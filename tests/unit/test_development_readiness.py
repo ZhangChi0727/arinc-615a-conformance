@@ -560,6 +560,90 @@ def test_rr95_conservative_member_status_survives_s9_and_next_round() -> None:
     assert errors(multi) == []
 
 
+def test_rr96_s0_unset_status_is_input_only_and_return_is_consumable(monkeypatch, tmp_path, capsys) -> None:
+    history_contract = next(row for row in PACKAGE["recordContracts"] if row["id"] == "HISTORY-HANDLE")
+    for branch_id in ("HR-NO-COMMIT", "HR-CONSERVATIVE"):
+        for unset_form in ("missing", "empty"):
+            valid = copy.deepcopy(PACKAGE)
+            row = next(row for row in valid["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]["branchWitnesses"]
+                       if row["id"] == branch_id)
+            if unset_form == "missing":
+                del row["inputHistoryHandle"]["statusByHypothesis"]
+            else:
+                row["inputHistoryHandle"]["statusByHypothesis"] = {}
+            assert MODULE.validate_record_instance(history_contract, row["inputHistoryHandle"]) == []
+            assert errors(valid) == []
+            result = row["s9"]["etaPrime"]
+            assert result["H"] == ["h0"]
+            assert result["statusByHypothesis"] == {"h0": "KNOWN" if branch_id == "HR-NO-COMMIT" else "CONSERVATIVE-UNKNOWN"}
+            assert MODULE.validate_record_instance(history_contract, result) == []
+            code, _ = run_main(monkeypatch, tmp_path, capsys, valid)
+            assert code == 0
+            if branch_id == "HR-CONSERVATIVE":
+                row["interface"]["HistoryHandlePrime"]["statusByHypothesis"]["h0"] = "KNOWN"
+                row["s9"]["etaPrime"] = copy.deepcopy(row["interface"]["HistoryHandlePrime"])
+                assert any(branch_id in item for item in errors(valid))
+                row["interface"]["HistoryHandlePrime"]["statusByHypothesis"]["h0"] = "CONSERVATIVE-UNKNOWN"
+                row["s9"]["etaPrime"] = copy.deepcopy(result)
+
+            # The returned handle, not an invented caller-side status, is the
+            # next round's input. Version and H must remain coherent.
+            row["inputHistoryHandle"] = copy.deepcopy(result)
+            row["inputH"] = copy.deepcopy(result["H"])
+            row["historyInputVersion"] = result["version"]
+            row["snapshotVersion"] = result["version"]
+            row["backend"]["historyVersion"] = result["version"] + 1
+            row["interface"]["HistoryHandlePrime"]["version"] = result["version"] + 1
+            row["s9"]["etaPrime"]["version"] = result["version"] + 1
+            assert errors(valid) == []
+            row["inputHistoryHandle"]["statusByHypothesis"] = {}
+            assert any(branch_id in item for item in errors(valid))
+
+    legal = copy.deepcopy(PACKAGE)
+    row = next(row for row in legal["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]["branchWitnesses"]
+               if row["id"] == "HR-CONSERVATIVE")
+    del row["inputHistoryHandle"]["statusByHypothesis"]
+    package = tmp_path / "package.json"
+    view = tmp_path / "view.md"
+    monkeypatch.setattr(SYNC, "PACKAGE", package)
+    monkeypatch.setattr(SYNC, "VIEW", view)
+    package.write_text(json.dumps(legal), encoding="utf-8")
+    for mode in ("--write", "--check"):
+        monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", mode])
+        assert SYNC.main() == 0
+
+
+def test_rr96_malformed_adjacent_inputs_have_named_diagnostics_without_publication(monkeypatch, tmp_path, capsys) -> None:
+    package = tmp_path / "package.json"
+    view = tmp_path / "view.md"
+    marker = b"old review view\n"
+    view.write_bytes(marker)
+    monkeypatch.setattr(SYNC, "PACKAGE", package)
+    monkeypatch.setattr(SYNC, "VIEW", view)
+    for kind in ("foreign-member", "unhashable-member", "unhashable-cancel", "unhashable-event-kind"):
+        bad = copy.deepcopy(PACKAGE)
+        if kind in {"foreign-member", "unhashable-member"}:
+            row = next(row for row in bad["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]["branchWitnesses"]
+                       if row["id"] == "HR-CONSERVATIVE")
+            row["backend"]["H_c"] = ["not-in-input-H"] if kind == "foreign-member" else [[]]
+        elif kind == "unhashable-cancel":
+            fixture = next(row for row in bad["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")["inputFixture"]["values"]["ownershipFixture"]
+            fixture["ownershipEvents"].append({"id": "C1", "kind": "CANCEL", "key": "k1", "sequence": 99, "targetRequestId": []})
+        else:
+            witness = next(row for row in bad["implementationDependencies"][0]["obligationWitnesses"]
+                           if row["requirementId"] == "CRS-M1-00109")
+            witness["inputs"]["events"][0]["kind"] = []
+        named = errors(bad)
+        assert named and all(isinstance(item, str) and item for item in named), kind
+        code, output = run_main(monkeypatch, tmp_path, capsys, bad)
+        assert code == 1 and "validation failed" in output.err and "Traceback" not in output.err, kind
+        package.write_text(json.dumps(bad), encoding="utf-8")
+        for mode in ("--write", "--check"):
+            monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", mode])
+            assert SYNC.main() == 1, kind
+            assert view.read_bytes() == marker
+
+
 def test_rr95_single_ownership_replay_matches_existing_method_after_ambiguity() -> None:
     def package_case(events, response_id, expected_owner, request_id, disposition):
         candidate = copy.deepcopy(PACKAGE)

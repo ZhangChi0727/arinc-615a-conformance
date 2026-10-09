@@ -544,7 +544,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 | `AM-DRIFT` | controlled drift | authority plus generated view at same validated snapshot | checker and generator agree or fail without publishing | delete relation, forge reference, refresh count/hash or retain stale view | `CONTROL-ERROR`; cases ``; test `test_review_generator_refuses_invalid_authority_and_detects_stale_view`; vector `{"failurePreservesOldView": true, "publicationMode": "--write", "sourceMutation": "remove protocolInputDispositions[0].rationaleZh", "viewMarker": "preserve this failed-publication marker\n"}` |
 
 The finite acceptance relations replay request-instance states: ACTIVE, DISCHARGED, CANCELLED, SUPERSEDED, or AMBIGUOUS. An ambiguous response is an ERROR premise, not proof of no response; discharge is not cancellation. BUDGET compares cost with remaining amount, while ROUNDS admits a positive remaining execution count before TEST-only scoring. IP coverage/conflict comes from fragment bytes, field width/encoding from the bound CRS fieldConstraint, and TFTP termination from effective block size and any required zero-length successor. Prep/Recover are never TEST-scored.
-The owner and no-response consumers use the same event replay: ambiguous old instances leave the matchable set, while a later new request of the same key starts independently. UNKNOWN-EFFECT marks every declared affected HistoryHandle member CONSERVATIVE-UNKNOWN in the interface result and S9 etaPrime; unaffected member states are preserved for the next round. A computation limit alone does not change the session qStatus or charge a retry.
+The owner and no-response consumers use the same event replay: ambiguous old instances leave the matchable set, while a later new request of the same key starts independently. At S0/version 0, HistoryHandle member status may be unset on input; a processed return must establish a status for every surviving member. A compatible first return establishes KNOWN, while UNKNOWN-EFFECT marks every declared affected HistoryHandle member CONSERVATIVE-UNKNOWN in the interface result and S9 etaPrime; already established unaffected member states are preserved for the next round. A computation limit alone does not change the session qStatus or charge a retry.
 
 ## First-batch experiment scenarios
 
@@ -2187,7 +2187,7 @@ A conservative unknown history effect preserves every input candidate; Stop-Empt
 | `AM-DRIFT` | 受控类别：controlled drift | 同一已验证快照上的权威对象和生成视图。 | 检查器与生成器一致，失败时不发布。 | 删除关系、伪造引用、仅刷新计数/散列或保留陈旧视图。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。；案例 ``；测试 `test_review_generator_refuses_invalid_authority_and_detects_stale_view`；向量 `{"failurePreservesOldView": true, "publicationMode": "--write", "sourceMutation": "remove protocolInputDispositions[0].rationaleZh", "viewMarker": "preserve this failed-publication marker\n"}` |
 
 有限验收关系区分请求实例的活动、完成、取消、替代及歧义状态。歧义响应属于 ERROR 前提，不证明无响应；正常完成不是取消。BUDGET 按费用余额准入，ROUNDS 按剩余执行次数准入，再仅对 TEST 评分。从分片字节推导 IP 覆盖与冲突，依据绑定的 CRS fieldConstraint 核验字段位宽与编码；TFTP 终块须有有效块长及必要的后继零长度块证据。Prep／Recover 不参与 TEST 评分。
-归属与无响应消费同一事件回放：旧实例一旦歧义即退出可配对集合；之后同键的新请求以新身份独立进入。UNKNOWN-EFFECT 将声明受影响的 HistoryHandle 成员标记为 CONSERVATIVE-UNKNOWN，并由接口结果及 S9 etaPrime 保留供下一轮读取；未受影响成员状态保持不变。单纯计算限额不会自行改变会话 qStatus 或收取重试费用。
+归属与无响应消费同一事件回放：旧实例一旦歧义即退出可配对集合；之后同键的新请求以新身份独立进入。S0／版本 0 的 HistoryHandle 输入可以尚未设置成员状态；处理后的返回必须为每个保留成员建立状态。首次相容返回建立 KNOWN；UNKNOWN-EFFECT 将声明受影响的 HistoryHandle 成员标记为 CONSERVATIVE-UNKNOWN，并由接口结果及 S9 etaPrime 保留供下一轮读取；未受影响且已有的成员状态保持不变。单纯计算限额不会自行改变会话 qStatus 或收取重试费用。
 
 ## 首批实验场景
 

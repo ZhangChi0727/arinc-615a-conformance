@@ -379,7 +379,10 @@ def _replay_ownership(values: dict) -> tuple[str | None, dict[str, str], dict[st
                        and isinstance(event.get("id"), str) and bool(event["id"])
                        and isinstance(event.get("key"), str) and bool(event["key"])
                        and isinstance(event.get("sequence"), int) and not isinstance(event["sequence"], bool)
-                       and event["sequence"] >= 0 for event in events)):
+                       and event["sequence"] >= 0
+                       and (event["kind"] not in {"CANCEL", "SUPERSEDE"}
+                            or (isinstance(event.get("targetRequestId"), str) and bool(event["targetRequestId"])))
+                       for event in events)):
         return "untyped ownership event schedule", {}, {}
     requests = {event["id"]: event for event in events if event["kind"] == "REQUEST"}
     if (len({event["sequence"] for event in events}) != len(events)
@@ -987,8 +990,9 @@ def package_errors(data: dict) -> list[str]:
                          and isinstance(input_handle, dict) and history_record is not None
                          and not validate_record_instance(history_record, input_handle)
                          and input_handle.get("H") == input_h and input_handle.get("version") == versions[1]
-                         and isinstance(input_handle.get("statusByHypothesis"), dict)
-                         and set(input_handle["statusByHypothesis"]) == set(input_h)
+                         and ((isinstance(input_handle.get("statusByHypothesis"), dict)
+                               and set(input_handle["statusByHypothesis"]) == set(input_h))
+                              or (versions[1] == 0 and input_handle.get("statusByHypothesis", {}) == {}))
                          and isinstance(result, dict)
                          and set(result) == ({"status", "reason", "etaPrime", "Hprime", "GammaPrime", "summaryCommitted", "outerDisposition"}
                                              if branch_id == "HR-VERSION-MISMATCH" else
@@ -1029,9 +1033,21 @@ def package_errors(data: dict) -> list[str]:
                             or isinstance(b, dict) and b.get("H_c") != input_h)):
                     errors.append(f"{refinement['id']} {branch_id} input/effect does not witness its history branch")
                 handle = i.get("HistoryHandlePrime") if isinstance(i, dict) else None
-                expected_member_status = {h: input_handle["statusByHypothesis"][h] for h in b.get("H_c", [])} if isinstance(b, dict) and isinstance(b.get("H_c"), list) else None
-                if expected_member_status is not None and effect == "UNKNOWN-EFFECT":
-                    expected_member_status.update({h: "CONSERVATIVE-UNKNOWN" for h in affected})
+                input_status = input_handle.get("statusByHypothesis", {})
+                valid_members = (isinstance(b, dict) and isinstance(b.get("H_c"), list)
+                                 and all(isinstance(h, str) and h in input_h for h in b["H_c"]))
+                expected_member_status = None
+                if valid_members:
+                    # S0 may leave member status unset. A processed return must
+                    # establish every surviving member's status; only a proved
+                    # compatible effect can establish KNOWN without an old value.
+                    expected_member_status = {h: input_status.get(h, "KNOWN") for h in b["H_c"]}
+                    if effect == "UNKNOWN-EFFECT":
+                        for h in affected:
+                            if h in expected_member_status:
+                                expected_member_status[h] = "CONSERVATIVE-UNKNOWN"
+                        if any(h not in input_status and h not in affected for h in b["H_c"]):
+                            expected_member_status = None
                 if (not isinstance(b, dict) or set(b) != {"eta_c", "H_c", "historyVersion"}
                         or not isinstance(b.get("H_c"), list)
                         or any(not isinstance(h, str) or not h for h in b["H_c"])
@@ -1044,6 +1060,7 @@ def package_errors(data: dict) -> list[str]:
                         or i.get("Hprime") != b["H_c"] or not isinstance(handle, dict)
                         or history_record is None or validate_record_instance(history_record, handle)
                         or handle.get("compatibleStateByHypothesis") != b["eta_c"]
+                        or expected_member_status is None
                         or handle.get("statusByHypothesis") != expected_member_status
                         or handle.get("version") != b["historyVersion"]
                         or result["etaPrime"] != handle or result["Hprime"] != i["Hprime"] or result["status"] != "OK"
@@ -1945,7 +1962,7 @@ def package_errors(data: dict) -> list[str]:
             status = witnesses.get("CRS-M1-00109", {}).get("inputs", {})
             events = status.get("events", [])
             start, end = status.get("calculationStartAt"), status.get("calculationEndAt")
-            typed_events = isinstance(events, list) and all(isinstance(event, dict) and event.get("kind") in {"FINAL-DATA", "STATUS"} and isinstance(event.get("at"), int) and not isinstance(event.get("at"), bool) for event in events)
+            typed_events = isinstance(events, list) and all(isinstance(event, dict) and isinstance(event.get("kind"), str) and event["kind"] in {"FINAL-DATA", "STATUS"} and isinstance(event.get("at"), int) and not isinstance(event.get("at"), bool) for event in events)
             ordered = typed_events and all(events[index]["at"] < events[index + 1]["at"] for index in range(len(events) - 1))
             final_indices = [index for index, event in enumerate(events) if event.get("kind") == "FINAL-DATA"] if typed_events else []
             final_index = final_indices[-1] if final_indices else -1
@@ -2025,7 +2042,8 @@ def package_errors(data: dict) -> list[str]:
                     variant_events = values.get("events", [])
                     if (not isinstance(variant_events, list)
                             or any(not isinstance(event, dict) or set(event) != {"kind", "at"}
-                                   or event.get("kind") not in {"FINAL-DATA", "STATUS"}
+                                   or not isinstance(event.get("kind"), str)
+                                   or event["kind"] not in {"FINAL-DATA", "STATUS"}
                                    or type(event.get("at")) is not int for event in variant_events)):
                         return "INVALID-SPEC"
                     variant_ordered = all(variant_events[index]["at"] < variant_events[index + 1]["at"] for index in range(len(variant_events) - 1))
