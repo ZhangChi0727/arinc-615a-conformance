@@ -327,6 +327,193 @@ def test_rr93_bilingual_view_explains_return_and_acceptance_premises() -> None:
         assert text in chinese
 
 
+def test_rr94_history_effect_evidence_controls_empty_and_conservative_returns() -> None:
+    def branch(data, branch_id):
+        rows = data["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]["branchWitnesses"]
+        return next(row for row in rows if row["id"] == branch_id)
+
+    bad = copy.deepcopy(PACKAGE)
+    row = branch(bad, "HR-CONSERVATIVE")
+    row["backend"].update(eta_c={}, H_c=[])
+    row["interface"].update(status="Stop-Empty", Hprime=[])
+    row["interface"]["HistoryHandlePrime"].update(H=[], compatibleStateByHypothesis={}, statusByHypothesis={})
+    row["s9"].update(etaPrime=copy.deepcopy(row["interface"]["HistoryHandlePrime"]), Hprime=[], outerDisposition="Stop-Empty")
+    assert any("HR-CONSERVATIVE" in message for message in errors(bad))
+    assert errors(copy.deepcopy(PACKAGE)) == []
+    known_session_unknown_effect = copy.deepcopy(PACKAGE)
+    row = branch(known_session_unknown_effect, "HR-CONSERVATIVE")
+    row["inputGamma"].update(qStatus="KNOWN", currentSummary="q0")
+    row["s9"]["GammaPrime"].update(qStatus="KNOWN", currentSummary="q0")
+    assert errors(known_session_unknown_effect) == []
+    bad = copy.deepcopy(PACKAGE)
+    row = branch(bad, "HR-STOP-EMPTY")
+    row["effectKnowledge"] = "UNKNOWN-EFFECT"
+    assert any("HR-STOP-EMPTY" in message for message in errors(bad))
+    two_candidates = copy.deepcopy(PACKAGE)
+    row = branch(two_candidates, "HR-CONSERVATIVE")
+    row["inputH"].append("h1")
+    row["inputHistoryHandle"]["H"].append("h1")
+    row["inputHistoryHandle"]["compatibleStateByHypothesis"]["h1"] = "frontier-old-1"
+    row["inputHistoryHandle"]["statusByHypothesis"]["h1"] = "KNOWN"
+    row["backend"]["H_c"].append("h1")
+    row["backend"]["eta_c"]["h1"] = "frontier-conservative-1"
+    row["interface"]["Hprime"].append("h1")
+    handle = row["interface"]["HistoryHandlePrime"]
+    handle["H"].append("h1")
+    handle["compatibleStateByHypothesis"]["h1"] = "frontier-conservative-1"
+    handle["statusByHypothesis"]["h1"] = "CONSERVATIVE-UNKNOWN"
+    row["s9"]["Hprime"].append("h1")
+    row["s9"]["etaPrime"] = copy.deepcopy(handle)
+    assert errors(two_candidates) == []
+    row["backend"]["H_c"] = ["h0"]
+    row["backend"]["eta_c"].pop("h1")
+    row["interface"]["Hprime"] = ["h0"]
+    handle["H"] = ["h0"]
+    handle["compatibleStateByHypothesis"].pop("h1")
+    handle["statusByHypothesis"].pop("h1")
+    row["s9"]["Hprime"] = ["h0"]
+    row["s9"]["etaPrime"] = copy.deepcopy(handle)
+    assert any("HR-CONSERVATIVE" in message for message in errors(two_candidates))
+    bad = copy.deepcopy(PACKAGE)
+    row = branch(bad, "HR-NO-COMMIT")
+    row["outcome"].update(summaryConfirmed=True)
+    row["s9"].update(summaryConfirmed=True, summaryCommitted=True)
+    row["s9"]["GammaPrime"]["currentSummary"] = "q1"
+    assert any("HR-NO-COMMIT" in message for message in errors(bad))
+
+
+def test_rr94_request_lifecycle_and_resource_mode_are_derived() -> None:
+    def transfer(data):
+        return next(row for row in data["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")["inputFixture"]["values"]
+
+    ambiguous = copy.deepcopy(PACKAGE)
+    values = transfer(ambiguous)
+    values["ownershipFixture"].update(policy="UNIQUE-KEY", expectedOwner="AMBIGUOUS")
+    next(row for row in ambiguous["acceptanceMatrix"] if row["id"] == "AM-OWNERSHIP")["coverageValues"].update(policy="UNIQUE-KEY", expectedOwner="AMBIGUOUS")
+    values["noResponseFixture"]["expectedDisposition"] = "ERROR"
+    assert errors(ambiguous) == []
+    values["noResponseFixture"]["expectedDisposition"] = "FAIL-NO-RESPONSE"
+    assert any("AM-OWNERSHIP" in message for message in errors(ambiguous))
+
+    complete = copy.deepcopy(PACKAGE)
+    values = transfer(complete)
+    values["ownershipFixture"].update(policy="FIFO", expectedOwner="REQUEST-A")
+    next(row for row in complete["acceptanceMatrix"] if row["id"] == "AM-OWNERSHIP")["coverageValues"].update(policy="FIFO", expectedOwner="REQUEST-A")
+    values["noResponseFixture"].update(cancelled=False, expectedDisposition="NO-ACTIVE-OBLIGATION")
+    assert errors(complete) == []
+    values["noResponseFixture"]["cancelled"] = True
+    assert any("AM-OWNERSHIP" in message for message in errors(complete))
+
+    cancelled = copy.deepcopy(PACKAGE)
+    values = transfer(cancelled)
+    values["ownershipFixture"]["ownershipEvents"].append(
+        {"id": "CANCEL-A", "kind": "CANCEL", "key": "k1", "sequence": 4, "targetRequestId": "REQUEST-A"})
+    values["noResponseFixture"].update(cancelled=True, expectedDisposition="NO-ACTIVE-OBLIGATION")
+    assert errors(cancelled) == []
+    superseded = copy.deepcopy(cancelled)
+    values = transfer(superseded)
+    values["ownershipFixture"]["ownershipEvents"][-1].update(id="SUPERSEDE-A", kind="SUPERSEDE")
+    values["noResponseFixture"]["cancelled"] = False
+    assert errors(superseded) == []
+
+    rounds = copy.deepcopy(PACKAGE)
+    select = next(row for row in rounds["acceptanceCases"] if row["id"] == "AC-SYN-SELECT")
+    for action in select["inputFixture"]["values"]["actions"]:
+        action["cost"] = 2
+    assert errors(rounds) == []
+    select["inputFixture"]["values"]["resource"]["mode"] = "INVALID"
+    assert any("RC-SELECT-STABLE-ID" in message for message in errors(rounds))
+    select["inputFixture"]["values"]["resource"]["mode"] = "ROUNDS"
+    select["inputFixture"]["values"]["actions"][0]["cost"] = 0
+    assert any("RC-SELECT-STABLE-ID" in message for message in errors(rounds))
+    select["inputFixture"]["values"]["actions"][0]["cost"] = 2
+    select["inputFixture"]["values"]["resource"]["mode"] = "BUDGET"
+    assert any("RC-SELECT-STABLE-ID" in message for message in errors(rounds))
+    select["expectedOutputFixture"]["values"]["selectedActionId"] = None
+    next(row for row in rounds["acceptanceMatrix"] if row["id"] == "AM-ADMIT")["coverageValues"]["resource"]["mode"] = "BUDGET"
+    assert errors(rounds) == []
+
+
+def test_rr94_integrity_missing_evidence_is_never_a_violation() -> None:
+    def variant(data, requirement_id, branch):
+        return next(row for row in data["implementationDependencies"][0]["obligationVariants"]
+                    if row["requirementId"] == requirement_id and row["branch"] == branch)
+
+    for requirement_id, changes in (
+        ("CRS-M1-00085", {"lspCheckValue": None}),
+        ("CRS-M1-00086", {"comparisonResult": None}),
+        ("CRS-M1-00109", {"finalDataSeen": False, "events": []}),
+    ):
+        bad = copy.deepcopy(PACKAGE)
+        variant(bad, requirement_id, "VIOLATED")["changes"].update(changes)
+        assert any("variant expected" in message for message in errors(bad))
+    for requirement_id, changes in (
+        ("CRS-M1-00085", {"lspCheckValue": None}),
+        ("CRS-M1-00086", {"comparisonSelected": None}),
+        ("CRS-M1-00086", {"comparisonResult": None}),
+        ("CRS-M1-00109", {"finalDataSeen": False, "events": []}),
+    ):
+        legal = copy.deepcopy(PACKAGE)
+        variant(legal, requirement_id, "NOT-EVALUATED")["changes"] = changes
+        assert errors(legal) == []
+    contradictory = copy.deepcopy(PACKAGE)
+    variant(contradictory, "CRS-M1-00085", "NOT-EVALUATED")["changes"] = {"checkValuePresent": False}
+    assert any("variant expected" in message for message in errors(contradictory))
+    contradictory = copy.deepcopy(PACKAGE)
+    variant(contradictory, "CRS-M1-00109", "NOT-EVALUATED")["changes"] = {"finalDataSeen": False}
+    assert any("variant expected" in message for message in errors(contradictory))
+    for requirement_id, field in (("CRS-M1-00085", "lspCheckValue"),
+                                  ("CRS-M1-00086", "comparisonResult"),
+                                  ("CRS-M1-00109", "finalDataSeen")):
+        bad_base = copy.deepcopy(PACKAGE)
+        witness = next(row for row in bad_base["implementationDependencies"][0]["obligationWitnesses"]
+                       if row["requirementId"] == requirement_id)
+        witness["inputs"][field] = False if field == "finalDataSeen" else None
+        assert any("baseline does not satisfy its shared evidence relation" in message for message in errors(bad_base))
+
+
+def test_rr94_real_entrypoints_reject_joint_mutations_without_publishing(monkeypatch, tmp_path, capsys) -> None:
+    package = tmp_path / "package.json"
+    view = tmp_path / "view.md"
+    marker = b"prior accepted view\n"
+    view.write_bytes(marker)
+    monkeypatch.setattr(SYNC, "PACKAGE", package)
+    monkeypatch.setattr(SYNC, "VIEW", view)
+    for kind in ("empty-unknown", "ambiguous-timeout", "missing-check-value"):
+        bad = copy.deepcopy(PACKAGE)
+        if kind == "empty-unknown":
+            row = next(row for row in bad["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]["branchWitnesses"]
+                       if row["id"] == "HR-CONSERVATIVE")
+            row["backend"].update(eta_c={}, H_c=[])
+            row["interface"].update(status="Stop-Empty", Hprime=[])
+            row["interface"]["HistoryHandlePrime"].update(H=[], compatibleStateByHypothesis={}, statusByHypothesis={})
+            row["s9"].update(etaPrime=copy.deepcopy(row["interface"]["HistoryHandlePrime"]), Hprime=[], outerDisposition="Stop-Empty")
+        elif kind == "ambiguous-timeout":
+            owner = next(row for row in bad["acceptanceMatrix"] if row["id"] == "AM-OWNERSHIP")["coverageValues"]
+            fixture = next(row for row in bad["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")["inputFixture"]["values"]
+            owner.update(policy="UNIQUE-KEY", expectedOwner="AMBIGUOUS")
+            fixture["ownershipFixture"].update(policy="UNIQUE-KEY", expectedOwner="AMBIGUOUS")
+        else:
+            row = next(row for row in bad["implementationDependencies"][0]["obligationVariants"]
+                       if row["requirementId"] == "CRS-M1-00085" and row["branch"] == "VIOLATED")
+            row["changes"]["lspCheckValue"] = None
+        code, _ = run_main(monkeypatch, tmp_path, capsys, bad)
+        assert code == 1, kind
+        package.write_text(json.dumps(bad), encoding="utf-8")
+        for mode in ("--write", "--check"):
+            monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", mode])
+            assert SYNC.main() == 1, kind
+            assert view.read_bytes() == marker
+
+
+def test_rr94_bilingual_view_states_undecided_boundaries() -> None:
+    english, chinese = SYNC.render(PACKAGE).split("# CL-TAV 开发就绪评审视图", 1)
+    for text in ("AMBIGUOUS", "ROUNDS admits a positive remaining execution count", "conservative unknown history effect", "unobserved FINAL-DATA"):
+        assert text in english
+    for text in ("歧义响应属于 ERROR 前提", "ROUNDS 按剩余执行次数准入", "保守未知的历史效果", "未观察到 FINAL-DATA"):
+        assert text in chinese
+
+
 def test_rr92_model_declarations_and_projection_fail_closed() -> None:
     def model(data):
         return data["algorithmRefinements"][0]["finiteKernelContract"]

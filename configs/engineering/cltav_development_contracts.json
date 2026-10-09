@@ -9694,25 +9694,25 @@
             "s9.GammaPrime.otherSessionFields": "inputGamma unchanged; S7/S8 effects are upstream of S9"
           },
           "branchWitnesses": [
-            {"id": "HR-NO-COMMIT", "inputGamma": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []},
+            {"id": "HR-NO-COMMIT", "effectKnowledge": "COMPATIBLE", "inputGamma": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []},
              "outcome": {"summaryConfirmed": false, "postSummary": "q1"}, "snapshotVersion": 0, "historyInputVersion": 0, "inputH": ["h0"],
              "inputHistoryHandle": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-old"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 0},
              "backend": {"eta_c": {"h0": "frontier-next"}, "H_c": ["h0"], "historyVersion": 1},
              "interface": {"status": "KNOWN", "Hprime": ["h0"], "HistoryHandlePrime": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-next"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 1}},
              "s9": {"status": "OK", "etaPrime": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-next"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 1}, "Hprime": ["h0"], "GammaPrime": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []}, "summaryCommitted": false, "outerDisposition": "CONTINUE"}},
-            {"id": "HR-STOP-EMPTY", "inputGamma": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []},
+            {"id": "HR-STOP-EMPTY", "effectKnowledge": "PROVEN-INCOMPATIBLE", "inputGamma": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []},
              "outcome": {"summaryConfirmed": false, "postSummary": null}, "snapshotVersion": 0, "historyInputVersion": 0, "inputH": ["h0"],
              "inputHistoryHandle": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-old"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 0},
              "backend": {"eta_c": {}, "H_c": [], "historyVersion": 1},
              "interface": {"status": "Stop-Empty", "Hprime": [], "HistoryHandlePrime": {"H": [], "compatibleStateByHypothesis": {}, "statusByHypothesis": {}, "version": 1}},
              "s9": {"status": "OK", "etaPrime": {"H": [], "compatibleStateByHypothesis": {}, "statusByHypothesis": {}, "version": 1}, "Hprime": [], "GammaPrime": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []}, "summaryCommitted": false, "outerDisposition": "Stop-Empty"}},
-            {"id": "HR-CONSERVATIVE", "inputGamma": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "UNKNOWN", "currentSummary": "", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []},
+            {"id": "HR-CONSERVATIVE", "effectKnowledge": "UNKNOWN-EFFECT", "inputGamma": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "UNKNOWN", "currentSummary": "", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []},
              "outcome": {"summaryConfirmed": false, "postSummary": null}, "snapshotVersion": 0, "historyInputVersion": 0, "inputH": ["h0"],
              "inputHistoryHandle": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-old"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 0},
              "backend": {"eta_c": {"h0": "frontier-conservative"}, "H_c": ["h0"], "historyVersion": 1},
              "interface": {"status": "CONSERVATIVE-UNKNOWN", "Hprime": ["h0"], "HistoryHandlePrime": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-conservative"}, "statusByHypothesis": {"h0": "CONSERVATIVE-UNKNOWN"}, "version": 1}},
              "s9": {"status": "OK", "etaPrime": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-conservative"}, "statusByHypothesis": {"h0": "CONSERVATIVE-UNKNOWN"}, "version": 1}, "Hprime": ["h0"], "GammaPrime": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "UNKNOWN", "currentSummary": "", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []}, "summaryCommitted": false, "outerDisposition": "CONTINUE"}},
-            {"id": "HR-VERSION-MISMATCH", "inputGamma": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []},
+            {"id": "HR-VERSION-MISMATCH", "effectKnowledge": "VERSION-MISMATCH", "inputGamma": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []},
              "outcome": {"summaryConfirmed": true, "postSummary": "q1"}, "snapshotVersion": 1, "historyInputVersion": 0, "inputH": ["h0"],
              "inputHistoryHandle": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-old"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 0},
              "backend": null, "interface": null,
@@ -12212,7 +12212,7 @@
         {"requirementId": "CRS-M1-00082", "branch": "NOT-EVALUATED", "changes": {"receiverSupport": null}},
         {"requirementId": "CRS-M1-00082", "branch": "NOT-APPLICABLE", "changes": {"optionSelected": false}},
         {"requirementId": "CRS-M1-00085", "branch": "VIOLATED", "changes": {"lspCheckValue": "0x5678"}},
-        {"requirementId": "CRS-M1-00085", "branch": "NOT-EVALUATED", "changes": {"checkValuePresent": false}},
+        {"requirementId": "CRS-M1-00085", "branch": "NOT-EVALUATED", "changes": {"checkValuePresent": false, "finalImageCheckValue": null, "lspCheckValue": null}},
         {"requirementId": "CRS-M1-00086", "branch": "VIOLATED", "changes": {"oldCheckValue": "0x1111", "newCheckValue": "0x2222", "comparisonResult": "EQUAL"}},
         {"requirementId": "CRS-M1-00086", "branch": "NOT-EVALUATED", "changes": {"oldCheckValue": null}},
         {"requirementId": "CRS-M1-00086", "branch": "NOT-APPLICABLE", "changes": {"comparisonSelected": false}},
@@ -12782,6 +12782,7 @@
           "response-b"
         ],
         "resource": {
+          "mode": "ROUNDS",
           "remaining": 1
         }
       }

@@ -411,26 +411,45 @@ def _resolve_ownership(values: dict) -> tuple[str | None, str | None]:
     return "response absent from event schedule", None
 
 
-def _remaining_request_ids(values: dict) -> set[str] | None:
-    """The no-response obligation uses the same response resolver and event order."""
+def _request_lifecycle(values: dict) -> dict[str, str] | None:
+    """Replay request instances; ambiguity is not evidence of silence."""
     events = values.get("ownershipEvents")
     if not isinstance(events, list):
         return None
-    active: set[str] = set()
+    states: dict[str, str] = {}
+    prefix: list[dict] = []
     for event in sorted(events, key=lambda item: item.get("sequence", -1) if isinstance(item, dict) else -1):
         if not isinstance(event, dict):
             return None
+        prefix.append(event)
         kind = event.get("kind")
         if kind == "REQUEST":
-            active.add(event["id"])
+            states[event["id"]] = "ACTIVE"
         elif kind in {"CANCEL", "SUPERSEDE"}:
-            active.discard(event["targetRequestId"])
+            target = event.get("targetRequestId")
+            if target not in states:
+                return None
+            if states[target] == "ACTIVE":
+                states[target] = "CANCELLED" if kind == "CANCEL" else "SUPERSEDED"
         elif kind == "RESPONSE":
-            error, owner = _resolve_ownership({**values, "responseId": event["id"], "key": event["key"]})
+            error, owner = _resolve_ownership({**values, "ownershipEvents": prefix,
+                                               "responseId": event["id"], "key": event["key"]})
             if error:
                 return None
-            active.discard(owner)
-    return active
+            if owner == "AMBIGUOUS":
+                for request in prefix:
+                    if request.get("kind") == "REQUEST" and request.get("key") == event["key"] and states.get(request["id"]) == "ACTIVE":
+                        states[request["id"]] = "AMBIGUOUS"
+            elif owner in states and states[owner] == "ACTIVE":
+                states[owner] = "DISCHARGED"
+        else:
+            return None
+    return states
+
+
+def _remaining_request_ids(values: dict) -> set[str] | None:
+    states = _request_lifecycle(values)
+    return {request_id for request_id, state in states.items() if state == "ACTIVE"} if states is not None else None
 
 
 def _acceptance_relation_errors(case: dict) -> list[str]:
@@ -478,6 +497,7 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
                 or not isinstance(inputs.get("eligibleActions"), list)
                 or any(not isinstance(value, str) or not value for value in inputs["eligibleActions"])
                 or len(set(inputs["eligibleActions"])) != len(inputs["eligibleActions"])
+                or resource.get("mode") not in {"BUDGET", "ROUNDS"}
                 or type(resource.get("remaining")) is not int or resource["remaining"] < 0):
             return ["RC-SELECT-STABLE-ID requires typed actions, eligibleActions, and resource"]
         hypotheses = inputs.get("H")
@@ -492,6 +512,7 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
                        or not isinstance(a.get("id"), str) or not a["id"]
                        or not isinstance(a.get("kind"), str) or a["kind"] not in {"TEST", "PREP", "RECOVER"}
                        or type(a.get("cost")) is not int or a["cost"] < 0
+                       or a["kind"] == "TEST" and a["cost"] == 0
                        or (a["kind"] == "TEST" and (set(a) != {"id", "kind", "cost", "worstClass", "classesByHypothesis"}
                            or not isinstance(a.get("classesByHypothesis"), dict)
                            or set(a["classesByHypothesis"]) != set(hypotheses)
@@ -504,9 +525,11 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
             return ["RC-SELECT-STABLE-ID requires typed distinguishing TEST scores"]
         if len({a["id"] for a in actions}) != len(actions) or not set(inputs["eligibleActions"]).issubset({a["id"] for a in actions}):
             return ["RC-SELECT-STABLE-ID requires unique declared eligible TEST IDs"]
-        affordable = [a for a in actions if a["kind"] == "TEST" and a["id"] in inputs["eligibleActions"] and a["cost"] <= resource["remaining"]]
+        affordable = [a for a in actions if a["kind"] == "TEST" and a["id"] in inputs["eligibleActions"]
+                      and (resource["remaining"] > 0 if resource["mode"] == "ROUNDS" else a["cost"] <= resource["remaining"])]
         expected = min(affordable, key=lambda a: (a["worstClass"], a["cost"], a["id"]))["id"] if affordable else None
-        if len(affordable) < 2 or outputs.get("selectedActionId") != expected:
+        eligible_tests = [a for a in actions if a["kind"] == "TEST" and a["id"] in inputs["eligibleActions"]]
+        if len(eligible_tests) < 2 or outputs.get("selectedActionId") != expected:
             errors.append("RC-SELECT-STABLE-ID at expectedOutputFixture.values.selectedActionId")
     elif relation == "RC-VERDICT-WHOLE-INTERVAL":
         interval = inputs.get("interval", {})
@@ -954,7 +977,7 @@ def package_errors(data: dict) -> list[str]:
                 input_h = branch.get("inputH")
                 input_handle = branch.get("inputHistoryHandle")
                 versions = (branch.get("snapshotVersion"), branch.get("historyInputVersion"))
-                typed = (set(branch) == {"id", "inputGamma", "outcome", "snapshotVersion", "historyInputVersion", "inputH", "inputHistoryHandle", "backend", "interface", "s9"}
+                typed = (set(branch) == {"id", "effectKnowledge", "inputGamma", "outcome", "snapshotVersion", "historyInputVersion", "inputH", "inputHistoryHandle", "backend", "interface", "s9"}
                          and isinstance(g, dict) and set(g) == session_fields
                          and all(g.get(field) == input_gamma.get(field) for field in session_fields - {"qStatus", "currentSummary"})
                          and isinstance(g.get("qStatus"), str) and g["qStatus"] in {"KNOWN", "UNKNOWN"}
@@ -980,6 +1003,11 @@ def package_errors(data: dict) -> list[str]:
                     errors.append(f"{refinement['id']} {branch_id} has malformed history return payload")
                     continue
                 stale = versions[0] != versions[1]
+                effect = branch["effectKnowledge"]
+                expected_effect = {"HR-NO-COMMIT": "COMPATIBLE", "HR-STOP-EMPTY": "PROVEN-INCOMPATIBLE",
+                                   "HR-CONSERVATIVE": "UNKNOWN-EFFECT", "HR-VERSION-MISMATCH": "VERSION-MISMATCH"}[branch_id]
+                if effect != expected_effect or stale is not (effect == "VERSION-MISMATCH"):
+                    errors.append(f"{refinement['id']} {branch_id} effect evidence and version premise disagree")
                 commit = (not stale and g["qStatus"] == "KNOWN" and z["summaryConfirmed"]
                           and isinstance(z["postSummary"], str) and bool(z["postSummary"]))
                 expected_summary = z["postSummary"] if commit else g["currentSummary"]
@@ -995,12 +1023,19 @@ def package_errors(data: dict) -> list[str]:
                             or result["Hprime"] != input_h or result["outerDisposition"] != "Stop-Error"):
                         errors.append(f"{refinement['id']} {branch_id} version mismatch did not preserve input history")
                     continue
+                if (branch_id == "HR-NO-COMMIT" and z["summaryConfirmed"]
+                        or effect == "PROVEN-INCOMPATIBLE" and (g["qStatus"] != "KNOWN" or not input_h)
+                        or effect == "UNKNOWN-EFFECT" and (z["summaryConfirmed"]
+                            or b is not None and b.get("H_c") != input_h)):
+                    errors.append(f"{refinement['id']} {branch_id} input/effect does not witness its history branch")
                 handle = i.get("HistoryHandlePrime") if isinstance(i, dict) else None
                 if (not isinstance(b, dict) or set(b) != {"eta_c", "H_c", "historyVersion"}
                         or not isinstance(b.get("H_c"), list)
                         or any(not isinstance(h, str) or not h for h in b["H_c"])
                         or len(set(b["H_c"])) != len(b["H_c"])
                         or not set(b["H_c"]).issubset(input_h) or not isinstance(b.get("eta_c"), dict)
+                        or effect == "UNKNOWN-EFFECT" and b["H_c"] != input_h
+                        or effect == "PROVEN-INCOMPATIBLE" and b["H_c"] != []
                         or set(b["eta_c"]) != set(b["H_c"]) or b.get("historyVersion") != versions[1] + 1
                         or not isinstance(i, dict) or set(i) != {"status", "Hprime", "HistoryHandlePrime"}
                         or i.get("Hprime") != b["H_c"] or not isinstance(handle, dict)
@@ -1009,7 +1044,7 @@ def package_errors(data: dict) -> list[str]:
                         or handle.get("version") != b["historyVersion"]
                         or result["etaPrime"] != handle or result["Hprime"] != i["Hprime"] or result["status"] != "OK"
                         or result["outerDisposition"] != ("Stop-Empty" if not b["H_c"] else "CONTINUE")
-                        or i.get("status") != ("Stop-Empty" if not b["H_c"] else "CONSERVATIVE-UNKNOWN" if branch_id == "HR-CONSERVATIVE" else "KNOWN")):
+                        or i.get("status") != ("Stop-Empty" if effect == "PROVEN-INCOMPATIBLE" else "CONSERVATIVE-UNKNOWN" if effect == "UNKNOWN-EFFECT" else "KNOWN")):
                     errors.append(f"{refinement['id']} {branch_id} backend/interface/S9 branch mapping is invalid")
         model_schema = finite["modelInstanceSchema"]
         clock_contract = model_schema.get("clockConstraint", {})
@@ -1519,8 +1554,9 @@ def package_errors(data: dict) -> list[str]:
         if item["category"] == "prediction and admission":
             vector = item["coverageValues"]
             if (any(vector.get(key) != consumer_input.get(key) for key in ("H", "eligibleActions", "distinguishingClasses"))
-                    or vector.get("resource", {}).get("remaining") != consumer_input.get("resource", {}).get("remaining")
-                    or consumer_output.get("selectedActionId") not in vector.get("eligibleActions", [])):
+                    or vector.get("resource") != consumer_input.get("resource")
+                    or consumer_output.get("selectedActionId") is not None
+                    and consumer_output.get("selectedActionId") not in vector.get("eligibleActions", [])):
                 errors.append(f"{item['id']} admission vector is not consumed by the select case")
         if item["category"] == "history update":
             vector = item["coverageValues"]
@@ -1537,10 +1573,11 @@ def package_errors(data: dict) -> list[str]:
             owner_fixture = transfer_input.get("ownershipFixture", {})
             no_response = transfer_input.get("noResponseFixture", {})
             schedule_error, owner = _resolve_ownership(owner_fixture) if isinstance(owner_fixture, dict) else ("untyped fixture", None)
-            active_requests = _remaining_request_ids(owner_fixture) if not schedule_error else None
-            request_active = (isinstance(no_response, dict) and isinstance(active_requests, set)
-                              and no_response.get("requestId") in active_requests)
-            no_response_disposition = ("FAIL-NO-RESPONSE" if request_active
+            request_states = _request_lifecycle(owner_fixture) if not schedule_error else None
+            request_state = request_states.get(no_response.get("requestId")) if isinstance(no_response, dict) and isinstance(request_states, dict) else None
+            request_active = request_state == "ACTIVE"
+            no_response_disposition = ("ERROR" if request_state == "AMBIGUOUS" else
+                                       "FAIL-NO-RESPONSE" if request_active
                                        and type(no_response.get("earliestElapsed")) in (int, float)
                                        and type(no_response.get("deadline")) in (int, float)
                                        and type(no_response.get("upperClosed")) is bool
@@ -1555,7 +1592,7 @@ def package_errors(data: dict) -> list[str]:
                     or no_response["requestId"] not in {event["id"] for event in owner_fixture.get("ownershipEvents", []) if isinstance(event, dict) and event.get("kind") == "REQUEST"}
                     or type(no_response.get("cancelled")) is not bool
                     or type(no_response.get("upperClosed")) is not bool
-                    or no_response["cancelled"] is request_active
+                    or no_response["cancelled"] is not (request_state == "CANCELLED")
                     or no_response.get("expectedDisposition") != no_response_disposition
                     or vector.get("earliestElapsed") != no_response.get("earliestElapsed")
                     or vector.get("deadline") != no_response.get("deadline")
@@ -1932,6 +1969,77 @@ def package_errors(data: dict) -> list[str]:
                     and isinstance(start, int) and isinstance(end, int) and start <= end and typed_events and ordered
                     and final_index >= 0 and events[final_index]["at"] <= end and continued):
                 errors.append(f"{dependency['id']} 00109 witness lacks post-DATA status continuation")
+            def classify_integrity_evidence(requirement_id: str, values: dict) -> str:
+                """One finite evidence relation for the baseline and its variants."""
+                if requirement_id in {"CRS-M1-00076", "CRS-M1-00082"}:
+                    service = integrity_by_requirement.get(requirement_id, {}).get("service")
+                    option_ref, bytes_ref = values.get("optionIdentity"), values.get("protectedBytesRef")
+                    if not (values.get("service") == service and isinstance(option_ref, str) and isinstance(bytes_ref, str)
+                            and symbolic_entities.get(option_ref) == {"id": option_ref, "kind": "OPTION", "service": service}
+                            and symbolic_entities.get(bytes_ref) == {"id": bytes_ref, "kind": "PROTECTED-BYTES", "service": service}):
+                        return "INVALID-SPEC"
+                    if values.get("optionSelected") is None:
+                        return "NOT-EVALUATED"
+                    if values.get("optionSelected") is False:
+                        return "NOT-APPLICABLE"
+                    if values.get("receiverSupport") is None:
+                        return "NOT-EVALUATED"
+                    return "SATISFIED" if values.get("receiverSupport") is True else "VIOLATED"
+                if requirement_id == "CRS-M1-00085":
+                    if not upload_entity(values.get("finalImageId"), "FILE") or not upload_entity(values.get("lspId"), "FILE"):
+                        return "INVALID-SPEC"
+                    if values.get("checkValuePresent") is False and any(values.get(key) is not None for key in ("finalImageCheckValue", "lspCheckValue")):
+                        return "INVALID-SPEC"
+                    if values.get("checkValuePresent") is not True or values.get("orderedBytesPresent") is not True:
+                        return "NOT-EVALUATED"
+                    if not all(isinstance(values.get(key), str) and values[key] for key in ("finalImageCheckValue", "lspCheckValue")):
+                        return "NOT-EVALUATED"
+                    return "SATISFIED" if values["finalImageCheckValue"] == values["lspCheckValue"] else "VIOLATED"
+                if requirement_id == "CRS-M1-00086":
+                    if values.get("comparisonSelected") is False:
+                        return "NOT-APPLICABLE"
+                    if values.get("comparisonSelected") is None:
+                        return "NOT-EVALUATED"
+                    if not (upload_entity(values.get("oldFileId"), "FILE") and upload_entity(values.get("newFileId"), "FILE")):
+                        return "INVALID-SPEC"
+                    old, new = values.get("oldCheckValue"), values.get("newCheckValue")
+                    if not all(isinstance(value, str) and value for value in (old, new)) or values.get("comparisonResult") is None:
+                        return "NOT-EVALUATED"
+                    actual = "EQUAL" if old == new else "DIFFERENT"
+                    return "SATISFIED" if values.get("comparisonResult") == actual else "VIOLATED"
+                if requirement_id == "CRS-M1-00087":
+                    if not (upload_entity(values.get("fileAId"), "FILE") and upload_entity(values.get("fileBId"), "FILE")):
+                        return "INVALID-SPEC"
+                    if not all(isinstance(values.get(key), str) and values[key] for key in ("partNumberA", "partNumberB")):
+                        return "NOT-EVALUATED"
+                    if values["partNumberA"] != values["partNumberB"]:
+                        return "NOT-APPLICABLE"
+                    if not all(isinstance(values.get(key), str) and values[key] for key in ("crcA", "crcB")):
+                        return "NOT-EVALUATED"
+                    return "SATISFIED" if values["crcA"] == values["crcB"] else "VIOLATED"
+                if requirement_id == "CRS-M1-00109":
+                    variant_events = values.get("events", [])
+                    variant_ordered = all(variant_events[index]["at"] < variant_events[index + 1]["at"] for index in range(len(variant_events) - 1))
+                    variant_final_indices = [index for index, event in enumerate(variant_events) if event["kind"] == "FINAL-DATA"]
+                    if values.get("finalDataSeen") is False and variant_final_indices:
+                        return "INVALID-SPEC"
+                    if values.get("calculationInProgress") is False:
+                        return "NOT-APPLICABLE"
+                    if values.get("finalDataSeen") is False or values.get("observationComplete") is False:
+                        return "NOT-EVALUATED"
+                    if not (values.get("calculationStartAt") == start and values.get("calculationEndAt") == end
+                            and values.get("requiredStatusObservationPoints") == scheduled_points
+                            and schedule_valid and variant_ordered and len(variant_final_indices) == 1
+                            and variant_events[variant_final_indices[0]]["at"] <= end
+                            and windows[0]["from"] + shift == start and windows[-1]["through"] + shift == end
+                            and all(windows[index]["through"] == windows[index + 1]["from"] for index in range(len(windows) - 1))):
+                        return "INVALID-SPEC"
+                    observed = {event["at"] for event in variant_events[variant_final_indices[0] + 1:] if event["kind"] == "STATUS"}
+                    return "SATISFIED" if all(point in observed for point in scheduled_points) else "VIOLATED"
+                return "INVALID-SPEC"
+            for requirement_id in integrity_by_requirement:
+                if classify_integrity_evidence(requirement_id, witnesses.get(requirement_id, {}).get("inputs", {})) != "SATISFIED":
+                    errors.append(f"{dependency['id']} {requirement_id} baseline does not satisfy its shared evidence relation")
             variant_rows = dependency.get("obligationVariants", [])
             required_variants = {
                 (requirement_id, branch)
@@ -1991,49 +2099,7 @@ def package_errors(data: dict) -> list[str]:
                 if not shape_ok:
                     errors.append(f"{dependency['id']} {requirement_id} variant has invalid typed inputs")
                     continue
-                classification = "INVALID-SPEC"
-                if requirement_id in {"CRS-M1-00076", "CRS-M1-00082"}:
-                    service = integrity_by_requirement.get(requirement_id, {}).get("service")
-                    option_ref, bytes_ref = values.get("optionIdentity"), values.get("protectedBytesRef")
-                    if (values.get("service") == service and isinstance(option_ref, str) and isinstance(bytes_ref, str)
-                            and symbolic_entities.get(option_ref) == {"id": option_ref, "kind": "OPTION", "service": service}
-                            and symbolic_entities.get(bytes_ref) == {"id": bytes_ref, "kind": "PROTECTED-BYTES", "service": service}
-                            and values.get("optionSelected") in (True, False, None)
-                            and values.get("receiverSupport") in (True, False, None)
-                            and all(type(values.get(field)) in (bool, type(None)) for field in ("optionSelected", "receiverSupport"))):
-                        classification = ("NOT-EVALUATED" if values.get("optionSelected") is None else
-                                          "NOT-APPLICABLE" if values.get("optionSelected") is False else
-                                          "NOT-EVALUATED" if values.get("receiverSupport") is None else
-                                          "SATISFIED" if values.get("receiverSupport") is True else
-                                          "VIOLATED" if values.get("receiverSupport") is False else "INVALID-SPEC")
-                elif requirement_id == "CRS-M1-00085":
-                    if upload_entity(values.get("finalImageId"), "FILE") and upload_entity(values.get("lspId"), "FILE"):
-                        classification = ("NOT-EVALUATED" if values.get("checkValuePresent") is not True or values.get("orderedBytesPresent") is not True else
-                                          "SATISFIED" if values.get("finalImageCheckValue") == values.get("lspCheckValue") else "VIOLATED")
-                elif requirement_id == "CRS-M1-00086":
-                    if values.get("comparisonSelected") is False:
-                        classification = "NOT-APPLICABLE"
-                    elif values.get("comparisonSelected") is True and upload_entity(values.get("oldFileId"), "FILE") and upload_entity(values.get("newFileId"), "FILE"):
-                        old, new = values.get("oldCheckValue"), values.get("newCheckValue")
-                        actual = "EQUAL" if old == new else "DIFFERENT"
-                        classification = ("NOT-EVALUATED" if not all(isinstance(value, str) and value for value in (old, new)) else
-                                          "SATISFIED" if values.get("comparisonResult") == actual else "VIOLATED")
-                elif requirement_id == "CRS-M1-00087":
-                    if upload_entity(values.get("fileAId"), "FILE") and upload_entity(values.get("fileBId"), "FILE"):
-                        classification = ("NOT-EVALUATED" if not all(isinstance(values.get(key), str) and values[key] for key in ("partNumberA", "partNumberB")) else
-                                          "NOT-APPLICABLE" if values.get("partNumberA") != values.get("partNumberB") else
-                                          "NOT-EVALUATED" if not all(isinstance(values.get(key), str) and values[key] for key in ("crcA", "crcB")) else
-                                          "SATISFIED" if values.get("crcA") == values.get("crcB") else "VIOLATED")
-                elif requirement_id == "CRS-M1-00109":
-                    if values.get("calculationInProgress") is False:
-                        classification = "NOT-APPLICABLE"
-                    elif values.get("observationComplete") is False:
-                        classification = "NOT-EVALUATED"
-                    elif (values.get("calculationStartAt") == start
-                          and values.get("calculationEndAt") == end
-                          and values.get("requiredStatusObservationPoints") == scheduled_points):
-                        observed = {event.get("at") for event in values.get("events", []) if isinstance(event, dict) and event.get("kind") == "STATUS"}
-                        classification = "SATISFIED" if all(point in observed for point in scheduled_points) else "VIOLATED"
+                classification = classify_integrity_evidence(requirement_id, values)
                 if classification != variant.get("branch"):
                     errors.append(f"{dependency['id']} {requirement_id} variant expected {variant.get('branch')} but derives {classification}")
         for requirement_id, binding in source_bindings.items():
