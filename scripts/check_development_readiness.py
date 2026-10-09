@@ -365,12 +365,11 @@ def _ip_reassembly_status(vector: object) -> str | None:
     return "COMPLETE" if merged_end == length - 1 else "GAPPED"
 
 
-def _resolve_ownership(values: dict) -> tuple[str | None, str | None]:
-    """Resolve one finite response using event identity, key, order and invalidation."""
-    if (not isinstance(values.get("policy"), str) or values["policy"] not in {"FIFO", "MOST-RECENT", "UNIQUE-KEY"}
-            or not isinstance(values.get("key"), str) or not values["key"]
-            or not isinstance(values.get("responseId"), str) or not values["responseId"]):
-        return "untyped ownership key, response or policy", None
+def _replay_ownership(values: dict) -> tuple[str | None, dict[str, str], dict[str, str]]:
+    """One finite event replay supplies both response owners and request states."""
+    if (not isinstance(values, dict) or not isinstance(values.get("policy"), str)
+            or values["policy"] not in {"FIFO", "MOST-RECENT", "UNIQUE-KEY"}):
+        return "untyped ownership policy", {}, {}
     events = values.get("ownershipEvents")
     if (not isinstance(events, list) or not events
             or not all(isinstance(event, dict)
@@ -381,70 +380,63 @@ def _resolve_ownership(values: dict) -> tuple[str | None, str | None]:
                        and isinstance(event.get("key"), str) and bool(event["key"])
                        and isinstance(event.get("sequence"), int) and not isinstance(event["sequence"], bool)
                        and event["sequence"] >= 0 for event in events)):
-        return "untyped ownership event schedule", None
-    responses = [event for event in events if event["kind"] == "RESPONSE" and event["id"] == values.get("responseId")]
+        return "untyped ownership event schedule", {}, {}
     requests = {event["id"]: event for event in events if event["kind"] == "REQUEST"}
     if (len({event["sequence"] for event in events}) != len(events)
-            or len({event["id"] for event in events}) != len(events) or len(responses) != 1
+            or len({event["id"] for event in events}) != len(events)
             or any(event["targetRequestId"] not in requests
                    or requests[event["targetRequestId"]]["sequence"] >= event["sequence"]
                    or requests[event["targetRequestId"]]["key"] != event["key"]
                    for event in events if event["kind"] in {"CANCEL", "SUPERSEDE"})):
-        return "invalid ownership event schedule", None
+        return "invalid ownership event schedule", {}, {}
     policy = values.get("policy")
     active: dict[str, dict] = {}
+    states: dict[str, str] = {}
+    owners: dict[str, str] = {}
     for event in sorted(events, key=lambda item: item["sequence"]):
         if event["kind"] == "REQUEST":
             active[event["id"]] = event
+            states[event["id"]] = "ACTIVE"
         elif event["kind"] in {"CANCEL", "SUPERSEDE"}:
-            active.pop(event["targetRequestId"], None)
+            target = event["targetRequestId"]
+            if target in active:
+                active.pop(target)
+                states[target] = "CANCELLED" if event["kind"] == "CANCEL" else "SUPERSEDED"
         else:
             candidates = sorted((request for request in active.values() if request["key"] == event["key"]),
                                 key=lambda request: request["sequence"])
             owner = ("UNMATCHED" if not candidates else
                      "AMBIGUOUS" if policy == "UNIQUE-KEY" and len(candidates) != 1 else
                      candidates[-1]["id"] if policy == "MOST-RECENT" else candidates[0]["id"])
-            if event["id"] == values["responseId"]:
-                return None, owner if event["key"] == values["key"] else "UNMATCHED"
-            if owner not in {"UNMATCHED", "AMBIGUOUS"}:
+            owners[event["id"]] = owner
+            if owner == "AMBIGUOUS":
+                for request in candidates:
+                    states[request["id"]] = "AMBIGUOUS"
+                    active.pop(request["id"])
+            elif owner != "UNMATCHED":
+                states[owner] = "DISCHARGED"
                 active.pop(owner)
-    return "response absent from event schedule", None
+    return None, owners, states
+
+
+def _resolve_ownership(values: dict) -> tuple[str | None, str | None]:
+    """Resolve one response from the same replay used by T2 and no-response."""
+    if (not isinstance(values, dict) or not isinstance(values.get("key"), str) or not values["key"]
+            or not isinstance(values.get("responseId"), str) or not values["responseId"]):
+        return "untyped ownership key or response", None
+    error, owners, _ = _replay_ownership(values)
+    if error:
+        return error, None
+    response = next((event for event in values["ownershipEvents"] if event["id"] == values["responseId"]
+                     and event["kind"] == "RESPONSE"), None)
+    if response is None:
+        return "response absent from event schedule", None
+    return None, owners[response["id"]] if response["key"] == values["key"] else "UNMATCHED"
 
 
 def _request_lifecycle(values: dict) -> dict[str, str] | None:
-    """Replay request instances; ambiguity is not evidence of silence."""
-    events = values.get("ownershipEvents")
-    if not isinstance(events, list):
-        return None
-    states: dict[str, str] = {}
-    prefix: list[dict] = []
-    for event in sorted(events, key=lambda item: item.get("sequence", -1) if isinstance(item, dict) else -1):
-        if not isinstance(event, dict):
-            return None
-        prefix.append(event)
-        kind = event.get("kind")
-        if kind == "REQUEST":
-            states[event["id"]] = "ACTIVE"
-        elif kind in {"CANCEL", "SUPERSEDE"}:
-            target = event.get("targetRequestId")
-            if target not in states:
-                return None
-            if states[target] == "ACTIVE":
-                states[target] = "CANCELLED" if kind == "CANCEL" else "SUPERSEDED"
-        elif kind == "RESPONSE":
-            error, owner = _resolve_ownership({**values, "ownershipEvents": prefix,
-                                               "responseId": event["id"], "key": event["key"]})
-            if error:
-                return None
-            if owner == "AMBIGUOUS":
-                for request in prefix:
-                    if request.get("kind") == "REQUEST" and request.get("key") == event["key"] and states.get(request["id"]) == "ACTIVE":
-                        states[request["id"]] = "AMBIGUOUS"
-            elif owner in states and states[owner] == "ACTIVE":
-                states[owner] = "DISCHARGED"
-        else:
-            return None
-    return states
+    error, _, states = _replay_ownership(values)
+    return None if error else states
 
 
 def _remaining_request_ids(values: dict) -> set[str] | None:
@@ -497,7 +489,8 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
                 or not isinstance(inputs.get("eligibleActions"), list)
                 or any(not isinstance(value, str) or not value for value in inputs["eligibleActions"])
                 or len(set(inputs["eligibleActions"])) != len(inputs["eligibleActions"])
-                or resource.get("mode") not in {"BUDGET", "ROUNDS"}
+                or not isinstance(resource.get("mode"), str)
+                or resource["mode"] not in {"BUDGET", "ROUNDS"}
                 or type(resource.get("remaining")) is not int or resource["remaining"] < 0):
             return ["RC-SELECT-STABLE-ID requires typed actions, eligibleActions, and resource"]
         hypotheses = inputs.get("H")
@@ -976,8 +969,9 @@ def package_errors(data: dict) -> list[str]:
                 g, z, b, i, result = (branch.get(key) for key in ("inputGamma", "outcome", "backend", "interface", "s9"))
                 input_h = branch.get("inputH")
                 input_handle = branch.get("inputHistoryHandle")
+                affected = branch.get("affectedHypothesisIds")
                 versions = (branch.get("snapshotVersion"), branch.get("historyInputVersion"))
-                typed = (set(branch) == {"id", "effectKnowledge", "inputGamma", "outcome", "snapshotVersion", "historyInputVersion", "inputH", "inputHistoryHandle", "backend", "interface", "s9"}
+                typed = (set(branch) == {"id", "effectKnowledge", "inputGamma", "outcome", "affectedHypothesisIds", "snapshotVersion", "historyInputVersion", "inputH", "inputHistoryHandle", "backend", "interface", "s9"}
                          and isinstance(g, dict) and set(g) == session_fields
                          and all(g.get(field) == input_gamma.get(field) for field in session_fields - {"qStatus", "currentSummary"})
                          and isinstance(g.get("qStatus"), str) and g["qStatus"] in {"KNOWN", "UNKNOWN"}
@@ -988,9 +982,13 @@ def package_errors(data: dict) -> list[str]:
                          and all(type(version) is int and version >= 0 for version in versions)
                          and isinstance(input_h, list) and all(isinstance(h, str) and h for h in input_h)
                          and len(set(input_h)) == len(input_h)
+                         and isinstance(affected, list) and all(isinstance(h, str) and h for h in affected)
+                         and len(set(affected)) == len(affected) and set(affected).issubset(input_h)
                          and isinstance(input_handle, dict) and history_record is not None
                          and not validate_record_instance(history_record, input_handle)
                          and input_handle.get("H") == input_h and input_handle.get("version") == versions[1]
+                         and isinstance(input_handle.get("statusByHypothesis"), dict)
+                         and set(input_handle["statusByHypothesis"]) == set(input_h)
                          and isinstance(result, dict)
                          and set(result) == ({"status", "reason", "etaPrime", "Hprime", "GammaPrime", "summaryCommitted", "outerDisposition"}
                                              if branch_id == "HR-VERSION-MISMATCH" else
@@ -1008,6 +1006,8 @@ def package_errors(data: dict) -> list[str]:
                                    "HR-CONSERVATIVE": "UNKNOWN-EFFECT", "HR-VERSION-MISMATCH": "VERSION-MISMATCH"}[branch_id]
                 if effect != expected_effect or stale is not (effect == "VERSION-MISMATCH"):
                     errors.append(f"{refinement['id']} {branch_id} effect evidence and version premise disagree")
+                if (effect == "UNKNOWN-EFFECT") is not bool(affected):
+                    errors.append(f"{refinement['id']} {branch_id} affected history members do not match effect knowledge")
                 commit = (not stale and g["qStatus"] == "KNOWN" and z["summaryConfirmed"]
                           and isinstance(z["postSummary"], str) and bool(z["postSummary"]))
                 expected_summary = z["postSummary"] if commit else g["currentSummary"]
@@ -1026,9 +1026,12 @@ def package_errors(data: dict) -> list[str]:
                 if (branch_id == "HR-NO-COMMIT" and z["summaryConfirmed"]
                         or effect == "PROVEN-INCOMPATIBLE" and (g["qStatus"] != "KNOWN" or not input_h)
                         or effect == "UNKNOWN-EFFECT" and (z["summaryConfirmed"]
-                            or b is not None and b.get("H_c") != input_h)):
+                            or isinstance(b, dict) and b.get("H_c") != input_h)):
                     errors.append(f"{refinement['id']} {branch_id} input/effect does not witness its history branch")
                 handle = i.get("HistoryHandlePrime") if isinstance(i, dict) else None
+                expected_member_status = {h: input_handle["statusByHypothesis"][h] for h in b.get("H_c", [])} if isinstance(b, dict) and isinstance(b.get("H_c"), list) else None
+                if expected_member_status is not None and effect == "UNKNOWN-EFFECT":
+                    expected_member_status.update({h: "CONSERVATIVE-UNKNOWN" for h in affected})
                 if (not isinstance(b, dict) or set(b) != {"eta_c", "H_c", "historyVersion"}
                         or not isinstance(b.get("H_c"), list)
                         or any(not isinstance(h, str) or not h for h in b["H_c"])
@@ -1041,6 +1044,7 @@ def package_errors(data: dict) -> list[str]:
                         or i.get("Hprime") != b["H_c"] or not isinstance(handle, dict)
                         or history_record is None or validate_record_instance(history_record, handle)
                         or handle.get("compatibleStateByHypothesis") != b["eta_c"]
+                        or handle.get("statusByHypothesis") != expected_member_status
                         or handle.get("version") != b["historyVersion"]
                         or result["etaPrime"] != handle or result["Hprime"] != i["Hprime"] or result["status"] != "OK"
                         or result["outerDisposition"] != ("Stop-Empty" if not b["H_c"] else "CONTINUE")
@@ -2019,6 +2023,11 @@ def package_errors(data: dict) -> list[str]:
                     return "SATISFIED" if values["crcA"] == values["crcB"] else "VIOLATED"
                 if requirement_id == "CRS-M1-00109":
                     variant_events = values.get("events", [])
+                    if (not isinstance(variant_events, list)
+                            or any(not isinstance(event, dict) or set(event) != {"kind", "at"}
+                                   or event.get("kind") not in {"FINAL-DATA", "STATUS"}
+                                   or type(event.get("at")) is not int for event in variant_events)):
+                        return "INVALID-SPEC"
                     variant_ordered = all(variant_events[index]["at"] < variant_events[index + 1]["at"] for index in range(len(variant_events) - 1))
                     variant_final_indices = [index for index, event in enumerate(variant_events) if event["kind"] == "FINAL-DATA"]
                     if values.get("finalDataSeen") is False and variant_final_indices:

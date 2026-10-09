@@ -15,6 +15,7 @@ assert SPEC and SPEC.loader
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
 sys.path.insert(0, str(ROOT / "scripts"))
+import cltav_silence_spec as SILENCE
 SYNC_SPEC = importlib.util.spec_from_file_location("sync_development_readiness", ROOT / "scripts" / "sync_development_readiness.py")
 assert SYNC_SPEC and SYNC_SPEC.loader
 SYNC = importlib.util.module_from_spec(SYNC_SPEC)
@@ -352,6 +353,7 @@ def test_rr94_history_effect_evidence_controls_empty_and_conservative_returns() 
     two_candidates = copy.deepcopy(PACKAGE)
     row = branch(two_candidates, "HR-CONSERVATIVE")
     row["inputH"].append("h1")
+    row["affectedHypothesisIds"].append("h1")
     row["inputHistoryHandle"]["H"].append("h1")
     row["inputHistoryHandle"]["compatibleStateByHypothesis"]["h1"] = "frontier-old-1"
     row["inputHistoryHandle"]["statusByHypothesis"]["h1"] = "KNOWN"
@@ -512,6 +514,196 @@ def test_rr94_bilingual_view_states_undecided_boundaries() -> None:
         assert text in english
     for text in ("歧义响应属于 ERROR 前提", "ROUNDS 按剩余执行次数准入", "保守未知的历史效果", "未观察到 FINAL-DATA"):
         assert text in chinese
+
+
+def test_rr95_conservative_member_status_survives_s9_and_next_round() -> None:
+    def branch(data):
+        return next(row for row in data["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]["branchWitnesses"]
+                    if row["id"] == "HR-CONSERVATIVE")
+
+    valid = branch(PACKAGE)
+    returned = valid["s9"]["etaPrime"]
+    history_contract = next(row for row in PACKAGE["recordContracts"] if row["id"] == "HISTORY-HANDLE")
+    assert MODULE.validate_record_instance(history_contract, returned) == []
+    assert returned["H"] == ["h0"]
+    assert returned["statusByHypothesis"]["h0"] == "CONSERVATIVE-UNKNOWN"
+    for replacement in ("KNOWN", None):
+        bad = copy.deepcopy(PACKAGE)
+        row = branch(bad)
+        statuses = row["interface"]["HistoryHandlePrime"]["statusByHypothesis"]
+        if replacement is None:
+            statuses.pop("h0")
+        else:
+            statuses["h0"] = replacement
+        row["s9"]["etaPrime"] = copy.deepcopy(row["interface"]["HistoryHandlePrime"])
+        assert any("HR-CONSERVATIVE" in message for message in errors(bad))
+    multi = copy.deepcopy(PACKAGE)
+    row = branch(multi)
+    row["inputH"].append("h1")
+    row["inputHistoryHandle"]["H"].append("h1")
+    row["inputHistoryHandle"]["compatibleStateByHypothesis"]["h1"] = "frontier-old-1"
+    row["inputHistoryHandle"]["statusByHypothesis"]["h1"] = "KNOWN"
+    row["backend"]["H_c"].append("h1")
+    row["backend"]["eta_c"]["h1"] = "frontier-next-1"
+    row["interface"]["Hprime"].append("h1")
+    handle = row["interface"]["HistoryHandlePrime"]
+    handle["H"].append("h1")
+    handle["compatibleStateByHypothesis"]["h1"] = "frontier-next-1"
+    handle["statusByHypothesis"]["h1"] = "KNOWN"
+    row["s9"]["Hprime"].append("h1")
+    row["s9"]["etaPrime"] = copy.deepcopy(handle)
+    assert errors(multi) == []  # h1 was not affected by this unknown effect.
+    row["affectedHypothesisIds"].append("h1")
+    assert any("HR-CONSERVATIVE" in message for message in errors(multi))
+    handle["statusByHypothesis"]["h1"] = "CONSERVATIVE-UNKNOWN"
+    row["s9"]["etaPrime"] = copy.deepcopy(handle)
+    assert errors(multi) == []
+
+
+def test_rr95_single_ownership_replay_matches_existing_method_after_ambiguity() -> None:
+    def package_case(events, response_id, expected_owner, request_id, disposition):
+        candidate = copy.deepcopy(PACKAGE)
+        fixture = next(row for row in candidate["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")["inputFixture"]["values"]
+        fixture["ownershipFixture"].update(policy="UNIQUE-KEY", responseId=response_id,
+                                           expectedOwner=expected_owner, ownershipEvents=events)
+        fixture["noResponseFixture"].update(requestId=request_id, cancelled=False,
+                                             expectedDisposition=disposition)
+        vector = next(row for row in candidate["acceptanceMatrix"] if row["id"] == "AM-OWNERSHIP")["coverageValues"]
+        vector.update(policy="UNIQUE-KEY", responseId=response_id, expectedOwner=expected_owner)
+        return candidate, fixture["ownershipFixture"]
+
+    old = [{"id": "REQUEST-A", "kind": "REQUEST", "key": "k1", "sequence": 1},
+           {"id": "REQUEST-B", "kind": "REQUEST", "key": "k1", "sequence": 2},
+           {"id": "R1", "kind": "RESPONSE", "key": "k1", "sequence": 3}]
+    cancelled = old + [{"id": "CANCEL-A", "kind": "CANCEL", "key": "k1", "sequence": 4,
+                        "targetRequestId": "REQUEST-A"},
+                       {"id": "R2", "kind": "RESPONSE", "key": "k1", "sequence": 5}]
+    candidate, fixture = package_case(cancelled, "R2", "UNMATCHED", "REQUEST-B", "ERROR")
+    assert MODULE._resolve_ownership(fixture) == (None, "UNMATCHED")
+    assert MODULE._request_lifecycle(fixture) == {"REQUEST-A": "AMBIGUOUS", "REQUEST-B": "AMBIGUOUS"}
+    assert errors(candidate) == []
+    fixture["expectedOwner"] = "REQUEST-B"
+    next(row for row in candidate["acceptanceMatrix"] if row["id"] == "AM-OWNERSHIP")["coverageValues"]["expectedOwner"] = "REQUEST-B"
+    assert any("AM-OWNERSHIP" in message for message in errors(candidate))
+
+    fresh = old + [{"id": "REQUEST-C", "kind": "REQUEST", "key": "k1", "sequence": 4},
+                   {"id": "R2", "kind": "RESPONSE", "key": "k1", "sequence": 5}]
+    candidate, fixture = package_case(fresh, "R2", "REQUEST-C", "REQUEST-C", "NO-ACTIVE-OBLIGATION")
+    assert MODULE._resolve_ownership(fixture) == (None, "REQUEST-C")
+    assert MODULE._request_lifecycle(fixture) == {"REQUEST-A": "AMBIGUOUS", "REQUEST-B": "AMBIGUOUS", "REQUEST-C": "DISCHARGED"}
+    assert errors(candidate) == []
+
+    for schedule, final_old, final_new in ((cancelled, SILENCE.Disposition.ERROR, None),
+                                           (fresh, SILENCE.Disposition.ERROR, SILENCE.Disposition.DISCHARGED)):
+        trace = tuple(SILENCE.Event(event["sequence"], float(event["sequence"]),
+                                    {"REQUEST": SILENCE.EventKind.TRIG, "RESPONSE": SILENCE.EventKind.RESP,
+                                     "CANCEL": SILENCE.EventKind.CANCEL, "SUPERSEDE": SILENCE.EventKind.SUPERSEDE}[event["kind"]],
+                                    event["key"])
+                      for event in schedule)
+        obligation = SILENCE.TimedObligation(trace[0], 5, pairing=SILENCE.PairingPolicy.UNIQUE_KEY,
+                                              concurrent_same_key=True)
+        method = SILENCE.replay_instances(obligation, trace)
+        assert method[1].disposition is final_old
+        assert method[2].disposition is final_old
+        if final_new is not None:
+            assert method[4].disposition is final_new
+
+
+def test_rr95_malformed_inputs_return_named_diagnostics_without_publication(monkeypatch, tmp_path, capsys) -> None:
+    package = tmp_path / "package.json"
+    view = tmp_path / "view.md"
+    marker = b"previous review\n"
+    view.write_bytes(marker)
+    monkeypatch.setattr(SYNC, "PACKAGE", package)
+    monkeypatch.setattr(SYNC, "VIEW", view)
+    for kind in ("backend", "resource-mode", "status-events"):
+        bad = copy.deepcopy(PACKAGE)
+        if kind == "backend":
+            row = next(row for row in bad["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]["branchWitnesses"]
+                       if row["id"] == "HR-CONSERVATIVE")
+            row["backend"] = []
+        elif kind == "resource-mode":
+            select = next(row for row in bad["acceptanceCases"] if row["id"] == "AC-SYN-SELECT")
+            select["inputFixture"]["values"]["resource"]["mode"] = []
+        else:
+            witness = next(row for row in bad["implementationDependencies"][0]["obligationWitnesses"]
+                           if row["requirementId"] == "CRS-M1-00109")
+            witness["inputs"]["events"] = [123]
+        code, output = run_main(monkeypatch, tmp_path, capsys, bad)
+        assert code == 1 and "validation failed" in output.err, kind
+        package.write_text(json.dumps(bad), encoding="utf-8")
+        for mode in ("--write", "--check"):
+            monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", mode])
+            assert SYNC.main() == 1, kind
+            assert view.read_bytes() == marker
+
+
+def test_rr95_joint_must_mutations_fail_real_entries_and_legal_roundtrip(monkeypatch, tmp_path, capsys) -> None:
+    package = tmp_path / "package.json"
+    view = tmp_path / "view.md"
+    marker = b"old accepted view\n"
+    view.write_bytes(marker)
+    monkeypatch.setattr(SYNC, "PACKAGE", package)
+    monkeypatch.setattr(SYNC, "VIEW", view)
+    for kind in ("member-status", "old-ambiguous-owner"):
+        bad = copy.deepcopy(PACKAGE)
+        if kind == "member-status":
+            row = next(row for row in bad["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]["branchWitnesses"]
+                       if row["id"] == "HR-CONSERVATIVE")
+            row["interface"]["HistoryHandlePrime"]["statusByHypothesis"]["h0"] = "KNOWN"
+            row["s9"]["etaPrime"] = copy.deepcopy(row["interface"]["HistoryHandlePrime"])
+        else:
+            values = next(row for row in bad["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")["inputFixture"]["values"]
+            events = [{"id": "REQUEST-A", "kind": "REQUEST", "key": "k1", "sequence": 1},
+                      {"id": "REQUEST-B", "kind": "REQUEST", "key": "k1", "sequence": 2},
+                      {"id": "R1", "kind": "RESPONSE", "key": "k1", "sequence": 3},
+                      {"id": "CANCEL-A", "kind": "CANCEL", "key": "k1", "sequence": 4, "targetRequestId": "REQUEST-A"},
+                      {"id": "R2", "kind": "RESPONSE", "key": "k1", "sequence": 5}]
+            values["ownershipFixture"].update(policy="UNIQUE-KEY", responseId="R2",
+                                               expectedOwner="REQUEST-B", ownershipEvents=events)
+            values["noResponseFixture"].update(requestId="REQUEST-B", cancelled=False,
+                                                 expectedDisposition="ERROR")
+            vector = next(row for row in bad["acceptanceMatrix"] if row["id"] == "AM-OWNERSHIP")["coverageValues"]
+            vector.update(policy="UNIQUE-KEY", responseId="R2", expectedOwner="REQUEST-B")
+        code, _ = run_main(monkeypatch, tmp_path, capsys, bad)
+        assert code == 1, kind
+        package.write_text(json.dumps(bad), encoding="utf-8")
+        for mode in ("--write", "--check"):
+            monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", mode])
+            assert SYNC.main() == 1, kind
+            assert view.read_bytes() == marker
+
+    legal = copy.deepcopy(PACKAGE)
+    values = next(row for row in legal["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")["inputFixture"]["values"]
+    events = [{"id": "REQUEST-A", "kind": "REQUEST", "key": "k1", "sequence": 1},
+              {"id": "REQUEST-B", "kind": "REQUEST", "key": "k1", "sequence": 2},
+              {"id": "R1", "kind": "RESPONSE", "key": "k1", "sequence": 3},
+              {"id": "REQUEST-C", "kind": "REQUEST", "key": "k1", "sequence": 4},
+              {"id": "R2", "kind": "RESPONSE", "key": "k1", "sequence": 5}]
+    values["ownershipFixture"].update(policy="UNIQUE-KEY", responseId="R2",
+                                       expectedOwner="REQUEST-C", ownershipEvents=events)
+    values["noResponseFixture"].update(requestId="REQUEST-C", cancelled=False,
+                                         expectedDisposition="NO-ACTIVE-OBLIGATION")
+    next(row for row in legal["acceptanceMatrix"] if row["id"] == "AM-OWNERSHIP")["coverageValues"].update(
+        policy="UNIQUE-KEY", responseId="R2", expectedOwner="REQUEST-C")
+    assert run_main(monkeypatch, tmp_path, capsys, legal)[0] == 0
+    package.write_text(json.dumps(legal), encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--write"])
+    assert SYNC.main() == 0
+    assert view.read_bytes() != marker
+    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--check"])
+    assert SYNC.main() == 0
+
+
+def test_rr95_bilingual_view_contains_member_and_replay_contracts() -> None:
+    english, chinese = SYNC.render(PACKAGE).split("# CL-TAV 开发就绪评审视图", 1)
+    assert "ambiguous old instances leave the matchable set" in english
+    assert "every declared affected HistoryHandle member CONSERVATIVE-UNKNOWN" in english
+    assert "旧实例一旦歧义即退出可配对集合" in chinese
+    assert "声明受影响的 HistoryHandle 成员标记为 CONSERVATIVE-UNKNOWN" in chinese
+    changed = copy.deepcopy(PACKAGE)
+    next(row for row in changed["acceptanceMatrix"] if row["id"] == "AM-OWNERSHIP")["positiveInput"] += " with a fresh instance"
+    assert SYNC.render(changed) != SYNC.render(PACKAGE)
 
 
 def test_rr92_model_declarations_and_projection_fail_closed() -> None:
