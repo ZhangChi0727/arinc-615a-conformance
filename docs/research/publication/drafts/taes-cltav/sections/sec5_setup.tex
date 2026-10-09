@@ -5,6 +5,12 @@ The comparison contract is the existing experiment plan. Four arms share the
 same information pool, action pool and fault domain. Direct numeric comparison
 is allowed only on the same denominator and the same charged projection of
 \(c=(c_{\mathrm{acq}},c_{\mathrm{comp}},c_{\mathrm{prep}},c_{\mathrm{retry}})\).
+Seven controlled interfaces define scene registration, injection, independent
+truth, causal collection, arm execution, validity filtering and evaluation.
+Historical captures use only the offline evidence line and are not runnable
+scenes or confirmatory truth. The controlled line still depends on an
+interactive IUT, confirmed injection, reset evidence, qualified clocks and a
+truth generator whose shared components are disclosed.
 
 \begin{itemize}
 \item CL-T: predetermined tests; projection \(c_{\mathrm{acq}}\) for tests that

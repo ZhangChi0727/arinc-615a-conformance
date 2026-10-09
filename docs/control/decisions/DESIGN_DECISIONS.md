@@ -1037,6 +1037,36 @@ submission, implementation and unrun numbers would reverse the evidence order.
 
 **Status:** Candidate under CR-2026-015.
 
+## DD-038 — First-slice requirements layering and readiness boundary
+
+**Decision:** Keep protocol requirements, tool requirements and experiment requirements as distinct layers.  The first offline UPLOAD/INFORMATION slice may specify records, modules, acceptance cases and explicit dispositions, but it does not establish an executable tool, full service coverage, M3, Configuration or conformance.
+
+**Why:** A bound implementation contract can be reviewable without turning capture-derived observations into protocol requirements or treating an inventory count as readiness.
+
+**Scope:** Development-package structure and first-slice boundary. The narrow source correction authorized by CR-2026-016 covers fixed-width ASCII versions and ratios, the LCS/LUS present-versus-used timer distinction with inactive zero, and LUI reuse of the complete five-field initialization layout. M2 is re-pinned to the corrected source ancestor for these non-executing derived field constraints only; transitions, timing, migration, service selection, and approval status do not change.
+
+**Status:** Candidate under CR-2026-016; independent review required.
+
+## DD-039 — Finite CL-TAV reference-kernel contract
+
+**Decision:** The first implementation specification uses finite tagged records, explicit resource limits and conservative error/unknown outcomes.  It refines the accepted interfaces without choosing or implementing a general timed-EFSM solver; unknown and resource exhaustion do not exclude hypotheses or become IUT FAIL.
+
+**Why:** A codable bounded contract is needed before implementation while preserving the accepted method's uncertainty and no-resurrection constraints.
+
+**Scope:** Reference-kernel contract only; no change to DD-029/033 algorithm semantics.
+
+**Status:** Candidate under CR-2026-016; independent method and implementation review required.
+
+## DD-040 — Historical captures and experimental-truth boundary
+
+**Decision:** The inspected local capture corpus is exploratory development evidence, identified by a manifest and audited under a caller-supplied corpus root.  It is not committed, not a validation set, and not a source of inferred protocol requirements or fault truth.  Unknown metadata and root cause remain explicit.
+
+**Why:** Keeping identity, observation and truth separate prevents historical availability from being misrepresented as independent confirmation.
+
+**Scope:** Historical-data intake and experiment boundary; no execution or experimental result.
+
+**Status:** Candidate under CR-2026-016; independent data/experiment review required.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -1521,6 +1551,36 @@ ARINC 615A 数据加载是合法操作、观测和实验场景的来源。CL-TAV
 **范围：** 仅项目状态面及其生成器；不改 CRS 内容。
 
 **状态：** 在 CR-2026-014 下为候选。
+
+## DD-038——首轮需求分层与就绪边界
+
+**决定：** 协议需求、工具需求和实验需求保持为不同层。首轮离线 UPLOAD／INFORMATION 切片可以规格化记录、模块、验收案例和明确处置，但不建立可执行工具、完整服务覆盖、M3、Configuration 或符合性。
+
+**理由：** 绑定的实现合同可以在不把抓包观察变成协议需求、也不把清单计数当作就绪的情况下接受评审。
+
+**范围：** 开发包结构与首轮边界。本 CR 授权的窄范围来源修正包括定宽 ASCII 版本与比率、LCS／LUS 计时字段的“始终存在／条件使用／非活动为零”区分，以及 LUI 对完整五字段初始化布局的复用。M2 仅为这些非执行性派生字段约束重钉到修正来源祖先；不改变迁移、时序、服务选择或批准状态。
+
+**状态：** 在 CR-2026-016 下为候选；需要独立评审。
+
+## DD-039——有限 CL-TAV 参考内核合同
+
+**决定：** 首轮实现规格采用有限、带标签的记录、显式资源限额和保守的错误／未知结果。它细化已接受接口，但不选择或实现通用 timed-EFSM 求解器；未知与资源耗尽不得排除假设，也不得成为 IUT FAIL。
+
+**理由：** 实现前需要可编码的有界合同，同时保留已接受方法的不确定性与不复活约束。
+
+**范围：** 仅参考内核合同；不改变 DD-029／033 的算法语义。
+
+**状态：** 在 CR-2026-016 下为候选；需要独立方法与实现评审。
+
+## DD-040——历史捕获与实验真值边界
+
+**决定：** 已查看的本地捕获语料是探索性开发证据，通过清单标识并在调用方提供的 corpus root 下审计。它不提交、不构成验证集，也不是推断协议需求或故障真值的来源。未知元数据和根因保持显式。
+
+**理由：** 将身份、观测和真值分开，避免把历史可获得性误写为独立确认。
+
+**范围：** 历史数据接入和实验边界；不执行实验，也不产生实验结果。
+
+**状态：** 在 CR-2026-016 下为候选；需要独立数据／实验评审。
 
 ## DD-037——TAES 初稿结构、页预算与证据占位
 

@@ -1,10 +1,10 @@
 {
-  "sourceHash": "3ff7188949b827a172abe8b9373e7a231d93933b46e3dce4bd7e55882b6d205e",
+  "sourceHash": "9646a694d6d7ec9e35feebadb92e9a2c6da234f4890935bc1425ac6c72b2cba2",
   "mainPdf": "artifacts/publications/cltav/CLTAV_TAES_DRAFT.pdf",
   "supplementPdf": "artifacts/publications/cltav/CLTAV_TAES_SUPPLEMENT.pdf",
   "outputHashes": {
-    "main": "acd11e61f12b428f89d0fbd9ff778828a362d26c95492613c0ee957418107b0b",
-    "supplement": "ea32cbf6a9bd23f4ef27b026343f40275408b6fbd237d58f4d42d75235bd913f"
+    "main": "ff3c883c57c5a08b92f7cb7da44b8aee669cb9e1857665828bf14b69b7f0dbcc",
+    "supplement": "35369878715e67dc41778bf4c4ce3a4e5dc5198cb8becb2d3b9aabb74d1a73c9"
   },
   "pageCounts": {
     "main": 6,

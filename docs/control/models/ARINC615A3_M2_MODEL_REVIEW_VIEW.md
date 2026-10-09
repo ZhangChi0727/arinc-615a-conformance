@@ -13,7 +13,7 @@
 - M1 NET-ISSUE-EDITION snapshot blocksM1Approval=`True` — Historical snapshot on the merged M1 tree. External owner sign-off and merge bound that Head. The boolean does not reopen the merge. CR-2026-009 accepted 664P3-1 as this M2 input edition; 664P7 remains recorded and AFDX stays unselected.
 - Successor delta `CR-2026-012` authorized by `CR-2026-009`; doesNotTransplantFrozenApproval=`True`
 - Predecessor input artifact commit `402e8371b0237aec4691bab0b44e502f4ac1a7c4` tree `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
-- Current input artifact commit `c32008e32bc4701df27e2f25f74b01465c9e2bf2` tree `041b7211e3e4222c21a20e224fa4349c5ea3a4c6`
+- Current input artifact commit `47fbe1771736ce20a345f0e88b09be6b97e4370b` tree `6e7280268663d46e5b9a851727d9049b7df97c33`
 
 ## Scope
 
@@ -702,6 +702,7 @@
 | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-VL-IDENTIFIER-CRS-M1-00815` | `CRS-M1-00815` | INCLUDE-DEFAULT-TX-VL-IDENTIFIER | ARINC-664-NETWORK-CONSTRAINT |
 | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-BAG-CRS-M1-00816` | `CRS-M1-00816` | INCLUDE-DEFAULT-TX-BAG | ARINC-664-NETWORK-CONSTRAINT |
 | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-SMAX-CRS-M1-00817` | `CRS-M1-00817` | INCLUDE-DEFAULT-TX-SMAX | ARINC-664-NETWORK-CONSTRAINT |
+| `OC-LUI-SHARED-INITIALIZATION-FIELDS` | `CRS-M1-00362` | DECODE-SHARED-INITIALIZATION-LAYOUT | LUI-FILE-BYTES-BEFORE-INITIALIZATION-RESPONSE |
 
 ## Interfaces
 
@@ -2613,7 +2614,7 @@
 | `README-P2-DISPLAY` | `CLOSED-IN-THIS-PR` | M2-AUTHOR | PROFILE-MODEL-REFINEMENT-GATE | displayGroup rendering remains. |
 | `M1-LEDGER` | `RECORDED-IN-INPUT-ACCEPTANCE` | M2-AUTHOR | PROFILE-MODEL-REFINEMENT-GATE | M1 merge facts remain in inputAcceptance. |
 | `M1-FILE-IDENTITY-6-4-4` | `CLOSED-BY-SUCCESSOR-M1-DELTA` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | Successor M1 delta executed under CR-2026-011. Frozen merge bytes stay unchanged as a preserved record. Independent RG1 still required. |
-| `LUI-FIELD-TABLE-GAP` | `KNOWN-GAP-NO-DEDICATED-TABLE` | M1-EXPANDED | EXECUTABLE-FOUNDATION-GATE | After 6.4.4→LUR there is no dedicated LUI field table. LUI remains a sequence file. Fields are not invented. |
+| `LUI-FIELD-TABLE-GAP` | `CLOSED-BY-SHARED-INITIALIZATION-FIELD-MAPPING` | M2-MODEL | FIRST-SLICE-DEVELOPMENT-GATE | LUI reuses the shared initialization response layout: protocol version, acceptance status, and status-description length/text. The mapping references the LCI field contracts and the LUI analysis sequence; it does not invent a second table. |
 
 ## Sequence endpoint bindings
 
@@ -2679,7 +2680,7 @@
 
 - Untimed: `GRAPH-CONNECTIVITY-ON-DECLARED-TRANSITIONS`
 - Timed: `NOT-CHECKED`
-- Unproven: timed reachability, implementation conformance, network-stack conformance, LUI field-table predicates
+- Unproven: timed reachability, implementation conformance, network-stack conformance
 
 ## Review control
 
@@ -2703,7 +2704,7 @@
 - M1 NET-ISSUE-EDITION 快照 blocksM1Approval=`True` — 已合并 M1 树上的历史快照。外部所有者签署与合并绑定了该 Head。该布尔值不重开合并。CR-2026-009 接受 664P3-1 作为本 M2 输入版次；664P7 保持已登记且 AFDX 未选。
 - 后继增量 `CR-2026-012` 由 `CR-2026-009` 授权；doesNotTransplantFrozenApproval=`True`
 - 前序输入制品提交 `402e8371b0237aec4691bab0b44e502f4ac1a7c4` 树 `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
-- 当前输入制品提交 `c32008e32bc4701df27e2f25f74b01465c9e2bf2` 树 `041b7211e3e4222c21a20e224fa4349c5ea3a4c6`
+- 当前输入制品提交 `47fbe1771736ce20a345f0e88b09be6b97e4370b` 树 `6e7280268663d46e5b9a851727d9049b7df97c33`
 
 ## 范围
 
@@ -3392,6 +3393,7 @@
 | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-VL-IDENTIFIER-CRS-M1-00815` | `CRS-M1-00815` | INCLUDE-DEFAULT-TX-VL-IDENTIFIER | ARINC-664-NETWORK-CONSTRAINT |
 | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-BAG-CRS-M1-00816` | `CRS-M1-00816` | INCLUDE-DEFAULT-TX-BAG | ARINC-664-NETWORK-CONSTRAINT |
 | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-SMAX-CRS-M1-00817` | `CRS-M1-00817` | INCLUDE-DEFAULT-TX-SMAX | ARINC-664-NETWORK-CONSTRAINT |
+| `OC-LUI-SHARED-INITIALIZATION-FIELDS` | `CRS-M1-00362` | DECODE-SHARED-INITIALIZATION-LAYOUT | LUI-FILE-BYTES-BEFORE-INITIALIZATION-RESPONSE |
 
 ## 接口
 
@@ -5303,7 +5305,7 @@
 | `README-P2-DISPLAY` | `CLOSED-IN-THIS-PR` | M2-AUTHOR | PROFILE-MODEL-REFINEMENT-GATE | 保留 displayGroup 展示。 |
 | `M1-LEDGER` | `RECORDED-IN-INPUT-ACCEPTANCE` | M2-AUTHOR | PROFILE-MODEL-REFINEMENT-GATE | M1 合并事实仍在 inputAcceptance。 |
 | `M1-FILE-IDENTITY-6-4-4` | `CLOSED-BY-SUCCESSOR-M1-DELTA` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | 后继 M1 增量已在 CR-2026-011 下执行。冻结合并字节作为保留记录不变。仍须独立 RG1。 |
-| `LUI-FIELD-TABLE-GAP` | `KNOWN-GAP-NO-DEDICATED-TABLE` | M1-EXPANDED | EXECUTABLE-FOUNDATION-GATE | 6.4.4 改为 LUR 后没有专用 LUI 字段表。LUI 仍是序列文件。不编造字段。 |
+| `LUI-FIELD-TABLE-GAP` | `CLOSED-BY-SHARED-INITIALIZATION-FIELD-MAPPING` | M2-MODEL | FIRST-SLICE-DEVELOPMENT-GATE | LUI 复用共享初始化响应布局：协议版本、接受状态及状态描述长度／文本。该映射引用 LCI 字段合同和 LUI 分析序列，不另造第二张表。 |
 
 ## 序列端点绑定
 
@@ -5369,7 +5371,7 @@
 
 - 无时：`GRAPH-CONNECTIVITY-ON-DECLARED-TRANSITIONS`
 - 定时：`NOT-CHECKED`
-- 未证明：timed reachability, implementation conformance, network-stack conformance, LUI field-table predicates
+- 未证明：timed reachability, implementation conformance, network-stack conformance
 
 ## 评审控制
 

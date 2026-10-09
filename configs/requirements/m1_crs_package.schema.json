@@ -639,6 +639,12 @@
                         "PROSE-DEFINED"
                     ]
                 },
+                "alignment": {
+                    "enum": ["LEFT", "RIGHT"]
+                },
+                "padding": {
+                    "enum": ["LEADING-SPACE", "TRAILING-SPACE", "ZERO"]
+                },
                 "terminationRule": {
                     "$ref": "#/$defs/id"
                 },

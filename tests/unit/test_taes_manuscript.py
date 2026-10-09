@@ -296,3 +296,88 @@ def test_first_publish_failure_leaves_no_partial_targets(tmp_path: Path) -> None
     else:
         raise AssertionError("injected first-publication failure was accepted")
     assert not any(path.exists() for path in targets)
+
+
+def test_builder_validation_failures_never_enter_publication(monkeypatch, tmp_path: Path) -> None:
+    draft = tmp_path / "draft"
+    stage = draft / "build"
+    draft.mkdir()
+    outputs = tuple(tmp_path / name for name in ("main.pdf", "supp.pdf", "record.json"))
+    originals = (b"old-main", b"old-supp", b"old-record")
+    for path, value in zip(outputs, originals, strict=True):
+        path.write_bytes(value)
+    monkeypatch.setattr(builder, "ROOT", tmp_path)
+    monkeypatch.setattr(builder, "DRAFT", draft)
+    monkeypatch.setattr(builder, "STAGE", stage)
+    monkeypatch.setattr(builder, "OUT_MAIN", outputs[0])
+    monkeypatch.setattr(builder, "OUT_SUPP", outputs[1])
+    monkeypatch.setattr(builder, "RECORD_PATH", outputs[2])
+    monkeypatch.setattr(builder, "_stage_closure", lambda target: None)
+    def compile_fixture(name: str, target: Path, log: Path) -> None:
+        (target / f"{name}.pdf").write_bytes(b"%PDF" + b"x" * 1200)
+        log.write_text("clean", encoding="utf-8")
+    monkeypatch.setattr(builder, "_compile", compile_fixture)
+    monkeypatch.setattr(builder, "_log_has_fatal", lambda log: [])
+    monkeypatch.setattr(builder, "_final_layout_errors", lambda root, names: [])
+    monkeypatch.setattr(builder.CHECK, "source_hash", lambda: "0" * 64)
+    monkeypatch.setattr(builder.CHECK, "file_sha256", lambda path: "1" * 64)
+    monkeypatch.setattr(builder.CHECK, "_pdf_pages", lambda path: 1)
+    monkeypatch.setattr(builder.subprocess, "check_output", lambda *args, **kwargs: "test-engine\n")
+    publish_calls = []
+    monkeypatch.setattr(builder, "_publish", lambda targets: publish_calls.append(targets))
+    for failure_call in (1, 2):
+        calls = 0
+        def reject_at_stage(**kwargs):
+            nonlocal calls
+            calls += 1
+            return ["injected staged validation failure"] if calls == failure_call else []
+        monkeypatch.setattr(builder.CHECK, "manuscript_errors", reject_at_stage)
+        try:
+            builder.main()
+        except SystemExit as exc:
+            assert "staged validation failed" in str(exc)
+        else:
+            raise AssertionError("invalid staged manuscript reached publication")
+        assert publish_calls == []
+        assert [path.read_bytes() for path in outputs] == list(originals)
+
+
+def test_first_publication_staging_failures_never_create_targets(monkeypatch, tmp_path: Path) -> None:
+    draft = tmp_path / "draft"
+    stage = draft / "build"
+    draft.mkdir()
+    outputs = tuple(tmp_path / name for name in ("main.pdf", "supp.pdf", "record.json"))
+    monkeypatch.setattr(builder, "ROOT", tmp_path)
+    monkeypatch.setattr(builder, "DRAFT", draft)
+    monkeypatch.setattr(builder, "STAGE", stage)
+    monkeypatch.setattr(builder, "OUT_MAIN", outputs[0])
+    monkeypatch.setattr(builder, "OUT_SUPP", outputs[1])
+    monkeypatch.setattr(builder, "RECORD_PATH", outputs[2])
+    monkeypatch.setattr(builder, "_stage_closure", lambda target: None)
+    def compile_fixture(name: str, target: Path, log: Path) -> None:
+        (target / f"{name}.pdf").write_bytes(b"%PDF" + b"x" * 1200)
+        log.write_text("clean", encoding="utf-8")
+    monkeypatch.setattr(builder, "_compile", compile_fixture)
+    monkeypatch.setattr(builder, "_log_has_fatal", lambda log: [])
+    monkeypatch.setattr(builder, "_final_layout_errors", lambda root, names: [])
+    monkeypatch.setattr(builder.CHECK, "source_hash", lambda: "0" * 64)
+    monkeypatch.setattr(builder.CHECK, "file_sha256", lambda path: "1" * 64)
+    monkeypatch.setattr(builder.CHECK, "_pdf_pages", lambda path: 1)
+    monkeypatch.setattr(builder.subprocess, "check_output", lambda *args, **kwargs: "test-engine\n")
+    publish_calls = []
+    monkeypatch.setattr(builder, "_publish", lambda targets: publish_calls.append(targets))
+    for failure_call in (1, 2):
+        calls = 0
+        def reject_at_stage(**kwargs):
+            nonlocal calls
+            calls += 1
+            return ["injected first-publication validation failure"] if calls == failure_call else []
+        monkeypatch.setattr(builder.CHECK, "manuscript_errors", reject_at_stage)
+        try:
+            builder.main()
+        except SystemExit as exc:
+            assert "staged validation failed" in str(exc)
+        else:
+            raise AssertionError("invalid first publication reached publication")
+        assert publish_calls == []
+        assert not any(path.exists() for path in outputs)

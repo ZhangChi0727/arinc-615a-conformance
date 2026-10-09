@@ -7136,7 +7136,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -7298,7 +7298,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -7756,7 +7756,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -7879,10 +7879,12 @@
         "ordinal": 5,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [],
+        "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "inactiveRequiredValue": "0x0000"
       }
     },
     {
@@ -8042,7 +8044,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -8270,7 +8272,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -8459,10 +8461,12 @@
         "ordinal": 7,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [],
+        "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "inactiveRequiredValue": "0x0000"
       }
     },
     {
@@ -8524,9 +8528,11 @@
         "widthBitsExpression": "24",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [],
+        "alignment": "RIGHT",
+        "padding": "LEADING-SPACE"
       }
     },
     {
@@ -8720,9 +8726,11 @@
         "widthBitsExpression": "24",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [],
+        "alignment": "RIGHT",
+        "padding": "LEADING-SPACE"
       }
     },
     {
@@ -23406,6 +23414,59 @@
       "requirementId": "CRS-M1-00521",
       "expected": {
         "cancellation": "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS"
+      }
+    },
+    {
+      "id": "RC-UPLOAD-PROTOCOL-VERSION-ASCII",
+      "kind": "FIELD-ENCODING",
+      "requirementIds": [
+        "CRS-M1-00283"
+      ],
+      "expected": {
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "widthBitsExpression": "16"
+      }
+    },
+    {
+      "id": "RC-LUS-RATIO-ASCII",
+      "kind": "FIELD-ENCODING",
+      "requirementIds": [
+        "CRS-M1-00324",
+        "CRS-M1-00330"
+      ],
+      "expected": {
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "widthBitsExpression": "24",
+        "alignment": "RIGHT",
+        "padding": "LEADING-SPACE"
+      }
+    },
+    {
+      "id": "RC-LUS-EXCEPTION-TIMER-PRESENCE-USE",
+      "kind": "FIELD-PRESENCE-AND-USE",
+      "requirementId": "CRS-M1-00322",
+      "expected": {
+        "presenceCondition": "ALWAYS",
+        "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "inactiveRequiredValue": "0x0000"
+      }
+    },
+    {
+      "id": "RC-UPLOAD-VERSION-FAMILY-ASCII",
+      "kind": "FIELD-ENCODING",
+      "requirementIds": [
+        "CRS-M1-00283",
+        "CRS-M1-00288",
+        "CRS-M1-00302",
+        "CRS-M1-00310",
+        "CRS-M1-00317"
+      ],
+      "expected": {
+        "fieldId": "FIELD-PROTOCOL-VERSION",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "widthBitsExpression": "16",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS"
       }
     }
   ]

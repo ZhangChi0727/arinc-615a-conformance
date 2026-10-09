@@ -36,6 +36,7 @@ Passing tests is not Result, Evidence, or a superiority Claim.
 | CL-ABLATION | Feedback, FIND-clock non-waiver and Prep/Recover cost change outcomes | EXP-CLTAV-ABLATION, including the forbidden abort-waiver negative control | To be verified |
 | CL-CRS | Expanded protocol CRS is reviewable for INFORMATION, UPLOAD, both DOWNLOAD modes, FIND, bounded 665/664/RFC support and 615A-triggered 645 semantic leaves | M1 package, source audit, bilingual review view | Specified as candidate; 645 SOURCE/SEMANTIC bound; capabilities NOT-ESTABLISHED; not independently approved |
 | CL-ALG | Top-level CL-TAV process and abstract interfaces are specified | ALG-CLTAV-01, method §3.9.2, DD-033 | Specified; not implemented; independent math review open |
+| CL-DEV | A bounded finite-path kernel, eight algorithm bindings, seven experiment bindings and synthetic contract witnesses are development-specified | `CLTAV-DEVELOPMENT-CONTRACTS` and generated bilingual review view | Specification candidate only; no parser, solver, IUT, integrity capability or experiment executed |
 
 Observation → Result → Evidence → Argument/Decision → Claim stays the control
 boundary. ARINC 645-1 2021 is identity-bound for 615A-triggered CRC, check-value

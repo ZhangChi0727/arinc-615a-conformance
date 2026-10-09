@@ -194,3 +194,73 @@ def test_unresolved_note_ref_fails() -> None:
     refresh_m1(data)
     found = m1_errors(data)
     assert any("LNR-FILE-NAME-REPEAT" in item and "fieldNoteRegistry" in item for item in found)
+
+
+def test_upload_first_slice_ascii_and_timer_contracts_are_source_bound() -> None:
+    data = m1_package()
+    version = req(data, "CRS-M1-00283")["fieldConstraint"]
+    timer = req(data, "CRS-M1-00322")["fieldConstraint"]
+    list_ratio = req(data, "CRS-M1-00324")["fieldConstraint"]
+    item_ratio = req(data, "CRS-M1-00330")["fieldConstraint"]
+    assert version["encodingRule"] == "FIXED-WIDTH-ASCII" and version["widthBitsExpression"] == "16"
+    for ratio in (list_ratio, item_ratio):
+        assert ratio["encodingRule"] == "FIXED-WIDTH-ASCII"
+        assert ratio["widthBitsExpression"] == "24"
+        assert ratio["alignment"] == "RIGHT" and ratio["padding"] == "LEADING-SPACE"
+    assert timer["presenceCondition"] == "ALWAYS"
+    assert timer["useCondition"] == "WHEN-STATUS-CODE-0002-OR-0004"
+    assert timer["inactiveRequiredValue"] == "0x0000"
+
+
+def test_upload_first_slice_integer_and_presence_regressions_fail() -> None:
+    for rid in ("CRS-M1-00283", "CRS-M1-00324", "CRS-M1-00330"):
+        data = m1_package()
+        req(data, rid)["fieldConstraint"]["encodingRule"] = "UNSIGNED-INT-BIG-ENDIAN"
+        refresh_m1(data)
+        assert any(rid in item or "ASCII" in item for item in m1_errors(data))
+    data = m1_package()
+    req(data, "CRS-M1-00322")["fieldConstraint"]["presenceCondition"] = "WHEN-STATUS-CODE-0002-OR-0004"
+    refresh_m1(data)
+    assert any("RC-LUS-EXCEPTION-TIMER" in item or "physically present" in item for item in m1_errors(data))
+
+
+def test_all_first_slice_protocol_versions_are_fixed_width_ascii() -> None:
+    data = m1_package()
+    ids = ("CRS-M1-00283", "CRS-M1-00288", "CRS-M1-00302", "CRS-M1-00310", "CRS-M1-00317")
+    assert {req(data, rid)["fieldConstraint"]["protocolFile"] for rid in ids} == {"LCI", "LCL", "LCS", "LUR", "LUS"}
+    assert all(req(data, rid)["fieldConstraint"]["encodingRule"] == "FIXED-WIDTH-ASCII" for rid in ids)
+    for rid in ids:
+        changed = m1_package()
+        req(changed, rid)["fieldConstraint"]["encodingRule"] = "UNSIGNED-INT-BIG-ENDIAN"
+        refresh_m1(changed)
+        assert any("RC-UPLOAD-VERSION-FAMILY-ASCII" in item or rid in item for item in m1_errors(changed))
+
+
+def test_lui_shared_initialization_mapping_is_explicit() -> None:
+    model = m2_package()
+    mapping = next(row for row in model["model"]["objectConstraints"] if row["id"] == "OC-LUI-SHARED-INITIALIZATION-FIELDS")
+    assert mapping["sourceFileRole"] == "LCI" and mapping["targetFileRole"] == "LUI"
+    assert mapping["fieldIds"] == ["FIELD-FILE-LENGTH", "FIELD-PROTOCOL-VERSION", "FIELD-OPERATION-ACCEPTANCE-STATUS-CODE", "FIELD-STATUS-DESCRIPTION-LENGTH", "FIELD-STATUS-DESCRIPTION"]
+    assert set(mapping["sourceRequirementIds"]) == {"CRS-M1-00282", "CRS-M1-00283", "CRS-M1-00284", "CRS-M1-00285", "CRS-M1-00286"}
+    assert set(mapping["targetSequenceRequirementIds"]) == {"CRS-M1-00360", "CRS-M1-00361", "CRS-M1-00362"}
+
+
+def test_lcs_exception_timer_is_present_but_zero_when_inactive() -> None:
+    timer = req(m1_package(), "CRS-M1-00305")["fieldConstraint"]
+    assert timer["presenceCondition"] == "ALWAYS"
+    assert timer["useCondition"] == "WHEN-STATUS-CODE-0002-OR-0004"
+    assert timer["inactiveRequiredValue"] == "0x0000"
+    for key, value in (("presenceCondition", "WHEN-STATUS-CODE-0002-OR-0004"), ("inactiveRequiredValue", "0x0001")):
+        changed = m1_package()
+        req(changed, "CRS-M1-00305")["fieldConstraint"][key] = value
+        refresh_m1(changed)
+        assert m1_errors(changed)
+
+
+def test_lui_shared_mapping_rejects_missing_file_length() -> None:
+    model = m2_package()
+    mapping = next(row for row in model["model"]["objectConstraints"] if row["id"] == "OC-LUI-SHARED-INITIALIZATION-FIELDS")
+    mapping["fieldIds"].remove("FIELD-FILE-LENGTH")
+    mapping["sourceRequirementIds"].remove("CRS-M1-00282")
+    refresh_m2(model)
+    assert m2_errors(model)

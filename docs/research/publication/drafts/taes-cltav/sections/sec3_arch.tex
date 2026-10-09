@@ -42,5 +42,17 @@ or execute.}
 
 Expanded CRS leaves do not add FIND or DOWNLOAD transitions to
 \(M_{\mathrm{prot}}\).
-\phbox{PH-IMPL-KERNEL}{IMPLEMENTATION-DETAIL}{Core estimators, pairing solvers
-and the history representation remain interface contracts and are not deployed.}
+The development contract now binds eight algorithm interfaces and seven
+experiment interfaces to typed inputs, outputs, ownership, failure, resource,
+acceptance, and successor implementation locations.  The first slice also
+preserves six CRC-bearing protocol obligations and their ARINC~645 parameter
+leaves.  The six contracts remain distinct: INFORMATION and UPLOAD receiver
+support, final-image/LSP check value, optional old/new-file comparison,
+equal CRC values for two distinct files sharing one part number, and
+status-file continuation after the final DATA
+while integrity calculation remains in progress.  This closes their
+specification dependency only: the runtime
+integrity capability remains \emph{not established} until implementation,
+project configuration, controlled-vector execution, and an independent gate
+record exist.  Missing evidence therefore yields \texttt{NOT-EVALUATED}, not a
+protocol verdict.

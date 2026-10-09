@@ -50,6 +50,37 @@ Empty \(S\) is never \(\arg\min\). Timing uses T5~\cite{jcgm106}:
 is FAIL; otherwise INCONCLUSIVE. An ambiguous pair is \texttt{ERROR}, not IUT
 FAIL.
 
+\subsection{Bounded reference-kernel contract}
+The first implementation target is a finite explicit-path kernel, not a
+general solver. Each frontier entry contains a stable hypothesis ID, control
+state, canonical exact-rational difference constraints, finite typed store, path length,
+whole-history provenance, and a known/conservative-unknown status. It accepts
+only TRUE, conjunction, state equality, typed-field equality and rational
+interval guards, with simultaneous finite assignment and exact zero-clock-reset
+updates. OR, NOT and calls are outside this first domain and are rejected as
+SPEC-ERROR before expansion; no normalization is left to an implementer.
+The sole normative numeric form is a numerator and strictly positive
+denominator pair; interval bounds carry explicit open/closed flags, and any
+fraction printed in a review view is display-only.  A typed adapter either
+maps the supported M2 subset into this AST or rejects the model before
+expansion, so M2 expressions are not a second authoritative encoding.
+Propagation validates the select-time snapshot, expands enabled transitions,
+intersects observation and timing constraints, and retains every feasible
+successor. Entries merge only when hypothesis, control state, clock
+constraint, store and history provenance are identical.
+
+Configured bounds cover hypotheses, actions, observation classes, path length
+and per-hypothesis frontier size. Unsupported syntax or an exhausted path or
+frontier bound returns the interface's named GAP, SPEC-ERROR, or conservative
+unknown result without deleting a hypothesis. Only prediction, selection,
+history update, equivalence and stop selection consume kernel results;
+execute, interpretation and Prep/Recover do not. Feasibility alone never
+establishes equivalence. Unsupported syntax, computation unknown and limits
+preserve (H), the summary and charge state. Stop-Empty requires an empty
+history proved by complete in-domain intersection. This contract maps every
+reachable result and marks every other interface/result pair unreachable; it does not claim
+completeness, polynomial complexity, or deployed code.
+
 \subsection{Conditional properties}
 \textbf{Monotonicity.} Equation~\eqref{eq:update} gives
 \(H_{k+1}\subseteq H_k\). Without a valid class there is no add or delete. An

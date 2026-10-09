@@ -1,0 +1,89 @@
+{
+  "artifactId": "CLTAV-INTEGRITY-OBLIGATION-BASELINE",
+  "version": "1.1",
+  "symbolicEntities": [
+    {"id": "integrity-option-information", "kind": "OPTION", "service": "INFORMATION"},
+    {"id": "integrity-option-upload", "kind": "OPTION", "service": "UPLOAD"},
+    {"id": "symbolic-information-bytes", "kind": "PROTECTED-BYTES", "service": "INFORMATION"},
+    {"id": "symbolic-upload-bytes", "kind": "PROTECTED-BYTES", "service": "UPLOAD"},
+    {"id": "image-A", "kind": "FILE", "service": "UPLOAD"},
+    {"id": "lsp-A", "kind": "FILE", "service": "UPLOAD"},
+    {"id": "old-A", "kind": "FILE", "service": "UPLOAD"},
+    {"id": "new-A", "kind": "FILE", "service": "UPLOAD"},
+    {"id": "file-A", "kind": "FILE", "service": "UPLOAD"},
+    {"id": "file-B", "kind": "FILE", "service": "UPLOAD"},
+    {"id": "CRC-SYN", "kind": "ALGORITHM", "service": "UPLOAD"}
+  ],
+  "syntheticStatusSchedule": {
+    "contractId": "INT-POST-DATA-STATUS-CONTINUATION",
+    "scope": "FINITE-SPECIFICATION-WITNESS-NOT-PROTOCOL-FREQUENCY",
+    "calculationStartAt": 10,
+    "calculationEndAt": 12,
+    "observationWindows": [
+      {"from": 10, "through": 11, "statusRequiredAt": 11},
+      {"from": 11, "through": 12, "statusRequiredAt": 12}
+    ]
+  },
+  "obligations": [
+    {
+      "requirementId": "CRS-M1-00076",
+      "service": "INFORMATION",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-025-3CF28DC21423",
+      "contractId": "INT-INFORMATION-RECEIVER-SUPPORT",
+      "subject": "information receiver",
+      "condition": "declared integrity option selected and supported",
+      "requiredObservation": "option identity, receiver support and protected bytes",
+      "acceptanceCaseId": "AC-SYN-INTEGRITY"
+    },
+    {
+      "requirementId": "CRS-M1-00082",
+      "service": "UPLOAD",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-3-P048-PROSE-SENTENCE-026-F38D018C4499",
+      "contractId": "INT-UPLOAD-RECEIVER-SUPPORT",
+      "subject": "upload receiver",
+      "condition": "declared integrity option selected and supported",
+      "requiredObservation": "option identity, receiver support and protected bytes",
+      "acceptanceCaseId": "AC-SYN-INTEGRITY"
+    },
+    {
+      "requirementId": "CRS-M1-00085",
+      "service": "UPLOAD",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-007-F209ABE1376B",
+      "contractId": "INT-FINAL-IMAGE-LSP-VALUE",
+      "subject": "final load image and LSP",
+      "condition": "all load bytes and declared check-value fields are present",
+      "requiredObservation": "algorithm identity, ordered image bytes and LSP check value",
+      "acceptanceCaseId": "AC-SYN-INTEGRITY"
+    },
+    {
+      "requirementId": "CRS-M1-00086",
+      "service": "UPLOAD",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-008-CDA43D6568CC",
+      "contractId": "INT-OPTIONAL-OLD-NEW-COMPARE",
+      "subject": "old and new target files",
+      "condition": "optional comparison is selected and both file identities are evidenced",
+      "requiredObservation": "old/new file identities, bytes and comparison result",
+      "acceptanceCaseId": "AC-SYN-INTEGRITY"
+    },
+    {
+      "requirementId": "CRS-M1-00087",
+      "service": "UPLOAD",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-010-F4624AC8DCB4",
+      "contractId": "INT-SAME-PART-NUMBER-CRC-EQUALITY",
+      "subject": "two files with the same part number",
+      "condition": "two distinct file identities declare the same part number",
+      "requiredObservation": "both file identities, their common part number, CRC A, CRC B, and CRC-A-equals-CRC-B relation",
+      "acceptanceCaseId": "AC-SYN-INTEGRITY"
+    },
+    {
+      "requirementId": "CRS-M1-00109",
+      "service": "UPLOAD",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-2-P068-PROSE-SENTENCE-042-4C1D759A6B9A",
+      "contractId": "INT-POST-DATA-STATUS-CONTINUATION",
+      "subject": "status-file stream after final DATA",
+      "condition": "integrity calculation remains in progress after final DATA",
+      "requiredObservation": "final-DATA event, calculation interval and continued status-file events",
+      "acceptanceCaseId": "AC-SYN-INTEGRITY"
+    }
+  ]
+}

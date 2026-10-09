@@ -47,6 +47,11 @@ jobs:
         run: |
           python scripts/sync_m2_model.py --check
 
+      - name: Validate development readiness contract
+        run: |
+          python scripts/check_development_readiness.py
+          python scripts/sync_development_readiness.py --check
+
       - name: Compile with SyntaxWarning as error
         run: |
           python -W error::SyntaxWarning -m compileall -q src scripts tests
