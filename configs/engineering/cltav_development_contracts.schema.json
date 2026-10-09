@@ -963,12 +963,21 @@
               "historyReturnFlow": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["backend", "interface", "s9", "sourceMap"],
+                "required": ["inputGamma", "normalizedOutcome", "backend", "interface", "s9", "sourceMap", "branchWitnesses"],
                 "properties": {
                   "backend": {"type": "object"},
                   "interface": {"type": "object"},
                   "s9": {"type": "object"},
-                  "sourceMap": {"type": "object"}
+                  "sourceMap": {"type": "object"},
+                  "inputGamma": {"type": "object", "required": ["sessionId", "resourceRemainder", "retryCount", "retryCap", "qStatus", "currentSummary", "knownTarget", "knownEvidence", "errorHistory", "unknownHistory"], "additionalProperties": false,
+                    "properties": {"sessionId": {"type": "string", "minLength": 1}, "resourceRemainder": {"type": "integer", "minimum": 0},
+                      "retryCount": {"type": "integer", "minimum": 0}, "retryCap": {"type": "integer", "minimum": 1},
+                      "qStatus": {"enum": ["KNOWN", "UNKNOWN"]}, "currentSummary": {"type": "string"},
+                      "knownTarget": {"type": ["string", "null"]}, "knownEvidence": {"type": "array"},
+                      "errorHistory": {"type": "array"}, "unknownHistory": {"type": "array"}}},
+                  "normalizedOutcome": {"type": "object", "required": ["summaryConfirmed", "postSummary"], "additionalProperties": false,
+                    "properties": {"summaryConfirmed": {"type": "boolean"}, "postSummary": {"type": ["string", "null"]}}},
+                  "branchWitnesses": {"type": "array", "minItems": 4, "items": {"type": "object"}}
                 }
               },
               "totalReturnMapping": {

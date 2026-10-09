@@ -39,6 +39,283 @@ def test_current_candidate_has_closed_specification_gate():
     assert errors(copy.deepcopy(PACKAGE)) == []
 
 
+def test_rr93_history_status_is_not_the_successor_summary() -> None:
+    flow = PACKAGE["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]
+    assert flow["inputGamma"]["qStatus"] == flow["s9"]["GammaPrime"]["qStatus"] == "KNOWN"
+    assert flow["normalizedOutcome"]["postSummary"] == flow["s9"]["GammaPrime"]["currentSummary"]
+    for status in ("q1", "GARBAGE", "UNKNOWN"):
+        bad = copy.deepcopy(PACKAGE)
+        bad_flow = bad["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]
+        bad_flow["s9"]["GammaPrime"]["qStatus"] = status
+        assert any("history backend/interface/S9" in item or "schema" in item for item in errors(bad))
+
+    for status, confirmed in (("KNOWN", False), ("UNKNOWN", True)):
+        legal = copy.deepcopy(PACKAGE)
+        legal_flow = legal["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]
+        legal_flow["inputGamma"]["qStatus"] = status
+        legal_flow["normalizedOutcome"]["summaryConfirmed"] = confirmed
+        legal_flow["s9"]["summaryConfirmed"] = confirmed
+        legal_flow["s9"]["summaryCommitted"] = False
+        legal_flow["s9"]["GammaPrime"].update(qStatus=status, currentSummary="q0")
+        assert errors(legal) == []
+
+    for branch_id, edit in (
+        ("HR-NO-COMMIT", lambda row: row["s9"].update(summaryCommitted=True)),
+        ("HR-STOP-EMPTY", lambda row: row["s9"].update(outerDisposition="CONTINUE")),
+        ("HR-CONSERVATIVE", lambda row: row["interface"].update(status="KNOWN")),
+        ("HR-VERSION-MISMATCH", lambda row: row["s9"].update(summaryCommitted=True)),
+    ):
+        bad = copy.deepcopy(PACKAGE)
+        row = next(item for item in bad["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]["branchWitnesses"] if item["id"] == branch_id)
+        edit(row)
+        assert any(branch_id in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]["s9"]["GammaPrime"]["retryCount"] = 1
+    assert any("history backend/interface/S9" in item for item in errors(bad))
+
+
+def test_rr93_model_input_and_successor_types_fail_closed() -> None:
+    for mutate in (
+        lambda f: f["witnessVectors"][0]["input"].update(transition=[]),
+        lambda f: f["witnessVectors"][0]["input"]["transition"].pop("id"),
+        lambda f: f["witnessVectors"][0]["input"]["transition"].update(arbitraryIgnored=True),
+        lambda f: f["witnessVectors"][1]["expected"].update(successorCount=999),
+        lambda f: f["witnessVectors"][2]["input"].update(transition=[]),
+        lambda f: f["historyReturnFlow"]["backend"].update(H_c=["h0", "h0"]),
+    ):
+        bad = copy.deepcopy(PACKAGE)
+        mutate(bad["algorithmRefinements"][0]["finiteKernelContract"])
+        assert errors(bad)
+    bad = copy.deepcopy(PACKAGE)
+    finite = bad["algorithmRefinements"][0]["finiteKernelContract"]
+    finite["modelInstanceSchema"]["typedVariables"] = {"mode": [True, False]}
+    finite["witnessVectors"][0]["input"]["typedStore"] = {"mode": 1}
+    finite["witnessVectors"][0]["expected"]["typedStore"] = {"mode": 1}
+    assert any("input.typedStore" in item for item in errors(bad))
+
+
+def test_rr93_fifo_replays_completed_requests() -> None:
+    schedule = [
+        {"id": "REQUEST-A", "kind": "REQUEST", "key": "k1", "sequence": 1},
+        {"id": "REQUEST-B", "kind": "REQUEST", "key": "k1", "sequence": 2},
+        {"id": "RESPONSE-B", "kind": "RESPONSE", "key": "k1", "sequence": 3},
+        {"id": "RESPONSE-C", "kind": "RESPONSE", "key": "k1", "sequence": 4},
+    ]
+    fixture = {"policy": "FIFO", "key": "k1", "responseId": "RESPONSE-C", "ownershipEvents": schedule}
+    assert MODULE._resolve_ownership(fixture) == (None, "REQUEST-B")
+    fixture["responseId"] = "RESPONSE-B"
+    assert MODULE._resolve_ownership(fixture) == (None, "REQUEST-A")
+    legal = copy.deepcopy(PACKAGE)
+    scene = next(row for row in legal["experimentScenarios"] if row["id"] == "SC-SAME-KEY")["scenarioValues"]
+    scene["eventSequence"].append("RESPONSE-C")
+    scene["ownershipEvents"].append(copy.deepcopy(schedule[-1]))
+    scene["ownershipEvents"][-1].update(id="RESPONSE-C", sequence=4)
+    scene.update(policy="FIFO", responseId="RESPONSE-C", expectedOwner="REQUEST-B")
+    assert errors(legal) == []
+    scene["expectedOwner"] = "REQUEST-A"
+    assert any("SC-SAME-KEY" in item for item in errors(legal))
+
+
+def test_rr93_matrix_outputs_are_derived_after_joint_mutation() -> None:
+    bad = copy.deepcopy(PACKAGE)
+    ip = next(row for row in bad["acceptanceMatrix"] if row["id"] == "AM-IP")["coverageValues"]
+    transfer = next(row for row in bad["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")
+    ip["coverageRanges"] = [[0, 4], [8, 15]]
+    transfer["inputFixture"]["values"]["ipFragments"] = copy.deepcopy(ip)
+    assert any("AM-IP" in item for item in errors(bad))
+    transfer["expectedOutputFixture"]["values"]["datagramStatus"] = "GAPPED"
+    assert any("AM-IP" in item for item in errors(bad))
+    ip["fragments"][0]["bytesHex"] = "0001020304"
+    transfer["inputFixture"]["values"]["ipFragments"] = copy.deepcopy(ip)
+    assert errors(bad) == []
+    bad = copy.deepcopy(PACKAGE)
+    layout = next(row for row in bad["acceptanceMatrix"] if row["id"] == "AM-FIELDS")["coverageValues"]
+    layout["widthBits"] = 999
+    next(row for row in bad["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")["inputFixture"]["values"]["fieldLayout"] = copy.deepcopy(layout)
+    assert any("ASCII field width" in item for item in errors(bad))
+
+
+def test_rr93_terminal_and_test_selection_are_derived() -> None:
+    for payload in (512, -1):
+        bad = copy.deepcopy(PACKAGE)
+        transfer = next(row for row in bad["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")
+        transfer["inputFixture"]["values"]["terminal"]["payloadBytes"] = payload
+        assert any("RC-TRANSFER-TERMINAL" in item for item in errors(bad))
+    legal = copy.deepcopy(PACKAGE)
+    transfer = next(row for row in legal["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")
+    transfer["inputFixture"]["values"]["terminal"].update(payloadBytes=512, nextZeroBlock=3, nextZeroPayloadBytes=0)
+    transfer["inputFixture"]["values"]["blocks"].append(3)
+    transfer["expectedOutputFixture"]["values"]["orderedBlocks"].append(3)
+    next(row for row in legal["acceptanceMatrix"] if row["id"] == "AM-TFTP")["coverageValues"]["blockNumbers"].append(3)
+    assert errors(legal) == []
+    bad = copy.deepcopy(PACKAGE)
+    select = next(row for row in bad["acceptanceCases"] if row["id"] == "AC-SYN-SELECT")
+    select["inputFixture"]["values"]["actions"][1]["kind"] = "PREP"
+    assert any("RC-SELECT-STABLE-ID" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    select = next(row for row in bad["acceptanceCases"] if row["id"] == "AC-SYN-SELECT")
+    select["inputFixture"]["values"]["actions"][1]["worstClass"] = 0
+    assert any("typed distinguishing TEST scores" in item for item in errors(bad))
+    legal = copy.deepcopy(PACKAGE)
+    select = next(row for row in legal["acceptanceCases"] if row["id"] == "AC-SYN-SELECT")
+    select["inputFixture"]["values"]["actions"].reverse()
+    assert errors(legal) == []
+    legal = copy.deepcopy(PACKAGE)
+    select = next(row for row in legal["acceptanceCases"] if row["id"] == "AC-SYN-SELECT")
+    select["inputFixture"]["values"]["actions"].append({"id": "prep-a", "kind": "PREP", "cost": 0})
+    select["inputFixture"]["values"]["eligibleActions"].append("prep-a")
+    next(row for row in legal["acceptanceMatrix"] if row["id"] == "AM-ADMIT")["coverageValues"]["eligibleActions"].append("prep-a")
+    assert errors(legal) == []
+
+
+def test_rr93_legal_field_fragment_and_tftp_variants() -> None:
+    legal = copy.deepcopy(PACKAGE)
+    transfer = next(row for row in legal["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")
+    field = next(row for row in legal["acceptanceMatrix"] if row["id"] == "AM-FIELDS")["coverageValues"]
+    field.update(encodingRule="ASCII-4", widthBits=32)
+    transfer["inputFixture"]["values"]["fieldLayout"] = copy.deepcopy(field)
+    assert errors(legal) == []
+
+    legal = copy.deepcopy(PACKAGE)
+    transfer = next(row for row in legal["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")
+    ip = next(row for row in legal["acceptanceMatrix"] if row["id"] == "AM-IP")["coverageValues"]
+    ip["fragments"][1].update(offset=4, bytesHex="ff" * 12)
+    ip["fragmentOffsets"] = [0, 4]
+    ip["overlapConflict"] = True
+    transfer["inputFixture"]["values"]["ipFragments"] = copy.deepcopy(ip)
+    transfer["expectedOutputFixture"]["values"]["datagramStatus"] = "CONFLICT"
+    assert errors(legal) == []
+
+    legal = copy.deepcopy(PACKAGE)
+    transfer = next(row for row in legal["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")
+    transfer["inputFixture"]["values"].update(optionState="ACCEPTED", acceptedBlockBytes=1024)
+    transfer["inputFixture"]["values"]["terminal"]["payloadBytes"] = 1000
+    next(row for row in legal["acceptanceMatrix"] if row["id"] == "AM-TFTP")["coverageValues"]["optionState"] = "ACCEPTED"
+    assert errors(legal) == []
+
+    unknown = copy.deepcopy(PACKAGE)
+    transfer = next(row for row in unknown["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")
+    transfer["inputFixture"]["values"]["optionState"] = "UNKNOWN"
+    next(row for row in unknown["acceptanceMatrix"] if row["id"] == "AM-TFTP")["coverageValues"]["optionState"] = "UNKNOWN"
+    assert any("RC-TRANSFER-TERMINAL" in item for item in errors(unknown))
+    transfer["expectedOutputFixture"]["values"]["terminalConfirmed"] = False
+    assert errors(unknown) == []
+
+
+def test_rr93_ownership_policies_and_no_response_share_activity() -> None:
+    events = [
+        {"id": "A", "kind": "REQUEST", "key": "k", "sequence": 1},
+        {"id": "B", "kind": "REQUEST", "key": "k", "sequence": 2},
+        {"id": "R", "kind": "RESPONSE", "key": "k", "sequence": 3},
+    ]
+    fixture = {"key": "k", "responseId": "R", "ownershipEvents": events, "policy": "MOST-RECENT"}
+    assert MODULE._resolve_ownership(fixture) == (None, "B")
+    assert MODULE._remaining_request_ids(fixture) == {"A"}
+    fixture["policy"] = "UNIQUE-KEY"
+    assert MODULE._resolve_ownership(fixture) == (None, "AMBIGUOUS")
+    events.insert(2, {"id": "C", "kind": "CANCEL", "key": "k", "sequence": 4, "targetRequestId": "A"})
+    events[-1]["sequence"] = 5
+    assert MODULE._resolve_ownership(fixture) == (None, "B")
+    legal = copy.deepcopy(PACKAGE)
+    transfer = next(row for row in legal["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")
+    values = transfer["inputFixture"]["values"]
+    values["ownershipFixture"]["ownershipEvents"].append(
+        {"id": "CANCEL-A", "kind": "CANCEL", "key": "k1", "sequence": 4, "targetRequestId": "REQUEST-A"})
+    values["noResponseFixture"].update(cancelled=True, expectedDisposition="NO-ACTIVE-OBLIGATION")
+    assert errors(legal) == []
+    values["noResponseFixture"]["expectedDisposition"] = "FAIL-NO-RESPONSE"
+    assert any("AM-OWNERSHIP" in item for item in errors(legal))
+    boundary = copy.deepcopy(PACKAGE)
+    transfer = next(row for row in boundary["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")
+    no_response = transfer["inputFixture"]["values"]["noResponseFixture"]
+    no_response["earliestElapsed"] = 5
+    no_response["expectedDisposition"] = "INCONCLUSIVE"
+    next(row for row in boundary["acceptanceMatrix"] if row["id"] == "AM-OWNERSHIP")["coverageValues"]["earliestElapsed"] = 5
+    assert errors(boundary) == []
+    no_response["upperClosed"] = False
+    no_response["expectedDisposition"] = "FAIL-NO-RESPONSE"
+    assert errors(boundary) == []
+
+
+def test_rr93_variant_inputs_are_typed_before_applicability() -> None:
+    for requirement_id, branch, changes in (
+        ("CRS-M1-00085", "NOT-EVALUATED", {"checkValuePresent": "UNKNOWN"}),
+        ("CRS-M1-00086", "NOT-APPLICABLE", {"oldFileId": "forged-file"}),
+        ("CRS-M1-00087", "NOT-APPLICABLE", {"partNumberB": []}),
+        ("CRS-M1-00109", "NOT-EVALUATED", {"observationComplete": "UNKNOWN"}),
+    ):
+        bad = copy.deepcopy(PACKAGE)
+        variant = next(row for row in bad["implementationDependencies"][0]["obligationVariants"]
+                       if row["requirementId"] == requirement_id and row["branch"] == branch)
+        variant["changes"].update(changes)
+        assert any("variant has invalid typed inputs" in item for item in errors(bad))
+
+
+def test_rr93_malformed_nested_values_return_diagnostics_not_exceptions() -> None:
+    bad = copy.deepcopy(PACKAGE)
+    bad["algorithmRefinements"][0]["finiteKernelContract"]["witnessVectors"][0]["id"] = "UNKNOWN-WITNESS"
+    assert any("witness set is incomplete" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    select = next(row for row in bad["acceptanceCases"] if row["id"] == "AC-SYN-SELECT")
+    select["inputFixture"]["values"]["actions"][0]["kind"] = []
+    assert any("RC-SELECT-STABLE-ID" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    variant = next(row for row in bad["implementationDependencies"][0]["obligationVariants"]
+                   if row["requirementId"] == "CRS-M1-00109" and row["branch"] == "VIOLATED")
+    variant["changes"]["events"][0]["kind"] = []
+    assert any("variant has invalid typed inputs" in item for item in errors(bad))
+
+
+def test_rr93_integrity_unknown_premises_do_not_become_determinate() -> None:
+    for requirement_id, branch, changes in (
+        ("CRS-M1-00087", "NOT-APPLICABLE", {"partNumberB": None}),
+        ("CRS-M1-00076", "VIOLATED", {"optionSelected": None}),
+        ("CRS-M1-00076", "VIOLATED", {"optionSelected": "UNKNOWN"}),
+    ):
+        bad = copy.deepcopy(PACKAGE)
+        variant = next(row for row in bad["implementationDependencies"][0]["obligationVariants"]
+                       if row["requirementId"] == requirement_id and row["branch"] == branch)
+        variant["changes"].update(changes)
+        assert any("variant expected" in item or "variant has invalid typed inputs" in item for item in errors(bad))
+    for requirement_id, changes in (
+        ("CRS-M1-00076", {"optionSelected": None}),
+        ("CRS-M1-00087", {"partNumberB": None}),
+    ):
+        legal = copy.deepcopy(PACKAGE)
+        variant = next(row for row in legal["implementationDependencies"][0]["obligationVariants"]
+                       if row["requirementId"] == requirement_id and row["branch"] == "NOT-EVALUATED")
+        variant["changes"] = changes
+        assert errors(legal) == []
+
+
+def test_rr93_real_entrypoints_reject_without_replacing_view(monkeypatch, tmp_path, capsys) -> None:
+    package = tmp_path / "package.json"
+    view = tmp_path / "review.md"
+    marker = b"previous review view\n"
+    view.write_bytes(marker)
+    monkeypatch.setattr(SYNC, "PACKAGE", package)
+    monkeypatch.setattr(SYNC, "VIEW", view)
+    for mutation in ("summary-status", "joint-ip-gap", "unknown-option"):
+        bad = copy.deepcopy(PACKAGE)
+        if mutation == "summary-status":
+            bad["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]["s9"]["GammaPrime"]["qStatus"] = "UNKNOWN"
+        elif mutation == "joint-ip-gap":
+            vector = next(row for row in bad["acceptanceMatrix"] if row["id"] == "AM-IP")["coverageValues"]
+            vector["coverageRanges"] = [[0, 4], [8, 15]]
+            next(row for row in bad["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")["inputFixture"]["values"]["ipFragments"] = copy.deepcopy(vector)
+        else:
+            variant = next(row for row in bad["implementationDependencies"][0]["obligationVariants"]
+                           if row["requirementId"] == "CRS-M1-00076" and row["branch"] == "VIOLATED")
+            variant["changes"]["optionSelected"] = None
+        code, _ = run_main(monkeypatch, tmp_path, capsys, bad)
+        assert code == 1
+        package.write_text(json.dumps(bad), encoding="utf-8")
+        for mode in ("--write", "--check"):
+            monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", mode])
+            assert SYNC.main() == 1
+            assert view.read_bytes() == marker
+
+
 def test_rr92_model_declarations_and_projection_fail_closed() -> None:
     def model(data):
         return data["algorithmRefinements"][0]["finiteKernelContract"]
@@ -99,7 +376,8 @@ def test_rr92_history_return_layers_are_consumable() -> None:
     finite = PACKAGE["algorithmRefinements"][0]["finiteKernelContract"]
     flow = finite["historyReturnFlow"]
     assert flow["interface"]["Hprime"] == flow["backend"]["H_c"]
-    assert flow["interface"]["HistoryHandlePrime"] == flow["s9"]["GammaPrime"]["historyHandle"]
+    assert flow["interface"]["HistoryHandlePrime"] == flow["s9"]["etaPrime"]
+    assert "historyHandle" not in flow["s9"]["GammaPrime"]
     bad = copy.deepcopy(PACKAGE)
     bad["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]["backend"]["H_c"] = ["h999"]
     assert any("payload flow" in item for item in errors(bad))

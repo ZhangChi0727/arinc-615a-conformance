@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import json
 import hashlib
+import math
 import re
 import subprocess
 import sys
@@ -314,6 +315,56 @@ def _git_blob_json(relative: str, blobs: dict[str, bytes]) -> dict:
     return json.loads(raw.decode("utf-8"))
 
 
+def _ip_reassembly_status(vector: object) -> str | None:
+    if not isinstance(vector, dict):
+        return None
+    length, ranges, conflict = vector.get("datagramLengthBytes"), vector.get("coverageRanges"), vector.get("overlapConflict")
+    fragments = vector.get("fragments")
+    if (type(length) is not int or length <= 0 or not isinstance(ranges, list) or not ranges
+            or not isinstance(fragments, list) or not fragments
+            or type(conflict) is not bool or any(not isinstance(pair, list) or len(pair) != 2
+                                                 or any(type(bound) is not int for bound in pair)
+                                                 or pair[0] < 0 or pair[0] > pair[1] or pair[1] >= length for pair in ranges)):
+        return None
+    observed: dict[int, int] = {}
+    derived_conflict = False
+    offsets: list[int] = []
+    for fragment in fragments:
+        if (not isinstance(fragment, dict) or set(fragment) != {"offset", "bytesHex"}
+                or type(fragment.get("offset")) is not int or fragment["offset"] < 0
+                or not isinstance(fragment.get("bytesHex"), str)):
+            return None
+        try:
+            payload = bytes.fromhex(fragment["bytesHex"])
+        except ValueError:
+            return None
+        if not payload or fragment["offset"] + len(payload) > length:
+            return None
+        offsets.append(fragment["offset"])
+        for index, byte in enumerate(payload, fragment["offset"]):
+            if index in observed and observed[index] != byte:
+                derived_conflict = True
+            observed[index] = byte
+    if offsets != vector.get("fragmentOffsets") or conflict is not derived_conflict:
+        return None
+    actual_ranges: list[list[int]] = []
+    for index in sorted(observed):
+        if not actual_ranges or index > actual_ranges[-1][1] + 1:
+            actual_ranges.append([index, index])
+        else:
+            actual_ranges[-1][1] = index
+    if ranges != actual_ranges:
+        return None
+    if derived_conflict:
+        return "CONFLICT"
+    merged_end = -1
+    for start, end in sorted(ranges):
+        if start > merged_end + 1:
+            return "GAPPED"
+        merged_end = max(merged_end, end)
+    return "COMPLETE" if merged_end == length - 1 else "GAPPED"
+
+
 def _resolve_ownership(values: dict) -> tuple[str | None, str | None]:
     """Resolve one finite response using event identity, key, order and invalidation."""
     if (not isinstance(values.get("policy"), str) or values["policy"] not in {"FIFO", "MOST-RECENT", "UNIQUE-KEY"}
@@ -323,6 +374,7 @@ def _resolve_ownership(values: dict) -> tuple[str | None, str | None]:
     events = values.get("ownershipEvents")
     if (not isinstance(events, list) or not events
             or not all(isinstance(event, dict)
+                       and isinstance(event.get("kind"), str)
                        and set(event) == ({"id", "kind", "key", "sequence", "targetRequestId"} if event.get("kind") in {"CANCEL", "SUPERSEDE"} else {"id", "kind", "key", "sequence"})
                        and event.get("kind") in {"REQUEST", "RESPONSE", "CANCEL", "SUPERSEDE"}
                        and isinstance(event.get("id"), str) and bool(event["id"])
@@ -339,18 +391,46 @@ def _resolve_ownership(values: dict) -> tuple[str | None, str | None]:
                    or requests[event["targetRequestId"]]["key"] != event["key"]
                    for event in events if event["kind"] in {"CANCEL", "SUPERSEDE"})):
         return "invalid ownership event schedule", None
-    response = responses[0]
-    invalidated = {event["targetRequestId"] for event in events
-                   if event["kind"] in {"CANCEL", "SUPERSEDE"} and event["sequence"] < response["sequence"]}
-    candidates = sorted((event for event in events if event["kind"] == "REQUEST"
-                         and event["key"] == response["key"] == values.get("key")
-                         and event["sequence"] < response["sequence"] and event["id"] not in invalidated),
-                        key=lambda event: event["sequence"])
-    if not candidates:
-        return None, "UNMATCHED"
     policy = values.get("policy")
-    return None, {"FIFO": candidates[0]["id"], "MOST-RECENT": candidates[-1]["id"],
-                  "UNIQUE-KEY": candidates[0]["id"] if len(candidates) == 1 else "AMBIGUOUS"}.get(policy)
+    active: dict[str, dict] = {}
+    for event in sorted(events, key=lambda item: item["sequence"]):
+        if event["kind"] == "REQUEST":
+            active[event["id"]] = event
+        elif event["kind"] in {"CANCEL", "SUPERSEDE"}:
+            active.pop(event["targetRequestId"], None)
+        else:
+            candidates = sorted((request for request in active.values() if request["key"] == event["key"]),
+                                key=lambda request: request["sequence"])
+            owner = ("UNMATCHED" if not candidates else
+                     "AMBIGUOUS" if policy == "UNIQUE-KEY" and len(candidates) != 1 else
+                     candidates[-1]["id"] if policy == "MOST-RECENT" else candidates[0]["id"])
+            if event["id"] == values["responseId"]:
+                return None, owner if event["key"] == values["key"] else "UNMATCHED"
+            if owner not in {"UNMATCHED", "AMBIGUOUS"}:
+                active.pop(owner)
+    return "response absent from event schedule", None
+
+
+def _remaining_request_ids(values: dict) -> set[str] | None:
+    """The no-response obligation uses the same response resolver and event order."""
+    events = values.get("ownershipEvents")
+    if not isinstance(events, list):
+        return None
+    active: set[str] = set()
+    for event in sorted(events, key=lambda item: item.get("sequence", -1) if isinstance(item, dict) else -1):
+        if not isinstance(event, dict):
+            return None
+        kind = event.get("kind")
+        if kind == "REQUEST":
+            active.add(event["id"])
+        elif kind in {"CANCEL", "SUPERSEDE"}:
+            active.discard(event["targetRequestId"])
+        elif kind == "RESPONSE":
+            error, owner = _resolve_ownership({**values, "responseId": event["id"], "key": event["key"]})
+            if error:
+                return None
+            active.discard(owner)
+    return active
 
 
 def _acceptance_relation_errors(case: dict) -> list[str]:
@@ -362,7 +442,27 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
     if not isinstance(inputs, dict) or not isinstance(outputs, dict):
         return [f"{relation or 'acceptance relation'} requires object fixture values"]
     if relation == "RC-TRANSFER-TERMINAL":
-        if not isinstance(inputs.get("terminal"), dict) or outputs.get("terminalConfirmed") is not True:
+        terminal = inputs.get("terminal")
+        option = inputs.get("optionState")
+        accepted = inputs.get("acceptedBlockBytes")
+        block_size = 512 if option == "DEFAULTED" else accepted if option == "ACCEPTED" else None
+        typed_terminal = (isinstance(terminal, dict) and set(terminal) == {"block", "payloadBytes", "nextZeroBlock", "nextZeroPayloadBytes"}
+                          and type(terminal.get("block")) is int and terminal["block"] >= 0
+                          and type(terminal.get("payloadBytes")) is int and terminal["payloadBytes"] >= 0
+                          and (terminal.get("nextZeroBlock") is None or type(terminal["nextZeroBlock"]) is int)
+                          and (terminal.get("nextZeroPayloadBytes") is None or type(terminal["nextZeroPayloadBytes"]) is int)
+                          and isinstance(inputs.get("blocks"), list)
+                          and all(type(block) is int and block >= 0 for block in inputs["blocks"])
+                          and terminal["block"] in inputs["blocks"]
+                          and (terminal["nextZeroBlock"] is None and terminal["nextZeroPayloadBytes"] is None
+                               or terminal["nextZeroBlock"] is not None and terminal["nextZeroPayloadBytes"] == 0
+                               and terminal["nextZeroBlock"] in inputs.get("blocks", []))
+                          and isinstance(option, str) and option in {"DEFAULTED", "ACCEPTED", "UNKNOWN"}
+                          and (accepted is None if option != "ACCEPTED" else type(accepted) is int and accepted > 0)
+                          and (block_size is None or terminal["payloadBytes"] <= block_size))
+        derived = (typed_terminal and block_size is not None and terminal["payloadBytes"] <= block_size
+                   and (terminal["payloadBytes"] < block_size or terminal["nextZeroBlock"] == terminal["block"] + 1))
+        if not typed_terminal or outputs.get("terminalConfirmed") is not bool(derived):
             errors.append("RC-TRANSFER-TERMINAL at inputFixture.values.terminal")
     elif relation == "RC-PREDICTION-NONEMPTY":
         if outputs.get("predictionStatus") == "OK":
@@ -374,9 +474,37 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
     elif relation == "RC-SELECT-STABLE-ID":
         actions = inputs.get("actions", [])
         resource = inputs.get("resource", {})
-        if not isinstance(actions, list) or not isinstance(resource, dict) or not isinstance(inputs.get("eligibleActions"), list) or not isinstance(resource.get("remaining"), (int, float)):
+        if (not isinstance(actions, list) or not isinstance(resource, dict)
+                or not isinstance(inputs.get("eligibleActions"), list)
+                or any(not isinstance(value, str) or not value for value in inputs["eligibleActions"])
+                or len(set(inputs["eligibleActions"])) != len(inputs["eligibleActions"])
+                or type(resource.get("remaining")) is not int or resource["remaining"] < 0):
             return ["RC-SELECT-STABLE-ID requires typed actions, eligibleActions, and resource"]
-        affordable = [a for a in actions if isinstance(a, dict) and a.get("id") in inputs["eligibleActions"] and isinstance(a.get("cost"), (int, float)) and isinstance(a.get("worstClass"), (int, float)) and a["cost"] <= resource["remaining"]]
+        hypotheses = inputs.get("H")
+        classes = inputs.get("distinguishingClasses")
+        if (not isinstance(hypotheses, list) or not hypotheses
+                or any(not isinstance(h, str) or not h for h in hypotheses)
+                or len(set(hypotheses)) != len(hypotheses)
+                or not isinstance(classes, list) or len(classes) < 2
+                or any(not isinstance(value, str) or not value for value in classes)
+                or len(set(classes)) != len(classes)
+                or any(not isinstance(a, dict)
+                       or not isinstance(a.get("id"), str) or not a["id"]
+                       or not isinstance(a.get("kind"), str) or a["kind"] not in {"TEST", "PREP", "RECOVER"}
+                       or type(a.get("cost")) is not int or a["cost"] < 0
+                       or (a["kind"] == "TEST" and (set(a) != {"id", "kind", "cost", "worstClass", "classesByHypothesis"}
+                           or not isinstance(a.get("classesByHypothesis"), dict)
+                           or set(a["classesByHypothesis"]) != set(hypotheses)
+                           or any(not isinstance(value, str) or not value for value in a["classesByHypothesis"].values())
+                           or set(a["classesByHypothesis"].values()) != set(classes)
+                           or type(a.get("worstClass")) is not int
+                           or a["worstClass"] != max(list(a["classesByHypothesis"].values()).count(value) for value in classes)))
+                       or (a["kind"] != "TEST" and set(a) != {"id", "kind", "cost"})
+                       for a in actions)):
+            return ["RC-SELECT-STABLE-ID requires typed distinguishing TEST scores"]
+        if len({a["id"] for a in actions}) != len(actions) or not set(inputs["eligibleActions"]).issubset({a["id"] for a in actions}):
+            return ["RC-SELECT-STABLE-ID requires unique declared eligible TEST IDs"]
+        affordable = [a for a in actions if a["kind"] == "TEST" and a["id"] in inputs["eligibleActions"] and a["cost"] <= resource["remaining"]]
         expected = min(affordable, key=lambda a: (a["worstClass"], a["cost"], a["id"]))["id"] if affordable else None
         if len(affordable) < 2 or outputs.get("selectedActionId") != expected:
             errors.append("RC-SELECT-STABLE-ID at expectedOutputFixture.values.selectedActionId")
@@ -762,17 +890,39 @@ def package_errors(data: dict) -> list[str]:
             "interface.Hprime": "backend.H_c",
             "interface.HistoryHandlePrime.compatibleStateByHypothesis": "backend.eta_c",
             "interface.HistoryHandlePrime.version": "backend.historyVersion",
-            "s9.etaPrime": "backend.eta_c",
+            "s9.etaPrime": "interface.HistoryHandlePrime",
             "s9.Hprime": "interface.Hprime",
-            "s9.GammaPrime.historyHandle": "interface.HistoryHandlePrime",
-            "s9.GammaPrime.qStatus": "confirmed postSummary",
+            "s9.GammaPrime.qStatus": "inputGamma.qStatus",
+            "s9.GammaPrime.currentSummary": "normalizedOutcome.postSummary when the S9 guard holds; otherwise inputGamma.currentSummary",
+            "s9.GammaPrime.otherSessionFields": "inputGamma unchanged; S7/S8 effects are upstream of S9",
         }
+        input_gamma, outcome = flow.get("inputGamma"), flow.get("normalizedOutcome")
+        session_fields = set(registry["sessionHandles"]["SessionContext"]["fields"])
+        gamma_typed = (isinstance(input_gamma, dict) and set(input_gamma) == session_fields
+                       and isinstance(input_gamma.get("sessionId"), str) and bool(input_gamma["sessionId"])
+                       and all(type(input_gamma.get(field)) is int and input_gamma[field] >= 0 for field in ("resourceRemainder", "retryCount", "retryCap"))
+                       and input_gamma["retryCap"] > 0 and input_gamma["retryCount"] <= input_gamma["retryCap"]
+                       and isinstance(input_gamma.get("qStatus"), str)
+                       and input_gamma["qStatus"] in {"KNOWN", "UNKNOWN"}
+                       and isinstance(input_gamma.get("currentSummary"), str)
+                       and (input_gamma.get("knownTarget") is None or isinstance(input_gamma.get("knownTarget"), str))
+                       and all(isinstance(input_gamma.get(field), list) for field in ("knownEvidence", "errorHistory", "unknownHistory"))
+                       and isinstance(outcome, dict) and set(outcome) == {"summaryConfirmed", "postSummary"}
+                       and isinstance(outcome.get("summaryConfirmed"), bool)
+                       and (outcome.get("postSummary") is None or isinstance(outcome.get("postSummary"), str)))
+        should_commit = (gamma_typed and input_gamma["qStatus"] == "KNOWN"
+                         and outcome["summaryConfirmed"] and isinstance(outcome["postSummary"], str)
+                         and bool(outcome["postSummary"]))
+        gamma_expected = dict(input_gamma) if gamma_typed else {}
+        if should_commit:
+            gamma_expected["currentSummary"] = outcome["postSummary"]
         history_record = next((record for record in data["recordContracts"] if record["id"] == "HISTORY-HANDLE"), None)
         handle = interface.get("HistoryHandlePrime") if isinstance(interface, dict) else None
         gamma = s9.get("GammaPrime") if isinstance(s9, dict) else None
         if (not isinstance(backend, dict) or set(backend) != {"eta_c", "H_c", "historyVersion"}
                 or not isinstance(backend.get("eta_c"), dict) or not isinstance(backend.get("H_c"), list)
                 or not backend["H_c"] or any(not isinstance(hypothesis, str) for hypothesis in backend["H_c"])
+                or len(set(backend["H_c"])) != len(backend["H_c"])
                 or set(backend["eta_c"]) != set(backend["H_c"])
                 or not all(isinstance(frontier, str) and frontier.startswith("frontier-") for frontier in backend["eta_c"].values())
                 or not isinstance(backend.get("historyVersion"), int) or isinstance(backend.get("historyVersion"), bool)
@@ -783,12 +933,84 @@ def package_errors(data: dict) -> list[str]:
                 or handle.get("compatibleStateByHypothesis") != backend["eta_c"]
                 or handle.get("version") != backend["historyVersion"]
                 or not isinstance(s9, dict) or set(s9) != {"status", "etaPrime", "Hprime", "GammaPrime", "summaryConfirmed", "summaryCommitted"}
-                or s9.get("status") != "OK" or s9.get("etaPrime") != backend["eta_c"]
+                or s9.get("status") != "OK" or s9.get("etaPrime") != handle
                 or s9.get("Hprime") != interface["Hprime"] or not isinstance(gamma, dict)
-                or gamma.get("historyHandle") != handle or not isinstance(gamma.get("qStatus"), str) or not gamma["qStatus"]
-                or s9.get("summaryConfirmed") is not True or s9.get("summaryCommitted") is not True
+                or not gamma_typed or set(gamma) != session_fields
+                or {field: gamma[field] for field in session_fields} != gamma_expected
+                or s9.get("summaryConfirmed") is not outcome["summaryConfirmed"]
+                or s9.get("summaryCommitted") is not should_commit
                 or flow.get("sourceMap") != source_map):
             errors.append(f"{refinement['id']} history backend/interface/S9 payload flow is invalid")
+        branch_rows = flow.get("branchWitnesses")
+        required_branches = {"HR-NO-COMMIT", "HR-STOP-EMPTY", "HR-CONSERVATIVE", "HR-VERSION-MISMATCH"}
+        if (not isinstance(branch_rows, list) or len(branch_rows) != len(required_branches)
+                or any(not isinstance(row, dict) or row.get("id") not in required_branches for row in branch_rows)
+                or {row["id"] for row in branch_rows} != required_branches):
+            errors.append(f"{refinement['id']} history return branch witnesses are incomplete")
+        else:
+            for branch in branch_rows:
+                branch_id = branch["id"]
+                g, z, b, i, result = (branch.get(key) for key in ("inputGamma", "outcome", "backend", "interface", "s9"))
+                input_h = branch.get("inputH")
+                input_handle = branch.get("inputHistoryHandle")
+                versions = (branch.get("snapshotVersion"), branch.get("historyInputVersion"))
+                typed = (set(branch) == {"id", "inputGamma", "outcome", "snapshotVersion", "historyInputVersion", "inputH", "inputHistoryHandle", "backend", "interface", "s9"}
+                         and isinstance(g, dict) and set(g) == session_fields
+                         and all(g.get(field) == input_gamma.get(field) for field in session_fields - {"qStatus", "currentSummary"})
+                         and isinstance(g.get("qStatus"), str) and g["qStatus"] in {"KNOWN", "UNKNOWN"}
+                         and isinstance(g.get("currentSummary"), str)
+                         and isinstance(z, dict) and set(z) == {"summaryConfirmed", "postSummary"}
+                         and type(z.get("summaryConfirmed")) is bool
+                         and (z.get("postSummary") is None or isinstance(z.get("postSummary"), str))
+                         and all(type(version) is int and version >= 0 for version in versions)
+                         and isinstance(input_h, list) and all(isinstance(h, str) and h for h in input_h)
+                         and len(set(input_h)) == len(input_h)
+                         and isinstance(input_handle, dict) and history_record is not None
+                         and not validate_record_instance(history_record, input_handle)
+                         and input_handle.get("H") == input_h and input_handle.get("version") == versions[1]
+                         and isinstance(result, dict)
+                         and set(result) == ({"status", "reason", "etaPrime", "Hprime", "GammaPrime", "summaryCommitted", "outerDisposition"}
+                                             if branch_id == "HR-VERSION-MISMATCH" else
+                                             {"status", "etaPrime", "Hprime", "GammaPrime", "summaryCommitted", "outerDisposition"})
+                         and isinstance(result.get("GammaPrime"), dict)
+                         and set(result["GammaPrime"]) == session_fields
+                         and isinstance(result.get("Hprime"), list)
+                         and type(result.get("summaryCommitted")) is bool)
+                if not typed:
+                    errors.append(f"{refinement['id']} {branch_id} has malformed history return payload")
+                    continue
+                stale = versions[0] != versions[1]
+                commit = (not stale and g["qStatus"] == "KNOWN" and z["summaryConfirmed"]
+                          and isinstance(z["postSummary"], str) and bool(z["postSummary"]))
+                expected_summary = z["postSummary"] if commit else g["currentSummary"]
+                expected_gamma = dict(g)
+                expected_gamma["currentSummary"] = expected_summary
+                if (result["GammaPrime"] != expected_gamma
+                        or result["summaryCommitted"] is not commit):
+                    errors.append(f"{refinement['id']} {branch_id} violates S9 summary commit guard")
+                if stale:
+                    if (b is not None or i is not None or result["status"] != "SPEC-ERROR"
+                            or result.get("reason") != "history version mismatch"
+                            or result["etaPrime"] != input_handle
+                            or result["Hprime"] != input_h or result["outerDisposition"] != "Stop-Error"):
+                        errors.append(f"{refinement['id']} {branch_id} version mismatch did not preserve input history")
+                    continue
+                handle = i.get("HistoryHandlePrime") if isinstance(i, dict) else None
+                if (not isinstance(b, dict) or set(b) != {"eta_c", "H_c", "historyVersion"}
+                        or not isinstance(b.get("H_c"), list)
+                        or any(not isinstance(h, str) or not h for h in b["H_c"])
+                        or len(set(b["H_c"])) != len(b["H_c"])
+                        or not set(b["H_c"]).issubset(input_h) or not isinstance(b.get("eta_c"), dict)
+                        or set(b["eta_c"]) != set(b["H_c"]) or b.get("historyVersion") != versions[1] + 1
+                        or not isinstance(i, dict) or set(i) != {"status", "Hprime", "HistoryHandlePrime"}
+                        or i.get("Hprime") != b["H_c"] or not isinstance(handle, dict)
+                        or history_record is None or validate_record_instance(history_record, handle)
+                        or handle.get("compatibleStateByHypothesis") != b["eta_c"]
+                        or handle.get("version") != b["historyVersion"]
+                        or result["etaPrime"] != handle or result["Hprime"] != i["Hprime"] or result["status"] != "OK"
+                        or result["outerDisposition"] != ("Stop-Empty" if not b["H_c"] else "CONTINUE")
+                        or i.get("status") != ("Stop-Empty" if not b["H_c"] else "CONSERVATIVE-UNKNOWN" if branch_id == "HR-CONSERVATIVE" else "KNOWN")):
+                    errors.append(f"{refinement['id']} {branch_id} backend/interface/S9 branch mapping is invalid")
         model_schema = finite["modelInstanceSchema"]
         clock_contract = model_schema.get("clockConstraint", {})
         if (not isinstance(clock_contract, dict)
@@ -876,7 +1098,7 @@ def package_errors(data: dict) -> list[str]:
                 return [] if set(ast) == {"tag", "clock", "interval"} and isinstance(ast.get("clock"), str) and ast["clock"] in declared_clocks and valid_interval(ast.get("interval")) else ["RATIONAL-INTERVAL-CONTAINS is malformed"]
             if tag == "TYPED-FIELD-EQUALS":
                 domain = declared_variables.get(ast.get("field")) if isinstance(ast.get("field"), str) else None
-                return [] if set(ast) == {"tag", "field", "value"} and isinstance(domain, list) and ast.get("value") in domain else ["TYPED-FIELD-EQUALS is malformed"]
+                return [] if set(ast) == {"tag", "field", "value"} and isinstance(domain, list) and any(type(ast.get("value")) is type(member) and ast.get("value") == member for member in domain) else ["TYPED-FIELD-EQUALS is malformed"]
             return [f"unknown guard tag {tag}"]
         def guard_constraint(ast: dict, current: dict, state: object, store: object) -> dict | None:
             tag = ast["tag"]
@@ -887,7 +1109,7 @@ def package_errors(data: dict) -> list[str]:
             if tag == "RATIONAL-INTERVAL-CONTAINS":
                 return intersection(current, ast["interval"])
             if tag == "TYPED-FIELD-EQUALS":
-                return current if isinstance(store, dict) and store.get(ast["field"]) == ast["value"] else None
+                return current if isinstance(store, dict) and type(store.get(ast["field"])) is type(ast["value"]) and store.get(ast["field"]) == ast["value"] else None
             if tag == "AND":
                 result = current
                 for child in ast["children"]:
@@ -918,7 +1140,7 @@ def package_errors(data: dict) -> list[str]:
                 tag = update.get("tag")
                 if tag == "CLOCK-RESET-TO-ZERO" and set(update) == {"tag", "clock"} and isinstance(update.get("clock"), str) and update["clock"] in declared_clocks:
                     target = ("clock", update["clock"])
-                elif tag == "TYPED-FIELD-ASSIGN" and set(update) == {"tag", "field", "value"} and isinstance(update.get("field"), str) and update["field"] in declared_variables and update.get("value") in declared_variables[update["field"]]:
+                elif tag == "TYPED-FIELD-ASSIGN" and set(update) == {"tag", "field", "value"} and isinstance(update.get("field"), str) and update["field"] in declared_variables and any(type(update.get("value")) is type(member) and update.get("value") == member for member in declared_variables[update["field"]]):
                     target = ("field", update["field"])
                 elif tag == "STATE-ASSIGN" and set(update) == {"tag", "state"} and isinstance(update.get("state"), str) and update["state"] in declared_states:
                     target = ("state", "control")
@@ -928,13 +1150,30 @@ def package_errors(data: dict) -> list[str]:
                     results.append(f"conflicting simultaneous update {target[0]}:{target[1]}")
                 targets.add(target)
             return results
+        witness_ids = [row["id"] for row in finite["witnessVectors"]]
+        if (len(witness_ids) != 5 or set(witness_ids) !=
+                {"FK-W1-FEASIBLE", "FK-W2-INFEASIBLE", "FK-W3-UNKNOWN", "FK-W4-HISTORY", "FK-W5-CLOCK"}):
+            errors.append(f"{refinement['id']} finite-kernel witness set is incomplete")
+            continue
         for witness_id in ("FK-W1-FEASIBLE", "FK-W2-INFEASIBLE"):
             witness = next(row for row in finite["witnessVectors"] if row["id"] == witness_id)
+            witness_input = witness.get("input")
+            required_input = {"state", "projectionClock", "typedStore", "clockConstraint", "guard", "observation", "transition", "quantifier", "delta"}
+            if not isinstance(witness_input, dict) or set(witness_input) != required_input:
+                errors.append(f"{refinement['id']} {witness_id} input has missing, extra, or untyped fields")
+                continue
+            if not isinstance(witness_input.get("state"), str) or witness_input["state"] not in declared_states:
+                errors.append(f"{refinement['id']} {witness_id} input.state is outside the declared model")
+                continue
             if not valid_interval(witness["input"].get("clockConstraint")) or not valid_interval(witness["input"].get("guard")):
                 errors.append(f"{refinement['id']} {witness_id} has a noncanonical or reversed interval")
             transition = witness["input"].get("transition", {})
-            if transition.get("source") != witness["input"].get("state") or not isinstance(transition.get("target"), str) or not transition["target"]:
+            if (not isinstance(transition, dict) or set(transition) != {"id", "source", "target", "guardAst", "simultaneousUpdates"}
+                    or not isinstance(transition.get("id"), str) or not transition["id"]
+                    or transition.get("source") != witness["input"].get("state")
+                    or not isinstance(transition.get("target"), str) or not transition["target"]):
                 errors.append(f"{refinement['id']} {witness_id} transition endpoints are malformed")
+                continue
             guard_ast = transition.get("guardAst")
             updates = transition.get("simultaneousUpdates")
             if guard_errors(guard_ast) or update_errors(updates):
@@ -959,10 +1198,19 @@ def package_errors(data: dict) -> list[str]:
                     continue
                 store = witness["input"].get("typedStore")
                 if (not isinstance(store, dict) or set(store) != set(declared_variables)
-                        or any(store[field] not in domain for field, domain in declared_variables.items())):
+                    or any(not any(type(store[field]) is type(member) and store[field] == member for member in domain)
+                           for field, domain in declared_variables.items())):
                     errors.append(f"{refinement['id']} {witness_id} input.typedStore is outside the declared model")
                     continue
                 expected_payload = witness.get("expected", {})
+                expected_keys = ({"result", "state", "typedStore", "clockConstraint"}
+                                 if witness_id == "FK-W1-FEASIBLE" else {"result", "successorCount"})
+                if not isinstance(expected_payload, dict) or set(expected_payload) != expected_keys:
+                    errors.append(f"{refinement['id']} {witness_id} expected successor branch has invalid fields")
+                    continue
+                if witness_id == "FK-W2-INFEASIBLE" and (type(expected_payload["successorCount"]) is not int
+                                                        or expected_payload["successorCount"] != 0):
+                    errors.append(f"{refinement['id']} {witness_id} INFEASIBLE must have zero successors")
                 if "state" in expected_payload:
                     computed_state = expected_payload["state"]
                     if not isinstance(computed_state, str) or computed_state not in declared_states:
@@ -971,7 +1219,8 @@ def package_errors(data: dict) -> list[str]:
                 if "typedStore" in expected_payload:
                     expected_store_payload = expected_payload["typedStore"]
                     if (not isinstance(expected_store_payload, dict) or set(expected_store_payload) != set(declared_variables)
-                            or any(expected_store_payload[field] not in domain for field, domain in declared_variables.items())):
+                            or any(not any(type(expected_store_payload[field]) is type(member) and expected_store_payload[field] == member for member in domain)
+                                   for field, domain in declared_variables.items())):
                         errors.append(f"{refinement['id']} {witness_id} expected.typedStore is outside the declared model")
                         continue
                 if len(declared_clocks) != 1 or next(iter(declared_clocks)) != witness["input"].get("projectionClock"):
@@ -995,8 +1244,13 @@ def package_errors(data: dict) -> list[str]:
                 if computed == "FEASIBLE" and (witness["expected"].get("state") != expected_state or witness["expected"].get("clockConstraint") != successor or witness["expected"].get("typedStore") != expected_store):
                     errors.append(f"{refinement['id']} {witness_id} successor does not follow its transition/time advance")
         w3 = next(row for row in finite["witnessVectors"] if row["id"] == "FK-W3-UNKNOWN")
-        w3_guard = w3.get("input", {}).get("transition", {}).get("guardAst")
-        if not guard_errors(w3_guard) or w3.get("expected", {}).get("result") != "UNSUPPORTED-SYNTAX":
+        w3_transition = w3.get("input", {}).get("transition")
+        w3_guard = w3_transition.get("guardAst") if isinstance(w3_transition, dict) else None
+        if (not isinstance(w3_transition, dict)
+                or set(w3_transition) != {"id", "source", "target", "guardAst", "simultaneousUpdates"}
+                or not isinstance(w3_transition.get("id"), str) or not w3_transition["id"]
+                or not isinstance(w3_guard, dict) or w3_guard.get("tag") != "CALL"
+                or not guard_errors(w3_guard) or w3.get("expected", {}).get("result") != "UNSUPPORTED-SYNTAX"):
             errors.append(f"{refinement['id']} unsupported syntax witness is not a typed unsupported guard")
         clock_witness = next(row for row in finite["witnessVectors"] if row["id"] == "FK-W5-CLOCK")
         clock_constraints = clock_witness.get("input", {}).get("clockConstraints", [])
@@ -1136,9 +1390,7 @@ def package_errors(data: dict) -> list[str]:
         pass
     select_case = next((case for case in data["acceptanceCases"] if case["id"] == "AC-SYN-SELECT"), None)
     if select_case:
-        sv=select_case["inputFixture"]["values"]; affordable=[a for a in sv["actions"] if a["id"] in sv["eligibleActions"] and a["cost"] <= sv["resource"]["remaining"]]
-        chosen=select_case["expectedOutputFixture"]["values"].get("selectedActionId")
-        if len(affordable) < 2 or chosen != min(affordable,key=lambda a:(a["worstClass"],a["cost"],a["id"]))["id"]:
+        if _acceptance_relation_errors(select_case):
             errors.append("AC-SYN-SELECT does not exercise the controlled affordable stable-ID tie")
     required_matrix_categories = {"corpus identity", "label boundary", "capture format", "IP reassembly", "TFTP reconstruction", "field contracts", "matching and no response", "timing and U", "prediction and admission", "history update", "state and return", "resource accounting", "experiment boundary", "controlled drift"}
     matrix_ids = [item["id"] for item in data["acceptanceMatrix"]]
@@ -1150,7 +1402,7 @@ def package_errors(data: dict) -> list[str]:
         if (not item["caseIds"] and item["category"] != "controlled drift") or not set(item["caseIds"]).issubset(case_by_id):
             errors.append(f"{item['id']} has an unknown or empty acceptance-vector reference")
         required_axes = {
-            "corpus identity":{"captureId","relativePath","byteCount","sha256","resolvedFileIdentity"}, "IP reassembly":{"fragmentOffsets","coverageRanges","overlapPolicy","gapPolicy"},
+            "corpus identity":{"captureId","relativePath","byteCount","sha256","resolvedFileIdentity"}, "IP reassembly":{"fragmentOffsets","fragments","coverageRanges","datagramLengthBytes","overlapConflict","overlapPolicy","gapPolicy"},
             "TFTP reconstruction":{"tidPair","blockNumbers","terminalBlock","optionState"}, "timing and U":{"measurementInterval","requirementWindow","clockValidity","boundaryClosure"},
             "history update":{"H","compatibleObservationHypotheses","historyVersion","summaryConfirmed"}, "controlled drift":{"sourceMutation","viewMarker","publicationMode","failurePreservesOldView"},
         }.get(item["category"])
@@ -1210,11 +1462,12 @@ def package_errors(data: dict) -> list[str]:
             offsets, ranges = vector.get("fragmentOffsets"), vector.get("coverageRanges")
             typed_offsets = isinstance(offsets, list) and offsets and all(isinstance(value, int) and not isinstance(value, bool) and value >= 0 for value in offsets)
             typed_ranges = isinstance(ranges, list) and ranges and all(isinstance(value, list) and len(value) == 2 and all(isinstance(bound, int) and not isinstance(bound, bool) and bound >= 0 for bound in value) and value[0] <= value[1] for value in ranges)
-            if not (typed_offsets and typed_ranges and isinstance(policy, dict)
+            derived_status = _ip_reassembly_status(vector)
+            if not (typed_offsets and typed_ranges and derived_status is not None and isinstance(policy, dict)
                     and vector.get("overlapPolicy") == policy.get("overlapPolicy")
                     and vector.get("gapPolicy") == policy.get("gapStatus")):
                 errors.append(f"{item['id']} has an unexecutable IP reassembly vector")
-            if consumer_input.get("ipFragments") != vector or consumer_output.get("datagramStatus") != "COMPLETE":
+            if consumer_input.get("ipFragments") != vector or consumer_output.get("datagramStatus") != derived_status:
                 errors.append(f"{item['id']} IP vector is not consumed by its transfer case")
         if item["category"] == "TFTP reconstruction":
             vector = item["coverageValues"]
@@ -1234,6 +1487,8 @@ def package_errors(data: dict) -> list[str]:
                     or not isinstance(vector.get("fieldId"), str) or not vector["fieldId"]
                     or vector.get("encodingRule") not in {"ASCII-2", "ASCII-4", "UNSIGNED-BE", "OPAQUE-BYTES"}):
                 errors.append(f"{item['id']} has an unexecutable field-layout vector")
+            if vector.get("encodingRule") in {"ASCII-2", "ASCII-4"} and vector.get("widthBits") != 8 * int(vector["encodingRule"][-1]):
+                errors.append(f"{item['id']} ASCII field width does not match its declared encoding")
             if consumer_input.get("fieldLayout") != vector:
                 errors.append(f"{item['id']} field layout is not consumed by its transfer case")
         if item["category"] == "timing and U":
@@ -1273,15 +1528,32 @@ def package_errors(data: dict) -> list[str]:
             owner_fixture = transfer_input.get("ownershipFixture", {})
             no_response = transfer_input.get("noResponseFixture", {})
             schedule_error, owner = _resolve_ownership(owner_fixture) if isinstance(owner_fixture, dict) else ("untyped fixture", None)
+            active_requests = _remaining_request_ids(owner_fixture) if not schedule_error else None
+            request_active = (isinstance(no_response, dict) and isinstance(active_requests, set)
+                              and no_response.get("requestId") in active_requests)
+            no_response_disposition = ("FAIL-NO-RESPONSE" if request_active
+                                       and type(no_response.get("earliestElapsed")) in (int, float)
+                                       and type(no_response.get("deadline")) in (int, float)
+                                       and type(no_response.get("upperClosed")) is bool
+                                       and (no_response["earliestElapsed"] > no_response["deadline"]
+                                            if no_response["upperClosed"] else no_response["earliestElapsed"] >= no_response["deadline"]) else
+                                       "INCONCLUSIVE" if request_active else "NO-ACTIVE-OBLIGATION")
             if (set(item["caseIds"]) != {"AC-SYN-OBSERVATION", "AC-SYN-TRANSFER"}
                     or schedule_error or owner_fixture.get("expectedOwner") != owner
                     or any(vector.get(field) != owner_fixture.get(field) for field in ("responseId", "key", "policy", "expectedOwner"))
-                    or not isinstance(no_response, dict) or no_response.get("cancelled") is not False
+                    or not isinstance(no_response, dict)
+                    or not isinstance(no_response.get("requestId"), str)
+                    or no_response["requestId"] not in {event["id"] for event in owner_fixture.get("ownershipEvents", []) if isinstance(event, dict) and event.get("kind") == "REQUEST"}
+                    or type(no_response.get("cancelled")) is not bool
+                    or type(no_response.get("upperClosed")) is not bool
+                    or no_response["cancelled"] is request_active
+                    or no_response.get("expectedDisposition") != no_response_disposition
                     or vector.get("earliestElapsed") != no_response.get("earliestElapsed")
                     or vector.get("deadline") != no_response.get("deadline")
-                    or not isinstance(no_response.get("earliestElapsed"), (int, float))
-                    or not isinstance(no_response.get("deadline"), (int, float))
-                    or no_response["earliestElapsed"] <= no_response["deadline"]):
+                    or type(no_response.get("earliestElapsed")) not in (int, float)
+                    or type(no_response.get("deadline")) not in (int, float)
+                    or not math.isfinite(no_response["earliestElapsed"]) or no_response["earliestElapsed"] < 0
+                    or not math.isfinite(no_response["deadline"]) or no_response["deadline"] < 0):
                 errors.append(f"{item['id']} ownership/no-response vector lacks its case fixture consumers")
         if item["category"] == "resource accounting":
             vector = item["coverageValues"]
@@ -1671,14 +1943,57 @@ def package_errors(data: dict) -> list[str]:
                     continue
                 values = dict(base)
                 values.update(changes)
+                def known_text(value: object) -> bool:
+                    return isinstance(value, str) and bool(value)
+                nullable_text = lambda value: value is None or known_text(value)
+                nullable_bool = lambda value: type(value) in (bool, type(None))
+                if requirement_id in {"CRS-M1-00076", "CRS-M1-00082"}:
+                    shape_ok = (set(values) == {"service", "receiverSupport", "optionSelected", "optionIdentity", "protectedBytesRef"}
+                                and all(known_text(values.get(key)) for key in ("service", "optionIdentity", "protectedBytesRef"))
+                                and nullable_bool(values.get("receiverSupport")) and nullable_bool(values.get("optionSelected")))
+                elif requirement_id == "CRS-M1-00085":
+                    shape_ok = (set(values) == {"finalImageId", "lspId", "orderedBytesPresent", "checkValuePresent", "finalImageCheckValue", "lspCheckValue", "relation"}
+                                and upload_entity(values.get("finalImageId"), "FILE") and upload_entity(values.get("lspId"), "FILE")
+                                and all(type(values.get(key)) is bool for key in ("orderedBytesPresent", "checkValuePresent"))
+                                and all(nullable_text(values.get(key)) for key in ("finalImageCheckValue", "lspCheckValue"))
+                                and values.get("relation") == "EQUALS")
+                elif requirement_id == "CRS-M1-00086":
+                    shape_ok = (set(values) == {"comparisonSelected", "oldFileId", "newFileId", "oldCheckValue", "newCheckValue", "comparisonResult"}
+                                and nullable_bool(values.get("comparisonSelected"))
+                                and upload_entity(values.get("oldFileId"), "FILE") and upload_entity(values.get("newFileId"), "FILE")
+                                and all(nullable_text(values.get(key)) for key in ("oldCheckValue", "newCheckValue"))
+                                and (values.get("comparisonResult") is None or isinstance(values.get("comparisonResult"), str)
+                                     and values["comparisonResult"] in {"EQUAL", "DIFFERENT"}))
+                elif requirement_id == "CRS-M1-00087":
+                    shape_ok = (set(values) == {"fileAId", "fileBId", "partNumberA", "partNumberB", "crcA", "crcB"}
+                                and upload_entity(values.get("fileAId"), "FILE") and upload_entity(values.get("fileBId"), "FILE")
+                                and all(nullable_text(values.get(key)) for key in ("partNumberA", "partNumberB", "crcA", "crcB")))
+                else:
+                    shape_ok = (set(values) == {"finalDataSeen", "calculationInProgress", "observationComplete", "events", "calculationStartAt", "calculationEndAt", "requiredStatusObservationPoints"}
+                                and all(type(values.get(key)) is bool for key in ("finalDataSeen", "calculationInProgress", "observationComplete"))
+                                and all(type(values.get(key)) is int for key in ("calculationStartAt", "calculationEndAt"))
+                                and isinstance(values.get("requiredStatusObservationPoints"), list)
+                                and all(type(point) is int for point in values["requiredStatusObservationPoints"])
+                                and isinstance(values.get("events"), list)
+                                and all(isinstance(event, dict) and set(event) == {"kind", "at"}
+                                        and isinstance(event.get("kind"), str)
+                                        and event["kind"] in {"FINAL-DATA", "STATUS"} and type(event.get("at")) is int
+                                        for event in values["events"]))
+                if not shape_ok:
+                    errors.append(f"{dependency['id']} {requirement_id} variant has invalid typed inputs")
+                    continue
                 classification = "INVALID-SPEC"
                 if requirement_id in {"CRS-M1-00076", "CRS-M1-00082"}:
                     service = integrity_by_requirement.get(requirement_id, {}).get("service")
                     option_ref, bytes_ref = values.get("optionIdentity"), values.get("protectedBytesRef")
                     if (values.get("service") == service and isinstance(option_ref, str) and isinstance(bytes_ref, str)
                             and symbolic_entities.get(option_ref) == {"id": option_ref, "kind": "OPTION", "service": service}
-                            and symbolic_entities.get(bytes_ref) == {"id": bytes_ref, "kind": "PROTECTED-BYTES", "service": service}):
-                        classification = ("NOT-APPLICABLE" if values.get("optionSelected") is False else
+                            and symbolic_entities.get(bytes_ref) == {"id": bytes_ref, "kind": "PROTECTED-BYTES", "service": service}
+                            and values.get("optionSelected") in (True, False, None)
+                            and values.get("receiverSupport") in (True, False, None)
+                            and all(type(values.get(field)) in (bool, type(None)) for field in ("optionSelected", "receiverSupport"))):
+                        classification = ("NOT-EVALUATED" if values.get("optionSelected") is None else
+                                          "NOT-APPLICABLE" if values.get("optionSelected") is False else
                                           "NOT-EVALUATED" if values.get("receiverSupport") is None else
                                           "SATISFIED" if values.get("receiverSupport") is True else
                                           "VIOLATED" if values.get("receiverSupport") is False else "INVALID-SPEC")
@@ -1696,7 +2011,8 @@ def package_errors(data: dict) -> list[str]:
                                           "SATISFIED" if values.get("comparisonResult") == actual else "VIOLATED")
                 elif requirement_id == "CRS-M1-00087":
                     if upload_entity(values.get("fileAId"), "FILE") and upload_entity(values.get("fileBId"), "FILE"):
-                        classification = ("NOT-APPLICABLE" if values.get("partNumberA") != values.get("partNumberB") else
+                        classification = ("NOT-EVALUATED" if not all(isinstance(values.get(key), str) and values[key] for key in ("partNumberA", "partNumberB")) else
+                                          "NOT-APPLICABLE" if values.get("partNumberA") != values.get("partNumberB") else
                                           "NOT-EVALUATED" if not all(isinstance(values.get(key), str) and values[key] for key in ("crcA", "crcB")) else
                                           "SATISFIED" if values.get("crcA") == values.get("crcB") else "VIOLATED")
                 elif requirement_id == "CRS-M1-00109":

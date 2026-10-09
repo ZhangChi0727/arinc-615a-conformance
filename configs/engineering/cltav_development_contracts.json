@@ -9647,6 +9647,15 @@
           }
         ],
         "historyReturnFlow": {
+          "inputGamma": {
+            "sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2,
+            "qStatus": "KNOWN",
+            "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []
+          },
+          "normalizedOutcome": {
+            "summaryConfirmed": true,
+            "postSummary": "q1"
+          },
           "backend": {
             "eta_c": {"h0": "frontier-syn-1"},
             "H_c": ["h0"],
@@ -9664,16 +9673,12 @@
           },
           "s9": {
             "status": "OK",
-            "etaPrime": {"h0": "frontier-syn-1"},
+            "etaPrime": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-syn-1"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 1},
             "Hprime": ["h0"],
             "GammaPrime": {
-              "historyHandle": {
-                "H": ["h0"],
-                "compatibleStateByHypothesis": {"h0": "frontier-syn-1"},
-                "statusByHypothesis": {"h0": "KNOWN"},
-                "version": 1
-              },
-              "qStatus": "q1"
+              "sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2,
+              "qStatus": "KNOWN",
+              "currentSummary": "q1", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []
             },
             "summaryConfirmed": true,
             "summaryCommitted": true
@@ -9682,11 +9687,37 @@
             "interface.Hprime": "backend.H_c",
             "interface.HistoryHandlePrime.compatibleStateByHypothesis": "backend.eta_c",
             "interface.HistoryHandlePrime.version": "backend.historyVersion",
-            "s9.etaPrime": "backend.eta_c",
+            "s9.etaPrime": "interface.HistoryHandlePrime",
             "s9.Hprime": "interface.Hprime",
-            "s9.GammaPrime.historyHandle": "interface.HistoryHandlePrime",
-            "s9.GammaPrime.qStatus": "confirmed postSummary"
-          }
+            "s9.GammaPrime.qStatus": "inputGamma.qStatus",
+            "s9.GammaPrime.currentSummary": "normalizedOutcome.postSummary when the S9 guard holds; otherwise inputGamma.currentSummary",
+            "s9.GammaPrime.otherSessionFields": "inputGamma unchanged; S7/S8 effects are upstream of S9"
+          },
+          "branchWitnesses": [
+            {"id": "HR-NO-COMMIT", "inputGamma": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []},
+             "outcome": {"summaryConfirmed": false, "postSummary": "q1"}, "snapshotVersion": 0, "historyInputVersion": 0, "inputH": ["h0"],
+             "inputHistoryHandle": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-old"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 0},
+             "backend": {"eta_c": {"h0": "frontier-next"}, "H_c": ["h0"], "historyVersion": 1},
+             "interface": {"status": "KNOWN", "Hprime": ["h0"], "HistoryHandlePrime": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-next"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 1}},
+             "s9": {"status": "OK", "etaPrime": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-next"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 1}, "Hprime": ["h0"], "GammaPrime": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []}, "summaryCommitted": false, "outerDisposition": "CONTINUE"}},
+            {"id": "HR-STOP-EMPTY", "inputGamma": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []},
+             "outcome": {"summaryConfirmed": false, "postSummary": null}, "snapshotVersion": 0, "historyInputVersion": 0, "inputH": ["h0"],
+             "inputHistoryHandle": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-old"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 0},
+             "backend": {"eta_c": {}, "H_c": [], "historyVersion": 1},
+             "interface": {"status": "Stop-Empty", "Hprime": [], "HistoryHandlePrime": {"H": [], "compatibleStateByHypothesis": {}, "statusByHypothesis": {}, "version": 1}},
+             "s9": {"status": "OK", "etaPrime": {"H": [], "compatibleStateByHypothesis": {}, "statusByHypothesis": {}, "version": 1}, "Hprime": [], "GammaPrime": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []}, "summaryCommitted": false, "outerDisposition": "Stop-Empty"}},
+            {"id": "HR-CONSERVATIVE", "inputGamma": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "UNKNOWN", "currentSummary": "", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []},
+             "outcome": {"summaryConfirmed": false, "postSummary": null}, "snapshotVersion": 0, "historyInputVersion": 0, "inputH": ["h0"],
+             "inputHistoryHandle": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-old"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 0},
+             "backend": {"eta_c": {"h0": "frontier-conservative"}, "H_c": ["h0"], "historyVersion": 1},
+             "interface": {"status": "CONSERVATIVE-UNKNOWN", "Hprime": ["h0"], "HistoryHandlePrime": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-conservative"}, "statusByHypothesis": {"h0": "CONSERVATIVE-UNKNOWN"}, "version": 1}},
+             "s9": {"status": "OK", "etaPrime": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-conservative"}, "statusByHypothesis": {"h0": "CONSERVATIVE-UNKNOWN"}, "version": 1}, "Hprime": ["h0"], "GammaPrime": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "UNKNOWN", "currentSummary": "", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []}, "summaryCommitted": false, "outerDisposition": "CONTINUE"}},
+            {"id": "HR-VERSION-MISMATCH", "inputGamma": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []},
+             "outcome": {"summaryConfirmed": true, "postSummary": "q1"}, "snapshotVersion": 1, "historyInputVersion": 0, "inputH": ["h0"],
+             "inputHistoryHandle": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-old"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 0},
+             "backend": null, "interface": null,
+             "s9": {"status": "SPEC-ERROR", "reason": "history version mismatch", "etaPrime": {"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier-old"}, "statusByHypothesis": {"h0": "KNOWN"}, "version": 0}, "Hprime": ["h0"], "GammaPrime": {"sessionId": "session-syn-1", "resourceRemainder": 3, "retryCount": 0, "retryCap": 2, "qStatus": "KNOWN", "currentSummary": "q0", "knownTarget": null, "knownEvidence": [], "errorHistory": [], "unknownHistory": []}, "summaryCommitted": false, "outerDisposition": "Stop-Error"}}
+          ]
         },
         "totalReturnMapping": [
           {
@@ -10984,11 +11015,12 @@
               {"id": "RESPONSE-B", "kind": "RESPONSE", "key": "k1", "sequence": 3}
             ]
           },
-          "noResponseFixture": {"earliestElapsed": 6, "deadline": 5, "cancelled": false},
+          "noResponseFixture": {"requestId": "REQUEST-A", "earliestElapsed": 6, "deadline": 5, "upperClosed": true, "cancelled": false, "expectedDisposition": "FAIL-NO-RESPONSE"},
           "captureFormat": {"sectionId": 1, "interfaceId": 0, "packetNumber": 1, "capturedLength": 64},
-          "ipFragments": {"fragmentOffsets": [0, 8], "coverageRanges": [[0, 15]], "overlapPolicy": "IDENTICAL-ONLY", "gapPolicy": "GAPPED"},
+          "ipFragments": {"fragmentOffsets": [0, 8], "fragments": [{"offset": 0, "bytesHex": "0001020304050607"}, {"offset": 8, "bytesHex": "08090a0b0c0d0e0f"}], "coverageRanges": [[0, 15]], "datagramLengthBytes": 16, "overlapConflict": false, "overlapPolicy": "IDENTICAL-ONLY", "gapPolicy": "GAPPED"},
           "fieldLayout": {"fieldId": "protocolVersion", "ordinal": 1, "widthBits": 16, "encodingRule": "ASCII-2"},
           "optionState": "DEFAULTED",
+          "acceptedBlockBytes": null,
           "tid": {
             "client": 12000,
             "server": 69
@@ -10999,7 +11031,9 @@
           ],
           "terminal": {
             "block": 2,
-            "payloadBytes": 0
+            "payloadBytes": 0,
+            "nextZeroBlock": null,
+            "nextZeroPayloadBytes": null
           },
           "gaps": []
         }
@@ -11180,13 +11214,15 @@
               "id": "test-b",
               "kind": "TEST",
               "cost": 1,
-              "worstClass": 2
+              "worstClass": 1,
+              "classesByHypothesis": {"h0": "response-a", "h1": "response-b"}
             },
             {
               "id": "test-a",
               "kind": "TEST",
               "cost": 1,
-              "worstClass": 2
+              "worstClass": 1,
+              "classesByHypothesis": {"h0": "response-a", "h1": "response-b"}
             }
           ],
           "H": [
@@ -12539,7 +12575,10 @@
       ],
       "coverageAxes": [
         "fragmentOffsets",
+        "fragments",
         "coverageRanges",
+        "datagramLengthBytes",
+        "overlapConflict",
         "overlapPolicy",
         "gapPolicy"
       ],
@@ -12548,12 +12587,15 @@
           0,
           8
         ],
+        "fragments": [{"offset": 0, "bytesHex": "0001020304050607"}, {"offset": 8, "bytesHex": "08090a0b0c0d0e0f"}],
         "coverageRanges": [
           [
             0,
             15
           ]
         ],
+        "datagramLengthBytes": 16,
+        "overlapConflict": false,
         "overlapPolicy": "IDENTICAL-ONLY",
         "gapPolicy": "GAPPED"
       }
