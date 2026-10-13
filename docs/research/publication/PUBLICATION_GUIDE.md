@@ -25,6 +25,9 @@ entry is [`../../../artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md`](../../
 - structure: [`RESEARCH_OUTLINE.md`](RESEARCH_OUTLINE.md);
 - evidence wording: [`../CLAIM_EVIDENCE_MATRIX.md`](../CLAIM_EVIDENCE_MATRIX.md);
 - experiments: [`../EXPERIMENT_PLAN.md`](../EXPERIMENT_PLAN.md);
+- literature synthesis and source/evidence/mapping ledgers:
+  [`../literature/CLTAV_LITERATURE_SYNTHESIS.md`](../literature/CLTAV_LITERATURE_SYNTHESIS.md)
+  and `configs/research/literature/`;
 - dependency contracts: [`../../control/contracts/DOMAIN_BOUNDARIES.md`](../../control/contracts/DOMAIN_BOUNDARIES.md).
 
 ## Publication traceability
@@ -140,13 +143,12 @@ specification.
 Compare on feedback, fault domain, uncertainty, cost and stopping. Do not claim
 that cited methods have no loop.
 
-| Paper | Contribution | Carrier | Evidence depth | Body use |
-|---|---|---|---|---|
-| Tretmans 1996 [4] | ioco / LTS test generation | labelled transition systems | formal relation, not timed avionics IUT | related work: conformance without closed-loop next-action under resource |
-| Petrenko, Nguena Timo, Ramesh 2016 [7] | constraint-solving mutant killing | FSM | algorithm + ICTSS study | related work: generation, not residual-ambiguity feedback |
-| Li, Pierce, Zdancewic 2021 [10] | model-based testing of networked apps | ISSTA networked systems | implementation + tests | related work: network MBT, not 615A integrity/timing loop |
-| Jia and Harman 2011 [8] | mutation-testing survey | software testing | survey | related work: mutation evidence, not CL-TAV stops |
-| Yang et al. 2025 [9] | requirements-based test generation survey | TOSEM | survey | related work: requirements tests, not analysis feedback into selection |
+| Paper family | Compared object | Evidence boundary | Body use |
+|---|---|---|---|
+| Köhl--Hermanns; Fränzle et al. | compatible timed history; delay-aware monitoring/testing | passive or non-adaptive task, explicit source assumptions | strongest C1 comparison; no general-loss theorem transfer |
+| Sampath; Chanthery--Pencolé; Hu et al.; Miao et al. | active diagnosis, plans, state feedback, time-interval control | different authority, objective, observables, cost and stops | C2 prior-art boundary; not a fifth arm |
+| Chanthery et al.; F-LAS; IMA/CDS MBT | aerospace procedures, loading scenarios, configuration/oracle practice | different task/standard; proposed or source-specific evaluation | engineering bridge and threats, not 615A validation |
+| Jia--Harman; Grün et al.; Arcuri--Briand | equivalent-mutant and statistical accounting | no CL-TAV prior, sample size or result | denominator and preregistration rules |
 
 Hard IEEE/Elsevier format rules are not this repository’s eight-chapter
 outline. Chapter 6 stays empty until registered confirmatory runs exist.
@@ -201,6 +203,9 @@ step labels S0–S10, not volatile typeset line numbers, protocol states, or tim
 - 结构：[`RESEARCH_OUTLINE.md`](RESEARCH_OUTLINE.md)；
 - 证据措辞：[`../CLAIM_EVIDENCE_MATRIX.md`](../CLAIM_EVIDENCE_MATRIX.md)；
 - 实验：[`../EXPERIMENT_PLAN.md`](../EXPERIMENT_PLAN.md)；
+- 文献综合与来源／证据／映射台账：
+  [`../literature/CLTAV_LITERATURE_SYNTHESIS.md`](../literature/CLTAV_LITERATURE_SYNTHESIS.md)
+  及 `configs/research/literature/`；
 - 依赖契约：[`../../control/contracts/DOMAIN_BOUNDARIES.md`](../../control/contracts/DOMAIN_BOUNDARIES.md)。
 
 ## 出版追踪
@@ -254,7 +259,12 @@ AST 为另一候选。官方 Guide for Authors 于 2026-09-20 访问。范围是
 
 ### 附近论文（有界，不是新综述）
 
-附近论文（有界，不是新综述）：Tretmans 1996、Petrenko 等 2016、Li/Pierce/Zdancewic 2021、Jia/Harman 2011、Yang 等 2025。按反馈、故障域、不确定性、成本、停止比较，不声称已有方法都没有闭环。期刊硬性格式不是本仓库自定的八章结构。第 6 章在确认性运行登记前保持空。
+附近论文按四类控制：Köhl--Hermanns 与 Fränzle 等约束 C1；Sampath、
+Chanthery--Pencolé、Hu 等与 Miao 等约束 C2；航空主动诊断、F-LAS、
+IMA／CDS MBT 只作工程桥接与威胁；变异与统计文献只约束分母和登记。
+按反馈、故障域、不确定性、成本、停止逐项比较，不声称已有方法都没有闭环，
+也不把文献方法自动加入实验臂。期刊硬性格式不是本仓库自定的八章结构。
+第 6 章在确认性运行登记前保持空。
 
 ### 本地渲染命令（2026-09-20）
 

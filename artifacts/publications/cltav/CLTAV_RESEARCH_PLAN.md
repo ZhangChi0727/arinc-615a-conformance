@@ -1,10 +1,28 @@
 # CL-TAV Research Plan
 
-Reader entry for CR-2026-013 and the CR-2026-015 TAES first draft. Authoritative files remain the method report, DD-028–034, DD-037, `RESEARCH_OUTLINE.md`, SysML sources, ALG-CLTAV-01, and the protocol source-audit ledger. The journal draft lives in [`../../../docs/research/publication/drafts/taes-cltav/`](../../../docs/research/publication/drafts/taes-cltav/). This page does not copy the CRS database.
+Reader entry for CR-2026-013, the CR-2026-015 TAES first draft and the
+CR-2026-018 / DD-042 literature-evidence integration. Authoritative files remain
+the method report, DD-028–034, DD-037, DD-042, `RESEARCH_OUTLINE.md`, SysML
+sources, ALG-CLTAV-01, the evidence ledgers and the protocol source-audit ledger.
+The journal draft lives in [`../../../docs/research/publication/drafts/taes-cltav/`](../../../docs/research/publication/drafts/taes-cltav/).
+This page does not copy the CRS database or promote literature mappings to
+human novelty approval.
 
 ## Method change summary
 
 Successor method: Closed-Loop Test–Analysis Verification (CL-TAV). First-version direction accepted 2026-09-14 in DD-029. Combination of Test and Analysis is not a first-invention claim. Finite termination uses uniform \(c_{\min}>0\) plus finite \(B\), or finite \(K_{\max}\); `ERROR` spends the same resource.
+
+## Literature-evidence integration
+
+The Batch B synthesis and four ledgers are repository inputs under CR-2026-018.
+Köhl--Hermanns is the strongest C1 neighbour and prevents a broad novelty claim
+for compatible timed histories under latency, clock mapping and reordered
+observation. Active-diagnosis work prevents a broad C2 feedback/selection claim.
+C1 is therefore conditional consistency/retention in the declared finite domain;
+C2 is a prior-free one-step residual-set choice with the existing protocol-legal
+lifecycle. F-LAS, IMA and cockpit-display work provide loading, configuration
+and oracle-risk context, not 615A authority or CL-TAV results. Manuscript
+bibliography keys are bound to ledger evidence IDs in the manuscript manifest.
 
 ## Thesis outline
 
@@ -46,11 +64,15 @@ The freeze-commit 94-block math check proves only that historical objects were n
 
 # 中文版
 
-CR-2026-013 与 CR-2026-015 TAES 初稿的读者入口。权威文件仍是方法报告、DD-028～034、DD-037、`RESEARCH_OUTLINE.md`、SysML 源、ALG-CLTAV-01 和协议来源审计清单。期刊初稿位于 [`../../../docs/research/publication/drafts/taes-cltav/`](../../../docs/research/publication/drafts/taes-cltav/)。本页不另抄 CRS 数据库。
+CR-2026-013、CR-2026-015 TAES 初稿及 CR-2026-018／DD-042 文献证据集成的读者入口。权威文件仍是方法报告、DD-028～034、DD-037、DD-042、`RESEARCH_OUTLINE.md`、SysML 源、ALG-CLTAV-01、文献证据台账和协议来源审计清单。期刊初稿位于 [`../../../docs/research/publication/drafts/taes-cltav/`](../../../docs/research/publication/drafts/taes-cltav/)。本页不另抄 CRS 数据库，也不把文献映射升级为人工创新批准。
 
 ## 方法变更摘要
 
 后继方法：闭环测试—分析协同验证方法（CL-TAV）。首版方向于 2026-09-14 在 DD-029 接受。Test 与 Analysis 的组合不是首次发明主张。有限终止采用统一 \(c_{\min}>0\) 加有限 \(B\)，或有限 \(K_{\max}\)；`ERROR` 消耗同一资源。
+
+## 文献证据集成
+
+Batch B 综合报告与四份台账在 CR-2026-018 下进入仓库。Köhl--Hermanns 是 C1 强近邻，阻止对时延、时钟映射和乱序观测下相容历史作宽泛创新主张；主动诊断工作阻止对 C2 反馈／选择作宽泛创新主张。因此 C1 限于声明有限域中的条件化一致性／保留，C2 限于无默认先验的一步剩余集选择及既有协议合法生命周期。F-LAS、IMA 与座舱显示研究提供加载、配置和 oracle 风险语境，不是 615A 权威或 CL-TAV 结果。稿件 manifest 将参考文献键绑定到台账 evidence ID。
 
 ## 论文大纲
 

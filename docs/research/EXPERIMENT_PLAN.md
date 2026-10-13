@@ -49,17 +49,39 @@ acquisition+compute). Inventing a cost that the arm did not spend is forbidden.
 
 #### Refusal, coverage and miss denominators
 
-Report, for every arm:
+Keep one all-attempt ledger for every arm. It retains confirmed runs and the
+named unconfirmed-injection, invalid-observation, equivalent-fault,
+undecided-fault, abstain, INCONCLUSIVE, ERROR and unconcluded flows; these names
+need not be treated as a single mutually exclusive taxonomy when the registered
+workflow permits layered labels.
 
-- attempt coverage (all registered attempts);
-- refusal / no-answer rate (abstentions among attempts);
-- conditional error rate on the answered subset;
-- miss rate on the detection denominator after invalid and equivalent faults are removed.
+Report separately:
 
-Abstentions are excluded from PASS/FAIL rates and must still appear as a
-first-class refusal rate. A large refusal rate cannot be read as a better
-conditional error rate. INCONCLUSIVE and ERROR stay visible. Unconcluded
-attempts are counted in coverage and refusal, not converted into PASS or miss.
+- attempt coverage and each named flow on all registered attempts;
+- refusal / no-answer among attempts;
+- detection PASS/FAIL conditional error on the valid detection answered subset;
+- miss rate on the registered detection denominator after declared exclusions;
+- localization decision coverage on confirmed in-domain injections;
+- true-fault retention/exclusion, singleton correctness and final candidate-set
+  size on the registered localization subset.
+
+A valid detection FAIL with (H=\{h_1,h_2\}) is an answered detection outcome,
+not completed singleton localization. A singleton normal hypothesis is not
+protocol PASS. Confirmed equivalents may be excluded from a mutation-score
+denominator, but equivalent and undecided counts, the adjudicator and review
+cost remain visible. A large refusal rate cannot be read as a better conditional
+error rate.
+
+#### Literature-comparator disposition
+
+No cited method is added as a fifth arm in this increment. Köhl--Hermanns and
+Fränzle et al. are C1 concept comparators because the task, active policy and
+observation premises differ. Hu et al. and Miao et al. are C2 concept comparators
+because controllable-event authority, objectives, observables, lifecycle and
+cost projections differ. F-LAS, IMA and cockpit-display studies are scenario or
+evaluation context. A direct implementation arm requires a later decision that
+freezes a faithful task mapping, information and action pools, stops, budget and
+observable outputs.
 
 ## Three experiment groups
 
@@ -131,6 +153,18 @@ estimation target. No sample size or confirmatory number is filled here.
   rounds, refusal rate and the timing-uncertainty disagreement count.
 - **Estimation target:** ablation contrast on the same held-out set; not
   estimated in this PR.
+
+#### Decisions that must be frozen before confirmatory registration
+
+The registration must name the experimental and sampling units, fault-domain
+construction, injection-confirmation method, equivalence/undecided adjudicator
+and review procedure, reset and pairing/randomization rule, time source and
+clock-error calibration, oracle independence/shared components, budget
+projection, stopping rule, primary denominators, and interval/effect-size method.
+If any stage is stochastic, it must also freeze seeds or seed generation and
+independent repetition. Literature workload, precision or equivalent-mutant
+percentages are not sample-size inputs. This list refines the existing
+registration authority; it does not create a second experiment plan.
 
 ## Registration, statistics and release
 
@@ -268,7 +302,13 @@ non-default comparison model.
 
 #### 拒答、覆盖与漏检分母
 
-每一对照臂都报告：全登记尝试覆盖；拒答／无答案率（尝试中的弃权）；已作答子集上的条件错误率；剔除无效与等价故障后的检测分母上的漏检率。拒答不进入 PASS／FAIL 分母，但仍作为一等拒答率报告。大量拒答不得被读成更优的条件错误率。INCONCLUSIVE 与 ERROR 保持可见。未作结论的尝试计入覆盖与拒答，不改写成 PASS 或漏检。
+每一对照臂保留同一份全部尝试总账。已确认运行以及具名的未确认注入、无效观测、等价故障、未决故障、弃权、INCONCLUSIVE、ERROR 和未结束流均保留；若登记工作流允许分层标签，不强称这些名称构成单一互斥穷尽分类。
+
+分开报告：全部登记尝试上的覆盖与各具名流；尝试中的拒答／无答案；检测有效回答子集上的 PASS／FAIL 条件错误；按登记排除后的检测分母漏检率；已确认域内注入上的定位决策覆盖；以及登记定位子集上的真故障保留／排除、单例正确性和最终候选集大小。有效检测 FAIL 且 (H=\{h_1,h_2\}) 是已回答检测结果，不是完成单例定位；正常单例不是协议 PASS。已确认等价体可从变异分数分母排除，但等价／未决计数、裁定人和评审成本保持可见。大量拒答不得被读成更优的条件错误率。
+
+#### 文献比较器处置
+
+本增量不把任何被引方法新增为第五实验臂。Köhl--Hermanns 与 Fränzle 等因任务、主动策略和观测前提不同，只作 C1 概念比较；Hu 等与 Miao 等因可控事件权限、目标、可观测、生命周期和成本投影不同，只作 C2 概念比较；F-LAS、IMA 与座舱显示研究只作场景或评价语境。建立直接实现臂须由后继决定冻结忠实任务映射、信息／动作池、停止、预算和可观测输出。
 
 ## 三组实验
 
@@ -306,6 +346,10 @@ non-default comparison model.
   4. 把 FIND 中止当作时钟豁免（反例对照；禁止）。
 - **指标：** 与父组相同的主指标，外加计费成本、轮次、拒答率及时序不确定性分歧计数。
 - **估计目标：** 同一留出集上的消融对照；本 PR 不估计。
+
+#### 确认性登记前必须冻结的决定
+
+登记须具名：实验单位与抽样单位、故障域构造、注入确认方法、等价／未决裁定人与评审过程、复位与配对／随机规则、时间源与钟差校准、oracle 独立性／共享组件、预算投影、停止规则、主分母及区间／效应量方法。若任一阶段具有随机性，还须冻结种子或种子生成和独立重复。文献中的工作量、precision 或等价变异比例不得作为样本量输入。本清单细化既有登记权威，不建立第二份实验方案。
 
 ## 登记、统计与发布
 

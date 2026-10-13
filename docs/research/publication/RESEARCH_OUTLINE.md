@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| **Version** | 3.2-candidate under CR-2026-015 |
-| **Status** | CL-TAV thesis plan journalized as a TAES Regular Paper first draft; design direction accepted 2026-09-14; 645 SOURCE/SEMANTIC bind is a candidate, not capability establishment; not independent mathematical or RG approval; not submission-ready |
+| **Version** | 3.3-candidate under CR-2026-018 |
+| **Status** | Batch B literature integrated into the TAES draft with evidence-bounded C1/C2 wording; confirmatory results, independent scientific approval and submission readiness remain open |
 | **Method** | [`../methodology/RR-2026-001_test_analysis_conformance_methodology.md`](../methodology/RR-2026-001_test_analysis_conformance_methodology.md), DD-028, DD-029, DD-030, DD-031–034, DD-037 |
 | **Reader entry** | [`../../../artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md`](../../../artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md) |
 | **Manuscript** | [`drafts/taes-cltav/`](drafts/taes-cltav/) under CR-2026-015 / DD-037 |
@@ -26,8 +26,8 @@ CL-RQ1 (loop consistency), CL-RQ2 (comparative effect under the same budget), an
 
 These are propositions, not established results, and not a claim to have invented Test or Analysis:
 
-1. uncertainty-aware mutually consistent observation interpretation, timing verdicts and compatibility update (C1; DD-031);
-2. feeding residual ambiguity into next-action selection with explicit resource, recovery, ERROR and stop rules (C2; DD-031);
+1. mutually consistent observation interpretation, timing verdicts and whole-history compatibility update in the declared finite domain, with true-hypothesis retention only under the named model, ownership, pairing and conservative-observation assumptions (C1; DD-031/DD-042); no new universal drift/loss/reordering theorem;
+2. feeding residual ambiguity into a prior-free one-step worst-residual choice over currently feasible affordable tests, with explicit resource, recovery, ERROR and stop rules (C2; DD-031/DD-042); not a first active loop or global policy optimum;
 3. a comparative experiment protocol (CL-T, CL-A, CL-TA, CL-LOOP) with no unrun results filled here;
 4. an expanded protocol CRS, generated only after source-unit audit, covering INFORMATION, UPLOAD, both DOWNLOAD modes, FIND, bounded 665/664/RFC support, and 615A-triggered 645 semantic leaves. CRS, SysML, evidence layout and platform are supporting, not extra major innovations.
 
@@ -48,12 +48,12 @@ Each chapter below states the claim it must carry, the CL-RQ it answers, the alg
 
 ### Chapter 2 Related work and problem definition
 
-- **Claim:** Requirements-based testing, ioco-style conformance, mutation adequacy and diagnostic classifiers each supply part of detection or localization. Whether a cited method already forms an observation→update→select loop with explicit finite termination, preparatory actions and unknown-effect `ERROR` remains a literature question to check against feedback mechanism, fault domain, timing uncertainty, cost objective and stopping guarantee. It is not a proved absence and not a first-invention claim for CL-TAV.
-- **Answers:** positions CL-RQ1 against related work; keeps RQ6 (transfer) explicitly unanswered.
-- **Uses:** no CL-TAV equations; defines the three comparison arms used later (CL-T, CL-A, CL-TA vs CL-LOOP).
-- **Needs:** literature already cited in RR-2026-001; no new “first invention” wording.
-- **Figures:** optional related-work map, not SysML.
-- **Have / gap:** §1.6 novelty boundary exists. Gap is a method-by-method comparison of those five attributes, not a blanket “not a closed loop” verdict.
+- **Claim:** Prior work already covers active observation--control feedback, diagnostic-state-conditioned selection, compatible timed histories, delay/jitter-aware testing, aerospace diagnostic procedures and avionics MBT. The paper compares four evidence strands---uncertain history, active choice, aviation loading and evaluation---and differentiates CL-TAV only by its bounded 615A action/observation/cost/stop contract. This is not a first-invention claim.
+- **Answers:** positions CL-RQ1 against the strongest C1 neighbour and CL-RQ2/3 against active-diagnosis and evaluation precedents; keeps RQ6 explicitly unanswered.
+- **Uses:** evidence-ledger version and locator bindings; no new CL-TAV equations and no literature theorem transplanted into the algorithm.
+- **Needs:** human novelty wording and independent scientific review remain open; full-text access for the actually used Batch B sources is closed.
+- **Figures:** compact related-work table in the manuscript; extended evidence remains in the synthesis and ledgers.
+- **Have / gap:** the manuscript now recognizes Köhl--Hermanns, Fränzle et al., Hu et al., Miao et al., F-LAS, IMA/CDS and mutation/statistical evaluation constraints. The remaining gap is human approval of the narrow contribution, not an access placeholder.
 
 ### Chapter 3 System-engineering design and CL-TAV architecture
 
@@ -78,9 +78,9 @@ Each chapter below states the claim it must carry, the CL-RQ it answers, the alg
 - **Claim:** The controlled package binds seven experiment interfaces and concrete specification witnesses so a later implementation can build the loop without inventing ownership, truth, resource or denominator rules.
 - **Answers:** CL-RQ2 (what will be compared) and the engineering half of CL-RQ1.
 - **Uses:** four arms CL-T / CL-A / CL-TA / CL-LOOP in `EXPERIMENT_PLAN.md` (EXP-CLTAV-DETECT / LOCATE / ABLATION); no shared secretly-stronger oracle.
-- **Needs:** registered experiment protocol before any confirmatory run. No Configuration, no live load.
+- **Needs:** registered experiment protocol before any confirmatory run. Freeze the experimental unit, fault construction, injection confirmation, equivalence adjudicator, clock calibration, any stochastic repeats/seeds and interval/effect-size method. No Configuration, no live load.
 - **Figures:** FIG-CL-TAV-09 experiment architecture; reuse FIG-CL-TAV-04 ports as the future tool boundary.
-- **Have / gap:** method report §8.1, EXPERIMENT_PLAN and seven interface bindings. Gap is executable experiment configuration, an interactive IUT, independent truth tooling and confirmatory registration, which belong to a later authorized PR.
+- **Have / gap:** method report §8.1, EXPERIMENT_PLAN and seven interface bindings. All-attempt accounting, the detection answered subset and localization-decision/correctness/candidate-size measures are distinct. Gap is executable experiment configuration, an interactive IUT, independent truth tooling and confirmatory registration, which belong to a later authorized PR.
 
 ### Chapter 6 Results
 
@@ -93,12 +93,12 @@ Each chapter below states the claim it must carry, the CL-RQ it answers, the alg
 
 ### Chapter 7 Discussion, limitations and further work
 
-- **Claim:** first-version CL-TAV is bounded by single-fault \(H_0\), one-step selection, 645 capabilities still NOT-ESTABLISHED, and notation-only SysML.
+- **Claim:** first-version CL-TAV is bounded by single-fault \(H_0\), one-step selection, declared observation assumptions, common-oracle risk, 645 capabilities still NOT-ESTABLISHED, and notation-only SysML.
 - **Answers:** interprets CL-RQ3 limitations; does not close RQ6.
 - **Uses:** threats already in method report §11; 645 identity and 615A-triggered semantics are bound, capabilities remain not established; out-of-domain faults may mimic in-domain hypotheses.
 - **Needs:** no new experiment.
 - **Figures:** none.
-- **Have / gap:** limitation list exists in DD-029/DD-032. Discussion prose waits for results. Do not write “645 cannot be obtained.”
+- **Have / gap:** limitation prose now separates passive/active scope, model/observation/fault-domain limits and shared parser/model/clock/oracle risk. Measured interpretation still waits for results. Do not write “645 cannot be obtained.”
 
 ### Chapter 8 Conclusion
 
@@ -157,8 +157,8 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 
 | 字段 | 值 |
 |---|---|
-| **版本** | CR-2026-015 下的 3.2-candidate |
-| **状态** | CL-TAV 论文计划已期刊化为 TAES Regular Paper 初稿；2026-09-14 接受设计方向；645 来源／语义绑定为候选，不是能力成立；不是独立数学或 RG 批准；不是投稿就绪 |
+| **版本** | CR-2026-018 下的 3.3-candidate |
+| **状态** | Batch B 文献已以证据有界方式融入 TAES 初稿；确认性结果、独立科学批准与投稿就绪仍开放 |
 | **方法** | [`../methodology/RR-2026-001_test_analysis_conformance_methodology.md`](../methodology/RR-2026-001_test_analysis_conformance_methodology.md)，DD-028、DD-029、DD-030、DD-031～034、DD-037 |
 | **读者入口** | [`../../../artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md`](../../../artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md) |
 | **稿件** | [`drafts/taes-cltav/`](drafts/taes-cltav/)，受 CR-2026-015／DD-037 管辖 |
@@ -177,8 +177,8 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 
 这些是命题，不是既成结果，也不声称发明了 Test 或 Analysis：
 
-1. 不确定感知且相互一致的观测解释、时序判定与相容更新（C1；DD-031）；
-2. 把剩余歧义反馈到后续选择，并明确资源、恢复、ERROR 与停止（C2；DD-031）；
+1. 声明有限域中相互一致的观测解释、时序判定与全历史相容更新，仅在已命名模型、所有权、配对和保守观测假设下保留真实假设（C1；DD-031／DD-042）；不提出漂移／丢失／乱序下的新普遍定理；
+2. 把剩余歧义反馈到当前有限可行、可负担测试集上的无默认先验一步最坏剩余选择，并明确资源、恢复、ERROR 与停止（C2；DD-031／DD-042）；不是首次主动闭环或全局策略最优；
 3. 固定 Test、Analysis、非反馈 T+A 与完整 CL-TAV 的比较实验协议（此处不填未跑结果）；
 4. 仅在来源单元审计之后生成的扩大协议 CRS（INFORMATION、UPLOAD、两种 DOWNLOAD、FIND、有界 665／664／RFC 支持，以及 615A 触发的 645 语义叶）。CRS、SysML、证据组织和平台是支撑，不是额外重大创新。
 
@@ -199,12 +199,12 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 
 ### 第2章 相关工作与问题定义
 
-- **论点：** 基于需求的测试、ioco 符合、变异充分性和诊断分类器各自提供检测或定位的一部分。某一被引方法是否已经构成带显式有限终止、准备性动作和效果未知 `ERROR` 的观测→更新→选择闭环，仍须按反馈机制、故障域、时序不确定性、成本目标和停止保证对照文献，不能由术语分类得出“已有工作都不是闭环”，也不得据此声称 CL-TAV 首次发明。
-- **回答：** 把 CL-RQ1 放到相关工作中；RQ6 明确未回答。
-- **使用：** 不用 CL-TAV 方程；定义后文比较臂 CL-T、CL-A、CL-TA 与 CL-LOOP。
-- **需要：** RR-2026-001 已引用文献；不得新写“首次发明”。
-- **图：** 可选相关工作图，不是 SysML。
-- **已有／缺口：** §1.6 创新边界已有。缺口是按上述五个属性做方法对方法比较，而不是总括“不是闭环”。
+- **论点：** 既有工作已覆盖主动观测—控制反馈、按诊断状态选择、相容时序历史、时延／抖动下测试、航空诊断规程和航电 MBT。稿件按不确定历史、主动选择、航空加载与评价四条证据线比较，仅用有界 615A 动作／观测／成本／停止合同区分 CL-TAV；不主张首次发明。
+- **回答：** 用最强 C1 近邻定位 CL-RQ1，并用主动诊断与评价先例定位 CL-RQ2／3；RQ6 明确未回答。
+- **使用：** 使用证据台账中的版本与页级定位；不新增 CL-TAV 方程，也不把来源定理移植进本项目算法。
+- **需要：** 最终创新措辞与独立科学评审仍须人工批准；实际引用的 Batch B 全文访问缺口已关闭。
+- **图：** 正文保留紧凑相关工作表；扩展证据留在综合报告与台账。
+- **已有／缺口：** 正文已承认 Köhl--Hermanns、Fränzle 等、Hu 等、Miao 等、F-LAS、IMA／CDS 及变异／统计评价约束。剩余缺口是窄贡献的人工批准，不是访问占位。
 
 ### 第3章 系统工程设计与 CL-TAV 架构
 
@@ -229,9 +229,9 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 - **论点：** 后继开发就绪 PR 才能实现该闭环；本章只规划模块、oracle、比较臂、隔离和指标。
 - **回答：** CL-RQ2（将比较什么）以及 CL-RQ1 的工程一半。
 - **使用：** `EXPERIMENT_PLAN.md` 中的四臂 CL-T／CL-A／CL-TA／CL-LOOP（EXP-CLTAV-DETECT／LOCATE／ABLATION）；不得共用暗中更强的 oracle。
-- **需要：** 确认性运行前先登记实验协议。无 Configuration，无实网加载。
+- **需要：** 确认性运行前先登记实验协议，并冻结实验单位、故障构造、注入确认、等价裁定人、钟差校准、如适用的随机重复／种子以及区间／效应量方法。无 Configuration，无实网加载。
 - **图：** FIG-CL-TAV-09 实验架构；复用 FIG-CL-TAV-04 端口作为未来工具边界。
-- **已有／缺口：** 方法报告 §8.1 与 EXPERIMENT_PLAN 契约已有。缺口是可执行实验配置、独立真值工具与确认性登记，属于后继授权 PR。
+- **已有／缺口：** 方法报告 §8.1 与 EXPERIMENT_PLAN 契约已有；全部尝试总账、检测回答子集和定位决策／正确性／候选集大小保持分开。缺口是可执行实验配置、交互 IUT、独立真值工具与确认性登记，属于后继授权 PR。
 
 ### 第6章 结果
 
@@ -244,12 +244,12 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 
 ### 第7章 讨论、局限与后续工作
 
-- **论点：** 首版 CL-TAV 受单故障 \(H_0\)、一步选择、645 能力仍为 NOT-ESTABLISHED 和仅记法 SysML 约束。
+- **论点：** 首版 CL-TAV 受单故障 \(H_0\)、一步选择、声明观测假设、共同 oracle 风险、645 能力仍为 NOT-ESTABLISHED 和仅记法 SysML 约束。
 - **回答：** 解释 CL-RQ3 的局限；不关闭 RQ6。
 - **使用：** 方法报告 §11 的威胁；645 身份与 615A 触发语义已绑定，能力仍未建立；域外故障可能与域内假设相同。
 - **需要：** 无新实验。
 - **图：** 无。
-- **已有／缺口：** DD-029／DD-032 已有局限清单。讨论正文等待结果。不得再写“无法获取 645”。
+- **已有／缺口：** 讨论已分离被动／主动范围、模型／观测／故障域边界及共享解析器／模型／时钟／oracle 风险。实测解释仍等待结果。不得再写“无法获取 645”。
 
 ### 第8章 结论
 

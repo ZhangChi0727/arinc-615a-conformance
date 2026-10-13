@@ -120,6 +120,13 @@ def test_rejects_missing_citation_key() -> None:
     assert any("missing from bib" in item for item in errors)
 
 
+def test_rejects_unknown_citation_evidence_id() -> None:
+    bad = copy.deepcopy(MANIFEST)
+    bad["citationEvidence"][0]["evidenceIds"] = ["EVID-NOT-REAL"]
+    errors = taes.manuscript_errors(bad)
+    assert "unknown evidence id for sampath1998: EVID-NOT-REAL" in errors
+
+
 def test_rejects_path_escape() -> None:
     bad = copy.deepcopy(MANIFEST)
     bad["main"] = "../secret.tex"

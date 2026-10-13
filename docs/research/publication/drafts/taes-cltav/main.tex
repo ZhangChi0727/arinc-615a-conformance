@@ -31,21 +31,22 @@ No AI system is an author.}
 \markboth{Author et al.}{CL-TAV}
 
 \begin{abstract}
-ARINC 615A data loading must be judged under declared timers, file identities
-and measurement uncertainty. A fixed test suite that never uses residual
-ambiguity, or an analysis that never issues a later legal operation, can leave
-detection and isolation incomplete. This paper specifies Closed-Loop
-Test--Analysis Verification (CL-TAV): a charged session that predicts current
-observation classes, selects an exclusive TEST, Prep, Recover or Admit action,
-interprets timing with a shared uncertainty reference, and updates a
-single-fault candidate set only from a select-time snapshot. Unknown-effect
-\texttt{ERROR} is not implementation FAIL. Confirmed-not-sent leaves the known
-summary unchanged. The bound protocol model remains UPLOAD and INFORMATION;
-ARINC 645 identity is bound for triggered leaves, while integrity capabilities
-stay unestablished. Four comparison arms and three registered experiment
-families are defined. Confirmatory measurements are not yet obtained;
-improvement percentages are therefore not reported. The draft is a journalized
-method paper, not a solver implementation and not a certification argument.
+Airborne software loading is judged from protocol events whose identity,
+ordering and timing may be only conservatively observed. This paper specifies
+Closed-Loop Test--Analysis Verification (CL-TAV) for ARINC 615A: a charged
+session that predicts observation classes, interprets a raw record under one
+uncertainty reference, updates a finite single-fault candidate set from the
+whole compatible history, and selects one exclusive TEST, Prep, Recover or
+Admit action. The contribution sought is deliberately bounded. C1 is
+consistency and conditional true-hypothesis retention under the declared model,
+ownership and conservative-observation assumptions, not a new general theorem
+for loss, drift or reordering. C2 is a prior-free one-step minimax choice over
+currently feasible and affordable tests with explicit error and stop semantics,
+not a globally optimal policy. The bound protocol model remains UPLOAD and
+INFORMATION; ARINC 645 identity is bound for triggered leaves, while runtime
+integrity remains unestablished. Four comparison arms and three experiment
+families are registered. Confirmatory measurements are not yet available, so
+no improvement, implementation-completeness or certification claim is made.
 \end{abstract}
 
 \begin{IEEEkeywords}

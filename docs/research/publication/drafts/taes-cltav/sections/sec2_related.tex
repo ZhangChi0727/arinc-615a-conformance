@@ -1,41 +1,62 @@
 \section{Related Work and Problem Formulation}
 \label{sec:related}
 
-\subsection{Selective comparison}
-Table~\ref{tab:related} records the cited work's stated object and its limited
-role in this paper. It makes no absence or laboratory-capability claim, and no
-paywalled method detail is used for a denial.
+\subsection{Evidence-bounded comparison}
+Table~\ref{tab:related} organizes the closest evidence by problem strand rather
+than by paper. It records the compared object and the boundary that prevents a
+category-level novelty claim.
 
 \begin{table}[!ht]
-\caption{Cited stated objects and their limited comparison role.}
+\caption{Closest evidence strands and the resulting CL-TAV boundary.}
 \label{tab:related}
 \centering
 \footnotesize
-\begin{tabular}{@{}p{0.25\columnwidth}p{0.60\columnwidth}@{}}
+\begin{tabular}{@{}p{0.20\columnwidth}p{0.33\columnwidth}p{0.34\columnwidth}@{}}
 \hline
-Work & Stated object / role here \\
+Strand & Existing object & Boundary used here \\
 \hline
-Tretmans~\cite{tretmans1996} & LTS implementation relation and test generation \\
-Chow; Fujiwara~\textit{et al.}~\cite{chow1978,fujiwara1991} & FSM covering sequences \\
-Petrenko~\textit{et al.}~\cite{petrenko2016} & Constraint solving and mutant killing \\
-Jia and Harman~\cite{jia2011} & Mutation-adequacy survey \\
-Yang~\textit{et al.}; Li~\textit{et al.}~\cite{yang2025,li2021} & Requirements-based and networked-application testing \\
-Alur and Dill~\cite{alur1994} & Timed-automaton vocabulary used as timing language \\
+Uncertain history & compatible-run diagnosis under latency, drift/offset and reordered observation; exact and bounded-history variants~\cite{koehl2023}; delay-aware monitoring/testing~\cite{fraenzle2026} & C1 is conditional project consistency, not the invention of uncertainty-aware history diagnosis \\
+Active choice & closed-loop supervisors, conditional plans and time-interval control~\cite{sampath1998,chanthery2009,hu2020,miao2025} & C2 is one-step residual-set selection with a different action, cost and stop contract, not the first active loop \\
+Aviation loading & onboard diagnostic procedures and avionics MBT~\cite{chanthery2019,efkemann2011,sartaj2021}; proposed LAS requirements/procedures~\cite{marques2021} & engineering context, not executed 615A conformance evidence \\
+Evaluation & mutation denominators and equivalent/undecided mutants~\cite{jia2011,gruen2009}; randomized-algorithm reporting~\cite{arcuri2011} & informs accounting and registration, not CL-TAV performance \\
 \hline
 \end{tabular}
 \end{table}
 
-Tretmans develops an LTS implementation relation and test
-generation, not a charged isolation session~\cite{tretmans1996}. Chow and
-Fujiwara~\textit{et al.}\ develop FSM covering sequences~\cite{chow1978,fujiwara1991}.
-Petrenko~\textit{et al.}\ develop constraint solving and mutant killing~\cite{petrenko2016}.
-Jia and Harman survey mutation adequacy~\cite{jia2011}. Yang~\textit{et al.}\
-survey requirements-based generation~\cite{yang2025}. Li~\textit{et al.}\ treat
-model-based testing of networked applications~\cite{li2021}. Alur and Dill
-supply timed-automaton vocabulary used here as timing language, not as a
-deployed solver~\cite{alur1994}.
-\phbox{PH-LIT-ACCESS}{LITERATURE-ACCESS}{A later denial that needs a paywalled
-detail is not made until AUTH-LIT obtains that text.}
+Köhl and Hermanns are the strongest C1 neighbour found. Their passive diagnoser
+ranges over runs compatible with the whole timed observation history under
+bounded action-specific latency and a clock remapping, including latency-induced
+reordering~\cite{koehl2023}. Their exact incremental algorithm is separated from
+a sound but generally incomplete fixed-history approximation. CL-TAV therefore
+does not claim history compatibility or uncertainty handling as new, does not
+call their ``active prefixes'' active tests, and does not inherit exact-once
+observation or their liveness assumption. Fränzle~\textit{et al.} likewise give
+exact delay/jitter-aware monitoring and testing semantics, but testing there is
+harness input plus verdict evaluation rather than adaptive next-action
+optimization~\cite{fraenzle2026}.
+
+Active diagnosis has long combined online state estimation with controlled
+behaviour~\cite{sampath1998}. Conditional action plans, state-conditioned event
+disablement and time-interval restrictions further establish feedback and
+active choice as prior art~\cite{chanthery2009,hu2020,miao2025}. Some objectives
+use costs or probabilistic information. CL-TAV instead fixes the current finite
+feasible set and ranks an affordable distinguishing TEST by the one-step worst
+residual cardinality, then cost and identifier. The lack of a default prior is a
+design choice, not an automatic advantage; Prep/Recover and exclusive error/stop
+semantics are compared as engineering contract differences, not proof of first
+combination or global optimality.
+
+For the application bridge, onboard active diagnosis demonstrates procedure
+generation and also reports wrong localization under limited observability and
+model/prototype mismatch~\cite{chanthery2019}. IMA and cockpit-display work
+demonstrate configuration-aware, model-derived avionics testing
+\cite{efkemann2011,sartaj2021}. F-LAS proposes 23 reusable requirements and six
+procedures across normal, interrupted/incomplete and version-conflict scenarios,
+but reports neither procedure execution nor an ARINC 615A conformance result
+\cite{marques2021}. These sources motivate cases and threats; the standard and
+the controlled CRS remain the protocol authority. All comparisons above are
+bound to the full-text versions recorded in the evidence ledger; no absence
+claim is inferred from an unreported feature.
 
 \subsection{Verification objects}
 The IUT is a 615A data-loading endpoint. The bound protocol model is UPLOAD

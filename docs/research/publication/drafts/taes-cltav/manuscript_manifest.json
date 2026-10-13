@@ -51,14 +51,6 @@
       "completion": "Registered confirmatory cells exist; no percentage is written before that."
     },
     {
-      "id": "PH-LIT-ACCESS",
-      "category": "LITERATURE-ACCESS",
-      "section": "sec:related",
-      "clrq": ["CL-RQ1"],
-      "dependsOn": ["AUTH-LIT"],
-      "completion": "Either the full text is obtained through the institution or the specific negative comparison is not made."
-    },
-    {
       "id": "PH-STAT-N",
       "category": "PUBLICATION-DECISION",
       "section": "sec:setup",
@@ -108,7 +100,24 @@
     }
   ],
   "citations": [
-    "tretmans1996", "chow1978", "fujiwara1991", "petrenko2016", "jia2011",
-    "yang2025", "li2021", "alur1994", "jcgm100", "jcgm106", "arinc615a3", "arinc6451"
+    "tretmans1996", "petrenko2016", "jia2011", "yang2025", "sampath1998",
+    "chanthery2009", "hu2020", "miao2025", "koehl2023", "fraenzle2026",
+    "chanthery2019", "efkemann2011", "sartaj2021", "marques2021", "gruen2009",
+    "arcuri2011", "jcgm100", "jcgm106", "arinc615a3", "arinc6451"
+  ],
+  "citationEvidence": [
+    {"bibKey": "sampath1998", "sourceId": "DOI:10.1109/9.701089", "evidenceIds": ["EVID-2026-001", "EVID-2026-002"], "claim": "active diagnosis already integrates supervision and diagnosis"},
+    {"bibKey": "chanthery2009", "sourceId": "DOI:10.3182/20090630-4-ES-2003.00252", "evidenceIds": ["EVID-2026-003", "EVID-2026-005"], "claim": "conditional active plans and cost-aware choice are prior art"},
+    {"bibKey": "hu2020", "sourceId": "DOI:10.1109/TAC.2020.2970011", "evidenceIds": ["EVID-2026-028", "EVID-2026-029", "EVID-2026-030"], "claim": "diagnostic-state feedback and stop-free online control predate CL-TAV"},
+    {"bibKey": "miao2025", "sourceId": "DOI:10.1109/TASE.2025.3531787", "evidenceIds": ["EVID-2026-013", "EVID-2026-014", "EVID-2026-015", "EVID-2026-038"], "claim": "time-interval active diagnosis controls events and timing under a different authority"},
+    {"bibKey": "koehl2023", "sourceId": "DOI:10.1145/3597209", "evidenceIds": ["EVID-2026-040", "EVID-2026-041", "EVID-2026-042", "EVID-2026-044", "EVID-2026-045"], "claim": "passive full-history diagnosis handles bounded latency, clock mapping and reordered observations under explicit assumptions"},
+    {"bibKey": "fraenzle2026", "sourceId": "DOI:10.1145/3749848", "evidenceIds": ["EVID-2026-017", "EVID-2026-018", "EVID-2026-019"], "claim": "delay-aware monitoring and non-adaptive active testing use a different observation model and objective"},
+    {"bibKey": "chanthery2019", "sourceId": "DOI:10.1109/TAES.2019.2923344", "evidenceIds": ["EVID-2026-022", "EVID-2026-023", "EVID-2026-024"], "claim": "aerospace procedure generation exists and exposes observability/model-mismatch localization risk"},
+    {"bibKey": "efkemann2011", "sourceId": "DOI:10.1109/ICSTW.2011.72", "evidenceIds": ["EVID-2026-053", "EVID-2026-054", "EVID-2026-055", "EVID-2026-056"], "claim": "configuration-aware avionics MBT is context, not measured 615A evidence"},
+    {"bibKey": "sartaj2021", "sourceId": "DOI:10.1007/s10270-020-00844-z", "evidenceIds": ["EVID-2026-071", "EVID-2026-072", "EVID-2026-073", "EVID-2026-074", "EVID-2026-075"], "claim": "cockpit-display evaluation illustrates repeated-observation and shared-oracle threats"},
+    {"bibKey": "marques2021", "sourceId": "DOI:10.1109/MAES.2020.3040511", "evidenceIds": ["EVID-2026-067", "EVID-2026-068", "EVID-2026-069", "EVID-2026-070"], "claim": "F-LAS proposes traceable loading requirements and procedures without executing them"},
+    {"bibKey": "jia2011", "sourceId": "DOI:10.1109/TSE.2010.62", "evidenceIds": ["EVID-2026-076", "EVID-2026-077"], "claim": "mutation score excludes confirmed equivalents and equivalence work remains visible"},
+    {"bibKey": "gruen2009", "sourceId": "DOI:10.1109/ICSTW.2009.37", "evidenceIds": ["EVID-2026-078", "EVID-2026-079", "EVID-2026-080"], "claim": "equivalent and undecided mutant classes and selection bias constrain evaluation"},
+    {"bibKey": "arcuri2011", "sourceId": "DOI:10.1145/1985793.1985795", "evidenceIds": ["EVID-2026-063", "EVID-2026-064", "EVID-2026-065"], "claim": "randomized comparisons require registered units, repetitions and effect reporting when applicable"}
   ]
 }

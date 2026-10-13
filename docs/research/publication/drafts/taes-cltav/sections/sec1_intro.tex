@@ -2,11 +2,14 @@
 \label{sec:intro}
 
 Airborne software loaders exchange INFORMATION and UPLOAD traffic under declared
-timers, file identities and operator actions~\cite{arinc615a3}. A missed or late
+timers, file identities and operator actions~\cite{arinc615a3}. Loading
+frameworks also treat identity, integrity, interrupted loading and version
+conflict as connected engineering concerns~\cite{marques2021}. A missed or late
 acknowledgement, a mismatched Load File, or an unresolved integrity check can
-be a protocol failure, a measurement artefact, or an unconfirmed injection.
-The engineering question is whether a later legal action can be chosen from
-residual ambiguity under a finite resource.
+therefore be product behaviour, a capture or clock limitation, a configuration
+discrepancy, or an unconfirmed injection. The engineering problem is not merely
+to collect more tests, but to decide whether the current evidence is usable and
+which later protocol-legal action is worth its finite resource.
 
 This paper studies Closed-Loop Test--Analysis Verification (CL-TAV). Three
 reader questions are used throughout:
@@ -21,16 +24,24 @@ Prep/Recover and exclusive stops affect those comparisons?
 \end{itemize}
 
 Two propositions are evaluated, not asserted as established results. C1 is
-uncertainty-aware interpretation, timing verdicts and compatible update
-(CL-RQ1). C2 is feeding residual ambiguity into the next exclusive action with
-explicit resource, Prep/Recover, \texttt{ERROR} and stop rules (CL-RQ2/3).
+mutual consistency of uncertainty-aware interpretation, timing verdict and
+whole-history compatible update in the declared finite domain; its retention
+statement is conditional on model, ownership, pairing and conservative
+observation assumptions. C2 feeds residual ambiguity into a prior-free,
+one-step worst-case candidate-set choice among feasible affordable tests, with
+explicit Prep/Recover, \texttt{ERROR}, resource and stop rules. C2 is not a
+global multi-step optimum and need not shrink the candidate set on every
+outcome.
 
-Requirements-based generation organises stimuli from obligations~\cite{yang2025}.
-Conformance relations such as \emph{ioco} generate tests from labelled
-transition systems~\cite{tretmans1996}. FSM covering and mutant killing select
-discriminating sequences~\cite{chow1978,fujiwara1991,petrenko2016,jia2011}.
-Section~\ref{sec:related} compares those stated objects with CL-RQ1--CL-RQ3.
-The comparison is not a proof that those methods cannot be extended.
+Requirements-based generation, conformance testing and mutation adequacy supply
+important test-construction and evaluation tools~\cite{tretmans1996,petrenko2016,jia2011,yang2025}.
+Active diagnosis already closes observation--control loops, while real-time
+diagnosis and testing already address uncertain communication timing
+\cite{sampath1998,hu2020,miao2025,koehl2023,fraenzle2026}. The narrower question
+here is whether the declared 615A action, observation, cost and stop contracts
+form a useful and empirically defensible combination. Section~\ref{sec:related}
+therefore compares stated objects and assumptions; it does not infer novelty
+from different terminology or prove that another method cannot be extended.
 
 The evaluation uses four arms (CL-T, CL-A, CL-TA, CL-LOOP) and three registered
 families (DETECT, LOCATE, ABLATION). Confirmatory numbers are not available.
