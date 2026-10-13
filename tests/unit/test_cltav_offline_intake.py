@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import socket
 import struct
 from copy import deepcopy
@@ -18,6 +19,8 @@ from cltav_offline import pipeline as pipeline_module
 from cltav_offline.corpus import audit_manifest, publish_json, run_corpus
 from cltav_offline.evidence import evidence_errors
 from cltav_offline.events import decode_first_slice_header
+from cltav_offline.models import Ipv4Fragment, PacketRef
+from cltav_offline.network import Ipv4Reassembler
 from cltav_offline.pipeline import IntakeConfig, IntakeError, IntakeResult, run_capture
 
 
@@ -499,3 +502,57 @@ def test_capture_container_variants_and_unsafe_manifest_entries_are_rejected(tmp
         }],
     }
     assert any("unsafe" in item for item in audit_manifest(manifest, corpus))
+
+
+def test_reassembly_key_prevents_cross_interface_id_reuse_and_empty_datagram_is_complete(
+    tmp_path: Path,
+) -> None:
+    def fragment(interface_id: int, offset: int, more: bool, payload: bytes, index: int) -> Ipv4Fragment:
+        reference = PacketRef("SYN-18", index, index * 100, interface_id, 1, len(payload), len(payload), None)
+        return Ipv4Fragment(reference, "10.0.0.1", "10.0.0.2", 77, 17, offset, more, payload)
+
+    reassembler = Ipv4Reassembler()
+    assert reassembler.add(fragment(0, 0, True, b"abcdefgh", 1)) == []
+    assert reassembler.add(fragment(1, 8, False, b"ijkl", 2)) == []
+    records = reassembler.finish()
+    assert len(records) == 2
+    assert all(record.status == "GAPPED" for record in records)
+
+    empty = tmp_path / "empty-ipv4.pcap"
+    empty.write_bytes(_pcap([_ethernet_ipv4(b"", identification=78)]))
+    result = run_capture(empty, capture_id="SYN-18B")
+    assert result.datagrams[0].status == "COMPLETE"
+    assert result.datagrams[0].to_dict()["payloadLength"] == 0
+    assert any(item.code == "TRUNCATED-UDP-HEADER" for item in result.diagnostics)
+
+
+def test_manifest_resolved_identity_and_repeatability_are_enforced(tmp_path: Path) -> None:
+    corpus = tmp_path / "corpus"
+    corpus.mkdir()
+    first = corpus / "one.pcapng"
+    first.write_bytes(_pcapng(_valid_exchange()))
+    second = corpus / "two.pcapng"
+    try:
+        os.link(first, second)
+    except OSError as exc:
+        pytest.skip(f"hard-link fixture unavailable: {exc}")
+    import hashlib
+    digest = hashlib.sha256(first.read_bytes()).hexdigest()
+    manifest = {
+        "manifestId": "CLTAV-HISTORICAL-CAPTURES", "manifestVersion": "1.0",
+        "purpose": "EXPLORATORY-DEVELOPMENT-ONLY", "captureCount": 2,
+        "truthBoundary": "not experimental truth",
+        "captures": [
+            {"captureId": "HC-01", "relativePath": "one.pcapng", "byteCount": first.stat().st_size, "sha256": digest,
+             "observationQuality": "UNASSESSED-EXPLORATORY", "labelSource": "FILE-ANNOTATION-NONTRUTH", "rootCause": "UNKNOWN"},
+            {"captureId": "HC-02", "relativePath": "two.pcapng", "byteCount": second.stat().st_size, "sha256": digest,
+             "observationQuality": "UNASSESSED-EXPLORATORY", "labelSource": "FILE-ANNOTATION-NONTRUTH", "rootCause": "UNKNOWN"},
+        ],
+    }
+    assert any("identity is repeated" in item for item in audit_manifest(manifest, corpus))
+
+    capture = tmp_path / "repeatable.pcap"
+    capture.write_bytes(_pcap(_valid_exchange()))
+    first_result = run_capture(capture, capture_id="SYN-19").to_dict(source_commit="7" * 40)
+    second_result = run_capture(capture, capture_id="SYN-19").to_dict(source_commit="7" * 40)
+    assert first_result == second_result
