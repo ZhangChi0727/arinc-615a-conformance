@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:arinc615a:cltav-offline-intake-evidence:1.0",
+  "title": "CL-TAV bounded offline intake evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifactType", "schemaVersion", "evidenceBoundary", "tool", "input",
+    "runParameters", "executionStatus", "counts", "packetRefs", "datagrams",
+    "transfers", "events", "diagnostics"
+  ],
+  "properties": {
+    "artifactType": {"const": "CLTAV-OFFLINE-INTAKE-EVIDENCE"},
+    "schemaVersion": {"const": "1.0"},
+    "evidenceBoundary": {
+      "type": "object",
+      "required": ["purpose", "conformanceVerdict"],
+      "properties": {
+        "purpose": {"const": "EXPLORATORY-DEVELOPMENT-ONLY"},
+        "conformanceVerdict": {"const": "NOT-EVALUATED"}
+      },
+      "additionalProperties": true
+    },
+    "tool": {
+      "type": "object",
+      "required": ["name", "sourceCommit"],
+      "properties": {"name": {"const": "cltav-offline"}, "sourceCommit": {"type": "string", "minLength": 1}},
+      "additionalProperties": true
+    },
+    "input": {
+      "type": "object",
+      "required": ["captureId", "byteCount", "sha256"],
+      "properties": {
+        "captureId": {"type": "string", "minLength": 1},
+        "byteCount": {"type": "integer", "minimum": 0},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": true
+    },
+    "runParameters": {"type": "object"},
+    "executionStatus": {"enum": ["COMPLETE", "COMPLETE-WITH-CONTROLLED-ISSUES", "FATAL-INPUT-ERROR"]},
+    "counts": {"type": "object"},
+    "packetRefs": {"type": "array"},
+    "datagrams": {"type": "array"},
+    "transfers": {"type": "array"},
+    "events": {"type": "array"},
+    "diagnostics": {"type": "array"}
+  }
+}
