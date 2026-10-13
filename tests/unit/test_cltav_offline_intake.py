@@ -492,12 +492,13 @@ def test_capture_container_variants_and_unsafe_manifest_entries_are_rejected(tmp
 
     corpus = tmp_path / "corpus"
     corpus.mkdir()
+    outside_relative_path = (tmp_path / "outside.pcapng").resolve().as_posix()
     manifest = {
         "manifestId": "CLTAV-HISTORICAL-CAPTURES", "manifestVersion": "1.0",
         "purpose": "EXPLORATORY-DEVELOPMENT-ONLY", "captureCount": 1,
         "truthBoundary": "not experimental truth",
         "captures": [{
-            "captureId": "HC-01", "relativePath": "C:/outside.pcapng", "byteCount": 1, "sha256": "0" * 64,
+            "captureId": "HC-01", "relativePath": outside_relative_path, "byteCount": 1, "sha256": "0" * 64,
             "observationQuality": "UNASSESSED-EXPLORATORY", "labelSource": "FILE-ANNOTATION-NONTRUTH", "rootCause": "UNKNOWN",
         }],
     }
