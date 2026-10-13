@@ -14,36 +14,209 @@
     "schemaVersion": {"const": "1.0"},
     "evidenceBoundary": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["purpose", "conformanceVerdict"],
       "properties": {
         "purpose": {"const": "EXPLORATORY-DEVELOPMENT-ONLY"},
-        "conformanceVerdict": {"const": "NOT-EVALUATED"}
-      },
-      "additionalProperties": true
+        "statement": {"type": "string", "minLength": 1},
+        "conformanceVerdict": {"const": "NOT-EVALUATED"},
+        "integrity": {"const": "NOT-EVALUATED"}
+      }
     },
     "tool": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["name", "sourceCommit"],
-      "properties": {"name": {"const": "cltav-offline"}, "sourceCommit": {"type": "string", "minLength": 1}},
-      "additionalProperties": true
+      "properties": {
+        "name": {"const": "cltav-offline"},
+        "version": {"type": "string", "minLength": 1},
+        "sourceCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "contractIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
     },
     "input": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["captureId", "byteCount", "sha256"],
       "properties": {
         "captureId": {"type": "string", "minLength": 1},
         "byteCount": {"type": "integer", "minimum": 0},
-        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-      },
-      "additionalProperties": true
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "container": {"type": "object"}
+      }
     },
-    "runParameters": {"type": "object"},
+    "runParameters": {"$ref": "#/$defs/runParameters"},
     "executionStatus": {"enum": ["COMPLETE", "COMPLETE-WITH-CONTROLLED-ISSUES", "FATAL-INPUT-ERROR"]},
-    "counts": {"type": "object"},
-    "packetRefs": {"type": "array"},
-    "datagrams": {"type": "array"},
-    "transfers": {"type": "array"},
-    "events": {"type": "array"},
-    "diagnostics": {"type": "array"}
+    "counts": {"$ref": "#/$defs/counts"},
+    "packetRefs": {"type": "array", "items": {"$ref": "#/$defs/packetRef"}},
+    "datagrams": {"type": "array", "items": {"$ref": "#/$defs/datagram"}},
+    "transfers": {"type": "array", "items": {"$ref": "#/$defs/transfer"}},
+    "events": {"type": "array", "items": {"$ref": "#/$defs/event"}},
+    "diagnostics": {"type": "array", "items": {"$ref": "#/$defs/diagnostic"}}
+  },
+  "$defs": {
+    "runParameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxPacketBytes", "maxContainerBlockBytes", "maxActiveDatagrams",
+        "maxDatagramBytes", "maxFragmentsPerDatagram", "maxActiveTransfers",
+        "maxTransferRecords", "maxTransferBytes", "maxEvidenceRecords", "tftpServicePort"
+      ],
+      "properties": {
+        "maxPacketBytes": {"type": "integer", "minimum": 1},
+        "maxContainerBlockBytes": {"type": "integer", "minimum": 1},
+        "maxActiveDatagrams": {"type": "integer", "minimum": 1},
+        "maxDatagramBytes": {"type": "integer", "minimum": 1, "maximum": 65535},
+        "maxFragmentsPerDatagram": {"type": "integer", "minimum": 1},
+        "maxActiveTransfers": {"type": "integer", "minimum": 1},
+        "maxTransferRecords": {"type": "integer", "minimum": 1},
+        "maxTransferBytes": {"type": "integer", "minimum": 1},
+        "maxEvidenceRecords": {"type": "integer", "minimum": 1},
+        "tftpServicePort": {"type": "integer", "minimum": 1, "maximum": 65535}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["containerPackets", "evidencePacketRefs", "datagrams", "transfers", "events", "diagnostics"],
+      "properties": {
+        "containerPackets": {"type": "integer", "minimum": 0},
+        "evidencePacketRefs": {"type": "integer", "minimum": 0},
+        "datagrams": {"type": "integer", "minimum": 0},
+        "transfers": {"type": "integer", "minimum": 0},
+        "events": {"type": "integer", "minimum": 0},
+        "diagnostics": {"type": "integer", "minimum": 0}
+      }
+    },
+    "timestamp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ticks", "ticksPerSecond", "offsetSeconds", "clockDomain", "accuracy"],
+      "properties": {
+        "ticks": {"type": "integer", "minimum": 0},
+        "ticksPerSecond": {"type": "integer", "minimum": 1},
+        "offsetSeconds": {"type": "integer"},
+        "clockDomain": {"type": "string", "minLength": 1},
+        "accuracy": {"const": "UNKNOWN"}
+      }
+    },
+    "packetRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packetRefId", "captureId", "packetIndex", "containerOffset", "interfaceId", "linkType", "capturedLength", "originalLength", "timestamp"],
+      "properties": {
+        "packetRefId": {"type": "string", "minLength": 1},
+        "captureId": {"type": "string", "minLength": 1},
+        "packetIndex": {"type": "integer", "minimum": 1},
+        "containerOffset": {"type": "integer", "minimum": 0},
+        "interfaceId": {"type": "integer", "minimum": 0},
+        "linkType": {"type": "integer", "minimum": 0},
+        "capturedLength": {"type": "integer", "minimum": 0},
+        "originalLength": {"type": "integer", "minimum": 0},
+        "timestamp": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/timestamp"}]}
+      }
+    },
+    "range": {
+      "type": "array",
+      "prefixItems": [{"type": "integer", "minimum": 0}, {"type": "integer", "minimum": 0}],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "datagram": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["datagramId", "captureId", "interfaceId", "source", "destination", "protocol", "ipv4Identification", "status", "failureCode", "payloadLength", "packetRefIds", "fragmentRanges", "missingRanges", "conflictRanges", "vlanTags"],
+      "properties": {
+        "datagramId": {"type": "string", "minLength": 1},
+        "captureId": {"type": "string", "minLength": 1},
+        "interfaceId": {"type": "integer", "minimum": 0},
+        "source": {"type": "string", "minLength": 1},
+        "destination": {"type": "string", "minLength": 1},
+        "protocol": {"type": "integer", "minimum": 0, "maximum": 255},
+        "ipv4Identification": {"type": "integer", "minimum": 0, "maximum": 65535},
+        "status": {"enum": ["COMPLETE", "GAPPED", "CONFLICT"]},
+        "failureCode": {"type": ["string", "null"]},
+        "payloadLength": {"type": ["integer", "null"], "minimum": 0},
+        "packetRefIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "fragmentRanges": {"type": "array", "items": {"$ref": "#/$defs/range"}},
+        "missingRanges": {"type": "array", "items": {"$ref": "#/$defs/range"}},
+        "conflictRanges": {"type": "array", "items": {"$ref": "#/$defs/range"}},
+        "vlanTags": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 4095}}
+      }
+    },
+    "endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["address", "port"],
+      "properties": {
+        "address": {"type": "string", "minLength": 1},
+        "port": {"type": ["integer", "null"], "minimum": 1, "maximum": 65535}
+      }
+    },
+    "transfer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transferId", "captureId", "requestKind", "filename", "mode", "clientEndpoint", "serverEndpoint", "associationStatus", "reconstructionStatus", "blockSize", "terminalBlock", "packetRefIds", "datagramIds", "diagnosticCodes", "completePayloadLength", "integrity"],
+      "properties": {
+        "transferId": {"type": "string", "minLength": 1},
+        "captureId": {"type": "string", "minLength": 1},
+        "requestKind": {"type": ["string", "null"]},
+        "filename": {"type": ["string", "null"]},
+        "mode": {"type": ["string", "null"]},
+        "clientEndpoint": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/endpoint"}]},
+        "serverEndpoint": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/endpoint"}]},
+        "associationStatus": {"type": "string", "minLength": 1},
+        "reconstructionStatus": {"enum": ["INCOMPLETE", "COMPLETE", "GAPPED", "CONFLICT", "ERROR"]},
+        "blockSize": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "value"],
+          "properties": {
+            "status": {"enum": ["ACCEPTED", "DEFAULTED", "UNKNOWN"]},
+            "value": {"type": ["integer", "null"], "minimum": 1}
+          }
+        },
+        "terminalBlock": {"type": ["integer", "null"], "minimum": 1, "maximum": 65535},
+        "packetRefIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "datagramIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "diagnosticCodes": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "completePayloadLength": {"type": ["integer", "null"], "minimum": 0},
+        "integrity": {"const": "NOT-EVALUATED"}
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eventId", "eventType", "layer", "serviceScope", "fileRole", "transferId", "sourceDatagramIds", "sourcePacketRefIds", "fields", "evidenceStatus", "conformanceVerdict"],
+      "properties": {
+        "eventId": {"type": "string", "minLength": 1},
+        "eventType": {"type": "string", "minLength": 1},
+        "layer": {"enum": ["WIRE", "PARSE-RESULT", "APPLICATION", "ENVIRONMENT"]},
+        "serviceScope": {"type": "string", "minLength": 1},
+        "fileRole": {"type": ["string", "null"]},
+        "transferId": {"type": "string", "minLength": 1},
+        "sourceDatagramIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "sourcePacketRefIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "fields": {"type": "object"},
+        "evidenceStatus": {"type": "string", "minLength": 1},
+        "conformanceVerdict": {"const": "NOT-EVALUATED"}
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "stage", "severity", "message"],
+      "properties": {
+        "code": {"type": "string", "minLength": 1},
+        "stage": {"type": "string", "minLength": 1},
+        "severity": {"enum": ["ERROR", "WARNING"]},
+        "message": {"type": "string", "minLength": 1},
+        "packetRefId": {"type": "string", "minLength": 1},
+        "containerOffset": {"type": "integer", "minimum": 0},
+        "detail": {"type": "object"}
+      }
+    }
   }
 }

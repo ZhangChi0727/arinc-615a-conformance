@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import hashlib
-import os
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -24,6 +24,19 @@ class IntakeError(ValueError):
         self.code = code
 
 
+SOURCE_COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
+
+
+def validate_source_commit(value: object) -> str:
+    """Require an immutable Git object ID for every published evidence item."""
+    if not isinstance(value, str) or not SOURCE_COMMIT_RE.fullmatch(value):
+        raise IntakeError(
+            "INVALID-SOURCE-COMMIT",
+            "source commit must be a lowercase 40-character Git object ID",
+        )
+    return value
+
+
 @dataclass(frozen=True)
 class IntakeConfig:
     """Implementation limits, explicitly separate from protocol constants."""
@@ -32,7 +45,9 @@ class IntakeConfig:
     max_container_block_bytes: int = 4 * 1024 * 1024
     max_active_datagrams: int = 128
     max_datagram_bytes: int = 65_535
+    max_fragments_per_datagram: int = 8_192
     max_active_transfers: int = 128
+    max_transfer_records: int = 200_000
     max_transfer_bytes: int = 16 * 1024 * 1024
     max_evidence_records: int = 200_000
     tftp_service_port: int = 69
@@ -43,7 +58,9 @@ class IntakeConfig:
             "maxContainerBlockBytes": self.max_container_block_bytes,
             "maxActiveDatagrams": self.max_active_datagrams,
             "maxDatagramBytes": self.max_datagram_bytes,
+            "maxFragmentsPerDatagram": self.max_fragments_per_datagram,
             "maxActiveTransfers": self.max_active_transfers,
+            "maxTransferRecords": self.max_transfer_records,
             "maxTransferBytes": self.max_transfer_bytes,
             "maxEvidenceRecords": self.max_evidence_records,
             "tftpServicePort": self.tftp_service_port,
@@ -72,7 +89,8 @@ class IntakeResult:
             record.status != "COMPLETE" for record in self.datagrams
         ) or any(record.reconstruction_status != "COMPLETE" for record in self.transfers)
 
-    def to_dict(self, *, source_commit: str = "UNSPECIFIED") -> dict[str, Any]:
+    def to_dict(self, *, source_commit: str) -> dict[str, Any]:
+        source_commit = validate_source_commit(source_commit)
         return {
             "artifactType": "CLTAV-OFFLINE-INTAKE-EVIDENCE",
             "schemaVersion": "1.0",
@@ -154,12 +172,14 @@ def run_capture(
     reassembler = Ipv4Reassembler(
         max_active_datagrams=config.max_active_datagrams,
         max_datagram_bytes=config.max_datagram_bytes,
+        max_fragments_per_datagram=config.max_fragments_per_datagram,
     )
     transfers = TftpReconstructor(
         capture_id=capture_id,
         service_port=config.tftp_service_port,
         max_active_transfers=config.max_active_transfers,
         max_transfer_bytes=config.max_transfer_bytes,
+        max_transfer_records=config.max_transfer_records,
     )
     result = IntakeResult(
         capture_id=capture_id,

@@ -150,15 +150,17 @@ class TftpReconstructor:
         service_port: int = 69,
         max_active_transfers: int = 128,
         max_transfer_bytes: int = 16 * 1024 * 1024,
+        max_transfer_records: int = 200_000,
     ) -> None:
         if not 1 <= service_port <= 65_535:
             raise ValueError("service_port must be in 1..65535")
-        if max_active_transfers < 1 or max_transfer_bytes < 1:
+        if max_active_transfers < 1 or max_transfer_bytes < 1 or max_transfer_records < 1:
             raise ValueError("transfer limits must be positive")
         self.capture_id = capture_id
         self.service_port = service_port
         self.max_active_transfers = max_active_transfers
         self.max_transfer_bytes = max_transfer_bytes
+        self.max_transfer_records = max_transfer_records
         self._sessions: list[_Session] = []
         self._records: list[TransferRecord] = []
         self._sequence = 0
@@ -206,7 +208,7 @@ class TftpReconstructor:
         """Close every retained session without treating missing evidence as success."""
         for session in self._sessions:
             record = session.record
-            if record.reconstruction_status in {"CONFLICT", "ERROR", "GAPPED"}:
+            if record.reconstruction_status in {"COMPLETE", "CONFLICT", "ERROR", "GAPPED"}:
                 continue
             if session.terminal_error:
                 record.reconstruction_status = "ERROR"
@@ -227,16 +229,29 @@ class TftpReconstructor:
 
     def _new_request(self, udp: UdpDatagram, message: TftpMessage) -> None:
         assert message.kind in REQUEST_KINDS
+        if len(self._records) >= self.max_transfer_records:
+            self.diagnostics.append(Diagnostic(
+                "RESOURCE-TRANSFER-RECORD-LIMIT", "TFTP",
+                "configured transfer-record limit reached; request was not reconstructed",
+                packet_ref_id=udp.datagram.packet_refs[-1].id,
+                detail={"limit": self.max_transfer_records},
+            ))
+            return
         endpoint = (udp.datagram.source, udp.source_port)
         server_host = udp.datagram.destination
         for existing in self._sessions:
-            if existing.client == endpoint and existing.server_host == server_host and existing.server_tid is None:
+            if (
+                existing.record.reconstruction_status == "INCOMPLETE"
+                and existing.client == endpoint and existing.server_host == server_host
+                and existing.server_tid is None
+            ):
                 existing.record.reconstruction_status = "GAPPED"
                 _append_unique(existing.record.diagnostics, "TFTP-SESSION-REUSED")
         if len(self._sessions) >= self.max_active_transfers:
             evicted = self._sessions.pop(0)
-            evicted.record.reconstruction_status = "GAPPED"
-            _append_unique(evicted.record.diagnostics, "RESOURCE-ACTIVE-TRANSFER-LIMIT")
+            if evicted.record.reconstruction_status == "INCOMPLETE":
+                evicted.record.reconstruction_status = "GAPPED"
+                _append_unique(evicted.record.diagnostics, "RESOURCE-ACTIVE-TRANSFER-LIMIT")
         self._sequence += 1
         options = dict(message.fields["options"])
         defaulted = "blksize" not in options
@@ -365,6 +380,12 @@ class TftpReconstructor:
                 self._conflict(session, "CONFLICTING-TFTP-TERMINATOR")
                 return
             session.terminal_block = block
+            if all(number in session.blocks for number in range(1, block + 1)):
+                session.record.reconstruction_status = "COMPLETE"
+                session.record.terminal_block = block
+                session.record.complete_payload = b"".join(
+                    session.blocks[number].data for number in range(1, block + 1)
+                )
 
     def _conflict(self, session: _Session, code: str) -> None:
         session.record.reconstruction_status = "CONFLICT"

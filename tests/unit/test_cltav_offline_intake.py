@@ -14,9 +14,11 @@ from jsonschema import Draft202012Validator
 from cltav_offline.capture import CaptureReader
 from cltav_offline.cli import main as cli_main
 from cltav_offline import corpus as corpus_module
+from cltav_offline import pipeline as pipeline_module
 from cltav_offline.corpus import audit_manifest, publish_json, run_corpus
 from cltav_offline.evidence import evidence_errors
-from cltav_offline.pipeline import IntakeConfig, IntakeError, run_capture
+from cltav_offline.events import decode_first_slice_header
+from cltav_offline.pipeline import IntakeConfig, IntakeError, IntakeResult, run_capture
 
 
 def _ethernet_ipv4(
@@ -324,3 +326,172 @@ def test_pcapng_sections_keep_clock_domains_and_interface_identity_distinct(tmp_
     assert [item.ref.interface_id for item in packets] == [0, 1]
     assert packets[0].ref.timestamp is not None and packets[1].ref.timestamp is not None
     assert packets[0].ref.timestamp.clock_domain != packets[1].ref.timestamp.clock_domain
+
+
+def test_reassembly_fragment_limit_and_transfer_record_limit_are_controlled(tmp_path: Path) -> None:
+    payload = _udp(10001, 69, _request(1, "limited.lui"))
+    first, second = payload[:16], payload[16:]
+    fragmented = tmp_path / "fragment-limit.pcap"
+    fragmented.write_bytes(_pcap([
+        _ethernet_ipv4(first, identification=60, more_fragments=True),
+        _ethernet_ipv4(second, identification=60, offset_bytes=16),
+    ]))
+    fragment_limited = run_capture(
+        fragmented,
+        capture_id="SYN-10",
+        config=IntakeConfig(max_fragments_per_datagram=1),
+    )
+    assert [item.status for item in fragment_limited.datagrams] == ["GAPPED"]
+    assert fragment_limited.datagrams[0].failure_code == "RESOURCE-FRAGMENT-COUNT-LIMIT"
+
+    requests = tmp_path / "transfer-limit.pcap"
+    requests.write_bytes(_pcap([
+        _ethernet_ipv4(_udp(10020, 69, _request(1, "one.lui")), identification=61),
+        _ethernet_ipv4(_udp(10021, 69, _request(1, "two.lui")), identification=62),
+    ]))
+    transfer_limited = run_capture(
+        requests,
+        capture_id="SYN-11",
+        config=IntakeConfig(max_transfer_records=1),
+    )
+    assert len(transfer_limited.transfers) == 1
+    assert any(item.code == "RESOURCE-TRANSFER-RECORD-LIMIT" for item in transfer_limited.diagnostics)
+    assert transfer_limited.has_controlled_issue is True
+
+
+def test_invalid_provenance_and_fatal_container_never_replace_existing_output(tmp_path: Path) -> None:
+    output = tmp_path / "evidence.json"
+    output.write_text("previous evidence", encoding="utf-8")
+    valid = tmp_path / "valid.pcap"
+    valid.write_bytes(_pcap(_valid_exchange()))
+    assert cli_main([
+        "inspect", "--input", str(valid), "--capture-id", "SYN-12", "--output", str(output),
+        "--source-commit", "not-a-git-object",
+    ]) == 1
+    assert output.read_text(encoding="utf-8") == "previous evidence"
+
+    truncated = tmp_path / "truncated.pcap"
+    truncated.write_bytes(_pcap(_valid_exchange())[:-3])
+    assert cli_main([
+        "inspect", "--input", str(truncated), "--capture-id", "SYN-12", "--output", str(output),
+        "--source-commit", "4" * 40,
+    ]) == 1
+    assert output.read_text(encoding="utf-8") == "previous evidence"
+
+
+def test_input_identity_change_is_fatal_and_invalid_source_is_not_publishable(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    capture = tmp_path / "valid.pcap"
+    capture.write_bytes(_pcap(_valid_exchange()))
+    actual_identity = pipeline_module.input_identity(capture)
+    calls = 0
+
+    def changing_identity(path: Path) -> tuple[int, str]:
+        nonlocal calls
+        calls += 1
+        return actual_identity if calls == 1 else (actual_identity[0] + 1, actual_identity[1])
+
+    monkeypatch.setattr(pipeline_module, "input_identity", changing_identity)
+    with pytest.raises(IntakeError) as caught:
+        run_capture(capture, capture_id="SYN-13")
+    assert caught.value.code == "INPUT-IDENTITY-CHANGED"
+
+    evidence = IntakeResult(
+        capture_id="SYN-13", byte_count=0, sha256="0" * 64, config=IntakeConfig(), capture_metadata={}
+    )
+    with pytest.raises(IntakeError) as invalid_commit:
+        evidence.to_dict(source_commit="UNSPECIFIED")
+    assert invalid_commit.value.code == "INVALID-SOURCE-COMMIT"
+
+
+def test_evidence_schema_requires_immutable_source_commit(tmp_path: Path) -> None:
+    capture = tmp_path / "valid.pcap"
+    capture.write_bytes(_pcap(_valid_exchange()))
+    evidence = run_capture(capture, capture_id="SYN-14").to_dict(source_commit="5" * 40)
+    evidence["tool"]["sourceCommit"] = "5" * 39
+    assert any("sourceCommit" in item for item in evidence_errors(evidence))
+    schema_path = Path(__file__).resolve().parents[2] / "configs/engineering/cltav_offline_intake_evidence.schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    assert list(Draft202012Validator(schema).iter_errors(evidence))
+
+
+def test_production_evidence_validation_rejects_count_and_provenance_mutations(tmp_path: Path) -> None:
+    capture = tmp_path / "valid.pcap"
+    capture.write_bytes(_pcap(_valid_exchange()))
+    evidence = run_capture(capture, capture_id="SYN-15").to_dict(source_commit="6" * 40)
+    count_mutation = deepcopy(evidence)
+    count_mutation["counts"]["transfers"] = 0
+    assert any("counts.transfers" in item for item in evidence_errors(count_mutation))
+    provenance_mutation = deepcopy(evidence)
+    provenance_mutation["events"][0]["transferId"] = "TR-NOT-PRESENT"
+    assert any("known transfer" in item for item in evidence_errors(provenance_mutation))
+    option_mutation = deepcopy(evidence)
+    option_mutation["transfers"][0]["blockSize"] = {"status": "UNKNOWN", "value": 512}
+    assert any("UNKNOWN transfer blockSize" in item for item in evidence_errors(option_mutation))
+
+
+def test_tftp_tid_binding_duplicate_and_missing_block_behaviour(tmp_path: Path) -> None:
+    records = [
+        _ethernet_ipv4(_udp(10030, 69, _request(2, "write.lur")), identification=70),
+        _ethernet_ipv4(_udp(40100, 10030, _ack(0)), source="10.0.0.2", destination="10.0.0.1", identification=71),
+        _ethernet_ipv4(_udp(10030, 40100, _data(1, b"abc")), identification=72),
+        _ethernet_ipv4(_udp(10030, 40100, _data(1, b"abc")), identification=73),
+        _ethernet_ipv4(_udp(10031, 69, _request(1, "missing.lci")), identification=74),
+        _ethernet_ipv4(_udp(40101, 10031, _data(2, b"x")), source="10.0.0.2", destination="10.0.0.1", identification=75),
+    ]
+    capture = tmp_path / "tid-and-gaps.pcap"
+    capture.write_bytes(_pcap(records))
+    result = run_capture(capture, capture_id="SYN-16")
+    complete, missing = result.transfers
+    assert complete.request_kind == "WRQ"
+    assert complete.server_endpoint == ("10.0.0.2", 40100)
+    assert complete.reconstruction_status == "COMPLETE"
+    assert complete.complete_payload == b"abc"
+    assert missing.reconstruction_status == "GAPPED"
+    assert "MISSING-TFTP-DATA-BLOCK" in missing.diagnostics
+
+
+def test_bounded_first_slice_roles_preserve_raw_contract_semantics() -> None:
+    base = (20).to_bytes(4, "big") + b"A1"
+    headers = {
+        "LCI": base + b"\x00\x00\x00",
+        "LCL": base + b"\x00\x02",
+        "LCS": base + b"\x00\x01\x00\x02\x00\x03\xff\xff\x00",
+        "LUI": base + b"\x00\x00\x00",
+        "LUR": base + b"\x00\x02",
+        "LUS": base + b"\x00\x04\x00\x00\x01\x00\x02\xff\xff75%",
+    }
+    parsed = {role: decode_first_slice_header(role, payload) for role, payload in headers.items()}
+    assert all(item["parseStatus"] == "PARSED" for item in parsed.values())
+    assert parsed["LCI"]["decodedFields"]["protocolVersion"] == "A1"
+    assert parsed["LCS"]["decodedFields"]["exceptionTimer"]["present"] is True
+    assert parsed["LCS"]["decodedFields"]["exceptionTimer"]["useConditionSatisfied"] is True
+    assert parsed["LCS"]["decodedFields"]["estimatedTime"]["status"] == "NOT-PROVIDED"
+    assert parsed["LUS"]["decodedFields"]["loadListRatio"]["rawAscii"] == "75%"
+
+
+def test_capture_container_variants_and_unsafe_manifest_entries_are_rejected(tmp_path: Path) -> None:
+    little = _pcap(_valid_exchange()[:1])
+    big = b"\xa1\xb2\xc3\xd4" + struct.pack(">HHIIII", 2, 4, 0, 0, 65535, 1)
+    packet = _valid_exchange()[0]
+    big += struct.pack(">IIII", 1, 1, len(packet), len(packet)) + packet
+    big_capture = tmp_path / "big.pcap"
+    big_capture.write_bytes(big)
+    result = run_capture(big_capture, capture_id="SYN-17")
+    assert result.capture_metadata["byteOrder"] == "BIG"
+    assert result.packet_refs[0].timestamp is not None
+    assert result.packet_refs[0].timestamp.ticks_per_second == 1_000_000
+
+    corpus = tmp_path / "corpus"
+    corpus.mkdir()
+    manifest = {
+        "manifestId": "CLTAV-HISTORICAL-CAPTURES", "manifestVersion": "1.0",
+        "purpose": "EXPLORATORY-DEVELOPMENT-ONLY", "captureCount": 1,
+        "truthBoundary": "not experimental truth",
+        "captures": [{
+            "captureId": "HC-01", "relativePath": "C:/outside.pcapng", "byteCount": 1, "sha256": "0" * 64,
+            "observationQuality": "UNASSESSED-EXPLORATORY", "labelSource": "FILE-ANNOTATION-NONTRUTH", "rootCause": "UNKNOWN",
+        }],
+    }
+    assert any("unsafe" in item for item in audit_manifest(manifest, corpus))

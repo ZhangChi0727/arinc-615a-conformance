@@ -4,13 +4,15 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
+import subprocess
 import sys
 from pathlib import Path
 
 from . import __version__
 from .corpus import publish_json, run_corpus
 from .evidence import evidence_errors
-from .pipeline import IntakeConfig, IntakeError, run_capture
+from .pipeline import IntakeConfig, IntakeError, run_capture, validate_source_commit
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -41,16 +43,19 @@ def main(argv: list[str] | None = None) -> int:
         max_container_block_bytes=args.max_container_block_bytes,
         max_active_datagrams=args.max_active_datagrams,
         max_datagram_bytes=args.max_datagram_bytes,
+        max_fragments_per_datagram=args.max_fragments_per_datagram,
         max_active_transfers=args.max_active_transfers,
+        max_transfer_records=args.max_transfer_records,
         max_transfer_bytes=args.max_transfer_bytes,
         max_evidence_records=args.max_evidence_records,
         tftp_service_port=args.tftp_service_port,
     )
     try:
+        source_commit = validate_source_commit(args.source_commit)
         if args.command == "inspect":
             _validate_single_output(args.input, args.output)
             result = run_capture(args.input, capture_id=args.capture_id, config=config)
-            data = result.to_dict(source_commit=args.source_commit)
+            data = result.to_dict(source_commit=source_commit)
             errors = evidence_errors(data)
             if errors:
                 raise IntakeError("EVIDENCE-SCHEMA-ERROR", "; ".join(errors))
@@ -62,7 +67,7 @@ def main(argv: list[str] | None = None) -> int:
             corpus_root=args.corpus_root,
             output_dir=args.output_dir,
             config=config,
-            source_commit=args.source_commit,
+            source_commit=source_commit,
         )
         controlled = any(row["executionStatus"] != "COMPLETE" for row in summary["captures"])
         print(
@@ -76,7 +81,21 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _source_commit_default() -> str:
-    return os.environ.get("GITHUB_SHA", "UNSPECIFIED")
+    candidate = os.environ.get("GITHUB_SHA")
+    if candidate:
+        return candidate.strip().lower()
+    try:
+        completed = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return "UNSPECIFIED"
+    value = completed.stdout.strip().lower()
+    return value if re.fullmatch(r"[0-9a-f]{40}", value) else "UNSPECIFIED"
 
 
 def _add_limits(parser: argparse.ArgumentParser) -> None:
@@ -85,7 +104,9 @@ def _add_limits(parser: argparse.ArgumentParser) -> None:
     limits.add_argument("--max-container-block-bytes", type=int, default=4 * 1024 * 1024)
     limits.add_argument("--max-active-datagrams", type=int, default=128)
     limits.add_argument("--max-datagram-bytes", type=int, default=65_535)
+    limits.add_argument("--max-fragments-per-datagram", type=int, default=8_192)
     limits.add_argument("--max-active-transfers", type=int, default=128)
+    limits.add_argument("--max-transfer-records", type=int, default=200_000)
     limits.add_argument("--max-transfer-bytes", type=int, default=16 * 1024 * 1024)
     limits.add_argument("--max-evidence-records", type=int, default=200_000)
     limits.add_argument("--tftp-service-port", type=int, default=69)

@@ -2,16 +2,25 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import os
+import re
 import shutil
 import uuid
 from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any
 
 from .evidence import evidence_errors
-from .pipeline import IntakeConfig, IntakeError, input_identity, run_capture
+from .pipeline import (
+    IntakeConfig,
+    IntakeError,
+    input_identity,
+    run_capture,
+    validate_source_commit,
+)
+
+
+_ABSOLUTE_PATH_RE = re.compile(r"(?:^|[\s\"'])((?:[A-Za-z]:[\\/])|/(?:[^\s\"']+))")
 
 
 def safe_relative_path(value: object) -> PurePosixPath | None:
@@ -159,6 +168,7 @@ def run_corpus(
     source_commit: str,
 ) -> dict[str, Any]:
     """Audit then process every declared corpus input into one staged directory."""
+    source_commit = validate_source_commit(source_commit)
     manifest = load_and_audit_manifest(manifest_path, corpus_root)
     root = corpus_root.resolve(strict=True)
     target = output_dir.resolve(strict=False)
@@ -170,6 +180,8 @@ def run_corpus(
         raise IntakeError("UNSAFE-OUTPUT-PATH", "corpus output must not be inside its input root")
     if target.exists() and target.is_symlink():
         raise IntakeError("UNSAFE-OUTPUT-PATH", "corpus output directory must not be a symbolic link")
+    if target.exists() and not target.is_dir():
+        raise IntakeError("UNSAFE-OUTPUT-PATH", "corpus output target must be a directory")
     parent = target.parent
     parent.mkdir(parents=True, exist_ok=True)
     stage = parent / f".{target.name}.staging-{uuid.uuid4().hex}"
@@ -285,5 +297,17 @@ def _failure_evidence(
         "datagrams": [],
         "transfers": [],
         "events": [],
-        "diagnostics": [{"code": error.code, "stage": "INPUT", "message": str(error)}],
+        "diagnostics": [{
+            "code": error.code,
+            "stage": "INPUT",
+            "message": _public_error_message(error),
+        }],
     }
+
+
+def _public_error_message(error: IntakeError) -> str:
+    """Keep a stable cause without publishing a caller's local filesystem path."""
+    message = str(error)
+    if error.code == "INPUT-READ-ERROR" or _ABSOLUTE_PATH_RE.search(message):
+        return "the declared capture input could not be read"
+    return message

@@ -124,6 +124,7 @@ class _Accumulator:
     ranges: set[tuple[int, int]] = field(default_factory=set)
     terminal_end: int | None = None
     vlan_tags: tuple[int, ...] = ()
+    fragment_count: int = 0
 
     @property
     def key(self) -> tuple[str, int, str, str, int, int]:
@@ -147,11 +148,17 @@ class Ipv4Reassembler:
         *,
         max_active_datagrams: int = 128,
         max_datagram_bytes: int = 65_535,
+        max_fragments_per_datagram: int = 8_192,
     ) -> None:
-        if max_active_datagrams < 1 or max_datagram_bytes < 1:
+        if (
+            max_active_datagrams < 1
+            or max_datagram_bytes < 1
+            or max_fragments_per_datagram < 1
+        ):
             raise ValueError("reassembly limits must be positive")
         self.max_active_datagrams = max_active_datagrams
         self.max_datagram_bytes = min(max_datagram_bytes, 65_535)
+        self.max_fragments_per_datagram = max_fragments_per_datagram
         self._active: OrderedDict[tuple[str, int, str, str, int, int], _Accumulator] = OrderedDict()
         self._sequence = 0
 
@@ -170,6 +177,13 @@ class Ipv4Reassembler:
             self._active.move_to_end(key)
         start = fragment.fragment_offset
         end = start + len(fragment.payload)
+        accumulator.fragment_count += 1
+        if accumulator.fragment_count > self.max_fragments_per_datagram:
+            self._active.pop(key, None)
+            accumulator.packet_refs.append(fragment.packet_ref)
+            accumulator.ranges.add((start, end))
+            results.append(self._gapped(accumulator, "RESOURCE-FRAGMENT-COUNT-LIMIT"))
+            return results
         if end > self.max_datagram_bytes:
             self._active.pop(key, None)
             accumulator.packet_refs.append(fragment.packet_ref)

@@ -52,6 +52,9 @@ processing; a change prevents publication.
   protocol and identification. Duplicate bytes are retained once; conflicting
   overlap produces `CONFLICT` without later-byte overwrite. EOF and resource
   eviction produce `GAPPED` with `INCOMPLETE-DATAGRAM` or a resource reason.
+  Per-datagram byte and fragment-count bounds, plus active-datagram bounds,
+  are implementation controls and produce named resource evidence rather than
+  a protocol-timeout conclusion.
 - UDP length must fit the complete IPv4 payload exactly. Checksum presence is
   recorded but checksum validity is `NOT-EVALUATED`.
 - A TFTP session starts from an observed RRQ/WRQ to the configured service
@@ -71,7 +74,11 @@ processing; a change prevents publication.
   conformance conclusion is produced.
 
 All listed numeric bounds are implementation resource limits—not protocol
-timeouts or product requirements—and appear in each output envelope.
+timeouts or product requirements—and appear in each output envelope. The
+envelope is a closed, versioned record contract: publication checks a
+lowercase 40-character Git object ID, configured bounds, declared counts,
+unique identifiers, source-reference closure and the default/accepted/unknown
+block-size rules before replacing an existing artifact.
 
 ## 4. Command line, publication and exit status
 
@@ -89,6 +96,10 @@ cltav-offline corpus --manifest configs/research/cltav_historical_capture_manife
 condition, conflict or incomplete reconstruction; `1` is a fatal invocation,
 identity, input or publication failure. These codes are tool-operation states,
 not ARINC 615A verdict values.
+
+`--source-commit` is a required immutable lowercase 40-character Git object
+ID for publication. The command derives it from `GITHUB_SHA` or `git
+rev-parse HEAD` when possible, but fails closed if neither yields a valid ID.
 
 Single-file output is written to a staged sibling and atomically replaced only
 after JSON validation. Corpus mode stages every per-capture output and its
@@ -149,13 +160,13 @@ does not modify manuscript sources, PDF or research claims.
 ## 3. 重建规则与限额
 
 - Ethernet（最多四层 VLAN）与 IPv4 按声明偏移解码；不支持 linktype、短头、非法 IHL／长度和非法非末分片长度均产生具名诊断。
-- IPv4 重建键包含捕获、接口、源、目的、协议与 identification。相同字节仅保留一次；冲突重叠产生 `CONFLICT`，不得以后续字节覆盖。EOF 与资源驱逐产生带 `INCOMPLETE-DATAGRAM` 或资源原因的 `GAPPED`。
+- IPv4 重建键包含捕获、接口、源、目的、协议与 identification。相同字节仅保留一次；冲突重叠产生 `CONFLICT`，不得以后续字节覆盖。EOF 与资源驱逐产生带 `INCOMPLETE-DATAGRAM` 或资源原因的 `GAPPED`。每数据报字节与分片数量上限，以及活跃数据报上限，都是实现控制；触发时产生具名资源证据，而不是协议超时结论。
 - UDP 长度必须精确落在完整 IPv4 载荷内。记录 checksum 是否存在，但 checksum 有效性为 `NOT-EVALUATED`。
 - TFTP 会话从指向配置服务端口的已观察 RRQ／WRQ 开始，再由匹配的反向包绑定服务端选择的 TID。不得假定后续包仍用 69 端口，也不得把歧义包任意关联至请求。
 - RRQ／WRQ、OACK、ACK、DATA、ERROR 布局均严格校验。选项状态为 `ACCEPTED`、`DEFAULTED`（仅在已证实未接受时取 512）或 `UNKNOWN`。短 DATA 仅在已知有效块大小下终止传输；等长数据必须观察到零长度末块。重复块不得重复文件；冲突块不得替换原内容。
 - LCI／LCL／LCS／LUI／LUR／LUS 仅解析来源约束的前导字段。保留定宽 ASCII 版本／比率、条件使用但物理存在的计时字段，以及 `0xFFFF` Estimated Time 未提供的含义。剩余字节显式未解析；不产生 checksum、文件完整性、接受或符合性结论。
 
-所有列出的数值上限都是实现资源限额，而不是协议超时或产品需求；每个输出 envelope 都记录这些限额。
+所有列出的数值上限都是实现资源限额，而不是协议超时或产品需求；每个输出 envelope 都记录这些限额。该 envelope 是封闭且有版本的记录合同：发布前会检查小写 40 位 Git 对象 ID、已配置限额、声明计数、唯一 ID、来源引用闭合，以及默认／已接受／未知块大小规则，之后才可替换已有制品。
 
 ## 4. 命令行、发布与退出状态
 
@@ -169,6 +180,8 @@ cltav-offline corpus --manifest configs/research/cltav_historical_capture_manife
 ```
 
 `0` 表示有界重建完成且无受控问题；`2` 表示已写入输出，但包含受控未知、不支持条件、冲突或未完成重建；`1` 表示致命调用、身份、输入或发布错误。这些代码是工具运行状态，不是 ARINC 615A 判定值。
+
+发布时 `--source-commit` 必须是不可变的小写 40 位 Git 对象 ID。命令在可行时从 `GITHUB_SHA` 或 `git rev-parse HEAD` 派生；两者都不能提供有效 ID 时 fail closed。
 
 单文件输出先写入同目录 staging 文件，JSON 校验后才原子替换。corpus 模式先 staging 所有逐文件输出与索引，随后交换目录；发布失败时回滚现有目录。两种模式都不写入捕获输入。
 
