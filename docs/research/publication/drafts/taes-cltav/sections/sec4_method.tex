@@ -87,9 +87,16 @@ an exact incremental passive diagnoser for bounded latency, drift/offset and
 out-of-order observation under exact-once and timed-automaton assumptions
 \cite{koehl2023}, as well as exact monitoring/testing for a different bounded
 communication-delay model~\cite{fraenzle2026}. CL-TAV claims only the consistency
-and retention property below under R1--R5. Missing, duplicate or spurious
-observations, failed ownership/pairing, unsupported syntax and exhausted bounds
-remain explicit non-verdict exits; no source theorem is transplanted.
+and retention property below under R1--R5. Detected capture inadequacy or
+invalid evidence, ambiguous ownership or pairing, unsupported syntax and
+exhausted bounds retain their existing named uncertain, error or resource
+outcomes and do not establish an IUT failure. This does not claim that every
+missing, duplicate or spurious event is detectable: undetected out-of-domain
+pollution may remain compatible with an in-domain candidate. Conversely, with
+qualified evidence and a valid still-active obligation, expiry at the declared
+timing boundary retains the existing no-response FAIL; a legal observation
+class whose complete in-domain intersection is empty retains Stop-Empty. No
+source theorem is transplanted.
 
 \subsection{Conditional properties}
 \textbf{Monotonicity.} Equation~\eqref{eq:update} gives

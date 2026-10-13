@@ -1,8 +1,11 @@
 # CL-TAV literature synthesis: corrected Batch A plus Batch B full-text closure
 
-Status: `BATCH-B-FULL-TEXT-CLOSURE / RESEARCH-DRAFT / HUMAN-REVIEW-PENDING`  
-Work orders: `WO-CLTAV-LITERATURE-2026-001`, reworked under `WO-CLTAV-LITERATURE-2026-002`, `WO-CLTAV-LITERATURE-2026-003`, `WO-CLTAV-LITERATURE-2026-004`, and `WO-CLTAV-LITERATURE-2026-005`  
-Scientific reference commit: `c5296aedef961ac3d5846ea9ef28847eea928132`  
+Status: `BATCH-B-FULL-TEXT-CLOSURE / RESEARCH-DRAFT / HUMAN-REVIEW-PENDING`
+
+Work orders: `WO-CLTAV-LITERATURE-2026-001`, reworked under `WO-CLTAV-LITERATURE-2026-002`, `WO-CLTAV-LITERATURE-2026-003`, `WO-CLTAV-LITERATURE-2026-004`, and `WO-CLTAV-LITERATURE-2026-005`
+
+Scientific reference commit: `c5296aedef961ac3d5846ea9ef28847eea928132`
+
 Last research update: 2026-10-13
 
 This is an AI research recommendation, not a human novelty decision. It changes no method, algorithm, CRS, interface, experiment, or manuscript. The scientific baseline was read with `git show` at the fixed reference commit; the dirty working tree was not treated as the scientific authority. Batch B adds aviation-testing bridge evidence and evaluation-design constraints while preserving the accepted Batch A findings.

@@ -42,21 +42,74 @@ def _load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _citation_evidence_errors(manifest: dict, root: Path) -> list[str]:
-    """Cross-check manuscript citation bindings against the evidence ledger."""
+def _citation_evidence_errors(
+    manifest: dict, root: Path, used_citations: set[str] | None = None
+) -> list[str]:
+    """Cross-check classified manuscript citations against the evidence ledger."""
     errors: list[str] = []
     rows = manifest.get("citationEvidence")
     if not isinstance(rows, list) or not rows:
         return ["citationEvidence must be a nonempty list"]
+    registered_rows = manifest.get("citations") or []
+    registered = {
+        key for key in registered_rows if isinstance(key, str) and key
+    }
+    if len(registered) != len(registered_rows):
+        errors.append("citations must contain unique nonempty keys")
+    scope = manifest.get("citationEvidenceScope")
+    required: list[str] = []
+    exempt_keys: list[str] = []
+    if not isinstance(scope, dict):
+        errors.append("citationEvidenceScope must be an object")
+    else:
+        required_rows = scope.get("required")
+        if not isinstance(required_rows, list) or not required_rows:
+            errors.append("citationEvidenceScope.required must be a nonempty list")
+        else:
+            required = [
+                key for key in required_rows if isinstance(key, str) and key
+            ]
+            if len(required) != len(required_rows):
+                errors.append("citationEvidenceScope.required has an invalid key")
+            if len(set(required)) != len(required):
+                errors.append("citationEvidenceScope.required repeats a key")
+        exempt_rows = scope.get("exempt")
+        if not isinstance(exempt_rows, list):
+            errors.append("citationEvidenceScope.exempt must be a list")
+        else:
+            for index, row in enumerate(exempt_rows):
+                label = f"citationEvidenceScope.exempt[{index}]"
+                if not isinstance(row, dict):
+                    errors.append(f"{label} must be an object")
+                    continue
+                key, reason = row.get("bibKey"), row.get("reason")
+                if not isinstance(key, str) or not key:
+                    errors.append(f"{label} has no bibKey")
+                else:
+                    exempt_keys.append(key)
+                if not isinstance(reason, str) or not reason.strip():
+                    errors.append(f"{label} has no reason")
+            if len(set(exempt_keys)) != len(exempt_keys):
+                errors.append("citationEvidenceScope.exempt repeats a key")
+    required_set, exempt_set = set(required), set(exempt_keys)
+    for key in sorted(required_set & exempt_set):
+        errors.append(f"citation evidence scope is both required and exempt: {key}")
+    classified = required_set | exempt_set
+    actual = registered if used_citations is None else {
+        key for key in used_citations if key
+    }
+    for key in sorted(actual - classified):
+        errors.append(f"used citation is not classified for evidence: {key}")
+    for key in sorted(classified - actual):
+        errors.append(f"citation evidence scope key is not used: {key}")
     ledger_path = root / "configs/research/literature/evidence_ledger.csv"
     if not ledger_path.is_file():
-        return ["citation evidence ledger is missing"]
+        return errors + ["citation evidence ledger is missing"]
     try:
         with ledger_path.open(encoding="utf-8-sig", newline="") as stream:
             evidence = {row["evidence_id"]: row for row in csv.DictReader(stream)}
     except (OSError, KeyError) as exc:
         return [f"citation evidence ledger is unreadable: {exc}"]
-    registered = set(manifest.get("citations") or [])
     seen: set[str] = set()
     for index, row in enumerate(rows):
         label = f"citationEvidence[{index}]"
@@ -88,6 +141,10 @@ def _citation_evidence_errors(manifest: dict, root: Path) -> list[str]:
                     f"source mismatch for {key}/{evidence_id}: "
                     f"{source} != {evidence_row.get('source_id')}"
                 )
+    for key in sorted(required_set - seen):
+        errors.append(f"required citation has no evidence binding: {key}")
+    for key in sorted(seen - required_set):
+        errors.append(f"citation evidence binding is outside required scope: {key}")
     return errors
 
 
@@ -517,7 +574,7 @@ def manuscript_errors(
     for key in sorted(set(cites) - bib_keys):
         if key:
             errors.append(f"unresolved citation: {key}")
-    errors.extend(_citation_evidence_errors(manifest, root))
+    errors.extend(_citation_evidence_errors(manifest, root, set(cites)))
     outputs = manifest.get("outputs") if isinstance(manifest.get("outputs"), dict) else {}
     if record is None and RECORD_PATH.is_file() and draft == DRAFT:
         try:

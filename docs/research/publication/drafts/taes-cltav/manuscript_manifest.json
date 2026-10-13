@@ -105,6 +105,22 @@
     "chanthery2019", "efkemann2011", "sartaj2021", "marques2021", "gruen2009",
     "arcuri2011", "jcgm100", "jcgm106", "arinc615a3", "arinc6451"
   ],
+  "citationEvidenceScope": {
+    "required": [
+      "sampath1998", "chanthery2009", "hu2020", "miao2025", "koehl2023",
+      "fraenzle2026", "chanthery2019", "efkemann2011", "sartaj2021",
+      "marques2021", "jia2011", "gruen2009", "arcuri2011"
+    ],
+    "exempt": [
+      {"bibKey": "tretmans1996", "reason": "pre-existing conformance-testing background outside the Batch B evidence audit"},
+      {"bibKey": "petrenko2016", "reason": "pre-existing constraint-solving test-generation background outside the Batch B evidence audit"},
+      {"bibKey": "yang2025", "reason": "pre-existing requirements-based test-generation survey outside the Batch B evidence audit"},
+      {"bibKey": "jcgm100", "reason": "measurement guidance governed as metrology context rather than a Batch B literature claim"},
+      {"bibKey": "jcgm106", "reason": "measurement guidance governed as metrology context rather than a Batch B literature claim"},
+      {"bibKey": "arinc615a3", "reason": "controlled protocol standard governed by the project source register"},
+      {"bibKey": "arinc6451", "reason": "controlled standard governed by the project source register"}
+    ]
+  },
   "citationEvidence": [
     {"bibKey": "sampath1998", "sourceId": "DOI:10.1109/9.701089", "evidenceIds": ["EVID-2026-001", "EVID-2026-002"], "claim": "active diagnosis already integrates supervision and diagnosis"},
     {"bibKey": "chanthery2009", "sourceId": "DOI:10.3182/20090630-4-ES-2003.00252", "evidenceIds": ["EVID-2026-003", "EVID-2026-005"], "claim": "conditional active plans and cost-aware choice are prior art"},
