@@ -225,6 +225,7 @@ class TftpReconstructor:
             record.reconstruction_status = "COMPLETE"
             record.terminal_block = session.terminal_block
             record.complete_payload = b"".join(session.blocks[number].data for number in expected)
+            record.complete_payload_length = len(record.complete_payload)
         return self.records
 
     def _new_request(self, udp: UdpDatagram, message: TftpMessage) -> None:
@@ -386,6 +387,7 @@ class TftpReconstructor:
                 session.record.complete_payload = b"".join(
                     session.blocks[number].data for number in range(1, block + 1)
                 )
+                session.record.complete_payload_length = len(session.record.complete_payload)
 
     def _conflict(self, session: _Session, code: str) -> None:
         session.record.reconstruction_status = "CONFLICT"

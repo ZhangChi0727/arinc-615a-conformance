@@ -38,6 +38,12 @@ plus a denominator.  pcapng section/interface clock domains are distinct; the
 tool does not infer synchronization, accuracy, topology, device version,
 configuration or root cause. Missing time information is explicit.
 
+Payload bytes exist only while the bounded decoder needs them. Completed
+datagrams retain their declared payload length and provenance after UDP/TFTP
+processing, and completed transfers retain their payload length after bounded
+header extraction; neither serialized evidence nor retained result records
+keep raw capture/file bytes.
+
 Input identity is byte count plus SHA-256.  Corpus mode verifies safe relative
 paths, resolved-root containment, resolved file identity, size/hash and a
 two-way manifest inventory before processing. The input is hashed again after
@@ -154,6 +160,8 @@ does not modify manuscript sources, PDF or research claims.
 初始本地头部调查表明，23 份已登记探索文件均为 little-endian pcapng，使用 Ethernet linktype 1 和 Enhanced Packet Block。实现也通过合成测试接纳经典 pcap 的字节序和 micro/nanosecond 变体。其他 pcapng 块要么是已知元数据块，要么以 `UNSUPPORTED-PCAPNG-BLOCK` 具名诊断；不得静默当作完整包覆盖。
 
 每个 `PACKET-REF` 保留容器字节偏移、包索引、捕获与原始长度、接口身份、linktype，以及以整数 tick 加分母表示的时间戳。pcapng section/interface 时钟域彼此不同；工具不推断同步、精度、拓扑、设备版本、配置或根因。缺失时间信息保持显式。
+
+载荷字节只在有界解码器实际需要时保留。完成的数据报在 UDP／TFTP 处理后仅保留声明的载荷长度和来源；完成的传输在有界头解析后仅保留载荷长度。序列化证据和留存结果均不保存原始捕获／文件字节。
 
 输入身份由字节数和 SHA-256 表示。corpus 模式在处理前核验安全相对路径、解析后根内包含、解析后文件身份、大小／散列和双向清单盘点；处理后再次散列输入，若变化则拒绝发布。
 

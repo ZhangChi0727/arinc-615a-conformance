@@ -305,6 +305,7 @@ class Ipv4Reassembler:
             missing_ranges=missing_ranges or [],
             conflict_ranges=conflict_ranges or [],
             payload=payload,
+            payload_length=None if payload is None else len(payload),
             vlan_tags=accumulator.vlan_tags,
         )
 

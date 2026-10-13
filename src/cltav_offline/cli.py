@@ -106,9 +106,9 @@ def _add_limits(parser: argparse.ArgumentParser) -> None:
     limits.add_argument("--max-datagram-bytes", type=int, default=65_535)
     limits.add_argument("--max-fragments-per-datagram", type=int, default=8_192)
     limits.add_argument("--max-active-transfers", type=int, default=128)
-    limits.add_argument("--max-transfer-records", type=int, default=200_000)
+    limits.add_argument("--max-transfer-records", type=int, default=50_000)
     limits.add_argument("--max-transfer-bytes", type=int, default=16 * 1024 * 1024)
-    limits.add_argument("--max-evidence-records", type=int, default=200_000)
+    limits.add_argument("--max-evidence-records", type=int, default=50_000)
     limits.add_argument("--tftp-service-port", type=int, default=69)
 
 

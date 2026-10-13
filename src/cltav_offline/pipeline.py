@@ -47,9 +47,9 @@ class IntakeConfig:
     max_datagram_bytes: int = 65_535
     max_fragments_per_datagram: int = 8_192
     max_active_transfers: int = 128
-    max_transfer_records: int = 200_000
+    max_transfer_records: int = 50_000
     max_transfer_bytes: int = 16 * 1024 * 1024
-    max_evidence_records: int = 200_000
+    max_evidence_records: int = 50_000
     tftp_service_port: int = 69
 
     def to_dict(self) -> dict[str, int]:
@@ -204,6 +204,7 @@ def run_capture(
         result.datagrams.append(record)
         _append_packet_refs(result.packet_refs, record.packet_refs, packet_ref_ids)
         if record.status != "COMPLETE" or record.protocol != UDP_PROTOCOL:
+            record.payload = None
             return
         try:
             udp = decode_udp(record)
@@ -212,9 +213,11 @@ def run_capture(
                 exc.code, "UDP", str(exc), packet_ref_id=record.packet_refs[-1].id,
                 detail={"datagramId": record.datagram_id},
             ))
-            return
-        if transfers.could_be_tftp(udp):
-            transfers.process(udp)
+        else:
+            if transfers.could_be_tftp(udp):
+                transfers.process(udp)
+        finally:
+            record.payload = None
 
     try:
         for captured in reader:
@@ -253,6 +256,10 @@ def run_capture(
     result.diagnostics.extend(transfers.diagnostics)
     result.transfers = transfers.finish()
     result.events = first_slice_events(result.transfers)
+    # Payload bytes are only an in-process parse input.  The serialised record
+    # retains their length and source chain, never the payload itself.
+    for transfer in result.transfers:
+        transfer.complete_payload = None
     after = input_identity(path)
     if after != before:
         raise IntakeError(

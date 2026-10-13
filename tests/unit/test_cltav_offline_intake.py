@@ -123,6 +123,8 @@ def test_pcap_pipeline_reconstructs_tftp_and_bounded_file_event(tmp_path: Path) 
     assert evidence["evidenceBoundary"]["conformanceVerdict"] == "NOT-EVALUATED"
     assert evidence["transfers"][0]["completePayloadLength"] == len(_lui_header())
     assert "completePayloadBytes" not in json.dumps(evidence)
+    assert all(item.payload is None for item in result.datagrams)
+    assert result.transfers[0].complete_payload is None
 
 
 def test_pcapng_timestamp_resolution_and_container_metadata(tmp_path: Path) -> None:
@@ -447,7 +449,9 @@ def test_tftp_tid_binding_duplicate_and_missing_block_behaviour(tmp_path: Path) 
     assert complete.request_kind == "WRQ"
     assert complete.server_endpoint == ("10.0.0.2", 40100)
     assert complete.reconstruction_status == "COMPLETE"
-    assert complete.complete_payload == b"abc"
+    assert complete.complete_payload is None
+    assert complete.complete_payload_length == 3
+    assert complete.to_dict()["completePayloadLength"] == 3
     assert missing.reconstruction_status == "GAPPED"
     assert "MISSING-TFTP-DATA-BLOCK" in missing.diagnostics
 

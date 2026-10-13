@@ -146,6 +146,7 @@ class DatagramRecord:
     missing_ranges: list[tuple[int, int]] = field(default_factory=list)
     conflict_ranges: list[tuple[int, int]] = field(default_factory=list)
     payload: bytes | None = None
+    payload_length: int | None = None
     vlan_tags: tuple[int, ...] = ()
 
     def to_dict(self) -> dict[str, Any]:
@@ -159,7 +160,11 @@ class DatagramRecord:
             "ipv4Identification": self.identification,
             "status": self.status,
             "failureCode": self.failure_code,
-            "payloadLength": None if self.payload is None else len(self.payload),
+            "payloadLength": (
+                self.payload_length
+                if self.payload_length is not None
+                else None if self.payload is None else len(self.payload)
+            ),
             "packetRefIds": [item.id for item in self.packet_refs],
             "fragmentRanges": [list(item) for item in self.fragment_ranges],
             "missingRanges": [list(item) for item in self.missing_ranges],
@@ -207,6 +212,7 @@ class TransferRecord:
     diagnostics: list[str] = field(default_factory=list)
     terminal_block: int | None = None
     complete_payload: bytes | None = None
+    complete_payload_length: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -232,7 +238,9 @@ class TransferRecord:
             "datagramIds": list(self.datagram_ids),
             "diagnosticCodes": list(self.diagnostics),
             "completePayloadLength": (
-                None if self.complete_payload is None else len(self.complete_payload)
+                self.complete_payload_length
+                if self.complete_payload_length is not None
+                else None if self.complete_payload is None else len(self.complete_payload)
             ),
             "integrity": "NOT-EVALUATED",
         }
