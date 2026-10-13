@@ -780,6 +780,34 @@ def test_historical_reader_report_path_must_resolve() -> None:
     assert any("historicalReaderReportPath" in error for error in baseline.sync.status_errors(data, ROOT))
 
 
+def test_current_evidence_report_paths_are_narrowly_validated() -> None:
+    data = status()
+    data["release"]["records"]["currentEvidenceReportPaths"] = ["../unsafe.md"]
+    assert any(
+        "currentEvidenceReportPaths[0]" in error
+        for error in baseline.sync.status_errors(data, ROOT)
+    )
+
+
+def test_current_report_population_allows_only_declared_evidence(tmp_path: Path) -> None:
+    data = status()
+    current = tmp_path / "artifacts/reports/current"
+    current.mkdir(parents=True)
+    historical = current / "RPT-2026-002_information_architecture_v4.2.1.md"
+    evidence = current / "RPT-CLTAV-OFFLINE-INTAKE-2026-001.md"
+    historical.write_text("historical\n", encoding="utf-8")
+    evidence.write_text("candidate\n", encoding="utf-8")
+    data["release"]["records"]["historicalReaderReportPath"] = historical.relative_to(tmp_path).as_posix()
+    data["release"]["records"]["currentEvidenceReportPaths"] = [evidence.relative_to(tmp_path).as_posix()]
+    assert baseline.current_report_population_errors(data, tmp_path) == []
+
+    (current / "unexpected.md").write_text("unexpected\n", encoding="utf-8")
+    assert any(
+        "controlled historical/evidence record set" in error
+        for error in baseline.current_report_population_errors(data, tmp_path)
+    )
+
+
 def test_iar_template_rejects_reader_report_handoff() -> None:
     text = source("docs/engineering/increments/IAR_TEMPLATE.md")
     broken = text + "\n## Reader-report " + "handoff\n"

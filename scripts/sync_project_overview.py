@@ -407,6 +407,35 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
             if not target.is_file():
                 errors.append(f"controlled record path does not exist: {dotted}")
 
+    records = data.get("release", {}).get("records", {})
+    evidence_paths = records.get("currentEvidenceReportPaths")
+    if not isinstance(evidence_paths, list) or not evidence_paths:
+        errors.append("release.records.currentEvidenceReportPaths must be a non-empty list")
+    else:
+        seen_evidence_paths: set[str] = set()
+        for index, value in enumerate(evidence_paths):
+            label = f"release.records.currentEvidenceReportPaths[{index}]"
+            if not isinstance(value, str):
+                errors.append(f"{label} must be a string")
+                continue
+            path = Path(value)
+            if (
+                not value
+                or "\\" in value
+                or path.is_absolute()
+                or ".." in path.parts
+                or path.parent != Path("artifacts/reports/current")
+                or path.suffix != ".md"
+            ):
+                errors.append(f"{label} must name a repository-relative current RPT Markdown file")
+                continue
+            if value in seen_evidence_paths:
+                errors.append(f"duplicate controlled evidence report path: {value}")
+                continue
+            seen_evidence_paths.add(value)
+            if not (root / path).is_file():
+                errors.append(f"controlled evidence report path does not exist: {label}")
+
     errors.extend(temporary_control_errors(data))
     return errors
 

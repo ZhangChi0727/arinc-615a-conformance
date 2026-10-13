@@ -109,6 +109,9 @@
       "baselinePath": "docs/control/baselines/RB-2026-001-v4.3.1.md",
       "changePath": "docs/control/changes/CR-2026-005.md",
       "historicalReaderReportPath": "artifacts/reports/current/RPT-2026-002_information_architecture_v4.2.1.md",
+      "currentEvidenceReportPaths": [
+        "artifacts/reports/current/CLTAV_OFFLINE_INTAKE_ACCEPTANCE.md"
+      ],
       "migrationReviewPath": "docs/control/reviews/PR9_GVS_MIGRATION_REVIEW_HANDOFF.md",
       "acknowledgementReviewPath": "docs/control/reviews/PR10_GVS_DISPOSITION_ACK_REVIEW_HANDOFF.md"
     },
