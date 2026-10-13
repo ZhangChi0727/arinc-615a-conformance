@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
+import json
 import re
+from functools import lru_cache
+from pathlib import Path
 from typing import Any
+
+from jsonschema import Draft202012Validator
 
 
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
@@ -12,60 +17,22 @@ ABSOLUTE_PATH_RE = re.compile(r"(?:^|[\s\"'])((?:[A-Za-z]:[\\/])|/(?:[^\s\"']+))
 
 
 def evidence_errors(data: object) -> list[str]:
-    """Validate the implementation output shape without a runtime dependency.
+    """Validate published evidence against the controlled schema and relations.
 
-    The canonical JSON Schema is stored beside engineering contracts.  This
-    lightweight equivalent protects the production publication path in a clean
-    installation where the optional development ``jsonschema`` extra is absent.
+    JSON Schema is a runtime dependency rather than a best-effort developer
+    extra: a publisher must never claim to validate a shape it does not execute.
+    The semantic pass below deliberately covers cross-record parentage that a
+    local JSON Schema cannot express succinctly.
     """
+    schema_errors = _schema_errors(data)
+    if schema_errors:
+        return schema_errors
     if not isinstance(data, dict):
         return ["evidence must be an object"]
     errors: list[str] = []
-    required = {
-        "artifactType", "schemaVersion", "evidenceBoundary", "tool", "input",
-        "runParameters", "executionStatus", "counts", "packetRefs", "datagrams",
-        "transfers", "events", "diagnostics",
-    }
-    missing = required - set(data)
-    if missing:
-        errors.append("evidence is missing " + ", ".join(sorted(missing)))
-    if data.get("artifactType") != "CLTAV-OFFLINE-INTAKE-EVIDENCE":
-        errors.append("artifactType is invalid")
-    if data.get("schemaVersion") != "1.0":
-        errors.append("schemaVersion is invalid")
-    boundary = data.get("evidenceBoundary")
-    if not isinstance(boundary, dict) or boundary.get("conformanceVerdict") != "NOT-EVALUATED":
-        errors.append("evidenceBoundary must keep conformanceVerdict NOT-EVALUATED")
-    tool = data.get("tool")
-    if not isinstance(tool, dict) or tool.get("name") != "cltav-offline":
-        errors.append("tool identity is invalid")
-    elif not isinstance(tool.get("sourceCommit"), str) or not SOURCE_COMMIT_RE.fullmatch(tool["sourceCommit"]):
-        errors.append("tool.sourceCommit must be a lowercase 40-character Git object ID")
-    input_data = data.get("input")
-    if not isinstance(input_data, dict):
-        errors.append("input must be an object")
-    else:
-        if not isinstance(input_data.get("captureId"), str) or not input_data["captureId"].strip():
-            errors.append("input.captureId is invalid")
-        if not isinstance(input_data.get("byteCount"), int) or input_data["byteCount"] < 0:
-            errors.append("input.byteCount is invalid")
-        if not isinstance(input_data.get("sha256"), str) or not SHA256_RE.fullmatch(input_data["sha256"]):
-            errors.append("input.sha256 is invalid")
-    if data.get("executionStatus") not in {"COMPLETE", "COMPLETE-WITH-CONTROLLED-ISSUES", "FATAL-INPUT-ERROR"}:
-        errors.append("executionStatus is invalid")
-    for key in ("packetRefs", "datagrams", "transfers", "events", "diagnostics"):
-        if not isinstance(data.get(key), list):
-            errors.append(f"{key} must be an array")
     _check_counts(data, errors)
     _check_provenance(data, errors)
-    for event in _objects(data.get("events")):
-        if not isinstance(event, dict) or event.get("conformanceVerdict") != "NOT-EVALUATED":
-            errors.append("events must retain NOT-EVALUATED conformanceVerdict")
-            break
-    for transfer in _objects(data.get("transfers")):
-        if not isinstance(transfer, dict) or transfer.get("integrity") != "NOT-EVALUATED":
-            errors.append("transfers must retain NOT-EVALUATED integrity")
-            break
+    _check_execution_shape(data, errors)
     rendered = _rendered_strings(data)
     if ABSOLUTE_PATH_RE.search(rendered):
         errors.append("evidence must not contain an absolute machine path")
@@ -74,6 +41,27 @@ def evidence_errors(data: object) -> list[str]:
     if found:
         errors.append("evidence contains forbidden payload/path field " + found[0])
     return errors
+
+
+@lru_cache(maxsize=1)
+def _validator() -> Draft202012Validator:
+    schema_path = Path(__file__).resolve().parents[2] / "configs" / "engineering" / "cltav_offline_intake_evidence.schema.json"
+    try:
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:  # pragma: no cover - package/install failure boundary
+        raise RuntimeError("controlled offline evidence schema is unavailable") from exc
+    return Draft202012Validator(schema)
+
+
+def _schema_errors(data: object) -> list[str]:
+    try:
+        errors = sorted(_validator().iter_errors(data), key=lambda item: list(item.absolute_path))
+    except RuntimeError as exc:
+        return [str(exc)]
+    return [
+        "schema " + (".".join(str(part) for part in error.absolute_path) or "$") + f": {error.message}"
+        for error in errors
+    ]
 
 
 def _check_counts(data: dict[str, Any], errors: list[str]) -> None:
@@ -100,7 +88,26 @@ def _check_counts(data: dict[str, Any], errors: list[str]) -> None:
         errors.append("counts.containerPackets is invalid")
 
 
+def _check_execution_shape(data: dict[str, Any], errors: list[str]) -> None:
+    """Tie declared execution status to observable evidence, without verdicts."""
+    execution = data["executionStatus"]
+    diagnostics = data["diagnostics"]
+    non_complete = any(item.get("status") != "COMPLETE" for item in _objects(data["datagrams"])) or any(
+        item.get("reconstructionStatus") != "COMPLETE" for item in _objects(data["transfers"])
+    )
+    if execution == "COMPLETE" and (diagnostics or non_complete):
+        errors.append("COMPLETE execution cannot contain controlled issues")
+    if execution == "COMPLETE-WITH-CONTROLLED-ISSUES" and not (diagnostics or non_complete):
+        errors.append("controlled-issues execution must retain a controlled issue")
+    if execution == "FATAL-INPUT-ERROR":
+        if any(data[key] for key in ("packetRefs", "datagrams", "transfers", "events")):
+            errors.append("fatal input evidence must not publish partial reconstruction records")
+        if len(diagnostics) != 1 or diagnostics[0].get("severity") != "ERROR":
+            errors.append("fatal input evidence must contain exactly one ERROR diagnostic")
+
+
 def _check_provenance(data: dict[str, Any], errors: list[str]) -> None:
+    input_capture_id = data["input"]["captureId"]
     packet_ids = _ids(data.get("packetRefs"), "packetRefId", "packetRefs", errors)
     datagram_ids = _ids(data.get("datagrams"), "datagramId", "datagrams", errors)
     transfer_ids = _ids(data.get("transfers"), "transferId", "transfers", errors)
@@ -108,6 +115,8 @@ def _check_provenance(data: dict[str, Any], errors: list[str]) -> None:
     for item in _objects(data.get("datagrams")):
         if not isinstance(item, dict):
             continue
+        if item.get("captureId") != input_capture_id:
+            errors.append("datagram captureId differs from input captureId")
         _require_known_ids(item.get("packetRefIds"), packet_ids, "datagram packetRefIds", errors)
         status = item.get("status")
         payload_length = item.get("payloadLength")
@@ -118,6 +127,8 @@ def _check_provenance(data: dict[str, Any], errors: list[str]) -> None:
     for item in _objects(data.get("transfers")):
         if not isinstance(item, dict):
             continue
+        if item.get("captureId") != input_capture_id:
+            errors.append("transfer captureId differs from input captureId")
         _require_known_ids(item.get("packetRefIds"), packet_ids, "transfer packetRefIds", errors)
         _require_known_ids(item.get("datagramIds"), datagram_ids, "transfer datagramIds", errors)
         block = item.get("blockSize")
@@ -147,6 +158,21 @@ def _check_provenance(data: dict[str, Any], errors: list[str]) -> None:
             errors.append("event transferId does not reference a known transfer")
         _require_known_ids(item.get("sourceDatagramIds"), datagram_ids, "event sourceDatagramIds", errors)
         _require_known_ids(item.get("sourcePacketRefIds"), packet_ids, "event sourcePacketRefIds", errors)
+        if isinstance(transfer_id, str) and transfer_id in transfer_ids:
+            parent = next(candidate for candidate in _objects(data.get("transfers")) if candidate.get("transferId") == transfer_id)
+            if not set(item.get("sourceDatagramIds", [])).issubset(set(parent.get("datagramIds", []))):
+                errors.append("event sourceDatagramIds are not owned by its transfer")
+            if not set(item.get("sourcePacketRefIds", [])).issubset(set(parent.get("packetRefIds", []))):
+                errors.append("event sourcePacketRefIds are not owned by its transfer")
+    for item in _objects(data.get("packetRefs")):
+        if isinstance(item, dict) and item.get("captureId") != input_capture_id:
+            errors.append("packetRef captureId differs from input captureId")
+    for item in _objects(data.get("diagnostics")):
+        if not isinstance(item, dict):
+            continue
+        packet_ref_id = item.get("packetRefId")
+        if packet_ref_id is not None and packet_ref_id not in packet_ids:
+            errors.append("diagnostic packetRefId does not reference a known packetRef")
 
 
 def _ids(value: object, key: str, label: str, errors: list[str]) -> set[str]:

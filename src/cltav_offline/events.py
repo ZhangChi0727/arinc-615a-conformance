@@ -53,7 +53,17 @@ def first_slice_events(records: list[TransferRecord]) -> list[ProtocolEvent]:
         if role is None:
             continue
         sequence += 1
-        header = decode_first_slice_header(role, transfer.complete_payload)
+        header = (
+            decode_first_slice_header(role, transfer.complete_payload)
+            if transfer.mode == "octet"
+            else {
+                "parseStatus": "OPAQUE",
+                "decodedFields": {},
+                "unparsedRemainderBytes": None,
+                "codecScope": "BOUNDED-FIRST-SLICE-HEADER-ONLY",
+                "reason": "TFTP-MODE-NOT-SUPPORTED-FOR-FILE-CODEC",
+            }
+        )
         parse_id = f"EV-{sequence:08d}"
         events.append(ProtocolEvent(
             event_id=parse_id,
@@ -65,7 +75,7 @@ def first_slice_events(records: list[TransferRecord]) -> list[ProtocolEvent]:
             source_datagram_ids=tuple(transfer.datagram_ids),
             source_packet_ref_ids=tuple(item.id for item in transfer.packet_refs),
             fields=header,
-            evidence_status=("PARSED" if header["parseStatus"] == "PARSED" else "NOT-PARSED"),
+            evidence_status=("PARSED" if header["parseStatus"] == "PARSED" else header["parseStatus"]),
         ))
         if header["parseStatus"] != "PARSED":
             continue
@@ -113,6 +123,9 @@ def decode_first_slice_header(role: str, payload: bytes | None) -> dict[str, Any
     if version is None:
         result.update({"parseStatus": "MALFORMED", "reason": "PROTOCOL-VERSION-NOT-ASCII"})
         return result
+    if version != "A1":
+        result.update({"parseStatus": "OPAQUE", "reason": "PROTOCOL-VERSION-NOT-IN-BOUNDED-CODEC"})
+        return result
     fields: dict[str, Any] = {
         "declaredFileLength": int.from_bytes(payload[0:4], "big"),
         "protocolVersion": version,
@@ -124,7 +137,10 @@ def decode_first_slice_header(role: str, payload: bytes | None) -> dict[str, Any
         if status is None or description_length is None:
             return _malformed(result, "STATUS-HEADER-TRUNCATED")
         fields["operationAcceptanceStatusCode"] = status
-        fields["statusDescription"] = _bounded_text(payload, cursor + 3, description_length)
+        description = _bounded_text(payload, cursor + 3, description_length)
+        if description["status"] != "PARSED":
+            return _partial(result, "STATUS-DESCRIPTION-TRUNCATED-OR-NONASCII", fields)
+        fields["statusDescription"] = description
         cursor += 3 + description_length
     elif role == "LCL":
         count = _u16(payload, cursor)
@@ -136,6 +152,9 @@ def decode_first_slice_header(role: str, payload: bytes | None) -> dict[str, Any
         counter, status, exception_timer, estimated_time, description_length = _fields_lcs(payload, cursor)
         if None in {counter, status, exception_timer, estimated_time, description_length}:
             return _malformed(result, "LCS-STATUS-HEADER-TRUNCATED")
+        description = _bounded_text(payload, cursor + 9, description_length)
+        if description["status"] != "PARSED":
+            return _partial(result, "LCS-DESCRIPTION-TRUNCATED-OR-NONASCII", fields)
         fields.update({
             "counter": counter,
             "informationOperationStatusCode": status,
@@ -146,7 +165,7 @@ def decode_first_slice_header(role: str, payload: bytes | None) -> dict[str, Any
                 "useConditionSatisfied": status in {2, 4},
             },
             "estimatedTime": _estimated_time(estimated_time),
-            "statusDescription": _bounded_text(payload, cursor + 9, description_length),
+            "statusDescription": description,
         })
         cursor += 9 + description_length
     elif role == "LUR":
@@ -170,9 +189,12 @@ def decode_first_slice_header(role: str, payload: bytes | None) -> dict[str, Any
         ratio_text = _fixed_ascii(ratio)
         if ratio_text is None:
             return _malformed(result, "LUS-RATIO-NOT-ASCII")
+        description = _bounded_text(payload, 9, description_length)
+        if description["status"] != "PARSED":
+            return _partial(result, "LUS-DESCRIPTION-TRUNCATED-OR-NONASCII", fields)
         fields.update({
             "uploadOperationStatusCode": status,
-            "statusDescription": _bounded_text(payload, 9, description_length),
+            "statusDescription": description,
             "counter": counter,
             "exceptionTimer": {
                 "present": True,
@@ -230,7 +252,12 @@ def _estimated_time(value: int) -> dict[str, Any]:
     return (
         {"status": "NOT-PROVIDED", "rawValue": "0xFFFF", "value": None}
         if value == 0xFFFF
-        else {"status": "OBSERVED", "rawValue": value, "value": value}
+        else {
+            "status": "RAW-NOT-INTERPRETED",
+            "rawValue": value,
+            "value": None,
+            "reason": "ESTIMATED-TIME-USABILITY-NOT-IMPLEMENTED",
+        }
     )
 
 
@@ -244,4 +271,12 @@ def _fields_lcs(data: bytes, offset: int) -> tuple[int | None, int | None, int |
 def _malformed(result: dict[str, Any], reason: str) -> dict[str, Any]:
     result["parseStatus"] = "MALFORMED"
     result["reason"] = reason
+    return result
+
+
+def _partial(result: dict[str, Any], reason: str, fields: dict[str, Any]) -> dict[str, Any]:
+    """Keep source-bound prefix fields without claiming a complete header parse."""
+    result["parseStatus"] = "PARTIAL"
+    result["reason"] = reason
+    result["decodedFields"] = fields
     return result

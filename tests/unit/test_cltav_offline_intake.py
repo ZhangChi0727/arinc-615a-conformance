@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 from jsonschema import Draft202012Validator
 
-from cltav_offline.capture import CaptureReader
+from cltav_offline.capture import CaptureReader, PCAPNG_SECTION_HEADER
 from cltav_offline.cli import main as cli_main
 from cltav_offline import corpus as corpus_module
 from cltav_offline import pipeline as pipeline_module
@@ -23,6 +23,7 @@ from cltav_offline.events import decode_first_slice_header
 from cltav_offline.models import Ipv4Fragment, PacketRef
 from cltav_offline.network import Ipv4Reassembler
 from cltav_offline.pipeline import IntakeConfig, IntakeError, IntakeResult, run_capture
+from scripts.check_development_readiness import validate_record_instance
 
 
 def _ethernet_ipv4(
@@ -97,6 +98,16 @@ def _pcapng(records: list[bytes]) -> bytes:
         body = struct.pack("<IIIII", 0, 0, index, len(record), len(record)) + record + padding
         result += _block(6, body)
     return result
+
+
+def _pcapng_with_epb_comment(record: bytes) -> bytes:
+    section_body = struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1)
+    interface_body = struct.pack("<HHI", 1, 0, 0)
+    padding = b"\0" * (-len(record) % 4)
+    # A legal opt_comment followed by the required end-of-options marker.
+    options = struct.pack("<HH", 1, 3) + b"abc\0" + struct.pack("<HH", 0, 0)
+    epb_body = struct.pack("<IIIII", 0, 0, 1, len(record), len(record)) + record + padding + options
+    return _block(0x0A0D0D0A, section_body) + _block(1, interface_body) + _block(6, epb_body)
 
 
 def _lui_header() -> bytes:
@@ -325,16 +336,35 @@ def test_corpus_publication_rejects_alias_output_and_unsafe_capture_id_before_wr
         )
     assert caught.value.code == "UNSAFE-OUTPUT-PATH"
     assert hashlib.sha256((safe_output / "corpus-index.json").read_bytes()).hexdigest() == old_output_hash
+
+
+def test_corpus_publication_refuses_nonowned_existing_result_directory(tmp_path: Path) -> None:
+    corpus = tmp_path / "corpus"
+    corpus.mkdir()
+    (corpus / "one.pcapng").write_bytes(_pcapng(_valid_exchange()))
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps(_corpus_manifest(corpus)), encoding="utf-8")
+    output = tmp_path / "existing"
+    output.mkdir()
+    sentinel = output / "unrelated.txt"
+    sentinel.write_text("do not replace", encoding="utf-8")
+    with pytest.raises(IntakeError) as caught:
+        run_corpus(
+            manifest_path=manifest_path, corpus_root=corpus, output_dir=output,
+            config=IntakeConfig(), source_commit="b" * 40,
+        )
+    assert caught.value.code == "UNSAFE-OUTPUT-PATH"
+    assert sentinel.read_text(encoding="utf-8") == "do not replace"
     malicious = _corpus_manifest(corpus, "../escape")
     manifest_path.write_text(json.dumps(malicious), encoding="utf-8")
     with pytest.raises(IntakeError) as invalid_id:
         run_corpus(
-            manifest_path=manifest_path, corpus_root=corpus, output_dir=safe_output,
+            manifest_path=manifest_path, corpus_root=corpus, output_dir=output,
             config=IntakeConfig(), source_commit="b" * 40,
         )
     assert invalid_id.value.code == "CORPUS-IDENTITY-AUDIT-FAILED"
     assert not (tmp_path / "escape.json").exists()
-    assert hashlib.sha256((safe_output / "corpus-index.json").read_bytes()).hexdigest() == old_output_hash
+    assert sentinel.read_text(encoding="utf-8") == "do not replace"
 
 
 def test_evidence_envelope_matches_schema_and_rejects_raw_payload_field(tmp_path: Path) -> None:
@@ -342,12 +372,20 @@ def test_evidence_envelope_matches_schema_and_rejects_raw_payload_field(tmp_path
     capture.write_bytes(_pcap(_valid_exchange()))
     evidence = run_capture(capture, capture_id="SYN-08").to_dict(source_commit="3" * 40)
     assert evidence_errors(evidence) == []
+    shared_only = run_capture(
+        capture, capture_id="SYN-11D", config=IntakeConfig(max_evidence_records=2),
+    ).to_dict(source_commit="9" * 40)
+    assert sum(
+        len(shared_only[name]) for name in ("packetRefs", "datagrams", "transfers", "events", "diagnostics")
+    ) <= 2
+    assert shared_only["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert evidence_errors(shared_only) == []
     schema_path = Path(__file__).resolve().parents[2] / "configs/engineering/cltav_offline_intake_evidence.schema.json"
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     assert list(Draft202012Validator(schema).iter_errors(evidence)) == []
     mutation = deepcopy(evidence)
     mutation["rawPayload"] = "not permitted"
-    assert any("forbidden" in item for item in evidence_errors(mutation))
+    assert any("Additional properties" in item for item in evidence_errors(mutation))
 
 
 def test_output_publish_failure_preserves_existing_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -449,6 +487,37 @@ def test_reassembly_fragment_limit_and_transfer_record_limit_are_controlled(tmp_
     assert transfer_limited.has_controlled_issue is True
 
 
+def test_resource_limits_bound_bad_packet_evidence_and_preserve_source_identity(tmp_path: Path) -> None:
+    # Non-IPv4 Ethernet frames exercise the formerly unbounded diagnostic-only path.
+    capture = tmp_path / "many-unsupported.pcap"
+    capture.write_bytes(_pcap([b"\0" * 20 for _ in range(12)]))
+    result = run_capture(
+        capture,
+        capture_id="SYN-11B",
+        config=IntakeConfig(max_evidence_records=2, max_packet_refs=3, max_diagnostics=3),
+    )
+    evidence = result.to_dict(source_commit="9" * 40)
+    assert len(evidence["packetRefs"]) <= 3
+    assert len(evidence["diagnostics"]) <= 3
+    assert evidence["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    packet_ids = {item["packetRefId"] for item in evidence["packetRefs"]}
+    for diagnostic in evidence["diagnostics"]:
+        assert diagnostic["detail"]["inputSha256"] == evidence["input"]["sha256"]
+        if "packetRefId" in diagnostic:
+            assert diagnostic["packetRefId"] in packet_ids
+    assert evidence_errors(evidence) == []
+
+
+def test_interface_resource_limit_is_a_named_capture_error(tmp_path: Path) -> None:
+    section_body = struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1)
+    idb = struct.pack("<HHI", 1, 0, 0)
+    capture = tmp_path / "many-interfaces.pcapng"
+    capture.write_bytes(_block(0x0A0D0D0A, section_body) + _block(1, idb) + _block(1, idb))
+    with pytest.raises(IntakeError) as caught:
+        run_capture(capture, capture_id="SYN-11C", config=IntakeConfig(max_interfaces=1))
+    assert caught.value.code == "RESOURCE-INTERFACE-LIMIT"
+
+
 def test_invalid_provenance_and_fatal_container_never_replace_existing_output(tmp_path: Path) -> None:
     output = tmp_path / "evidence.json"
     output.write_text("previous evidence", encoding="utf-8")
@@ -519,6 +588,123 @@ def test_production_evidence_validation_rejects_count_and_provenance_mutations(t
     option_mutation = deepcopy(evidence)
     option_mutation["transfers"][0]["blockSize"] = {"status": "UNKNOWN", "value": 512}
     assert any("UNKNOWN transfer blockSize" in item for item in evidence_errors(option_mutation))
+
+
+def test_production_schema_and_cross_record_validation_rejects_bad_envelopes(tmp_path: Path) -> None:
+    capture = tmp_path / "valid.pcap"
+    capture.write_bytes(_pcap(_valid_exchange()))
+    evidence = run_capture(capture, capture_id="SYN-15B").to_dict(source_commit="d" * 40)
+    empty_parameters = deepcopy(evidence)
+    empty_parameters["runParameters"] = {}
+    assert evidence_errors(empty_parameters)
+    integrity_pass = deepcopy(evidence)
+    integrity_pass["evidenceBoundary"]["integrity"] = "PASS"
+    assert evidence_errors(integrity_pass)
+    negative_length = deepcopy(evidence)
+    negative_length["packetRefs"][0]["capturedLength"] = -1
+    assert evidence_errors(negative_length)
+    foreign_capture = deepcopy(evidence)
+    foreign_capture["datagrams"][0]["captureId"] = "OTHER"
+    assert any("captureId differs" in item for item in evidence_errors(foreign_capture))
+    missing_diagnostic_ref = deepcopy(evidence)
+    missing_diagnostic_ref["diagnostics"] = [{
+        "code": "SYNTHETIC", "stage": "TEST", "severity": "ERROR", "message": "synthetic",
+        "packetRefId": "SYN-15B:P99999999",
+    }]
+    missing_diagnostic_ref["counts"]["diagnostics"] = 1
+    assert any("diagnostic packetRefId" in item for item in evidence_errors(missing_diagnostic_ref))
+
+
+def test_corpus_fatal_evidence_is_schema_valid_and_invalid_inspect_does_not_publish(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    corpus = tmp_path / "corpus"
+    corpus.mkdir()
+    bad = corpus / "one.pcapng"
+    bad.write_bytes(b"not a capture")
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps(_corpus_manifest(corpus)), encoding="utf-8")
+    output_dir = tmp_path / "result"
+    summary = run_corpus(
+        manifest_path=manifest_path, corpus_root=corpus, output_dir=output_dir,
+        config=IntakeConfig(), source_commit="e" * 40,
+    )
+    assert summary["captures"][0]["executionStatus"] == "FATAL-INPUT-ERROR"
+    fatal = json.loads((output_dir / "HC-01.json").read_text(encoding="utf-8"))
+    assert evidence_errors(fatal) == []
+    assert fatal["diagnostics"][0]["severity"] == "ERROR"
+
+    output = tmp_path / "inspect.json"
+    output.write_text("old", encoding="utf-8")
+    original = pipeline_module.IntakeResult.to_dict
+
+    def invalid_output(self: IntakeResult, *, source_commit: str) -> dict[str, object]:
+        data = original(self, source_commit=source_commit)
+        data["unexpected"] = True
+        return data
+
+    monkeypatch.setattr(pipeline_module.IntakeResult, "to_dict", invalid_output)
+    valid = tmp_path / "valid.pcap"
+    valid.write_bytes(_pcap(_valid_exchange()))
+    assert cli_main([
+        "inspect", "--input", str(valid), "--capture-id", "SYN-15C", "--output", str(output),
+        "--source-commit", "f" * 40,
+    ]) == 1
+    assert output.read_text(encoding="utf-8") == "old"
+
+
+def test_normal_capture_has_publicly_valid_typed_contract_projection(tmp_path: Path) -> None:
+    capture = tmp_path / "projection.pcap"
+    capture.write_bytes(_pcap(_valid_exchange()))
+    result = run_capture(capture, capture_id="cap-valid")
+    evidence = result.to_dict(source_commit="a" * 40)
+    projection = evidence["contractProjection"]
+    assert projection["nonProjectable"] == []
+    assert projection["contractIdentity"]["path"] == "configs/engineering/cltav_development_contracts.json"
+    contracts = json.loads(
+        (Path(__file__).resolve().parents[2] / "configs/engineering/cltav_development_contracts.json").read_text(encoding="utf-8")
+    )
+    definitions = {item["id"]: item for item in contracts["recordContracts"]}
+    for projected in projection["records"]:
+        assert validate_record_instance(definitions[projected["recordType"]], projected["payload"]) == []
+    transfer = next(item["payload"] for item in projection["records"] if item["recordType"] == "TRANSFER-RECORD")
+    assert transfer["blockMap"] == {"1": "cap-valid:0:0:2"}
+    assert transfer["request"].startswith("event-request-")
+
+
+def test_nonprojectable_identity_is_explicit_not_filled_with_fake_contract_values(tmp_path: Path) -> None:
+    capture = tmp_path / "nonprojectable.pcap"
+    capture.write_bytes(_pcap(_valid_exchange()))
+    projection = run_capture(capture, capture_id="SYN-NONCONTRACT").to_dict(source_commit="a" * 40)["contractProjection"]
+    assert projection["records"] == []
+    assert any(item["sourceType"] == "PACKET-REF" for item in projection["nonProjectable"])
+
+
+def test_cli_marks_git_oid_as_claim_and_never_derives_it_from_cwd(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    capture = tmp_path / "identity.pcap"
+    capture.write_bytes(_pcap(_valid_exchange()))
+    unrelated = tmp_path / "unrelated-repository"
+    unrelated.mkdir()
+    monkeypatch.chdir(unrelated)
+    monkeypatch.setenv("GITHUB_SHA", "f" * 40)
+    output = tmp_path / "unverified.json"
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", "SYN-15D", "--output", str(output),
+    ]) == 0
+    unverified = json.loads(output.read_text(encoding="utf-8"))
+    assert unverified["tool"]["sourceCommit"] == "UNVERIFIED"
+    assert unverified["tool"]["sourceCommitStatus"] == "UNAVAILABLE"
+    assert len(unverified["tool"]["runtimeSourceSha256"]) == 64
+    claimed_output = tmp_path / "claimed.json"
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", "SYN-15E", "--output", str(claimed_output),
+        "--source-commit", "f" * 40,
+    ]) == 0
+    claimed = json.loads(claimed_output.read_text(encoding="utf-8"))
+    assert claimed["tool"]["sourceCommit"] == "f" * 40
+    assert claimed["tool"]["sourceCommitStatus"] == "CLAIMED-UNVERIFIED"
 
 
 def test_tftp_tid_binding_duplicate_and_missing_block_behaviour(tmp_path: Path) -> None:
@@ -646,6 +832,45 @@ def test_bounded_first_slice_roles_preserve_raw_contract_semantics() -> None:
     assert parsed["LCS"]["decodedFields"]["exceptionTimer"]["useConditionSatisfied"] is True
     assert parsed["LCS"]["decodedFields"]["estimatedTime"]["status"] == "NOT-PROVIDED"
     assert parsed["LUS"]["decodedFields"]["loadListRatio"]["rawAscii"] == "75%"
+
+
+def test_truncated_nested_header_is_partial_and_never_emits_application_event(tmp_path: Path) -> None:
+    # File length/version plus status and a declared five-byte description,
+    # but no description bytes.  It is not a successful bounded decode.
+    truncated_header = (20).to_bytes(4, "big") + b"A1" + b"\0\0\x05"
+    assert decode_first_slice_header("LCI", truncated_header)["parseStatus"] == "PARTIAL"
+    capture = tmp_path / "partial.lci.pcap"
+    records = [
+        _ethernet_ipv4(_udp(10050, 69, _request(1, "partial.lci")), identification=99),
+        _ethernet_ipv4(
+            _udp(40050, 10050, _data(1, truncated_header)),
+            source="10.0.0.2", destination="10.0.0.1", identification=100,
+        ),
+    ]
+    capture.write_bytes(_pcap(records))
+    result = run_capture(capture, capture_id="SYN-25")
+    assert any(event.fields.get("parseStatus") == "PARTIAL" for event in result.events)
+    assert all(event.layer != "APPLICATION" for event in result.events)
+    unknown_version = (9).to_bytes(4, "big") + b"B9" + b"\0\0\0"
+    assert decode_first_slice_header("LUI", unknown_version)["parseStatus"] == "OPAQUE"
+
+
+def test_pcapng_structural_errors_are_controlled_and_options_are_accepted(tmp_path: Path) -> None:
+    malformed = tmp_path / "short-shb.pcapng"
+    malformed.write_bytes(PCAPNG_SECTION_HEADER.to_bytes(4, "big") + struct.pack("<I", 12) + struct.pack("<I", 0x1A2B3C4D))
+    output = tmp_path / "evidence.json"
+    output.write_text("old evidence", encoding="utf-8")
+    assert cli_main([
+        "inspect", "--input", str(malformed), "--capture-id", "SYN-26", "--output", str(output),
+        "--source-commit", "c" * 40,
+    ]) == 1
+    assert output.read_text(encoding="utf-8") == "old evidence"
+
+    valid = tmp_path / "comment.pcapng"
+    valid.write_bytes(_pcapng_with_epb_comment(_valid_exchange()[0]))
+    result = run_capture(valid, capture_id="SYN-27")
+    assert result.container_packet_count == 1
+    assert result.packet_refs[0].captured_length == len(_valid_exchange()[0])
 
 
 def test_capture_container_variants_and_unsafe_manifest_entries_are_rejected(tmp_path: Path) -> None:

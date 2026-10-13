@@ -7,7 +7,7 @@
   "required": [
     "artifactType", "schemaVersion", "evidenceBoundary", "tool", "input",
     "runParameters", "executionStatus", "counts", "packetRefs", "datagrams",
-    "transfers", "events", "diagnostics"
+    "transfers", "events", "diagnostics", "contractProjection"
   ],
   "properties": {
     "artifactType": {"const": "CLTAV-OFFLINE-INTAKE-EVIDENCE"},
@@ -26,12 +26,26 @@
     "tool": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "sourceCommit"],
+      "required": ["name", "sourceCommit", "sourceCommitStatus", "runtimeSourceSha256", "contractIdentities"],
       "properties": {
         "name": {"const": "cltav-offline"},
         "version": {"type": "string", "minLength": 1},
-        "sourceCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "sourceCommit": {"oneOf": [{"const": "UNVERIFIED"}, {"type": "string", "pattern": "^[0-9a-f]{40}$"}]},
+        "sourceCommitStatus": {"enum": ["CLAIMED-UNVERIFIED", "UNAVAILABLE"]},
+        "runtimeSourceSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "contractIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+        ,"contractIdentities": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["path", "sha256", "version"],
+            "properties": {
+              "path": {"const": "configs/engineering/cltav_development_contracts.json"},
+              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "version": {"type": "string", "minLength": 1}
+            }
+          }
+        }
       }
     },
     "input": {
@@ -52,7 +66,8 @@
     "datagrams": {"type": "array", "items": {"$ref": "#/$defs/datagram"}},
     "transfers": {"type": "array", "items": {"$ref": "#/$defs/transfer"}},
     "events": {"type": "array", "items": {"$ref": "#/$defs/event"}},
-    "diagnostics": {"type": "array", "items": {"$ref": "#/$defs/diagnostic"}}
+    "diagnostics": {"type": "array", "items": {"$ref": "#/$defs/diagnostic"}},
+    "contractProjection": {"$ref": "#/$defs/contractProjection"}
   },
   "$defs": {
     "runParameters": {
@@ -61,7 +76,8 @@
       "required": [
         "maxPacketBytes", "maxContainerBlockBytes", "maxActiveDatagrams",
         "maxDatagramBytes", "maxFragmentsPerDatagram", "maxActiveTransfers",
-        "maxTransferRecords", "maxTransferBytes", "maxEvidenceRecords", "tftpServicePort"
+        "maxTransferRecords", "maxTransferBytes", "maxEvidenceRecords", "maxPacketRefs",
+        "maxDiagnostics", "maxEvents", "maxInterfaces", "tftpServicePort"
       ],
       "properties": {
         "maxPacketBytes": {"type": "integer", "minimum": 1},
@@ -73,6 +89,10 @@
         "maxTransferRecords": {"type": "integer", "minimum": 1},
         "maxTransferBytes": {"type": "integer", "minimum": 1},
         "maxEvidenceRecords": {"type": "integer", "minimum": 1},
+        "maxPacketRefs": {"type": "integer", "minimum": 1},
+        "maxDiagnostics": {"type": "integer", "minimum": 1},
+        "maxEvents": {"type": "integer", "minimum": 1},
+        "maxInterfaces": {"type": "integer", "minimum": 1},
         "tftpServicePort": {"type": "integer", "minimum": 1, "maximum": 65535}
       }
     },
@@ -224,6 +244,47 @@
         "packetRefId": {"type": "string", "minLength": 1},
         "containerOffset": {"type": "integer", "minimum": 0},
         "detail": {"type": "object"}
+      }
+    },
+    "contractProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["adapterVersion", "contractIdentity", "records", "nonProjectable"],
+      "properties": {
+        "adapterVersion": {"const": "1.0"},
+        "contractIdentity": {
+          "type": "object", "additionalProperties": false,
+          "required": ["path", "sha256", "version"],
+          "properties": {
+            "path": {"const": "configs/engineering/cltav_development_contracts.json"},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "version": {"type": "string", "minLength": 1}
+          }
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["recordType", "sourceId", "payload"],
+            "properties": {
+              "recordType": {"enum": ["PACKET-REF", "DATAGRAM-RECORD", "TRANSFER-RECORD", "PROTOCOL-EVENT"]},
+              "sourceId": {"type": "string", "minLength": 1},
+              "payload": {"type": "object"}
+            }
+          }
+        },
+        "nonProjectable": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["sourceType", "sourceId", "reason"],
+            "properties": {
+              "sourceType": {"type": "string", "minLength": 1},
+              "sourceId": {"type": "string", "minLength": 1},
+              "reason": {"type": "string", "minLength": 1}
+            }
+          }
+        }
       }
     }
   }

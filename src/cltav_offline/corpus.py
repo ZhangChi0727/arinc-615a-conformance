@@ -11,6 +11,8 @@ from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any
 
 from .evidence import evidence_errors
+from .identity import tool_identity
+from .contracts import empty_contract_projection
 from .pipeline import (
     IntakeConfig,
     IntakeError,
@@ -331,12 +333,26 @@ def _is_owned_corpus_result(target: Path) -> bool:
         summary = json.loads(index.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return False
-    return (
+    if not (
         isinstance(summary, dict)
         and summary.get("artifactType") == "CLTAV-OFFLINE-INTAKE-CORPUS-INDEX"
         and summary.get("schemaVersion") == "1.0"
         and summary.get("manifestId") == "CLTAV-HISTORICAL-CAPTURES"
-    )
+        and isinstance(summary.get("captures"), list)
+    ):
+        return False
+    capture_ids = [row.get("captureId") for row in summary["captures"] if isinstance(row, dict)]
+    if len(capture_ids) != len(summary["captures"]) or any(
+        not isinstance(value, str) or not _CORPUS_CAPTURE_ID_RE.fullmatch(value) for value in capture_ids
+    ):
+        return False
+    expected = {"corpus-index.json", *(f"{capture_id}.json" for capture_id in capture_ids)}
+    try:
+        actual = {item.name for item in target.iterdir() if item.is_file() and not item.is_symlink()}
+        no_directories = not any(item.is_dir() or item.is_symlink() for item in target.iterdir())
+    except OSError:
+        return False
+    return no_directories and actual == expected
 
 
 def _staged_capture_output(stage: Path, capture_id: str) -> Path:
@@ -384,7 +400,7 @@ def _failure_evidence(
             "purpose": "EXPLORATORY-DEVELOPMENT-ONLY",
             "conformanceVerdict": "NOT-EVALUATED",
         },
-        "tool": {"name": "cltav-offline", "sourceCommit": source_commit},
+        "tool": tool_identity(source_commit),
         "input": {
             "captureId": capture_id,
             "byteCount": row["byteCount"],
@@ -407,8 +423,11 @@ def _failure_evidence(
         "diagnostics": [{
             "code": error.code,
             "stage": "INPUT",
+            "severity": "ERROR",
             "message": _public_error_message(error),
+            "detail": {"inputSha256": row["sha256"]},
         }],
+        "contractProjection": empty_contract_projection(),
     }
 
 

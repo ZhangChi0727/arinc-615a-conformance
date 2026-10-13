@@ -90,12 +90,17 @@ class CaptureReader:
         *,
         max_packet_bytes: int = 2 * 1024 * 1024,
         max_block_bytes: int = 4 * 1024 * 1024,
+        max_interfaces: int = 1_024,
+        max_diagnostics: int = 50_000,
     ) -> None:
         self.path = path
         self.capture_id = capture_id
         self.max_packet_bytes = max_packet_bytes
         self.max_block_bytes = max_block_bytes
+        self.max_interfaces = max_interfaces
+        self.max_diagnostics = max_diagnostics
         self.metadata = CaptureMetadata()
+        self._metadata_diagnostic_limit_reported = False
 
     def __iter__(self) -> Iterator[CapturedPacket]:
         try:
@@ -163,9 +168,15 @@ class CaptureReader:
             ts_sec, ts_fraction, included_length, original_length = struct.unpack(
                 f"{endian}IIII", record_header
             )
+            if ts_fraction >= resolution:
+                raise CaptureFormatError(
+                    "INVALID-PCAP-TIMESTAMP-FRACTION",
+                    "pcap timestamp fraction exceeds its declared resolution",
+                    record_start,
+                )
             offset += 16
             if included_length > self.max_packet_bytes:
-                self.metadata.diagnostics.append(Diagnostic(
+                self._add_metadata_diagnostic(Diagnostic(
                     "PACKET-RESOURCE-LIMIT", "CAPTURE",
                     "pcap packet exceeds configured capture-byte limit",
                     packet_ref_id=f"{self.capture_id}:P{packet_index + 1:08d}",
@@ -226,6 +237,12 @@ class CaptureReader:
                     )
                 total_length = struct.unpack(f"{endian}I", header[4:])[0]
                 _validate_block_length(total_length, self.max_block_bytes, block_start)
+                if total_length < 28:
+                    raise CaptureFormatError(
+                        "INVALID-PCAPNG-SHB",
+                        "pcapng section header is shorter than its fixed fields",
+                        block_start,
+                    )
                 remaining = _read_exact(
                     stream, total_length - 12, "TRUNCATED-PCAPNG-SHB", block_start + 12
                 )
@@ -255,6 +272,12 @@ class CaptureReader:
             body = remainder[:-4]
             offset += total_length
             if block_type == PCAPNG_INTERFACE_DESCRIPTION:
+                if len(self.metadata.interfaces) >= self.max_interfaces:
+                    raise CaptureFormatError(
+                        "RESOURCE-INTERFACE-LIMIT",
+                        "pcapng interface count exceeds configured bound",
+                        block_start,
+                    )
                 interface = _parse_interface_description(
                     body, endian, section_index, global_interface_id, block_start,
                     clock_domain=f"PCAPNG-SECTION-{section_index}-INTERFACE-{interface_sequence}-UNASSESSED",
@@ -278,14 +301,15 @@ class CaptureReader:
                         "PCAPNG-UNKNOWN-INTERFACE", "enhanced packet references an unknown interface", block_start
                     )
                 padded = _padded_length(captured_length)
-                if len(body) != 20 + padded:
+                if len(body) < 20 + padded:
                     raise CaptureFormatError(
                         "INVALID-PCAPNG-ENHANCED-LENGTH", "enhanced packet length is inconsistent", block_start
                     )
+                _parse_options(body[20 + padded:], endian, block_start + 28 + padded)
                 packet_index += 1
                 self.metadata.packet_count += 1
                 if captured_length > self.max_packet_bytes:
-                    self.metadata.diagnostics.append(Diagnostic(
+                    self._add_metadata_diagnostic(Diagnostic(
                         "PACKET-RESOURCE-LIMIT", "CAPTURE",
                         "pcapng packet exceeds configured capture-byte limit",
                         packet_ref_id=f"{self.capture_id}:P{packet_index:08d}",
@@ -324,7 +348,7 @@ class CaptureReader:
                 packet_index += 1
                 self.metadata.packet_count += 1
                 if captured_length > self.max_packet_bytes:
-                    self.metadata.diagnostics.append(Diagnostic(
+                    self._add_metadata_diagnostic(Diagnostic(
                         "PACKET-RESOURCE-LIMIT", "CAPTURE",
                         "simple packet exceeds configured capture-byte limit",
                         packet_ref_id=f"{self.capture_id}:P{packet_index:08d}",
@@ -332,7 +356,7 @@ class CaptureReader:
                         detail={"capturedLength": captured_length, "limit": self.max_packet_bytes},
                     ))
                     continue
-                self.metadata.diagnostics.append(Diagnostic(
+                self._add_metadata_diagnostic(Diagnostic(
                     "PACKET-TIMESTAMP-UNKNOWN", "CAPTURE",
                     "pcapng simple packet has no timestamp", severity="WARNING",
                     packet_ref_id=f"{self.capture_id}:P{packet_index:08d}", container_offset=block_start,
@@ -347,12 +371,26 @@ class CaptureReader:
                 )
                 continue
             if block_type not in PCAPNG_KNOWN_NON_PACKET_BLOCKS:
-                self.metadata.diagnostics.append(Diagnostic(
+                self._add_metadata_diagnostic(Diagnostic(
                     "UNSUPPORTED-PCAPNG-BLOCK", "CAPTURE",
                     "pcapng contains a block type not interpreted by this bounded intake",
                     severity="WARNING", container_offset=block_start,
                     detail={"blockType": f"0x{block_type:08X}"},
                 ))
+
+    def _add_metadata_diagnostic(self, diagnostic: Diagnostic) -> None:
+        """Bound retained container diagnostics, reserving a truncation witness."""
+        if len(self.metadata.diagnostics) < self.max_diagnostics - 1:
+            self.metadata.diagnostics.append(diagnostic)
+            return
+        if not self._metadata_diagnostic_limit_reported:
+            self._metadata_diagnostic_limit_reported = True
+            self.metadata.diagnostics.append(Diagnostic(
+                "RESOURCE-CAPTURE-DIAGNOSTIC-LIMIT",
+                "CAPTURE",
+                "capture diagnostics were bounded; later container issues were not retained",
+                detail={"limit": self.max_diagnostics},
+            ))
 
 
 def _read_exact(stream: BinaryIO, size: int, code: str, offset: int) -> bytes:
@@ -386,6 +424,34 @@ def _padded_length(length: int) -> int:
     return length + (-length % 4)
 
 
+def _parse_options(data: bytes, endian: str, offset: int) -> None:
+    """Validate and intentionally discard legal pcapng option payloads.
+
+    Comments and other options may contain local/sensitive content.  The
+    bounded intake preserves only structural validity, never their text.
+    """
+    cursor = 0
+    while cursor < len(data):
+        if cursor + 4 > len(data):
+            raise CaptureFormatError(
+                "INVALID-PCAPNG-OPTION", "pcapng option header is truncated", offset + cursor
+            )
+        code, length = struct.unpack(f"{endian}HH", data[cursor:cursor + 4])
+        cursor += 4
+        if code == 0:
+            if length != 0 or cursor != len(data):
+                raise CaptureFormatError(
+                    "INVALID-PCAPNG-OPTION", "pcapng option end marker is invalid", offset + cursor - 4
+                )
+            return
+        padded = _padded_length(length)
+        if cursor + padded > len(data):
+            raise CaptureFormatError(
+                "INVALID-PCAPNG-OPTION", "pcapng option payload is truncated", offset + cursor
+            )
+        cursor += padded
+
+
 def _parse_interface_description(
     body: bytes, endian: str, section_id: int, interface_id: int, offset: int, *, clock_domain: str,
 ) -> InterfaceMetadata:
@@ -394,9 +460,9 @@ def _parse_interface_description(
             "INVALID-PCAPNG-INTERFACE", "interface description is too short", offset
         )
     link_type, _reserved, snap_length = struct.unpack(f"{endian}HHI", body[:8])
-    if snap_length <= 0:
+    if snap_length < 0:  # unsigned field; retain an explicit defensive boundary.
         raise CaptureFormatError(
-            "INVALID-PCAPNG-SNAPLEN", "interface snap length must be positive", offset
+            "INVALID-PCAPNG-SNAPLEN", "interface snap length is invalid", offset
         )
     ticks_per_second = 1_000_000
     offset_seconds = 0

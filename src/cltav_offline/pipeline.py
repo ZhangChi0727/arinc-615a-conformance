@@ -10,7 +10,9 @@ from typing import Any
 
 from . import __version__
 from .capture import CaptureFormatError, CaptureReader
+from .contracts import project_development_records
 from .events import first_slice_events
+from .identity import tool_identity
 from .models import DatagramRecord, Diagnostic, PacketRef, ProtocolEvent, TransferRecord
 from .network import Ipv4Reassembler, PacketDecodeError, UDP_PROTOCOL, decode_udp, extract_ipv4
 from .tftp import TftpReconstructor
@@ -28,11 +30,13 @@ SOURCE_COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
 
 
 def validate_source_commit(value: object) -> str:
-    """Require an immutable Git object ID for every published evidence item."""
+    """Validate an optional caller claim without calling arbitrary CWD Git."""
+    if value is None or value == "UNVERIFIED":
+        return "UNVERIFIED"
     if not isinstance(value, str) or not SOURCE_COMMIT_RE.fullmatch(value):
         raise IntakeError(
             "INVALID-SOURCE-COMMIT",
-            "source commit must be a lowercase 40-character Git object ID",
+            "source commit claim must be a lowercase 40-character Git object ID",
         )
     return value
 
@@ -50,6 +54,10 @@ class IntakeConfig:
     max_transfer_records: int = 50_000
     max_transfer_bytes: int = 16 * 1024 * 1024
     max_evidence_records: int = 50_000
+    max_packet_refs: int = 50_000
+    max_diagnostics: int = 50_000
+    max_events: int = 50_000
+    max_interfaces: int = 1_024
     tftp_service_port: int = 69
 
     def to_dict(self) -> dict[str, int]:
@@ -63,6 +71,10 @@ class IntakeConfig:
             "maxTransferRecords": self.max_transfer_records,
             "maxTransferBytes": self.max_transfer_bytes,
             "maxEvidenceRecords": self.max_evidence_records,
+            "maxPacketRefs": self.max_packet_refs,
+            "maxDiagnostics": self.max_diagnostics,
+            "maxEvents": self.max_events,
+            "maxInterfaces": self.max_interfaces,
             "tftpServicePort": self.tftp_service_port,
         }
 
@@ -104,12 +116,7 @@ class IntakeResult:
                 "conformanceVerdict": "NOT-EVALUATED",
                 "integrity": "NOT-EVALUATED",
             },
-            "tool": {
-                "name": "cltav-offline",
-                "version": __version__,
-                "sourceCommit": source_commit,
-                "contractIds": ["CR-2026-016", "CR-2026-017", "DD-038", "DD-040", "DD-041"],
-            },
+            "tool": {"version": __version__, **tool_identity(source_commit)},
             "input": {
                 "captureId": self.capture_id,
                 "byteCount": self.byte_count,
@@ -132,7 +139,8 @@ class IntakeResult:
             "datagrams": [item.to_dict() for item in self.datagrams],
             "transfers": [item.to_dict() for item in self.transfers],
             "events": [item.to_dict() for item in self.events],
-            "diagnostics": [item.to_dict() for item in self.diagnostics],
+            "diagnostics": [_diagnostic_dict(item, self.sha256) for item in self.diagnostics],
+            "contractProjection": project_development_records(self),
         }
 
 
@@ -168,6 +176,8 @@ def run_capture(
         path, capture_id,
         max_packet_bytes=config.max_packet_bytes,
         max_block_bytes=config.max_container_block_bytes,
+        max_interfaces=min(config.max_interfaces, config.max_evidence_records),
+        max_diagnostics=min(config.max_diagnostics, config.max_evidence_records),
     )
     reassembler = Ipv4Reassembler(
         max_active_datagrams=config.max_active_datagrams,
@@ -180,6 +190,7 @@ def run_capture(
         max_active_transfers=config.max_active_transfers,
         max_transfer_bytes=config.max_transfer_bytes,
         max_transfer_records=config.max_transfer_records,
+        max_diagnostics=min(config.max_diagnostics, config.max_evidence_records),
     )
     result = IntakeResult(
         capture_id=capture_id,
@@ -190,27 +201,82 @@ def run_capture(
     )
     stopped_for_limit = False
     packet_ref_ids: set[str] = set()
+    diagnostic_limit_reported = False
+
+    def retained_count() -> int:
+        return (
+            len(result.packet_refs)
+            + len(result.datagrams)
+            + len(result.transfers)
+            + len(result.events)
+            + len(result.diagnostics)
+        )
+
+    def emit_diagnostic(diagnostic: Diagnostic) -> bool:
+        """Retain a bounded diagnostic stream with one reserved stop witness."""
+        nonlocal stopped_for_limit, diagnostic_limit_reported
+        diagnostic_limit = min(config.max_diagnostics, config.max_evidence_records)
+        if len(result.diagnostics) < diagnostic_limit - 1 and retained_count() < config.max_evidence_records - 1:
+            result.diagnostics.append(diagnostic)
+            return True
+        if not diagnostic_limit_reported and retained_count() < config.max_evidence_records:
+            diagnostic_limit_reported = True
+            result.diagnostics.append(Diagnostic(
+                "RESOURCE-DIAGNOSTIC-LIMIT",
+                "PIPELINE",
+                "diagnostic retention limit reached; input suffix was not consumed",
+                detail={"limit": diagnostic_limit, "unconsumedSuffix": "NOT-CONSUMED"},
+            ))
+        stopped_for_limit = True
+        return False
+
+    def retain_packet_ref(reference: PacketRef) -> bool:
+        nonlocal stopped_for_limit
+        if reference.id in packet_ref_ids:
+            return True
+        packet_limit = min(config.max_packet_refs, config.max_evidence_records)
+        if len(result.packet_refs) >= packet_limit or retained_count() >= config.max_evidence_records - 1:
+            emit_diagnostic(Diagnostic(
+                "RESOURCE-PACKET-REF-LIMIT",
+                "PIPELINE",
+                "packet-reference retention limit reached; input suffix was not consumed",
+                detail={"limit": packet_limit, "unconsumedSuffix": "NOT-CONSUMED"},
+            ))
+            stopped_for_limit = True
+            return False
+        result.packet_refs.append(reference)
+        packet_ref_ids.add(reference.id)
+        return True
 
     def accept_datagram(record: DatagramRecord) -> None:
         nonlocal stopped_for_limit
-        if len(result.datagrams) >= config.max_evidence_records:
-            stopped_for_limit = True
-            result.diagnostics.append(Diagnostic(
-                "RESOURCE-EVIDENCE-RECORD-LIMIT", "PIPELINE",
+        if len(result.datagrams) >= config.max_evidence_records or retained_count() >= config.max_evidence_records - 1:
+            emit_diagnostic(Diagnostic(
+                "RESOURCE-DATAGRAM-RECORD-LIMIT", "PIPELINE",
                 "configured evidence-record limit reached; remaining packets were not consumed",
-                detail={"limit": config.max_evidence_records},
+                detail={"limit": config.max_evidence_records, "unconsumedSuffix": "NOT-CONSUMED"},
             ))
+            stopped_for_limit = True
+            return
+        if any(item.id not in packet_ref_ids for item in record.packet_refs):
+            emit_diagnostic(Diagnostic(
+                "RESOURCE-PACKET-REF-LIMIT", "PIPELINE",
+                "datagram source references could not be retained",
+                detail={"limit": config.max_packet_refs, "unconsumedSuffix": "NOT-CONSUMED"},
+            ))
+            stopped_for_limit = True
+            record.payload = None
             return
         result.datagrams.append(record)
-        _append_packet_refs(result.packet_refs, record.packet_refs, packet_ref_ids)
         if record.status != "COMPLETE" or record.protocol != UDP_PROTOCOL:
             record.payload = None
             return
         try:
             udp = decode_udp(record)
         except PacketDecodeError as exc:
-            result.diagnostics.append(Diagnostic(
+            emit_diagnostic(Diagnostic(
                 exc.code, "UDP", str(exc), packet_ref_id=record.packet_refs[-1].id,
+                container_offset=record.packet_refs[-1].container_offset,
                 detail={"datagramId": record.datagram_id},
             ))
         else:
@@ -223,15 +289,25 @@ def run_capture(
         for captured in reader:
             if stopped_for_limit:
                 break
+            if not retain_packet_ref(captured.ref):
+                break
             try:
                 fragment = extract_ipv4(captured.ref, captured.data)
             except PacketDecodeError as exc:
-                result.diagnostics.append(Diagnostic(
+                emit_diagnostic(Diagnostic(
                     exc.code, "NETWORK", str(exc), severity="WARNING",
-                    packet_ref_id=captured.ref.id,
+                    packet_ref_id=captured.ref.id, container_offset=captured.ref.container_offset,
                 ))
                 continue
             if fragment is None:
+                emit_diagnostic(Diagnostic(
+                    "UNSUPPORTED-NETWORK-PAYLOAD",
+                    "NETWORK",
+                    "captured packet is outside the bounded Ethernet/IPv4 intake scope",
+                    severity="WARNING",
+                    packet_ref_id=captured.ref.id,
+                    container_offset=captured.ref.container_offset,
+                ))
                 continue
             for record in reassembler.add(fragment):
                 accept_datagram(record)
@@ -245,17 +321,56 @@ def run_capture(
     finally:
         result.capture_metadata = reader.metadata.to_dict()
         result.container_packet_count = reader.metadata.packet_count
-        result.diagnostics.extend(reader.metadata.diagnostics)
+        for diagnostic in reader.metadata.diagnostics:
+            if diagnostic.packet_ref_id is not None and diagnostic.packet_ref_id not in packet_ref_ids:
+                detail = dict(diagnostic.detail)
+                detail["packetRefUnavailable"] = diagnostic.packet_ref_id
+                diagnostic = Diagnostic(
+                    diagnostic.code, diagnostic.stage, diagnostic.message,
+                    severity=diagnostic.severity, container_offset=diagnostic.container_offset, detail=detail,
+                )
+            emit_diagnostic(diagnostic)
     if stopped_for_limit:
         # Active records are flushed even after a resource stop, preserving why
         # their reconstruction cannot be treated as complete.
         for record in reassembler.finish("RESOURCE-EVIDENCE-RECORD-LIMIT"):
-            if len(result.datagrams) < config.max_evidence_records:
+            if (
+                len(result.datagrams) < config.max_evidence_records
+                and retained_count() < config.max_evidence_records - 1
+                and all(item.id in packet_ref_ids for item in record.packet_refs)
+            ):
                 result.datagrams.append(record)
-                _append_packet_refs(result.packet_refs, record.packet_refs, packet_ref_ids)
-    result.diagnostics.extend(transfers.diagnostics)
-    result.transfers = transfers.finish()
-    result.events = first_slice_events(result.transfers)
+    for diagnostic in transfers.diagnostics:
+        emit_diagnostic(diagnostic)
+    finished_transfers = transfers.finish()
+    transfer_room = max(0, config.max_evidence_records - 1 - retained_count())
+    if len(finished_transfers) > transfer_room:
+        result.transfers = finished_transfers[:transfer_room]
+        emit_diagnostic(Diagnostic(
+            "RESOURCE-TRANSFER-EVIDENCE-LIMIT",
+            "TFTP",
+            "transfer records exceeded the shared evidence retention limit",
+            detail={"limit": config.max_evidence_records},
+        ))
+    else:
+        result.transfers = finished_transfers
+    generated_events = first_slice_events(result.transfers)
+    event_room = min(config.max_events, max(0, config.max_evidence_records - 1 - retained_count()))
+    if len(generated_events) > event_room:
+        result.events = generated_events[:event_room]
+        emit_diagnostic(Diagnostic(
+            "RESOURCE-EVENT-LIMIT",
+            "EVENT",
+            "event retention limit reached; later derived events were not retained",
+            detail={"limit": event_room},
+        ))
+    else:
+        result.events = generated_events
+    if stopped_for_limit:
+        result.capture_metadata["scanStatus"] = "STOPPED-RESOURCE-LIMIT"
+        result.capture_metadata["unconsumedSuffix"] = "NOT-CONSUMED"
+    else:
+        result.capture_metadata["scanStatus"] = "COMPLETE"
     # Payload bytes are only an in-process parse input.  The serialised record
     # retains their length and source chain, never the payload itself.
     for transfer in result.transfers:
@@ -278,6 +393,15 @@ def _append_packet_refs(
         if item.id not in known:
             target.append(item)
             known.add(item.id)
+
+
+def _diagnostic_dict(diagnostic: Diagnostic, input_sha256: str) -> dict[str, Any]:
+    """Attach the immutable input identity to each retained diagnostic."""
+    rendered = diagnostic.to_dict()
+    detail = dict(rendered.get("detail", {}))
+    detail["inputSha256"] = input_sha256
+    rendered["detail"] = detail
+    return rendered
 
 
 def _validate_config(config: IntakeConfig) -> None:

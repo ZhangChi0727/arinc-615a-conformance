@@ -166,20 +166,23 @@ class TftpReconstructor:
         max_active_transfers: int = 128,
         max_transfer_bytes: int = 16 * 1024 * 1024,
         max_transfer_records: int = 200_000,
+        max_diagnostics: int = 50_000,
     ) -> None:
         if not 1 <= service_port <= 65_535:
             raise ValueError("service_port must be in 1..65535")
-        if max_active_transfers < 1 or max_transfer_bytes < 1 or max_transfer_records < 1:
+        if min(max_active_transfers, max_transfer_bytes, max_transfer_records, max_diagnostics) < 1:
             raise ValueError("transfer limits must be positive")
         self.capture_id = capture_id
         self.service_port = service_port
         self.max_active_transfers = max_active_transfers
         self.max_transfer_bytes = max_transfer_bytes
         self.max_transfer_records = max_transfer_records
+        self.max_diagnostics = max_diagnostics
         self._sessions: list[_Session] = []
         self._records: list[TransferRecord] = []
         self._sequence = 0
         self.diagnostics: list[Diagnostic] = []
+        self._diagnostic_limit_reported = False
 
     @property
     def records(self) -> list[TransferRecord]:
@@ -301,6 +304,7 @@ class TftpReconstructor:
             vlan_tags=udp.datagram.vlan_tags,
         )
         _record_source(record, udp)
+        record.request_packet_ref = udp.datagram.packet_refs[-1]
         self._sessions.append(_Session(record=record, request_options=options, context=context))
         self._records.append(record)
 
@@ -437,9 +441,11 @@ class TftpReconstructor:
             self._terminate(session, "GAPPED", "RESOURCE-TRANSFER-BYTE-LIMIT")
             return
         session.blocks[block] = _Block(digest, data)
+        session.record.block_packet_refs[block] = session.record.packet_refs[-1]
         session.received_payload_bytes += len(data)
         if len(data) < block_size:
             session.terminal_block = block
+            session.record.completion_packet_ref = session.record.packet_refs[-1]
             self._complete_if_contiguous(session)
 
     def _complete_if_contiguous(self, session: _Session) -> None:
@@ -476,6 +482,17 @@ class TftpReconstructor:
         severity: str = "ERROR",
         **detail: int | str,
     ) -> None:
+        if len(self.diagnostics) >= self.max_diagnostics - 1:
+            if self._diagnostic_limit_reported:
+                return
+            self._diagnostic_limit_reported = True
+            self.diagnostics.append(Diagnostic(
+                "RESOURCE-TFTP-DIAGNOSTIC-LIMIT",
+                "TFTP",
+                "TFTP diagnostics were bounded; later candidate packets were not retained",
+                detail={"limit": self.max_diagnostics},
+            ))
+            return
         self.diagnostics.append(Diagnostic(
             code,
             "TFTP",

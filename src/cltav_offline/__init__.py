@@ -8,4 +8,3 @@ CL-TAV ownership/history loop.
 from __future__ import annotations
 
 __version__ = "0.1.0"
-

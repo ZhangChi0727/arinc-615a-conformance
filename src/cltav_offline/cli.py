@@ -3,9 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import os
-import re
-import subprocess
 import sys
 from pathlib import Path
 
@@ -29,13 +26,13 @@ def main(argv: list[str] | None = None) -> int:
     inspect.add_argument("--input", required=True, type=Path)
     inspect.add_argument("--capture-id", required=True)
     inspect.add_argument("--output", required=True, type=Path)
-    inspect.add_argument("--source-commit", default=_source_commit_default())
+    inspect.add_argument("--source-commit", default=None)
     _add_limits(inspect)
     corpus = subparsers.add_parser("corpus", help="audit and process a manifest-controlled local corpus")
     corpus.add_argument("--manifest", required=True, type=Path)
     corpus.add_argument("--corpus-root", required=True, type=Path)
     corpus.add_argument("--output-dir", required=True, type=Path)
-    corpus.add_argument("--source-commit", default=_source_commit_default())
+    corpus.add_argument("--source-commit", default=None)
     _add_limits(corpus)
     args = parser.parse_args(argv)
     config = IntakeConfig(
@@ -48,6 +45,10 @@ def main(argv: list[str] | None = None) -> int:
         max_transfer_records=args.max_transfer_records,
         max_transfer_bytes=args.max_transfer_bytes,
         max_evidence_records=args.max_evidence_records,
+        max_packet_refs=args.max_packet_refs,
+        max_diagnostics=args.max_diagnostics,
+        max_events=args.max_events,
+        max_interfaces=args.max_interfaces,
         tftp_service_port=args.tftp_service_port,
     )
     try:
@@ -80,24 +81,6 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
 
-def _source_commit_default() -> str:
-    candidate = os.environ.get("GITHUB_SHA")
-    if candidate:
-        return candidate.strip().lower()
-    try:
-        completed = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            check=True,
-            capture_output=True,
-            text=True,
-            timeout=5,
-        )
-    except (OSError, subprocess.SubprocessError):
-        return "UNSPECIFIED"
-    value = completed.stdout.strip().lower()
-    return value if re.fullmatch(r"[0-9a-f]{40}", value) else "UNSPECIFIED"
-
-
 def _add_limits(parser: argparse.ArgumentParser) -> None:
     limits = parser.add_argument_group("implementation resource limits (not protocol constants)")
     limits.add_argument("--max-packet-bytes", type=int, default=2 * 1024 * 1024)
@@ -109,6 +92,10 @@ def _add_limits(parser: argparse.ArgumentParser) -> None:
     limits.add_argument("--max-transfer-records", type=int, default=50_000)
     limits.add_argument("--max-transfer-bytes", type=int, default=16 * 1024 * 1024)
     limits.add_argument("--max-evidence-records", type=int, default=50_000)
+    limits.add_argument("--max-packet-refs", type=int, default=50_000)
+    limits.add_argument("--max-diagnostics", type=int, default=50_000)
+    limits.add_argument("--max-events", type=int, default=50_000)
+    limits.add_argument("--max-interfaces", type=int, default=1_024)
     limits.add_argument("--tftp-service-port", type=int, default=69)
 
 

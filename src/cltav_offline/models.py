@@ -239,6 +239,9 @@ class TransferRecord:
     terminal_block: int | None = None
     complete_payload: bytes | None = None
     complete_payload_length: int | None = None
+    request_packet_ref: PacketRef | None = None
+    block_packet_refs: dict[int, PacketRef] = field(default_factory=dict)
+    completion_packet_ref: PacketRef | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
