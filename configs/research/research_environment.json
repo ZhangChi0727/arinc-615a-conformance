@@ -1,0 +1,50 @@
+{
+  "environmentId": "CLTAV-RESEARCH-ENV-2026-001",
+  "version": "1.0",
+  "status": "ACTIVE-INFRASTRUCTURE",
+  "targetVenue": "IEEE Transactions on Aerospace and Electronic Systems",
+  "review": {
+    "mode": "LIVING-EVIDENCE-MAP",
+    "fixedCutoffDate": null,
+    "cutoffPolicy": "No permanent cutoff; record every search execution date and rerun targeted searches before submission.",
+    "databases": [
+      {"name": "IEEE Xplore", "role": "primary-domain-search", "access": "institutional-or-user"},
+      {"name": "ACM Digital Library", "role": "primary-software-search", "access": "institutional-or-user"},
+      {"name": "Scopus", "role": "multidisciplinary-index", "access": "institutional-or-user"},
+      {"name": "Web of Science", "role": "multidisciplinary-index", "access": "institutional-or-user"},
+      {"name": "Crossref", "role": "metadata-verification", "access": "public-api"},
+      {"name": "OpenAlex", "role": "discovery-and-citation-chasing", "access": "public-api"},
+      {"name": "Google Scholar", "role": "supplementary-discovery", "access": "human-assisted"}
+    ]
+  },
+  "referenceManager": {
+    "product": "Zotero",
+    "exporter": "Better BibTeX",
+    "collection": "CL-TAV TAES",
+    "plannedExport": "configs/research/literature/zotero-library.bib",
+    "attachmentsCommitted": false
+  },
+  "registries": {
+    "searchLog": "configs/research/literature/search_log.csv",
+    "screeningLedger": "configs/research/literature/screening_ledger.csv",
+    "evidenceLedger": "configs/research/literature/evidence_ledger.csv",
+    "claimCitationLedger": "configs/research/literature/claim_citation_ledger.csv",
+    "quantitativeFigureManifest": "configs/research/quantitative_figure_manifest.json",
+    "manuscriptBibliography": "docs/research/publication/drafts/taes-cltav/references.bib"
+  },
+  "skills": [
+    ".agents/skills/cltav-literature-review/SKILL.md",
+    ".agents/skills/cltav-research-figures/SKILL.md",
+    ".agents/skills/cltav-manuscript-audit/SKILL.md"
+  ],
+  "humanGates": [
+    "LAWFUL-SOURCE-ACCESS",
+    "BOUNDARY-SCREENING",
+    "STANDARD-INTERPRETATION",
+    "NOVELTY-WORDING",
+    "CONFIRMATORY-REGISTRATION",
+    "RAW-OBSERVATION-AUTHENTICITY",
+    "AUTHOR-AND-INSTITUTIONAL-DISCLOSURE",
+    "FINAL-SCIENTIFIC-APPROVAL"
+  ]
+}

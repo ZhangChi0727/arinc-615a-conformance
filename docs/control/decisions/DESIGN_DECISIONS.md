@@ -985,6 +985,44 @@ number once.
 
 **Status:** Candidate under CR-2026-014.
 
+## DD-042 — Evidence-bounded TAES positioning and evaluation accounting
+
+**Decision:** Integrate the accepted literature evidence into the CL-TAV TAES
+draft without changing the controlled method. C1 is limited to mutually
+consistent interpretation and whole-history update, with true-hypothesis
+retention only under the declared finite model, ownership, pairing and
+conservative-observation assumptions. It is not a new general diagnosis theorem
+for drift, loss, duplication, spurious events or reordering. C2 is a prior-free
+one-step minimax choice over the current feasible affordable test set, together
+with the existing Prep/Recover/ERROR/resource/stop lifecycle; it is not a first
+active-diagnosis loop or a globally optimal policy. The manuscript must treat
+Köhl--Hermanns as the strongest C1 neighbour and keep its passive scope, exact
+versus bounded-history variants, exact-once premise and unresolved A4 reading
+explicit. F-LAS, IMA and cockpit-display sources are engineering/evaluation
+context, not ARINC 615A authority or CL-TAV results.
+
+Evaluation keeps an all-attempt ledger and separately reports the valid
+detection denominator, detection answered subset, localization decision,
+true-fault retention/exclusion, singleton correctness and final candidate-set
+size. Equivalent and undecided faults, unconfirmed injection, invalid
+observation, ERROR, abstention and unconcluded attempts remain visible. A valid
+FAIL with a nonsingleton candidate set is not completed localization, and a
+normal singleton is not protocol PASS. Literature methods become direct arms
+only after task, information, control authority, stopping and cost comparability
+are independently decided.
+
+**Why:** The strongest nearby work already covers feedback, compatible history
+and uncertain timing. The defensible contribution is the bounded 615A
+engineering contract and its later evidence, not a category-level first claim.
+Separating denominators prevents selective answering or common-oracle dependence
+from being reported as detection or localization performance.
+
+**Scope:** Manuscript positioning, citation traceability and explanatory
+experiment accounting under CR-2026-018. No algorithm/interface, CRS, M2,
+engineering-contract, experiment-arm or result change.
+
+**Status:** Candidate under CR-2026-018; independent scientific review required.
+
 ## DD-036 — Algorithm presentation layers, contracts and equivalence acceptance
 
 **Decision:** Present the approved CL-TAV process as one readable top-level
@@ -1590,6 +1628,32 @@ ARINC 615A 数据加载是合法操作、观测和实验场景的来源。CL-TAV
 **范围：** 仅包括 pcap／pcapng 接入、数据包记录、有限 IPv4／UDP／TFTP 重建、首轮 UPLOAD／INFORMATION 事件提取和可追踪证据索引。本地历史语料仅是探索性开发输入。不授权网络活动、IUT 交互、协议判定、根因 finding、完整性建立、Project Configuration、M3 激活、确认性实验、能力主张或认证主张。
 
 **状态：** 在 CR-2026-017 下为候选；接受前需要实现和独立评审。本决定仅在狭窄的实现授权上取代 CR-2026-016，不改变后者作为历史“仅规格”记录的含义。
+
+## DD-042——证据有界的 TAES 定位与评价记账
+
+**决定：** 在不改变受控方法的前提下，把已接受文献证据融入 CL-TAV TAES
+稿件。C1 限于声明有限模型、所有权、配对与保守观测假设下相互一致的解释和
+全历史更新，以及条件化真实假设保留；不提出漂移、丢失、重复、伪造或乱序下的
+新普遍诊断定理。C2 是当前有限可行、可负担测试集上的无默认先验一步 minimax，
+并沿用 Prep／Recover／ERROR／资源／停止生命周期；不是首次主动诊断闭环，也不是
+全局最优策略。稿件须把 Köhl--Hermanns 作为 C1 强近邻，明确其被动范围、精确／
+有界历史版本、exact-once 前提与未决 A4 解释。F-LAS、IMA 与座舱显示文献仅作
+工程／评价语境，不是 ARINC 615A 权威或 CL-TAV 结果。
+
+评价保留全部尝试总账，并分别报告检测有效分母、检测回答子集、是否作出定位决策、
+真故障保留／排除、单例正确性与最终候选集大小。等价／未决故障、未确认注入、
+无效观测、ERROR、弃权和未结束尝试保持可见。有效 FAIL 且候选不唯一不等于完成
+定位，正常单例不等于协议 PASS。只有任务、信息、控制权限、停止与成本具备公平
+可比性并另行决定后，文献方法才能成为直接实验臂。
+
+**理由：** 最接近工作已经覆盖反馈、相容历史和时序不确定性。可辩护贡献是有界的
+615A 工程合同及其后续证据，而不是类别级“首次”。分开分母可以防止选择性回答或
+共同 oracle 依赖被误报为检测／定位性能。
+
+**范围：** CR-2026-018 下的稿件定位、引用追踪与实验记账解释；不改变算法／接口、
+CRS、M2、开发合同、实验臂或结果。
+
+**状态：** CR-2026-018 下候选；须独立科学评审。
 
 ## DD-038——首轮需求分层与就绪边界
 

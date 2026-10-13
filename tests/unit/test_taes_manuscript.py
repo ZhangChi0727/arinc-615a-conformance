@@ -120,6 +120,45 @@ def test_rejects_missing_citation_key() -> None:
     assert any("missing from bib" in item for item in errors)
 
 
+def test_rejects_unknown_citation_evidence_id() -> None:
+    bad = copy.deepcopy(MANIFEST)
+    bad["citationEvidence"][0]["evidenceIds"] = ["EVID-NOT-REAL"]
+    errors = taes.manuscript_errors(bad)
+    assert "unknown evidence id for sampath1998: EVID-NOT-REAL" in errors
+
+
+def test_rejects_missing_required_citation_evidence_binding() -> None:
+    bad = copy.deepcopy(MANIFEST)
+    bad["citationEvidence"] = [
+        row for row in bad["citationEvidence"] if row["bibKey"] != "arcuri2011"
+    ]
+    errors = taes._citation_evidence_errors(
+        bad, ROOT, set(bad["citations"])
+    )
+    assert "required citation has no evidence binding: arcuri2011" in errors
+
+
+def test_citation_evidence_binding_order_is_not_semantic() -> None:
+    reordered = copy.deepcopy(MANIFEST)
+    reordered["citationEvidence"].reverse()
+    assert taes._citation_evidence_errors(
+        reordered, ROOT, set(reordered["citations"])
+    ) == []
+
+
+def test_rejects_unclassified_used_citation() -> None:
+    bad = copy.deepcopy(MANIFEST)
+    bad["citationEvidenceScope"]["exempt"] = [
+        row
+        for row in bad["citationEvidenceScope"]["exempt"]
+        if row["bibKey"] != "arinc6451"
+    ]
+    errors = taes._citation_evidence_errors(
+        bad, ROOT, set(bad["citations"])
+    )
+    assert "used citation is not classified for evidence: arinc6451" in errors
+
+
 def test_rejects_path_escape() -> None:
     bad = copy.deepcopy(MANIFEST)
     bad["main"] = "../secret.tex"

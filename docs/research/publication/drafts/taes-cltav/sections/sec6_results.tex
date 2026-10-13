@@ -7,11 +7,11 @@ No effect direction, percentage or superiority is reported.
 \begin{figure}[!t]
 \centering
 \phboxhigh{PH-RES-DETECT}{EXPERIMENT-RESULT}{Separate cells, not one shared
-denominator: (i) attempt coverage on all registered attempts; (ii) refusal
-rate (abstain/INCONCLUSIVE/unconcluded among attempts); (iii) conditional
-error on the answered subset; (iv) miss and false-FAIL on the detection
-denominator after invalid and equivalent faults are removed. Abstain is not a
-PASS/FAIL. Source: EXP-CLTAV-DETECT.}
+denominator: (i) the all-attempt ledger and attempt coverage; (ii) named
+unconfirmed, invalid, equivalent, undecided, ERROR, abstain and unconcluded
+flows; (iii) refusal among attempts; (iv) conditional error on the detection
+answered subset; and (v) miss and false-FAIL on the registered valid detection
+denominator. Abstain is not PASS/FAIL. Source: EXP-CLTAV-DETECT.}
 \caption{Reserved detection panel. Not a result.}
 \label{fig:res-detect}
 \end{figure}
@@ -20,8 +20,10 @@ PASS/FAIL. Source: EXP-CLTAV-DETECT.}
 \begin{figure}[!t]
 \centering
 \phboxhigh{PH-RES-LOCATE}{EXPERIMENT-RESULT}{Cells: final \(|H|\), true-fault
-exclusion, refusal, charged resource. Denominator: confirmed in-domain
-injections. Out-of-domain faults are reported separately. Singleton
+retention/exclusion, decision issued, singleton correctness, refusal and charged
+resource. Denominator: confirmed in-domain injections, reported separately from
+the detection answered subset. A valid FAIL with a nonsingleton \(H\) is not
+completed localization. Out-of-domain faults are separate; singleton
 \(h_{\mathrm{normal}}\) is not protocol PASS. Source: EXP-CLTAV-LOCATE.}
 \caption{Reserved localization panel. Not a result.}
 \label{fig:res-locate}

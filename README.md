@@ -51,17 +51,18 @@ silently redefine the Core.
 
 ## Current increment
 
-**Bounded CL-TAV offline intake implementation under CR-2026-017**
+**Parallel CL-TAV offline intake and TAES evidence-integration candidates**
 
-- Implement the separately authorized, read-only capture-to-evidence intake slice under CR-2026-017 / DD-041: packet identity, finite IPv4/UDP/TFTP reconstruction, bounded UPLOAD/INFORMATION events and traceable reporting.
-- Keep the local historical corpus as exploratory development input only; file annotation is not wire outcome, independent case conclusion or experimental truth, and unknown metadata remains explicit.
-- Preserve the accepted specification, the finite explicit-path kernel and runtime-integrity boundary as controlled inputs; this increment does not establish a general solver, a full CL-TAV loop or a protocol verdict capability.
-- PR #19 was accepted at c9ca381 and squash-merged as 324d832; PR #20 rebounded the M2 input identity to c5296aed. The present implementation authorization is narrow and does not activate M3, Configuration, execution, capability or conformance claims.
+- CR-2026-017 / DD-041 authorizes a separately owned, read-only offline capture-to-evidence engineering candidate: packet identity, finite IPv4/UDP/TFTP reconstruction, bounded UPLOAD/INFORMATION events and traceable reporting; it remains subject to independent Draft-PR review.
+- CR-2026-018 / DD-042 integrates accepted literature evidence into the TAES draft, bibliography, bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.
+- Both lines began at c5296aedef961ac3d5846ea9ef28847eea928132 in independent worktrees and require serial reconciliation; the later line preserves both CR/DD records and is reviewed on its new head.
+- The local historical corpus remains exploratory development input only. No confirmatory result, implementation completion, Configuration, capability, conformance, independent scientific approval, submission, baseline or tag is created.
 
 State changes:
 
 - CR-2026-017 / DD-041 authorize one bounded offline intake implementation increment on a Draft PR; M3 remains blocked.
-- currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims; it does not prohibit the specifically authorized read-only intake work.
+- CR-2026-018 / DD-042 authorizes evidence-bounded TAES positioning and evaluation accounting without changing the controlled method.
+- currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims.
 
 Unchanged boundaries:
 
@@ -102,17 +103,18 @@ Unchanged boundaries:
 
 ## 本次集成增量
 
-**CR-2026-017 下的有界 CL-TAV 离线接入实现**
+**并行的 CL-TAV 离线接入与 TAES 证据集成候选**
 
-- 在 CR-2026-017／DD-041 下实现单独授权的只读“捕获到证据”接入切片：数据包身份、有限 IPv4／UDP／TFTP 重建、有界 UPLOAD／INFORMATION 事件和可追踪报告。
-- 本地历史语料继续仅作探索性开发输入；文件注释不等于线上结果、独立案例结论或实验真值，未知元数据保持显式。
-- 将已接受的规格、有限显式路径内核和运行完整性边界作为受控输入；本增量不建立通用求解器、完整 CL-TAV 闭环或协议判定能力。
-- PR #19 在 c9ca381 获接受，并以 324d832 压缩合并；PR #20 将 M2 输入身份重钉至 c5296aed。本实现授权范围狭窄，不激活 M3、Configuration、执行、能力或符合性主张。
+- CR-2026-017／DD-041 授权一条单独负责、只读的“捕获到证据”离线工程候选线：数据包身份、有限 IPv4／UDP／TFTP 重建、有界 UPLOAD／INFORMATION 事件和可追踪报告；它仍须在 Draft PR 上接受独立评审。
+- CR-2026-018／DD-042 在不改变算法、接口和实验臂的前提下，把已接受文献证据融入 TAES 初稿、参考文献、有界 C1／C2 措辞与评价记账。
+- 两条线均从 c5296aedef961ac3d5846ea9ef28847eea928132 起步，在独立工作树开发并需要串行协调；后合入者保留两套 CR／DD 记录并在新 Head 上接受评审。
+- 本地历史语料继续仅作探索性开发输入。本增量不产生确认性结果、实现完成、Configuration、能力、符合性、独立科学批准、投稿、baseline 或 tag。
 
 状态变化：
 
 - CR-2026-017／DD-041 授权在 Draft PR 上实施一个有界离线接入增量；M3 保持阻塞。
-- 对 M3、主动执行和能力主张而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE；它不禁止此次明确授权的只读接入工作。
+- CR-2026-018／DD-042 授权有证据边界的 TAES 定位与评价记账，不改变受控方法。
+- 对 M3、主动执行和能力主张而言，currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。
 
 保持不变的边界：
 
