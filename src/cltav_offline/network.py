@@ -167,6 +167,24 @@ class Ipv4Reassembler:
         results: list[DatagramRecord] = []
         key = fragment.key
         accumulator = self._active.get(key)
+        # The overwhelmingly common IPv4 case is a complete, unfragmented
+        # datagram.  It has no overlap or gap relation to resolve, so avoid a
+        # byte-at-a-time accumulator while retaining exactly the same source
+        # range and finite byte-bound semantics.  A pending fragment set with
+        # the same key still follows the conservative accumulator path below.
+        if accumulator is None and fragment.fragment_offset == 0 and not fragment.more_fragments:
+            end = len(fragment.payload)
+            standalone = _Accumulator(
+                fragment=fragment,
+                packet_refs=[fragment.packet_ref],
+                ranges={(0, end)},
+                terminal_end=end,
+                vlan_tags=fragment.vlan_tags,
+                fragment_count=1,
+            )
+            if end > self.max_datagram_bytes:
+                return [self._gapped(standalone, "RESOURCE-DATAGRAM-BYTE-LIMIT")]
+            return [self._record(standalone, "COMPLETE", None, payload=fragment.payload)]
         if accumulator is None:
             if len(self._active) >= self.max_active_datagrams:
                 _old_key, old = self._active.popitem(last=False)
