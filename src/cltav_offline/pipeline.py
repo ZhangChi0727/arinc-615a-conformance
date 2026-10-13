@@ -189,6 +189,7 @@ def run_capture(
         capture_metadata={},
     )
     stopped_for_limit = False
+    packet_ref_ids: set[str] = set()
 
     def accept_datagram(record: DatagramRecord) -> None:
         nonlocal stopped_for_limit
@@ -201,7 +202,7 @@ def run_capture(
             ))
             return
         result.datagrams.append(record)
-        _append_packet_refs(result.packet_refs, record.packet_refs)
+        _append_packet_refs(result.packet_refs, record.packet_refs, packet_ref_ids)
         if record.status != "COMPLETE" or record.protocol != UDP_PROTOCOL:
             return
         try:
@@ -248,7 +249,7 @@ def run_capture(
         for record in reassembler.finish("RESOURCE-EVIDENCE-RECORD-LIMIT"):
             if len(result.datagrams) < config.max_evidence_records:
                 result.datagrams.append(record)
-                _append_packet_refs(result.packet_refs, record.packet_refs)
+                _append_packet_refs(result.packet_refs, record.packet_refs, packet_ref_ids)
     result.diagnostics.extend(transfers.diagnostics)
     result.transfers = transfers.finish()
     result.events = first_slice_events(result.transfers)
@@ -260,8 +261,12 @@ def run_capture(
     return result
 
 
-def _append_packet_refs(target: list[PacketRef], values: list[PacketRef]) -> None:
-    known = {item.id for item in target}
+def _append_packet_refs(
+    target: list[PacketRef], values: list[PacketRef], known: set[str] | None = None,
+) -> None:
+    """Append source references once without a repeated whole-result scan."""
+    if known is None:
+        known = {item.id for item in target}
     for item in values:
         if item.id not in known:
             target.append(item)
