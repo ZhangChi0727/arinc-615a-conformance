@@ -23,10 +23,17 @@ only; no invented sampling cost.
 \end{itemize}
 
 Truth is evaluator-only. It never enters \IFsel, \IFpred, \IFhist{} or
-\IFexec. Report four rates on every arm: attempt coverage (all registered
-attempts); refusal/no-answer among attempts; conditional error on the answered
-subset; miss on the detection denominator after invalid and equivalent faults
-are removed. Abstention is first-class refusal and is excluded from PASS/FAIL.
+\IFexec. The all-attempt ledger retains every registered attempt, including
+unconfirmed injection, invalid observation, equivalent or undecided fault,
+\texttt{ERROR}, abstention and unconcluded execution. Detection uses a named
+valid denominator and a separate answered subset for PASS/FAIL error. Localization
+uses confirmed in-domain injections and separately reports whether a localization
+decision was issued, whether the true fault remains, whether a singleton is
+correct, and final \(|H|\). Thus a valid detection FAIL with
+\(H=\{h_1,h_2\}\) is an answered detection outcome but not singleton
+localization; \(H=\{h_{\mathrm{normal}}\}\) is not protocol PASS. Mutation
+scores exclude only confirmed equivalents while equivalent and undecided counts
+and adjudication effort remain visible~\cite{jia2011,gruen2009}.
 
 \begin{figure}[!t]
 \centering
@@ -60,3 +67,17 @@ fixed; and FIND-abort-as-waiver as a forbidden negative control, not an allowed
 algorithm. Sample size remains a named gap.
 \phbox{PH-STAT-N}{PUBLICATION-DECISION}{Numeric \(n\), repeats and interval
 method freeze at confirmatory registration, not in this draft.}
+
+Literature methods are not automatically experimental arms. Köhl--Hermanns and
+Fränzle~\textit{et al.} are C1 concept comparators because their passive or
+non-adaptive testing tasks and observation assumptions differ
+\cite{koehl2023,fraenzle2026}. Hu~\textit{et al.} and Miao~\textit{et al.} are
+C2 concept comparators, but their controllable-event authority, objective,
+observables and stopping rules prevent a fair direct 615A arm without a new
+mapping decision~\cite{hu2020,miao2025}. F-LAS, IMA and cockpit-display studies
+are scenario or evaluation context, not algorithm baselines
+\cite{marques2021,efkemann2011,sartaj2021}. Confirmatory registration must still
+freeze the experimental unit, fault construction, equivalence adjudicator,
+injection confirmation, clock calibration, stochastic repetition/seeds if any,
+and interval/effect-size method; no literature percentage selects those values
+\cite{arcuri2011}.

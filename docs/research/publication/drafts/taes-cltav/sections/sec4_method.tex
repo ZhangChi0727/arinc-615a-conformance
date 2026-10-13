@@ -81,6 +81,23 @@ history proved by complete in-domain intersection. This contract maps every
 reachable result and marks every other interface/result pair unreachable; it does not claim
 completeness, polynomial complexity, or deployed code.
 
+This contract is intentionally weaker than a universal uncertain-observation
+diagnosis theorem. Existing work already supplies possible-run semantics and
+an exact incremental passive diagnoser for bounded latency, drift/offset and
+out-of-order observation under exact-once and timed-automaton assumptions
+\cite{koehl2023}, as well as exact monitoring/testing for a different bounded
+communication-delay model~\cite{fraenzle2026}. CL-TAV claims only the consistency
+and retention property below under R1--R5. Detected capture inadequacy or
+invalid evidence, ambiguous ownership or pairing, unsupported syntax and
+exhausted bounds retain their existing named uncertain, error or resource
+outcomes and do not establish an IUT failure. This does not claim that every
+missing, duplicate or spurious event is detectable: undetected out-of-domain
+pollution may remain compatible with an in-domain candidate. Conversely, with
+qualified evidence and a valid still-active obligation, expiry at the declared
+timing boundary retains the existing no-response FAIL; a legal observation
+class whose complete in-domain intersection is empty retains Stop-Empty. No
+source theorem is transplanted.
+
 \subsection{Conditional properties}
 \textbf{Monotonicity.} Equation~\eqref{eq:update} gives
 \(H_{k+1}\subseteq H_k\). Without a valid class there is no add or delete. An
@@ -96,8 +113,11 @@ retains it in \(H_{k+1}\). Out-of-domain faults may still mimic an in-domain
 survivor.
 
 \textbf{One-step minimax.} On nonempty finite \(T_{\mathrm{cur}}\), \(t^\star\)
-is a least element of \((s(t),\mathrm{cost}(t),\mathrm{id})\). This is not a
-global policy.
+is a least element of \((s(t),\mathrm{cost}(t),\mathrm{id})\). Diagnostic-state
+feedback and timed active control already exist~\cite{hu2020,miao2025}; this
+statement concerns only the declared current choice. It is not a global policy,
+does not prove future distinguishability, and does not guarantee shrinkage for
+every observation class.
 
 \textbf{Termination.} Every charged TEST, Prep, Recover and \texttt{ERROR}
 spends the selected mode, hence at most \(\lfloor B/c_{\min}\rfloor\) or
