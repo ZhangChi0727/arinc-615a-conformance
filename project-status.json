@@ -1,51 +1,51 @@
 {
   "schemaVersion": "1.0",
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-13",
   "repository": {
     "role": "instance",
     "displayRole": "ARINC 615A Profile / Binding / Configuration / instance engineering and evidence owner",
     "url": "https://github.com/ZhangChi0727/arinc-615a-conformance"
   },
   "currentIncrement": {
-    "title": "Accepted CL-TAV first-slice development specification and post-merge input pin",
-    "titleZh": "已接受的 CL-TAV 首轮开发规格及合并后输入重钉",
+    "title": "Bounded CL-TAV offline intake implementation under CR-2026-017",
+    "titleZh": "CR-2026-017 下的有界 CL-TAV 离线接入实现",
     "summary": [
-      "Specify the first offline UPLOAD/INFORMATION development slice under CR-2026-016 / DD-038–040: capture identity, reconstruction records, ownership, observation interpretation, bounded history compatibility and traceable reporting.",
-      "Register the local historical corpus as exploratory development input only; file annotation is not wire outcome, independent case conclusion or experimental truth, and unknown metadata remains explicit.",
-      "Bind a finite explicit-path kernel, eight algorithm interfaces, seven experiment interfaces, concrete synthetic contract witnesses and a specification-closed/runtime-unestablished integrity dependency.",
-      "PR #19 was accepted at c9ca381 and squash-merged as 324d832. This follow-up rebinds the M2 input identity to that exact merged tree; the specification is not a tool implementation, confirmation experiment, Configuration, M3 activation, capability or conformance claim."
+      "Implement the separately authorized, read-only capture-to-evidence intake slice under CR-2026-017 / DD-041: packet identity, finite IPv4/UDP/TFTP reconstruction, bounded UPLOAD/INFORMATION events and traceable reporting.",
+      "Keep the local historical corpus as exploratory development input only; file annotation is not wire outcome, independent case conclusion or experimental truth, and unknown metadata remains explicit.",
+      "Preserve the accepted specification, the finite explicit-path kernel and runtime-integrity boundary as controlled inputs; this increment does not establish a general solver, a full CL-TAV loop or a protocol verdict capability.",
+      "PR #19 was accepted at c9ca381 and squash-merged as 324d832; PR #20 rebounded the M2 input identity to c5296aed. The present implementation authorization is narrow and does not activate M3, Configuration, execution, capability or conformance claims."
     ],
     "summaryZh": [
-      "在 CR-2026-016／DD-038～040 下规格化首轮离线 UPLOAD／INFORMATION 开发切片：捕获身份、重建记录、所有权、观测解释、有界历史相容更新和可追踪报告。",
-      "本地历史语料仅登记为探索性开发输入；文件注释不等于线上结果、独立案例结论或实验真值，未知元数据保持显式。",
-      "绑定有限显式路径内核、八个算法接口、七个实验接口、具体合成合同见证，以及规格已关闭但运行能力未建立的完整性依赖。",
-      "PR #19 在 c9ca381 获接受，并以 324d832 压缩合并。本次后处理将 M2 输入身份重钉至相同的合入树；该规格不是工具实现、确认性实验、Configuration、M3 激活、能力或符合性主张。"
+      "在 CR-2026-017／DD-041 下实现单独授权的只读“捕获到证据”接入切片：数据包身份、有限 IPv4／UDP／TFTP 重建、有界 UPLOAD／INFORMATION 事件和可追踪报告。",
+      "本地历史语料继续仅作探索性开发输入；文件注释不等于线上结果、独立案例结论或实验真值，未知元数据保持显式。",
+      "将已接受的规格、有限显式路径内核和运行完整性边界作为受控输入；本增量不建立通用求解器、完整 CL-TAV 闭环或协议判定能力。",
+      "PR #19 在 c9ca381 获接受，并以 324d832 压缩合并；PR #20 将 M2 输入身份重钉至 c5296aed。本实现授权范围狭窄，不激活 M3、Configuration、执行、能力或符合性主张。"
     ],
     "stateChanges": [
-      "PR #19 under CR-2026-016 / DD-038–040 is merged; this follow-up corrects only the post-squash M2 input pin. M3 remains blocked.",
-      "currentStop remains EXECUTABLE-FOUNDATION-GATE for M3 implementation."
+      "CR-2026-017 / DD-041 authorize one bounded offline intake implementation increment on a Draft PR; M3 remains blocked.",
+      "currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims; it does not prohibit the specifically authorized read-only intake work."
     ],
     "stateChangesZh": [
-      "CR-2026-016／DD-038～040 下的 PR #19 已合并；本次后处理仅修正压缩合并后的 M2 输入锚点。M3 保持阻塞。",
-      "对 M3 实现而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。"
+      "CR-2026-017／DD-041 授权在 Draft PR 上实施一个有界离线接入增量；M3 保持阻塞。",
+      "对 M3、主动执行和能力主张而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE；它不禁止此次明确授权的只读接入工作。"
     ],
     "unchangedBoundaries": [
       "Candidate GVS Core and compatibility-disposition identities remain separate and unchanged.",
       "The 18 source mapping rows, 7 instance-only rows and Q-01 through Q-09 remain unchanged.",
       "Project Configuration is NOT YET ESTABLISHED; instance evaluation is NOT-EXERCISED; RQ8 remains OPEN.",
       "Protocol conformance, certification readiness and authority acceptance remain false; no baseline or tag is created.",
-      "This increment creates no codec, executable EFSM engine, verification case, procedure, execution evidence or Project Configuration."
+      "This increment creates no active codec/service engine, executable CL-TAV EFSM/solver, verification verdict, controlled execution evidence or Project Configuration."
     ],
     "unchangedBoundariesZh": [
       "Candidate GVS Core 与兼容性处置身份保持分离且不变。",
       "18 个来源映射行、7 个实例专用行及 Q-01～Q-09 保持不变。",
       "Project Configuration 保持 NOT YET ESTABLISHED；实例评价保持 NOT-EXERCISED；RQ8 保持 OPEN。",
       "协议符合性、认证准备度和权威接受保持 false；不创建 baseline 或 tag。",
-      "本增量不创建 codec、可执行 EFSM 引擎、验证用例、规程、执行证据或 Project Configuration。"
+      "本增量不创建主动 codec／服务引擎、可执行 CL-TAV EFSM／求解器、验证判定、受控执行证据或 Project Configuration。"
     ]
   },
   "development": {
-    "phase": "CL-TAV first-slice development specification accepted under CR-2026-016; M3 still blocked",
+    "phase": "bounded CL-TAV offline intake implementation authorized under CR-2026-017; M3 and controlled execution still blocked",
     "gates": {
       "SOURCE-TECHNICAL-DIRECTION-GATE": "COMPLETED-EXTERNALLY-VERIFIED",
       "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE": "COMPLETED-EXTERNALLY-VERIFIED",
@@ -61,20 +61,20 @@
     "currentStop": {
       "id": "EXECUTABLE-FOUNDATION-GATE",
       "statusPath": "development.gates.EXECUTABLE-FOUNDATION-GATE",
-      "objective": "This stop still blocks M3 implementation. RR-CLTAV-2026-097 accepted the first-slice offline UPLOAD/INFORMATION development specification at PR #19 Head c9ca381, squash-merged as 324d832. That acceptance is not a tool implementation, runtime integrity result, confirmatory experiment, Project Configuration, expanded-CRS approval or M3 activation. M1-CANDIDATE-25 and its open source dependencies retain their controlled dispositions; the post-merge M2 pin correction changes artifact ancestry only. Further implementation requires separate authorization and evidence.",
-      "objectiveZh": "本停点仍禁止 M3 实现。RR-CLTAV-2026-097 接受了 PR #19 Head c9ca381 的首轮离线 UPLOAD／INFORMATION 开发规格，随后以 324d832 压缩合并。该接受不等于工具实现、运行完整性结果、确认性实验、Project Configuration、扩大 CRS 批准或 M3 激活。M1-CANDIDATE-25 及其开放来源依赖保持受控处置；合并后的 M2 重钉只改变制品祖先身份。后续实现须单独授权并提供证据。"
+      "objective": "This stop still blocks M3, active protocol execution and capability claims. RR-CLTAV-2026-097 accepted the first-slice offline UPLOAD/INFORMATION development specification at PR #19 Head c9ca381, squash-merged as 324d832; PR #20 rebounded the M2 input to c5296aed. CR-2026-017 / DD-041 separately authorize only a bounded, read-only offline intake implementation with evidence output. That narrow authorization is not a runtime-integrity result, confirmatory experiment, Project Configuration, expanded-CRS approval or M3 activation. M1-CANDIDATE-25 and its open source dependencies retain their controlled dispositions.",
+      "objectiveZh": "本停点仍禁止 M3、主动协议执行和能力主张。RR-CLTAV-2026-097 接受了 PR #19 Head c9ca381 的首轮离线 UPLOAD／INFORMATION 开发规格，随后以 324d832 压缩合并；PR #20 将 M2 输入重钉至 c5296aed。CR-2026-017／DD-041 仅单独授权一个输出证据的有界、只读离线接入实现。该狭窄授权不等于运行完整性结果、确认性实验、Project Configuration、扩大 CRS 批准或 M3 激活。M1-CANDIDATE-25 及其开放来源依赖保持受控处置。"
     },
   "nextSteps": [
-    "Use the accepted first-slice specification as controlled input for a separately authorized implementation increment. Establish runtime integrity and independent experimental truth before capability or conformance claims; do not start M3 from this specification alone.",
+    "Complete the authorized offline intake increment under CR-2026-017 / DD-041, then obtain independent review on its unchanged Draft PR Head. Establish runtime integrity and independent experimental truth before capability or conformance claims; do not start M3 from this implementation alone.",
     "Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth."
   ],
   "nextStepsZh": [
-    "将已接受的首轮规格作为后续单独授权实现增量的受控输入。建立运行完整性与独立实验真值后方可提出能力或符合性主张；不得仅凭本规格启动 M3。",
+    "完成 CR-2026-017／DD-041 下的授权离线接入增量，再在不变 Draft PR Head 上取得独立评审。建立运行完整性与独立实验真值后方可提出能力或符合性主张；不得仅凭本实现启动 M3。",
     "保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。"
   ],
     "blockedActions": [
       "Do not start M3 or a development-ready CRS PR before this expanded protocol CRS is independently accepted.",
-      "Do not implement protocol behavior before CRS and model gates approve it.",
+      "Do not implement unbounded, active or verdict-producing protocol behavior beyond the narrowly authorized read-only offline intake increment.",
       "Do not execute or evaluate an instance before Project Configuration is established.",
       "Do not promote instance evidence into a Generic Core conclusion.",
       "Do not claim protocol conformance, certification or authority acceptance.",
