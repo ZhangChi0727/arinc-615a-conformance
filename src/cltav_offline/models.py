@@ -42,6 +42,8 @@ class PacketRef:
     captured_length: int
     original_length: int
     timestamp: Timestamp | None
+    section_id: int = 0
+    link_domain: str = "CAPTURE-SECTION-0-INTERFACE-0"
 
     @property
     def id(self) -> str:
@@ -53,8 +55,10 @@ class PacketRef:
             "captureId": self.capture_id,
             "packetIndex": self.packet_index,
             "containerOffset": self.container_offset,
+            "sectionId": self.section_id,
             "interfaceId": self.interface_id,
             "linkType": self.link_type,
+            "linkDomain": self.link_domain,
             "capturedLength": self.captured_length,
             "originalLength": self.original_length,
             "timestamp": None if self.timestamp is None else self.timestamp.to_dict(),
@@ -112,11 +116,14 @@ class Ipv4Fragment:
     vlan_tags: tuple[int, ...] = ()
 
     @property
-    def key(self) -> tuple[str, int, str, str, int, int]:
-        """Include capture/interface/direction context; never key by IP ID alone."""
+    def key(self) -> tuple[str, int, int, str, tuple[int, ...], str, str, int, int]:
+        """Include capture/link/VLAN/direction context; never key by IP ID alone."""
         return (
             self.packet_ref.capture_id,
+            self.packet_ref.section_id,
             self.packet_ref.interface_id,
+            self.packet_ref.link_domain,
+            self.vlan_tags,
             self.source,
             self.destination,
             self.protocol,
@@ -148,12 +155,27 @@ class DatagramRecord:
     payload: bytes | None = None
     payload_length: int | None = None
     vlan_tags: tuple[int, ...] = ()
+    section_id: int = 0
+    link_domain: str = "CAPTURE-SECTION-0-INTERFACE-0"
+
+    @property
+    def context_key(self) -> tuple[str, int, int, str, tuple[int, ...]]:
+        """Capture-local link domain required for conservative session matching."""
+        return (
+            self.capture_id,
+            self.section_id,
+            self.interface_id,
+            self.link_domain,
+            self.vlan_tags,
+        )
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "datagramId": self.datagram_id,
             "captureId": self.capture_id,
+            "sectionId": self.section_id,
             "interfaceId": self.interface_id,
+            "linkDomain": self.link_domain,
             "source": self.source,
             "destination": self.destination,
             "protocol": self.protocol,
@@ -207,6 +229,10 @@ class TransferRecord:
     reconstruction_status: str
     option_status: str
     effective_block_size: int | None
+    section_id: int = 0
+    interface_id: int = 0
+    link_domain: str = "CAPTURE-SECTION-0-INTERFACE-0"
+    vlan_tags: tuple[int, ...] = ()
     packet_refs: list[PacketRef] = field(default_factory=list)
     datagram_ids: list[str] = field(default_factory=list)
     diagnostics: list[str] = field(default_factory=list)
@@ -218,6 +244,10 @@ class TransferRecord:
         return {
             "transferId": self.transfer_id,
             "captureId": self.capture_id,
+            "sectionId": self.section_id,
+            "interfaceId": self.interface_id,
+            "linkDomain": self.link_domain,
+            "vlanTags": list(self.vlan_tags),
             "requestKind": self.request_kind,
             "filename": self.filename,
             "mode": self.mode,

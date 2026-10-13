@@ -127,7 +127,7 @@ class _Accumulator:
     fragment_count: int = 0
 
     @property
-    def key(self) -> tuple[str, int, str, str, int, int]:
+    def key(self) -> tuple[str, int, int, str, tuple[int, ...], str, str, int, int]:
         return self.fragment.key
 
     @property
@@ -159,7 +159,9 @@ class Ipv4Reassembler:
         self.max_active_datagrams = max_active_datagrams
         self.max_datagram_bytes = min(max_datagram_bytes, 65_535)
         self.max_fragments_per_datagram = max_fragments_per_datagram
-        self._active: OrderedDict[tuple[str, int, str, str, int, int], _Accumulator] = OrderedDict()
+        self._active: OrderedDict[
+            tuple[str, int, int, str, tuple[int, ...], str, str, int, int], _Accumulator
+        ] = OrderedDict()
         self._sequence = 0
 
     def add(self, fragment: Ipv4Fragment) -> list[DatagramRecord]:
@@ -294,6 +296,8 @@ class Ipv4Reassembler:
             datagram_id=self._record_id(),
             capture_id=fragment.packet_ref.capture_id,
             interface_id=fragment.packet_ref.interface_id,
+            section_id=fragment.packet_ref.section_id,
+            link_domain=fragment.packet_ref.link_domain,
             source=fragment.source,
             destination=fragment.destination,
             protocol=fragment.protocol,

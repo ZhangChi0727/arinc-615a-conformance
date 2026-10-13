@@ -104,14 +104,16 @@
     "packetRef": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["packetRefId", "captureId", "packetIndex", "containerOffset", "interfaceId", "linkType", "capturedLength", "originalLength", "timestamp"],
+      "required": ["packetRefId", "captureId", "packetIndex", "containerOffset", "sectionId", "interfaceId", "linkType", "linkDomain", "capturedLength", "originalLength", "timestamp"],
       "properties": {
         "packetRefId": {"type": "string", "minLength": 1},
         "captureId": {"type": "string", "minLength": 1},
         "packetIndex": {"type": "integer", "minimum": 1},
         "containerOffset": {"type": "integer", "minimum": 0},
+        "sectionId": {"type": "integer", "minimum": 0},
         "interfaceId": {"type": "integer", "minimum": 0},
         "linkType": {"type": "integer", "minimum": 0},
+        "linkDomain": {"type": "string", "minLength": 1},
         "capturedLength": {"type": "integer", "minimum": 0},
         "originalLength": {"type": "integer", "minimum": 0},
         "timestamp": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/timestamp"}]}
@@ -127,11 +129,13 @@
     "datagram": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["datagramId", "captureId", "interfaceId", "source", "destination", "protocol", "ipv4Identification", "status", "failureCode", "payloadLength", "packetRefIds", "fragmentRanges", "missingRanges", "conflictRanges", "vlanTags"],
+      "required": ["datagramId", "captureId", "sectionId", "interfaceId", "linkDomain", "source", "destination", "protocol", "ipv4Identification", "status", "failureCode", "payloadLength", "packetRefIds", "fragmentRanges", "missingRanges", "conflictRanges", "vlanTags"],
       "properties": {
         "datagramId": {"type": "string", "minLength": 1},
         "captureId": {"type": "string", "minLength": 1},
+        "sectionId": {"type": "integer", "minimum": 0},
         "interfaceId": {"type": "integer", "minimum": 0},
+        "linkDomain": {"type": "string", "minLength": 1},
         "source": {"type": "string", "minLength": 1},
         "destination": {"type": "string", "minLength": 1},
         "protocol": {"type": "integer", "minimum": 0, "maximum": 255},
@@ -158,10 +162,14 @@
     "transfer": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["transferId", "captureId", "requestKind", "filename", "mode", "clientEndpoint", "serverEndpoint", "associationStatus", "reconstructionStatus", "blockSize", "terminalBlock", "packetRefIds", "datagramIds", "diagnosticCodes", "completePayloadLength", "integrity"],
+      "required": ["transferId", "captureId", "sectionId", "interfaceId", "linkDomain", "vlanTags", "requestKind", "filename", "mode", "clientEndpoint", "serverEndpoint", "associationStatus", "reconstructionStatus", "blockSize", "terminalBlock", "packetRefIds", "datagramIds", "diagnosticCodes", "completePayloadLength", "integrity"],
       "properties": {
         "transferId": {"type": "string", "minLength": 1},
         "captureId": {"type": "string", "minLength": 1},
+        "sectionId": {"type": "integer", "minimum": 0},
+        "interfaceId": {"type": "integer", "minimum": 0},
+        "linkDomain": {"type": "string", "minLength": 1},
+        "vlanTags": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 4095}},
         "requestKind": {"type": ["string", "null"]},
         "filename": {"type": ["string", "null"]},
         "mode": {"type": ["string", "null"]},

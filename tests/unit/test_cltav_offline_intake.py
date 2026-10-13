@@ -6,6 +6,7 @@ import json
 import os
 import socket
 import struct
+import hashlib
 from copy import deepcopy
 from pathlib import Path
 
@@ -32,6 +33,7 @@ def _ethernet_ipv4(
     identification: int = 1,
     offset_bytes: int = 0,
     more_fragments: bool = False,
+    vlan_tags: tuple[int, ...] = (),
 ) -> bytes:
     assert offset_bytes % 8 == 0
     flags_offset = (0x2000 if more_fragments else 0) | (offset_bytes // 8)
@@ -40,7 +42,11 @@ def _ethernet_ipv4(
         0x45, 0, 20 + len(payload), identification, flags_offset, 64, 17, 0,
         socket.inet_aton(source), socket.inet_aton(destination),
     ) + payload
-    return b"\xaa" * 6 + b"\xbb" * 6 + struct.pack("!H", 0x0800) + ipv4
+    ethernet = b"\xaa" * 6 + b"\xbb" * 6
+    for index, tag in enumerate(vlan_tags):
+        ethernet += struct.pack("!H", 0x8100 if index == 0 else 0x88A8)
+        ethernet += struct.pack("!H", tag & 0x0FFF)
+    return ethernet + struct.pack("!H", 0x0800) + ipv4
 
 
 def _udp(source_port: int, destination_port: int, payload: bytes) -> bytes:
@@ -106,6 +112,23 @@ def _valid_exchange() -> list[bytes]:
         _ethernet_ipv4(_udp(40000, 10000, _data(1, payload)), source="10.0.0.2", destination="10.0.0.1", identification=11),
         _ethernet_ipv4(_udp(10000, 40000, _ack(1)), identification=12),
     ]
+
+
+def _corpus_manifest(corpus: Path, capture_id: str = "HC-01") -> dict[str, object]:
+    """Build a public, one-file corpus manifest without retaining packet payload."""
+    capture = corpus / "one.pcapng"
+    return {
+        "manifestId": "CLTAV-HISTORICAL-CAPTURES", "manifestVersion": "1.0",
+        "purpose": "EXPLORATORY-DEVELOPMENT-ONLY", "captureCount": 1,
+        "truthBoundary": "not experimental truth",
+        "captures": [{
+            "captureId": capture_id, "relativePath": "one.pcapng",
+            "byteCount": capture.stat().st_size,
+            "sha256": hashlib.sha256(capture.read_bytes()).hexdigest(),
+            "observationQuality": "UNASSESSED-EXPLORATORY",
+            "labelSource": "FILE-ANNOTATION-NONTRUTH", "rootCause": "UNKNOWN",
+        }],
+    }
 
 
 def test_pcap_pipeline_reconstructs_tftp_and_bounded_file_event(tmp_path: Path) -> None:
@@ -226,18 +249,7 @@ def test_corpus_audit_and_staged_run_do_not_publish_machine_paths(tmp_path: Path
     corpus.mkdir()
     capture = corpus / "one.pcapng"
     capture.write_bytes(_pcapng(_valid_exchange()))
-    size = capture.stat().st_size
-    import hashlib
-    sha = hashlib.sha256(capture.read_bytes()).hexdigest()
-    manifest = {
-        "manifestId": "CLTAV-HISTORICAL-CAPTURES", "manifestVersion": "1.0",
-        "purpose": "EXPLORATORY-DEVELOPMENT-ONLY", "captureCount": 1,
-        "truthBoundary": "not experimental truth",
-        "captures": [{
-            "captureId": "HC-01", "relativePath": "one.pcapng", "byteCount": size, "sha256": sha,
-            "observationQuality": "UNASSESSED-EXPLORATORY", "labelSource": "FILE-ANNOTATION-NONTRUTH", "rootCause": "UNKNOWN",
-        }],
-    }
+    manifest = _corpus_manifest(corpus)
     assert audit_manifest(manifest, corpus) == []
     manifest_path = tmp_path / "manifest.json"
     manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
@@ -250,6 +262,79 @@ def test_corpus_audit_and_staged_run_do_not_publish_machine_paths(tmp_path: Path
     text = (output / "corpus-index.json").read_text(encoding="utf-8")
     assert str(corpus) not in text
     assert (output / "HC-01.json").is_file()
+
+
+@pytest.mark.parametrize("target_kind", ["same", "descendant", "ancestor", "manifest-parent"])
+def test_corpus_publication_rejects_input_overlapping_targets_before_staging(
+    tmp_path: Path, target_kind: str,
+) -> None:
+    """A result transaction must never rename/delete an input ancestor or manifest parent."""
+    source_parent = tmp_path / "source-parent"
+    corpus = source_parent / "corpus"
+    corpus.mkdir(parents=True)
+    capture = corpus / "one.pcapng"
+    capture.write_bytes(_pcapng(_valid_exchange()))
+    manifest_path = source_parent / "manifest.json"
+    manifest_path.write_text(json.dumps(_corpus_manifest(corpus)), encoding="utf-8")
+    original_capture = hashlib.sha256(capture.read_bytes()).hexdigest()
+    original_manifest = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+    target = {
+        "same": corpus,
+        "descendant": corpus / "results",
+        "ancestor": source_parent,
+        "manifest-parent": source_parent,
+    }[target_kind]
+    with pytest.raises(IntakeError) as caught:
+        run_corpus(
+            manifest_path=manifest_path,
+            corpus_root=corpus,
+            output_dir=target,
+            config=IntakeConfig(),
+            source_commit="a" * 40,
+        )
+    assert caught.value.code == "UNSAFE-OUTPUT-PATH"
+    assert hashlib.sha256(capture.read_bytes()).hexdigest() == original_capture
+    assert hashlib.sha256(manifest_path.read_bytes()).hexdigest() == original_manifest
+    assert not list(source_parent.glob(".*.staging-*"))
+
+
+def test_corpus_publication_rejects_alias_output_and_unsafe_capture_id_before_writes(tmp_path: Path) -> None:
+    source_parent = tmp_path / "source-parent"
+    corpus = source_parent / "corpus"
+    corpus.mkdir(parents=True)
+    capture = corpus / "one.pcapng"
+    capture.write_bytes(_pcapng(_valid_exchange()))
+    manifest_path = tmp_path / "manifest.json"
+    manifest = _corpus_manifest(corpus)
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    safe_output = tmp_path / "safe-output"
+    run_corpus(
+        manifest_path=manifest_path, corpus_root=corpus, output_dir=safe_output,
+        config=IntakeConfig(), source_commit="b" * 40,
+    )
+    old_output_hash = hashlib.sha256((safe_output / "corpus-index.json").read_bytes()).hexdigest()
+    alias = tmp_path / "source-alias"
+    try:
+        os.symlink(source_parent, alias, target_is_directory=True)
+    except OSError as exc:
+        pytest.skip(f"directory symlink fixture unavailable: {exc}")
+    with pytest.raises(IntakeError) as caught:
+        run_corpus(
+            manifest_path=manifest_path, corpus_root=corpus, output_dir=alias,
+            config=IntakeConfig(), source_commit="b" * 40,
+        )
+    assert caught.value.code == "UNSAFE-OUTPUT-PATH"
+    assert hashlib.sha256((safe_output / "corpus-index.json").read_bytes()).hexdigest() == old_output_hash
+    malicious = _corpus_manifest(corpus, "../escape")
+    manifest_path.write_text(json.dumps(malicious), encoding="utf-8")
+    with pytest.raises(IntakeError) as invalid_id:
+        run_corpus(
+            manifest_path=manifest_path, corpus_root=corpus, output_dir=safe_output,
+            config=IntakeConfig(), source_commit="b" * 40,
+        )
+    assert invalid_id.value.code == "CORPUS-IDENTITY-AUDIT-FAILED"
+    assert not (tmp_path / "escape.json").exists()
+    assert hashlib.sha256((safe_output / "corpus-index.json").read_bytes()).hexdigest() == old_output_hash
 
 
 def test_evidence_envelope_matches_schema_and_rejects_raw_payload_field(tmp_path: Path) -> None:
@@ -457,6 +542,91 @@ def test_tftp_tid_binding_duplicate_and_missing_block_behaviour(tmp_path: Path) 
     assert complete.to_dict()["completePayloadLength"] == 3
     assert missing.reconstruction_status == "GAPPED"
     assert "MISSING-TFTP-DATA-BLOCK" in missing.diagnostics
+
+
+def test_tftp_terminal_states_are_not_recovered_by_later_data(tmp_path: Path) -> None:
+    request = _ethernet_ipv4(_udp(10040, 69, _request(1, "terminal.lui")), identification=80)
+    server = {"source": "10.0.0.2", "destination": "10.0.0.1"}
+    full_a = _ethernet_ipv4(_udp(40040, 10040, _data(1, b"a" * 512)), identification=81, **server)
+    full_b = _ethernet_ipv4(_udp(40040, 10040, _data(1, b"b" * 512)), identification=82, **server)
+    terminator = _ethernet_ipv4(_udp(40040, 10040, _data(2, b"")), identification=83, **server)
+    second_request = _ethernet_ipv4(_udp(10047, 69, _request(1, "error.lui")), identification=84)
+    error = _ethernet_ipv4(_udp(40041, 10047, struct.pack("!HH", 5, 1) + b"no\0"), identification=85, **server)
+    short = _ethernet_ipv4(_udp(40041, 10047, _data(1, b"x")), identification=86, **server)
+    capture = tmp_path / "terminal.pcap"
+    capture.write_bytes(_pcap([request, full_a, full_b, terminator, second_request, error, short]))
+    result = run_capture(capture, capture_id="SYN-20")
+    assert [item.reconstruction_status for item in result.transfers] == ["CONFLICT", "ERROR"]
+    assert all(item.complete_payload_length is None for item in result.transfers)
+    assert all(event.layer != "APPLICATION" for event in result.events)
+
+
+def test_tftp_post_terminator_and_duplicate_request_are_conservative(tmp_path: Path) -> None:
+    request = _ethernet_ipv4(_udp(10041, 69, _request(1, "duplicate.lui")), identification=86)
+    server = {"source": "10.0.0.2", "destination": "10.0.0.1"}
+    first = _ethernet_ipv4(_udp(40042, 10041, _data(1, b"a")), identification=87, **server)
+    later = _ethernet_ipv4(_udp(40042, 10041, _data(2, b"b" * 512)), identification=88, **server)
+    conflict_capture = tmp_path / "after-terminal.pcap"
+    conflict_capture.write_bytes(_pcap([request, first, later]))
+    conflict = run_capture(conflict_capture, capture_id="SYN-21")
+    assert conflict.transfers[0].reconstruction_status == "CONFLICT"
+    assert conflict.transfers[0].complete_payload_length is None
+
+    duplicate_capture = tmp_path / "duplicate-request.pcap"
+    duplicate_capture.write_bytes(_pcap([request, request, first]))
+    duplicate = run_capture(duplicate_capture, capture_id="SYN-21B")
+    assert len(duplicate.transfers) == 1
+    assert duplicate.transfers[0].reconstruction_status == "COMPLETE"
+
+
+def test_tftp_option_evidence_and_rollover_are_not_guessed(tmp_path: Path) -> None:
+    server = {"source": "10.0.0.2", "destination": "10.0.0.1"}
+    too_large = [
+        _ethernet_ipv4(_udp(10042, 69, _request(1, "bad.lui", {"blksize": "8"})), identification=89),
+        _ethernet_ipv4(_udp(40043, 10042, _oack({"blksize": "1024"})), identification=90, **server),
+        _ethernet_ipv4(_udp(40043, 10042, _data(1, b"x" * 700)), identification=91, **server),
+    ]
+    unknown = [
+        _ethernet_ipv4(_udp(10043, 69, _request(1, "unknown.lui", {"blksize": "1024"})), identification=92),
+        _ethernet_ipv4(_udp(40044, 10043, _data(2, b"x")), identification=93, **server),
+    ]
+    rollover = [
+        _ethernet_ipv4(_udp(10044, 69, _request(1, "wrap.lui")), identification=94),
+        _ethernet_ipv4(_udp(40045, 10044, _data(0, b"")), identification=95, **server),
+    ]
+    capture = tmp_path / "options-and-wrap.pcap"
+    capture.write_bytes(_pcap(too_large + unknown + rollover))
+    result = run_capture(capture, capture_id="SYN-22")
+    invalid, missing, wrap = result.transfers
+    assert invalid.reconstruction_status == "CONFLICT"
+    assert missing.option_status == "UNKNOWN"
+    assert missing.reconstruction_status == "GAPPED"
+    assert wrap.reconstruction_status == "GAPPED"
+    assert "UNSUPPORTED-TFTP-BLOCK-ROLLOVER" in wrap.diagnostics
+
+
+def test_vlan_and_pcapng_section_contexts_do_not_cross_reassemble_or_transfer(tmp_path: Path) -> None:
+    udp = _udp(10045, 69, _request(1, "vlan.lui"))
+    first, second = udp[:16], udp[16:]
+    vlan_capture = tmp_path / "vlan-fragments.pcap"
+    vlan_capture.write_bytes(_pcap([
+        _ethernet_ipv4(first, identification=96, more_fragments=True, vlan_tags=(1,)),
+        _ethernet_ipv4(second, identification=96, offset_bytes=16, vlan_tags=(2,)),
+    ]))
+    vlan_result = run_capture(vlan_capture, capture_id="SYN-23")
+    assert len(vlan_result.datagrams) == 2
+    assert all(item.status == "GAPPED" for item in vlan_result.datagrams)
+
+    request = _pcapng([_ethernet_ipv4(_udp(10046, 69, _request(1, "section.lui")), identification=97)])
+    data = _pcapng([_ethernet_ipv4(
+        _udp(40046, 10046, _data(1, b"x")), source="10.0.0.2", destination="10.0.0.1", identification=98,
+    )])
+    section_capture = tmp_path / "sections.pcapng"
+    section_capture.write_bytes(request + data)
+    section_result = run_capture(section_capture, capture_id="SYN-24")
+    assert len(section_result.transfers) == 1
+    assert section_result.transfers[0].reconstruction_status == "GAPPED"
+    assert any(item.code == "UNASSOCIATED-TFTP-PACKET" for item in section_result.diagnostics)
 
 
 def test_bounded_first_slice_roles_preserve_raw_contract_semantics() -> None:

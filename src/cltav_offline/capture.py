@@ -34,6 +34,7 @@ class CaptureFormatError(ValueError):
 
 @dataclass(frozen=True)
 class InterfaceMetadata:
+    section_id: int
     interface_id: int
     link_type: int
     snap_length: int
@@ -43,6 +44,7 @@ class InterfaceMetadata:
 
     def to_dict(self) -> dict[str, object]:
         return {
+            "sectionId": self.section_id,
             "interfaceId": self.interface_id,
             "linkType": self.link_type,
             "snapLength": self.snap_length,
@@ -139,7 +141,7 @@ class CaptureReader:
             container_format="PCAP",
             byte_order="LITTLE" if endian == "<" else "BIG",
             interfaces={0: InterfaceMetadata(
-                interface_id=0,
+                section_id=0, interface_id=0,
                 link_type=link_type,
                 snap_length=snaplen,
                 ticks_per_second=resolution,
@@ -188,6 +190,7 @@ class CaptureReader:
                 PacketRef(
                     self.capture_id, packet_index, record_start, 0, link_type,
                     included_length, original_length, timestamp,
+                    section_id=0, link_domain="PCAP-SECTION-0-INTERFACE-0",
                 ),
                 data,
             )
@@ -253,7 +256,7 @@ class CaptureReader:
             offset += total_length
             if block_type == PCAPNG_INTERFACE_DESCRIPTION:
                 interface = _parse_interface_description(
-                    body, endian, global_interface_id, block_start,
+                    body, endian, section_index, global_interface_id, block_start,
                     clock_domain=f"PCAPNG-SECTION-{section_index}-INTERFACE-{interface_sequence}-UNASSESSED",
                 )
                 self.metadata.interfaces[global_interface_id] = interface
@@ -300,6 +303,7 @@ class CaptureReader:
                     PacketRef(
                         self.capture_id, packet_index, block_start, interface.interface_id,
                         interface.link_type, captured_length, original_length, timestamp,
+                        section_id=interface.section_id, link_domain=interface.clock_domain,
                     ),
                     body[20:20 + captured_length],
                 )
@@ -337,6 +341,7 @@ class CaptureReader:
                     PacketRef(
                         self.capture_id, packet_index, block_start, interface.interface_id, interface.link_type,
                         captured_length, original_length, None,
+                        section_id=interface.section_id, link_domain=interface.clock_domain,
                     ),
                     payload[:captured_length],
                 )
@@ -382,7 +387,7 @@ def _padded_length(length: int) -> int:
 
 
 def _parse_interface_description(
-    body: bytes, endian: str, interface_id: int, offset: int, *, clock_domain: str,
+    body: bytes, endian: str, section_id: int, interface_id: int, offset: int, *, clock_domain: str,
 ) -> InterfaceMetadata:
     if len(body) < 8:
         raise CaptureFormatError(
@@ -439,7 +444,7 @@ def _parse_interface_description(
                 )
             offset_seconds = struct.unpack(f"{endian}q", value)[0]
     return InterfaceMetadata(
-        interface_id=interface_id,
+        section_id=section_id, interface_id=interface_id,
         link_type=link_type,
         snap_length=snap_length,
         ticks_per_second=ticks_per_second,

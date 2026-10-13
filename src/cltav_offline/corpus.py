@@ -21,6 +21,7 @@ from .pipeline import (
 
 
 _ABSOLUTE_PATH_RE = re.compile(r"(?:^|[\s\"'])((?:[A-Za-z]:[\\/])|/(?:[^\s\"']+))")
+_CORPUS_CAPTURE_ID_RE = re.compile(r"^HC-[0-9]{2}$")
 
 
 def safe_relative_path(value: object) -> PurePosixPath | None:
@@ -73,7 +74,16 @@ def audit_manifest(manifest: dict[str, Any], corpus_root: Path) -> list[str]:
             errors.append(f"{label} fields differ from the controlled schema")
             continue
         capture_id = row.get("captureId")
-        if not isinstance(capture_id, str) or not capture_id or capture_id in seen_ids:
+        # Corpus capture IDs are deliberately stricter than the single-file
+        # CLI capture ID.  They become result filenames below, and the
+        # accepted manifest schema fixes their syntax to HC-XX.  Do not use a
+        # generic non-empty-string check here: that would permit separators,
+        # absolute paths, or platform-reserved names to escape staging.
+        if (
+            not isinstance(capture_id, str)
+            or not _CORPUS_CAPTURE_ID_RE.fullmatch(capture_id)
+            or capture_id in seen_ids
+        ):
             errors.append(f"{label} captureId is missing or repeated")
             continue
         seen_ids.add(capture_id)
@@ -107,9 +117,17 @@ def audit_manifest(manifest: dict[str, Any], corpus_root: Path) -> list[str]:
             errors.append(f"{capture_id} resolved file identity is repeated")
         identities.add(identity)
         actual = input_identity(resolved)
-        if actual[0] != row.get("byteCount"):
+        if (
+            isinstance(row.get("byteCount"), bool)
+            or not isinstance(row.get("byteCount"), int)
+            or row["byteCount"] < 1
+        ):
+            errors.append(f"{capture_id} byteCount is invalid")
+        elif actual[0] != row["byteCount"]:
             errors.append(f"{capture_id} byteCount differs")
-        if actual[1] != row.get("sha256"):
+        if not isinstance(row.get("sha256"), str) or not re.fullmatch(r"[0-9a-f]{64}", row["sha256"]):
+            errors.append(f"{capture_id} sha256 is invalid")
+        elif actual[1] != row["sha256"]:
             errors.append(f"{capture_id} sha256 differs")
     actual_paths = {
         PurePosixPath(item.relative_to(root).as_posix())
@@ -170,18 +188,7 @@ def run_corpus(
     """Audit then process every declared corpus input into one staged directory."""
     source_commit = validate_source_commit(source_commit)
     manifest = load_and_audit_manifest(manifest_path, corpus_root)
-    root = corpus_root.resolve(strict=True)
-    target = output_dir.resolve(strict=False)
-    try:
-        target.relative_to(root)
-    except ValueError:
-        pass
-    else:
-        raise IntakeError("UNSAFE-OUTPUT-PATH", "corpus output must not be inside its input root")
-    if target.exists() and target.is_symlink():
-        raise IntakeError("UNSAFE-OUTPUT-PATH", "corpus output directory must not be a symbolic link")
-    if target.exists() and not target.is_dir():
-        raise IntakeError("UNSAFE-OUTPUT-PATH", "corpus output target must be a directory")
+    root, target = _preflight_corpus_publication(manifest_path, corpus_root, output_dir, manifest)
     parent = target.parent
     parent.mkdir(parents=True, exist_ok=True)
     stage = parent / f".{target.name}.staging-{uuid.uuid4().hex}"
@@ -191,7 +198,7 @@ def run_corpus(
         for row in sorted(manifest["captures"], key=lambda item: item["captureId"]):
             capture_id = row["captureId"]
             input_path = root.joinpath(*PurePosixPath(row["relativePath"]).parts)
-            output = stage / f"{capture_id}.json"
+            output = _staged_capture_output(stage, capture_id)
             try:
                 result = run_capture(
                     input_path,
@@ -243,6 +250,106 @@ def run_corpus(
             shutil.rmtree(stage)
         raise
     return summary
+
+
+def _preflight_corpus_publication(
+    manifest_path: Path,
+    corpus_root: Path,
+    output_dir: Path,
+    manifest: dict[str, Any],
+) -> tuple[Path, Path]:
+    """Prove a corpus result directory cannot replace an input or broad parent.
+
+    This check intentionally happens *after* manifest identity audit and
+    *before* parent/staging creation.  ``Path.resolve`` follows existing
+    symbolic links/junctions, so aliases cannot bypass the directory relation
+    checks.  The target itself remains a user-selected result directory; an
+    existing nonempty target must be recognisably owned by this tool before it
+    can be transactionally replaced.
+    """
+    try:
+        root = corpus_root.resolve(strict=True)
+        manifest_resolved = manifest_path.resolve(strict=True)
+        target = output_dir.resolve(strict=False)
+    except OSError as exc:
+        raise IntakeError("UNSAFE-OUTPUT-PATH", "could not resolve corpus publication paths") from exc
+    if not root.is_dir() or not manifest_resolved.is_file():
+        raise IntakeError("UNSAFE-OUTPUT-PATH", "corpus root and manifest must be ordinary resolved inputs")
+    if output_dir.exists() and output_dir.is_symlink():
+        raise IntakeError("UNSAFE-OUTPUT-PATH", "corpus output directory must not be a symbolic link")
+    if target.exists() and not target.is_dir():
+        raise IntakeError("UNSAFE-OUTPUT-PATH", "corpus output target must be a directory")
+    # A target that is an input, descends from an input, or contains an input
+    # can cause the backup/replace transaction to move or delete source data.
+    protected = [root, manifest_resolved]
+    for row in manifest["captures"]:
+        relative = safe_relative_path(row["relativePath"])
+        if relative is None:  # audit_manifest already rejected this, retain defense in depth.
+            raise IntakeError("UNSAFE-OUTPUT-PATH", "manifest contains an unsafe input path")
+        try:
+            protected.append(root.joinpath(*relative.parts).resolve(strict=True))
+        except OSError as exc:  # likewise should have been caught by audit.
+            raise IntakeError("UNSAFE-OUTPUT-PATH", "could not resolve declared corpus input") from exc
+    if any(_paths_overlap(target, item) for item in protected):
+        raise IntakeError(
+            "UNSAFE-OUTPUT-PATH",
+            "corpus output must not equal, contain, or descend from an input or manifest",
+        )
+    # Do not make the checkout itself an atomic-replacement target.  Results
+    # may live below a checkout's ignored output directory, but not at its
+    # root (or another git worktree root).
+    if (target / ".git").exists() or target == Path(__file__).resolve().parents[2]:
+        raise IntakeError("UNSAFE-OUTPUT-PATH", "corpus output must not be a repository root")
+    if target.exists() and any(target.iterdir()) and not _is_owned_corpus_result(target):
+        raise IntakeError(
+            "UNSAFE-OUTPUT-PATH",
+            "refusing to replace a nonempty directory not identified as a corpus result",
+        )
+    return root, target
+
+
+def _paths_overlap(left: Path, right: Path) -> bool:
+    """Whether two resolved paths are equal or one contains the other."""
+    try:
+        left.relative_to(right)
+        return True
+    except ValueError:
+        pass
+    try:
+        right.relative_to(left)
+        return True
+    except ValueError:
+        return False
+
+
+def _is_owned_corpus_result(target: Path) -> bool:
+    """Recognise only a prior index emitted by this publisher, never arbitrary data."""
+    index = target / "corpus-index.json"
+    if not index.is_file() or index.is_symlink():
+        return False
+    try:
+        summary = json.loads(index.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False
+    return (
+        isinstance(summary, dict)
+        and summary.get("artifactType") == "CLTAV-OFFLINE-INTAKE-CORPUS-INDEX"
+        and summary.get("schemaVersion") == "1.0"
+        and summary.get("manifestId") == "CLTAV-HISTORICAL-CAPTURES"
+    )
+
+
+def _staged_capture_output(stage: Path, capture_id: str) -> Path:
+    """Return a checked result filename wholly contained by an owned stage."""
+    if not _CORPUS_CAPTURE_ID_RE.fullmatch(capture_id):
+        raise IntakeError("UNSAFE-CAPTURE-ID", "corpus capture ID is not safe for an output filename")
+    stage_resolved = stage.resolve(strict=True)
+    output = stage / f"{capture_id}.json"
+    try:
+        output.resolve(strict=False).relative_to(stage_resolved)
+    except (OSError, ValueError) as exc:
+        raise IntakeError("UNSAFE-OUTPUT-PATH", "capture result would escape staging") from exc
+    return output
 
 
 def _publish_directory(stage: Path, target: Path) -> None:
