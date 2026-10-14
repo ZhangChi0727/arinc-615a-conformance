@@ -46,6 +46,15 @@ def evidence_errors(data: object) -> list[str]:
     return errors
 
 
+def evidence_failure_code(errors: list[str]) -> str:
+    """Return a stable tool code when validation failed before interpretation."""
+    for error in errors:
+        code = error.split(":", 1)[0]
+        if code.startswith("CONTROLLED-RESOURCE-") or code.startswith("DEVELOPMENT-CONTRACT-"):
+            return code
+    return "EVIDENCE-SCHEMA-ERROR"
+
+
 @lru_cache(maxsize=1)
 def _validator() -> Draft202012Validator:
     try:

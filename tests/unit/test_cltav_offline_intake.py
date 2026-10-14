@@ -588,6 +588,9 @@ def test_shared_evidence_budget_counts_interfaces_and_reserves_a_stop_witness(tm
     assert retained <= 2
     assert evidence["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
     assert evidence["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
+    stop = next(item for item in evidence["diagnostics"] if item["code"].startswith("RESOURCE-"))
+    assert stop["detail"]["lastConsumedPacketIndex"] == 1
+    assert stop["detail"]["lastConsumedContainerOffset"] >= 24
     assert evidence_errors(evidence) == []
 
     with pytest.raises(IntakeError) as caught:
@@ -1373,7 +1376,7 @@ def test_contract_projection_is_a_production_gate_with_complete_disposition(
 
 
 def test_missing_controlled_resource_is_named_and_prevents_publication(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
 ) -> None:
     """A resource/tool failure never degrades into a capture controlled issue."""
     capture = tmp_path / "resource-missing.pcap"
@@ -1402,12 +1405,38 @@ def test_missing_controlled_resource_is_named_and_prevents_publication(
         "inspect", "--input", str(capture), "--capture-id", "cap-resource", "--output", str(output),
         "--source-commit", "a" * 40,
     ]) == 1
+    assert "CONTROLLED-RESOURCE-UNAVAILABLE" in capsys.readouterr().err
     assert output.read_text(encoding="utf-8") == "old resource output"
     controlled_resources.controlled_resource_bytes.cache_clear()
     controlled_resources.controlled_resource_json.cache_clear()
     development_contract_module.development_contract_snapshot.cache_clear()
     evidence_module._validator.cache_clear()
     monkeypatch.setattr(controlled_resources, "_source_authority_path", original_path)
+
+
+def test_changed_controlled_contract_resource_is_named_and_prevents_publication(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
+) -> None:
+    capture = tmp_path / "resource-changed.pcap"
+    capture.write_bytes(_pcap(_valid_exchange()))
+    output = tmp_path / "resource-changed.json"
+    output.write_text("old changed-resource output", encoding="utf-8")
+    original_bytes = controlled_resources.controlled_resource_bytes
+
+    def changed_bytes(resource_id: str) -> bytes:
+        if resource_id == "development-contract":
+            return b"{}"
+        return original_bytes(resource_id)
+
+    monkeypatch.setattr(controlled_resources, "controlled_resource_bytes", changed_bytes)
+    development_contract_module.development_contract_snapshot.cache_clear()
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", "cap-resource-changed", "--output", str(output),
+        "--source-commit", "a" * 40,
+    ]) == 1
+    assert "DEVELOPMENT-CONTRACT-IDENTITY-MISMATCH" in capsys.readouterr().err
+    assert output.read_text(encoding="utf-8") == "old changed-resource output"
+    development_contract_module.development_contract_snapshot.cache_clear()
 
 
 def test_noneditable_wheel_contains_authoritative_resources_and_real_cli_runs(tmp_path: Path) -> None:

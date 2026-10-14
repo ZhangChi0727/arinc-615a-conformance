@@ -10,7 +10,7 @@ import uuid
 from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any
 
-from .evidence import evidence_errors
+from .evidence import evidence_errors, evidence_failure_code
 from .identity import tool_identity
 from .contracts import empty_contract_projection
 from .pipeline import (
@@ -211,7 +211,7 @@ def run_corpus(
                 data = result.to_dict(source_commit=source_commit)
                 errors = evidence_errors(data)
                 if errors:
-                    raise IntakeError("EVIDENCE-SCHEMA-ERROR", "; ".join(errors))
+                    raise IntakeError(evidence_failure_code(errors), "; ".join(errors))
                 publish_json(data, output)
                 rows.append({
                     "captureId": capture_id,
@@ -230,7 +230,7 @@ def run_corpus(
                 failure = _failure_evidence(capture_id, row, config, source_commit, exc)
                 errors = evidence_errors(failure)
                 if errors:
-                    raise IntakeError("EVIDENCE-SCHEMA-ERROR", "; ".join(errors))
+                    raise IntakeError(evidence_failure_code(errors), "; ".join(errors))
                 publish_json(failure, output)
                 rows.append({
                     "captureId": capture_id,

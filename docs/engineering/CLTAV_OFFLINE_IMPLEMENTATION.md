@@ -40,9 +40,11 @@ configuration or root cause. Missing time information is explicit.
 
 Payload bytes exist only while the bounded decoder needs them. Completed
 datagrams retain their declared payload length and provenance after UDP/TFTP
-processing, and completed transfers retain their payload length after bounded
-header extraction; neither serialized evidence nor retained result records
-keep raw capture/file bytes.
+processing. A completed transfer may retain only a separately bounded parse
+payload long enough to derive its declared first-slice information; raw block
+bytes are then released while their digests remain available for provenance.
+Neither serialized evidence nor retained result records keep raw capture/file
+bytes.
 
 Input identity is byte count plus SHA-256. Corpus mode verifies safe relative
 paths, resolved-root containment, resolved file identity, size/hash and a
@@ -83,7 +85,9 @@ hashed again after processing; a change prevents publication.
   duplicate a file; conflicting blocks do not replace earlier content. Once a
   transfer is `CONFLICT`, `ERROR`, or resource-truncated, later ordinary data
   cannot restore it to `COMPLETE`, and derived payload, length and application
-  events are withdrawn.
+  events are withdrawn. Once terminal block *n* is observed, a later block
+  above *n*, or a different terminal block, is a conflict; a missing block
+  below *n* may still arrive and complete the observed finite block set.
 - LCI/LCL/LCS/LUI/LUR/LUS parsing is bounded to source-bound leading fields.
   It preserves fixed-width ASCII versions/ratios, conditionally used but
   physically present timers, and `0xFFFF` estimated-time absence. Remaining
@@ -91,22 +95,28 @@ hashed again after processing; a change prevents publication.
   conformance conclusion is produced.
 
 All listed numeric bounds are implementation resource limits—not protocol
-timeouts or product requirements—and appear in each output envelope. A shared
-retention budget covers packet references, diagnostics, interface metadata,
-datagrams, transfers and events. It reserves space for a named stop record and
-records the unconsumed suffix rather than claiming complete processing. Each
-diagnostic keeps input SHA-256 plus packet/index/offset/context evidence; it
-never needs retained payload bytes to remain traceable.
+timeouts or product requirements—and appear in each output envelope. The
+shared retained-evidence budget covers packet references, diagnostics,
+interface metadata, datagrams, transfers and events. It reserves space for a
+named stop record and records the unconsumed suffix rather than claiming
+complete processing. `maxActiveTransferBytes` separately bounds raw active
+TFTP blocks; `maxCompletedPayloadBytes` separately bounds completed payload
+held for finite header parsing. Each resource diagnostic keeps input SHA-256
+plus the last consumed packet/index/offset/context evidence; it never needs
+retained payload bytes to remain traceable.
 
 The envelope is a closed, versioned record contract. Publication runs the
 declared Draft 2020-12 JSON Schema and cross-record semantic checks before an
 atomic replacement. It verifies configured bounds, declared counts, unique
 identifiers, source-reference closure, default/accepted/unknown block-size
-rules, and the typed adapter projection. The projection binds the exact
-development-contract path, version and SHA-256. The production-path acceptance
-matrix validates normal projectable records against the existing public record
-validator, while unsupported or unknown fields remain explicitly
-non-projectable rather than being guessed or zero-filled.
+rules, and the typed adapter projection. The runtime loads both its evidence
+schema and the accepted-record definitions as package resources; the build
+copies the exact controlled source bytes, and the runtime verifies the
+development-contract snapshot identity before it projects records. Every
+normal projection is validated by the shared public record validator and its
+parentage is checked against the originating capture evidence. Unsupported or
+unknown fields remain explicitly non-projectable rather than being guessed or
+zero-filled.
 
 ## 4. Command line, publication and exit status
 
@@ -121,8 +131,12 @@ cltav-offline corpus --manifest configs/research/cltav_historical_capture_manife
 
 `0` means the bounded reconstruction completed without controlled issues;
 `2` means an output was written but contains a controlled unknown, unsupported
-condition, conflict or incomplete reconstruction; `1` is a fatal invocation,
-identity, input or publication failure. These codes are tool-operation states,
+condition, conflict, incomplete reconstruction, or a per-capture input fault
+in corpus mode; `1` is a fatal invocation, identity, controlled-resource,
+schema, tool, or publication failure. A malformed capture is represented as
+per-file `FATAL-INPUT-ERROR` evidence only in corpus mode. A tool or
+controlled-resource failure aborts the staged corpus transaction and never
+fabricates a capture-level input error. These codes are tool-operation states,
 not ARINC 615A verdict values.
 
 `--source-commit` is optional caller provenance. If supplied, it must be a
@@ -191,7 +205,7 @@ does not modify manuscript sources, PDF or research claims.
 
 每个 `PACKET-REF` 保留容器字节偏移、包索引、捕获与原始长度、接口身份、linktype，以及以整数 tick 加分母表示的时间戳。pcapng section/interface 时钟域彼此不同；工具不推断同步、精度、拓扑、设备版本、配置或根因。缺失时间信息保持显式。
 
-载荷字节只在有界解码器实际需要时保留。完成的数据报在 UDP／TFTP 处理后仅保留声明的载荷长度和来源；完成的传输在有界头解析后仅保留载荷长度。序列化证据和留存结果均不保存原始捕获／文件字节。
+载荷字节只在有界解码器实际需要时保留。完成的数据报在 UDP／TFTP 处理后仅保留声明的载荷长度和来源。完成传输只能在独立限额内暂留解析载荷，以导出其声明的首切片信息；随后释放原始块字节，同时保留用于来源追踪的摘要。序列化证据和留存结果均不保存原始捕获／文件字节。
 
 输入身份由字节数和 SHA-256 表示。corpus 模式在处理前核验安全相对路径、解析后根内包含、解析后文件身份、大小／散列和双向清单盘点；创建 staging 前还解析并核验 corpus 根、manifest、每个输入及请求的输出目标。若目标等于、位于或包含任何输入、manifest 或其父边界，即拒绝；符号链接或 junction 别名不得绕过该关系。已有目标只有在确认为本工具的精确结果目录时才允许替换。处理后再次散列输入，若变化则拒绝发布。
 
@@ -201,12 +215,12 @@ does not modify manuscript sources, PDF or research claims.
 - IPv4 重建键包含捕获、section、接口、链路域、VLAN 上下文、源、目的、协议与 identification。相同字节仅保留一次；冲突重叠产生 `CONFLICT`，不得以后续字节覆盖。EOF 与资源驱逐产生带 `INCOMPLETE-DATAGRAM` 或资源原因的 `GAPPED`。每数据报字节与分片数量上限，以及活跃数据报上限，都是实现控制；触发时产生具名资源证据，而不是协议超时结论。
 - UDP 长度必须精确落在完整 IPv4 载荷内。记录 checksum 是否存在，但 checksum 有效性为 `NOT-EVALUATED`。
 - TFTP 会话从指向配置服务端口的已观察 RRQ／WRQ 开始，再由同一 section／接口／链路／VLAN 上下文中的匹配反向包绑定服务端选择的 TID。不得假定后续包仍用 69 端口，也不得跨捕获域或把歧义包任意关联至请求。
-- RRQ／WRQ、OACK、ACK、DATA、ERROR 布局均严格校验。选项状态为 `ACCEPTED`、`DEFAULTED`（仅当请求／响应路径已证明未接受时才取 512）或 `UNKNOWN`。OACK 值必须是数值、方向正确并且不超过请求上界。短 DATA 仅在已知有效块大小下终止传输；等长数据必须观察到零长度末块。重复块不得重复文件；冲突块不得替换原内容。一旦传输进入 `CONFLICT`、`ERROR` 或资源截断，普通后继 DATA 不得使其恢复 `COMPLETE`，派生载荷、长度和应用事件须同步撤销。
+- RRQ／WRQ、OACK、ACK、DATA、ERROR 布局均严格校验。选项状态为 `ACCEPTED`、`DEFAULTED`（仅当请求／响应路径已证明未接受时才取 512）或 `UNKNOWN`。OACK 值必须是数值、方向正确并且不超过请求上界。短 DATA 仅在已知有效块大小下终止传输；等长数据必须观察到零长度末块。重复块不得重复文件；冲突块不得替换原内容。一旦传输进入 `CONFLICT`、`ERROR` 或资源截断，普通后继 DATA 不得使其恢复 `COMPLETE`，派生载荷、长度和应用事件须同步撤销。一旦观察到末块 *n*，随后出现大于 *n* 的块或不同末块即为冲突；小于 *n* 的缺块仍可在之后到达并完成该有限块集合。
 - LCI／LCL／LCS／LUI／LUR／LUS 仅解析来源约束的前导字段。保留定宽 ASCII 版本／比率、条件使用但物理存在的计时字段，以及 `0xFFFF` Estimated Time 未提供的含义。剩余字节显式未解析；不产生 checksum、文件完整性、接受或符合性结论。
 
-所有列出的数值上限都是实现资源限额，而不是协议超时或产品需求；每个输出 envelope 都记录这些限额。共享保留预算覆盖 packet ref、诊断、接口元数据、数据报、传输和事件；为具名停止记录预留空间，并登记未消费后缀而不宣称全量处理。每个诊断保留输入 SHA-256 和包／索引／偏移／上下文证据，不依赖保留载荷也能追溯。
+所有列出的数值上限都是实现资源限额，而不是协议超时或产品需求；每个输出 envelope 都记录这些限额。共享证据保留预算覆盖 packet ref、诊断、接口元数据、数据报、传输和事件；为具名停止记录预留空间，并登记未消费后缀而不宣称全量处理。`maxActiveTransferBytes` 单独约束活跃 TFTP 原始块，`maxCompletedPayloadBytes` 单独约束已完成传输为有限头解析而保留的载荷。每个资源诊断保留输入 SHA-256 以及最后已消费的包／索引／偏移／上下文证据，不依赖保留载荷也能追溯。
 
-该 envelope 是封闭且有版本的记录合同。发布前实际执行声明的 Draft 2020-12 JSON Schema 和跨记录语义检查，之后才可原子替换已有制品。它检查已配置限额、声明计数、唯一 ID、来源引用闭合、默认／已接受／未知块大小规则以及类型化适配投影。投影绑定精确的开发合同路径、版本和 SHA-256；生产路径验收矩阵会以既有公共记录验证器校验可投影的普通记录，无法表达的未知项以具名不可投影原因保留，不得猜测或以零填充。
+该 envelope 是封闭且有版本的记录合同。发布前实际执行声明的 Draft 2020-12 JSON Schema 和跨记录语义检查，之后才可原子替换已有制品。它检查已配置限额、声明计数、唯一 ID、来源引用闭合、默认／已接受／未知块大小规则以及类型化适配投影。运行时将证据 schema 和已接受记录定义作为包资源加载；构建复制精确的受控源字节，运行时在投影前核验开发合同快照身份。每个可投影普通记录均经共享公共记录验证器校验，其父子来源链亦须回指原始捕获证据。无法表达的未知项以具名不可投影原因保留，不得猜测或以零填充。
 
 ## 4. 命令行、发布与退出状态
 
@@ -219,7 +233,7 @@ cltav-offline corpus --manifest configs/research/cltav_historical_capture_manife
   --output-dir .cltav-local/offline-intake/corpus [--source-commit <caller-claim-40-hex>]
 ```
 
-`0` 表示有界重建完成且无受控问题；`2` 表示已写入输出，但包含受控未知、不支持条件、冲突或未完成重建；`1` 表示致命调用、身份、输入或发布错误。这些代码是工具运行状态，不是 ARINC 615A 判定值。
+`0` 表示有界重建完成且无受控问题；`2` 表示已写入输出，但包含受控未知、不支持条件、冲突、未完成重建，或 corpus 模式下逐捕获的输入故障；`1` 表示致命调用、身份、受控资源、schema、工具或发布错误。畸形捕获仅在 corpus 模式下以逐文件 `FATAL-INPUT-ERROR` 证据表示；工具或受控资源失败会中止整个 staging 事务，绝不伪造成某一捕获的输入错误。这些代码是工具运行状态，不是 ARINC 615A 判定值。
 
 `--source-commit` 是可选的调用方来源声明。若给出，必须是小写 40 位 Git 对象 ID，并标为 `CLAIMED-UNVERIFIED`；若未给出，标为 `UNAVAILABLE`。命令不会读取 `GITHUB_SHA`、当前目录或本地 Git checkout 来制造声明。每个输出改为记录确定性的运行源码快照 SHA-256 及精确的受控合同身份。这些是不同强度的断言：语法正确的调用方声明不得表述成已核验构建身份。
 

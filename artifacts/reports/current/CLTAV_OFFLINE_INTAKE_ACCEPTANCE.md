@@ -122,6 +122,22 @@ It is a candidate-side trace, not an independent approval.
 | P22-A01 | Full-range whitespace checking is a required final gate. |
 | P22-A02 | Git OIDs are caller claims only; runtime source and controlled-contract content identities are recorded separately, without CWD, Git or environment inference. |
 
+### R2 candidate-side closure trace
+
+This trace records the candidate implementation evidence for the seven
+remediation areas identified during independent review. It is not an
+independent finding closure or approval.
+
+| Finding | Candidate-side corrective boundary exercised by public tests |
+|---|---|
+| R2-F01 | The normal evidence-to-record projection is a production gate: it verifies the exact controlled development-contract resource, validates every projected record with the shared public validator, and rejects invalid source disposition or parentage before publication. |
+| R2-F02 | A terminal TFTP block creates a finite terminal set: later blocks above it or a different terminal block cause `CONFLICT`; a previously missing lower block can still complete the set. Completed sessions are excluded from active-session eviction. |
+| R2-F03 | Corpus mode publishes a per-file `FATAL-INPUT-ERROR` only for an input fault. Tool, schema, controlled-resource, or publication failure aborts the staged transaction and preserves prior owned output. |
+| R2-F04 | Active raw TFTP blocks and completed parse payloads have separate configured bounds. The shared evidence limit retains a named stop witness with last-consumed packet/index/offset information and does not claim unconsumed suffixes were scanned. |
+| R2-F05 | Parsed, partial, malformed, and opaque first-slice outcomes remain distinct. A non-`PARSED` outcome is a controlled issue and produces exit status `2`, not a successful parser claim. |
+| R2-F06 | pcap/pcapng capture length inconsistencies are explicit non-projectable conditions. SPB payload length follows its declared original/snapshot semantics, excluding alignment padding; illegal short or extra SPB bodies are rejected. |
+| R2-F07 | The installed noneditable wheel carries the exact controlled contract/schema resources. A real installed `cltav-offline` entry point is exercised from an unrelated working directory; missing or changed controlled resources prevent replacement and use a named tool failure. |
+
 ## 6. Follow-on boundary
 
 This evidence may later be consumed through a reviewed evidence manifest.  A
@@ -226,6 +242,20 @@ python -m cltav_offline corpus --manifest configs/research/cltav_historical_capt
 | P22-F08 | 短 pcapng 结构输入返回具名受控错误；合法 EPB options 和已支持容器变体继续接纳。 |
 | P22-A01 | 全范围空白检查是最终必跑门禁。 |
 | P22-A02 | Git OID 仅是调用方声明；运行源码和受控合同内容身份分开记录，不从 CWD、Git 或环境推导。 |
+
+### R2 候选侧关闭追踪
+
+本追踪记录独立评审所列七项修正领域的候选实现证据；它不是独立发现项关闭或批准。
+
+| 发现项 | 公开测试所覆盖的候选侧修正边界 |
+|---|---|
+| R2-F01 | 普通证据到记录的投影是生产门禁：它核验精确的受控开发合同资源，以共享公共验证器校验每个投影记录，并在发布前拒绝无效的来源处置或父子链。 |
+| R2-F02 | TFTP 末块形成有限末端集合：随后出现大于末块的块或不同末块会产生 `CONFLICT`；此前缺失的较低块仍可补齐该集合。已完成会话不参加活跃会话驱逐。 |
+| R2-F03 | corpus 模式仅为输入故障发布逐文件 `FATAL-INPUT-ERROR`。工具、schema、受控资源或发布失败会中止 staging 事务并保留原有工具拥有输出。 |
+| R2-F04 | 活跃 TFTP 原始块和已完成解析载荷分别具有配置上限。共享证据限额保留带最后已消费包／索引／偏移信息的具名停止见证，且不声称已扫描未消费后缀。 |
+| R2-F05 | 已解析、部分解析、畸形和不透明的首切片结果保持区分。非 `PARSED` 结果属于受控问题并返回退出状态 `2`，不构成成功的解析器主张。 |
+| R2-F06 | pcap/pcapng 捕获长度不一致是显式不可投影条件。SPB 载荷长度遵从声明的 original/snapshot 语义并排除对齐填充；非法过短或附加 SPB body 会被拒绝。 |
+| R2-F07 | 已安装的非 editable wheel 携带精确的受控合同／schema 资源。真实已安装的 `cltav-offline` 入口从无关工作目录运行；缺失或改变的受控资源会阻止替换并返回具名工具失败。 |
 
 ## 6. 后继边界
 

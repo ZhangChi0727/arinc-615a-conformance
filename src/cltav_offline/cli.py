@@ -8,7 +8,7 @@ from pathlib import Path
 
 from . import __version__
 from .corpus import publish_json, run_corpus
-from .evidence import evidence_errors
+from .evidence import evidence_errors, evidence_failure_code
 from .pipeline import IntakeConfig, IntakeError, run_capture, validate_source_commit
 
 
@@ -61,7 +61,7 @@ def main(argv: list[str] | None = None) -> int:
             data = result.to_dict(source_commit=source_commit)
             errors = evidence_errors(data)
             if errors:
-                raise IntakeError("EVIDENCE-SCHEMA-ERROR", "; ".join(errors))
+                raise IntakeError(evidence_failure_code(errors), "; ".join(errors))
             publish_json(data, args.output)
             print(f"offline intake wrote {args.output.name}: {data['executionStatus']}")
             return 0 if data["executionStatus"] == "COMPLETE" else 2

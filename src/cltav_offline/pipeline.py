@@ -239,6 +239,7 @@ def run_capture(
     stopped_for_limit = False
     packet_ref_ids: set[str] = set()
     diagnostic_limit_reported = False
+    last_consumed_packet: PacketRef | None = None
 
     def retained_count() -> int:
         return (
@@ -253,17 +254,34 @@ def run_capture(
     def emit_diagnostic(diagnostic: Diagnostic) -> bool:
         """Retain a bounded diagnostic stream with one reserved stop witness."""
         nonlocal stopped_for_limit, diagnostic_limit_reported
+        if diagnostic.code.startswith("RESOURCE-") and last_consumed_packet is not None:
+            detail = dict(diagnostic.detail)
+            detail.setdefault("lastConsumedPacketRefId", last_consumed_packet.id)
+            detail.setdefault("lastConsumedPacketIndex", last_consumed_packet.packet_index)
+            detail.setdefault("lastConsumedContainerOffset", last_consumed_packet.container_offset)
+            diagnostic = Diagnostic(
+                diagnostic.code, diagnostic.stage, diagnostic.message,
+                severity=diagnostic.severity, packet_ref_id=diagnostic.packet_ref_id,
+                container_offset=diagnostic.container_offset, detail=detail,
+            )
         diagnostic_limit = min(config.max_diagnostics, config.max_evidence_records)
         if len(result.diagnostics) < diagnostic_limit - 1 and retained_count() < config.max_evidence_records - 1:
             result.diagnostics.append(diagnostic)
             return True
         if not diagnostic_limit_reported and retained_count() < config.max_evidence_records:
             diagnostic_limit_reported = True
+            detail: dict[str, Any] = {"limit": diagnostic_limit, "unconsumedSuffix": "NOT-CONSUMED"}
+            if last_consumed_packet is not None:
+                detail.update({
+                    "lastConsumedPacketRefId": last_consumed_packet.id,
+                    "lastConsumedPacketIndex": last_consumed_packet.packet_index,
+                    "lastConsumedContainerOffset": last_consumed_packet.container_offset,
+                })
             result.diagnostics.append(Diagnostic(
                 "RESOURCE-DIAGNOSTIC-LIMIT",
                 "PIPELINE",
                 "diagnostic retention limit reached; input suffix was not consumed",
-                detail={"limit": diagnostic_limit, "unconsumedSuffix": "NOT-CONSUMED"},
+                detail=detail,
             ))
         stopped_for_limit = True
         return False
@@ -325,6 +343,7 @@ def run_capture(
 
     try:
         for captured in reader:
+            last_consumed_packet = captured.ref
             if stopped_for_limit:
                 break
             if not retain_packet_ref(captured.ref):
@@ -390,7 +409,11 @@ def run_capture(
             "RESOURCE-TRANSFER-EVIDENCE-LIMIT",
             "TFTP",
             "transfer records exceeded the shared evidence retention limit",
-            detail={"limit": config.max_evidence_records},
+            detail={
+                "limit": config.max_evidence_records,
+                "retentionBoundary": "DERIVED-TRANSFER-RECORDS-TRUNCATED",
+                "scanStatus": "STOPPED-RESOURCE-LIMIT" if stopped_for_limit else "COMPLETE",
+            },
         ))
     else:
         result.transfers = finished_transfers
@@ -402,7 +425,11 @@ def run_capture(
             "RESOURCE-EVENT-LIMIT",
             "EVENT",
             "event retention limit reached; later derived events were not retained",
-            detail={"limit": event_room},
+            detail={
+                "limit": event_room,
+                "retentionBoundary": "DERIVED-EVENTS-TRUNCATED",
+                "scanStatus": "STOPPED-RESOURCE-LIMIT" if stopped_for_limit else "COMPLETE",
+            },
         ))
     else:
         result.events = generated_events
