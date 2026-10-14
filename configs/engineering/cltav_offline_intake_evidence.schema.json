@@ -76,7 +76,7 @@
       "required": [
         "maxPacketBytes", "maxContainerBlockBytes", "maxActiveDatagrams",
         "maxDatagramBytes", "maxFragmentsPerDatagram", "maxActiveTransfers",
-        "maxTransferRecords", "maxTransferBytes", "maxEvidenceRecords", "maxPacketRefs",
+        "maxTransferRecords", "maxTransferBytes", "maxActiveTransferBytes", "maxCompletedPayloadBytes", "maxEvidenceRecords", "maxPacketRefs",
         "maxDiagnostics", "maxEvents", "maxInterfaces", "tftpServicePort"
       ],
       "properties": {
@@ -88,6 +88,8 @@
         "maxActiveTransfers": {"type": "integer", "minimum": 1},
         "maxTransferRecords": {"type": "integer", "minimum": 1},
         "maxTransferBytes": {"type": "integer", "minimum": 1},
+        "maxActiveTransferBytes": {"type": "integer", "minimum": 1},
+        "maxCompletedPayloadBytes": {"type": "integer", "minimum": 1},
         "maxEvidenceRecords": {"type": "integer", "minimum": 1},
         "maxPacketRefs": {"type": "integer", "minimum": 1},
         "maxDiagnostics": {"type": "integer", "minimum": 1},

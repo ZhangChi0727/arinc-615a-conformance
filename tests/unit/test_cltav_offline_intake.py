@@ -527,6 +527,41 @@ def test_resource_limits_bound_bad_packet_evidence_and_preserve_source_identity(
     assert evidence_errors(evidence) == []
 
 
+def test_shared_evidence_budget_counts_interfaces_and_reserves_a_stop_witness(tmp_path: Path) -> None:
+    capture = tmp_path / "shared-budget.pcap"
+    capture.write_bytes(_pcap(_valid_exchange()[:1]))
+    result = run_capture(
+        capture,
+        capture_id="SYN-SHARED-BUDGET",
+        config=IntakeConfig(max_evidence_records=2, max_packet_refs=10, max_diagnostics=10),
+    )
+    evidence = result.to_dict(source_commit="a" * 40)
+    retained = (
+        len(evidence["input"]["container"]["interfaces"])
+        + len(evidence["packetRefs"])
+        + len(evidence["datagrams"])
+        + len(evidence["transfers"])
+        + len(evidence["events"])
+        + len(evidence["diagnostics"])
+    )
+    assert retained <= 2
+    assert evidence["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert evidence["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
+    assert evidence_errors(evidence) == []
+
+    with pytest.raises(IntakeError) as caught:
+        run_capture(capture, capture_id="SYN-SHARED-INVALID", config=IntakeConfig(max_evidence_records=1))
+    assert caught.value.code == "INVALID-RUNTIME-LIMIT"
+
+    section_body = struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1)
+    idb = struct.pack("<HHI", 1, 0, 65535)
+    two_interfaces = tmp_path / "two-interfaces.pcapng"
+    two_interfaces.write_bytes(_block(PCAPNG_SECTION_HEADER, section_body) + _block(1, idb) + _block(1, idb))
+    with pytest.raises(IntakeError) as caught:
+        run_capture(two_interfaces, capture_id="SYN-SHARED-INTERFACES", config=IntakeConfig(max_evidence_records=2))
+    assert caught.value.code == "RESOURCE-INTERFACE-LIMIT"
+
+
 def test_interface_resource_limit_is_a_named_capture_error(tmp_path: Path) -> None:
     section_body = struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1)
     idb = struct.pack("<HHI", 1, 0, 0)
@@ -782,6 +817,78 @@ def test_tftp_post_terminator_and_duplicate_request_are_conservative(tmp_path: P
     duplicate = run_capture(duplicate_capture, capture_id="SYN-21B")
     assert len(duplicate.transfers) == 1
     assert duplicate.transfers[0].reconstruction_status == "COMPLETE"
+
+
+def test_tftp_terminal_block_set_is_order_independent_and_completed_sessions_release_slots(tmp_path: Path) -> None:
+    server = {"source": "10.0.0.2", "destination": "10.0.0.1"}
+    # A full block above a later terminal is contradictory even when it was
+    # observed first; it must never manufacture a longer COMPLETE transfer.
+    above_terminal = [
+        _ethernet_ipv4(_udp(10100, 69, _request(1, "above.lui")), identification=100),
+        _ethernet_ipv4(_udp(40100, 10100, _data(2, b"x" * 512)), identification=101, **server),
+        _ethernet_ipv4(_udp(40100, 10100, _data(1, b"short")), identification=102, **server),
+    ]
+    capture = tmp_path / "above-terminal.pcap"
+    capture.write_bytes(_pcap(above_terminal))
+    result = run_capture(capture, capture_id="SYN-TERMINAL-A")
+    assert result.transfers[0].reconstruction_status == "CONFLICT"
+    assert result.transfers[0].complete_payload_length is None
+    assert all(event.layer != "APPLICATION" for event in result.events)
+
+    # A terminal block may arrive before an earlier full block: filling the
+    # hole below the terminal remains valid and is completed deterministically.
+    fill_hole = [
+        _ethernet_ipv4(_udp(10101, 69, _request(1, "fill.lui")), identification=103),
+        _ethernet_ipv4(_udp(40101, 10101, _data(2, b"z")), identification=104, **server),
+        _ethernet_ipv4(_udp(40101, 10101, _data(1, b"a" * 512)), identification=105, **server),
+    ]
+    capture = tmp_path / "fill-terminal-hole.pcap"
+    capture.write_bytes(_pcap(fill_hole))
+    result = run_capture(capture, capture_id="SYN-TERMINAL-B")
+    assert result.transfers[0].reconstruction_status == "COMPLETE"
+    assert result.transfers[0].terminal_block == 2
+    assert result.transfers[0].complete_payload_length == 513
+
+    # Completed observations do not consume active-session slots or retain
+    # raw block allocations.  All eight are valid under one active slot.
+    records: list[bytes] = []
+    for index in range(8):
+        client = 10200 + index
+        tid = 40200 + index
+        records.extend([
+            _ethernet_ipv4(_udp(client, 69, _request(1, f"done-{index}.lui")), identification=110 + index * 2),
+            _ethernet_ipv4(_udp(tid, client, _data(1, b"q" * 100)), identification=111 + index * 2, **server),
+        ])
+    capture = tmp_path / "completed-sessions.pcap"
+    capture.write_bytes(_pcap(records))
+    result = run_capture(
+        capture,
+        capture_id="SYN-TERMINAL-C",
+        config=IntakeConfig(
+            max_active_transfers=1,
+            max_transfer_bytes=100,
+            max_active_transfer_bytes=100,
+            max_completed_payload_bytes=800,
+        ),
+    )
+    assert [transfer.reconstruction_status for transfer in result.transfers] == ["COMPLETE"] * 8
+    assert not any(item.code == "RESOURCE-ACTIVE-TRANSFER-LIMIT" for item in result.diagnostics)
+    assert all(transfer.complete_payload is None for transfer in result.transfers)
+
+    # Completed payload parsing has its own hard boundary rather than silently
+    # accumulating raw transfer data after completion.
+    capped = run_capture(
+        capture,
+        capture_id="SYN-TERMINAL-D",
+        config=IntakeConfig(
+            max_active_transfers=1,
+            max_transfer_bytes=100,
+            max_active_transfer_bytes=100,
+            max_completed_payload_bytes=100,
+        ),
+    )
+    assert capped.transfers[0].reconstruction_status == "COMPLETE"
+    assert all("RESOURCE-COMPLETED-PAYLOAD-LIMIT" in item.diagnostics for item in capped.transfers[1:])
 
 
 def test_tftp_option_evidence_and_rollover_are_not_guessed(tmp_path: Path) -> None:

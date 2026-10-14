@@ -122,6 +122,7 @@ class _Session:
     blocks: dict[int, _Block] = field(default_factory=dict)
     terminal_block: int | None = None
     received_payload_bytes: int = 0
+    completed_payload_bytes: int = 0
     oack_options: dict[str, str] | None = None
     data_seen: bool = False
     superseded: bool = False
@@ -165,21 +166,30 @@ class TftpReconstructor:
         service_port: int = 69,
         max_active_transfers: int = 128,
         max_transfer_bytes: int = 16 * 1024 * 1024,
+        max_active_transfer_bytes: int = 16 * 1024 * 1024,
+        max_completed_payload_bytes: int = 16 * 1024 * 1024,
         max_transfer_records: int = 200_000,
         max_diagnostics: int = 50_000,
     ) -> None:
         if not 1 <= service_port <= 65_535:
             raise ValueError("service_port must be in 1..65535")
-        if min(max_active_transfers, max_transfer_bytes, max_transfer_records, max_diagnostics) < 1:
+        if min(
+            max_active_transfers, max_transfer_bytes, max_active_transfer_bytes,
+            max_completed_payload_bytes, max_transfer_records, max_diagnostics,
+        ) < 1:
             raise ValueError("transfer limits must be positive")
         self.capture_id = capture_id
         self.service_port = service_port
         self.max_active_transfers = max_active_transfers
         self.max_transfer_bytes = max_transfer_bytes
+        self.max_active_transfer_bytes = max_active_transfer_bytes
+        self.max_completed_payload_bytes = max_completed_payload_bytes
         self.max_transfer_records = max_transfer_records
         self.max_diagnostics = max_diagnostics
         self._sessions: list[_Session] = []
         self._records: list[TransferRecord] = []
+        self._active_payload_bytes = 0
+        self._completed_payload_bytes = 0
         self._sequence = 0
         self.diagnostics: list[Diagnostic] = []
         self._diagnostic_limit_reported = False
@@ -279,7 +289,12 @@ class TftpReconstructor:
                 if existing.record.reconstruction_status == "INCOMPLETE":
                     self._terminate(existing, "GAPPED", "TFTP-SESSION-REUSED")
                 existing.superseded = True
-        active = [session for session in self._sessions if session.is_matchable]
+        # Completed sessions remain only as bounded association summaries for
+        # late-packet diagnostics; they neither occupy nor evict active slots.
+        active = [
+            session for session in self._sessions
+            if not session.superseded and session.record.reconstruction_status == "INCOMPLETE"
+        ]
         if len(active) >= self.max_active_transfers:
             evicted = active[0]
             self._terminate(evicted, "GAPPED", "RESOURCE-ACTIVE-TRANSFER-LIMIT")
@@ -435,17 +450,35 @@ class TftpReconstructor:
                 self._conflict(session, "CONFLICTING-TFTP-DATA-BLOCK")
             return
         if session.terminal_block is not None:
+            if block > session.terminal_block:
+                self._conflict(session, "TFTP-DATA-AFTER-TERMINATOR")
+                return
+            if len(data) < block_size and block != session.terminal_block:
+                self._conflict(session, "CONFLICTING-TFTP-TERMINATOR")
+                return
+        if len(data) < block_size and session.terminal_block is None and any(number > block for number in session.blocks):
+            # A later short block defines the terminal set.  Earlier observed
+            # data above that set is contradictory regardless of arrival order.
             self._conflict(session, "TFTP-DATA-AFTER-TERMINATOR")
             return
         if session.received_payload_bytes + len(data) > self.max_transfer_bytes:
             self._terminate(session, "GAPPED", "RESOURCE-TRANSFER-BYTE-LIMIT")
             return
+        if self._active_payload_bytes + len(data) > self.max_active_transfer_bytes:
+            self._terminate(session, "GAPPED", "RESOURCE-ACTIVE-TRANSFER-BYTE-LIMIT")
+            return
         session.blocks[block] = _Block(digest, data)
         session.record.block_packet_refs[block] = session.record.packet_refs[-1]
         session.received_payload_bytes += len(data)
+        self._active_payload_bytes += len(data)
         if len(data) < block_size:
+            if session.terminal_block is not None and session.terminal_block != block:
+                self._conflict(session, "CONFLICTING-TFTP-TERMINATOR")
+                return
             session.terminal_block = block
             session.record.completion_packet_ref = session.record.packet_refs[-1]
+            self._complete_if_contiguous(session)
+        elif session.terminal_block is not None:
             self._complete_if_contiguous(session)
 
     def _complete_if_contiguous(self, session: _Session) -> None:
@@ -454,19 +487,38 @@ class TftpReconstructor:
             self._complete(session)
 
     def _complete(self, session: _Session) -> None:
-        if session.is_bad_terminal or session.terminal_block is None:
+        if session.is_bad_terminal or session.terminal_block is None or session.record.reconstruction_status == "COMPLETE":
+            return
+        if self._completed_payload_bytes + session.received_payload_bytes > self.max_completed_payload_bytes:
+            self._terminate(session, "GAPPED", "RESOURCE-COMPLETED-PAYLOAD-LIMIT")
             return
         payload = b"".join(session.blocks[number].data for number in range(1, session.terminal_block + 1))
         session.record.reconstruction_status = "COMPLETE"
         session.record.terminal_block = session.terminal_block
         session.record.complete_payload = payload
         session.record.complete_payload_length = len(payload)
+        session.completed_payload_bytes = len(payload)
+        self._completed_payload_bytes += len(payload)
+        self._active_payload_bytes -= session.received_payload_bytes
+        session.received_payload_bytes = 0
+        # Keep fixed-size digests for later contradictory duplicate detection,
+        # but release every raw DATA allocation once reconstruction completes.
+        for number, block in tuple(session.blocks.items()):
+            session.blocks[number] = _Block(block.digest, b"")
 
     def _terminate(self, session: _Session, status: str, code: str) -> None:
         assert status in _TERMINAL_BAD
+        self._active_payload_bytes -= session.received_payload_bytes
+        self._completed_payload_bytes -= session.completed_payload_bytes
+        session.received_payload_bytes = 0
+        session.completed_payload_bytes = 0
+        session.blocks.clear()
         session.record.reconstruction_status = status
         _append_unique(session.record.diagnostics, code)
+        session.terminal_block = None
         session.record.terminal_block = None
+        session.record.completion_packet_ref = None
+        session.record.block_packet_refs.clear()
         session.record.complete_payload = None
         session.record.complete_payload_length = None
 

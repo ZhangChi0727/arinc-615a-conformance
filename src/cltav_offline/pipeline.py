@@ -54,6 +54,8 @@ class IntakeConfig:
     max_active_transfers: int = 128
     max_transfer_records: int = 50_000
     max_transfer_bytes: int = 16 * 1024 * 1024
+    max_active_transfer_bytes: int = 16 * 1024 * 1024
+    max_completed_payload_bytes: int = 16 * 1024 * 1024
     max_evidence_records: int = 50_000
     max_packet_refs: int = 50_000
     max_diagnostics: int = 50_000
@@ -71,6 +73,8 @@ class IntakeConfig:
             "maxActiveTransfers": self.max_active_transfers,
             "maxTransferRecords": self.max_transfer_records,
             "maxTransferBytes": self.max_transfer_bytes,
+            "maxActiveTransferBytes": self.max_active_transfer_bytes,
+            "maxCompletedPayloadBytes": self.max_completed_payload_bytes,
             "maxEvidenceRecords": self.max_evidence_records,
             "maxPacketRefs": self.max_packet_refs,
             "maxDiagnostics": self.max_diagnostics,
@@ -100,7 +104,9 @@ class IntakeResult:
     def has_controlled_issue(self) -> bool:
         return bool(self.diagnostics) or any(
             record.status != "COMPLETE" for record in self.datagrams
-        ) or any(record.reconstruction_status != "COMPLETE" for record in self.transfers)
+        ) or any(record.reconstruction_status != "COMPLETE" for record in self.transfers) or (
+            self.capture_metadata.get("scanStatus") not in {None, "COMPLETE"}
+        )
 
     def to_dict(self, *, source_commit: str) -> dict[str, Any]:
         source_commit = validate_source_commit(source_commit)
@@ -183,7 +189,10 @@ def run_capture(
         path, capture_id,
         max_packet_bytes=config.max_packet_bytes,
         max_block_bytes=config.max_container_block_bytes,
-        max_interfaces=min(config.max_interfaces, config.max_evidence_records),
+        # Reserve one shared-evidence slot for an explicit stop witness.  Input
+        # interface metadata is published evidence too; it cannot bypass the
+        # same retention budget used by packets, reconstructions, and events.
+        max_interfaces=min(config.max_interfaces, config.max_evidence_records - 1),
         max_diagnostics=min(config.max_diagnostics, config.max_evidence_records),
     )
     reassembler = Ipv4Reassembler(
@@ -196,6 +205,8 @@ def run_capture(
         service_port=config.tftp_service_port,
         max_active_transfers=config.max_active_transfers,
         max_transfer_bytes=config.max_transfer_bytes,
+        max_active_transfer_bytes=config.max_active_transfer_bytes,
+        max_completed_payload_bytes=config.max_completed_payload_bytes,
         max_transfer_records=config.max_transfer_records,
         max_diagnostics=min(config.max_diagnostics, config.max_evidence_records),
     )
@@ -212,7 +223,8 @@ def run_capture(
 
     def retained_count() -> int:
         return (
-            len(result.packet_refs)
+            len(reader.metadata.interfaces)
+            + len(result.packet_refs)
             + len(result.datagrams)
             + len(result.transfers)
             + len(result.events)
@@ -417,5 +429,10 @@ def _validate_config(config: IntakeConfig) -> None:
             raise IntakeError("INVALID-RUNTIME-LIMIT", f"{label} must be positive")
     if config.max_datagram_bytes > 65_535:
         raise IntakeError("INVALID-RUNTIME-LIMIT", "maxDatagramBytes cannot exceed IPv4 maximum")
+    if config.max_evidence_records < 2:
+        raise IntakeError(
+            "INVALID-RUNTIME-LIMIT",
+            "maxEvidenceRecords must reserve one item for an explicit resource-stop witness",
+        )
     if config.tftp_service_port > 65_535:
         raise IntakeError("INVALID-RUNTIME-LIMIT", "tftpServicePort must not exceed 65535")

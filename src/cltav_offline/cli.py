@@ -44,6 +44,8 @@ def main(argv: list[str] | None = None) -> int:
         max_active_transfers=args.max_active_transfers,
         max_transfer_records=args.max_transfer_records,
         max_transfer_bytes=args.max_transfer_bytes,
+        max_active_transfer_bytes=args.max_active_transfer_bytes,
+        max_completed_payload_bytes=args.max_completed_payload_bytes,
         max_evidence_records=args.max_evidence_records,
         max_packet_refs=args.max_packet_refs,
         max_diagnostics=args.max_diagnostics,
@@ -91,6 +93,8 @@ def _add_limits(parser: argparse.ArgumentParser) -> None:
     limits.add_argument("--max-active-transfers", type=int, default=128)
     limits.add_argument("--max-transfer-records", type=int, default=50_000)
     limits.add_argument("--max-transfer-bytes", type=int, default=16 * 1024 * 1024)
+    limits.add_argument("--max-active-transfer-bytes", type=int, default=16 * 1024 * 1024)
+    limits.add_argument("--max-completed-payload-bytes", type=int, default=16 * 1024 * 1024)
     limits.add_argument("--max-evidence-records", type=int, default=50_000)
     limits.add_argument("--max-packet-refs", type=int, default=50_000)
     limits.add_argument("--max-diagnostics", type=int, default=50_000)
