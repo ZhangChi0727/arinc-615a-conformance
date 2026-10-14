@@ -1,8 +1,10 @@
 # CL-TAV Experiment Implementation Specification / CL-TAV 实验实施规格
 
-**Identity:** `CLTAV-EXPERIMENT-DESIGN`, version `0.1-candidate`  
-**Parent authority:** `EXP-PLAN-2026-001`  
-**Machine index:** `configs/research/cltav_experiment_design.json`  
+**Identity:** `CLTAV-EXPERIMENT-DESIGN`, version `0.1-candidate`
+
+**Parent authority:** `EXP-PLAN-2026-001`
+
+**Machine index:** `configs/research/cltav_experiment_design.json`
 **Status:** candidate design; **not** a registration, executable Configuration,
 run approval, result, proof or scientific approval.
 
