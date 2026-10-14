@@ -11,7 +11,10 @@ requires-python = ">=3.10"
 dependencies = ["jsonschema>=4.18"]
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0"]
+# The installed-wheel regression deliberately uses --no-build-isolation, so
+# the development/test environment must provide the declared build backend on
+# all supported Python versions (notably Python 3.12+).
+dev = ["pytest>=7.0", "setuptools>=61"]
 
 [project.scripts]
 a615a-sim = "a615a_sim.cli:main"
