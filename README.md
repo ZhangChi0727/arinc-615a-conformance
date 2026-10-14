@@ -51,17 +51,17 @@ silently redefine the Core.
 
 ## Current increment
 
-**Parallel CL-TAV offline-engineering and TAES evidence-integration candidates**
+**Parallel CL-TAV offline-engineering and experiment-design candidates**
 
-- CR-2026-017 / DD-041 is the separately owned offline intake and protocol-reconstruction engineering candidate; its completion and review state are not asserted by this paper line.
-- CR-2026-018 / DD-042 integrates the accepted literature evidence into the TAES draft, bibliography, bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.
-- Both lines start from c5296aedef961ac3d5846ea9ef28847eea928132 in independent worktrees and must merge serially; the second line to land preserves both CR/DD records, reconciles current status and is re-reviewed on its new head.
-- No confirmatory result, implementation completion, Configuration, capability, conformance, independent scientific approval, submission, baseline or tag is created.
+- CR-2026-017 / DD-041 is the separately owned Draft offline intake and protocol-reconstruction engineering candidate; this research line assigns it no new work and asserts no completion.
+- CR-2026-019 / DD-043 refines the merged literature-bounded C1/C2 claims into a candidate experiment implementation design while preserving the four arms, three families, eight scenarios and existing method/interface authorities.
+- Both active candidates start from f55b69f0c8df8f40e5d75fd631289e8e6eb3a01c in independent worktrees and must merge serially; the second line to land preserves both CR/DD records, reconciles this shared status and is re-reviewed on its new head.
+- Design acceptance remains separate from run admission: no confirmatory result, implementation completion, Configuration, capability, conformance, independent scientific approval, submission, baseline or tag is created.
 
 State changes:
 
-- Two separately owned candidate lines are authorized from the same base; this branch records only the paper-line output and the serial-merge rule.
-- The TAES literature-access placeholder is resolved for the sources actually used, while result, sample-size and institutional-input placeholders remain open.
+- Two separately owned candidate lines are active from the same merged-paper base; this branch records only the research-design output and serial-merge rule.
+- The finite experiment design index, denominators, synthetic accounting and dependency/decision gates are candidate review material, not execution readiness.
 - currentStop remains EXECUTABLE-FOUNDATION-GATE for M3 implementation.
 
 Unchanged boundaries:
@@ -103,17 +103,17 @@ Unchanged boundaries:
 
 ## 本次集成增量
 
-**并行的 CL-TAV 离线工程与 TAES 证据集成候选**
+**并行的 CL-TAV 离线工程与实验实施设计候选**
 
-- CR-2026-017／DD-041 是由另一工作区负责的离线接入与协议重建工程候选；本论文线不声称其已完成或已评审。
-- CR-2026-018／DD-042 在不改变算法、接口和实验臂的前提下，把已接受文献证据融入 TAES 初稿、参考文献、有界 C1／C2 措辞与评价记账。
-- 两条线均从 c5296aedef961ac3d5846ea9ef28847eea928132 起步，在独立工作树开发并串行合并；后合入者须保留两套 CR／DD、协调当前状态并在新 Head 上重审。
-- 本增量不产生确认性结果、实现完成、Configuration、能力、符合性、独立科学批准、投稿、baseline 或 tag。
+- CR-2026-017／DD-041 是由另一工作区负责的离线接入与协议重建 Draft 工程候选；本研究线不向其追加任务，也不声称其已完成。
+- CR-2026-019／DD-043 把已合并且受文献限定的 C1／C2 细化为候选实验实施设计，同时保持四臂、三实验族、八场景和既有方法／接口权威。
+- 两条活动候选均从 f55b69f0c8df8f40e5d75fd631289e8e6eb3a01c 起步，在独立工作树开发并串行合并；后合入者须保留两套 CR／DD、协调共享状态并在新 Head 上重审。
+- 设计接受与运行准入继续分离；本增量不产生确认性结果、实现完成、Configuration、能力、符合性、独立科学批准、投稿、baseline 或 tag。
 
 状态变化：
 
-- 两条不同责任人的候选线获准从同一基点并行；本分支只登记论文线输出与串行合并规则。
-- 实际采用来源的 TAES 文献访问占位已消解，结果、样本量和单位材料占位继续开放。
+- 两条不同责任人的候选线从同一已合并论文基点并行；本分支只登记研究设计输出与串行合并规则。
+- 有限实验设计索引、分母、合成记账及依赖／决定门只是候选评审材料，不构成执行就绪。
 - 对 M3 实现而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。
 
 保持不变的边界：
