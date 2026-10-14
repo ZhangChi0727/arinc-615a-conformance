@@ -30,11 +30,18 @@ acceptance identities; it is not a parallel requirements package.
 ## 2. Reproducible local evidence
 
 The historical input is the caller-provided exploratory manifest
-`CLTAV-HISTORICAL-CAPTURES` version `1.0`.  Its identity audit covered all 23
-registered captures before the local intake run.  The runtime source used for
-that run was immutable commit
-`b6f4ac216d51e55c7f34b4747bf2f0a7320a75ed`; the later serial integration of
-the parallel paper line does not alter `src/cltav_offline/`.
+`CLTAV-HISTORICAL-CAPTURES` version `1.0`. Its identity audit covered all 23
+registered captures before the local intake run. The run records a deterministic
+runtime-source snapshot instead of treating a caller-provided Git OID as a
+verified build identity:
+
+`33314564f6970942f984f2430f13c4d470872489312a6274439e5032c5ef1cf7`
+
+The caller supplied `85eeb79a5d7e086113bda9a91f930153792b7dac`, which the
+evidence correctly labels `CLAIMED-UNVERIFIED`. The consumed development
+contract is the exact snapshot
+`configs/engineering/cltav_development_contracts.json` with SHA-256
+`e9df5397d2b3ffedb8f5e14e655ceb3fba70cd324d37bb170fc9fbd4033d4e7c`.
 
 The ignored, local-only corpus index was written under `.cltav-local/` and has
 SHA-256:
@@ -47,15 +54,17 @@ Aggregate result only:
 |---|---:|
 | Registered capture identities audited | 23 |
 | Corpus outputs published | 23 captures plus one corpus index |
-| `COMPLETE` reconstructions | 2 |
-| `COMPLETE-WITH-CONTROLLED-ISSUES` reconstructions | 21 |
-| `RESOURCE-EVIDENCE-RECORD-LIMIT` diagnostics | 21 |
-| `TRUNCATED-IPV4-PAYLOAD` diagnostics | 2 |
+| `COMPLETE` reconstructions | 0 |
+| `COMPLETE-WITH-CONTROLLED-ISSUES` reconstructions | 23 |
+| Runtime source snapshot | `33314564…c5ef1cf7` |
+| Source-claim status | `CLAIMED-UNVERIFIED` |
 
 These figures are an intake-support boundary, not a success rate, a protocol
 verdict, an experimental denominator, or a statement about the captured
-systems.  No local root, filename, address, payload, annotation, topology,
-clock characterization, configuration, or root-cause label is stored in Git.
+systems. In particular, controlled issues are retained rather than tuned away
+to manufacture a `COMPLETE` result. No local root, filename, address, payload,
+annotation, topology, clock characterization, configuration, or root-cause
+label is stored in Git.
 
 ## 3. Public verification entry points
 
@@ -64,7 +73,7 @@ python -m pip install -e ".[dev]"
 cltav-offline --version
 pytest -q tests/unit/test_cltav_offline_intake.py
 python scripts/audit_capture_manifest.py --manifest configs/research/cltav_historical_capture_manifest.json --corpus-root <authorized-local-corpus-root>
-python -m cltav_offline corpus --manifest configs/research/cltav_historical_capture_manifest.json --corpus-root <authorized-local-corpus-root> --output-dir .cltav-local/offline-intake/corpus --source-commit <immutable-40-hex-head>
+python -m cltav_offline corpus --manifest configs/research/cltav_historical_capture_manifest.json --corpus-root <authorized-local-corpus-root> --output-dir .cltav-local/offline-intake/corpus [--source-commit <caller-claim-40-hex>]
 ```
 
 The full repository gate sequence is recorded in the Draft PR and its CI run
@@ -95,7 +104,25 @@ depend on the local corpus.
 | E-15 | The PR comparison against its current base isolates this runtime/documentation increment; protected inputs remain controlled rather than rewritten for implementation convenience. |
 | E-16 | The Draft PR must bind local/remote CI to its final 40-hex head and must retain `Draft`; it does not activate a capability or configuration state. |
 
-## 5. Follow-on boundary
+## 5. PR #22 remediation closure evidence
+
+The following records corrective evidence for the independent review findings.
+It is a candidate-side trace, not an independent approval.
+
+| Finding | Corrective boundary exercised by public tests |
+|---|---|
+| P22-F01 | Corpus publication resolves input, manifest and output identities before staging; it rejects equal, descendant, ancestor and alias targets, unsafe capture IDs and unowned targets; rollback leaves prior output intact. |
+| P22-F02 | Terminal TFTP `CONFLICT`, protocol `ERROR` and resource outcomes cannot be revived by later data; derived completion data/events are withdrawn; duplicate requests, TID binding, OACK limits, defaulted/unknown options and rollover are exercised. |
+| P22-F03 | Reassembly and transfer association include section, interface, link-domain and VLAN context; cross-domain fragments/requests do not merge. |
+| P22-F04 | A versioned adapter binds the exact accepted contract snapshot, projects the four accepted record types from normal production evidence and records non-projectable unknowns without fabricated values. The production-path test invokes the public record validator for every normal projection. |
+| P22-F05 | Publication executes the declared JSON Schema plus cross-record checks; malformed normal and fatal envelopes fail before replacement. |
+| P22-F06 | Shared retained-record limits cover success and diagnostic paths, reserve a stop record, and retain SHA/index/offset/context traceability without raw payload. |
+| P22-F07 | Partial, malformed and opaque first-slice results remain distinct from parsed application events. |
+| P22-F08 | Short pcapng structural input returns a named controlled error; legal EPB options and supported container variants remain accepted. |
+| P22-A01 | Full-range whitespace checking is a required final gate. |
+| P22-A02 | Git OIDs are caller claims only; runtime source and controlled-contract content identities are recorded separately, without CWD, Git or environment inference. |
+
+## 6. Follow-on boundary
 
 This evidence may later be consumed through a reviewed evidence manifest.  A
 follow-on change, separately reviewed, is required before ownership,
@@ -125,8 +152,13 @@ use it.
 
 ## 2. 可复现的本地证据
 
-历史输入为调用方提供的探索性清单 `CLTAV-HISTORICAL-CAPTURES` 版本 `1.0`。本地接入运行前已审计全部 23 份已登记捕获的身份。该运行使用的运行源码为不可变提交
-`b6f4ac216d51e55c7f34b4747bf2f0a7320a75ed`；随后串行集成的并行论文线没有改动 `src/cltav_offline/`。
+历史输入为调用方提供的探索性清单 `CLTAV-HISTORICAL-CAPTURES` 版本 `1.0`。本地接入运行前已审计全部 23 份已登记捕获的身份。该运行记录确定性的运行源码快照，而不把调用方给出的 Git OID 当作已核验构建身份：
+
+`33314564f6970942f984f2430f13c4d470872489312a6274439e5032c5ef1cf7`
+
+调用方给出了 `85eeb79a5d7e086113bda9a91f930153792b7dac`，证据将其正确标为 `CLAIMED-UNVERIFIED`。所消费的开发合同为精确快照
+`configs/engineering/cltav_development_contracts.json`，SHA-256 为
+`e9df5397d2b3ffedb8f5e14e655ceb3fba70cd324d37bb170fc9fbd4033d4e7c`。
 
 已忽略、仅本地保存的 corpus 索引写入 `.cltav-local/`，其 SHA-256 为：
 
@@ -138,12 +170,12 @@ use it.
 |---|---:|
 | 已审计的登记捕获身份 | 23 |
 | 已发布的 corpus 输出 | 23 份捕获加一个 corpus 索引 |
-| `COMPLETE` 重建 | 2 |
-| `COMPLETE-WITH-CONTROLLED-ISSUES` 重建 | 21 |
-| `RESOURCE-EVIDENCE-RECORD-LIMIT` 诊断 | 21 |
-| `TRUNCATED-IPV4-PAYLOAD` 诊断 | 2 |
+| `COMPLETE` 重建 | 0 |
+| `COMPLETE-WITH-CONTROLLED-ISSUES` 重建 | 23 |
+| 运行源码快照 | `33314564…c5ef1cf7` |
+| 来源声明状态 | `CLAIMED-UNVERIFIED` |
 
-这些数字是接入支持边界，而不是成功率、协议判定、实验分母或关于被捕获系统的结论。本报告不向 Git 提交本地根、文件名、地址、载荷、注释、拓扑、时钟特性、配置或根因标签。
+这些数字是接入支持边界，而不是成功率、协议判定、实验分母或关于被捕获系统的结论。尤其是，受控问题被保留而非通过调高限额等方式消除以制造 `COMPLETE` 结果。本报告不向 Git 提交本地根、文件名、地址、载荷、注释、拓扑、时钟特性、配置或根因标签。
 
 ## 3. 公开验证入口
 
@@ -152,7 +184,7 @@ python -m pip install -e ".[dev]"
 cltav-offline --version
 pytest -q tests/unit/test_cltav_offline_intake.py
 python scripts/audit_capture_manifest.py --manifest configs/research/cltav_historical_capture_manifest.json --corpus-root <authorized-local-corpus-root>
-python -m cltav_offline corpus --manifest configs/research/cltav_historical_capture_manifest.json --corpus-root <authorized-local-corpus-root> --output-dir .cltav-local/offline-intake/corpus --source-commit <immutable-40-hex-head>
+python -m cltav_offline corpus --manifest configs/research/cltav_historical_capture_manifest.json --corpus-root <authorized-local-corpus-root> --output-dir .cltav-local/offline-intake/corpus [--source-commit <caller-claim-40-hex>]
 ```
 
 完整仓库门禁序列记录在绑定不可变 PR Head 的 Draft PR 及其 CI 中，包括开发就绪检查器、M1/M2 同步、项目概览同步、baseline 检查器、稿件检查器、全量测试、严格 Python 编译和 `git diff --check`。CI 只使用公开合成夹具，不依赖本地语料。
@@ -178,6 +210,23 @@ python -m cltav_offline corpus --manifest configs/research/cltav_historical_capt
 | E-15 | PR 相对当前 base 的比较隔离本运行时／文档增量；受保护输入继续受控，不为实现便利而重写。 |
 | E-16 | Draft PR 必须将本地／远端 CI 绑定到最终 40 位 Head 并保持 Draft；它不激活能力或配置状态。 |
 
-## 5. 后继边界
+## 5. PR #22 修正关闭证据
+
+下表记录独立评审发现的候选侧修正证据；它不是独立批准。
+
+| 发现项 | 公开测试所覆盖的修正边界 |
+|---|---|
+| P22-F01 | corpus 发布在 staging 前解析输入、manifest 和输出身份；拒绝相等、子目录、祖先和别名目标、不安全捕获 ID 及非工具拥有目标；回滚保留旧输出。 |
+| P22-F02 | TFTP 的终态 `CONFLICT`、协议 `ERROR` 和资源结果不得被后续 DATA 复活；派生完成数据／事件同步撤销；覆盖重复请求、TID 绑定、OACK 上界、defaulted/unknown 选项及回绕。 |
+| P22-F03 | 重组和传输关联纳入 section、接口、链路域和 VLAN 上下文；跨域分片／请求不得合并。 |
+| P22-F04 | 版本化适配器绑定精确的已接受合同快照，从正常生产证据投影四类已接受记录，并以不伪造值的方式登记无法投影的未知项。生产路径测试会对每个正常投影调用公共记录验证器。 |
+| P22-F05 | 发布实际执行声明的 JSON Schema 和跨记录检查；畸形普通／fatal envelope 均在替换前失败。 |
+| P22-F06 | 共享保留限额覆盖成功与诊断路径、预留停止记录，并在不保留原始载荷时保留 SHA／索引／偏移／上下文出处。 |
+| P22-F07 | PARTIAL、MALFORMED 和 OPAQUE 首切片结果与已解析的应用事件保持区分。 |
+| P22-F08 | 短 pcapng 结构输入返回具名受控错误；合法 EPB options 和已支持容器变体继续接纳。 |
+| P22-A01 | 全范围空白检查是最终必跑门禁。 |
+| P22-A02 | Git OID 仅是调用方声明；运行源码和受控合同内容身份分开记录，不从 CWD、Git 或环境推导。 |
+
+## 6. 后继边界
 
 这些证据可在后续通过经评审的 evidence manifest 被消费。所有权、观测判定、历史更新、主动执行、完整性建立、故障真值、实验记账或任何符合性／能力主张使用它之前，都需要单独的后继变更和评审。

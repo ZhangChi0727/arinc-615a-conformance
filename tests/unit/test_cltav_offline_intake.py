@@ -7,6 +7,7 @@ import os
 import socket
 import struct
 import hashlib
+import subprocess
 from copy import deepcopy
 from pathlib import Path
 
@@ -309,7 +310,7 @@ def test_corpus_publication_rejects_input_overlapping_targets_before_staging(
     assert not list(source_parent.glob(".*.staging-*"))
 
 
-def test_corpus_publication_rejects_alias_output_and_unsafe_capture_id_before_writes(tmp_path: Path) -> None:
+def test_corpus_publication_rejects_alias_output_before_writes(tmp_path: Path) -> None:
     source_parent = tmp_path / "source-parent"
     corpus = source_parent / "corpus"
     corpus.mkdir(parents=True)
@@ -328,7 +329,19 @@ def test_corpus_publication_rejects_alias_output_and_unsafe_capture_id_before_wr
     try:
         os.symlink(source_parent, alias, target_is_directory=True)
     except OSError as exc:
-        pytest.skip(f"directory symlink fixture unavailable: {exc}")
+        if os.name != "nt":
+            pytest.skip(f"directory symlink fixture unavailable: {exc}")
+        # A junction exercises the same resolved-target containment boundary on
+        # Windows machines where symlink creation needs a privilege.  It is
+        # confined to pytest's temporary source/alias directories.
+        junction = subprocess.run(
+            ["cmd.exe", "/d", "/c", "mklink", "/J", str(alias), str(source_parent)],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if junction.returncode != 0:
+            pytest.skip(f"directory alias fixture unavailable: {exc}; {junction.stderr.strip()}")
     with pytest.raises(IntakeError) as caught:
         run_corpus(
             manifest_path=manifest_path, corpus_root=corpus, output_dir=alias,
@@ -338,7 +351,7 @@ def test_corpus_publication_rejects_alias_output_and_unsafe_capture_id_before_wr
     assert hashlib.sha256((safe_output / "corpus-index.json").read_bytes()).hexdigest() == old_output_hash
 
 
-def test_corpus_publication_refuses_nonowned_existing_result_directory(tmp_path: Path) -> None:
+def test_corpus_publication_refuses_nonowned_target_and_unsafe_capture_id_before_writes(tmp_path: Path) -> None:
     corpus = tmp_path / "corpus"
     corpus.mkdir()
     (corpus / "one.pcapng").write_bytes(_pcapng(_valid_exchange()))
