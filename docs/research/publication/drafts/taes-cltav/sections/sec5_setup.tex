@@ -5,6 +5,8 @@ The comparison contract is the existing experiment plan. Four arms share the
 same information pool, action pool and fault domain. Direct numeric comparison
 is allowed only on the same denominator and the same charged projection of
 \(c=(c_{\mathrm{acq}},c_{\mathrm{comp}},c_{\mathrm{prep}},c_{\mathrm{retry}})\).
+Runtime records may retain recovery as a detail, but evaluation folds it into
+\(c_{\mathrm{prep}}\) exactly once; it is not a fifth comparison coordinate.
 Seven controlled interfaces define scene registration, injection, independent
 truth, causal collection, arm execution, validity filtering and evaluation.
 Historical captures use only the offline evidence line and are not runnable
@@ -22,18 +24,27 @@ only; no invented sampling cost.
 \item CL-LOOP: the CL-TAV session; charge the components that actually run.
 \end{itemize}
 
-Truth is evaluator-only. It never enters \IFsel, \IFpred, \IFhist{} or
-\IFexec. The all-attempt ledger retains every registered attempt, including
+Truth is typed evaluator-only. It never enters \IFsel, \IFpred, \IFhist{} or
+\IFexec; algorithm-visible references are limited to registered initial inputs
+and records produced by that arm's own actions. Runtime \texttt{IF-EQUIV}
+candidate equivalence is distinct from evaluator-side injected-fault
+equivalence. The all-attempt ledger retains every registered attempt, including
 unconfirmed injection, invalid observation, equivalent or undecided fault,
 \texttt{ERROR}, abstention and unconcluded execution. Detection uses a named
 valid denominator and a separate answered subset for PASS/FAIL error. Localization
-uses confirmed in-domain injections and separately reports whether a localization
-decision was issued, whether the true fault remains, whether a singleton is
-correct, and final \(|H|\). Thus a valid detection FAIL with
+uses confirmed in-domain non-equivalent injections and separately reports
+localization-decision coverage, whether the true fault remains or is excluded,
+whether an issued singleton is correct, and final \(|H|\). These finite
+populations are derived from attempt fields rather than handwritten denominator
+tags. Thus a valid detection FAIL with
 \(H=\{h_1,h_2\}\) is an answered detection outcome but not singleton
 localization; \(H=\{h_{\mathrm{normal}}\}\) is not protocol PASS. Mutation
 scores exclude only confirmed equivalents while equivalent and undecided counts
 and adjudication effort remain visible~\cite{jia2011,gruen2009}.
+If no attempt is answered, answered coverage is reported as \(0/N\) for
+\(N>0\), whereas answered-conditional error is not applicable. An
+\texttt{ERROR}, \texttt{Stop-Empty}, \texttt{Stop-645}, or budget stop cannot
+manufacture an answered or singleton-localization decision.
 
 \begin{figure}[!t]
 \centering
@@ -79,6 +90,16 @@ error. Their specification coverage does not establish fault coverage. FIND,
 DOWNLOAD, AFDX and runtime integrity capability remain outside first-run
 admission. Design review therefore precedes engineering feasibility, pilot,
 frozen registration, execution and result acceptance.
+
+The registered statistical decision must classify comparisons as primary,
+secondary or exploratory and map each primary estimand to its finite domain,
+unit, pairing, estimator, interval, applicability and effect scale. Numeric
+sample/repeat policy, resource budget and stop priority, and clock/error budget
+are separate open decisions with named owners and closure witnesses; none is
+selected by this draft. The timing witness in the design contract uses
+\(I_{\mathrm{obs}}=[5.0,5.2]~\mathrm{s}\) and
+\(I_r=[4.0,5.1]~\mathrm{s}\), whose overlap without containment is
+\texttt{INCONCLUSIVE}.
 
 Literature methods are not automatically experimental arms. Köhl--Hermanns and
 Fränzle~\textit{et al.} are C1 concept comparators because their passive or

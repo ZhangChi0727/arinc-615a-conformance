@@ -61,7 +61,7 @@
       "section": "sec:setup",
       "clrq": ["CL-RQ2", "CL-RQ3"],
       "dependsOn": ["confirmatory registration"],
-      "completion": "n, seeds and interval method are frozen in the experiment register."
+      "completion": "Experimental unit, n/repeats/seeds and interval/effect method are frozen in the experiment register; resource/stop and clock/error budgets close under separate named decisions."
     },
     {
       "id": "PH-RES-DETECT",
@@ -69,7 +69,7 @@
       "section": "sec:results",
       "clrq": ["CL-RQ2"],
       "dependsOn": ["EXP-CLTAV-DETECT"],
-      "completion": "Registered DETECT cells derive from unique attemptId records; all-attempt flow, valid denominator, answered subset, numerator, filtering, unit and charged projection are frozen and auditable."
+      "completion": "Registered DETECT cells derive finite populations from unique attemptId fields; all-attempt flow, 0/N answered coverage, answered-conditional error, missing/censoring rules, filtering, unit and four-component charged projection are frozen and auditable."
     },
     {
       "id": "PH-RES-LOCATE",
@@ -77,7 +77,7 @@
       "section": "sec:results",
       "clrq": ["CL-RQ2"],
       "dependsOn": ["EXP-CLTAV-LOCATE"],
-      "completion": "Registered LOCATE cells expose decision coverage, true-hypothesis retention/exclusion, singleton correctness and final cardinality on named denominators; evaluator truth never entered arm inputs."
+      "completion": "Registered LOCATE cells expose eligible-attempt decision coverage before truth retention/exclusion, singleton correctness and final cardinality; evaluator-only typed truth never entered arm inputs and stop classes did not manufacture decisions."
     },
     {
       "id": "PH-RES-ABLATION",
@@ -85,7 +85,7 @@
       "section": "sec:results",
       "clrq": ["CL-RQ3"],
       "dependsOn": ["EXP-CLTAV-ABLATION"],
-      "completion": "Paired ablation cells use the same base scenes with independent reset evidence, disclose common-error risks, preserve N/A cells and report actual cost projections."
+      "completion": "Paired ablation cells name parent metrics, use the same base scenes with independent reset evidence, disclose common-error risks, retain unmatched/censored rows and report the actual four-component cost projection with recovery folded into preparation once."
     },
     {
       "id": "PH-RES-INTERPRET",

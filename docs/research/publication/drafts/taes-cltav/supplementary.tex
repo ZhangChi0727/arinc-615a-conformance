@@ -95,9 +95,14 @@ scenario identifiers. One unique \texttt{attemptId} is the all-ledger unit;
 evaluation. Detection answered, localization decision, true-hypothesis
 retention, singleton correctness, abstention, error, equivalence, unresolved
 fault and budget exit remain distinct, potentially overlapping labels. Every
-result cell names its denominator and emits N/A when that denominator is empty.
+result cell names its finite population, missing/censoring rule and
+metric-specific empty-denominator behavior. With registered attempts but no
+answers, answered coverage is (0/N) while answered-conditional error is N/A.
+Recovery detail is folded into preparation exactly once in the accepted
+four-component cost projection.
 Confirmatory execution is blocked until the IUT/reset, truth/injection,
-equivalence, mathematical-review and sample/precision decisions are frozen.
+equivalence, mathematical-review, sample/repeat, resource-budget and clock/error
+budget decisions are frozen.
 The machine-checked synthetic ledger is an accounting witness, not evidence of
 method performance.
 

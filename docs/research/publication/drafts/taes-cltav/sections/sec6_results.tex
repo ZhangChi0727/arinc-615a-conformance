@@ -5,10 +5,18 @@ No effect direction, percentage or superiority is reported.
 
 Every future cell is derived from unique \texttt{attemptId} records. Its
 completion record must identify the claim/RQ, target subset, numerator,
-denominator, filtering, zero-denominator N/A rule, budget censoring, source
+denominator, filtering, metric-specific zero-denominator rule, missingness,
+budget censoring, source
 fields, unit and charged cost projection. Overlapping flow labels are not
 summed as an exclusive partition. The synthetic design ledger validates these
 rules only and is excluded from all result panels.
+
+Coverage metrics retain the finite all-attempt denominator: zero answered
+attempts among \(N>0\) are reported as \(0/N\). Metrics conditional on the
+answered subset, such as conditional detection error, are N/A when that subset
+is empty. Every localization panel first reports decision coverage; truth
+retention/exclusion and singleton correctness do not silently discard eligible
+attempts that ended without a decision.
 
 \subsection{CL-RQ2: verdict reliability}
 \begin{figure}[!t]
@@ -59,3 +67,5 @@ FIND-abort waiver & forbidden & forbidden & forbidden & forbidden \\
 registered ablation factors, not a generic ``disable cost accounting.'' Complete
 when parent DETECT/LOCATE cells exist on the same paired base scenes with
 independent reset evidence, disclosed common components and actual cost fields.}
+Recovery may remain a runtime detail, but the evaluator folds it into
+preparation once and never reports or charges it again as a fifth coordinate.
