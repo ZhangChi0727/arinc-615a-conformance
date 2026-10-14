@@ -271,6 +271,19 @@ non-default comparison model.
 
 ---
 
+## CR-2026-019 implementation-design attachment
+
+`EXPERIMENT_IMPLEMENTATION_SPEC.md` refines this plan without replacing it.
+It reuses the three experiment families, four arms, eight scenario IDs, seven
+experiment interfaces and fourteen acceptance-matrix classes. Its closed JSON
+index provides finite field links, metric denominators, dependency gates,
+pending decisions and synthetic accounting. Design-check success is not
+confirmatory registration or run admission. Interactive IUT/reset evidence,
+truth and injection confirmation, equivalent-fault adjudication, independent
+mathematical review and the justified sample/precision decision remain named
+blockers. Historical captures stay exploratory and synthetic fixtures are not
+results.
+
 # 中文版
 
 本文件是 CL-TAV 增量的**活动**实验方案。RR-2026-001 v4.2 下的 EXP-001～007 只作为冻结登记保留，不再作为当前对照设计。本 PR 不填确认性数字；正式样本量与效应阈值须在声明的 pilot 或外部依据之后冻结。单元测试通过不表示 CL-TAV 优于任一对照臂。
@@ -440,18 +453,7 @@ artifacts/experiments/EXP-YYYY-NNN/
 
 EXP-001～007 仍按 RR-2026-001 v4.2 保留为历史方案，可被引用，但不定义上述四臂与三组。HMM／贝叶斯校准保持非默认比较模型。
 
-## CR-2026-019 implementation-design attachment / 实施设计附件
-
-`EXPERIMENT_IMPLEMENTATION_SPEC.md` refines this plan without replacing it.
-It reuses the three experiment families, four arms, eight scenario IDs, seven
-experiment interfaces and fourteen acceptance-matrix classes. Its closed JSON
-index provides finite field links, metric denominators, dependency gates,
-pending decisions and synthetic accounting. Design-check success is not
-confirmatory registration or run admission. Interactive IUT/reset evidence,
-truth and injection confirmation, equivalent-fault adjudication, independent
-mathematical review and the justified sample/precision decision remain named
-blockers. Historical captures stay exploratory and synthetic fixtures are not
-results.
+## CR-2026-019 实施设计附件
 
 `EXPERIMENT_IMPLEMENTATION_SPEC.md` 是本计划的下属细化，不取代本计划。它
 复用三实验族、四臂、八场景、七实验接口和十四类 AM；封闭 JSON 仅提供有限字段

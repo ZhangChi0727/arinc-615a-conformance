@@ -132,6 +132,20 @@ permitted.
 
 ---
 
+## CR-2026-019 implementation-design obligations
+
+This attachment does not promote any claim. `CL-C1` remains conditional on the
+finite domain, ownership/pairing, conservative interpretation, R1--R5 and a
+versioned whole-history handle. Its minimum falsifiers include uncertainty
+identity drift, treating an observation class as H, exclusion of a valid true
+hypothesis, or unconditional FAIL from insufficient evidence. `CL-C2` separates
+implementation conformance from measured benefit; prediction gaps, truth
+leakage, omitted cost, TEST-scoring of Prep/Recover, or global-optimality wording
+falsify the implementation/wording obligation. Independent mathematical and
+scientific review remain open. The full argument and witnesses are in
+`EXPERIMENT_IMPLEMENTATION_SPEC.md`; finite references and synthetic accounting
+are indexed by `configs/research/cltav_experiment_design.json`.
+
 # 中文版
 
 本矩阵控制报告、发布和论文允许使用的主张。状态由证据获得，实现进度本身不能晋级。
@@ -240,19 +254,7 @@ permitted.
 
 认证向：`Planned → Evidence Collected → In Review → Supported / Not Supported / Open`；研究向：`Planned → Reproduced → Evaluated → Held-Out / Calibrated / Replicated`。每次转换必须记录证据版本与门禁记录；否定和不完整结果不得通过事后改写主张删除。禁止从执行判定自动晋级到目标状态，或从目标状态自动晋级到合规状态。
 
-## CR-2026-019 implementation-design obligations / 实施设计义务
-
-This attachment does not promote any claim. `CL-C1` remains conditional on the
-finite domain, ownership/pairing, conservative interpretation, R1--R5 and a
-versioned whole-history handle. Its minimum falsifiers include uncertainty
-identity drift, treating an observation class as H, exclusion of a valid true
-hypothesis, or unconditional FAIL from insufficient evidence. `CL-C2` separates
-implementation conformance from measured benefit; prediction gaps, truth
-leakage, omitted cost, TEST-scoring of Prep/Recover, or global-optimality wording
-falsify the implementation/wording obligation. Independent mathematical and
-scientific review remain open. The full argument and witnesses are in
-`EXPERIMENT_IMPLEMENTATION_SPEC.md`; finite references and synthetic accounting
-are indexed by `configs/research/cltav_experiment_design.json`.
+## CR-2026-019 实施设计义务
 
 本附件不提升主张状态。`CL-C1` 仍依赖有限域、所有权／配对、保守解释、R1--R5
 与版本化全历史；不确定性身份漂移、把观测类当 H、排除有效真实假设、把证据不足

@@ -1105,6 +1105,27 @@ submission, implementation and unrun numbers would reverse the evidence order.
 
 **Status:** Candidate under CR-2026-016; independent data/experiment review required.
 
+## DD-043 — Separate research-design acceptance from run admission
+
+**Decision:** Accept a finite, reviewable experiment implementation design as
+an attachment below `EXP-PLAN-2026-001`, while keeping confirmatory run
+admission blocked until named evidence is frozen. The bilingual specification
+is the human design authority; the closed JSON is only its mechanically checked
+reference/accounting index. Dependencies freeze at the latest relevant
+milestone: design review, engineering feasibility, pilot/calibration,
+confirmatory registration, run, or result acceptance.
+
+**Rationale:** A useful engineering handoff can exist before an IUT, independent
+truth, reset evidence and sample decision exist. Treating design completeness
+as execution readiness would manufacture capabilities and approvals. Conversely,
+leaving every parameter as an unnamed TBD would make the design unactionable.
+
+**Scope:** CR-2026-019 research design only. Existing method, algorithms,
+interfaces, records, engineering contracts and PR #22 ownership are unchanged.
+
+**Status:** Candidate under CR-2026-019; independent scientific review and all
+run-admission decisions remain open.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -1615,27 +1636,6 @@ ARINC 615A 数据加载是合法操作、观测和实验场景的来源。CL-TAV
 CRS、M2、开发合同、实验臂或结果。
 
 **状态：** CR-2026-018 下候选；须独立科学评审。
-
-## DD-043 — Separate research-design acceptance from run admission
-
-**Decision:** Accept a finite, reviewable experiment implementation design as
-an attachment below `EXP-PLAN-2026-001`, while keeping confirmatory run
-admission blocked until named evidence is frozen. The bilingual specification
-is the human design authority; the closed JSON is only its mechanically checked
-reference/accounting index. Dependencies freeze at the latest relevant
-milestone: design review, engineering feasibility, pilot/calibration,
-confirmatory registration, run, or result acceptance.
-
-**Rationale:** A useful engineering handoff can exist before an IUT, independent
-truth, reset evidence and sample decision exist. Treating design completeness
-as execution readiness would manufacture capabilities and approvals. Conversely,
-leaving every parameter as an unnamed TBD would make the design unactionable.
-
-**Scope:** CR-2026-019 research design only. Existing method, algorithms,
-interfaces, records, engineering contracts and PR #22 ownership are unchanged.
-
-**Status:** Candidate under CR-2026-019; independent scientific review and all
-run-admission decisions remain open.
 
 ## DD-043——研究设计接受与运行准入分离
 
