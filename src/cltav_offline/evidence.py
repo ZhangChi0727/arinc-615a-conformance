@@ -5,10 +5,12 @@ from __future__ import annotations
 import json
 import re
 from functools import lru_cache
-from pathlib import Path
 from typing import Any
 
 from jsonschema import Draft202012Validator
+
+from .contracts import evidence_projection_errors
+from .controlled_resources import ControlledResourceError, controlled_resource_json
 
 
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
@@ -33,6 +35,7 @@ def evidence_errors(data: object) -> list[str]:
     _check_counts(data, errors)
     _check_provenance(data, errors)
     _check_execution_shape(data, errors)
+    errors.extend(evidence_projection_errors(data))
     rendered = _rendered_strings(data)
     if ABSOLUTE_PATH_RE.search(rendered):
         errors.append("evidence must not contain an absolute machine path")
@@ -45,11 +48,10 @@ def evidence_errors(data: object) -> list[str]:
 
 @lru_cache(maxsize=1)
 def _validator() -> Draft202012Validator:
-    schema_path = Path(__file__).resolve().parents[2] / "configs" / "engineering" / "cltav_offline_intake_evidence.schema.json"
     try:
-        schema = json.loads(schema_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:  # pragma: no cover - package/install failure boundary
-        raise RuntimeError("controlled offline evidence schema is unavailable") from exc
+        schema = controlled_resource_json("evidence-schema")
+    except ControlledResourceError as exc:  # pragma: no cover - package/install failure boundary
+        raise RuntimeError(f"{exc.code}: {exc}") from exc
     return Draft202012Validator(schema)
 
 

@@ -8,6 +8,8 @@ import socket
 import struct
 import hashlib
 import subprocess
+import sys
+import zipfile
 from copy import deepcopy
 from pathlib import Path
 
@@ -18,7 +20,11 @@ from cltav_offline.capture import CaptureReader, PCAPNG_SECTION_HEADER
 from cltav_offline.cli import main as cli_main
 from cltav_offline import corpus as corpus_module
 from cltav_offline import pipeline as pipeline_module
+from cltav_offline import controlled_resources
+from cltav_offline import development_contract as development_contract_module
+from cltav_offline import evidence as evidence_module
 from cltav_offline.corpus import audit_manifest, publish_json, run_corpus
+from cltav_offline.development_contract import accepted_record_contracts
 from cltav_offline.evidence import evidence_errors
 from cltav_offline.events import decode_first_slice_header
 from cltav_offline.models import Ipv4Fragment, PacketRef
@@ -965,3 +971,180 @@ def test_manifest_resolved_identity_and_repeatability_are_enforced(tmp_path: Pat
     first_result = run_capture(capture, capture_id="SYN-19").to_dict(source_commit="7" * 40)
     second_result = run_capture(capture, capture_id="SYN-19").to_dict(source_commit="7" * 40)
     assert first_result == second_result
+
+
+def test_contract_projection_is_a_production_gate_with_complete_disposition(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Mutating an emitted projection must fail the real CLI before replace."""
+    capture = tmp_path / "contract-gate.pcap"
+    capture.write_bytes(_pcap(_valid_exchange()))
+    evidence = run_capture(capture, capture_id="cap-contract-gate").to_dict(source_commit="a" * 40)
+    assert evidence_errors(evidence) == []
+    assert set(accepted_record_contracts()) >= {
+        "PACKET-REF", "DATAGRAM-RECORD", "TRANSFER-RECORD", "PROTOCOL-EVENT",
+    }
+
+    bad_payload = deepcopy(evidence)
+    packet = next(item for item in bad_payload["contractProjection"]["records"] if item["recordType"] == "PACKET-REF")
+    packet["payload"] = {}
+    assert any("RC-PACKET" in error for error in evidence_errors(bad_payload))
+
+    bad_identity = deepcopy(evidence)
+    bad_identity["contractProjection"]["contractIdentity"]["sha256"] = "0" * 64
+    assert any("identity" in error for error in evidence_errors(bad_identity))
+
+    missing_disposition = deepcopy(evidence)
+    missing_disposition["contractProjection"]["records"] = [
+        item for item in missing_disposition["contractProjection"]["records"]
+        if item["recordType"] != "TRANSFER-RECORD"
+    ]
+    assert any("TRANSFER-RECORD" in error and ("omits" in error or "parentage" in error) for error in evidence_errors(missing_disposition))
+
+    bad_packet_length = deepcopy(evidence)
+    packet = next(item for item in bad_packet_length["contractProjection"]["records"] if item["recordType"] == "PACKET-REF")
+    packet["payload"]["caplen"] = packet["payload"]["origlen"] + 1
+    assert any("RC-PACKET-CAPLEN" in error for error in evidence_errors(bad_packet_length))
+
+    bad_parentage = deepcopy(evidence)
+    transfer = bad_parentage["transfers"][0]
+    transfer["packetRefIds"] = []
+    for event in bad_parentage["events"]:
+        event["sourcePacketRefIds"] = []
+    assert evidence_errors(bad_parentage)
+
+    output = tmp_path / "protected.json"
+    output.write_text("old projection", encoding="utf-8")
+    original = pipeline_module.IntakeResult.to_dict
+
+    def malformed_projection(self: IntakeResult, *, source_commit: str) -> dict[str, object]:
+        rendered = original(self, source_commit=source_commit)
+        projected = next(item for item in rendered["contractProjection"]["records"] if item["recordType"] == "PACKET-REF")
+        projected["payload"] = {}
+        return rendered
+
+    monkeypatch.setattr(pipeline_module.IntakeResult, "to_dict", malformed_projection)
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", "cap-contract-gate", "--output", str(output),
+        "--source-commit", "a" * 40,
+    ]) == 1
+    assert output.read_text(encoding="utf-8") == "old projection"
+
+
+def test_missing_controlled_resource_is_named_and_prevents_publication(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A resource/tool failure never degrades into a capture controlled issue."""
+    capture = tmp_path / "resource-missing.pcap"
+    capture.write_bytes(_pcap(_valid_exchange()))
+    output = tmp_path / "resource.json"
+    output.write_text("old resource output", encoding="utf-8")
+    original_path = controlled_resources._source_authority_path
+
+    def unavailable_source(filename: str) -> Path:
+        return tmp_path / "missing-controlled-resources" / filename
+
+    monkeypatch.setattr(controlled_resources, "_source_authority_path", unavailable_source)
+    class MissingFiles:
+        def joinpath(self, _filename: str) -> "MissingFiles":
+            return self
+
+        def read_bytes(self) -> bytes:
+            raise FileNotFoundError("missing resource")
+
+    monkeypatch.setattr(controlled_resources.resources, "files", lambda _package: MissingFiles())
+    controlled_resources.controlled_resource_bytes.cache_clear()
+    controlled_resources.controlled_resource_json.cache_clear()
+    development_contract_module.development_contract_snapshot.cache_clear()
+    evidence_module._validator.cache_clear()
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", "cap-resource", "--output", str(output),
+        "--source-commit", "a" * 40,
+    ]) == 1
+    assert output.read_text(encoding="utf-8") == "old resource output"
+    controlled_resources.controlled_resource_bytes.cache_clear()
+    controlled_resources.controlled_resource_json.cache_clear()
+    development_contract_module.development_contract_snapshot.cache_clear()
+    evidence_module._validator.cache_clear()
+    monkeypatch.setattr(controlled_resources, "_source_authority_path", original_path)
+
+
+def test_noneditable_wheel_contains_authoritative_resources_and_real_cli_runs(tmp_path: Path) -> None:
+    """Exercise the installed entry point from an unrelated CWD, offline."""
+    root = Path(__file__).resolve().parents[2]
+    wheel_dir = tmp_path / "wheel"
+    wheel_dir.mkdir()
+    build = subprocess.run(
+        [sys.executable, "-m", "pip", "wheel", "--no-deps", "--no-build-isolation", "--wheel-dir", str(wheel_dir), str(root)],
+        text=True, capture_output=True,
+    )
+    assert build.returncode == 0, build.stderr
+    wheel = next(wheel_dir.glob("*.whl"))
+    with zipfile.ZipFile(wheel) as archive:
+        for filename in (
+            "cltav_development_contracts.json",
+            "cltav_development_contracts.schema.json",
+            "cltav_offline_intake_evidence.schema.json",
+        ):
+            member = f"cltav_offline/resources/{filename}"
+            assert archive.read(member) == (root / "configs" / "engineering" / filename).read_bytes()
+
+    venv = tmp_path / "wheel-venv"
+    create = subprocess.run([sys.executable, "-m", "venv", "--system-site-packages", str(venv)], text=True, capture_output=True)
+    assert create.returncode == 0, create.stderr
+    python = venv / "Scripts" / "python.exe"
+    entrypoint = venv / "Scripts" / "cltav-offline.exe"
+    install = subprocess.run([str(python), "-m", "pip", "install", "--no-deps", str(wheel)], text=True, capture_output=True)
+    assert install.returncode == 0, install.stderr
+    unrelated = tmp_path / "unrelated"
+    unrelated.mkdir()
+    loaded = subprocess.run(
+        [str(python), "-c", "import cltav_offline; print(cltav_offline.__file__)"],
+        cwd=unrelated, text=True, capture_output=True,
+    )
+    assert loaded.returncode == 0 and "site-packages" in loaded.stdout.replace("\\", "/")
+
+    normal = tmp_path / "wheel-normal.pcap"
+    normal.write_bytes(_pcap(_valid_exchange()))
+    normal_output = tmp_path / "wheel-normal.json"
+    completed = subprocess.run([
+        str(entrypoint), "inspect", "--input", str(normal), "--capture-id", "cap-wheel", "--output", str(normal_output),
+        "--source-commit", "a" * 40,
+    ], cwd=unrelated, text=True, capture_output=True)
+    assert completed.returncode == 0, completed.stderr
+    assert evidence_errors(json.loads(normal_output.read_text(encoding="utf-8"))) == []
+
+    controlled = tmp_path / "wheel-controlled.pcap"
+    controlled.write_bytes(_pcap([b"\0" * 20]))
+    controlled_output = tmp_path / "wheel-controlled.json"
+    completed = subprocess.run([
+        str(entrypoint), "inspect", "--input", str(controlled), "--capture-id", "cap-wheel-issue", "--output", str(controlled_output),
+        "--source-commit", "a" * 40,
+    ], cwd=unrelated, text=True, capture_output=True)
+    assert completed.returncode == 2, completed.stderr
+    assert json.loads(controlled_output.read_text(encoding="utf-8"))["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
+
+    fatal = tmp_path / "wheel-fatal.pcap"
+    fatal.write_bytes(b"not a capture")
+    protected = tmp_path / "wheel-protected.json"
+    protected.write_text("old installed output", encoding="utf-8")
+    completed = subprocess.run([
+        str(entrypoint), "inspect", "--input", str(fatal), "--capture-id", "cap-wheel-fatal", "--output", str(protected),
+        "--source-commit", "a" * 40,
+    ], cwd=unrelated, text=True, capture_output=True)
+    assert completed.returncode == 1
+    assert protected.read_text(encoding="utf-8") == "old installed output"
+
+    corpus_root = tmp_path / "wheel-corpus"
+    corpus_root.mkdir()
+    corpus_capture = corpus_root / "one.pcapng"
+    corpus_capture.write_bytes(_pcapng(_valid_exchange()))
+    manifest = tmp_path / "wheel-manifest.json"
+    manifest.write_text(json.dumps(_corpus_manifest(corpus_root)), encoding="utf-8")
+    corpus_output = tmp_path / "wheel-corpus-output"
+    completed = subprocess.run([
+        str(entrypoint), "corpus", "--manifest", str(manifest), "--corpus-root", str(corpus_root),
+        "--output-dir", str(corpus_output), "--source-commit", "a" * 40,
+    ], cwd=unrelated, text=True, capture_output=True)
+    assert completed.returncode == 0, completed.stderr
+    assert (corpus_output / "corpus-index.json").is_file()

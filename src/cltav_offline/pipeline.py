@@ -10,7 +10,8 @@ from typing import Any
 
 from . import __version__
 from .capture import CaptureFormatError, CaptureReader
-from .contracts import project_development_records
+from .contracts import ContractProjectionError, project_development_records
+from .controlled_resources import ControlledResourceError
 from .events import first_slice_events
 from .identity import tool_identity
 from .models import DatagramRecord, Diagnostic, PacketRef, ProtocolEvent, TransferRecord
@@ -103,6 +104,12 @@ class IntakeResult:
 
     def to_dict(self, *, source_commit: str) -> dict[str, Any]:
         source_commit = validate_source_commit(source_commit)
+        try:
+            projection = project_development_records(self)
+        except ContractProjectionError as exc:
+            raise IntakeError("CONTRACT-PROJECTION-ERROR", str(exc)) from exc
+        except ControlledResourceError as exc:
+            raise IntakeError(exc.code, str(exc)) from exc
         return {
             "artifactType": "CLTAV-OFFLINE-INTAKE-EVIDENCE",
             "schemaVersion": "1.0",
@@ -140,7 +147,7 @@ class IntakeResult:
             "transfers": [item.to_dict() for item in self.transfers],
             "events": [item.to_dict() for item in self.events],
             "diagnostics": [_diagnostic_dict(item, self.sha256) for item in self.diagnostics],
-            "contractProjection": project_development_records(self),
+            "contractProjection": projection,
         }
 
 
