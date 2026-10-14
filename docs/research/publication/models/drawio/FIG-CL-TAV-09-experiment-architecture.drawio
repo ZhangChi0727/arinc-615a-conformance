@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" agent="cltav-model-figures/1.0" version="24.7.17" type="device" compressed="false">
+  <diagram id="fig-cl-tav-09" name="FIG-CL-TAV-09">
+    <mxGraphModel dx="0" dy="0" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="820" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="node-Scene" value="Controlled scene / config&lt;br&gt;IUT, fault plan, resource mode" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#666666;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="external">
+          <mxGeometry as="geometry" x="70" y="90" width="300" height="82" />
+        </mxCell>
+        <mxCell id="node-Truth" value="Independent truth record&lt;br&gt;evaluator only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#6A4C93;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="truth">
+          <mxGeometry as="geometry" x="620" y="80" width="300" height="82" />
+        </mxCell>
+        <mxCell id="node-Arms" value="Comparison arms&lt;br&gt;CL-T / CL-A / CL-TA / CL-LOOP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="70" y="300" width="330" height="88" />
+        </mxCell>
+        <mxCell id="node-Obs" value="Observations and resource log&lt;br&gt;algorithm-visible" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#9A7B1F;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="evidence">
+          <mxGeometry as="geometry" x="500" y="300" width="320" height="88" />
+        </mxCell>
+        <mxCell id="node-Valid" value="Validity check&lt;br&gt;unconfirmed / invalid / equivalent / abstain" style="rhombus;whiteSpace=wrap;html=1;fillColor=#E2F0D9;strokeColor=#548235;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="decision">
+          <mxGeometry as="geometry" x="980" y="290" width="360" height="98" />
+        </mxCell>
+        <mxCell id="node-Metrics" value="Metrics with denominators&lt;br&gt;EXP-CLTAV-DETECT / LOCATE / ABLATION" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#9A7B1F;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="evidence">
+          <mxGeometry as="geometry" x="760" y="500" width="440" height="92" />
+        </mxCell>
+        <mxCell id="node-Claims" value="RQ / claims&lt;br&gt;no unrun numbers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#B85450;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="risk">
+          <mxGeometry as="geometry" x="790" y="680" width="380" height="66" />
+        </mxCell>
+        <mxCell id="note-truth-boundary" value="Evaluator truth must not enter IF-SELECT-ADMIT, IF-PRED-OBS, IF-HIST-UPDATE, or IF-EXECUTE-RECORD." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#8C8C8C;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#333333;align=left;verticalAlign=middle;spacing=8;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="note" semanticRole="interpretation-boundary">
+          <mxGeometry as="geometry" x="1030" y="70" width="450" height="68" />
+        </mxCell>
+        <mxCell id="note-fairness" value="Same pool does not gift later CL-LOOP records to other arms and does not invent sampling cost for CL-A." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#8C8C8C;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#333333;align=left;verticalAlign=middle;spacing=8;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="note" semanticRole="interpretation-boundary">
+          <mxGeometry as="geometry" x="80" y="500" width="500" height="66" />
+        </mxCell>
+        <mxCell id="edge-scene-arms" value="same declared pool and action library" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Scene" target="node-Arms" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-scene-truth" value="injection plan + execution confirmation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#6A4C93;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Scene" target="node-Truth" semanticKind="relation" semanticRole="evaluation">
+          <mxGeometry as="geometry" relative="1" y="16" />
+        </mxCell>
+        <mxCell id="edge-truth-arms" value="FORBIDDEN LEAKAGE" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=block;strokeColor=#B85450;fontColor=#9C0006;exitX=0;exitY=0.75;entryX=1;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Truth" target="node-Arms" semanticKind="relation" semanticRole="forbidden">
+          <mxGeometry as="geometry" relative="1" y="-14">
+            <Array as="points">
+              <mxPoint x="450" y="142" />
+              <mxPoint x="450" y="344" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-arms-obs" value="algorithm-visible Izk, q, cost" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Arms" target="node-Obs" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-obs-valid" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Obs" target="node-Valid" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-truth-valid" value="evaluator-only confirmation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#6A4C93;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Truth" target="node-Valid" semanticKind="relation" semanticRole="evaluation">
+          <mxGeometry as="geometry" relative="1" y="-14">
+            <Array as="points">
+              <mxPoint x="770" y="230" />
+              <mxPoint x="1160" y="230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-valid-metrics" value="attempt and answered-subset denominators" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#6A4C93;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Valid" target="node-Metrics" semanticKind="relation" semanticRole="evaluation">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-metrics-claims" value="comparable projections only" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=open;strokeColor=#9A7B1F;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Metrics" target="node-Claims" semanticKind="relation" semanticRole="evidence-only">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" agent="cltav-model-figures/1.0" version="24.7.17" type="device" compressed="false">
+  <diagram id="fig-cl-tav-05" name="FIG-CL-TAV-05">
+    <mxGraphModel dx="0" dy="0" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1320" pageHeight="1320" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="node-S0" value="S0 Idle&lt;br&gt;SessionContext unique" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="360" y="35" width="260" height="62" />
+        </mxCell>
+        <mxCell id="node-S1" value="S1 IF-RESOURCE-STOP gate" style="rhombus;whiteSpace=wrap;html=1;fillColor=#E2F0D9;strokeColor=#548235;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="decision">
+          <mxGeometry as="geometry" x="350" y="135" width="280" height="70" />
+        </mxCell>
+        <mxCell id="node-StopGate" value="Already decided&lt;br&gt;A2-A5 or P1-P5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#B85450;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="stop">
+          <mxGeometry as="geometry" x="780" y="135" width="240" height="70" />
+        </mxCell>
+        <mxCell id="node-S2" value="S2 IF-PRED-OBS&lt;br&gt;predict classes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="350" y="250" width="280" height="70" />
+        </mxCell>
+        <mxCell id="node-PredictionGap" value="PredictionGapError&lt;br&gt;TEST-scoped; Recover/Prep ineligible" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#B85450;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="stop">
+          <mxGeometry as="geometry" x="780" y="245" width="300" height="82" />
+        </mxCell>
+        <mxCell id="node-S3" value="S3 IF-SELECT-ADMIT&lt;br&gt;final action; freeze q/actionId" style="rhombus;whiteSpace=wrap;html=1;fillColor=#E2F0D9;strokeColor=#548235;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="decision">
+          <mxGeometry as="geometry" x="340" y="365" width="300" height="82" />
+        </mxCell>
+        <mxCell id="node-Admit" value="Admit A2-A5 / empty-S spec handling" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#B85450;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="stop">
+          <mxGeometry as="geometry" x="780" y="370" width="300" height="70" />
+        </mxCell>
+        <mxCell id="node-S4" value="S4 charge cost once" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="360" y="490" width="260" height="62" />
+        </mxCell>
+        <mxCell id="node-S5" value="S5 IF-EXECUTE-RECORD&lt;br&gt;effect class" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="350" y="590" width="280" height="74" />
+        </mxCell>
+        <mxCell id="node-S6" value="S6 IF-OBS-INTERPRET" style="rhombus;whiteSpace=wrap;html=1;fillColor=#E2F0D9;strokeColor=#548235;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="decision">
+          <mxGeometry as="geometry" x="355" y="705" width="270" height="66" />
+        </mxCell>
+        <mxCell id="node-S7" value="S7 classify effect&lt;br&gt;confirmed-not-sent keeps q&lt;br&gt;unknown-effect invalidates q" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#B85450;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="risk">
+          <mxGeometry as="geometry" x="760" y="680" width="330" height="98" />
+        </mxCell>
+        <mxCell id="node-StopError" value="Stop-Error&lt;br&gt;retry cap reached" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#B85450;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="stop">
+          <mxGeometry as="geometry" x="1110" y="650" width="190" height="68" />
+        </mxCell>
+        <mxCell id="node-LoopS1" value="retry remaining" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fillColor=#FCE5CD;strokeColor=#C47A1B;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="retry">
+          <mxGeometry as="geometry" x="1110" y="760" width="190" height="58" />
+        </mxCell>
+        <mxCell id="node-S8" value="S8 sole KNOWN writer&lt;br&gt;confirmed Recover target/evidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="340" y="825" width="300" height="82" />
+        </mxCell>
+        <mxCell id="node-Unconfirmed" value="unconfirmed Recover" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#B85450;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="risk">
+          <mxGeometry as="geometry" x="780" y="835" width="250" height="60" />
+        </mxCell>
+        <mxCell id="node-S9" value="S9 IF-HIST-UPDATE&lt;br&gt;reads qUsedAtSelect; commits postSummary" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="330" y="950" width="320" height="82" />
+        </mxCell>
+        <mxCell id="node-S10" value="S10 P1-P5&lt;br&gt;IF-RESOURCE-STOP / IF-EQUIV" style="rhombus;whiteSpace=wrap;html=1;fillColor=#E2F0D9;strokeColor=#548235;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="decision">
+          <mxGeometry as="geometry" x="340" y="1075" width="300" height="82" />
+        </mxCell>
+        <mxCell id="node-StopP" value="P-stop return" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#B85450;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="stop">
+          <mxGeometry as="geometry" x="780" y="1080" width="230" height="60" />
+        </mxCell>
+        <mxCell id="note-invariants" value="Admissible A then selectable S; exclusive TEST/Prep/Recover/Admit; BUDGET xor ROUNDS; charge once; ERROR uses ErrorHandle; P1-P5 priority unchanged." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#8C8C8C;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#333333;align=left;verticalAlign=middle;spacing=8;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="note" semanticRole="interpretation-boundary">
+          <mxGeometry as="geometry" x="100" y="1220" width="1120" height="58" />
+        </mxCell>
+        <mxCell id="edge-E-S0-S1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S0" target="node-S1" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-E-S1-S2" value="no stop" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S1" target="node-S2" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-E-S1-STOP" value="already decided" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#B85450;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S1" target="node-StopGate" semanticKind="relation" semanticRole="stop">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-E-S2-S3" value="predict" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S2" target="node-S3" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-E-S2-GAP" value="Recover and Prep ineligible" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#B85450;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S2" target="node-PredictionGap" semanticKind="relation" semanticRole="stop">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-E-S3-ADMIT" value="A2-A5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#B85450;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S3" target="node-Admit" semanticKind="relation" semanticRole="stop">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-E-S3-S4" value="charge" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S3" target="node-S4" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-E-S4-S5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S4" target="node-S5" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-E-S5-S6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S5" target="node-S6" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-E-S6-S7" value="UNKNOWN-EFFECT" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=block;strokeColor=#B85450;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S6" target="node-S7" semanticKind="relation" semanticRole="risk">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-E-S6-S8" value="KNOWN" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S6" target="node-S8" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-E-S8-UNCONFIRMED" value="unconfirmed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=block;strokeColor=#B85450;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S8" target="node-Unconfirmed" semanticKind="relation" semanticRole="risk">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-E-UNCONFIRMED-S7" value="unconfirmed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=block;strokeColor=#C47A1B;exitX=0.5;exitY=0;entryX=0.5;entryY=1;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Unconfirmed" target="node-S7" semanticKind="relation" semanticRole="retry">
+          <mxGeometry as="geometry" relative="1" y="14">
+            <Array as="points">
+              <mxPoint x="905" y="810" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-E-S7-STOP" value="Stop-Error" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#B85450;exitX=1;exitY=0.3;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S7" target="node-StopError" semanticKind="relation" semanticRole="stop">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-E-S7-LOOP" value="retry remaining" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=block;strokeColor=#C47A1B;exitX=1;exitY=0.75;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S7" target="node-LoopS1" semanticKind="relation" semanticRole="retry">
+          <mxGeometry as="geometry" relative="1" y="14" />
+        </mxCell>
+        <mxCell id="edge-E-S7-S1" value="retry back-edge" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=block;strokeColor=#C47A1B;exitX=1;exitY=0.5;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-LoopS1" target="node-S1" semanticKind="relation" semanticRole="retry">
+          <mxGeometry as="geometry" relative="1" y="-14">
+            <Array as="points">
+              <mxPoint x="1305" y="789" />
+              <mxPoint x="1305" y="115" />
+              <mxPoint x="490" y="115" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-E-S8-S9" value="KNOWN" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S8" target="node-S9" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-E-S6-S9" value="postSummary" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S6" target="node-S9" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14">
+            <Array as="points">
+              <mxPoint x="260" y="738" />
+              <mxPoint x="260" y="991" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-E-S9-S10" value="advance" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S9" target="node-S10" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-E-S10-STOP" value="P-stop" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#B85450;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S10" target="node-StopP" semanticKind="relation" semanticRole="stop">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-E-S10-S1" value="no stop" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=block;strokeColor=#315A7D;exitX=0;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-S10" target="node-S1" semanticKind="relation" semanticRole="continue">
+          <mxGeometry as="geometry" relative="1" y="-14">
+            <Array as="points">
+              <mxPoint x="80" y="1116" />
+              <mxPoint x="80" y="170" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

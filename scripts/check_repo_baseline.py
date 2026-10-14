@@ -102,6 +102,8 @@ CLTAV_PUML_FILES = (
     "FIG-CL-TAV-08-parametric.puml",
     "FIG-CL-TAV-09-experiment-architecture.puml",
 )
+CLTAV_DRAWIO_DIR = CLTAV_PUML_DIR / "drawio"
+CLTAV_DRAWIO_FILES = tuple(name.replace(".puml", ".drawio") for name in CLTAV_PUML_FILES)
 CLTAV_SVG_DIR = ROOT / "artifacts/publications/cltav/figures"
 CLTAV_SVG_FILES = tuple(name.replace(".puml", ".svg") for name in CLTAV_PUML_FILES)
 AUDIT_STATUS_GENERATION = {
@@ -214,10 +216,12 @@ REQUIRED_FIXED_FILES = [
     ROOT / "configs/research/cltav_protocol_source_audit.json",
     ROOT / "configs/research/cltav_interface_registry.json",
     ROOT / "configs/research/cltav_figure_graphs.json",
+    ROOT / "configs/research/cltav_model_figure_manifest.json",
     ROOT / "configs/research/cltav_owned_generated_artifacts.json",
     ROOT / "artifacts/publications/cltav/ALG-CLTAV-01.pdf",
     ROOT / "scripts/cltav_loop_spec.py",
     *[CLTAV_PUML_DIR / name for name in CLTAV_PUML_FILES],
+    *[CLTAV_DRAWIO_DIR / name for name in CLTAV_DRAWIO_FILES],
     *[CLTAV_SVG_DIR / name for name in CLTAV_SVG_FILES],
     ROOT / "docs/engineering/ENGINEERING_CONTROL.md",
     ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md",

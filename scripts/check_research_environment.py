@@ -85,6 +85,7 @@ TOOLS = (
     ("plantuml", False),
     ("dot", False),
     ("inkscape", False),
+    ("drawio", False),
 )
 
 
@@ -240,6 +241,16 @@ def validate_environment(root: Path = ROOT) -> list[str]:
         if isinstance(figure_data, dict) and not isinstance(figure_data.get("figures"), list):
             errors.append("quantitative figure manifest figures must be a list")
 
+    model_figure_relative = registries.get("modelFigureManifest")
+    if not isinstance(model_figure_relative, str) or not model_figure_relative:
+        errors.append("missing modelFigureManifest path")
+    else:
+        model_figure_data = _load_json(root / model_figure_relative, errors)
+        if isinstance(model_figure_data, dict):
+            model_figures = model_figure_data.get("figures")
+            if not isinstance(model_figures, list) or len(model_figures) != 9:
+                errors.append("model figure manifest must contain nine figures")
+
     skills = data.get("skills")
     if not isinstance(skills, list) or not skills:
         errors.append("skills must be a nonempty list")
@@ -267,7 +278,16 @@ def validate_environment(root: Path = ROOT) -> list[str]:
 def tool_report() -> list[str]:
     rows: list[str] = []
     for name, required_for_manuscript in TOOLS:
-        location = shutil.which(name)
+        candidates = (name, "draw.io") if name == "drawio" else (name,)
+        location = None
+        for candidate in candidates:
+            location = shutil.which(candidate)
+            if location:
+                break
+        if name == "drawio" and location is None:
+            windows_app = Path.home() / "AppData/Local/Programs/draw.io/draw.io.exe"
+            if windows_app.is_file():
+                location = str(windows_app)
         role = "manuscript-required" if required_for_manuscript else "optional-workflow"
         rows.append(f"{name}: {location or 'MISSING'} [{role}]")
     return rows

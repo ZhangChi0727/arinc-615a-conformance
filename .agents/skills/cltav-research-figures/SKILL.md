@@ -6,8 +6,10 @@ description: Create or revise reproducible data-derived figures for CL-TAV exper
 # CL-TAV Research Figures
 
 Use this skill for quantitative plots, statistical graphics, and data-derived
-tables. Existing FIG-CL-TAV PlantUML architecture views remain governed by
-their current source and artifact registries.
+tables. Route controlled FIG-CL-TAV model, architecture, activity, sequence,
+state-machine, parametric, and experiment-architecture views to
+`cltav-model-figures`. Their PlantUML sources remain the semantic authority;
+the Draw.io files produced by that skill are editable publication views.
 
 Read `docs/research/RESEARCH_ENVIRONMENT.md`, the applicable experiment
 registration, and

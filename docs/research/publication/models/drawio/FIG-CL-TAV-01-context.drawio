@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" agent="cltav-model-figures/1.0" version="24.7.17" type="device" compressed="false">
+  <diagram id="fig-cl-tav-01" name="FIG-CL-TAV-01">
+    <mxGraphModel dx="0" dy="0" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="620" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="node-Operator" value="Operator" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#666666;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="external">
+          <mxGeometry as="geometry" x="40" y="220" width="160" height="64" />
+        </mxCell>
+        <mxCell id="node-TestAdapter" value="Test adapter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="290" y="200" width="200" height="88" />
+        </mxCell>
+        <mxCell id="node-IUT" value="IUT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="610" y="200" width="170" height="88" />
+        </mxCell>
+        <mxCell id="node-NetworkClock" value="Network clock" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#666666;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="external">
+          <mxGeometry as="geometry" x="920" y="65" width="210" height="64" />
+        </mxCell>
+        <mxCell id="node-Integrity645" value="645 integrity boundary&lt;br&gt;identity bound; capability NOT-ESTABLISHED" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#B85450;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="risk">
+          <mxGeometry as="geometry" x="880" y="310" width="330" height="88" />
+        </mxCell>
+        <mxCell id="node-Msess" value="Verification session observation port (Msess)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#9A7B1F;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="evidence">
+          <mxGeometry as="geometry" x="250" y="390" width="360" height="74" />
+        </mxCell>
+        <mxCell id="note-boundary" value="Protocol messages and operation states belong to Mprot, not Msess." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#8C8C8C;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#333333;align=left;verticalAlign=middle;spacing=8;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="note" semanticRole="interpretation-boundary">
+          <mxGeometry as="geometry" x="660" y="500" width="500" height="62" />
+        </mxCell>
+        <mxCell id="edge-request" value="test request" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Operator" target="node-TestAdapter" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-12" />
+        </mxCell>
+        <mxCell id="edge-stimulus" value="stimulus" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=1;exitY=0.28;entryX=0;entryY=0.28;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-TestAdapter" target="node-IUT" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14">
+            <Array as="points">
+              <mxPoint x="535" y="185" />
+              <mxPoint x="565" y="185" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-observation" value="observation Izk" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=block;strokeColor=#315A7D;exitX=0;exitY=0.75;entryX=1;entryY=0.75;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-IUT" target="node-TestAdapter" semanticKind="relation" semanticRole="observation">
+          <mxGeometry as="geometry" relative="1" y="15">
+            <Array as="points">
+              <mxPoint x="565" y="305" />
+              <mxPoint x="535" y="305" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-clock" value="time / error bound" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=open;exitX=0.7;exitY=0;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-TestAdapter" target="node-NetworkClock" semanticKind="relation" semanticRole="dependency">
+          <mxGeometry as="geometry" relative="1" x="0.45" y="-14">
+            <Array as="points">
+              <mxPoint x="430" y="155" />
+              <mxPoint x="850" y="155" />
+              <mxPoint x="850" y="97" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-integrity" value="call and state only; not algorithm evidence" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=open;strokeColor=#9A7B1F;exitX=1;exitY=0.65;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-IUT" target="node-Integrity645" semanticKind="relation" semanticRole="evidence-only">
+          <mxGeometry as="geometry" relative="1" x="0.35" y="15">
+            <Array as="points">
+              <mxPoint x="830" y="257" />
+              <mxPoint x="830" y="354" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-session" value="observation port" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-TestAdapter" target="node-Msess" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-12" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

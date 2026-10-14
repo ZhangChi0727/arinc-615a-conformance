@@ -19,6 +19,7 @@ accountability.
 | `configs/research/literature/evidence_ledger.csv` | Source proposition, locator, access level, and verification state |
 | `configs/research/literature/claim_citation_ledger.csv` | Mapping from project or manuscript claims to extracted evidence |
 | `configs/research/quantitative_figure_manifest.json` | Reproducibility contract for data-derived publication figures |
+| `configs/research/cltav_model_figure_manifest.json` | Hash-bound derived inventory for editable Draw.io redraws of the controlled PlantUML model figures |
 | `docs/research/publication/drafts/taes-cltav/references.bib` | Current TAES draft bibliography |
 | `local-references/` and Zotero | Private full text, lawful copies, and annotations; never published from this repository |
 
@@ -100,9 +101,14 @@ records source data, generator, parameters, random seed when applicable, output
 paths, hashes, and review state. Prefer vector PDF/SVG for publication; use PNG
 only when raster output is necessary.
 
-The existing PlantUML architecture figures remain governed by
-`cltav_figure_graphs.json` and `cltav_owned_generated_artifacts.json`. The new
-quantitative manifest does not duplicate their authority.
+The existing PlantUML architecture figures remain semantic authority under
+`cltav_figure_graphs.json` and `cltav_owned_generated_artifacts.json`. Editable
+Draw.io redraws are governed by the project skill `cltav-model-figures` and the
+hash-bound derived inventory `cltav_model_figure_manifest.json`. A Draw.io file
+is a publication view, not a second algorithm or model authority, and it does
+not replace a reader SVG until semantic checks, final-size rendering, manuscript
+insertion inspection, and human review pass. The quantitative manifest remains
+separate and does not duplicate either authority.
 
 ## 5. Validation
 
@@ -111,6 +117,7 @@ Run from the repository root:
 ```text
 python scripts/check_research_environment.py
 python scripts/check_research_environment.py --tools
+python .agents/skills/cltav-model-figures/scripts/model_drawio.py --check
 python -m pytest tests/unit/test_research_environment.py -q
 ```
 

@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" agent="cltav-model-figures/1.0" version="24.7.17" type="device" compressed="false">
+  <diagram id="fig-cl-tav-06" name="FIG-CL-TAV-06">
+    <mxGraphModel dx="0" dy="0" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1650" pageHeight="930" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="group-OperatorLane" value="Operator" style="swimlane;horizontal=1;startSize=30;rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F2F2;swimlaneFillColor=#FFFFFF;strokeColor=#666666;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#1F1F1F;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="group" semanticRole="external">
+          <mxGeometry as="geometry" x="30" y="50" width="300" height="760" />
+        </mxCell>
+        <mxCell id="group-MsessLane" value="Msess" style="swimlane;horizontal=1;startSize=30;rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;swimlaneFillColor=#FFFFFF;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#1F1F1F;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="group" semanticRole="core">
+          <mxGeometry as="geometry" x="360" y="50" width="430" height="760" />
+        </mxCell>
+        <mxCell id="group-MprotLane" value="Mprot" style="swimlane;horizontal=1;startSize=30;rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F2F2;swimlaneFillColor=#FFFFFF;strokeColor=#666666;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#1F1F1F;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="group" semanticRole="external">
+          <mxGeometry as="geometry" x="820" y="50" width="330" height="760" />
+        </mxCell>
+        <mxCell id="group-AnalysisLane" value="Analysis / Diagnosis" style="swimlane;horizontal=1;startSize=30;rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;swimlaneFillColor=#FFFFFF;strokeColor=#9A7B1F;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#1F1F1F;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="group" semanticRole="evidence">
+          <mxGeometry as="geometry" x="1180" y="50" width="400" height="760" />
+        </mxCell>
+        <mxCell id="node-Start" value="start session&lt;br&gt;H0 = {h_normal} union H_single" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#666666;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-OperatorLane" semanticKind="entity" semanticRole="external">
+          <mxGeometry as="geometry" x="30" y="55" width="240" height="64" />
+        </mxCell>
+        <mxCell id="node-Overlap" value="overlapping {a,b}/{a,c}&lt;br&gt;remains strictly-reducing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-MsessLane" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="35" y="150" width="350" height="72" />
+        </mxCell>
+        <mxCell id="node-Admit" value="Admit: uninformative TEST has no strictly-reducing outcome" style="rhombus;whiteSpace=wrap;html=1;fillColor=#E2F0D9;strokeColor=#548235;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-MsessLane" semanticKind="entity" semanticRole="decision">
+          <mxGeometry as="geometry" x="35" y="260" width="350" height="72" />
+        </mxCell>
+        <mxCell id="node-Prep" value="Select Prep from A" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-MsessLane" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="35" y="365" width="350" height="54" />
+        </mxCell>
+        <mxCell id="node-PrepEffect" value="Prep action updates qk+1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#666666;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-MprotLane" semanticKind="entity" semanticRole="external">
+          <mxGeometry as="geometry" x="35" y="360" width="260" height="64" />
+        </mxCell>
+        <mxCell id="node-SelectTb" value="Select later distinguishing test tb from A" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-MsessLane" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="35" y="470" width="350" height="64" />
+        </mxCell>
+        <mxCell id="node-ExecuteTb" value="Execute tb" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-MsessLane" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="35" y="565" width="350" height="52" />
+        </mxCell>
+        <mxCell id="node-Observation" value="observation splits h1 / h2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#666666;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-MprotLane" semanticKind="entity" semanticRole="external">
+          <mxGeometry as="geometry" x="35" y="560" width="260" height="62" />
+        </mxCell>
+        <mxCell id="node-Analyse" value="Izk of tb" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#9A7B1F;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-AnalysisLane" semanticKind="entity" semanticRole="evidence">
+          <mxGeometry as="geometry" x="35" y="650" width="330" height="52" />
+        </mxCell>
+        <mxCell id="node-Result" value="Hk singleton or still indistinguishable" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-MsessLane" semanticKind="entity" semanticRole="core">
+          <mxGeometry as="geometry" x="35" y="650" width="350" height="58" />
+        </mxCell>
+        <mxCell id="note-resource" value="Prep is a session action in the same admissible set and spends the same selected-mode resource as a test. ERROR with unknown-effect does not keep q; recover first." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#8C8C8C;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#333333;align=left;verticalAlign=middle;spacing=8;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="note" semanticRole="interpretation-boundary">
+          <mxGeometry as="geometry" x="270" y="845" width="1120" height="58" />
+        </mxCell>
+        <mxCell id="edge-start-session" value="start" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=1;exitY=0.5;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Start" target="node-Overlap" semanticKind="relation" semanticRole="sequence">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-overlap-admit" value="worst-case non-shrinkage is not no diagnostic value" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Overlap" target="node-Admit" semanticKind="relation" semanticRole="sequence">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-admit-prep" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;" edge="1" parent="1" source="node-Admit" target="node-Prep" semanticKind="relation" semanticRole="sequence">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-prep-mprot" value="through FIG-CL-TAV-04 ports" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=1;exitY=0.35;entryX=0;entryY=0.35;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Prep" target="node-PrepEffect" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-prep-return" value="qk+1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=block;strokeColor=#315A7D;exitX=0;exitY=0.75;entryX=1;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-PrepEffect" target="node-SelectTb" semanticKind="relation" semanticRole="observation">
+          <mxGeometry as="geometry" relative="1" y="14">
+            <Array as="points">
+              <mxPoint x="805" y="458" />
+              <mxPoint x="805" y="552" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-select-execute" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;" edge="1" parent="1" source="node-SelectTb" target="node-ExecuteTb" semanticKind="relation" semanticRole="sequence">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-execute-mprot" value="tb" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-ExecuteTb" target="node-Observation" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-observation-analysis" value="Izk" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=block;strokeColor=#315A7D;exitX=1;exitY=0.5;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Observation" target="node-Analyse" semanticKind="relation" semanticRole="observation">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-analysis-result" value="candidate result" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=block;strokeColor=#315A7D;exitX=0;exitY=0.5;entryX=1;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Analyse" target="node-Result" semanticKind="relation" semanticRole="observation">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
