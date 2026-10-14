@@ -1616,6 +1616,43 @@ CRS、M2、开发合同、实验臂或结果。
 
 **状态：** CR-2026-018 下候选；须独立科学评审。
 
+## DD-043 — Separate research-design acceptance from run admission
+
+**Decision:** Accept a finite, reviewable experiment implementation design as
+an attachment below `EXP-PLAN-2026-001`, while keeping confirmatory run
+admission blocked until named evidence is frozen. The bilingual specification
+is the human design authority; the closed JSON is only its mechanically checked
+reference/accounting index. Dependencies freeze at the latest relevant
+milestone: design review, engineering feasibility, pilot/calibration,
+confirmatory registration, run, or result acceptance.
+
+**Rationale:** A useful engineering handoff can exist before an IUT, independent
+truth, reset evidence and sample decision exist. Treating design completeness
+as execution readiness would manufacture capabilities and approvals. Conversely,
+leaving every parameter as an unnamed TBD would make the design unactionable.
+
+**Scope:** CR-2026-019 research design only. Existing method, algorithms,
+interfaces, records, engineering contracts and PR #22 ownership are unchanged.
+
+**Status:** Candidate under CR-2026-019; independent scientific review and all
+run-admission decisions remain open.
+
+## DD-043——研究设计接受与运行准入分离
+
+**决定：** 接受一份位于 `EXP-PLAN-2026-001` 下的有限、可评审实验实施设计，
+但确认性运行必须等待具名证据冻结。双语规格是人类设计权威；封闭 JSON 只作机械
+引用／记账索引。依赖最迟在其对应的设计评审、工程可行性、pilot／校准、确认性
+登记、运行或结果接纳里程碑冻结。
+
+**理由：** 即使 IUT、独立真值、复位证据和样本决定尚不存在，也可以形成有用的
+工程交接；把设计完整误作执行就绪会伪造能力与批准。反之，把参数都留成无名 TBD
+也不可执行。
+
+**范围：** 仅 CR-2026-019 研究设计；不改变方法、算法、接口、记录、开发合同或
+PR #22 所有权。
+
+**状态：** CR-2026-019 下候选；独立科学评审和全部运行准入决定仍开放。
+
 ## DD-038——首轮需求分层与就绪边界
 
 **决定：** 协议需求、工具需求和实验需求保持为不同层。首轮离线 UPLOAD／INFORMATION 切片可以规格化记录、模块、验收案例和明确处置，但不建立可执行工具、完整服务覆盖、M3、Configuration 或符合性。
