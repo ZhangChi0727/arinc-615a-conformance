@@ -131,6 +131,11 @@ def _packet_nonprojectable_reason(packet: PacketRef) -> str:
         return "TIMESTAMP-OFFSET-NONPROJECTABLE"
     if packet.captured_length > packet.original_length:
         return "CAPLEN-EXCEEDS-ORIGLEN"
+    if (
+        packet.capture_snap_length not in {None, 0}
+        and packet.captured_length > packet.capture_snap_length
+    ) or "CAPLEN-EXCEEDS-SNAPLEN" in packet.quality_codes:
+        return "CAPLEN-EXCEEDS-SNAPLEN"
     return ""
 
 
@@ -368,11 +373,21 @@ def evidence_projection_errors(evidence: object) -> list[str]:
         if _event_payload_from_evidence(row, packet_contract_refs)[0] is None
     )
     for source_id, transfer in transfer_rows.items():
+        request_event = _request_event_payload_from_evidence(transfer, packet_contract_refs)
+        if request_event is None:
+            expected_unavailable.add(("TRANSFER-RECORD", source_id))
+            continue
+        request_id, _request_payload = request_event
+        # A syntactically and provenance-valid RRQ/WRQ remains useful
+        # evidence even when later TID or DATA-block evidence is insufficient
+        # for a full transfer-record contract.  Do not turn that normal
+        # request event into a schema failure merely because the transfer
+        # projection is intentionally unavailable.
+        expected_normal.add(("PROTOCOL-EVENT", request_id))
         if _transfer_evidence_nonprojectable_reason(transfer, packet_contract_refs):
             expected_unavailable.add(("TRANSFER-RECORD", source_id))
         else:
             expected_normal.add(("TRANSFER-RECORD", source_id))
-            expected_normal.add(("PROTOCOL-EVENT", f"event-request-{source_id}"))
     expected_sources = expected_normal | expected_unavailable
     for key in sorted(set(records) - expected_normal):
         errors.append(f"contract projection has an unparented record {key[0]}/{key[1]}")
@@ -409,6 +424,16 @@ def _packet_payload_from_evidence(packet: dict[str, Any]) -> tuple[dict[str, Any
     caplen, origlen = packet.get("capturedLength"), packet.get("originalLength")
     if not isinstance(caplen, int) or not isinstance(origlen, int) or caplen > origlen:
         return None, "CAPLEN-EXCEEDS-ORIGLEN"
+    snaplen = packet.get("captureSnapLength")
+    quality_codes = packet.get("qualityCodes")
+    if (
+        not isinstance(snaplen, (int, type(None)))
+        or not isinstance(quality_codes, list)
+        or any(not isinstance(code, str) for code in quality_codes)
+    ):
+        return None, "CAPLEN-EXCEEDS-SNAPLEN"
+    if (snaplen not in {None, 0} and caplen > snaplen) or "CAPLEN-EXCEEDS-SNAPLEN" in quality_codes:
+        return None, "CAPLEN-EXCEEDS-SNAPLEN"
     try:
         return {
             "captureId": packet["captureId"],
@@ -491,62 +516,166 @@ def _check_transfer_projection(
     source_id: str, transfer: dict[str, Any], packet_contract_refs: dict[str, str],
 ) -> None:
     key = ("TRANSFER-RECORD", source_id)
-    packet_refs = transfer.get("packetRefIds")
-    client, server = transfer.get("clientEndpoint"), transfer.get("serverEndpoint")
-    request_kind = transfer.get("requestKind")
-    reason = _transfer_evidence_nonprojectable_reason(transfer, packet_contract_refs)
-    if reason:
+    witness_errors = _transfer_source_witness_errors(transfer, packet_contract_refs)
+    errors.extend(f"transfer source witness differs for {source_id}: {detail}" for detail in witness_errors)
+    request_event = _request_event_payload_from_evidence(transfer, packet_contract_refs)
+    if request_event is None:
+        reason = "REQUEST-OR-CONTEXT-NONPROJECTABLE"
         if unavailable.get(key) != reason:
             errors.append(f"contract projection must retain TRANSFER-RECORD/{source_id} as {reason}")
         return
-    payload = records.get(key)
-    request_key = ("PROTOCOL-EVENT", f"event-request-{source_id}")
-    request_payload = records.get(request_key)
-    if not isinstance(payload, dict) or not isinstance(request_payload, dict):
-        errors.append(f"contract projection omits transfer/request parentage for {source_id}")
+    request_id, expected_request = request_event
+    request_key = ("PROTOCOL-EVENT", request_id)
+    if records.get(request_key) != expected_request:
+        errors.append(f"contract projection request event differs for {source_id}")
+    expected_payload = _transfer_payload_from_evidence(
+        transfer, packet_contract_refs, request_id,
+    )
+    if expected_payload is None:
+        reason = "TID-OR-BLOCK-SOURCE-NONPROJECTABLE"
+        if unavailable.get(key) != reason:
+            errors.append(f"contract projection must retain TRANSFER-RECORD/{source_id} as {reason}")
         return
-    expected_refs = {packet_contract_refs[value] for value in packet_refs}
-    if payload.get("direction") != ("SERVER-TO-CLIENT" if request_kind == "RRQ" else "CLIENT-TO-SERVER"):
-        errors.append(f"contract projection transfer direction differs for {source_id}")
-    if payload.get("endpoints") != {"client": client["address"], "server": server["address"]}:
-        errors.append(f"contract projection endpoints differ for {source_id}")
-    if payload.get("tid") != {"clientPort": client["port"], "serverPort": server["port"]}:
-        errors.append(f"contract projection TID differs for {source_id}")
-    if payload.get("request") != request_key[1]:
-        errors.append(f"contract projection request parentage differs for {source_id}")
-    if request_payload.get("payload", {}).get("type") != request_kind or not set(request_payload.get("rawRefs", [])).issubset(expected_refs):
-        errors.append(f"contract projection request event is not parented by transfer {source_id}")
-    if not set(payload.get("blockMap", {}).values() if isinstance(payload.get("blockMap"), dict) else ()).issubset(expected_refs):
-        errors.append(f"contract projection block map is not parented by transfer {source_id}")
-    completion = payload.get("completionEvidence")
-    if not isinstance(completion, list) or any(
-        not isinstance(item, str) or not item.startswith("pkt-") or item[4:] not in expected_refs for item in completion
-    ):
-        errors.append(f"contract projection completion evidence is not parented by transfer {source_id}")
-    mode = transfer.get("blockSize", {})
-    if not isinstance(mode, dict) or payload.get("optionState") != {
-        "mode": mode.get("status"),
-        "values": {} if mode.get("status") == "UNKNOWN" else {"blksize": mode.get("value")},
-    }:
-        errors.append(f"contract projection option state differs for {source_id}")
+    if records.get(key) != expected_payload:
+        errors.append(f"contract projection payload/parentage differs for TRANSFER-RECORD/{source_id}")
 
 
 def _transfer_evidence_nonprojectable_reason(
     transfer: dict[str, Any], packet_contract_refs: dict[str, str],
 ) -> str:
+    if _request_event_payload_from_evidence(transfer, packet_contract_refs) is None:
+        return "REQUEST-OR-CONTEXT-NONPROJECTABLE"
+    if _transfer_payload_from_evidence(
+        transfer, packet_contract_refs, f"event-request-{transfer.get('transferId')}"
+    ) is None:
+        return "TID-OR-BLOCK-SOURCE-NONPROJECTABLE"
+    return ""
+
+
+def _transfer_source_witness_errors(
+    transfer: dict[str, Any], packet_contract_refs: dict[str, str],
+) -> list[str]:
+    """Confirm that claimed transfer provenance is exact, not merely related.
+
+    The compact witness is serialised by ``TransferRecord`` before the adapter
+    derives a request event, block map, or completion marker.  It prevents a
+    later envelope edit from replacing an actual source with any packet that
+    happens to belong to the same reconstructed transfer.
+    """
+    witness = transfer.get("sourceWitness")
     packet_refs = transfer.get("packetRefIds")
-    client, server = transfer.get("clientEndpoint"), transfer.get("serverEndpoint")
+    datagram_ids = transfer.get("datagramIds")
+    if not isinstance(witness, dict):
+        return ["sourceWitness is unavailable"]
+    if not isinstance(packet_refs, list) or witness.get("packetRefIds") != packet_refs:
+        return ["packetRefIds are not an exact copy of the transfer sources"]
+    if not isinstance(datagram_ids, list) or witness.get("datagramIds") != datagram_ids:
+        return ["datagramIds are not an exact copy of the transfer sources"]
+    request = witness.get("requestPacketRefId")
+    request_datagram = witness.get("requestDatagramId")
+    if request is not None and (not isinstance(request, str) or request not in packet_refs):
+        return ["requestPacketRefId is not a transfer source"]
+    if request is None or not isinstance(request_datagram, str) or request_datagram not in datagram_ids:
+        return ["request packet/datagram witness is unavailable"]
+    blocks = witness.get("blockPacketRefIds")
+    block_datagrams = witness.get("blockDatagramIds")
+    if not isinstance(blocks, dict):
+        return ["blockPacketRefIds is unavailable"]
+    if not isinstance(block_datagrams, dict) or set(block_datagrams) != set(blocks):
+        return ["blockDatagramIds are unavailable or do not match blockPacketRefIds"]
+    for block, packet_id in blocks.items():
+        if not isinstance(block, str) or not isinstance(packet_id, str) or packet_id not in packet_refs:
+            return ["a block source is not a transfer source"]
+    completion = witness.get("completionPacketRefId")
+    completion_datagram = witness.get("completionDatagramId")
+    if completion is not None and (not isinstance(completion, str) or completion not in packet_refs):
+        return ["completionPacketRefId is not a transfer source"]
+    if completion_datagram is not None and (
+        not isinstance(completion_datagram, str) or completion_datagram not in datagram_ids
+    ):
+        return ["completionDatagramId is not a transfer source"]
+    return []
+
+
+def _request_event_payload_from_evidence(
+    transfer: dict[str, Any], packet_contract_refs: dict[str, str],
+) -> tuple[str, dict[str, Any]] | None:
+    witness = transfer.get("sourceWitness")
+    if not isinstance(witness, dict):
+        return None
+    request_packet = witness.get("requestPacketRefId")
+    request_datagram = witness.get("requestDatagramId")
+    packet_refs = transfer.get("packetRefIds")
+    request_kind = transfer.get("requestKind")
+    transfer_id = transfer.get("transferId")
     if (
-        transfer.get("requestKind") not in {"RRQ", "WRQ"}
+        request_kind not in {"RRQ", "WRQ"}
+        or not isinstance(transfer_id, str)
         or not isinstance(packet_refs, list)
-        or not packet_refs
-        or any(not isinstance(value, str) or value not in packet_contract_refs for value in packet_refs)
-        or not isinstance(client, dict)
+        or not isinstance(request_packet, str)
+        or request_packet not in packet_refs
+        or request_packet not in packet_contract_refs
+        or not isinstance(request_datagram, str)
+    ):
+        return None
+    event_id = f"event-request-{transfer_id}"
+    return event_id, {
+        "eventLayer": "WIRE",
+        "role": "CLIENT",
+        "payload": {"type": request_kind, "ref": f"payload-request-{transfer_id}"},
+        "correlationKey": f"corr-{transfer_id}",
+        "rawRefs": [packet_contract_refs[request_packet]],
+        "parseBoundary": "COMPLETE",
+    }
+
+
+def _transfer_payload_from_evidence(
+    transfer: dict[str, Any], packet_contract_refs: dict[str, str], request_id: str,
+) -> dict[str, Any] | None:
+    client, server = transfer.get("clientEndpoint"), transfer.get("serverEndpoint")
+    witness = transfer.get("sourceWitness")
+    if (
+        not isinstance(client, dict)
         or not isinstance(server, dict)
         or not isinstance(client.get("address"), str)
         or not isinstance(client.get("port"), int)
         or not isinstance(server.get("address"), str)
         or not isinstance(server.get("port"), int)
+        or not isinstance(witness, dict)
     ):
-        return "REQUEST-OR-CONTEXT-NONPROJECTABLE"
-    return ""
+        return None
+    blocks = witness.get("blockPacketRefIds")
+    block_datagrams = witness.get("blockDatagramIds")
+    if not isinstance(blocks, dict) or not isinstance(block_datagrams, dict) or set(blocks) != set(block_datagrams):
+        return None
+    block_map: dict[str, str] = {}
+    for block, packet_id in blocks.items():
+        if not isinstance(block, str) or not isinstance(packet_id, str) or packet_id not in packet_contract_refs:
+            return None
+        block_map[block] = packet_contract_refs[packet_id]
+    completion_id = witness.get("completionPacketRefId")
+    if completion_id is not None and (not isinstance(completion_id, str) or completion_id not in packet_contract_refs):
+        return None
+    mode = transfer.get("blockSize")
+    if not isinstance(mode, dict):
+        return None
+    status, value = mode.get("status"), mode.get("value")
+    if status == "UNKNOWN":
+        values: dict[str, Any] = {}
+    elif isinstance(value, int):
+        values = {"blksize": value}
+    else:
+        return None
+    request_kind = transfer.get("requestKind")
+    if request_kind not in {"RRQ", "WRQ"}:
+        return None
+    completion = [] if completion_id is None else [f"pkt-{packet_contract_refs[completion_id]}"]
+    return {
+        "direction": "SERVER-TO-CLIENT" if request_kind == "RRQ" else "CLIENT-TO-SERVER",
+        "endpoints": {"client": client["address"], "server": server["address"]},
+        "tid": {"clientPort": client["port"], "serverPort": server["port"]},
+        "request": request_id,
+        "optionState": {"mode": status, "values": values},
+        "blockMap": block_map,
+        "completionEvidence": completion,
+    }

@@ -123,6 +123,21 @@ def _lui_header() -> bytes:
     return (9).to_bytes(4, "big") + b"A1" + b"\0\0" + b"\0"
 
 
+def _role_header(role: str, declared_length: int | None = None) -> bytes:
+    """Return one structurally valid bounded A1 header for every supported role."""
+    suffixes = {
+        "LCI": b"\0\0\0",
+        "LCL": b"\0\x02",
+        "LCS": b"\0\x01\0\x02\0\x03\xff\xff\0",
+        "LUI": b"\0\0\0",
+        "LUR": b"\0\x02",
+        "LUS": b"\0\x04\0\0\x01\0\x02\xff\xff75%",
+    }
+    suffix = suffixes[role]
+    actual_length = 6 + len(suffix)
+    return (actual_length if declared_length is None else declared_length).to_bytes(4, "big") + b"A1" + suffix
+
+
 def _valid_exchange() -> list[bytes]:
     request = _request(1, "load.lui")
     payload = _lui_header()
@@ -601,9 +616,14 @@ def test_shared_evidence_budget_counts_interfaces_and_reserves_a_stop_witness(tm
     idb = struct.pack("<HHI", 1, 0, 65535)
     two_interfaces = tmp_path / "two-interfaces.pcapng"
     two_interfaces.write_bytes(_block(PCAPNG_SECTION_HEADER, section_body) + _block(1, idb) + _block(1, idb))
-    with pytest.raises(IntakeError) as caught:
-        run_capture(two_interfaces, capture_id="SYN-SHARED-INTERFACES", config=IntakeConfig(max_evidence_records=2))
-    assert caught.value.code == "RESOURCE-INTERFACE-LIMIT"
+    interface_budget = run_capture(
+        two_interfaces,
+        capture_id="SYN-SHARED-INTERFACES",
+        config=IntakeConfig(max_evidence_records=2),
+    ).to_dict(source_commit="a" * 40)
+    assert interface_budget["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert [item["code"] for item in interface_budget["diagnostics"]] == ["RESOURCE-INTERFACE-EVIDENCE-LIMIT"]
+    assert evidence_errors(interface_budget) == []
 
 
 def test_interface_resource_limit_is_a_named_capture_error(tmp_path: Path) -> None:
@@ -1091,14 +1111,16 @@ def test_vlan_and_pcapng_section_contexts_do_not_cross_reassemble_or_transfer(tm
 
 
 def test_bounded_first_slice_roles_preserve_raw_contract_semantics() -> None:
-    base = (20).to_bytes(4, "big") + b"A1"
+    def header(suffix: bytes) -> bytes:
+        return (6 + len(suffix)).to_bytes(4, "big") + b"A1" + suffix
+
     headers = {
-        "LCI": base + b"\x00\x00\x00",
-        "LCL": base + b"\x00\x02",
-        "LCS": base + b"\x00\x01\x00\x02\x00\x03\xff\xff\x00",
-        "LUI": base + b"\x00\x00\x00",
-        "LUR": base + b"\x00\x02",
-        "LUS": base + b"\x00\x04\x00\x00\x01\x00\x02\xff\xff75%",
+        "LCI": header(b"\x00\x00\x00"),
+        "LCL": header(b"\x00\x02"),
+        "LCS": header(b"\x00\x01\x00\x02\x00\x03\xff\xff\x00"),
+        "LUI": header(b"\x00\x00\x00"),
+        "LUR": header(b"\x00\x02"),
+        "LUS": header(b"\x00\x04\x00\x00\x01\x00\x02\xff\xff75%"),
     }
     parsed = {role: decode_first_slice_header(role, payload) for role, payload in headers.items()}
     assert all(item["parseStatus"] == "PARSED" for item in parsed.values())
@@ -1261,6 +1283,11 @@ def test_nonzero_pcapng_time_offset_is_explicitly_nonprojectable(tmp_path: Path)
         item["sourceType"] == "PACKET-REF" and item["reason"] == "TIMESTAMP-OFFSET-NONPROJECTABLE"
         for item in evidence["contractProjection"]["nonProjectable"]
     )
+    assert any(
+        item["sourceType"] == "PROTOCOL-EVENT"
+        and item["reason"] == "RAW-SOURCE-NONPROJECTABLE"
+        for item in evidence["contractProjection"]["nonProjectable"]
+    )
 
 
 def test_reassembly_key_prevents_cross_interface_id_reuse_and_empty_datagram_is_complete(
@@ -1338,6 +1365,10 @@ def test_contract_projection_is_a_production_gate_with_complete_disposition(
     bad_identity["contractProjection"]["contractIdentity"]["sha256"] = "0" * 64
     assert any("identity" in error for error in evidence_errors(bad_identity))
 
+    bad_tool_identity = deepcopy(evidence)
+    bad_tool_identity["tool"]["contractIdentities"][0]["sha256"] = "0" * 64
+    assert any("tool contractIdentities" in error for error in evidence_errors(bad_tool_identity))
+
     missing_disposition = deepcopy(evidence)
     missing_disposition["contractProjection"]["records"] = [
         item for item in missing_disposition["contractProjection"]["records"]
@@ -1373,6 +1404,1117 @@ def test_contract_projection_is_a_production_gate_with_complete_disposition(
         "--source-commit", "a" * 40,
     ]) == 1
     assert output.read_text(encoding="utf-8") == "old projection"
+
+
+def test_transfer_projection_requires_exact_role_witness_and_keeps_request_only_evidence(
+    tmp_path: Path,
+) -> None:
+    capture = tmp_path / "transfer-witness.pcap"
+    capture.write_bytes(_pcap(_valid_exchange()))
+    evidence = run_capture(capture, capture_id="cap-transfer-witness").to_dict(source_commit="a" * 40)
+    assert evidence_errors(evidence) == []
+    packet_refs = {
+        item["sourceId"]: item["payload"]
+        for item in evidence["contractProjection"]["records"]
+        if item["recordType"] == "PACKET-REF"
+    }
+    request_event = next(
+        item for item in evidence["contractProjection"]["records"]
+        if item["recordType"] == "PROTOCOL-EVENT" and item["sourceId"].startswith("event-request-")
+    )
+    transfer = next(
+        item for item in evidence["contractProjection"]["records"]
+        if item["recordType"] == "TRANSFER-RECORD"
+    )
+    request_ref = request_event["payload"]["rawRefs"][0]
+    other_ref = next(value for value in packet_refs.values() if value != request_ref)
+
+    wrong_request = deepcopy(evidence)
+    request = next(
+        item for item in wrong_request["contractProjection"]["records"]
+        if item["sourceId"] == request_event["sourceId"]
+    )
+    request["payload"]["rawRefs"] = [other_ref]
+    assert evidence_errors(wrong_request)
+
+    wrong_block = deepcopy(evidence)
+    projected = next(
+        item for item in wrong_block["contractProjection"]["records"]
+        if item["sourceId"] == transfer["sourceId"]
+    )
+    projected["payload"]["blockMap"] = {"1": request_ref}
+    assert any("TRANSFER-RECORD" in error for error in evidence_errors(wrong_block))
+
+    # An observed RRQ is still a normal WIRE record when no server TID/DATA
+    # evidence exists.  Only the TRANSFER-RECORD claim is non-projectable.
+    request_only = tmp_path / "request-only.pcap"
+    request_only.write_bytes(_pcap([_ethernet_ipv4(_udp(10000, 69, _request(1, "only.lui")))]))
+    partial = run_capture(request_only, capture_id="cap-request-only").to_dict(source_commit="a" * 40)
+    assert evidence_errors(partial) == []
+    assert any(
+        item["recordType"] == "PROTOCOL-EVENT" and item["sourceId"].startswith("event-request-")
+        for item in partial["contractProjection"]["records"]
+    )
+    assert any(
+        item == {
+            "sourceType": "TRANSFER-RECORD",
+            "sourceId": partial["transfers"][0]["transferId"],
+            "reason": "TID-OR-BLOCK-SOURCE-NONPROJECTABLE",
+        }
+        for item in partial["contractProjection"]["nonProjectable"]
+    )
+
+
+def test_same_direction_data_cannot_substitute_another_block_source(tmp_path: Path) -> None:
+    """A complete transfer's block labels need independent source-role proof."""
+    server = {"source": "10.0.0.2", "destination": "10.0.0.1"}
+    capture = tmp_path / "same-direction-blocks.pcap"
+    capture.write_bytes(_pcap([
+        _ethernet_ipv4(_udp(10300, 69, _request(1, "blocks.lui")), identification=850),
+        _ethernet_ipv4(_udp(40300, 10300, _data(1, b"a" * 512)), identification=851, **server),
+        _ethernet_ipv4(_udp(40300, 10300, _data(2, b"z")), identification=852, **server),
+    ]))
+    baseline = run_capture(capture, capture_id="cap-same-direction-blocks").to_dict(source_commit="a" * 40)
+    assert evidence_errors(baseline) == []
+    mutated = deepcopy(baseline)
+    transfer = mutated["transfers"][0]
+    witness = transfer["sourceWitness"]
+    assert isinstance(witness, dict)
+    first_packet, second_packet = witness["blockPacketRefIds"]["1"], witness["blockPacketRefIds"]["2"]
+    first_datagram, second_datagram = witness["blockDatagramIds"]["1"], witness["blockDatagramIds"]["2"]
+    # Both packets are server-to-client and both follow the request.  A
+    # direction/order-only validator would accept this coordinated swap even
+    # though DATA(1) and DATA(2) now substantiate the wrong block labels.
+    witness["blockPacketRefIds"] = {"1": second_packet, "2": first_packet}
+    witness["blockDatagramIds"] = {"1": second_datagram, "2": first_datagram}
+    witness["completionPacketRefId"] = first_packet
+    witness["completionDatagramId"] = first_datagram
+    projection = mutated["contractProjection"]
+    packet_contract_ids = {
+        item["packetRefId"]: (
+            f"{item['captureId']}:{item['sectionId']}:{item['interfaceId']}:{item['packetIndex']}"
+        )
+        for item in mutated["packetRefs"]
+    }
+    projected = next(
+        item for item in projection["records"]
+        if item["recordType"] == "TRANSFER-RECORD" and item["sourceId"] == transfer["transferId"]
+    )
+    projected["payload"]["blockMap"] = {
+        "1": packet_contract_ids[second_packet], "2": packet_contract_ids[first_packet],
+    }
+    projected["payload"]["completionEvidence"] = [f"pkt-{packet_contract_ids[first_packet]}"]
+    assert evidence_errors(mutated)
+
+
+def test_provenance_mutations_fail_real_inspect_and_corpus_publication(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A shape-valid projection mutation must not replace a prior publication."""
+    capture = tmp_path / "provenance.pcap"
+    server = {"source": "10.0.0.2", "destination": "10.0.0.1"}
+    capture.write_bytes(_pcap([
+        _ethernet_ipv4(_udp(10400, 69, _request(1, "provenance.lui")), identification=860),
+        _ethernet_ipv4(_udp(40400, 10400, _data(1, b"a" * 512)), identification=861, **server),
+        _ethernet_ipv4(_udp(40400, 10400, _data(2, b"z")), identification=862, **server),
+    ]))
+    original = pipeline_module.IntakeResult.to_dict
+
+    def transfer_rows(rendered: dict[str, object]) -> tuple[dict[str, object], dict[str, object], dict[str, object]]:
+        projection = rendered["contractProjection"]
+        assert isinstance(projection, dict)
+        records = projection["records"]
+        assert isinstance(records, list)
+        transfer = next(item for item in rendered["transfers"] if isinstance(item, dict))
+        projected = next(item for item in records if item["recordType"] == "TRANSFER-RECORD")
+        request = next(
+            item for item in records
+            if item["recordType"] == "PROTOCOL-EVENT" and str(item["sourceId"]).startswith("event-request-")
+        )
+        assert isinstance(transfer, dict) and isinstance(projected, dict) and isinstance(request, dict)
+        return transfer, projected, request
+
+    def packet_contract_refs(rendered: dict[str, object]) -> dict[str, str]:
+        rows = rendered["packetRefs"]
+        assert isinstance(rows, list)
+        return {
+            item["packetRefId"]: (
+                f"{item['captureId']}:{item['sectionId']}:{item['interfaceId']}:{item['packetIndex']}"
+            )
+            for item in rows
+            if isinstance(item, dict)
+        }
+
+    def clear_block_and_completion(rendered: dict[str, object]) -> None:
+        transfer, projected, _request = transfer_rows(rendered)
+        witness = transfer["sourceWitness"]
+        assert isinstance(witness, dict)
+        witness["blockPacketRefIds"] = {}
+        witness["blockDatagramIds"] = {}
+        witness["completionPacketRefId"] = None
+        witness["completionDatagramId"] = None
+        payload = projected["payload"]
+        assert isinstance(payload, dict)
+        payload["blockMap"] = {}
+        payload["completionEvidence"] = []
+
+    def swap_request_source(rendered: dict[str, object]) -> None:
+        transfer, _projected, request = transfer_rows(rendered)
+        witness = transfer["sourceWitness"]
+        assert isinstance(witness, dict)
+        replacement = next(iter(witness["blockPacketRefIds"].values()))
+        replacement_datagram = next(iter(witness["blockDatagramIds"].values()))
+        witness["requestPacketRefId"] = replacement
+        witness["requestDatagramId"] = replacement_datagram
+        projection = rendered["contractProjection"]
+        assert isinstance(projection, dict)
+        ref_by_source = packet_contract_refs(rendered)
+        payload = request["payload"]
+        assert isinstance(payload, dict)
+        payload["rawRefs"] = [ref_by_source[replacement]]
+
+    def swap_completion_source(rendered: dict[str, object]) -> None:
+        transfer, projected, _request = transfer_rows(rendered)
+        witness = transfer["sourceWitness"]
+        assert isinstance(witness, dict)
+        request_packet = witness["requestPacketRefId"]
+        request_datagram = witness["requestDatagramId"]
+        assert isinstance(request_packet, str) and isinstance(request_datagram, str)
+        witness["blockPacketRefIds"] = {"1": request_packet}
+        witness["blockDatagramIds"] = {"1": request_datagram}
+        witness["completionPacketRefId"] = request_packet
+        witness["completionDatagramId"] = request_datagram
+        projection = rendered["contractProjection"]
+        assert isinstance(projection, dict)
+        ref_by_source = packet_contract_refs(rendered)
+        payload = projected["payload"]
+        assert isinstance(payload, dict)
+        payload["completionEvidence"] = [f"pkt-{ref_by_source[request_packet]}"]
+
+    def swap_same_direction_data_blocks(rendered: dict[str, object]) -> None:
+        """Coordinate every visible transfer/projection field for a role swap."""
+        transfer, projected, _request = transfer_rows(rendered)
+        witness = transfer["sourceWitness"]
+        assert isinstance(witness, dict)
+        first_packet, second_packet = (
+            witness["blockPacketRefIds"]["1"], witness["blockPacketRefIds"]["2"],
+        )
+        first_datagram, second_datagram = (
+            witness["blockDatagramIds"]["1"], witness["blockDatagramIds"]["2"],
+        )
+        witness["blockPacketRefIds"] = {"1": second_packet, "2": first_packet}
+        witness["blockDatagramIds"] = {"1": second_datagram, "2": first_datagram}
+        witness["completionPacketRefId"] = first_packet
+        witness["completionDatagramId"] = first_datagram
+        ref_by_source = packet_contract_refs(rendered)
+        payload = projected["payload"]
+        assert isinstance(payload, dict)
+        payload["blockMap"] = {
+            "1": ref_by_source[second_packet], "2": ref_by_source[first_packet],
+        }
+        payload["completionEvidence"] = [f"pkt-{ref_by_source[first_packet]}"]
+
+    def prune_to_request(rendered: dict[str, object]) -> None:
+        transfer, _projected, _request = transfer_rows(rendered)
+        witness = transfer["sourceWitness"]
+        assert isinstance(witness, dict)
+        request_packet = witness["requestPacketRefId"]
+        first_datagram = transfer["datagramIds"][0]
+        transfer["packetRefIds"] = [request_packet]
+        transfer["datagramIds"] = [first_datagram]
+        witness["packetRefIds"] = [request_packet]
+        witness["datagramIds"] = [first_datagram]
+        witness["blockPacketRefIds"] = {}
+        witness["blockDatagramIds"] = {}
+        witness["completionPacketRefId"] = None
+        witness["completionDatagramId"] = None
+        for event in rendered["events"]:
+            event["sourcePacketRefIds"] = [request_packet]
+            event["sourceDatagramIds"] = [first_datagram]
+
+    def clear_datagram_ancestry(rendered: dict[str, object]) -> None:
+        transfer, _projected, _request = transfer_rows(rendered)
+        witness = transfer["sourceWitness"]
+        assert isinstance(witness, dict)
+        transfer["datagramIds"] = []
+        witness["datagramIds"] = []
+        for event in rendered["events"]:
+            event["sourceDatagramIds"] = []
+
+    mutations = [
+        clear_block_and_completion,
+        swap_request_source,
+        swap_completion_source,
+        swap_same_direction_data_blocks,
+        prune_to_request,
+        clear_datagram_ancestry,
+    ]
+    # Each historical semantic attack must fail the library entry point first;
+    # the CLI/corpus loops below then prove the same gate is not presentation
+    # only.  The mutations update every relevant public witness/projection
+    # field, rather than relying on a superficial stale-reference failure.
+    baseline = run_capture(capture, capture_id="cap-provenance").to_dict(source_commit="a" * 40)
+    for mutate in mutations:
+        candidate = deepcopy(baseline)
+        mutate(candidate)
+        assert evidence_errors(candidate)
+    for index, mutate in enumerate(mutations):
+        def mutated(self: IntakeResult, *, source_commit: str, _mutate=mutate) -> dict[str, object]:
+            rendered = original(self, source_commit=source_commit)
+            _mutate(rendered)
+            return rendered
+
+        monkeypatch.setattr(pipeline_module.IntakeResult, "to_dict", mutated)
+        output = tmp_path / f"inspect-{index}.json"
+        output.write_text("prior publication", encoding="utf-8")
+        assert cli_main([
+            "inspect", "--input", str(capture), "--capture-id", "cap-provenance", "--output", str(output),
+            "--source-commit", "a" * 40,
+        ]) == 1
+        assert output.read_text(encoding="utf-8") == "prior publication"
+
+    # The same semantic closure is a corpus transaction gate, rather than an
+    # inspect-only guard.  Exercise all five mutations through the publishing
+    # transaction, preserving the requirement that no failed stage appears.
+    corpus_root = tmp_path / "corpus"
+    corpus_root.mkdir()
+    corpus_capture = corpus_root / "one.pcapng"
+    corpus_capture.write_bytes(capture.read_bytes())
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps(_corpus_manifest(corpus_root)), encoding="utf-8")
+    for index, mutate in enumerate(mutations):
+        def mutated(self: IntakeResult, *, source_commit: str, _mutate=mutate) -> dict[str, object]:
+            rendered = original(self, source_commit=source_commit)
+            _mutate(rendered)
+            return rendered
+
+        monkeypatch.setattr(pipeline_module.IntakeResult, "to_dict", mutated)
+        output_dir = tmp_path / f"corpus-output-{index}"
+        with pytest.raises(IntakeError) as caught:
+            run_corpus(
+                manifest_path=manifest_path, corpus_root=corpus_root, output_dir=output_dir,
+                config=IntakeConfig(), source_commit="a" * 40,
+            )
+        assert caught.value.code == "EVIDENCE-SCHEMA-ERROR"
+        assert not output_dir.exists()
+
+
+def test_declared_file_length_mismatch_stays_a_controlled_parse_failure(tmp_path: Path) -> None:
+    payload = (99).to_bytes(4, "big") + b"A1" + b"\0\0\0"
+    capture = tmp_path / "declared-length.pcap"
+    capture.write_bytes(_pcap([
+        _ethernet_ipv4(_udp(10000, 69, _request(1, "length.lui")), identification=201),
+        _ethernet_ipv4(
+            _udp(40000, 10000, _data(1, payload)),
+            source="10.0.0.2", destination="10.0.0.1", identification=202,
+        ),
+        _ethernet_ipv4(_udp(10000, 40000, _ack(1)), identification=203),
+    ]))
+    result = run_capture(capture, capture_id="cap-declared-length")
+    header = next(item for item in result.events if item.event_type == "FIRST-SLICE-FILE-HEADER")
+    assert header.fields["parseStatus"] == "MALFORMED"
+    assert header.fields["reason"] == "DECLARED-FILE-LENGTH-MISMATCH"
+    assert header.fields["decodedFields"]["declaredFileLength"] == 99
+    assert header.fields["decodedFields"]["observedFileLength"] == len(payload)
+    assert not any(item.layer == "APPLICATION" for item in result.events)
+    assert evidence_errors(result.to_dict(source_commit="a" * 40)) == []
+
+
+@pytest.mark.parametrize("opcode", [1, 2])
+def test_request_only_rrq_and_wrq_publish_controlled_evidence_through_cli(
+    tmp_path: Path, opcode: int,
+) -> None:
+    capture = tmp_path / f"request-{opcode}.pcap"
+    capture.write_bytes(_pcap([
+        _ethernet_ipv4(_udp(10000, 69, _request(opcode, "only.lui")), identification=270 + opcode),
+    ]))
+    output = tmp_path / f"request-{opcode}.json"
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", f"cap-request-{opcode}",
+        "--output", str(output), "--source-commit", "a" * 40,
+    ]) == 2
+    rendered = json.loads(output.read_text(encoding="utf-8"))
+    assert rendered["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
+    assert evidence_errors(rendered) == []
+    assert any(item["sourceId"].startswith("event-request-") for item in rendered["contractProjection"]["records"])
+    assert any(item["reason"] == "TID-OR-BLOCK-SOURCE-NONPROJECTABLE" for item in rendered["contractProjection"]["nonProjectable"])
+
+
+@pytest.mark.parametrize("opcode", [1, 2])
+def test_request_only_capture_stays_a_controlled_corpus_row(tmp_path: Path, opcode: int) -> None:
+    corpus_root = tmp_path / "request-only-corpus"
+    corpus_root.mkdir()
+    capture = corpus_root / "one.pcapng"
+    capture.write_bytes(_pcap([
+        _ethernet_ipv4(_udp(10000, 69, _request(opcode, "only.lui")), identification=280 + opcode),
+    ]))
+    manifest_path = tmp_path / "request-only-manifest.json"
+    manifest_path.write_text(json.dumps(_corpus_manifest(corpus_root)), encoding="utf-8")
+    output_dir = tmp_path / "request-only-output"
+    summary = run_corpus(
+        manifest_path=manifest_path, corpus_root=corpus_root, output_dir=output_dir,
+        config=IntakeConfig(), source_commit="a" * 40,
+    )
+    assert summary["captures"][0]["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
+    assert evidence_errors(json.loads((output_dir / "HC-01.json").read_text(encoding="utf-8"))) == []
+
+
+@pytest.mark.parametrize("role", ["LCI", "LCL", "LCS", "LUI", "LUR", "LUS"])
+@pytest.mark.parametrize("direction", ["too-small", "too-large"])
+def test_all_supported_role_length_contradictions_are_controlled_through_cli(
+    tmp_path: Path, role: str, direction: str,
+) -> None:
+    normal = _role_header(role)
+    declared = len(normal) - 1 if direction == "too-small" else len(normal) + 1000
+    payload = _role_header(role, declared)
+    capture = tmp_path / f"{role}-{direction}.pcap"
+    capture.write_bytes(_pcap([
+        _ethernet_ipv4(_udp(10000, 69, _request(1, f"sample.{role.lower()}")), identification=310),
+        _ethernet_ipv4(
+            _udp(40000, 10000, _data(1, payload)),
+            source="10.0.0.2", destination="10.0.0.1", identification=311,
+        ),
+        _ethernet_ipv4(_udp(10000, 40000, _ack(1)), identification=312),
+    ]))
+    output = tmp_path / f"{role}-{direction}.json"
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", f"cap-{role.lower()}-{direction}",
+        "--output", str(output), "--source-commit", "a" * 40,
+    ]) == 2
+    rendered = json.loads(output.read_text(encoding="utf-8"))
+    assert rendered["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
+    assert any(
+        event["layer"] == "PARSE-RESULT"
+        and event["fields"].get("reason") == "DECLARED-FILE-LENGTH-MISMATCH"
+        for event in rendered["events"]
+    )
+    assert not any(event["layer"] == "APPLICATION" for event in rendered["events"])
+    assert evidence_errors(rendered) == []
+
+
+@pytest.mark.parametrize("role", ["LCI", "LCL", "LCS", "LUI", "LUR", "LUS"])
+def test_all_supported_role_normal_lengths_remain_clean(role: str) -> None:
+    decoded = decode_first_slice_header(role, _role_header(role))
+    assert decoded["parseStatus"] == "PARSED"
+    assert decoded["decodedFields"]["declaredFileLength"] == decoded["decodedFields"]["observedFileLength"]
+
+
+@pytest.mark.parametrize("role", ["LCI", "LCL", "LCS", "LUI", "LUR", "LUS"])
+def test_all_supported_role_normal_lengths_publish_application_evidence_through_cli(
+    tmp_path: Path, role: str,
+) -> None:
+    """The twelve contradiction cases retain one real clean control per role."""
+    capture = tmp_path / f"{role}-normal.pcap"
+    capture.write_bytes(_pcap([
+        _ethernet_ipv4(_udp(10000, 69, _request(1, f"sample.{role.lower()}")), identification=330),
+        _ethernet_ipv4(
+            _udp(40000, 10000, _data(1, _role_header(role))),
+            source="10.0.0.2", destination="10.0.0.1", identification=331,
+        ),
+        _ethernet_ipv4(_udp(10000, 40000, _ack(1)), identification=332),
+    ]))
+    output = tmp_path / f"{role}-normal.json"
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", f"cap-{role.lower()}-normal",
+        "--output", str(output), "--source-commit", "a" * 40,
+    ]) == 0
+    rendered = json.loads(output.read_text(encoding="utf-8"))
+    assert rendered["executionStatus"] == "COMPLETE"
+    assert any(event["layer"] == "APPLICATION" for event in rendered["events"])
+    assert evidence_errors(rendered) == []
+
+
+def test_file_length_matrix_remains_controlled_through_corpus_publication(tmp_path: Path) -> None:
+    """Every supported role/direction is a real corpus-row quality witness."""
+    corpus_root = tmp_path / "length-matrix-corpus"
+    corpus_root.mkdir()
+    captures: list[dict[str, object]] = []
+    cases: list[tuple[str, str, str]] = []
+    for index, (role, direction) in enumerate(
+        (role, direction)
+        for role in ("LCI", "LCL", "LCS", "LUI", "LUR", "LUS")
+        for direction in ("too-small", "too-large")
+    ):
+        normal = _role_header(role)
+        declared = len(normal) - 1 if direction == "too-small" else len(normal) + 1000
+        capture = corpus_root / f"case-{index:02d}.pcap"
+        capture.write_bytes(_pcap([
+            _ethernet_ipv4(_udp(10000, 69, _request(1, f"sample.{role.lower()}")), identification=350 + index * 3),
+            _ethernet_ipv4(
+                _udp(40000, 10000, _data(1, _role_header(role, declared))),
+                source="10.0.0.2", destination="10.0.0.1", identification=351 + index * 3,
+            ),
+            _ethernet_ipv4(_udp(10000, 40000, _ack(1)), identification=352 + index * 3),
+        ]))
+        capture_id = f"HC-{index + 1:02d}"
+        captures.append({
+            "captureId": capture_id,
+            "relativePath": capture.name,
+            "byteCount": capture.stat().st_size,
+            "sha256": hashlib.sha256(capture.read_bytes()).hexdigest(),
+            "observationQuality": "UNASSESSED-EXPLORATORY",
+            "labelSource": "FILE-ANNOTATION-NONTRUTH",
+            "rootCause": "UNKNOWN",
+        })
+        cases.append((capture_id, role, direction))
+    manifest = {
+        "manifestId": "CLTAV-HISTORICAL-CAPTURES",
+        "manifestVersion": "1.0",
+        "purpose": "EXPLORATORY-DEVELOPMENT-ONLY",
+        "captureCount": len(captures),
+        "truthBoundary": "not experimental truth",
+        "captures": captures,
+    }
+    manifest_path = tmp_path / "length-matrix-manifest.json"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    output_dir = tmp_path / "length-matrix-output"
+    summary = run_corpus(
+        manifest_path=manifest_path, corpus_root=corpus_root, output_dir=output_dir,
+        config=IntakeConfig(), source_commit="a" * 40,
+    )
+    assert {item["captureId"] for item in summary["captures"]} == {case[0] for case in cases}
+    assert {item["executionStatus"] for item in summary["captures"]} == {"COMPLETE-WITH-CONTROLLED-ISSUES"}
+    for capture_id, _role, _direction in cases:
+        rendered = json.loads((output_dir / f"{capture_id}.json").read_text(encoding="utf-8"))
+        assert any(
+            event["layer"] == "PARSE-RESULT"
+            and event["fields"].get("reason") == "DECLARED-FILE-LENGTH-MISMATCH"
+            for event in rendered["events"]
+        )
+        assert not any(event["layer"] == "APPLICATION" for event in rendered["events"])
+        assert evidence_errors(rendered) == []
+
+
+def test_contradictory_file_length_cannot_be_relabelled_complete_for_publication(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    payload = _role_header("LUI", 1000)
+    capture = tmp_path / "forced-complete.pcap"
+    capture.write_bytes(_pcap([
+        _ethernet_ipv4(_udp(10000, 69, _request(1, "forced.lui")), identification=320),
+        _ethernet_ipv4(_udp(40000, 10000, _data(1, payload)), source="10.0.0.2", destination="10.0.0.1", identification=321),
+        _ethernet_ipv4(_udp(10000, 40000, _ack(1)), identification=322),
+    ]))
+    output = tmp_path / "forced-complete.json"
+    output.write_text("prior quality output", encoding="utf-8")
+    original = pipeline_module.IntakeResult.to_dict
+
+    def falsely_clean(self: IntakeResult, *, source_commit: str) -> dict[str, object]:
+        rendered = original(self, source_commit=source_commit)
+        rendered["executionStatus"] = "COMPLETE"
+        header = next(
+            item for item in rendered["events"]
+            if item["eventType"] == "FIRST-SLICE-FILE-HEADER"
+        )
+        header["fields"] = {
+            "parseStatus": "PARSED",
+            "decodedFields": {},
+            "unparsedRemainderBytes": 0,
+            "codecScope": "BOUNDED-FIRST-SLICE-HEADER-ONLY",
+        }
+        for item in rendered["contractProjection"]["records"]:
+            if item["recordType"] == "PROTOCOL-EVENT" and item["sourceId"] == header["eventId"]:
+                item["payload"]["parseBoundary"] = "COMPLETE"
+        return rendered
+
+    monkeypatch.setattr(pipeline_module.IntakeResult, "to_dict", falsely_clean)
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", "cap-forced-complete", "--output", str(output),
+        "--source-commit", "a" * 40,
+    ]) == 1
+    assert output.read_text(encoding="utf-8") == "prior quality output"
+
+
+def test_capture_versions_snaplen_and_shb_options_are_checked(tmp_path: Path) -> None:
+    packet = b"x" * 10
+    bad_pcap_version = tmp_path / "pcap-version.pcap"
+    bad_pcap_version.write_bytes(
+        b"\xd4\xc3\xb2\xa1" + struct.pack("<HHIIII", 9, 9, 0, 0, 65535, 1)
+    )
+    with pytest.raises(CaptureFormatError, match="supported 2.4 profile") as caught:
+        list(CaptureReader(bad_pcap_version, "cap-pcap-version"))
+    assert caught.value.code == "UNSUPPORTED-PCAP-VERSION"
+
+    snap_pcap = tmp_path / "pcap-snaplen.pcap"
+    snap_pcap.write_bytes(
+        b"\xd4\xc3\xb2\xa1" + struct.pack("<HHIIII", 2, 4, 0, 0, 5, 1)
+        + struct.pack("<IIII", 1, 0, len(packet), len(packet)) + packet
+    )
+    pcap_result = run_capture(snap_pcap, capture_id="cap-pcap-snap")
+    assert "CAPLEN-EXCEEDS-SNAPLEN" in pcap_result.packet_refs[0].quality_codes
+    pcap_evidence = pcap_result.to_dict(source_commit="a" * 40)
+    assert evidence_errors(pcap_evidence) == []
+    assert any(item["reason"] == "CAPLEN-EXCEEDS-SNAPLEN" for item in pcap_evidence["contractProjection"]["nonProjectable"])
+
+    big_snap_pcap = tmp_path / "pcap-snaplen-big.pcap"
+    big_snap_pcap.write_bytes(
+        b"\xa1\xb2\xc3\xd4" + struct.pack(">HHIIII", 2, 4, 0, 0, 5, 1)
+        + struct.pack(">IIII", 1, 0, len(packet), len(packet)) + packet
+    )
+    assert "CAPLEN-EXCEEDS-SNAPLEN" in run_capture(
+        big_snap_pcap, capture_id="cap-pcap-snap-big",
+    ).packet_refs[0].quality_codes
+
+    shb = struct.pack("<IHHq", 0x1A2B3C4D, 1, 2, -1)
+    idb = struct.pack("<HHI", 1, 0, 5)
+    epb = struct.pack("<IIIII", 0, 0, 1, len(packet), len(packet)) + packet + b"\0" * 2
+    snap_pcapng = tmp_path / "pcapng-snaplen.pcapng"
+    snap_pcapng.write_bytes(_block(PCAPNG_SECTION_HEADER, shb) + _block(1, idb) + _block(6, epb))
+    pcapng_result = run_capture(snap_pcapng, capture_id="cap-pcapng-snap")
+    assert "CAPLEN-EXCEEDS-SNAPLEN" in pcapng_result.packet_refs[0].quality_codes
+
+    def big_block(block_type: int, body: bytes) -> bytes:
+        total = 12 + len(body)
+        assert total % 4 == 0
+        return struct.pack(">II", block_type, total) + body + struct.pack(">I", total)
+
+    big_snap_pcapng = tmp_path / "pcapng-snaplen-big.pcapng"
+    big_shb = struct.pack(">IHHq", 0x1A2B3C4D, 1, 2, -1)
+    big_epb = struct.pack(">IIIII", 0, 0, 1, len(packet), len(packet)) + packet + b"\0" * 2
+    big_snap_pcapng.write_bytes(big_block(PCAPNG_SECTION_HEADER, big_shb) + big_block(1, struct.pack(">HHI", 1, 0, 5)) + big_block(6, big_epb))
+    assert "CAPLEN-EXCEEDS-SNAPLEN" in run_capture(
+        big_snap_pcapng, capture_id="cap-pcapng-snap-big",
+    ).packet_refs[0].quality_codes
+
+    compatible = tmp_path / "pcapng-12-compatible.pcapng"
+    compatible_epb = struct.pack("<IIIII", 0, 0, 1, len(packet), len(packet)) + packet + b"\0" * 2
+    compatible.write_bytes(
+        _block(PCAPNG_SECTION_HEADER, struct.pack("<IHHq", 0x1A2B3C4D, 1, 2, -1))
+        + _block(1, struct.pack("<HHI", 1, 0, 0)) + _block(6, compatible_epb)
+    )
+    compatible_packets = list(CaptureReader(compatible, "cap-pcapng-12"))
+    assert len(compatible_packets) == 1
+    assert compatible_packets[0].ref.capture_snap_length == 0
+    assert compatible_packets[0].ref.quality_codes == ()
+
+    unsupported = tmp_path / "pcapng-version.pcapng"
+    unsupported.write_bytes(_block(PCAPNG_SECTION_HEADER, struct.pack("<IHHq", 0x1A2B3C4D, 99, 99, -1)))
+    with pytest.raises(CaptureFormatError) as caught:
+        list(CaptureReader(unsupported, "cap-pcapng-version"))
+    assert caught.value.code == "UNSUPPORTED-PCAPNG-VERSION"
+
+    invalid_options = tmp_path / "pcapng-shb-options.pcapng"
+    invalid_shb = struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1) + struct.pack("<HH", 0, 1)
+    invalid_options.write_bytes(_block(PCAPNG_SECTION_HEADER, invalid_shb))
+    with pytest.raises(CaptureFormatError) as caught:
+        list(CaptureReader(invalid_options, "cap-pcapng-options"))
+    assert caught.value.code == "INVALID-PCAPNG-OPTION"
+
+    legal_options = tmp_path / "pcapng-shb-unknown-options.pcapng"
+    legal_shb = (
+        struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1)
+        + struct.pack("<HH", 0x00FF, 3) + b"abc\0" + struct.pack("<HH", 0, 0)
+    )
+    legal_options.write_bytes(_block(PCAPNG_SECTION_HEADER, legal_shb))
+    assert list(CaptureReader(legal_options, "cap-pcapng-unknown-options")) == []
+
+
+def test_snaplen_quality_is_published_through_cli_and_corpus(tmp_path: Path) -> None:
+    """Container quality is not merely a reader-local observation."""
+    packet = b"x" * 10
+    pcap = tmp_path / "snaplen-cli.pcap"
+    pcap.write_bytes(
+        b"\xd4\xc3\xb2\xa1" + struct.pack("<HHIIII", 2, 4, 0, 0, 5, 1)
+        + struct.pack("<IIII", 1, 0, len(packet), len(packet)) + packet
+    )
+    cli_output = tmp_path / "snaplen-cli.json"
+    assert cli_main([
+        "inspect", "--input", str(pcap), "--capture-id", "cap-snaplen-cli",
+        "--output", str(cli_output), "--source-commit", "a" * 40,
+    ]) == 2
+    cli_evidence = json.loads(cli_output.read_text(encoding="utf-8"))
+    assert cli_evidence["packetRefs"][0]["captureSnapLength"] == 5
+    assert "CAPLEN-EXCEEDS-SNAPLEN" in cli_evidence["packetRefs"][0]["qualityCodes"]
+    assert any(item["reason"] == "CAPLEN-EXCEEDS-SNAPLEN" for item in cli_evidence["contractProjection"]["nonProjectable"])
+    assert evidence_errors(cli_evidence) == []
+
+    shb = struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1)
+    idb = struct.pack("<HHI", 1, 0, 5)
+    epb = struct.pack("<IIIII", 0, 0, 1, len(packet), len(packet)) + packet + b"\0" * 2
+    corpus_root = tmp_path / "snaplen-corpus"
+    corpus_root.mkdir()
+    corpus_capture = corpus_root / "one.pcapng"
+    corpus_capture.write_bytes(_block(PCAPNG_SECTION_HEADER, shb) + _block(1, idb) + _block(6, epb))
+    manifest_path = tmp_path / "snaplen-manifest.json"
+    manifest_path.write_text(json.dumps(_corpus_manifest(corpus_root)), encoding="utf-8")
+    output_dir = tmp_path / "snaplen-corpus-output"
+    summary = run_corpus(
+        manifest_path=manifest_path, corpus_root=corpus_root, output_dir=output_dir,
+        config=IntakeConfig(), source_commit="a" * 40,
+    )
+    assert summary["captures"][0]["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
+    corpus_evidence = json.loads((output_dir / "HC-01.json").read_text(encoding="utf-8"))
+    assert corpus_evidence["packetRefs"][0]["captureSnapLength"] == 5
+    assert "CAPLEN-EXCEEDS-SNAPLEN" in corpus_evidence["packetRefs"][0]["qualityCodes"]
+    assert evidence_errors(corpus_evidence) == []
+
+
+def test_snaplen_quality_cannot_be_erased_from_container_metadata(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A clean-looking packet cannot replace a snaplen-bounded source fact."""
+    packet = b"x" * 10
+    capture = tmp_path / "snaplen-erasure.pcap"
+    capture.write_bytes(
+        b"\xd4\xc3\xb2\xa1" + struct.pack("<HHIIII", 2, 4, 0, 0, 5, 1)
+        + struct.pack("<IIII", 1, 0, len(packet), len(packet)) + packet
+    )
+    baseline = run_capture(capture, capture_id="cap-snaplen-erasure").to_dict(source_commit="a" * 40)
+
+    def erase_quality(rendered: dict[str, object]) -> None:
+        rendered["executionStatus"] = "COMPLETE"
+        rendered["diagnostics"] = []
+        rendered["counts"]["diagnostics"] = 0
+        rendered["input"]["container"]["interfaces"] = []
+        for ref in rendered["packetRefs"]:
+            ref["captureSnapLength"] = None
+            ref["qualityCodes"] = []
+        projection = rendered["contractProjection"]
+        projection["nonProjectable"] = [
+            item for item in projection["nonProjectable"]
+            if item["sourceType"] != "PACKET-REF"
+        ]
+        ref = rendered["packetRefs"][0]
+        projection["records"].append({
+            "recordType": "PACKET-REF",
+            "sourceId": ref["packetRefId"],
+            "payload": {
+                "captureId": ref["captureId"],
+                "sectionId": ref["sectionId"],
+                "interfaceId": ref["interfaceId"],
+                "packetNumber": ref["packetIndex"],
+                "rawTicks": ref["timestamp"]["ticks"],
+                "resolution": {"ticksPerSecond": ref["timestamp"]["ticksPerSecond"]},
+                "caplen": ref["capturedLength"],
+                "origlen": ref["originalLength"],
+                "decodeStatus": "FULL",
+            },
+        })
+
+    erased = deepcopy(baseline)
+    erase_quality(erased)
+    assert any("container interface" in item for item in evidence_errors(erased))
+
+    output = tmp_path / "snaplen-erasure.json"
+    output.write_text("prior snaplen output", encoding="utf-8")
+    original = pipeline_module.IntakeResult.to_dict
+
+    def falsified(self: IntakeResult, *, source_commit: str) -> dict[str, object]:
+        rendered = original(self, source_commit=source_commit)
+        erase_quality(rendered)
+        return rendered
+
+    monkeypatch.setattr(pipeline_module.IntakeResult, "to_dict", falsified)
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", "cap-snaplen-erasure", "--output", str(output),
+        "--source-commit", "a" * 40,
+    ]) == 1
+    assert output.read_text(encoding="utf-8") == "prior snaplen output"
+
+
+def test_both_endian_snaplen_quality_reaches_cli_and_corpus(tmp_path: Path) -> None:
+    """The public quality disposition is independent of container byte order."""
+    packet = _valid_exchange()[0]
+
+    def block(order: str, block_type: int, body: bytes) -> bytes:
+        total = 12 + len(body)
+        assert total % 4 == 0
+        return struct.pack(f"{order}II", block_type, total) + body + struct.pack(f"{order}I", total)
+
+    def pcap(order: str) -> bytes:
+        magic = b"\xd4\xc3\xb2\xa1" if order == "<" else b"\xa1\xb2\xc3\xd4"
+        return (
+            magic + struct.pack(f"{order}HHIIII", 2, 4, 0, 0, 5, 1)
+            + struct.pack(f"{order}IIII", 1, 0, len(packet), len(packet)) + packet
+        )
+
+    def pcapng(order: str) -> bytes:
+        padding = b"\0" * (-len(packet) % 4)
+        return (
+            block(order, PCAPNG_SECTION_HEADER, struct.pack(f"{order}IHHq", 0x1A2B3C4D, 1, 0, -1))
+            + block(order, 1, struct.pack(f"{order}HHI", 1, 0, 5))
+            + block(order, 6, struct.pack(f"{order}IIIII", 0, 0, 1, len(packet), len(packet)) + packet + padding)
+        )
+
+    cases = {
+        "pcap-little": pcap("<"), "pcap-big": pcap(">"),
+        "pcapng-little": pcapng("<"), "pcapng-big": pcapng(">"),
+    }
+    for index, (label, content) in enumerate(cases.items()):
+        capture = tmp_path / f"{label}.capture"
+        capture.write_bytes(content)
+        output = tmp_path / f"{label}.json"
+        assert cli_main([
+            "inspect", "--input", str(capture), "--capture-id", f"cap-{label}", "--output", str(output),
+            "--source-commit", "a" * 40,
+        ]) == 2
+        rendered = json.loads(output.read_text(encoding="utf-8"))
+        assert rendered["packetRefs"][0]["captureSnapLength"] == 5
+        assert "CAPLEN-EXCEEDS-SNAPLEN" in rendered["packetRefs"][0]["qualityCodes"]
+        assert evidence_errors(rendered) == []
+
+    corpus_root = tmp_path / "snaplen-endian-corpus"
+    corpus_root.mkdir()
+    captures: list[dict[str, object]] = []
+    for index, (label, content) in enumerate(cases.items(), 1):
+        path = corpus_root / f"{label}.capture"
+        path.write_bytes(content)
+        captures.append({
+            "captureId": f"HC-{index:02d}", "relativePath": path.name,
+            "byteCount": path.stat().st_size, "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            "observationQuality": "UNASSESSED-EXPLORATORY",
+            "labelSource": "FILE-ANNOTATION-NONTRUTH", "rootCause": "UNKNOWN",
+        })
+    manifest = {
+        "manifestId": "CLTAV-HISTORICAL-CAPTURES", "manifestVersion": "1.0",
+        "purpose": "EXPLORATORY-DEVELOPMENT-ONLY", "captureCount": len(captures),
+        "truthBoundary": "not experimental truth", "captures": captures,
+    }
+    manifest_path = tmp_path / "snaplen-endian-manifest.json"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    output_dir = tmp_path / "snaplen-endian-output"
+    summary = run_corpus(
+        manifest_path=manifest_path, corpus_root=corpus_root, output_dir=output_dir,
+        config=IntakeConfig(), source_commit="a" * 40,
+    )
+    assert {row["executionStatus"] for row in summary["captures"]} == {"COMPLETE-WITH-CONTROLLED-ISSUES"}
+    for item in captures:
+        rendered = json.loads((output_dir / f"{item['captureId']}.json").read_text(encoding="utf-8"))
+        assert rendered["packetRefs"][0]["captureSnapLength"] == 5
+        assert evidence_errors(rendered) == []
+
+
+def test_both_endian_container_version_and_shb_option_boundaries_reach_cli(tmp_path: Path) -> None:
+    """Fatal container structure never becomes a clean supported capture."""
+    packet = _valid_exchange()[0]
+
+    def block(order: str, block_type: int, body: bytes) -> bytes:
+        total = 12 + len(body)
+        assert total % 4 == 0
+        return struct.pack(f"{order}II", block_type, total) + body + struct.pack(f"{order}I", total)
+
+    for order, label in (("<", "little"), (">", "big")):
+        magic = b"\xd4\xc3\xb2\xa1" if order == "<" else b"\xa1\xb2\xc3\xd4"
+        bad_pcap = tmp_path / f"bad-pcap-{label}.pcap"
+        bad_pcap.write_bytes(magic + struct.pack(f"{order}HHIIII", 99, 99, 0, 0, 65535, 1))
+        pcap_output = tmp_path / f"bad-pcap-{label}.json"
+        pcap_output.write_text("old pcap publication", encoding="utf-8")
+        assert cli_main([
+            "inspect", "--input", str(bad_pcap), "--capture-id", f"cap-bad-pcap-{label}",
+            "--output", str(pcap_output), "--source-commit", "a" * 40,
+        ]) == 1
+        assert pcap_output.read_text(encoding="utf-8") == "old pcap publication"
+
+        bad_version = tmp_path / f"bad-pcapng-version-{label}.pcapng"
+        bad_version.write_bytes(block(order, PCAPNG_SECTION_HEADER, struct.pack(f"{order}IHHq", 0x1A2B3C4D, 99, 99, -1)))
+        version_output = tmp_path / f"bad-pcapng-version-{label}.json"
+        version_output.write_text("old pcapng publication", encoding="utf-8")
+        assert cli_main([
+            "inspect", "--input", str(bad_version), "--capture-id", f"cap-bad-pcapng-{label}",
+            "--output", str(version_output), "--source-commit", "a" * 40,
+        ]) == 1
+        assert version_output.read_text(encoding="utf-8") == "old pcapng publication"
+
+        malformed_options = tmp_path / f"bad-pcapng-options-{label}.pcapng"
+        malformed_shb = struct.pack(f"{order}IHHq", 0x1A2B3C4D, 1, 0, -1) + struct.pack(f"{order}HH", 0, 1)
+        malformed_options.write_bytes(block(order, PCAPNG_SECTION_HEADER, malformed_shb))
+        options_output = tmp_path / f"bad-pcapng-options-{label}.json"
+        options_output.write_text("old option publication", encoding="utf-8")
+        assert cli_main([
+            "inspect", "--input", str(malformed_options), "--capture-id", f"cap-bad-options-{label}",
+            "--output", str(options_output), "--source-commit", "a" * 40,
+        ]) == 1
+        assert options_output.read_text(encoding="utf-8") == "old option publication"
+
+        # A supported 1.2 SHB, legal unknown padded option, and snaplen zero
+        # remains an admitted container; TFTP incompleteness is a separate
+        # controlled issue, not a snaplen/parser failure.
+        padding = b"\0" * (-len(packet) % 4)
+        legal_shb = (
+            struct.pack(f"{order}IHHq", 0x1A2B3C4D, 1, 2, -1)
+            + struct.pack(f"{order}HH", 0x00FF, 3) + b"abc\0" + struct.pack(f"{order}HH", 0, 0)
+        )
+        accepted = tmp_path / f"accepted-pcapng-{label}.pcapng"
+        accepted.write_bytes(
+            block(order, PCAPNG_SECTION_HEADER, legal_shb)
+            + block(order, 1, struct.pack(f"{order}HHI", 1, 0, 0))
+            + block(order, 6, struct.pack(f"{order}IIIII", 0, 0, 1, len(packet), len(packet)) + packet + padding)
+        )
+        accepted_output = tmp_path / f"accepted-pcapng-{label}.json"
+        assert cli_main([
+            "inspect", "--input", str(accepted), "--capture-id", f"cap-accepted-{label}",
+            "--output", str(accepted_output), "--source-commit", "a" * 40,
+        ]) == 2
+        rendered = json.loads(accepted_output.read_text(encoding="utf-8"))
+        assert rendered["packetRefs"][0]["captureSnapLength"] == 0
+        assert "CAPLEN-EXCEEDS-SNAPLEN" not in rendered["packetRefs"][0]["qualityCodes"]
+        assert evidence_errors(rendered) == []
+
+
+def test_shared_evidence_budget_is_live_and_keeps_post_scan_boundaries_truthful(tmp_path: Path) -> None:
+    packet = _valid_exchange()[0]
+    section = _block(PCAPNG_SECTION_HEADER, struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1))
+    idb = _block(1, struct.pack("<HHI", 1, 0, 65535))
+    padding = b"\0" * (-len(packet) % 4)
+    epb = _block(6, struct.pack("<IIIII", 0, 0, 1, len(packet), len(packet)) + packet + padding)
+    tail = _block(1, struct.pack("<HHI", 1, 0, 65535)) * 3
+    capture = tmp_path / "tail-interfaces.pcapng"
+    capture.write_bytes(section + idb + epb + tail)
+    limited = run_capture(capture, capture_id="cap-tail-idb", config=IntakeConfig(max_evidence_records=5))
+    rendered = limited.to_dict(source_commit="a" * 40)
+    retained = (
+        len(rendered["input"]["container"]["interfaces"])
+        + sum(len(rendered[name]) for name in ("packetRefs", "datagrams", "transfers", "events", "diagnostics"))
+    )
+    assert retained <= 5
+    assert rendered["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    witness = next(item for item in rendered["diagnostics"] if item["code"] == "RESOURCE-INTERFACE-EVIDENCE-LIMIT")
+    assert witness["detail"]["unconsumedSuffix"] == "NOT-CONSUMED"
+    assert witness["detail"]["lastConsumedPacketRefId"] == rendered["packetRefs"][-1]["packetRefId"]
+    assert evidence_errors(rendered) == []
+
+    # Event retention can end after the entire capture has been consumed; it
+    # must not counterfeit an unread-input resource stop.
+    complete = tmp_path / "event-boundary.pcap"
+    complete.write_bytes(_pcap(_valid_exchange()))
+    post_scan = run_capture(complete, capture_id="cap-event-boundary", config=IntakeConfig(max_evidence_records=10))
+    post_rendered = post_scan.to_dict(source_commit="a" * 40)
+    event_witness = next(item for item in post_rendered["diagnostics"] if item["code"] == "RESOURCE-EVENT-LIMIT")
+    assert post_rendered["input"]["container"]["scanStatus"] == "COMPLETE"
+    assert "unconsumedSuffix" not in post_rendered["input"]["container"]
+    assert event_witness["detail"]["scanStatus"] == "COMPLETE"
+    assert evidence_errors(post_rendered) == []
+
+
+def test_private_capture_and_tftp_diagnostics_cannot_bypass_live_evidence_budget(tmp_path: Path) -> None:
+    """Producer-local diagnostic queues must not defer shared-budget enforcement."""
+    malformed_capture = tmp_path / "capture-diagnostic-limit.pcap"
+    malformed_capture.write_bytes(
+        b"\xd4\xc3\xb2\xa1" + struct.pack("<HHIIII", 2, 4, 0, 0, 5, 1)
+        + struct.pack("<IIII", 1, 0, 10, 5) + b"x" * 10
+    )
+    capture_limited = run_capture(
+        malformed_capture,
+        capture_id="cap-capture-diagnostic-limit",
+        config=IntakeConfig(max_evidence_records=3, max_diagnostics=3),
+    ).to_dict(source_commit="a" * 40)
+    assert capture_limited["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert len(capture_limited["diagnostics"]) == 2
+    # The malformed-packet diagnostic is ordinary evidence.  The packet that
+    # would otherwise exceed the shared bound is the real input-stop cause,
+    # so retain its precise witness rather than relabelling it as a generic
+    # diagnostic limit.
+    assert capture_limited["diagnostics"][-1]["code"] == "RESOURCE-PACKET-REF-LIMIT"
+    assert capture_limited["diagnostics"][0]["detail"]["packetRefUnavailable"].endswith("P00000001")
+    assert evidence_errors(capture_limited) == []
+
+    tftp_capture = tmp_path / "tftp-diagnostic-limit.pcap"
+    tftp_capture.write_bytes(_pcap([
+        _ethernet_ipv4(_udp(10000, 69, b"\0\0"), identification=290),
+        _ethernet_ipv4(_udp(10001, 69, b"\0\0"), identification=291),
+    ]))
+    tftp_limited = run_capture(
+        tftp_capture,
+        capture_id="cap-tftp-diagnostic-limit",
+        config=IntakeConfig(max_evidence_records=50, max_diagnostics=1),
+    ).to_dict(source_commit="a" * 40)
+    # A bounded producer diagnostic alone is not an unread-input boundary.
+    # The two packets were consumed; publish the post-scan diagnostic-retention
+    # boundary instead of falsely stopping the capture at the first one.
+    assert tftp_limited["input"]["container"]["scanStatus"] == "COMPLETE"
+    assert [item["code"] for item in tftp_limited["diagnostics"]] == ["RESOURCE-DIAGNOSTIC-LIMIT"]
+    assert tftp_limited["diagnostics"][0]["detail"]["retentionBoundary"] == "POST-SCAN-DIAGNOSTICS-TRUNCATED"
+    assert evidence_errors(tftp_limited) == []
+
+
+def test_live_budget_accounts_for_fragment_state_and_never_overreads_after_a_stop(tmp_path: Path) -> None:
+    """EOF-owned reassembly differs from a real input-stop boundary."""
+    incomplete = tmp_path / "one-fragment-at-eof.pcap"
+    incomplete.write_bytes(_pcap([
+        _ethernet_ipv4(b"abcdefgh", identification=301, more_fragments=True),
+    ]))
+    eof_result = run_capture(
+        incomplete,
+        capture_id="cap-one-fragment-eof",
+        config=IntakeConfig(max_evidence_records=3),
+    ).to_dict(source_commit="a" * 40)
+    assert eof_result["input"]["container"]["containerPacketCount"] == 1
+    assert eof_result["input"]["container"]["scanStatus"] == "COMPLETE"
+    assert "unconsumedSuffix" not in eof_result["input"]["container"]
+    assert [item["status"] for item in eof_result["datagrams"]] == ["GAPPED"]
+    assert not any(item["code"].startswith("RESOURCE-") for item in eof_result["diagnostics"])
+    assert evidence_errors(eof_result) == []
+
+    three_packets = tmp_path / "early-stop-does-not-overread.pcap"
+    three_packets.write_bytes(_pcap([
+        _ethernet_ipv4(_udp(11000 + index, 12000, b"x"), identification=310 + index)
+        for index in range(3)
+    ]))
+    stopped = run_capture(
+        three_packets,
+        capture_id="cap-no-overread",
+        config=IntakeConfig(max_evidence_records=3),
+    ).to_dict(source_commit="a" * 40)
+    assert stopped["input"]["container"]["containerPacketCount"] == 1
+    assert stopped["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    witness = next(item for item in stopped["diagnostics"] if item["code"] == "RESOURCE-DATAGRAM-RECORD-LIMIT")
+    assert witness["detail"]["lastConsumedPacketIndex"] == 1
+    assert evidence_errors(stopped) == []
+
+    section = _block(PCAPNG_SECTION_HEADER, struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1))
+    interface = _block(1, struct.pack("<HHI", 1, 0, 65535))
+    no_packet_interfaces = tmp_path / "two-interfaces-budget-two.pcapng"
+    no_packet_interfaces.write_bytes(section + interface + interface)
+    interface_limited = run_capture(
+        no_packet_interfaces,
+        capture_id="cap-idb-budget-two",
+        config=IntakeConfig(max_evidence_records=2),
+    ).to_dict(source_commit="a" * 40)
+    assert len(interface_limited["input"]["container"]["interfaces"]) == 1
+    assert interface_limited["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert [item["code"] for item in interface_limited["diagnostics"]] == ["RESOURCE-INTERFACE-EVIDENCE-LIMIT"]
+    assert evidence_errors(interface_limited) == []
+
+
+def test_live_budget_charges_transfer_sessions_and_event_generation_before_slicing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def exchange(client_port: int, server_port: int, identification: int) -> list[bytes]:
+        return [
+            _ethernet_ipv4(_udp(client_port, 69, _request(1, f"{client_port}.lui")), identification=identification),
+            _ethernet_ipv4(
+                _udp(server_port, client_port, _data(1, _lui_header())),
+                source="10.0.0.2", destination="10.0.0.1", identification=identification + 1,
+            ),
+            _ethernet_ipv4(_udp(client_port, server_port, _ack(1)), identification=identification + 2),
+        ]
+
+    two = tmp_path / "two-transfers.pcap"
+    two.write_bytes(_pcap(exchange(10100, 40100, 500) + exchange(10200, 40200, 510)))
+    limited = run_capture(two, capture_id="cap-two-live", config=IntakeConfig(max_evidence_records=10))
+    limited_rendered = limited.to_dict(source_commit="a" * 40)
+    total = len(limited_rendered["input"]["container"]["interfaces"]) + sum(
+        len(limited_rendered[name]) for name in ("packetRefs", "datagrams", "transfers", "events", "diagnostics")
+    )
+    assert total <= 10
+    assert limited_rendered["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert any(item["code"].startswith("RESOURCE-") for item in limited_rendered["diagnostics"])
+    assert evidence_errors(limited_rendered) == []
+
+    # The production pipeline requests only a bounded prefix plus one
+    # look-ahead boundary event; it must not materialise the whole event list.
+    complete = tmp_path / "event-stream.pcap"
+    complete.write_bytes(_pcap(_valid_exchange()))
+    original_iter = pipeline_module.iter_first_slice_events
+    pulls = 0
+
+    def counted_iter(records: list[object]):
+        nonlocal pulls
+        for event in original_iter(records):
+            pulls += 1
+            yield event
+
+    monkeypatch.setattr(pipeline_module, "iter_first_slice_events", counted_iter)
+    bounded = run_capture(
+        complete, capture_id="cap-event-stream",
+        config=IntakeConfig(max_evidence_records=50, max_events=1),
+    )
+    assert len(bounded.events) == 1
+    assert pulls == 2
+    assert any(item.code == "RESOURCE-EVENT-LIMIT" for item in bounded.diagnostics)
+
+
+def test_published_transfer_count_cannot_exceed_its_declared_run_limit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The envelope's retained transfer count is a live-budget defense too."""
+    def exchange(client_port: int, server_port: int, identification: int) -> list[bytes]:
+        return [
+            _ethernet_ipv4(_udp(client_port, 69, _request(1, f"{client_port}.lui")), identification=identification),
+            _ethernet_ipv4(
+                _udp(server_port, client_port, _data(1, _lui_header())),
+                source="10.0.0.2", destination="10.0.0.1", identification=identification + 1,
+            ),
+            _ethernet_ipv4(_udp(client_port, server_port, _ack(1)), identification=identification + 2),
+        ]
+
+    capture = tmp_path / "two-transfer-limit.pcap"
+    capture.write_bytes(_pcap(exchange(11200, 41200, 600) + exchange(11300, 41300, 610)))
+    config = IntakeConfig(max_transfer_records=2)
+    baseline = run_capture(capture, capture_id="cap-transfer-limit", config=config).to_dict(source_commit="a" * 40)
+    assert len(baseline["transfers"]) == 2
+    assert evidence_errors(baseline) == []
+    tampered = deepcopy(baseline)
+    tampered["runParameters"]["maxTransferRecords"] = 1
+    assert any("published transfers exceed" in item for item in evidence_errors(tampered))
+
+    output = tmp_path / "two-transfer-limit.json"
+    output.write_text("prior transfer-limit publication", encoding="utf-8")
+    original = pipeline_module.IntakeResult.to_dict
+
+    def lowered_limit(self: IntakeResult, *, source_commit: str) -> dict[str, object]:
+        rendered = original(self, source_commit=source_commit)
+        rendered["runParameters"]["maxTransferRecords"] = 1
+        return rendered
+
+    monkeypatch.setattr(pipeline_module.IntakeResult, "to_dict", lowered_limit)
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", "cap-transfer-limit", "--output", str(output),
+        "--source-commit", "a" * 40, "--max-transfer-records", "2",
+    ]) == 1
+    assert output.read_text(encoding="utf-8") == "prior transfer-limit publication"
+
+
+def test_local_transfer_limit_preserves_the_real_shared_budget_boundary(tmp_path: Path) -> None:
+    """A local TFTP cap cannot impersonate a later scan/output boundary."""
+    def request(client_port: int, identification: int) -> bytes:
+        return _ethernet_ipv4(
+            _udp(client_port, 69, _request(1, f"{client_port}.lui")),
+            identification=identification,
+        )
+
+    two = tmp_path / "two-request-transfer-limit.pcap"
+    two.write_bytes(_pcap([request(12000, 701), request(12001, 702)]))
+    config = IntakeConfig(max_evidence_records=7, max_transfer_records=1)
+    complete = run_capture(two, capture_id="cap-local-transfer-limit", config=config).to_dict(
+        source_commit="a" * 40,
+    )
+    # One interface, two packet refs, two datagrams, and one admitted transfer
+    # leave only the final shared slot.  The second-request diagnostic is local
+    # and must not consume it; the first omitted derived event must instead
+    # publish a truthful post-scan boundary.
+    assert complete["input"]["container"]["scanStatus"] == "COMPLETE"
+    assert complete["counts"]["containerPackets"] == 2
+    assert [item["code"] for item in complete["diagnostics"]] == ["RESOURCE-EVENT-LIMIT"]
+    assert complete["diagnostics"][0]["detail"]["retentionBoundary"] == "DERIVED-EVENTS-TRUNCATED"
+    assert complete["diagnostics"][0]["detail"]["earlierDiagnosticRetention"] == "NOT-RETAINED"
+    assert evidence_errors(complete) == []
+
+    output = tmp_path / "two-request-transfer-limit.json"
+    assert cli_main([
+        "inspect", "--input", str(two), "--capture-id", "cap-local-transfer-limit-cli",
+        "--output", str(output), "--source-commit", "a" * 40,
+        "--max-evidence-records", "7", "--max-transfer-records", "1",
+    ]) == 2
+    cli_rendered = json.loads(output.read_text(encoding="utf-8"))
+    assert cli_rendered["input"]["container"]["scanStatus"] == "COMPLETE"
+    assert [item["code"] for item in cli_rendered["diagnostics"]] == ["RESOURCE-EVENT-LIMIT"]
+    assert evidence_errors(cli_rendered) == []
+
+    three = tmp_path / "three-request-transfer-limit.pcap"
+    three.write_bytes(_pcap([request(12000, 701), request(12001, 702), request(12002, 703)]))
+    stopped = run_capture(
+        three, capture_id="cap-real-transfer-boundary", config=config,
+    ).to_dict(source_commit="a" * 40)
+    # The third packet actually exhausts the shared intake capacity.  Its
+    # witness, not the earlier local transfer-record condition, must explain
+    # why input stopped.
+    assert stopped["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert stopped["counts"]["containerPackets"] == 3
+    witness = next(item for item in stopped["diagnostics"] if item["code"] == "RESOURCE-PACKET-REF-LIMIT")
+    assert witness["detail"]["lastConsumedPacketIndex"] == 3
+    assert witness["detail"]["unconsumedSuffix"] == "NOT-CONSUMED"
+    assert evidence_errors(stopped) == []
 
 
 def test_missing_controlled_resource_is_named_and_prevents_publication(
@@ -1504,6 +2646,50 @@ def test_noneditable_wheel_contains_authoritative_resources_and_real_cli_runs(tm
     ], cwd=unrelated, text=True, capture_output=True)
     assert completed.returncode == 2, completed.stderr
     assert json.loads(controlled_output.read_text(encoding="utf-8"))["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
+
+    # A lawful incomplete RRQ is not a tool/schema failure in the packaged
+    # entry point: its request event is publishable while its transfer remains
+    # explicitly non-projectable until a responder TID is observed.
+    for opcode in (1, 2):
+        request_only = tmp_path / f"wheel-request-only-{opcode}.pcap"
+        request_only.write_bytes(_pcap([
+            _ethernet_ipv4(_udp(10000, 69, _request(opcode, "only.lui")), identification=400 + opcode),
+        ]))
+        request_output = tmp_path / f"wheel-request-only-{opcode}.json"
+        completed = subprocess.run([
+            str(entrypoint), "inspect", "--input", str(request_only), "--capture-id", f"cap-wheel-request-{opcode}",
+            "--output", str(request_output), "--source-commit", "a" * 40,
+        ], cwd=unrelated, text=True, capture_output=True)
+        assert completed.returncode == 2, completed.stderr
+        request_rendered = json.loads(request_output.read_text(encoding="utf-8"))
+        assert evidence_errors(request_rendered) == []
+        assert any(item["sourceId"].startswith("event-request-") for item in request_rendered["contractProjection"]["records"])
+
+    # A packaged entry point also preserves a parse-quality contradiction as
+    # controlled evidence rather than promoting a clean application record.
+    wheel_quality = tmp_path / "wheel-length-mismatch.pcap"
+    wheel_quality.write_bytes(_pcap([
+        _ethernet_ipv4(_udp(10000, 69, _request(1, "mismatch.lui")), identification=410),
+        _ethernet_ipv4(
+            _udp(40000, 10000, _data(1, _role_header("LUI", 1000))),
+            source="10.0.0.2", destination="10.0.0.1", identification=411,
+        ),
+        _ethernet_ipv4(_udp(10000, 40000, _ack(1)), identification=412),
+    ]))
+    quality_output = tmp_path / "wheel-length-mismatch.json"
+    completed = subprocess.run([
+        str(entrypoint), "inspect", "--input", str(wheel_quality), "--capture-id", "cap-wheel-length",
+        "--output", str(quality_output), "--source-commit", "a" * 40,
+    ], cwd=unrelated, text=True, capture_output=True)
+    assert completed.returncode == 2, completed.stderr
+    quality_rendered = json.loads(quality_output.read_text(encoding="utf-8"))
+    assert any(
+        event["layer"] == "PARSE-RESULT"
+        and event["fields"].get("reason") == "DECLARED-FILE-LENGTH-MISMATCH"
+        for event in quality_rendered["events"]
+    )
+    assert not any(event["layer"] == "APPLICATION" for event in quality_rendered["events"])
+    assert evidence_errors(quality_rendered) == []
 
     fatal = tmp_path / "wheel-fatal.pcap"
     fatal.write_bytes(b"not a capture")

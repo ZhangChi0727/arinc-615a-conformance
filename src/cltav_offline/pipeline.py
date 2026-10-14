@@ -12,7 +12,7 @@ from . import __version__
 from .capture import CaptureFormatError, CaptureReader
 from .contracts import ContractProjectionError, project_development_records
 from .controlled_resources import ControlledResourceError
-from .events import first_slice_events
+from .events import iter_first_slice_events
 from .identity import tool_identity
 from .models import DatagramRecord, Diagnostic, PacketRef, ProtocolEvent, TransferRecord
 from .network import Ipv4Reassembler, PacketDecodeError, UDP_PROTOCOL, decode_udp, extract_ipv4
@@ -211,7 +211,7 @@ def run_capture(
         # Reserve one shared-evidence slot for an explicit stop witness.  Input
         # interface metadata is published evidence too; it cannot bypass the
         # same retention budget used by packets, reconstructions, and events.
-        max_interfaces=min(config.max_interfaces, config.max_evidence_records - 1),
+        max_interfaces=config.max_interfaces,
         max_diagnostics=min(config.max_diagnostics, config.max_evidence_records),
     )
     reassembler = Ipv4Reassembler(
@@ -238,7 +238,16 @@ def run_capture(
     )
     stopped_for_limit = False
     packet_ref_ids: set[str] = set()
+    live_transfer_ids: set[str] = set()
     diagnostic_limit_reported = False
+    # A producer-local resource condition (for example, refusing one extra
+    # transfer record) is not necessarily an input-stop boundary.  If it
+    # cannot be retained without consuming the reserved final slot, remember
+    # that fact and let the later, actual scan/derived-output boundary occupy
+    # that slot.  The producer is allowed to continue because its controlled
+    # record state remains serialised; only the duplicate detail diagnostic is
+    # omitted.
+    diagnostic_retention_pending = False
     last_consumed_packet: PacketRef | None = None
 
     def retained_count() -> int:
@@ -246,15 +255,59 @@ def run_capture(
             len(reader.metadata.interfaces)
             + len(result.packet_refs)
             + len(result.datagrams)
-            + len(result.transfers)
+            # Fragmented IPv4 datagrams have not reached the public result yet,
+            # but their accumulators own packet provenance and payload bytes.
+            + reassembler.active_count
+            # Transfer records become public only after the capture scan, but
+            # their internal sessions are still retained evidence state.  Count
+            # them from admission onwards, not only after final serialisation.
+            + max(len(result.transfers), len(live_transfer_ids))
             + len(result.events)
             + len(result.diagnostics)
         )
 
-    def emit_diagnostic(diagnostic: Diagnostic) -> bool:
+    def admit_transfer(record: TransferRecord) -> bool:
+        """Reserve one shared evidence slot before TFTP stores a session."""
+        if retained_count() >= config.max_evidence_records - 1:
+            return False
+        live_transfer_ids.add(record.transfer_id)
+        return True
+
+    def admit_interface(_interface: object) -> bool:
+        """Reserve metadata evidence before a pcapng IDB is retained."""
+        return retained_count() < config.max_evidence_records - 1
+
+    def admit_reassembly(_fragment: object) -> bool:
+        """Reserve a live slot before retaining a fragmented IPv4 accumulator."""
+        # A reassembly accumulator may use the final slot only until it is
+        # transferred into a terminal datagram at EOF.  If another input packet
+        # arrives, retain_packet_ref releases it for the required stop witness.
+        return retained_count() < config.max_evidence_records
+
+    transfers.set_record_admission(admit_transfer)
+    reader.set_interface_admission(admit_interface)
+    reassembler.set_active_admission(admit_reassembly)
+
+    def is_final_resource_boundary(diagnostic: Diagnostic) -> bool:
+        """Return whether a diagnostic truthfully consumes the reserved slot.
+
+        Resource *names* alone are not enough: several resource codes describe
+        a local, controlled reconstruction outcome while capture scanning can
+        continue.  Final-slot admission is restricted to explicit unread-input
+        or post-scan-retention boundaries (plus the generic diagnostic-limit
+        witness created below).
+        """
+        detail = diagnostic.detail
+        return diagnostic.code == "RESOURCE-DIAGNOSTIC-LIMIT" or (
+            isinstance(detail, dict)
+            and ("unconsumedSuffix" in detail or "retentionBoundary" in detail)
+        )
+
+    def emit_diagnostic(diagnostic: Diagnostic, *, input_stop: bool = True) -> bool:
         """Retain a bounded diagnostic stream with one reserved stop witness."""
-        nonlocal stopped_for_limit, diagnostic_limit_reported
-        if diagnostic.code.startswith("RESOURCE-") and last_consumed_packet is not None:
+        nonlocal stopped_for_limit, diagnostic_limit_reported, diagnostic_retention_pending
+        boundary_witness = is_final_resource_boundary(diagnostic)
+        if boundary_witness and last_consumed_packet is not None:
             detail = dict(diagnostic.detail)
             detail.setdefault("lastConsumedPacketRefId", last_consumed_packet.id)
             detail.setdefault("lastConsumedPacketIndex", last_consumed_packet.packet_index)
@@ -265,12 +318,33 @@ def run_capture(
                 container_offset=diagnostic.container_offset, detail=detail,
             )
         diagnostic_limit = min(config.max_diagnostics, config.max_evidence_records)
-        if len(result.diagnostics) < diagnostic_limit - 1 and retained_count() < config.max_evidence_records - 1:
+        # A resource-boundary diagnostic is itself the final retained item.
+        # It is allowed to consume the reserved slot whether it marks an
+        # unread input suffix or a post-scan derived-retention boundary.
+        if (
+            len(result.diagnostics) < (diagnostic_limit if boundary_witness else diagnostic_limit - 1)
+            and retained_count() < (
+                config.max_evidence_records if boundary_witness else config.max_evidence_records - 1
+            )
+        ):
             result.diagnostics.append(diagnostic)
+            return True
+        if not boundary_witness:
+            # Preserve the final slot for a later real boundary.  Returning
+            # success keeps a local TFTP/capture limit from falsely stopping
+            # the scan merely because its explanatory diagnostic could not be
+            # retained.  The terminal record itself carries the controlled
+            # outcome; at EOF we publish a generic boundary if no more
+            # specific boundary supersedes it.
+            diagnostic_retention_pending = True
             return True
         if not diagnostic_limit_reported and retained_count() < config.max_evidence_records:
             diagnostic_limit_reported = True
-            detail: dict[str, Any] = {"limit": diagnostic_limit, "unconsumedSuffix": "NOT-CONSUMED"}
+            detail: dict[str, Any] = {"limit": diagnostic_limit}
+            if input_stop:
+                detail["unconsumedSuffix"] = "NOT-CONSUMED"
+            else:
+                detail["retentionBoundary"] = "POST-SCAN-DIAGNOSTICS-TRUNCATED"
             if last_consumed_packet is not None:
                 detail.update({
                     "lastConsumedPacketRefId": last_consumed_packet.id,
@@ -280,11 +354,22 @@ def run_capture(
             result.diagnostics.append(Diagnostic(
                 "RESOURCE-DIAGNOSTIC-LIMIT",
                 "PIPELINE",
-                "diagnostic retention limit reached; input suffix was not consumed",
+                (
+                    "diagnostic retention limit reached; input suffix was not consumed"
+                    if input_stop else
+                    "diagnostic retention limit reached after input consumption"
+                ),
                 detail=detail,
             ))
-        stopped_for_limit = True
+        if input_stop:
+            stopped_for_limit = True
         return False
+
+    # Capture and TFTP diagnostics are evidence too.  Admit them while their
+    # producers are reading input rather than letting either private queue grow
+    # beyond the result's single retention boundary and truncating afterwards.
+    reader.set_diagnostic_admission(lambda diagnostic: emit_diagnostic(diagnostic))
+    transfers.set_diagnostic_admission(lambda diagnostic: emit_diagnostic(diagnostic))
 
     def retain_packet_ref(reference: PacketRef) -> bool:
         nonlocal stopped_for_limit
@@ -292,11 +377,20 @@ def run_capture(
             return True
         packet_limit = min(config.max_packet_refs, config.max_evidence_records)
         if len(result.packet_refs) >= packet_limit or retained_count() >= config.max_evidence_records - 1:
+            # An active reassembly may be borrowing the final record slot.  A
+            # subsequent packet proves the scan cannot continue, so release the
+            # private accumulator before emitting the one required witness.
+            released = None
+            if retained_count() >= config.max_evidence_records - 1:
+                released = reassembler.discard_oldest_for_resource_stop()
+            detail: dict[str, Any] = {"limit": packet_limit, "unconsumedSuffix": "NOT-CONSUMED"}
+            if released is not None:
+                detail["discardedActivePacketRefId"] = released.id
             emit_diagnostic(Diagnostic(
                 "RESOURCE-PACKET-REF-LIMIT",
                 "PIPELINE",
                 "packet-reference retention limit reached; input suffix was not consumed",
-                detail={"limit": packet_limit, "unconsumedSuffix": "NOT-CONSUMED"},
+                detail=detail,
             ))
             stopped_for_limit = True
             return False
@@ -304,23 +398,47 @@ def run_capture(
         packet_ref_ids.add(reference.id)
         return True
 
-    def accept_datagram(record: DatagramRecord) -> None:
+    def accept_datagram(record: DatagramRecord, *, input_stop: bool = True) -> None:
         nonlocal stopped_for_limit
-        if len(result.datagrams) >= config.max_evidence_records or retained_count() >= config.max_evidence_records - 1:
+        # A terminal incomplete reassembly cannot generate a derived protocol
+        # event.  At EOF it may therefore occupy the final slot without
+        # inventing an unread-input stop witness.
+        retention_limit = (
+            config.max_evidence_records
+            if not input_stop and record.status != "COMPLETE"
+            else config.max_evidence_records - 1
+        )
+        if len(result.datagrams) >= config.max_evidence_records or retained_count() >= retention_limit:
+            detail: dict[str, Any] = {"limit": config.max_evidence_records}
+            if input_stop:
+                detail["unconsumedSuffix"] = "NOT-CONSUMED"
+            else:
+                detail["retentionBoundary"] = "POST-SCAN-DATAGRAMS-TRUNCATED"
             emit_diagnostic(Diagnostic(
                 "RESOURCE-DATAGRAM-RECORD-LIMIT", "PIPELINE",
-                "configured evidence-record limit reached; remaining packets were not consumed",
-                detail={"limit": config.max_evidence_records, "unconsumedSuffix": "NOT-CONSUMED"},
-            ))
-            stopped_for_limit = True
+                (
+                    "configured evidence-record limit reached; remaining packets were not consumed"
+                    if input_stop else
+                    "configured evidence-record limit reached after input consumption"
+                ),
+                detail=detail,
+            ), input_stop=input_stop)
+            if input_stop:
+                stopped_for_limit = True
             return
         if any(item.id not in packet_ref_ids for item in record.packet_refs):
+            detail = {"limit": config.max_packet_refs}
+            if input_stop:
+                detail["unconsumedSuffix"] = "NOT-CONSUMED"
+            else:
+                detail["retentionBoundary"] = "POST-SCAN-SOURCES-UNAVAILABLE"
             emit_diagnostic(Diagnostic(
                 "RESOURCE-PACKET-REF-LIMIT", "PIPELINE",
                 "datagram source references could not be retained",
-                detail={"limit": config.max_packet_refs, "unconsumedSuffix": "NOT-CONSUMED"},
-            ))
-            stopped_for_limit = True
+                detail=detail,
+            ), input_stop=input_stop)
+            if input_stop:
+                stopped_for_limit = True
             record.payload = None
             return
         result.datagrams.append(record)
@@ -338,6 +456,23 @@ def run_capture(
         else:
             if transfers.could_be_tftp(udp):
                 transfers.process(udp)
+                if transfers.retention_limit_reached:
+                    reference = transfers.resource_stop_packet_ref or record.packet_refs[-1]
+                    if transfers.resource_limit_kind == "TRANSFER":
+                        emit_diagnostic(Diagnostic(
+                            "RESOURCE-TRANSFER-EVIDENCE-LIMIT",
+                            "TFTP",
+                            "shared evidence retention limit reached; later input was not consumed",
+                            packet_ref_id=reference.id,
+                            container_offset=reference.container_offset,
+                            detail={
+                                "limit": config.max_evidence_records,
+                                "unconsumedSuffix": "NOT-CONSUMED",
+                            },
+                        ))
+                    # A diagnostic-admission rejection has already retained its
+                    # own RESOURCE-DIAGNOSTIC-LIMIT witness through the callback.
+                    stopped_for_limit = True
         finally:
             record.payload = None
 
@@ -355,6 +490,8 @@ def run_capture(
                     exc.code, "NETWORK", str(exc), severity="WARNING",
                     packet_ref_id=captured.ref.id, container_offset=captured.ref.container_offset,
                 ))
+                if stopped_for_limit:
+                    break
                 continue
             if fragment is None:
                 emit_diagnostic(Diagnostic(
@@ -365,14 +502,45 @@ def run_capture(
                     packet_ref_id=captured.ref.id,
                     container_offset=captured.ref.container_offset,
                 ))
+                if stopped_for_limit:
+                    break
                 continue
             for record in reassembler.add(fragment):
                 accept_datagram(record)
                 if stopped_for_limit:
                     break
+            if reassembler.retention_limit_reached:
+                reference = reassembler.resource_stop_packet_ref or captured.ref
+                emit_diagnostic(Diagnostic(
+                    "RESOURCE-REASSEMBLY-EVIDENCE-LIMIT",
+                    "NETWORK",
+                    "shared evidence retention limit reached before retaining fragmented IPv4 state",
+                    packet_ref_id=reference.id,
+                    container_offset=reference.container_offset,
+                    detail={"limit": config.max_evidence_records, "unconsumedSuffix": "NOT-CONSUMED"},
+                ))
+                stopped_for_limit = True
+            if stopped_for_limit:
+                break
+        if reader.resource_limit_reached and reader.resource_limit_kind == "INTERFACE":
+            emit_diagnostic(Diagnostic(
+                "RESOURCE-INTERFACE-EVIDENCE-LIMIT",
+                "CAPTURE",
+                "shared evidence retention limit reached while retaining a pcapng interface",
+                container_offset=reader.resource_stop_offset,
+                detail={
+                    "limit": config.max_evidence_records,
+                    "unconsumedSuffix": "NOT-CONSUMED",
+                },
+            ))
+            stopped_for_limit = True
+        elif reader.resource_limit_reached:
+            # The shared diagnostic callback has already retained a precise
+            # RESOURCE-DIAGNOSTIC-LIMIT witness before CaptureReader stopped.
+            stopped_for_limit = True
         if not stopped_for_limit:
             for record in reassembler.finish():
-                accept_datagram(record)
+                accept_datagram(record, input_stop=False)
     except CaptureFormatError as exc:
         raise IntakeError(
             exc.code, str(exc), input_fault=True, stage="CAPTURE", container_offset=exc.offset,
@@ -388,7 +556,7 @@ def run_capture(
                     diagnostic.code, diagnostic.stage, diagnostic.message,
                     severity=diagnostic.severity, container_offset=diagnostic.container_offset, detail=detail,
                 )
-            emit_diagnostic(diagnostic)
+            emit_diagnostic(diagnostic, input_stop=False)
     if stopped_for_limit:
         # Active records are flushed even after a resource stop, preserving why
         # their reconstruction cannot be treated as complete.
@@ -400,39 +568,58 @@ def run_capture(
             ):
                 result.datagrams.append(record)
     for diagnostic in transfers.diagnostics:
-        emit_diagnostic(diagnostic)
-    finished_transfers = transfers.finish()
-    transfer_room = max(0, config.max_evidence_records - 1 - retained_count())
-    if len(finished_transfers) > transfer_room:
-        result.transfers = finished_transfers[:transfer_room]
-        emit_diagnostic(Diagnostic(
-            "RESOURCE-TRANSFER-EVIDENCE-LIMIT",
-            "TFTP",
-            "transfer records exceeded the shared evidence retention limit",
-            detail={
-                "limit": config.max_evidence_records,
-                "retentionBoundary": "DERIVED-TRANSFER-RECORDS-TRUNCATED",
-                "scanStatus": "STOPPED-RESOURCE-LIMIT" if stopped_for_limit else "COMPLETE",
-            },
-        ))
-    else:
-        result.transfers = finished_transfers
-    generated_events = first_slice_events(result.transfers)
-    event_room = min(config.max_events, max(0, config.max_evidence_records - 1 - retained_count()))
-    if len(generated_events) > event_room:
-        result.events = generated_events[:event_room]
+        emit_diagnostic(diagnostic, input_stop=False)
+    # Every transfer was admitted before TFTP stored its internal session, so
+    # publishing the finished list cannot silently exceed the shared bound.
+    result.transfers = transfers.finish()
+    events_truncated = False
+    for event in iter_first_slice_events(result.transfers):
+        if len(result.events) >= config.max_events or retained_count() >= config.max_evidence_records - 1:
+            events_truncated = True
+            break
+        result.events.append(event)
+    if events_truncated:
+        # This is post-EOF derivation retention, not an unread input suffix.
+        # Keep the scan result truthful while preserving an explicit boundary.
+        event_limit_detail: dict[str, Any] = {
+            "limit": min(config.max_events, config.max_evidence_records),
+            "retentionBoundary": "DERIVED-EVENTS-TRUNCATED",
+            "scanStatus": "COMPLETE" if not stopped_for_limit else "STOPPED-RESOURCE-LIMIT",
+        }
+        if diagnostic_retention_pending:
+            event_limit_detail["earlierDiagnosticRetention"] = "NOT-RETAINED"
         emit_diagnostic(Diagnostic(
             "RESOURCE-EVENT-LIMIT",
             "EVENT",
             "event retention limit reached; later derived events were not retained",
+            detail=event_limit_detail,
+        ), input_stop=False)
+    elif diagnostic_retention_pending and not stopped_for_limit:
+        # An ordinary producer diagnostic was deliberately kept out of the
+        # final slot, and no later event boundary consumed it.  State that
+        # post-scan fact explicitly instead of silently dropping it.
+        emit_diagnostic(Diagnostic(
+            "RESOURCE-DIAGNOSTIC-LIMIT",
+            "PIPELINE",
+            "diagnostic retention limit reached after input consumption",
             detail={
-                "limit": event_room,
-                "retentionBoundary": "DERIVED-EVENTS-TRUNCATED",
-                "scanStatus": "STOPPED-RESOURCE-LIMIT" if stopped_for_limit else "COMPLETE",
+                "limit": min(config.max_diagnostics, config.max_evidence_records),
+                "retentionBoundary": "POST-SCAN-DIAGNOSTICS-TRUNCATED",
             },
-        ))
-    else:
-        result.events = generated_events
+        ), input_stop=False)
+
+    # A quality diagnostic is emitted before its packet can be admitted.  If a
+    # resource boundary stops the reader at exactly that point, detach the
+    # unavailable packet reference rather than serialising dangling provenance.
+    for index, diagnostic in enumerate(result.diagnostics):
+        if diagnostic.packet_ref_id is not None and diagnostic.packet_ref_id not in packet_ref_ids:
+            detail = dict(diagnostic.detail)
+            detail["packetRefUnavailable"] = diagnostic.packet_ref_id
+            result.diagnostics[index] = Diagnostic(
+                diagnostic.code, diagnostic.stage, diagnostic.message,
+                severity=diagnostic.severity, container_offset=diagnostic.container_offset,
+                detail=detail,
+            )
     if stopped_for_limit:
         result.capture_metadata["scanStatus"] = "STOPPED-RESOURCE-LIMIT"
         result.capture_metadata["unconsumedSuffix"] = "NOT-CONSUMED"

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 from typing import Any
 
 from .models import ProtocolEvent, TransferRecord
@@ -27,12 +28,21 @@ def infer_file_role(filename: str | None) -> str | None:
 
 def first_slice_events(records: list[TransferRecord]) -> list[ProtocolEvent]:
     """Create WIRE/PARSE-RESULT/APPLICATION evidence without a verdict layer."""
-    events: list[ProtocolEvent] = []
+    return list(iter_first_slice_events(records))
+
+
+def iter_first_slice_events(records: list[TransferRecord]) -> Iterator[ProtocolEvent]:
+    """Yield first-slice evidence one item at a time under a caller's budget.
+
+    ``first_slice_events`` remains the convenient compatibility wrapper, while
+    the pipeline consumes this iterator directly so an event cap does not first
+    allocate a full, unpublished derived-event list.
+    """
     sequence = 0
     for transfer in records:
         sequence += 1
         wire_id = f"EV-{sequence:08d}"
-        events.append(ProtocolEvent(
+        yield ProtocolEvent(
             event_id=wire_id,
             event_type="TFTP-TRANSFER-OBSERVED",
             layer="WIRE",
@@ -48,7 +58,7 @@ def first_slice_events(records: list[TransferRecord]) -> list[ProtocolEvent]:
                 "blockSize": transfer.effective_block_size,
             },
             evidence_status="OBSERVED",
-        ))
+        )
         role = infer_file_role(transfer.filename)
         if role is None:
             continue
@@ -65,7 +75,7 @@ def first_slice_events(records: list[TransferRecord]) -> list[ProtocolEvent]:
             }
         )
         parse_id = f"EV-{sequence:08d}"
-        events.append(ProtocolEvent(
+        yield ProtocolEvent(
             event_id=parse_id,
             event_type="FIRST-SLICE-FILE-HEADER",
             layer="PARSE-RESULT",
@@ -76,11 +86,11 @@ def first_slice_events(records: list[TransferRecord]) -> list[ProtocolEvent]:
             source_packet_ref_ids=tuple(item.id for item in transfer.packet_refs),
             fields=header,
             evidence_status=("PARSED" if header["parseStatus"] == "PARSED" else header["parseStatus"]),
-        ))
+        )
         if header["parseStatus"] != "PARSED":
             continue
         sequence += 1
-        events.append(ProtocolEvent(
+        yield ProtocolEvent(
             event_id=f"EV-{sequence:08d}",
             event_type="FIRST-SLICE-FILE-EVIDENCE",
             layer="APPLICATION",
@@ -96,8 +106,7 @@ def first_slice_events(records: list[TransferRecord]) -> list[ProtocolEvent]:
                 "acceptance": "NOT-EVALUATED",
             },
             evidence_status="PARSED-NOT-VERIFIED",
-        ))
-    return events
+        )
 
 
 def decode_first_slice_header(role: str, payload: bytes | None) -> dict[str, Any]:
@@ -116,6 +125,14 @@ def decode_first_slice_header(role: str, payload: bytes | None) -> dict[str, Any
     if payload is None:
         result["reason"] = "TRANSFER-NOT-COMPLETE"
         return result
+    # Retain the available complete-payload fact before deciding whether the
+    # bounded header codec can interpret the first bytes.  This lets the
+    # publication gate distinguish a genuinely unsupported/short header from
+    # an envelope edit that erases a known length contradiction.
+    fields: dict[str, Any] = {"observedFileLength": len(payload)}
+    if len(payload) >= 4:
+        fields["declaredFileLength"] = int.from_bytes(payload[0:4], "big")
+    result["decodedFields"] = fields
     if len(payload) < 6:
         result.update({"parseStatus": "MALFORMED", "reason": "HEADER-SHORTER-THAN-FILE-LENGTH-AND-VERSION"})
         return result
@@ -123,13 +140,10 @@ def decode_first_slice_header(role: str, payload: bytes | None) -> dict[str, Any
     if version is None:
         result.update({"parseStatus": "MALFORMED", "reason": "PROTOCOL-VERSION-NOT-ASCII"})
         return result
+    fields["protocolVersion"] = version
     if version != "A1":
         result.update({"parseStatus": "OPAQUE", "reason": "PROTOCOL-VERSION-NOT-IN-BOUNDED-CODEC"})
         return result
-    fields: dict[str, Any] = {
-        "declaredFileLength": int.from_bytes(payload[0:4], "big"),
-        "protocolVersion": version,
-    }
     cursor = 6
     if role in {"LCI", "LUI"}:
         status = _u16(payload, cursor)
@@ -212,6 +226,16 @@ def decode_first_slice_header(role: str, payload: bytes | None) -> dict[str, Any
         cursor += 9
     else:  # pragma: no cover - guarded by infer_file_role
         return _malformed(result, "UNSUPPORTED-FILE-ROLE")
+    # The bounded codec does not interpret the entire role-specific body, but
+    # once its supported A1 prefix is structurally valid it can still check
+    # the header's file-length claim against the complete reconstructed byte
+    # sequence.  Do not promote contradictory bytes into an APPLICATION
+    # event: retain both values as a controlled malformed parse result.
+    if fields["declaredFileLength"] != len(payload):
+        result["decodedFields"] = fields
+        result["parseStatus"] = "MALFORMED"
+        result["reason"] = "DECLARED-FILE-LENGTH-MISMATCH"
+        return result
     result["parseStatus"] = "PARSED"
     result["decodedFields"] = fields
     result["unparsedRemainderBytes"] = max(0, len(payload) - cursor)

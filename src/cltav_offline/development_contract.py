@@ -60,4 +60,3 @@ def record_instance_errors(record_type: str, payload: object) -> list[tuple[str,
     if record is None:
         return [("RC-RECORD-TYPE", (), f"unknown controlled record type {record_type!r}")]
     return validate_record_instance(record, payload)
-

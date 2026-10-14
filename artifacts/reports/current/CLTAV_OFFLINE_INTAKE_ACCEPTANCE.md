@@ -138,6 +138,23 @@ independent finding closure or approval.
 | R2-F06 | pcap/pcapng capture length inconsistencies are explicit non-projectable conditions. SPB payload length follows its declared original/snapshot semantics, excluding alignment padding; illegal short or extra SPB bodies are rejected. |
 | R2-F07 | The installed noneditable wheel carries the exact controlled contract/schema resources. A real installed `cltav-offline` entry point is exercised from an unrelated working directory; missing or changed controlled resources prevent replacement and use a named tool failure. |
 
+### R3 candidate-side corrective trace
+
+This trace records candidate-side work against the later R3 review work order.
+It identifies exercised boundaries only; an independent reviewer must still bind
+the final immutable Head, inspect the full integration range, and decide
+whether the findings are closed.
+
+| Finding | Candidate-side corrective boundary exercised by public tests |
+|---|---|
+| R3-F01 | Transfer serialization retains a compact request/block/completion source witness, and each decoded datagram retains only its TFTP role/block summary (never payload bytes). Publication requires exact request, DATA-block, completion, transfer-to-datagram and event ancestry instead of a related-packet subset; source CLI and corpus staging reject coordinated provenance mutations, including a same-direction DATA-block swap, without replacing prior output. |
+| R3-F02 | A known RRQ or WRQ can publish its independently derived request event while the unbound transfer remains explicitly non-projectable. Source CLI, corpus and installed CLI retain this controlled incomplete input without inventing a responder TID. |
+| R3-F03 | One live evidence budget admits interfaces, capture/TFTP diagnostics, active IPv4 accumulators, transfer sessions, public records and lazily generated events. Only an explicit unread-input or post-scan boundary can consume the final reserved slot; a local transfer-cap diagnostic cannot impersonate a later actual stop. Tests distinguish an actual early input stop from EOF-only derived retention, including no-packet IDBs and a last-packet fragmented datagram. |
+| R3-F04 | Every supported first-slice role has a normal production control and too-small/too-large declared-length witnesses. Source CLI, corpus publication and installed CLI retain declared and observed lengths, classify the contradiction, and withhold clean APPLICATION promotion. |
+| R3-F05 | pcap and pcapng packet references retain snap-length/quality fields; supported versions and bounded SHB options are checked, including little/big-endian snaplen cases, pcapng 1.2 compatibility, malformed options and legal unknown options. CLI/corpus quality publication is exercised. |
+| R3-A01 | The candidate removes the reported EOF-only blank lines and retains full-range `git diff --check` as a final gate. |
+| R3-A02 | Both `tool.contractIdentities` and the projection identity must name the same accepted controlled contract snapshot; a stale tool identity is rejected before publication. |
+
 ## 6. Follow-on boundary
 
 This evidence may later be consumed through a reviewed evidence manifest.  A
@@ -256,6 +273,22 @@ python -m cltav_offline corpus --manifest configs/research/cltav_historical_capt
 | R2-F05 | 已解析、部分解析、畸形和不透明的首切片结果保持区分。非 `PARSED` 结果属于受控问题并返回退出状态 `2`，不构成成功的解析器主张。 |
 | R2-F06 | pcap/pcapng 捕获长度不一致是显式不可投影条件。SPB 载荷长度遵从声明的 original/snapshot 语义并排除对齐填充；非法过短或附加 SPB body 会被拒绝。 |
 | R2-F07 | 已安装的非 editable wheel 携带精确的受控合同／schema 资源。真实已安装的 `cltav-offline` 入口从无关工作目录运行；缺失或改变的受控资源会阻止替换并返回具名工具失败。 |
+
+### R3 候选侧修正追踪
+
+本追踪记录对后续 R3 评审工作单的候选侧修正。它只说明已经演练的
+边界；独立评审者仍须绑定最终不可变 Head、检查完整集成范围，并判定
+发现项是否关闭。
+
+| 发现项 | 公开测试所覆盖的候选侧修正边界 |
+|---|---|
+| R3-F01 | 传输序列化保留紧凑的请求／块／完成来源见证，每个已解码 datagram 仅保留其 TFTP 角色／块号摘要（绝不保留载荷字节）。发布要求精确的请求、DATA 块、完成、传输到 datagram 及事件来源链，而不是“相关数据包”子集；source CLI 和 corpus staging 会拒绝协同篡改的来源链（包括同方向 DATA 块互换），且不替换旧输出。 |
+| R3-F02 | 已知 RRQ 或 WRQ 可以独立发布其派生请求事件，而尚未绑定的传输保持明确的不可投影状态。source CLI、corpus 和已安装 CLI 都保留该受控不完整输入，不伪造响应方 TID。 |
+| R3-F03 | 单一实时证据预算在分配时接纳接口、捕获／TFTP 诊断、活跃 IPv4 累积器、传输会话、公共记录和惰性生成的事件。只有明确的未消费输入或扫描后边界可以占用最终保留槽位；局部传输上限诊断不得冒充后续真实停止。测试区分真实提前停止与仅在 EOF 后发生的派生保留限制，并覆盖无数据包 IDB 和最后一个数据包是不完整分片的情况。 |
+| R3-F04 | 每个受支持首切片角色都有正常生产对照和声明长度过小／过大的见证。source CLI、corpus 发布和已安装 CLI 保留声明与观测长度、分类该矛盾，并禁止干净的 APPLICATION 提升。 |
+| R3-F05 | pcap 和 pcapng 数据包引用保留 snap-length／质量字段；检查支持版本和有界 SHB options，覆盖小／大端 snaplen、pcapng 1.2 兼容性、畸形 options 与合法未知 options，并演练 CLI／corpus 的质量发布。 |
+| R3-A01 | 候选已删除评审指出的仅 EOF 空行，并把全范围 `git diff --check` 保留为最终门禁。 |
+| R3-A02 | `tool.contractIdentities` 和投影身份都必须指向同一个已接受受控合同快照；过期的工具身份会在发布前被拒绝。 |
 
 ## 6. 后继边界
 

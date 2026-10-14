@@ -10,8 +10,9 @@ from __future__ import annotations
 import hashlib
 import struct
 from dataclasses import dataclass, field
+from typing import Callable
 
-from .models import Diagnostic, TftpMessage, TransferRecord, UdpDatagram
+from .models import Diagnostic, PacketRef, TftpMessage, TransferRecord, UdpDatagram
 
 
 DEFAULT_BLOCK_SIZE = 512
@@ -170,6 +171,8 @@ class TftpReconstructor:
         max_completed_payload_bytes: int = 16 * 1024 * 1024,
         max_transfer_records: int = 200_000,
         max_diagnostics: int = 50_000,
+        record_admission: Callable[[TransferRecord], bool] | None = None,
+        diagnostic_admission: Callable[[Diagnostic], bool] | None = None,
     ) -> None:
         if not 1 <= service_port <= 65_535:
             raise ValueError("service_port must be in 1..65535")
@@ -186,6 +189,8 @@ class TftpReconstructor:
         self.max_completed_payload_bytes = max_completed_payload_bytes
         self.max_transfer_records = max_transfer_records
         self.max_diagnostics = max_diagnostics
+        self._record_admission = record_admission
+        self._diagnostic_admission = diagnostic_admission
         self._sessions: list[_Session] = []
         self._records: list[TransferRecord] = []
         self._active_payload_bytes = 0
@@ -193,6 +198,17 @@ class TftpReconstructor:
         self._sequence = 0
         self.diagnostics: list[Diagnostic] = []
         self._diagnostic_limit_reported = False
+        self.retention_limit_reached = False
+        self.resource_stop_packet_ref: PacketRef | None = None
+        self.resource_limit_kind: str | None = None
+
+    def set_record_admission(self, callback: Callable[[TransferRecord], bool] | None) -> None:
+        """Install the pipeline's shared evidence-record admission boundary."""
+        self._record_admission = callback
+
+    def set_diagnostic_admission(self, callback: Callable[[Diagnostic], bool] | None) -> None:
+        """Install the pipeline's shared live diagnostic-retention boundary."""
+        self._diagnostic_admission = callback
 
     @property
     def records(self) -> list[TransferRecord]:
@@ -234,6 +250,14 @@ class TftpReconstructor:
         except TftpDecodeError as exc:
             self._diagnose_packet(exc.code, str(exc), udp)
             return
+        # Retain only the decoder's role/block summary on the independently
+        # reconstructed datagram.  It deliberately excludes payload bytes,
+        # filenames and option text, while preventing a later transfer
+        # serializer from substituting another same-direction DATA datagram
+        # for a claimed block source.
+        udp.datagram.tftp_message_kind = message.kind
+        block_number = message.fields.get("block")
+        udp.datagram.tftp_block_number = block_number if isinstance(block_number, int) else None
         if message.kind in REQUEST_KINDS and udp.destination_port == self.service_port:
             self._new_request(udp, message)
             return
@@ -337,8 +361,17 @@ class TftpReconstructor:
             link_domain=udp.datagram.link_domain,
             vlan_tags=udp.datagram.vlan_tags,
         )
+        if self._record_admission is not None and not self._record_admission(record):
+            # The pipeline, which owns the single evidence budget, emits the
+            # retained stop witness.  Do not allocate a hidden record or a
+            # second TFTP diagnostic after admission has failed.
+            self.retention_limit_reached = True
+            self.resource_stop_packet_ref = udp.datagram.packet_refs[-1]
+            self.resource_limit_kind = "TRANSFER"
+            return
         _record_source(record, udp)
         record.request_packet_ref = udp.datagram.packet_refs[-1]
+        record.request_datagram_id = udp.datagram.datagram_id
         self._sessions.append(_Session(record=record, request_options=options, context=context))
         self._records.append(record)
 
@@ -397,7 +430,7 @@ class TftpReconstructor:
             if session.record.option_status == "UNKNOWN":
                 _append_unique(session.record.diagnostics, "MISSING-TFTP-BLOCKSIZE-CONFIRMATION")
                 return
-            self._data(session, message)
+            self._data(session, message, udp)
             return
         if message.kind == "ERROR":
             self._terminate(session, "ERROR", "TFTP-ERROR-PACKET")
@@ -448,7 +481,7 @@ class TftpReconstructor:
             session.record.option_status = "DEFAULTED"
             session.record.effective_block_size = DEFAULT_BLOCK_SIZE
 
-    def _data(self, session: _Session, message: TftpMessage) -> None:
+    def _data(self, session: _Session, message: TftpMessage, udp: UdpDatagram) -> None:
         block = int(message.fields["block"])
         data = bytes(message.fields["data"])
         session.data_seen = True
@@ -488,6 +521,7 @@ class TftpReconstructor:
             return
         session.blocks[block] = _Block(digest, data)
         session.record.block_packet_refs[block] = session.record.packet_refs[-1]
+        session.record.block_datagram_ids[block] = udp.datagram.datagram_id
         session.received_payload_bytes += len(data)
         self._active_payload_bytes += len(data)
         if len(data) < block_size:
@@ -496,6 +530,7 @@ class TftpReconstructor:
                 return
             session.terminal_block = block
             session.record.completion_packet_ref = session.record.packet_refs[-1]
+            session.record.completion_datagram_id = udp.datagram.datagram_id
             self._complete_if_contiguous(session)
         elif session.terminal_block is not None:
             self._complete_if_contiguous(session)
@@ -537,7 +572,9 @@ class TftpReconstructor:
         session.terminal_block = None
         session.record.terminal_block = None
         session.record.completion_packet_ref = None
+        session.record.completion_datagram_id = None
         session.record.block_packet_refs.clear()
+        session.record.block_datagram_ids.clear()
         session.record.complete_payload = None
         session.record.complete_payload_length = None
 
@@ -553,6 +590,22 @@ class TftpReconstructor:
         severity: str = "ERROR",
         **detail: int | str,
     ) -> None:
+        diagnostic = Diagnostic(
+            code,
+            "TFTP",
+            message,
+            severity=severity,
+            packet_ref_id=udp.datagram.packet_refs[-1].id,
+            container_offset=udp.datagram.packet_refs[-1].container_offset,
+            detail={"datagramId": udp.datagram.datagram_id, **detail},
+        )
+        if self._diagnostic_admission is not None:
+            if self._diagnostic_admission(diagnostic):
+                return
+            self.retention_limit_reached = True
+            self.resource_stop_packet_ref = udp.datagram.packet_refs[-1]
+            self.resource_limit_kind = "DIAGNOSTIC"
+            return
         if len(self.diagnostics) >= self.max_diagnostics - 1:
             if self._diagnostic_limit_reported:
                 return
@@ -564,15 +617,7 @@ class TftpReconstructor:
                 detail={"limit": self.max_diagnostics},
             ))
             return
-        self.diagnostics.append(Diagnostic(
-            code,
-            "TFTP",
-            message,
-            severity=severity,
-            packet_ref_id=udp.datagram.packet_refs[-1].id,
-            container_offset=udp.datagram.packet_refs[-1].container_offset,
-            detail={"datagramId": udp.datagram.datagram_id, **detail},
-        ))
+        self.diagnostics.append(diagnostic)
 
 
 def _request_key(session: _Session) -> tuple[str | None, str | None, str | None, tuple[tuple[str, str], ...]]:

@@ -44,6 +44,8 @@ class PacketRef:
     timestamp: Timestamp | None
     section_id: int = 0
     link_domain: str = "CAPTURE-SECTION-0-INTERFACE-0"
+    capture_snap_length: int | None = None
+    quality_codes: tuple[str, ...] = ()
 
     @property
     def id(self) -> str:
@@ -61,6 +63,8 @@ class PacketRef:
             "linkDomain": self.link_domain,
             "capturedLength": self.captured_length,
             "originalLength": self.original_length,
+            "captureSnapLength": self.capture_snap_length,
+            "qualityCodes": list(self.quality_codes),
             "timestamp": None if self.timestamp is None else self.timestamp.to_dict(),
         }
 
@@ -157,6 +161,11 @@ class DatagramRecord:
     vlan_tags: tuple[int, ...] = ()
     section_id: int = 0
     link_domain: str = "CAPTURE-SECTION-0-INTERFACE-0"
+    # This is a compact decoder summary, not a retained UDP/TFTP payload.  It
+    # gives the evidence checker an independently emitted DATA block identity
+    # with which to bind a transfer's source witness.
+    tftp_message_kind: str | None = None
+    tftp_block_number: int | None = None
 
     @property
     def context_key(self) -> tuple[str, int, int, str, tuple[int, ...]]:
@@ -192,6 +201,12 @@ class DatagramRecord:
             "missingRanges": [list(item) for item in self.missing_ranges],
             "conflictRanges": [list(item) for item in self.conflict_ranges],
             "vlanTags": list(self.vlan_tags),
+            "tftpMessage": (
+                None if self.tftp_message_kind is None else {
+                    "kind": self.tftp_message_kind,
+                    "blockNumber": self.tftp_block_number,
+                }
+            ),
         }
 
 
@@ -240,10 +255,37 @@ class TransferRecord:
     complete_payload: bytes | None = None
     complete_payload_length: int | None = None
     request_packet_ref: PacketRef | None = None
+    request_datagram_id: str | None = None
     block_packet_refs: dict[int, PacketRef] = field(default_factory=dict)
+    block_datagram_ids: dict[int, str] = field(default_factory=dict)
     completion_packet_ref: PacketRef | None = None
+    completion_datagram_id: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
+        # These compact source witnesses are intentionally separate from the
+        # presentation-oriented packet/datagram arrays below.  They preserve
+        # the exact request, DATA-block, and terminal-DATA lineage consumed by
+        # the contract adapter, so a later serialisation error cannot swap a
+        # merely-associated packet for the actual source of a derived claim.
+        source_witness = {
+            "packetRefIds": [item.id for item in self.packet_refs],
+            "datagramIds": list(self.datagram_ids),
+            "requestPacketRefId": (
+                None if self.request_packet_ref is None else self.request_packet_ref.id
+            ),
+            "requestDatagramId": self.request_datagram_id,
+            "blockPacketRefIds": {
+                str(block): packet.id for block, packet in sorted(self.block_packet_refs.items())
+            },
+            "blockDatagramIds": {
+                str(block): datagram_id
+                for block, datagram_id in sorted(self.block_datagram_ids.items())
+            },
+            "completionPacketRefId": (
+                None if self.completion_packet_ref is None else self.completion_packet_ref.id
+            ),
+            "completionDatagramId": self.completion_datagram_id,
+        }
         return {
             "transferId": self.transfer_id,
             "captureId": self.capture_id,
@@ -269,6 +311,7 @@ class TransferRecord:
             "terminalBlock": self.terminal_block,
             "packetRefIds": [item.id for item in self.packet_refs],
             "datagramIds": list(self.datagram_ids),
+            "sourceWitness": source_witness,
             "diagnosticCodes": list(self.diagnostics),
             "completePayloadLength": (
                 self.complete_payload_length

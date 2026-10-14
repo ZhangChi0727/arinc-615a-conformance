@@ -5,7 +5,7 @@ from __future__ import annotations
 import struct
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import BinaryIO, Iterator
+from typing import BinaryIO, Callable, Iterator
 
 from .models import CapturedPacket, Diagnostic, PacketRef, Timestamp
 
@@ -21,6 +21,8 @@ PCAPNG_KNOWN_NON_PACKET_BLOCKS = {
     0x0000000B,  # Custom Block
     0x40000BAD,  # Custom Block (copyable)
 }
+PCAP_SUPPORTED_VERSION = (2, 4)
+PCAPNG_SUPPORTED_VERSIONS = frozenset({(1, 0), (1, 2)})
 
 
 class CaptureFormatError(ValueError):
@@ -92,6 +94,8 @@ class CaptureReader:
         max_block_bytes: int = 4 * 1024 * 1024,
         max_interfaces: int = 1_024,
         max_diagnostics: int = 50_000,
+        interface_admission: Callable[[InterfaceMetadata], bool] | None = None,
+        diagnostic_admission: Callable[[Diagnostic], bool] | None = None,
     ) -> None:
         self.path = path
         self.capture_id = capture_id
@@ -99,8 +103,25 @@ class CaptureReader:
         self.max_block_bytes = max_block_bytes
         self.max_interfaces = max_interfaces
         self.max_diagnostics = max_diagnostics
+        self._interface_admission = interface_admission
+        self._diagnostic_admission = diagnostic_admission
         self.metadata = CaptureMetadata()
         self._metadata_diagnostic_limit_reported = False
+        self.resource_limit_reached = False
+        self.resource_stop_offset: int | None = None
+        self.resource_limit_kind: str | None = None
+
+    def set_interface_admission(
+        self, callback: Callable[[InterfaceMetadata], bool] | None,
+    ) -> None:
+        """Install the pipeline's single evidence-retention admission hook."""
+        self._interface_admission = callback
+
+    def set_diagnostic_admission(
+        self, callback: Callable[[Diagnostic], bool] | None,
+    ) -> None:
+        """Install the pipeline's single live diagnostic-retention hook."""
+        self._diagnostic_admission = callback
 
     def __iter__(self) -> Iterator[CapturedPacket]:
         try:
@@ -137,9 +158,15 @@ class CaptureReader:
             endian, resolution = ">", 1_000_000_000
         else:  # pragma: no cover - dispatched before this method
             raise CaptureFormatError("UNSUPPORTED-PCAP-MAGIC", "unsupported pcap magic", 0)
-        _major, _minor, _zone, _sigfigs, snaplen, link_type = struct.unpack(
+        major, minor, _zone, _sigfigs, snaplen, link_type = struct.unpack(
             f"{endian}HHIIII", header[4:]
         )
+        if (major, minor) != PCAP_SUPPORTED_VERSION:
+            raise CaptureFormatError(
+                "UNSUPPORTED-PCAP-VERSION",
+                f"pcap version {major}.{minor} is outside the supported 2.4 profile",
+                4,
+            )
         if snaplen <= 0:
             raise CaptureFormatError("INVALID-PCAP-SNAPLEN", "pcap snaplen must be positive", 16)
         self.metadata = CaptureMetadata(
@@ -157,6 +184,8 @@ class CaptureReader:
         offset = 24
         packet_index = 0
         while True:
+            if self.resource_limit_reached:
+                return
             record_start = offset
             record_header = stream.read(16)
             if not record_header:
@@ -174,7 +203,9 @@ class CaptureReader:
                     "pcap timestamp fraction exceeds its declared resolution",
                     record_start,
                 )
+            quality_codes: list[str] = []
             if included_length > original_length:
+                quality_codes.append("CAPLEN-EXCEEDS-ORIGLEN")
                 self._add_metadata_diagnostic(Diagnostic(
                     "INVALID-PCAP-CAPTURE-LENGTH", "CAPTURE",
                     "pcap captured length exceeds original length; packet is non-projectable",
@@ -182,6 +213,17 @@ class CaptureReader:
                     container_offset=record_start,
                     detail={"capturedLength": included_length, "originalLength": original_length},
                 ))
+            if included_length > snaplen:
+                quality_codes.append("CAPLEN-EXCEEDS-SNAPLEN")
+                self._add_metadata_diagnostic(Diagnostic(
+                    "CAPLEN-EXCEEDS-SNAPLEN", "CAPTURE",
+                    "pcap captured length exceeds the declared snap length; packet is non-projectable",
+                    packet_ref_id=f"{self.capture_id}:P{packet_index + 1:08d}",
+                    container_offset=record_start,
+                    detail={"capturedLength": included_length, "snapLength": snaplen},
+                ))
+            if self.resource_limit_reached:
+                return
             offset += 16
             if included_length > self.max_packet_bytes:
                 self._add_metadata_diagnostic(Diagnostic(
@@ -210,6 +252,7 @@ class CaptureReader:
                     self.capture_id, packet_index, record_start, 0, link_type,
                     included_length, original_length, timestamp,
                     section_id=0, link_domain="PCAP-SECTION-0-INTERFACE-0",
+                    capture_snap_length=snaplen, quality_codes=tuple(quality_codes),
                 ),
                 data,
             )
@@ -224,6 +267,8 @@ class CaptureReader:
         packet_index = 0
         self.metadata = CaptureMetadata(container_format="PCAPNG")
         while True:
+            if self.resource_limit_reached:
+                return
             block_start = offset
             header = stream.read(8)
             if not header:
@@ -258,6 +303,14 @@ class CaptureReader:
                     raise CaptureFormatError(
                         "PCAPNG-BLOCK-LENGTH-MISMATCH", "pcapng section block length disagrees", block_start
                     )
+                major, minor = struct.unpack(f"{endian}HH", remaining[:4])
+                if (major, minor) not in PCAPNG_SUPPORTED_VERSIONS:
+                    raise CaptureFormatError(
+                        "UNSUPPORTED-PCAPNG-VERSION",
+                        f"pcapng section version {major}.{minor} is outside the supported profile",
+                        block_start + 12,
+                    )
+                _parse_options(remaining[12:-4], endian, block_start + 24)
                 offset += total_length
                 self.metadata.byte_order = "LITTLE" if endian == "<" else "BIG"
                 section_index += 1
@@ -290,6 +343,11 @@ class CaptureReader:
                     body, endian, section_index, global_interface_id, block_start,
                     clock_domain=f"PCAPNG-SECTION-{section_index}-INTERFACE-{interface_sequence}-UNASSESSED",
                 )
+                if self._interface_admission is not None and not self._interface_admission(interface):
+                    self.resource_limit_reached = True
+                    self.resource_stop_offset = block_start
+                    self.resource_limit_kind = "INTERFACE"
+                    return
                 self.metadata.interfaces[global_interface_id] = interface
                 local_interfaces[interface_sequence] = interface
                 interface_sequence += 1
@@ -308,7 +366,9 @@ class CaptureReader:
                     raise CaptureFormatError(
                         "PCAPNG-UNKNOWN-INTERFACE", "enhanced packet references an unknown interface", block_start
                     )
+                quality_codes: list[str] = []
                 if captured_length > original_length:
+                    quality_codes.append("CAPLEN-EXCEEDS-ORIGLEN")
                     self._add_metadata_diagnostic(Diagnostic(
                         "INVALID-PCAPNG-CAPTURE-LENGTH", "CAPTURE",
                         "pcapng captured length exceeds original length; packet is non-projectable",
@@ -316,6 +376,17 @@ class CaptureReader:
                         container_offset=block_start,
                         detail={"capturedLength": captured_length, "originalLength": original_length},
                     ))
+                if interface.snap_length != 0 and captured_length > interface.snap_length:
+                    quality_codes.append("CAPLEN-EXCEEDS-SNAPLEN")
+                    self._add_metadata_diagnostic(Diagnostic(
+                        "CAPLEN-EXCEEDS-SNAPLEN", "CAPTURE",
+                        "pcapng captured length exceeds the interface snap length; packet is non-projectable",
+                        packet_ref_id=f"{self.capture_id}:P{packet_index + 1:08d}",
+                        container_offset=block_start,
+                        detail={"capturedLength": captured_length, "snapLength": interface.snap_length},
+                    ))
+                if self.resource_limit_reached:
+                    return
                 padded = _padded_length(captured_length)
                 if len(body) < 20 + padded:
                     raise CaptureFormatError(
@@ -344,6 +415,7 @@ class CaptureReader:
                         self.capture_id, packet_index, block_start, interface.interface_id,
                         interface.link_type, captured_length, original_length, timestamp,
                         section_id=interface.section_id, link_domain=interface.clock_domain,
+                        capture_snap_length=interface.snap_length, quality_codes=tuple(quality_codes),
                     ),
                     body[20:20 + captured_length],
                 )
@@ -387,11 +459,14 @@ class CaptureReader:
                     "pcapng simple packet has no timestamp", severity="WARNING",
                     packet_ref_id=f"{self.capture_id}:P{packet_index:08d}", container_offset=block_start,
                 ))
+                if self.resource_limit_reached:
+                    return
                 yield CapturedPacket(
                     PacketRef(
                         self.capture_id, packet_index, block_start, interface.interface_id, interface.link_type,
                         captured_length, original_length, None,
                         section_id=interface.section_id, link_domain=interface.clock_domain,
+                        capture_snap_length=interface.snap_length,
                     ),
                     payload,
                 )
@@ -404,11 +479,18 @@ class CaptureReader:
                     detail={"blockType": f"0x{block_type:08X}"},
                 ))
 
-    def _add_metadata_diagnostic(self, diagnostic: Diagnostic) -> None:
-        """Bound retained container diagnostics, reserving a truncation witness."""
+    def _add_metadata_diagnostic(self, diagnostic: Diagnostic) -> bool:
+        """Retain diagnostics locally or through the pipeline's shared boundary."""
+        if self._diagnostic_admission is not None:
+            if self._diagnostic_admission(diagnostic):
+                return True
+            self.resource_limit_reached = True
+            self.resource_stop_offset = diagnostic.container_offset
+            self.resource_limit_kind = "DIAGNOSTIC"
+            return False
         if len(self.metadata.diagnostics) < self.max_diagnostics - 1:
             self.metadata.diagnostics.append(diagnostic)
-            return
+            return True
         if not self._metadata_diagnostic_limit_reported:
             self._metadata_diagnostic_limit_reported = True
             self.metadata.diagnostics.append(Diagnostic(
@@ -417,6 +499,7 @@ class CaptureReader:
                 "capture diagnostics were bounded; later container issues were not retained",
                 detail={"limit": self.max_diagnostics},
             ))
+        return False
 
 
 def _read_exact(stream: BinaryIO, size: int, code: str, offset: int) -> bytes:

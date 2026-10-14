@@ -6,6 +6,7 @@ import ipaddress
 import struct
 from collections import OrderedDict
 from dataclasses import dataclass, field
+from typing import Callable
 
 from .models import DatagramRecord, Ipv4Fragment, PacketRef, UdpDatagram
 
@@ -149,6 +150,7 @@ class Ipv4Reassembler:
         max_active_datagrams: int = 128,
         max_datagram_bytes: int = 65_535,
         max_fragments_per_datagram: int = 8_192,
+        active_admission: Callable[[Ipv4Fragment], bool] | None = None,
     ) -> None:
         if (
             max_active_datagrams < 1
@@ -159,10 +161,36 @@ class Ipv4Reassembler:
         self.max_active_datagrams = max_active_datagrams
         self.max_datagram_bytes = min(max_datagram_bytes, 65_535)
         self.max_fragments_per_datagram = max_fragments_per_datagram
+        self._active_admission = active_admission
         self._active: OrderedDict[
             tuple[str, int, int, str, tuple[int, ...], str, str, int, int], _Accumulator
         ] = OrderedDict()
         self._sequence = 0
+        self.retention_limit_reached = False
+        self.resource_stop_packet_ref: PacketRef | None = None
+
+    @property
+    def active_count(self) -> int:
+        """Number of not-yet-published reassembly records owned internally."""
+        return len(self._active)
+
+    def set_active_admission(self, callback: Callable[[Ipv4Fragment], bool] | None) -> None:
+        """Install the pipeline's shared retention admission boundary."""
+        self._active_admission = callback
+
+    def discard_oldest_for_resource_stop(self) -> PacketRef | None:
+        """Release one private accumulator to make room for a stop witness.
+
+        The caller has already established that scanning cannot continue.  The
+        associated retained packet references remain public; the explicit
+        resource witness explains why no gapped datagram record was emitted.
+        """
+        if not self._active:
+            return None
+        _key, accumulator = self._active.popitem(last=False)
+        if accumulator.packet_refs:
+            return accumulator.packet_refs[-1]
+        return accumulator.fragment.packet_ref
 
     def add(self, fragment: Ipv4Fragment) -> list[DatagramRecord]:
         """Add a fragment and return any completed/terminated records."""
@@ -188,6 +216,10 @@ class Ipv4Reassembler:
                 return [self._gapped(standalone, "RESOURCE-DATAGRAM-BYTE-LIMIT")]
             return [self._record(standalone, "COMPLETE", None, payload=fragment.payload)]
         if accumulator is None:
+            if self._active_admission is not None and not self._active_admission(fragment):
+                self.retention_limit_reached = True
+                self.resource_stop_packet_ref = fragment.packet_ref
+                return results
             if len(self._active) >= self.max_active_datagrams:
                 _old_key, old = self._active.popitem(last=False)
                 results.append(self._gapped(old, "RESOURCE-ACTIVE-DATAGRAM-LIMIT"))
