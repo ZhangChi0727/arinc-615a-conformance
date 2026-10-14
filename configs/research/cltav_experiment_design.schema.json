@@ -1,27 +1,380 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/cltav_experiment_design.schema.json",
+  "title": "CL-TAV experiment design contract",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion","identity","inputBindings","references","claimArguments","arms","scenarios","metrics","dependencies","pendingDecisions","syntheticWalkthroughs","designAdmission","artifactMap"],
+  "required": [
+    "schemaVersion", "identity", "inputBindings", "references", "claimArguments",
+    "costAccounting", "arms", "scenarios", "acceptanceMatrixDispositions",
+    "populations", "metrics", "comparisonFamilies", "analysisPlans", "dependencies",
+    "pendingDecisions", "syntheticWalkthroughs", "designAdmission", "artifactMap"
+  ],
   "$defs": {
-    "id": {"type":"string","minLength":1},
-    "stringArray": {"type":"array","items":{"type":"string","minLength":1},"uniqueItems":true},
-    "binding": {"type":"object","additionalProperties":false,"required":["path","gitBlobOid","sha256"],"properties":{"path":{"type":"string","pattern":"^(?!/)(?!.*\\.\\.).+"},"gitBlobOid":{"type":"string","pattern":"^[0-9a-f]{40}$"},"sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"}}},
-    "cost": {"type":"object","additionalProperties":false,"required":["acquisition","computation","preparation","recovery","retry"],"properties":{"acquisition":{"type":"number","minimum":0},"computation":{"type":"number","minimum":0},"preparation":{"type":"number","minimum":0},"recovery":{"type":"number","minimum":0},"retry":{"type":"number","minimum":0}}}
+    "id": {"type": "string", "minLength": 1},
+    "nonEmptyStringArray": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "stringArray": {
+      "type": "array", "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["role", "path", "gitBlobOid", "sha256"],
+      "properties": {
+        "role": {"enum": ["ACCEPTED-AUTHORITY", "SUCCESSOR-BASELINE"]},
+        "path": {"type": "string", "pattern": "^(?!/)(?!.*\\.\\.).+"},
+        "gitBlobOid": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "fieldRef": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ref", "role"],
+      "properties": {
+        "ref": {"type": "string", "minLength": 1},
+        "role": {"enum": ["ALGORITHM-INITIAL", "ALGORITHM-OWN-ACTION"]}
+      }
+    },
+    "cost": {
+      "type": "object", "additionalProperties": false,
+      "required": ["acquisition", "computation", "preparation", "recovery", "retry"],
+      "properties": {
+        "acquisition": {"type": "number", "minimum": 0},
+        "computation": {"type": "number", "minimum": 0},
+        "preparation": {"type": "number", "minimum": 0},
+        "recovery": {"type": "number", "minimum": 0},
+        "retry": {"type": "number", "minimum": 0}
+      }
+    },
+    "interval": {
+      "type": "object", "additionalProperties": false,
+      "required": ["lower", "upper", "unit"],
+      "properties": {
+        "lower": {"type": "number"}, "upper": {"type": "number"},
+        "unit": {"type": "string", "minLength": 1}
+      }
+    },
+    "proposalField": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "type", "producer", "visibility", "backwardCompatibility", "closureMilestone"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "type": {"type": "string", "minLength": 1},
+        "producer": {"type": "string", "minLength": 1},
+        "visibility": {"type": "string", "minLength": 1},
+        "backwardCompatibility": {"type": "string", "minLength": 1},
+        "closureMilestone": {"type": "string", "minLength": 1}
+      }
+    }
   },
   "properties": {
-    "schemaVersion":{"const":"1.0"},
-    "identity":{"type":"object","additionalProperties":false,"required":["artifactId","version","status","changeRequest","decision","baseCommit","authority"],"properties":{"artifactId":{"const":"CLTAV-EXPERIMENT-DESIGN"},"version":{"type":"string"},"status":{"const":"CANDIDATE-DESIGN"},"changeRequest":{"const":"CR-2026-019"},"decision":{"const":"DD-043"},"baseCommit":{"type":"string","pattern":"^[0-9a-f]{40}$"},"authority":{"type":"string","minLength":1}}},
-    "inputBindings":{"type":"array","minItems":6,"items":{"$ref":"#/$defs/binding"}},
-    "references":{"type":"object","additionalProperties":false,"required":["claims","families","arms","scenarios","acceptanceMatrix","algorithmInterfaces","experimentInterfaces","records"],"properties":{"claims":{"$ref":"#/$defs/stringArray"},"families":{"$ref":"#/$defs/stringArray"},"arms":{"$ref":"#/$defs/stringArray"},"scenarios":{"$ref":"#/$defs/stringArray"},"acceptanceMatrix":{"$ref":"#/$defs/stringArray"},"algorithmInterfaces":{"$ref":"#/$defs/stringArray"},"experimentInterfaces":{"$ref":"#/$defs/stringArray"},"records":{"$ref":"#/$defs/stringArray"}}},
-    "claimArguments":{"type":"array","minItems":2,"items":{"type":"object","additionalProperties":false,"required":["claimId","boundedProposition","locators","assumptions","falsifiers","allowedWording","forbiddenWording","reviewGate"],"properties":{"claimId":{"enum":["CL-C1","CL-C2"]},"boundedProposition":{"type":"string"},"locators":{"$ref":"#/$defs/stringArray"},"assumptions":{"$ref":"#/$defs/stringArray"},"falsifiers":{"$ref":"#/$defs/stringArray"},"allowedWording":{"type":"string"},"forbiddenWording":{"type":"string"},"reviewGate":{"type":"string"}}}},
-    "arms":{"type":"array","minItems":4,"maxItems":4,"items":{"type":"object","additionalProperties":false,"required":["id","visibleInputs","actions","feedback","costComponents","prohibitedInputs"],"properties":{"id":{"type":"string"},"visibleInputs":{"$ref":"#/$defs/stringArray"},"actions":{"$ref":"#/$defs/stringArray"},"feedback":{"type":"boolean"},"costComponents":{"$ref":"#/$defs/stringArray"},"prohibitedInputs":{"$ref":"#/$defs/stringArray"}}}},
-    "scenarios":{"type":"array","minItems":8,"maxItems":8,"items":{"type":"object","additionalProperties":false,"required":["id","familyIds","serviceScope","faultClass","truthConfirmation","observableOutcome","resetEvidence","acceptanceMatrixRefs","dependencyIds"],"properties":{"id":{"type":"string"},"familyIds":{"$ref":"#/$defs/stringArray"},"serviceScope":{"enum":["UPLOAD","INFORMATION","FIND","DOWNLOAD","AFDX"]},"faultClass":{"type":"string"},"truthConfirmation":{"type":"string"},"observableOutcome":{"type":"string"},"resetEvidence":{"type":"string"},"acceptanceMatrixRefs":{"$ref":"#/$defs/stringArray"},"dependencyIds":{"$ref":"#/$defs/stringArray"}}}},
-    "metrics":{"type":"array","minItems":10,"items":{"type":"object","additionalProperties":false,"required":["id","familyIds","population","numerator","denominator","unit","direction","zeroDenominator","primary","requiredFields","output"],"properties":{"id":{"type":"string","pattern":"^MET-[A-Z0-9-]+$"},"familyIds":{"$ref":"#/$defs/stringArray"},"population":{"type":"string"},"numerator":{"type":"string"},"denominator":{"type":"string"},"unit":{"type":"string"},"direction":{"type":"string"},"zeroDenominator":{"const":"N/A"},"primary":{"type":"boolean"},"requiredFields":{"$ref":"#/$defs/stringArray"},"output":{"type":"string"}}}},
-    "dependencies":{"type":"array","minItems":8,"items":{"type":"object","additionalProperties":false,"required":["id","consumers","currentReference","neededEvidence","producer","state","closureTest","blockingMilestone","minimumFollowUp"],"properties":{"id":{"type":"string","pattern":"^DEP-[A-Z0-9-]+$"},"consumers":{"$ref":"#/$defs/stringArray"},"currentReference":{"type":"string"},"neededEvidence":{"type":"string"},"producer":{"type":"string"},"state":{"enum":["EXISTING-REFERENCE","PROPOSED-CONTRACT-DELTA","RUNTIME-PENDING","HUMAN-PENDING"]},"closureTest":{"type":"string"},"blockingMilestone":{"type":"string"},"minimumFollowUp":{"type":"string"}}}},
-    "pendingDecisions":{"type":"array","minItems":5,"items":{"type":"object","additionalProperties":false,"required":["id","ownerRole","options","recommendation","evidenceNeeded","freezeBy","blocks","status"],"properties":{"id":{"type":"string","pattern":"^DEC-[A-Z0-9-]+$"},"ownerRole":{"type":"string"},"options":{"$ref":"#/$defs/stringArray"},"recommendation":{"type":"string"},"evidenceNeeded":{"type":"string"},"freezeBy":{"type":"string"},"blocks":{"$ref":"#/$defs/stringArray"},"status":{"const":"OPEN"}}}},
-    "syntheticWalkthroughs":{"type":"array","minItems":10,"items":{"type":"object","additionalProperties":false,"required":["id","label","scenarioId","attemptId","runId","truthClass","validity","outcome","stopClass","finalHypotheses","denominators","chargedCost"],"properties":{"id":{"type":"string","pattern":"^SYN-[A-Z0-9-]+$"},"label":{"const":"SYNTHETIC-DESIGN-WALKTHROUGH"},"scenarioId":{"type":"string"},"attemptId":{"type":"string"},"runId":{"type":["string","null"]},"truthClass":{"type":"string"},"validity":{"type":"string"},"outcome":{"enum":["PASS","FAIL","ERROR","INCONCLUSIVE","NOT-ANSWERED"]},"stopClass":{"type":["string","null"]},"finalHypotheses":{"$ref":"#/$defs/stringArray"},"denominators":{"$ref":"#/$defs/stringArray"},"chargedCost":{"$ref":"#/$defs/cost"}}}},
-    "designAdmission":{"type":"object","additionalProperties":false,"required":["designReviewStatus","confirmatoryRunStatus","blockingDecisionIds","historicalCaptureUse","syntheticFixtureUse"],"properties":{"designReviewStatus":{"const":"CANDIDATE"},"confirmatoryRunStatus":{"const":"BLOCKED"},"blockingDecisionIds":{"$ref":"#/$defs/stringArray"},"historicalCaptureUse":{"const":"EXPLORATORY-OFFLINE-ONLY"},"syntheticFixtureUse":{"const":"DESIGN-ACCOUNTING-ONLY"}}},
-    "artifactMap":{"type":"array","minItems":4,"items":{"type":"object","additionalProperties":false,"required":["id","path","role"],"properties":{"id":{"type":"string"},"path":{"type":"string","pattern":"^(?!/)(?!.*\\.\\.).+"},"role":{"type":"string"}}}}
+    "schemaVersion": {"const": "2.0"},
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifactId", "version", "status", "changeRequest", "decision", "baseCommit", "authority"],
+      "properties": {
+        "artifactId": {"const": "CLTAV-EXPERIMENT-DESIGN"},
+        "version": {"const": "0.2"},
+        "status": {"const": "CANDIDATE-DESIGN"},
+        "changeRequest": {"const": "CR-2026-019"},
+        "decision": {"const": "DD-043"},
+        "baseCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "authority": {"type": "string", "minLength": 1}
+      }
+    },
+    "inputBindings": {
+      "type": "array", "minItems": 9, "maxItems": 9,
+      "items": {"$ref": "#/$defs/binding"}
+    },
+    "references": {
+      "type": "object", "additionalProperties": false,
+      "required": ["claims", "families", "arms", "scenarios", "acceptanceMatrix", "algorithmInterfaces", "experimentInterfaces", "records", "evidenceIds"],
+      "properties": {
+        "claims": {"$ref": "#/$defs/nonEmptyStringArray"},
+        "families": {"$ref": "#/$defs/nonEmptyStringArray"},
+        "arms": {"$ref": "#/$defs/nonEmptyStringArray"},
+        "scenarios": {"$ref": "#/$defs/nonEmptyStringArray"},
+        "acceptanceMatrix": {"$ref": "#/$defs/nonEmptyStringArray"},
+        "algorithmInterfaces": {"$ref": "#/$defs/nonEmptyStringArray"},
+        "experimentInterfaces": {"$ref": "#/$defs/nonEmptyStringArray"},
+        "records": {"$ref": "#/$defs/nonEmptyStringArray"},
+        "evidenceIds": {"$ref": "#/$defs/nonEmptyStringArray"}
+      }
+    },
+    "claimArguments": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["claimId", "boundedProposition", "locators", "assumptions", "falsifiers", "allowedWording", "forbiddenWording", "reviewGate"],
+        "properties": {
+          "claimId": {"enum": ["CL-C1", "CL-C2"]},
+          "boundedProposition": {"type": "string", "minLength": 1},
+          "locators": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "assumptions": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "falsifiers": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "allowedWording": {"type": "string", "minLength": 1},
+          "forbiddenWording": {"type": "string", "minLength": 1},
+          "reviewGate": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "costAccounting": {
+      "type": "object", "additionalProperties": false,
+      "required": ["acceptedProjection", "detailToProjection", "doubleChargeRule"],
+      "properties": {
+        "acceptedProjection": {"const": ["acquisition", "computation", "preparation", "retry"]},
+        "detailToProjection": {
+          "type": "object", "additionalProperties": false,
+          "required": ["acquisition", "computation", "preparation", "recovery", "retry"],
+          "properties": {
+            "acquisition": {"const": "acquisition"},
+            "computation": {"const": "computation"},
+            "preparation": {"const": "preparation"},
+            "recovery": {"const": "preparation"},
+            "retry": {"const": "retry"}
+          }
+        },
+        "doubleChargeRule": {"const": "recovery is a preparation detail and is never added twice to the projected preparation component"}
+      }
+    },
+    "arms": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "visibleInputs", "actions", "feedback", "costComponents", "prohibitedRefs"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "visibleInputs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/fieldRef"}},
+          "actions": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "feedback": {"type": "boolean"},
+          "costComponents": {
+            "type": "array", "minItems": 1, "uniqueItems": true,
+            "items": {"enum": ["acquisition", "computation", "preparation", "retry"]}
+          },
+          "prohibitedRefs": {"$ref": "#/$defs/nonEmptyStringArray"}
+        }
+      }
+    },
+    "scenarios": {
+      "type": "array", "minItems": 8, "maxItems": 8,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "developmentScenarioRef", "familyIds", "serviceScope", "faultClass", "crsRefs", "crsDisposition", "acceptanceCaseRefs", "perturbationPoint", "requiredRecords", "truthConfirmation", "observableOutcome", "resetEvidence", "acceptanceMatrixRefs", "admissionRule", "dependencyIds"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "developmentScenarioRef": {"type": "string", "minLength": 1},
+          "familyIds": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "serviceScope": {"enum": ["UPLOAD", "INFORMATION", "FIND", "DOWNLOAD", "AFDX"]},
+          "faultClass": {"type": "string", "minLength": 1},
+          "crsRefs": {"$ref": "#/$defs/stringArray"},
+          "crsDisposition": {"enum": ["APPLICABLE", "TOOL-OR-EXPERIMENT-N/A"]},
+          "acceptanceCaseRefs": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "perturbationPoint": {"type": "string", "minLength": 1},
+          "requiredRecords": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "truthConfirmation": {"type": "string", "minLength": 1},
+          "observableOutcome": {"type": "string", "minLength": 1},
+          "resetEvidence": {"type": "string", "minLength": 1},
+          "acceptanceMatrixRefs": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "admissionRule": {"type": "string", "minLength": 1},
+          "dependencyIds": {"$ref": "#/$defs/nonEmptyStringArray"}
+        }
+      }
+    },
+    "acceptanceMatrixDispositions": {
+      "type": "array", "minItems": 14, "maxItems": 14,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "disposition", "consumerRefs", "rationale"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "disposition": {"enum": ["SCENARIO-EVIDENCE", "PRE-RUN-CONTRACT", "CONTROL-GATE"]},
+          "consumerRefs": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "rationale": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "populations": {
+      "type": "array", "minItems": 10,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "unit", "derivedFromFields", "predicate", "retentionRule"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^POP-[A-Z0-9-]+$"},
+          "unit": {"enum": ["attempt", "run", "pair"]},
+          "derivedFromFields": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "predicate": {"type": "string", "minLength": 1},
+          "retentionRule": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "metrics": {
+      "type": "array", "minItems": 15,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "familyIds", "populationId", "numeratorPopulationId", "calculation", "unit", "direction", "zeroDenominator", "missingRule", "censoringRule", "primary", "requiredFields", "parentMetricIds", "analysisPlanId", "output"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^MET-[A-Z0-9-]+$"},
+          "familyIds": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "populationId": {"type": "string", "pattern": "^POP-[A-Z0-9-]+$"},
+          "numeratorPopulationId": {"type": ["string", "null"]},
+          "calculation": {"type": "string", "minLength": 1},
+          "unit": {"type": "string", "minLength": 1},
+          "direction": {"type": "string", "minLength": 1},
+          "zeroDenominator": {"const": "N/A"},
+          "missingRule": {"type": "string", "minLength": 1},
+          "censoringRule": {"type": "string", "minLength": 1},
+          "primary": {"type": "boolean"},
+          "requiredFields": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "parentMetricIds": {"$ref": "#/$defs/stringArray"},
+          "analysisPlanId": {"type": "string", "pattern": "^AN-[A-Z0-9-]+$"},
+          "output": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "comparisonFamilies": {
+      "type": "array", "minItems": 3,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "classification", "metricIds", "multiplicityDisposition"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^CF-[A-Z0-9-]+$"},
+          "classification": {"enum": ["PRIMARY", "SECONDARY", "EXPLORATORY"]},
+          "metricIds": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "multiplicityDisposition": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "analysisPlans": {
+      "type": "array", "minItems": 4,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "estimand", "domain", "unit", "pairing", "estimator", "interval", "applicability", "effectMeasure", "pilotInputs", "methodEvidenceIds", "reviewStatus", "freezeDecisionId"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^AN-[A-Z0-9-]+$"},
+          "estimand": {"type": "string", "minLength": 1},
+          "domain": {"type": "string", "minLength": 1},
+          "unit": {"type": "string", "minLength": 1},
+          "pairing": {"type": "string", "minLength": 1},
+          "estimator": {"type": "string", "minLength": 1},
+          "interval": {"type": "string", "minLength": 1},
+          "applicability": {"type": "string", "minLength": 1},
+          "effectMeasure": {"type": "string", "minLength": 1},
+          "pilotInputs": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "methodEvidenceIds": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "reviewStatus": {"enum": ["METHOD-CANDIDATE", "PENDING-STATISTICAL-REVIEW"]},
+          "freezeDecisionId": {"type": "string", "pattern": "^DEC-[A-Z0-9-]+$"}
+        }
+      }
+    },
+    "dependencies": {
+      "type": "array", "minItems": 8,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "consumers", "currentReference", "neededEvidence", "producer", "state", "proposalFields", "decisionIds", "closureTest", "blockingMilestone", "minimumFollowUp"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^DEP-[A-Z0-9-]+$"},
+          "consumers": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "currentReference": {
+            "type": "object", "additionalProperties": false,
+            "required": ["kind", "ref"],
+            "properties": {"kind": {"type": "string", "minLength": 1}, "ref": {"type": "string", "minLength": 1}}
+          },
+          "neededEvidence": {"type": "string", "minLength": 1},
+          "producer": {"type": "string", "minLength": 1},
+          "state": {"enum": ["EXISTING-REFERENCE", "PROPOSED-CONTRACT-DELTA", "RUNTIME-PENDING", "HUMAN-PENDING"]},
+          "proposalFields": {"type": "array", "items": {"$ref": "#/$defs/proposalField"}},
+          "decisionIds": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "closureTest": {"type": "string", "minLength": 1},
+          "blockingMilestone": {"type": "string", "minLength": 1},
+          "minimumFollowUp": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "pendingDecisions": {
+      "type": "array", "minItems": 8,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "ownerRole", "options", "recommendation", "inputEvidence", "selectionProcedure", "freezeBy", "closureWitness", "blocks", "status"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^DEC-[A-Z0-9-]+$"},
+          "ownerRole": {"type": "string", "minLength": 1},
+          "options": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "recommendation": {"type": "string", "minLength": 1},
+          "inputEvidence": {"type": "string", "minLength": 1},
+          "selectionProcedure": {"type": "string", "minLength": 1},
+          "freezeBy": {"type": "string", "minLength": 1},
+          "closureWitness": {"type": "string", "minLength": 1},
+          "blocks": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "status": {"const": "OPEN"}
+        }
+      }
+    },
+    "syntheticWalkthroughs": {
+      "type": "array", "minItems": 12,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "label", "scenarioId", "attemptId", "runId", "pairingId", "truthReference", "injectionStatus", "faultDomain", "validity", "outcome", "stopClass", "stage", "observationInterval", "requirementInterval", "historyBefore", "compatibleState", "finalHypotheses", "localizationDecisionIssued", "singletonDecisionIssued", "resourcePolicy", "resourceStatus", "actionIssued", "chargedCost"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^SYN-[A-Z0-9-]+$"},
+          "label": {"const": "SYNTHETIC-DESIGN-WALKTHROUGH"},
+          "scenarioId": {"type": "string", "minLength": 1},
+          "attemptId": {"type": "string", "minLength": 1},
+          "runId": {"type": ["string", "null"]},
+          "pairingId": {"type": ["string", "null"]},
+          "truthReference": {
+            "type": "object", "additionalProperties": false,
+            "required": ["ref", "visibility", "truthHypothesis"],
+            "properties": {
+              "ref": {"const": "IF-EXP-TRUTH.truthRecord"},
+              "visibility": {"const": "EVALUATOR-ONLY"},
+              "truthHypothesis": {"type": ["string", "null"]}
+            }
+          },
+          "injectionStatus": {"enum": ["NORMAL", "CONFIRMED", "UNCONFIRMED", "EQUIVALENT", "UNRESOLVED"]},
+          "faultDomain": {"enum": ["NORMAL", "IN-DOMAIN-NON-EQUIVALENT", "OUT-OF-DOMAIN", "UNKNOWN"]},
+          "validity": {"enum": ["VALID", "ABSTAIN", "INVALID", "INCOMPLETE", "PRE-RUN-EXCLUDED"]},
+          "outcome": {"enum": ["PASS", "FAIL", "ERROR", "INCONCLUSIVE", "NOT-ANSWERED"]},
+          "stopClass": {"type": ["string", "null"]},
+          "stage": {"enum": ["PRE-RUN", "PRE-ACTION", "POST-UPDATE", "TERMINAL"]},
+          "observationInterval": {"anyOf": [{"$ref": "#/$defs/interval"}, {"type": "null"}]},
+          "requirementInterval": {"anyOf": [{"$ref": "#/$defs/interval"}, {"type": "null"}]},
+          "historyBefore": {"$ref": "#/$defs/stringArray"},
+          "compatibleState": {"$ref": "#/$defs/stringArray"},
+          "finalHypotheses": {"$ref": "#/$defs/stringArray"},
+          "localizationDecisionIssued": {"type": "boolean"},
+          "singletonDecisionIssued": {"type": "boolean"},
+          "resourcePolicy": {"enum": ["BUDGET", "ROUNDS", "NOT-RUN"]},
+          "resourceStatus": {"enum": ["NORMAL", "BUDGET-EXHAUSTED", "RESOURCE-ERROR", "NOT-RUN"]},
+          "actionIssued": {"type": "boolean"},
+          "chargedCost": {"$ref": "#/$defs/cost"}
+        }
+      }
+    },
+    "designAdmission": {
+      "type": "object", "additionalProperties": false,
+      "required": ["designReviewStatus", "confirmatoryRunStatus", "blockingDecisionIds", "historicalCaptureUse", "syntheticFixtureUse"],
+      "properties": {
+        "designReviewStatus": {"const": "CANDIDATE"},
+        "confirmatoryRunStatus": {"const": "BLOCKED"},
+        "blockingDecisionIds": {"$ref": "#/$defs/nonEmptyStringArray"},
+        "historicalCaptureUse": {"const": "EXPLORATORY-OFFLINE-ONLY"},
+        "syntheticFixtureUse": {"const": "DESIGN-ACCOUNTING-ONLY"}
+      }
+    },
+    "artifactMap": {
+      "type": "array", "minItems": 5,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "path", "role"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "path": {"type": "string", "pattern": "^(?!/)(?!.*\\.\\.).+"},
+          "role": {"type": "string", "minLength": 1}
+        }
+      }
+    }
   }
 }

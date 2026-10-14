@@ -276,13 +276,20 @@ non-default comparison model.
 `EXPERIMENT_IMPLEMENTATION_SPEC.md` refines this plan without replacing it.
 It reuses the three experiment families, four arms, eight scenario IDs, seven
 experiment interfaces and fourteen acceptance-matrix classes. Its closed JSON
-index provides finite field links, metric denominators, dependency gates,
-pending decisions and synthetic accounting. Design-check success is not
+index v0.2 binds nine exact base-commit blobs by role, derives finite metric
+populations from attempt fields, disposes every AM class, and maps any recovery
+detail into the accepted four-component cost vector exactly once. It also
+names missing/censoring rules, comparison families, analysis plans, dependency
+fields, and separate sample/repeat, resource, and clock decisions. The
+bilingual shared tables are generated from that index and checked for drift.
+Design-check success is not
 confirmatory registration or run admission. Interactive IUT/reset evidence,
 truth and injection confirmation, equivalent-fault adjudication, independent
-mathematical review and the justified sample/precision decision remain named
-blockers. Historical captures stay exploratory and synthetic fixtures are not
-results.
+mathematical review, justified sample/repeat policy, resource budget, and clock
+error budget remain named blockers. A zero answered count is reported as
+coverage `0/N`, while answered-conditional error is `N/A`; `ERROR` and stop
+classes never manufacture answered or singleton-localization outcomes.
+Historical captures stay exploratory and synthetic fixtures are not results.
 
 # 中文版
 
@@ -456,7 +463,11 @@ EXP-001～007 仍按 RR-2026-001 v4.2 保留为历史方案，可被引用，但
 ## CR-2026-019 实施设计附件
 
 `EXPERIMENT_IMPLEMENTATION_SPEC.md` 是本计划的下属细化，不取代本计划。它
-复用三实验族、四臂、八场景、七实验接口和十四类 AM；封闭 JSON 仅提供有限字段
-引用、指标分母、依赖门、待决项和合成记账。设计检查通过不等于确认性登记或运行
-准入。交互 IUT／复位、真值与注入确认、等价裁定、独立数学审查及有依据的样本／
-精度决定继续阻塞运行；历史捕获只属探索，合成 fixture 不是结果。
+复用三实验族、四臂、八场景、七实验接口和十四类 AM。v0.2 封闭 JSON 按角色绑定
+九个基线 Git blob，由尝试字段推导有限总体，逐项处置全部 AM，并把 recovery 明细
+恰好一次并入接受的四维成本向量；同时规定缺失／删失、比较族、分析方案、依赖字段，
+并把样本／重复、资源预算和时钟误差预算分开决策。双语共享表由该 JSON 生成并检查
+漂移。设计检查通过不等于确认性登记或运行准入。交互 IUT／复位、真值与注入确认、
+等价裁定、独立数学审查、有依据的样本／重复、资源和时钟决定继续阻塞运行。零回答
+时回答覆盖率写作 `0/N`，以回答为条件的错误率写作 `N/A`；`ERROR` 或停止类不得虚构
+回答或单点定位决定。历史捕获只属探索，合成 fixture 不是结果。

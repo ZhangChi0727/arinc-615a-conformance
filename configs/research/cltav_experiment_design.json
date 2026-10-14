@@ -1,23 +1,69 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "2.0",
   "identity": {
     "artifactId": "CLTAV-EXPERIMENT-DESIGN",
-    "version": "0.1-candidate",
+    "version": "0.2",
     "status": "CANDIDATE-DESIGN",
     "changeRequest": "CR-2026-019",
     "decision": "DD-043",
     "baseCommit": "f55b69f0c8df8f40e5d75fd631289e8e6eb3a01c",
-    "authority": "Finite design index for review and mechanical accounting; not an experiment registration, runtime configuration, scientific approval, or second method authority."
+    "authority": "EXP-PLAN-2026-001 remains the only experiment-plan authority; this candidate freezes implementation-facing semantics but authorizes no run."
   },
   "inputBindings": [
-    {"path":"configs/research/cltav_interface_registry.json","gitBlobOid":"a7202e42f07e69b5d9c1f95137e093c16e1c1ab8","sha256":"a65679b902cf51d31aa613c133919c3cd2c66dbc6c65eb3cc58d9bf3530d329d"},
-    {"path":"configs/engineering/cltav_development_contracts.json","gitBlobOid":"aad74f8c5ac3ab47a5c7b4b85e51e1174c6b664e","sha256":"3331fadf2786133f161eded9d1fb42066ca58d7dd510ce6e775da1cd89a5aae1"},
-    {"path":"docs/research/CLAIM_EVIDENCE_MATRIX.md","gitBlobOid":"636ebea67994922d2f609ef8e181d6d337bf3602","sha256":"1750e648439d3f84c5574b6f8a757efd40faed0f032d6f8a25c84617c3a28388"},
-    {"path":"docs/research/EXPERIMENT_PLAN.md","gitBlobOid":"84bdb70d123af9e23cd3cc6b1fa76a79aa7ef870","sha256":"f6a4d4d9b3b6c9936c8a844759fdb1032a37d35296ec7ce154fa80a3dbd71f83"},
-    {"path":"docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md","gitBlobOid":"9676ee5ec960e06ee5646fc045234f398aa2f051","sha256":"99ee3dea697ce99b078efd23098c794836e83286d97d1e44473df6d4d19a36cd"},
-    {"path":"docs/research/publication/drafts/taes-cltav/manuscript_manifest.json","gitBlobOid":"e59beb05855ea4c50a3790f563fd73aa05ca46ea","sha256":"34d2de1eed1035de678d357134168e31c7ef5e423ee25e8db9f27c6bb108b557"},
-    {"path":"configs/requirements/arinc_615a3_m1_crs.json","gitBlobOid":"44b471aa25ceb6af0d0a6fdd610e25cd02f92b7b","sha256":"56e214f089e6563e53e3991e7a8e7892f163840bb2c1d7d39f4a9ce92fc16758"},
-    {"path":"configs/models/arinc_615a3_m2_model.json","gitBlobOid":"9e311e60824194c5f15174543a28cdc070321a0a","sha256":"32b92b1eb4a54c603386363a3cdf3a0fc4d1c44af7cead2115a4226282fa1684"}
+    {
+      "role": "ACCEPTED-AUTHORITY",
+      "path": "configs/research/cltav_interface_registry.json",
+      "gitBlobOid": "a7202e42f07e69b5d9c1f95137e093c16e1c1ab8",
+      "sha256": "a65679b902cf51d31aa613c133919c3cd2c66dbc6c65eb3cc58d9bf3530d329d"
+    },
+    {
+      "role": "ACCEPTED-AUTHORITY",
+      "path": "configs/engineering/cltav_development_contracts.json",
+      "gitBlobOid": "aad74f8c5ac3ab47a5c7b4b85e51e1174c6b664e",
+      "sha256": "3331fadf2786133f161eded9d1fb42066ca58d7dd510ce6e775da1cd89a5aae1"
+    },
+    {
+      "role": "SUCCESSOR-BASELINE",
+      "path": "docs/research/CLAIM_EVIDENCE_MATRIX.md",
+      "gitBlobOid": "636ebea67994922d2f609ef8e181d6d337bf3602",
+      "sha256": "1750e648439d3f84c5574b6f8a757efd40faed0f032d6f8a25c84617c3a28388"
+    },
+    {
+      "role": "SUCCESSOR-BASELINE",
+      "path": "docs/research/EXPERIMENT_PLAN.md",
+      "gitBlobOid": "84bdb70d123af9e23cd3cc6b1fa76a79aa7ef870",
+      "sha256": "f6a4d4d9b3b6c9936c8a844759fdb1032a37d35296ec7ce154fa80a3dbd71f83"
+    },
+    {
+      "role": "ACCEPTED-AUTHORITY",
+      "path": "docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md",
+      "gitBlobOid": "9676ee5ec960e06ee5646fc045234f398aa2f051",
+      "sha256": "99ee3dea697ce99b078efd23098c794836e83286d97d1e44473df6d4d19a36cd"
+    },
+    {
+      "role": "SUCCESSOR-BASELINE",
+      "path": "docs/research/publication/drafts/taes-cltav/manuscript_manifest.json",
+      "gitBlobOid": "e59beb05855ea4c50a3790f563fd73aa05ca46ea",
+      "sha256": "34d2de1eed1035de678d357134168e31c7ef5e423ee25e8db9f27c6bb108b557"
+    },
+    {
+      "role": "ACCEPTED-AUTHORITY",
+      "path": "configs/requirements/arinc_615a3_m1_crs.json",
+      "gitBlobOid": "44b471aa25ceb6af0d0a6fdd610e25cd02f92b7b",
+      "sha256": "56e214f089e6563e53e3991e7a8e7892f163840bb2c1d7d39f4a9ce92fc16758"
+    },
+    {
+      "role": "ACCEPTED-AUTHORITY",
+      "path": "configs/models/arinc_615a3_m2_model.json",
+      "gitBlobOid": "9e311e60824194c5f15174543a28cdc070321a0a",
+      "sha256": "32b92b1eb4a54c603386363a3cdf3a0fc4d1c44af7cead2115a4226282fa1684"
+    },
+    {
+      "role": "ACCEPTED-AUTHORITY",
+      "path": "configs/research/literature/evidence_ledger.csv",
+      "gitBlobOid": "e609173a90fbe7d06cff3c1adc9c527af979cf0d",
+      "sha256": "cbafb08062d549425adef5486b1fb5f174072ec8f8b932addbd7f2dcff00e70e"
+    }
   ],
   "references": {
     "claims": ["CL-C1", "CL-C2", "CL-DETECT", "CL-LOCATE", "CL-ABLATION"],
@@ -27,105 +73,305 @@
     "acceptanceMatrix": ["AM-IDENTITY", "AM-LABEL", "AM-FORMAT", "AM-IP", "AM-TFTP", "AM-FIELDS", "AM-OWNERSHIP", "AM-TIMING", "AM-ADMIT", "AM-HISTORY", "AM-STATE", "AM-RESOURCE", "AM-EXPERIMENT", "AM-DRIFT"],
     "algorithmInterfaces": ["IF-PRED-OBS", "IF-SELECT-ADMIT", "IF-EXECUTE-RECORD", "IF-OBS-INTERPRET", "IF-PREP-RECOVER", "IF-HIST-UPDATE", "IF-EQUIV", "IF-RESOURCE-STOP"],
     "experimentInterfaces": ["IF-EXP-SCENE", "IF-EXP-INJECT", "IF-EXP-TRUTH", "IF-EXP-COLLECT", "IF-EXP-RUN", "IF-EXP-FILTER", "IF-EXP-EVAL"],
-    "records": ["CAPTURE-IDENTITY", "PACKET-REF", "DATAGRAM-RECORD", "TRANSFER-RECORD", "PROTOCOL-EVENT", "OWNERSHIP-RESULT", "OBSERVATION-ASSESSMENT", "INTAKE-METADATA", "FINDING-RECORD", "HISTORY-HANDLE"]
+    "records": ["CAPTURE-IDENTITY", "PACKET-REF", "DATAGRAM-RECORD", "TRANSFER-RECORD", "PROTOCOL-EVENT", "OWNERSHIP-RESULT", "OBSERVATION-ASSESSMENT", "INTAKE-METADATA", "FINDING-RECORD", "HISTORY-HANDLE"],
+    "evidenceIds": ["EVID-2026-063", "EVID-2026-064", "EVID-2026-065", "EVID-2026-077", "EVID-2026-079"]
   },
   "claimArguments": [
     {
       "claimId": "CL-C1",
-      "boundedProposition": "Within the declared finite domain, one interpretation identity is used across prediction, snapshot, interpretation and whole-history update; true-hypothesis retention additionally requires R1-R5.",
-      "locators": ["RR-2026-001 §3.9-§3.9.1", "ALG-CLTAV-06", "ALG-CLTAV-07"],
-      "assumptions": ["finite declared hypothesis domain", "qualified ownership and pairing", "conservative observation class", "R1-R5", "versioned whole-history handle"],
-      "falsifiers": ["same uncertainty reference changes meaning between interfaces", "H is replaced by an observation class", "true in-domain hypothesis is removed under valid evidence", "evidence insufficiency is treated as unconditional FAIL", "domain-external contamination is claimed always detectable"],
-      "allowedWording": "specified conditional consistency and true-hypothesis retention under the declared assumptions",
-      "forbiddenWording": "universal soundness or completeness under arbitrary loss, drift, duplication or reordering",
-      "reviewGate": "independent mathematical review remains open"
+      "boundedProposition": "For admitted histories and the accepted compatibility update, every non-empty update is a subset of the preceding hypothesis set and contains each hypothesis compatible with the accumulated history.",
+      "locators": ["RR-2026-001:R1-R3", "IF-HIST-UPDATE", "HISTORY-HANDLE"],
+      "assumptions": ["the initial set covers the registered hypothesis domain", "observation compatibility is evaluated using the accepted interval rule"],
+      "falsifiers": ["an accepted update adds a hypothesis absent from the preceding set", "a compatible truth hypothesis is removed by the accepted update"],
+      "allowedWording": "bounded history-monotonicity and compatibility retention under the registered model and admitted observations",
+      "forbiddenWording": "universal convergence, completeness, or certification of arbitrary systems",
+      "reviewGate": "DEC-MATH-REVIEW"
     },
     {
       "claimId": "CL-C2",
-      "boundedProposition": "Current feasible affordable TEST actions are ranked by one-step worst residual cardinality, then charged cost and stable identifier; Prep and Recover follow their existing coordination rules.",
-      "locators": ["RR-2026-001 §3.9-§3.9.1", "ALG-CLTAV-05"],
-      "assumptions": ["finite current nonempty survivor set", "valid prediction classes", "exclusive BUDGET or ROUNDS mode", "positive finite action costs", "declared retry cap"],
-      "falsifiers": ["prediction gap scored as zero", "A treated as S", "Prep or Recover scored as TEST", "future evidence leaked to another arm", "claim of global multi-step optimality", "benefit reported after excluding abstention or failed attempts"],
-      "allowedWording": "implementation follows the one-step ranking; empirical benefit is a separate estimand",
-      "forbiddenWording": "first active loop, Bayesian optimum, or global multi-step optimum",
-      "reviewGate": "fair four-arm registration and confirmatory comparison remain open"
+      "boundedProposition": "Under the registered arm contracts, CL-LOOP may condition a later admissible action on its own earlier observations while CL-T, CL-A, and CL-TA may not; any empirical gain remains pending execution.",
+      "locators": ["RR-2026-001:R4-R5", "IF-SELECT-ADMIT", "IF-EXECUTE-RECORD"],
+      "assumptions": ["all arms receive the same registered initial information", "evaluator truth is never algorithm-visible", "cost is charged on issued actions"],
+      "falsifiers": ["a comparator receives later CL-LOOP observations", "CL-LOOP sees evaluator truth", "a reported gain disappears under the registered parent metric"],
+      "allowedWording": "a testable feedback distinction and candidate closed-loop protocol",
+      "forbiddenWording": "proven empirical superiority or optimality before confirmatory execution",
+      "reviewGate": "DEC-MATH-REVIEW"
     }
   ],
+  "costAccounting": {
+    "acceptedProjection": ["acquisition", "computation", "preparation", "retry"],
+    "detailToProjection": {
+      "acquisition": "acquisition",
+      "computation": "computation",
+      "preparation": "preparation",
+      "recovery": "preparation",
+      "retry": "retry"
+    },
+    "doubleChargeRule": "recovery is a preparation detail and is never added twice to the projected preparation component"
+  },
   "arms": [
-    {"id":"CL-T","visibleInputs":["frozen test pool","algorithm-visible records produced by its own executed tests"],"actions":["predetermined TEST","declared Prep/Recover when actually executed"],"feedback":false,"costComponents":["acquisition","preparation","recovery","retry"],"prohibitedInputs":["evaluator truth","later CL-LOOP adaptive records"]},
-    {"id":"CL-A","visibleInputs":["frozen prior input records"],"actions":["analysis only"],"feedback":false,"costComponents":["computation"],"prohibitedInputs":["evaluator truth","invented acquisition","later CL-LOOP adaptive records"]},
-    {"id":"CL-TA","visibleInputs":["records from its frozen acquisition policy"],"actions":["collect then analyse"],"feedback":false,"costComponents":["acquisition","computation","preparation","recovery","retry"],"prohibitedInputs":["evaluator truth","adaptive selection after analysis"]},
-    {"id":"CL-LOOP","visibleInputs":["same initial pool","records acquired by its own prior actions"],"actions":["TEST","Prep","Recover","analysis-guided next action"],"feedback":true,"costComponents":["acquisition","computation","preparation","recovery","retry"],"prohibitedInputs":["evaluator truth"]}
+    {
+      "id": "CL-T",
+      "visibleInputs": [
+        {"ref": "IF-EXP-SCENE.sceneRecord", "role": "ALGORITHM-INITIAL"},
+        {"ref": "IF-EXP-COLLECT.observationLog", "role": "ALGORITHM-OWN-ACTION"}
+      ],
+      "actions": ["predetermined TEST", "declared Prep/Recover when executed"],
+      "feedback": false,
+      "costComponents": ["acquisition", "preparation", "retry"],
+      "prohibitedRefs": ["IF-EXP-TRUTH.truthRecord", "records acquired by another arm"]
+    },
+    {
+      "id": "CL-A",
+      "visibleInputs": [{"ref": "IF-EXP-SCENE.sceneRecord", "role": "ALGORITHM-INITIAL"}],
+      "actions": ["analysis only"],
+      "feedback": false,
+      "costComponents": ["computation"],
+      "prohibitedRefs": ["IF-EXP-TRUTH.truthRecord", "invented acquisition", "records acquired by another arm"]
+    },
+    {
+      "id": "CL-TA",
+      "visibleInputs": [
+        {"ref": "IF-EXP-SCENE.sceneRecord", "role": "ALGORITHM-INITIAL"},
+        {"ref": "IF-EXP-COLLECT.observationLog", "role": "ALGORITHM-OWN-ACTION"}
+      ],
+      "actions": ["frozen collection policy", "analysis after frozen collection"],
+      "feedback": false,
+      "costComponents": ["acquisition", "computation", "preparation", "retry"],
+      "prohibitedRefs": ["IF-EXP-TRUTH.truthRecord", "adaptive selection after analysis"]
+    },
+    {
+      "id": "CL-LOOP",
+      "visibleInputs": [
+        {"ref": "IF-EXP-SCENE.sceneRecord", "role": "ALGORITHM-INITIAL"},
+        {"ref": "IF-EXP-COLLECT.observationLog", "role": "ALGORITHM-OWN-ACTION"},
+        {"ref": "IF-EXP-COLLECT.resourceLog", "role": "ALGORITHM-OWN-ACTION"}
+      ],
+      "actions": ["TEST", "Prep", "Recover", "analysis-guided next action"],
+      "feedback": true,
+      "costComponents": ["acquisition", "computation", "preparation", "retry"],
+      "prohibitedRefs": ["IF-EXP-TRUTH.truthRecord"]
+    }
   ],
   "scenarios": [
-    {"id":"SC-NORMAL-UPLOAD","familyIds":["EXP-CLTAV-DETECT","EXP-CLTAV-LOCATE"],"serviceScope":"UPLOAD","faultClass":"NORMAL-CONTROL","truthConfirmation":"controlled scene definition plus terminal-status evidence","observableOutcome":"qualified completion evidence; normal singleton is not protocol PASS","resetEvidence":"fresh session and IUT reset identifier","acceptanceMatrixRefs":["AM-EXPERIMENT","AM-STATE"],"dependencyIds":["DEP-IUT","DEP-RESET","DEP-REGISTRATION"]},
-    {"id":"SC-WAIT-CONTINUE","familyIds":["EXP-CLTAV-DETECT","EXP-CLTAV-ABLATION"],"serviceScope":"UPLOAD","faultClass":"CONFIGURATION-OR-PROTOCOL","truthConfirmation":"confirmed event script","observableOutcome":"WAIT preserves the active obligation until continuation","resetEvidence":"loader/session reset record","acceptanceMatrixRefs":["AM-TIMING","AM-STATE"],"dependencyIds":["DEP-IUT","DEP-CLOCK","DEP-REGISTRATION"]},
-    {"id":"SC-NO-RESPONSE","familyIds":["EXP-CLTAV-DETECT","EXP-CLTAV-LOCATE"],"serviceScope":"INFORMATION","faultClass":"PROTOCOL-FAULT","truthConfirmation":"confirmed suppression plus complete qualified observation horizon","observableOutcome":"FAIL only when the valid uncancelled obligation expires; insufficient evidence remains non-FAIL","resetEvidence":"endpoint and capture-horizon reset record","acceptanceMatrixRefs":["AM-OWNERSHIP","AM-TIMING"],"dependencyIds":["DEP-IUT","DEP-CLOCK","DEP-TRUTH","DEP-REGISTRATION"]},
-    {"id":"SC-ABORT","familyIds":["EXP-CLTAV-DETECT","EXP-CLTAV-ABLATION"],"serviceScope":"UPLOAD","faultClass":"CONFIGURATION-OR-PROTOCOL","truthConfirmation":"independent controller log","observableOutcome":"abort cancels only the owned obligation and does not waive unrelated clocks","resetEvidence":"transfer/session reset record","acceptanceMatrixRefs":["AM-OWNERSHIP","AM-TIMING"],"dependencyIds":["DEP-IUT","DEP-TRUTH","DEP-REGISTRATION"]},
-    {"id":"SC-INVALID-OBS","familyIds":["EXP-CLTAV-DETECT","EXP-CLTAV-ABLATION"],"serviceScope":"INFORMATION","faultClass":"OBSERVATION-ANOMALY","truthConfirmation":"evaluator construction record, not an IUT-fault label","observableOutcome":"ERROR or existing qualification result; never direct IUT blame","resetEvidence":"fresh capture/session identity","acceptanceMatrixRefs":["AM-LABEL","AM-TIMING","AM-EXPERIMENT"],"dependencyIds":["DEP-CLOCK","DEP-OBS-QUAL","DEP-REGISTRATION"]},
-    {"id":"SC-SAME-KEY","familyIds":["EXP-CLTAV-LOCATE","EXP-CLTAV-ABLATION"],"serviceScope":"INFORMATION","faultClass":"CONFIGURATION-OR-PROTOCOL","truthConfirmation":"independent request schedule","observableOutcome":"one owner or explicit ambiguity; no response reuse","resetEvidence":"correlation-state reset record","acceptanceMatrixRefs":["AM-OWNERSHIP","AM-HISTORY"],"dependencyIds":["DEP-IUT","DEP-TRUTH","DEP-REGISTRATION"]},
-    {"id":"SC-SINGLE-BATCH","familyIds":["EXP-CLTAV-LOCATE","EXP-CLTAV-ABLATION"],"serviceScope":"UPLOAD","faultClass":"CONFIGURATION-DIFFERENCE","truthConfirmation":"paired controlled scene definitions","observableOutcome":"paired comparison only after independent full reset","resetEvidence":"resetId links both paired units","acceptanceMatrixRefs":["AM-EXPERIMENT","AM-HISTORY"],"dependencyIds":["DEP-IUT","DEP-RESET","DEP-REGISTRATION"]},
-    {"id":"SC-RESOURCE-ERROR","familyIds":["EXP-CLTAV-DETECT","EXP-CLTAV-LOCATE","EXP-CLTAV-ABLATION"],"serviceScope":"INFORMATION","faultClass":"TOOL-OR-RESOURCE-ERROR","truthConfirmation":"configuration plus controller record","observableOutcome":"named ERROR/budget exit with all spent cost retained; not IUT nonconformance","resetEvidence":"resource and retry-counter reset","acceptanceMatrixRefs":["AM-RESOURCE","AM-STATE"],"dependencyIds":["DEP-IUT","DEP-RESOURCE","DEP-REGISTRATION"]}
+    {
+      "id": "SC-NORMAL-UPLOAD", "developmentScenarioRef": "SC-NORMAL-UPLOAD",
+      "familyIds": ["EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE"], "serviceScope": "UPLOAD",
+      "faultClass": "NORMAL-CONTROL", "crsRefs": ["CRS-M1-00077"], "crsDisposition": "APPLICABLE",
+      "acceptanceCaseRefs": ["AC-EXP-SCENE", "AC-EXP-CAUSAL"],
+      "perturbationPoint": "no perturbation; qualified upload completion control",
+      "requiredRecords": ["TRANSFER-RECORD", "PROTOCOL-EVENT", "OBSERVATION-ASSESSMENT", "HISTORY-HANDLE"],
+      "truthConfirmation": "controlled scene definition plus terminal-status evidence",
+      "observableOutcome": "qualified completion evidence; normal singleton does not by itself establish protocol PASS",
+      "resetEvidence": "fresh session and IUT reset identifier",
+      "acceptanceMatrixRefs": ["AM-EXPERIMENT", "AM-STATE"],
+      "admissionRule": "admit only after scene identity, reset, and observation qualification pass",
+      "dependencyIds": ["DEP-IUT", "DEP-RESET", "DEP-REGISTRATION"]
+    },
+    {
+      "id": "SC-WAIT-CONTINUE", "developmentScenarioRef": "SC-WAIT-CONTINUE",
+      "familyIds": ["EXP-CLTAV-DETECT", "EXP-CLTAV-ABLATION"], "serviceScope": "UPLOAD",
+      "faultClass": "CONFIGURATION-OR-PROTOCOL", "crsRefs": ["CRS-M1-00106", "CRS-M1-00107"], "crsDisposition": "APPLICABLE",
+      "acceptanceCaseRefs": ["AC-EXP-SCENE", "AC-EXP-CAUSAL", "AC-SYN-HISTORY"],
+      "perturbationPoint": "WAIT/continuation event timing and state transition",
+      "requiredRecords": ["PROTOCOL-EVENT", "OBSERVATION-ASSESSMENT", "HISTORY-HANDLE"],
+      "truthConfirmation": "confirmed event script and evaluator timing record",
+      "observableOutcome": "WAIT preserves the active obligation until continuation",
+      "resetEvidence": "loader/session reset record", "acceptanceMatrixRefs": ["AM-TIMING", "AM-STATE"],
+      "admissionRule": "admit only when event ownership and both measurement intervals are reconstructable",
+      "dependencyIds": ["DEP-IUT", "DEP-CLOCK", "DEP-REGISTRATION"]
+    },
+    {
+      "id": "SC-NO-RESPONSE", "developmentScenarioRef": "SC-NO-RESPONSE",
+      "familyIds": ["EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE"], "serviceScope": "INFORMATION",
+      "faultClass": "PROTOCOL-FAULT", "crsRefs": ["CRS-M1-00101"], "crsDisposition": "APPLICABLE",
+      "acceptanceCaseRefs": ["AC-EXP-SCENE", "AC-EXP-CAUSAL", "AC-SYN-OBSERVATION"],
+      "perturbationPoint": "owned response suppression after a confirmed request",
+      "requiredRecords": ["PACKET-REF", "PROTOCOL-EVENT", "OWNERSHIP-RESULT", "OBSERVATION-ASSESSMENT"],
+      "truthConfirmation": "confirmed suppression plus complete qualified observation horizon",
+      "observableOutcome": "FAIL only when the valid uncancelled obligation expires; insufficient evidence remains non-FAIL",
+      "resetEvidence": "endpoint and capture-horizon reset record", "acceptanceMatrixRefs": ["AM-OWNERSHIP", "AM-TIMING"],
+      "admissionRule": "admit only confirmed, non-equivalent suppression with a complete qualified horizon",
+      "dependencyIds": ["DEP-IUT", "DEP-CLOCK", "DEP-TRUTH", "DEP-REGISTRATION"]
+    },
+    {
+      "id": "SC-ABORT", "developmentScenarioRef": "SC-ABORT",
+      "familyIds": ["EXP-CLTAV-DETECT", "EXP-CLTAV-ABLATION"], "serviceScope": "UPLOAD",
+      "faultClass": "CONFIGURATION-OR-PROTOCOL", "crsRefs": ["CRS-M1-00104", "CRS-M1-00108"], "crsDisposition": "APPLICABLE",
+      "acceptanceCaseRefs": ["AC-EXP-SCENE", "AC-EXP-CAUSAL", "AC-SYN-TRANSFER"],
+      "perturbationPoint": "owned abort event during active transfer",
+      "requiredRecords": ["TRANSFER-RECORD", "PROTOCOL-EVENT", "OWNERSHIP-RESULT"],
+      "truthConfirmation": "independent controller log", "observableOutcome": "abort cancels only the owned obligation and does not waive unrelated clocks",
+      "resetEvidence": "transfer/session reset record", "acceptanceMatrixRefs": ["AM-OWNERSHIP", "AM-TIMING"],
+      "admissionRule": "admit only when the abort is causally linked to one request instance",
+      "dependencyIds": ["DEP-IUT", "DEP-TRUTH", "DEP-REGISTRATION"]
+    },
+    {
+      "id": "SC-INVALID-OBS", "developmentScenarioRef": "SC-INVALID-OBS",
+      "familyIds": ["EXP-CLTAV-DETECT", "EXP-CLTAV-ABLATION"], "serviceScope": "INFORMATION",
+      "faultClass": "OBSERVATION-ANOMALY", "crsRefs": [], "crsDisposition": "TOOL-OR-EXPERIMENT-N/A",
+      "acceptanceCaseRefs": ["AC-EXP-SCENE", "AC-EXP-CAUSAL", "AC-SYN-OBSERVATION"],
+      "perturbationPoint": "capture timestamp, coverage, or ownership evidence",
+      "requiredRecords": ["CAPTURE-IDENTITY", "PACKET-REF", "OBSERVATION-ASSESSMENT", "FINDING-RECORD"],
+      "truthConfirmation": "evaluator construction record, not an IUT-fault label",
+      "observableOutcome": "ERROR or existing qualification result; never direct IUT blame",
+      "resetEvidence": "fresh capture/session identity", "acceptanceMatrixRefs": ["AM-LABEL", "AM-TIMING", "AM-EXPERIMENT"],
+      "admissionRule": "retain in all-attempt accounting but exclude from IUT PASS/FAIL denominators",
+      "dependencyIds": ["DEP-CLOCK", "DEP-OBS-QUAL", "DEP-REGISTRATION"]
+    },
+    {
+      "id": "SC-SAME-KEY", "developmentScenarioRef": "SC-SAME-KEY",
+      "familyIds": ["EXP-CLTAV-LOCATE", "EXP-CLTAV-ABLATION"], "serviceScope": "INFORMATION",
+      "faultClass": "CONFIGURATION-OR-PROTOCOL", "crsRefs": [], "crsDisposition": "TOOL-OR-EXPERIMENT-N/A",
+      "acceptanceCaseRefs": ["AC-EXP-SCENE", "AC-EXP-CAUSAL", "AC-SYN-HISTORY"],
+      "perturbationPoint": "concurrent requests sharing a correlation key",
+      "requiredRecords": ["PROTOCOL-EVENT", "OWNERSHIP-RESULT", "HISTORY-HANDLE"],
+      "truthConfirmation": "independent request schedule", "observableOutcome": "one owner or explicit ambiguity; no response reuse",
+      "resetEvidence": "correlation-state reset record", "acceptanceMatrixRefs": ["AM-OWNERSHIP", "AM-HISTORY"],
+      "admissionRule": "admit only when ambiguity is represented rather than silently resolved",
+      "dependencyIds": ["DEP-IUT", "DEP-TRUTH", "DEP-REGISTRATION"]
+    },
+    {
+      "id": "SC-SINGLE-BATCH", "developmentScenarioRef": "SC-SINGLE-BATCH",
+      "familyIds": ["EXP-CLTAV-LOCATE", "EXP-CLTAV-ABLATION"], "serviceScope": "UPLOAD",
+      "faultClass": "CONFIGURATION-DIFFERENCE", "crsRefs": ["CRS-M1-00084"], "crsDisposition": "APPLICABLE",
+      "acceptanceCaseRefs": ["AC-EXP-SCENE", "AC-EXP-CAUSAL", "AC-SYN-SELECT"],
+      "perturbationPoint": "registered single-versus-batch selection policy",
+      "requiredRecords": ["TRANSFER-RECORD", "PROTOCOL-EVENT", "HISTORY-HANDLE"],
+      "truthConfirmation": "paired controlled scene definitions", "observableOutcome": "paired comparison only after independent full reset",
+      "resetEvidence": "resetId links both paired units", "acceptanceMatrixRefs": ["AM-EXPERIMENT", "AM-HISTORY"],
+      "admissionRule": "admit paired units only when configuration differs solely at the registered perturbation",
+      "dependencyIds": ["DEP-IUT", "DEP-RESET", "DEP-REGISTRATION"]
+    },
+    {
+      "id": "SC-RESOURCE-ERROR", "developmentScenarioRef": "SC-RESOURCE-ERROR",
+      "familyIds": ["EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE", "EXP-CLTAV-ABLATION"], "serviceScope": "INFORMATION",
+      "faultClass": "TOOL-OR-RESOURCE-ERROR", "crsRefs": ["CRS-M1-00167"], "crsDisposition": "APPLICABLE",
+      "acceptanceCaseRefs": ["AC-EXP-SCENE", "AC-EXP-CAUSAL", "AC-SYN-RESOURCE-STOP"],
+      "perturbationPoint": "declared resource controller or tool-error path",
+      "requiredRecords": ["INTAKE-METADATA", "FINDING-RECORD", "HISTORY-HANDLE"],
+      "truthConfirmation": "configuration plus controller record", "observableOutcome": "named ERROR/budget exit with all spent cost retained; not IUT nonconformance",
+      "resetEvidence": "resource and retry-counter reset", "acceptanceMatrixRefs": ["AM-RESOURCE", "AM-STATE"],
+      "admissionRule": "retain every registered attempt and distinguish budget exhaustion from tool error",
+      "dependencyIds": ["DEP-IUT", "DEP-RESOURCE", "DEP-REGISTRATION"]
+    }
+  ],
+  "acceptanceMatrixDispositions": [
+    {"id": "AM-IDENTITY", "disposition": "PRE-RUN-CONTRACT", "consumerRefs": ["DEP-IUT", "DEP-REGISTRATION"], "rationale": "fixes artifact and IUT identity before a run"},
+    {"id": "AM-LABEL", "disposition": "SCENARIO-EVIDENCE", "consumerRefs": ["SC-INVALID-OBS"], "rationale": "separates tool/capture anomalies from IUT findings"},
+    {"id": "AM-FORMAT", "disposition": "PRE-RUN-CONTRACT", "consumerRefs": ["DEP-IUT"], "rationale": "format preconditions belong to the selected environment"},
+    {"id": "AM-IP", "disposition": "PRE-RUN-CONTRACT", "consumerRefs": ["DEP-IUT"], "rationale": "network identity is frozen with the IUT configuration"},
+    {"id": "AM-TFTP", "disposition": "PRE-RUN-CONTRACT", "consumerRefs": ["DEP-IUT"], "rationale": "transport setup is verified before scenario admission"},
+    {"id": "AM-FIELDS", "disposition": "SCENARIO-EVIDENCE", "consumerRefs": ["SC-NORMAL-UPLOAD", "SC-ABORT"], "rationale": "field evidence is collected by protocol scenarios"},
+    {"id": "AM-OWNERSHIP", "disposition": "SCENARIO-EVIDENCE", "consumerRefs": ["SC-NO-RESPONSE", "SC-ABORT", "SC-SAME-KEY"], "rationale": "ownership is a per-attempt causal fact"},
+    {"id": "AM-TIMING", "disposition": "SCENARIO-EVIDENCE", "consumerRefs": ["SC-WAIT-CONTINUE", "SC-NO-RESPONSE", "SC-ABORT", "SC-INVALID-OBS"], "rationale": "timing intervals are per-attempt evidence"},
+    {"id": "AM-ADMIT", "disposition": "CONTROL-GATE", "consumerRefs": ["DEP-REGISTRATION"], "rationale": "admission must pass before analysis"},
+    {"id": "AM-HISTORY", "disposition": "SCENARIO-EVIDENCE", "consumerRefs": ["SC-SAME-KEY", "SC-SINGLE-BATCH"], "rationale": "history state is reconstructed per run"},
+    {"id": "AM-STATE", "disposition": "SCENARIO-EVIDENCE", "consumerRefs": ["SC-NORMAL-UPLOAD", "SC-WAIT-CONTINUE", "SC-RESOURCE-ERROR"], "rationale": "state transitions support outcome and stop attribution"},
+    {"id": "AM-RESOURCE", "disposition": "CONTROL-GATE", "consumerRefs": ["DEP-RESOURCE", "SC-RESOURCE-ERROR"], "rationale": "budget and charge modes are frozen before execution"},
+    {"id": "AM-EXPERIMENT", "disposition": "CONTROL-GATE", "consumerRefs": ["DEP-REGISTRATION", "SC-NORMAL-UPLOAD", "SC-INVALID-OBS", "SC-SINGLE-BATCH"], "rationale": "experiment identity and pairing are control-plane gates"},
+    {"id": "AM-DRIFT", "disposition": "CONTROL-GATE", "consumerRefs": ["DEP-REGISTRATION"], "rationale": "authority drift invalidates the registered design"}
+  ],
+  "populations": [
+    {"id": "POP-ATTEMPTS", "unit": "attempt", "derivedFromFields": ["attemptId"], "predicate": "one row per unique registered attemptId", "retentionRule": "retain every registered attempt, including excluded, unresolved, abstaining, incomplete, and error attempts"},
+    {"id": "POP-ANSWERED", "unit": "attempt", "derivedFromFields": ["validity", "outcome"], "predicate": "validity == VALID and outcome in {PASS, FAIL}", "retentionRule": "ERROR, INCONCLUSIVE, and NOT-ANSWERED are not answered"},
+    {"id": "POP-QUALIFIED-NORMAL", "unit": "attempt", "derivedFromFields": ["injectionStatus", "faultDomain", "validity"], "predicate": "injectionStatus == NORMAL and faultDomain == NORMAL and validity == VALID", "retentionRule": "invalid normal controls stay in POP-ATTEMPTS only"},
+    {"id": "POP-CONFIRMED-FAULT", "unit": "attempt", "derivedFromFields": ["injectionStatus", "faultDomain", "runId"], "predicate": "injectionStatus == CONFIRMED and faultDomain == IN-DOMAIN-NON-EQUIVALENT and runId != null", "retentionRule": "confirmed equivalents and unresolved injections stay visible but are not scored as faults"},
+    {"id": "POP-MISSES", "unit": "attempt", "derivedFromFields": ["outcome"], "predicate": "member of POP-CONFIRMED-FAULT and outcome == PASS", "retentionRule": "non-answered fault attempts remain in the fault denominator but not the answered denominator"},
+    {"id": "POP-FALSE-FAILS", "unit": "attempt", "derivedFromFields": ["outcome"], "predicate": "member of POP-QUALIFIED-NORMAL and outcome == FAIL", "retentionRule": "tool ERROR is not a false fail"},
+    {"id": "POP-CONDITIONAL-ERROR", "unit": "attempt", "derivedFromFields": ["outcome", "truthReference.truthHypothesis"], "predicate": "member of POP-ANSWERED and either POP-MISSES or POP-FALSE-FAILS", "retentionRule": "defined only inside POP-ANSWERED"},
+    {"id": "POP-ABSTAIN", "unit": "attempt", "derivedFromFields": ["validity"], "predicate": "validity == ABSTAIN", "retentionRule": "a singleton survivor does not override an abstention stop"},
+    {"id": "POP-INCONCLUSIVE", "unit": "attempt", "derivedFromFields": ["outcome"], "predicate": "outcome == INCONCLUSIVE", "retentionRule": "retain interval-overlap cases without forcing PASS or FAIL"},
+    {"id": "POP-ERROR", "unit": "attempt", "derivedFromFields": ["validity", "outcome"], "predicate": "outcome == ERROR or validity == INVALID", "retentionRule": "retain cause and spent cost without IUT blame"},
+    {"id": "POP-INCOMPLETE", "unit": "attempt", "derivedFromFields": ["validity", "resourceStatus"], "predicate": "validity == INCOMPLETE or resourceStatus == BUDGET-EXHAUSTED", "retentionRule": "retain partial history and charged cost"},
+    {"id": "POP-LOCALIZATION-ELIGIBLE", "unit": "attempt", "derivedFromFields": ["injectionStatus", "faultDomain", "runId"], "predicate": "member of POP-CONFIRMED-FAULT", "retentionRule": "eligibility does not require a decision"},
+    {"id": "POP-LOCALIZATION-DECISION", "unit": "attempt", "derivedFromFields": ["localizationDecisionIssued"], "predicate": "member of POP-LOCALIZATION-ELIGIBLE and localizationDecisionIssued == true", "retentionRule": "empty/error exits remain only in the eligible population"},
+    {"id": "POP-TRUE-RETAINED", "unit": "attempt", "derivedFromFields": ["truthReference.truthHypothesis", "finalHypotheses"], "predicate": "member of POP-LOCALIZATION-DECISION and truth hypothesis occurs in finalHypotheses", "retentionRule": "evaluate using evaluator-only truth after the run"},
+    {"id": "POP-TRUE-EXCLUDED", "unit": "attempt", "derivedFromFields": ["truthReference.truthHypothesis", "finalHypotheses"], "predicate": "member of POP-LOCALIZATION-DECISION and truth hypothesis is absent from finalHypotheses", "retentionRule": "report separately from absence of a localization decision"},
+    {"id": "POP-SINGLETON-DECISION", "unit": "attempt", "derivedFromFields": ["singletonDecisionIssued", "finalHypotheses"], "predicate": "member of POP-LOCALIZATION-DECISION and singletonDecisionIssued == true and len(finalHypotheses) == 1", "retentionRule": "stop class alone cannot manufacture a singleton decision"},
+    {"id": "POP-SINGLETON-CORRECT", "unit": "attempt", "derivedFromFields": ["truthReference.truthHypothesis", "finalHypotheses"], "predicate": "member of POP-SINGLETON-DECISION and sole hypothesis equals truth", "retentionRule": "wrong singleton remains in singleton denominator"},
+    {"id": "POP-PAIRED-ELIGIBLE", "unit": "pair", "derivedFromFields": ["pairingId"], "predicate": "two registered rows share a non-null pairingId and satisfy their parent metric population", "retentionRule": "unmatched rows remain visible and are not imputed"},
+    {"id": "POP-ROUNDS", "unit": "run", "derivedFromFields": ["runId", "resourcePolicy", "actionIssued"], "predicate": "runId != null and resourcePolicy == ROUNDS", "retentionRule": "charge only actually issued actions"}
   ],
   "metrics": [
-    {"id":"MET-ATTEMPTS","familyIds":["EXP-CLTAV-DETECT","EXP-CLTAV-LOCATE","EXP-CLTAV-ABLATION"],"population":"all registered attempts","numerator":"unique attempts","denominator":"attempt","unit":"count","direction":"descriptive","zeroDenominator":"N/A","primary":false,"requiredFields":["IF-EXP-EVAL.attemptDenominator"],"output":"all-attempt flow table"},
-    {"id":"MET-ANSWERED-COVERAGE","familyIds":["EXP-CLTAV-DETECT"],"population":"all attempts","numerator":"valid PASS or FAIL answered attempts","denominator":"attempt","unit":"proportion","direction":"higher with error and abstention reported","zeroDenominator":"N/A","primary":true,"requiredFields":["IF-EXP-EVAL.answeredSubsetDenominator"],"output":"detection result figure"},
-    {"id":"MET-MISS","familyIds":["EXP-CLTAV-DETECT"],"population":"confirmed in-domain non-equivalent fault attempts","numerator":"valid PASS among eligible fault attempts","denominator":"confirmed-in-domain-fault","unit":"proportion","direction":"lower","zeroDenominator":"N/A","primary":true,"requiredFields":["FINDING-RECORD.judgmentBasis","IF-EXP-TRUTH.truthRecord"],"output":"detection result figure"},
-    {"id":"MET-FALSE-FAIL","familyIds":["EXP-CLTAV-DETECT"],"population":"qualified normal controls","numerator":"valid FAIL normal controls","denominator":"qualified-normal","unit":"proportion","direction":"lower","zeroDenominator":"N/A","primary":true,"requiredFields":["OBSERVATION-ASSESSMENT.verdict","IF-EXP-TRUTH.truthRecord"],"output":"detection result figure"},
-    {"id":"MET-ABSTAIN","familyIds":["EXP-CLTAV-DETECT","EXP-CLTAV-LOCATE"],"population":"all attempts","numerator":"named abstention attempts","denominator":"attempt","unit":"proportion","direction":"descriptive","zeroDenominator":"N/A","primary":false,"requiredFields":["IF-EXP-RUN.stopClass"],"output":"flow table"},
-    {"id":"MET-ERROR","familyIds":["EXP-CLTAV-DETECT","EXP-CLTAV-LOCATE"],"population":"all attempts","numerator":"ERROR or invalid-observation attempts","denominator":"attempt","unit":"proportion","direction":"lower with cause reported","zeroDenominator":"N/A","primary":false,"requiredFields":["OBSERVATION-ASSESSMENT.verdict"],"output":"flow table"},
-    {"id":"MET-TRUE-RETAINED","familyIds":["EXP-CLTAV-LOCATE"],"population":"confirmed in-domain localization decisions","numerator":"final sets retaining the true hypothesis","denominator":"localization-decision","unit":"proportion","direction":"higher","zeroDenominator":"N/A","primary":true,"requiredFields":["HISTORY-HANDLE.H","IF-EXP-TRUTH.truthRecord"],"output":"localization result figure"},
-    {"id":"MET-SINGLETON-CORRECT","familyIds":["EXP-CLTAV-LOCATE"],"population":"localization decisions ending in singleton","numerator":"singletons equal to adjudicated truth","denominator":"singleton-decision","unit":"proportion","direction":"higher","zeroDenominator":"N/A","primary":false,"requiredFields":["HISTORY-HANDLE.H","IF-EXP-TRUTH.truthRecord"],"output":"localization result figure"},
-    {"id":"MET-FINAL-CANDIDATES","familyIds":["EXP-CLTAV-LOCATE"],"population":"all eligible localization attempts","numerator":"final survivor count per attempt","denominator":"eligible-localization-attempt","unit":"count per attempt","direction":"lower subject to truth retention","zeroDenominator":"N/A","primary":true,"requiredFields":["HISTORY-HANDLE.H"],"output":"localization distribution"},
-    {"id":"MET-COST-VECTOR","familyIds":["EXP-CLTAV-DETECT","EXP-CLTAV-LOCATE","EXP-CLTAV-ABLATION"],"population":"all attempts including incomplete and budget exits","numerator":"actual acquisition, computation, preparation, recovery and retry charges","denominator":"attempt","unit":"declared cost vector","direction":"lower only with success/coverage jointly reported","zeroDenominator":"N/A","primary":true,"requiredFields":["IF-EXP-EVAL.metricCells","IF-RESOURCE-STOP.trace"],"output":"cost table"},
-    {"id":"MET-ROUNDS","familyIds":["EXP-CLTAV-LOCATE","EXP-CLTAV-ABLATION"],"population":"all attempts in ROUNDS mode","numerator":"issued rounds","denominator":"attempt","unit":"rounds","direction":"lower only with outcome jointly reported","zeroDenominator":"N/A","primary":false,"requiredFields":["IF-RESOURCE-STOP.trace"],"output":"cost table"},
-    {"id":"MET-ABLATION-DELTA","familyIds":["EXP-CLTAV-ABLATION"],"population":"paired scenes sharing the parent metric definition","numerator":"within-scene arm difference for a named parent metric","denominator":"paired-eligible-scene","unit":"parent metric unit","direction":"two-sided","zeroDenominator":"N/A","primary":false,"requiredFields":["IF-EXP-EVAL.metricCells"],"output":"ablation table"}
+    {"id": "MET-ATTEMPTS", "familyIds": ["EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE", "EXP-CLTAV-ABLATION"], "populationId": "POP-ATTEMPTS", "numeratorPopulationId": null, "calculation": "cardinality", "unit": "count", "direction": "descriptive", "zeroDenominator": "N/A", "missingRule": "missing attemptId invalidates the row", "censoringRule": "none; retain every registered attempt", "primary": false, "requiredFields": ["attemptId"], "parentMetricIds": [], "analysisPlanId": "AN-FLOW", "output": "all-attempt flow table"},
+    {"id": "MET-ANSWERED-COVERAGE", "familyIds": ["EXP-CLTAV-DETECT"], "populationId": "POP-ATTEMPTS", "numeratorPopulationId": "POP-ANSWERED", "calculation": "answered attempts / all attempts", "unit": "proportion", "direction": "higher with errors and abstentions jointly reported", "zeroDenominator": "N/A", "missingRule": "missing validity or outcome invalidates the row", "censoringRule": "no censoring; budget and error exits remain in denominator", "primary": true, "requiredFields": ["attemptId", "validity", "outcome"], "parentMetricIds": [], "analysisPlanId": "AN-PROPORTION", "output": "detection result figure"},
+    {"id": "MET-CONDITIONAL-DETECTION-ERROR", "familyIds": ["EXP-CLTAV-DETECT"], "populationId": "POP-ANSWERED", "numeratorPopulationId": "POP-CONDITIONAL-ERROR", "calculation": "wrong answered decisions / answered attempts", "unit": "proportion", "direction": "lower", "zeroDenominator": "N/A", "missingRule": "missing evaluator truth invalidates error classification", "censoringRule": "defined only for answered attempts", "primary": true, "requiredFields": ["validity", "outcome", "truthReference.truthHypothesis"], "parentMetricIds": [], "analysisPlanId": "AN-PROPORTION", "output": "detection result figure"},
+    {"id": "MET-MISS", "familyIds": ["EXP-CLTAV-DETECT"], "populationId": "POP-CONFIRMED-FAULT", "numeratorPopulationId": "POP-MISSES", "calculation": "valid PASS / confirmed in-domain non-equivalent fault attempts", "unit": "proportion", "direction": "lower", "zeroDenominator": "N/A", "missingRule": "unconfirmed or unresolved injection is retained outside this denominator", "censoringRule": "budget/error exits remain in fault denominator and are reported separately", "primary": true, "requiredFields": ["injectionStatus", "faultDomain", "outcome", "truthReference.truthHypothesis"], "parentMetricIds": [], "analysisPlanId": "AN-PROPORTION", "output": "detection result figure"},
+    {"id": "MET-FALSE-FAIL", "familyIds": ["EXP-CLTAV-DETECT"], "populationId": "POP-QUALIFIED-NORMAL", "numeratorPopulationId": "POP-FALSE-FAILS", "calculation": "valid FAIL / qualified normal controls", "unit": "proportion", "direction": "lower", "zeroDenominator": "N/A", "missingRule": "unqualified normal controls stay outside this denominator", "censoringRule": "tool errors are not false failures", "primary": true, "requiredFields": ["injectionStatus", "faultDomain", "validity", "outcome"], "parentMetricIds": [], "analysisPlanId": "AN-PROPORTION", "output": "detection result figure"},
+    {"id": "MET-ABSTAIN", "familyIds": ["EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE"], "populationId": "POP-ATTEMPTS", "numeratorPopulationId": "POP-ABSTAIN", "calculation": "abstentions / all attempts", "unit": "proportion", "direction": "descriptive", "zeroDenominator": "N/A", "missingRule": "missing validity invalidates row", "censoringRule": "none", "primary": false, "requiredFields": ["validity"], "parentMetricIds": [], "analysisPlanId": "AN-FLOW", "output": "flow table"},
+    {"id": "MET-INCONCLUSIVE", "familyIds": ["EXP-CLTAV-DETECT"], "populationId": "POP-ATTEMPTS", "numeratorPopulationId": "POP-INCONCLUSIVE", "calculation": "inconclusive attempts / all attempts", "unit": "proportion", "direction": "descriptive", "zeroDenominator": "N/A", "missingRule": "missing outcome invalidates row", "censoringRule": "interval overlap is retained as inconclusive", "primary": false, "requiredFields": ["outcome", "observationInterval", "requirementInterval"], "parentMetricIds": [], "analysisPlanId": "AN-FLOW", "output": "flow table"},
+    {"id": "MET-ERROR", "familyIds": ["EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE"], "populationId": "POP-ATTEMPTS", "numeratorPopulationId": "POP-ERROR", "calculation": "errors / all attempts", "unit": "proportion", "direction": "lower with cause reported", "zeroDenominator": "N/A", "missingRule": "missing outcome or validity invalidates row", "censoringRule": "none", "primary": false, "requiredFields": ["validity", "outcome"], "parentMetricIds": [], "analysisPlanId": "AN-FLOW", "output": "flow table"},
+    {"id": "MET-INCOMPLETE", "familyIds": ["EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE"], "populationId": "POP-ATTEMPTS", "numeratorPopulationId": "POP-INCOMPLETE", "calculation": "incomplete or budget-exhausted attempts / all attempts", "unit": "proportion", "direction": "descriptive", "zeroDenominator": "N/A", "missingRule": "missing resourceStatus invalidates row", "censoringRule": "right-censored runtime/cost remains visible", "primary": false, "requiredFields": ["validity", "resourceStatus", "chargedCost"], "parentMetricIds": [], "analysisPlanId": "AN-FLOW", "output": "flow table"},
+    {"id": "MET-LOCALIZATION-COVERAGE", "familyIds": ["EXP-CLTAV-LOCATE"], "populationId": "POP-LOCALIZATION-ELIGIBLE", "numeratorPopulationId": "POP-LOCALIZATION-DECISION", "calculation": "issued localization decisions / eligible localization attempts", "unit": "proportion", "direction": "higher with retention/error jointly reported", "zeroDenominator": "N/A", "missingRule": "missing decision flag invalidates row", "censoringRule": "empty/error stops remain in eligible denominator", "primary": true, "requiredFields": ["localizationDecisionIssued", "injectionStatus", "faultDomain"], "parentMetricIds": [], "analysisPlanId": "AN-PROPORTION", "output": "localization result figure"},
+    {"id": "MET-TRUE-RETAINED", "familyIds": ["EXP-CLTAV-LOCATE"], "populationId": "POP-LOCALIZATION-DECISION", "numeratorPopulationId": "POP-TRUE-RETAINED", "calculation": "decisions retaining truth / issued localization decisions", "unit": "proportion", "direction": "higher", "zeroDenominator": "N/A", "missingRule": "missing truth or final set invalidates row", "censoringRule": "no-decision attempts are reported by coverage, not silently removed", "primary": true, "requiredFields": ["truthReference.truthHypothesis", "finalHypotheses", "localizationDecisionIssued"], "parentMetricIds": [], "analysisPlanId": "AN-PROPORTION", "output": "localization result figure"},
+    {"id": "MET-TRUE-EXCLUDED", "familyIds": ["EXP-CLTAV-LOCATE"], "populationId": "POP-LOCALIZATION-DECISION", "numeratorPopulationId": "POP-TRUE-EXCLUDED", "calculation": "decisions excluding truth / issued localization decisions", "unit": "proportion", "direction": "lower", "zeroDenominator": "N/A", "missingRule": "missing truth or final set invalidates row", "censoringRule": "no-decision attempts are not truth exclusions", "primary": false, "requiredFields": ["truthReference.truthHypothesis", "finalHypotheses", "localizationDecisionIssued"], "parentMetricIds": [], "analysisPlanId": "AN-PROPORTION", "output": "localization result figure"},
+    {"id": "MET-SINGLETON-CORRECT", "familyIds": ["EXP-CLTAV-LOCATE"], "populationId": "POP-SINGLETON-DECISION", "numeratorPopulationId": "POP-SINGLETON-CORRECT", "calculation": "correct singletons / issued singleton decisions", "unit": "proportion", "direction": "higher", "zeroDenominator": "N/A", "missingRule": "missing truth invalidates row", "censoringRule": "Stop-645 and budget stops cannot create singleton decisions", "primary": false, "requiredFields": ["singletonDecisionIssued", "finalHypotheses", "truthReference.truthHypothesis"], "parentMetricIds": [], "analysisPlanId": "AN-PROPORTION", "output": "localization result figure"},
+    {"id": "MET-FINAL-CANDIDATES", "familyIds": ["EXP-CLTAV-LOCATE"], "populationId": "POP-LOCALIZATION-ELIGIBLE", "numeratorPopulationId": null, "calculation": "distribution of len(finalHypotheses)", "unit": "count per attempt", "direction": "lower subject to truth retention and coverage", "zeroDenominator": "N/A", "missingRule": "missing finalHypotheses invalidates row", "censoringRule": "include incomplete and empty exits with stop class", "primary": true, "requiredFields": ["finalHypotheses", "stopClass"], "parentMetricIds": [], "analysisPlanId": "AN-DISTRIBUTION", "output": "localization distribution"},
+    {"id": "MET-COST-VECTOR", "familyIds": ["EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE", "EXP-CLTAV-ABLATION"], "populationId": "POP-ATTEMPTS", "numeratorPopulationId": null, "calculation": "project detail costs to (acquisition, computation, preparation, retry), folding recovery into preparation once", "unit": "four-dimensional cost vector", "direction": "lower only with success and coverage jointly reported", "zeroDenominator": "N/A", "missingRule": "missing charge field invalidates row", "censoringRule": "include spent cost for incomplete and error exits", "primary": true, "requiredFields": ["chargedCost.acquisition", "chargedCost.computation", "chargedCost.preparation", "chargedCost.recovery", "chargedCost.retry"], "parentMetricIds": [], "analysisPlanId": "AN-DISTRIBUTION", "output": "cost table"},
+    {"id": "MET-ROUNDS", "familyIds": ["EXP-CLTAV-LOCATE", "EXP-CLTAV-ABLATION"], "populationId": "POP-ROUNDS", "numeratorPopulationId": null, "calculation": "issued actions per ROUNDS-policy run", "unit": "rounds", "direction": "lower only with outcome jointly reported", "zeroDenominator": "N/A", "missingRule": "non-ROUNDS policy is not applicable", "censoringRule": "right-censor at the registered round limit", "primary": false, "requiredFields": ["runId", "actionIssued", "resourcePolicy"], "parentMetricIds": [], "analysisPlanId": "AN-DISTRIBUTION", "output": "cost table"},
+    {"id": "MET-ABLATION-DELTA", "familyIds": ["EXP-CLTAV-ABLATION"], "populationId": "POP-PAIRED-ELIGIBLE", "numeratorPopulationId": null, "calculation": "within-pair arm difference for each named parent metric", "unit": "parent metric unit", "direction": "two-sided", "zeroDenominator": "N/A", "missingRule": "unmatched pairs are reported and not imputed", "censoringRule": "inherits each parent metric censoring rule", "primary": false, "requiredFields": ["pairingId", "outcome", "chargedCost"], "parentMetricIds": ["MET-ANSWERED-COVERAGE", "MET-TRUE-RETAINED", "MET-COST-VECTOR"], "analysisPlanId": "AN-PAIRED", "output": "ablation table"}
+  ],
+  "comparisonFamilies": [
+    {"id": "CF-PRIMARY", "classification": "PRIMARY", "metricIds": ["MET-ANSWERED-COVERAGE", "MET-CONDITIONAL-DETECTION-ERROR", "MET-MISS", "MET-FALSE-FAIL", "MET-LOCALIZATION-COVERAGE", "MET-TRUE-RETAINED", "MET-FINAL-CANDIDATES", "MET-COST-VECTOR"], "multiplicityDisposition": "report simultaneous family role and uncertainty; no confirmatory multiplicity claim until DEC-SAMPLE closes"},
+    {"id": "CF-SECONDARY", "classification": "SECONDARY", "metricIds": ["MET-ABSTAIN", "MET-INCONCLUSIVE", "MET-ERROR", "MET-INCOMPLETE", "MET-TRUE-EXCLUDED", "MET-SINGLETON-CORRECT", "MET-ROUNDS"], "multiplicityDisposition": "descriptive support and failure-mode accounting"},
+    {"id": "CF-EXPLORATORY", "classification": "EXPLORATORY", "metricIds": ["MET-ABLATION-DELTA"], "multiplicityDisposition": "label exploratory unless its parent estimand and multiplicity treatment are frozen before held-out access"}
+  ],
+  "analysisPlans": [
+    {"id": "AN-FLOW", "estimand": "finite attempt-flow proportion or count", "domain": "all registered attempts", "unit": "attempt", "pairing": "none", "estimator": "finite count and empirical proportion", "interval": "exact or score interval selected before confirmatory execution; 0/N is reported for zero events with N>0", "applicability": "flow and coverage metrics", "effectMeasure": "risk difference when comparing arms", "pilotInputs": ["cell-specific event count", "registered attempt count"], "methodEvidenceIds": ["EVID-2026-064", "EVID-2026-065"], "reviewStatus": "PENDING-STATISTICAL-REVIEW", "freezeDecisionId": "DEC-SAMPLE"},
+    {"id": "AN-PROPORTION", "estimand": "finite-population decision or error proportion", "domain": "metric-specific derived population", "unit": "attempt", "pairing": "paired by scene/seed when registered, otherwise independent", "estimator": "empirical proportion and registered arm contrast", "interval": "method chosen from finite/exact/score alternatives after population and dependence are fixed", "applicability": "binary primary and secondary metrics with nonzero denominator", "effectMeasure": "risk difference; odds ratio only as a secondary scale", "pilotInputs": ["eligible denominator", "event count", "pairing and dependence structure"], "methodEvidenceIds": ["EVID-2026-063", "EVID-2026-064", "EVID-2026-065"], "reviewStatus": "PENDING-STATISTICAL-REVIEW", "freezeDecisionId": "DEC-SAMPLE"},
+    {"id": "AN-DISTRIBUTION", "estimand": "distribution of survivor count, cost, or rounds", "domain": "metric-specific attempt/run population", "unit": "attempt or run", "pairing": "paired summaries when the scenario contract supplies pairingId", "estimator": "median and empirical distribution with a registered nonparametric contrast if stochastic", "interval": "bootstrap or finite-domain interval only after randomness and dependence are established", "applicability": "count/cost metrics; no automatic large-sample assumption", "effectMeasure": "Vargha-Delaney A12 or paired difference when applicable", "pilotInputs": ["randomness source", "empirical dispersion", "censoring fraction"], "methodEvidenceIds": ["EVID-2026-063", "EVID-2026-064", "EVID-2026-065"], "reviewStatus": "PENDING-STATISTICAL-REVIEW", "freezeDecisionId": "DEC-SAMPLE"},
+    {"id": "AN-PAIRED", "estimand": "within-scene ablation change in a named parent metric", "domain": "complete registered pairs", "unit": "pair", "pairing": "same registered scene/seed with independent reset", "estimator": "paired difference on the parent metric scale", "interval": "paired interval selected after repeat and dependence decisions", "applicability": "only when parent metric semantics and pair completeness both hold", "effectMeasure": "paired risk or scalar difference", "pilotInputs": ["pair completeness", "within-pair dispersion", "parent metric censoring"], "methodEvidenceIds": ["EVID-2026-063", "EVID-2026-064", "EVID-2026-065"], "reviewStatus": "PENDING-STATISTICAL-REVIEW", "freezeDecisionId": "DEC-SAMPLE"}
   ],
   "dependencies": [
-    {"id":"DEP-IUT","consumers":["SC-NORMAL-UPLOAD","SC-WAIT-CONTINUE","SC-NO-RESPONSE","SC-ABORT","SC-SAME-KEY","SC-SINGLE-BATCH","SC-RESOURCE-ERROR"],"currentReference":"experiment prerequisites","neededEvidence":"interactive IUT identity and behavior boundary","producer":"project owner and later authorized implementer","state":"RUNTIME-PENDING","closureTest":"reviewed IUT/configuration identity resolves before registration","blockingMilestone":"pilot","minimumFollowUp":"select IUT or simulator and record configuration"},
-    {"id":"DEP-TRUTH","consumers":["MET-MISS","MET-FALSE-FAIL","MET-TRUE-RETAINED","MET-SINGLETON-CORRECT"],"currentReference":"IF-EXP-TRUTH.truthRecord","neededEvidence":"confirmed injection and evaluator-only adjudicated truth","producer":"independent evaluator","state":"PROPOSED-CONTRACT-DELTA","closureTest":"truth leakage review plus independent confirmation witness","blockingMilestone":"pilot","minimumFollowUp":"approve generator/adjudicator separation"},
-    {"id":"DEP-CLOCK","consumers":["SC-WAIT-CONTINUE","SC-NO-RESPONSE","SC-INVALID-OBS"],"currentReference":"OBSERVATION-ASSESSMENT.measurementInterval","neededEvidence":"clock chain and error budget","producer":"test environment owner","state":"RUNTIME-PENDING","closureTest":"calibration evidence and interval reproduction","blockingMilestone":"pilot","minimumFollowUp":"qualify clock and epsilon"},
-    {"id":"DEP-RESET","consumers":["SC-NORMAL-UPLOAD","SC-SINGLE-BATCH"],"currentReference":"IF-EXP-SCENE.sceneRecord","neededEvidence":"reset identifier and success evidence","producer":"scene controller","state":"PROPOSED-CONTRACT-DELTA","closureTest":"paired run starts from independently confirmed reset","blockingMilestone":"pilot","minimumFollowUp":"define reset evidence field"},
-    {"id":"DEP-OBS-QUAL","consumers":["SC-INVALID-OBS","MET-ERROR"],"currentReference":"OBSERVATION-ASSESSMENT.verdict","neededEvidence":"qualification policy separating capture/tool error from IUT verdict","producer":"observation assessor","state":"EXISTING-REFERENCE","closureTest":"invalid timestamp/ownership witness produces ERROR without IUT blame","blockingMilestone":"design-review","minimumFollowUp":"retain existing qualification semantics"},
-    {"id":"DEP-RESOURCE","consumers":["SC-RESOURCE-ERROR","MET-COST-VECTOR","MET-ROUNDS"],"currentReference":"IF-RESOURCE-STOP.trace","neededEvidence":"exclusive resource mode and actual charge log","producer":"runtime resource controller","state":"RUNTIME-PENDING","closureTest":"one charge per issued action and named exhaustion","blockingMilestone":"pilot","minimumFollowUp":"implement charge trace without changing cost semantics"},
-    {"id":"DEP-REGISTRATION","consumers":["EXP-CLTAV-DETECT","EXP-CLTAV-LOCATE","EXP-CLTAV-ABLATION"],"currentReference":"EXP-PLAN-2026-001","neededEvidence":"frozen confirmatory registration","producer":"experiment registrar and named scientific reviewer","state":"HUMAN-PENDING","closureTest":"registration committed before confirmatory runs","blockingMilestone":"confirmatory-run","minimumFollowUp":"freeze units, budgets, denominators, adjudication and analysis"},
-    {"id":"DEP-EQUIV","consumers":["MET-MISS","MET-ABLATION-DELTA"],"currentReference":"IF-EQUIV.established","neededEvidence":"named equivalence or unresolved adjudication","producer":"named adjudicator","state":"HUMAN-PENDING","closureTest":"confirmed equivalents and unresolved cases remain separately counted","blockingMilestone":"confirmatory-registration","minimumFollowUp":"approve adjudication procedure"},
-    {"id":"DEP-SAMPLE","consumers":["MET-ANSWERED-COVERAGE","MET-MISS","MET-TRUE-RETAINED","MET-ABLATION-DELTA"],"currentReference":"PH-STAT-N","neededEvidence":"precision/effect target or external basis plus pilot variance/prevalence","producer":"named scientific reviewer","state":"HUMAN-PENDING","closureTest":"sample size and multiplicity role frozen before held-out access","blockingMilestone":"confirmatory-registration","minimumFollowUp":"run non-confirmatory pilot then decide"},
-    {"id":"DEP-645-RUNTIME","consumers":["EXP-CLTAV-ABLATION"],"currentReference":"ARINC 645 source/semantic binding","neededEvidence":"implemented and independently checked CRC/check-value/naming oracle","producer":"future authorized engineering change","state":"RUNTIME-PENDING","closureTest":"independent vectors and oracle evidence; source presence alone is insufficient","blockingMilestone":"645-specific-run","minimumFollowUp":"separate engineering CR if this cell is retained"}
+    {"id": "DEP-IUT", "consumers": ["SC-NORMAL-UPLOAD", "SC-WAIT-CONTINUE", "SC-NO-RESPONSE", "SC-ABORT", "SC-SAME-KEY", "SC-SINGLE-BATCH", "SC-RESOURCE-ERROR"], "currentReference": {"kind": "experiment-plan-section", "ref": "EXP-PLAN-2026-001:prerequisites"}, "neededEvidence": "interactive IUT identity and behavior boundary", "producer": "project owner and later authorized implementer", "state": "RUNTIME-PENDING", "proposalFields": [{"path": "sceneRecord.iutIdentity", "type": "string", "producer": "scene controller", "visibility": "all arms and evaluator", "backwardCompatibility": "additive field", "closureMilestone": "pilot"}], "decisionIds": ["DEC-IUT"], "closureTest": "reviewed IUT/configuration identity resolves before registration", "blockingMilestone": "pilot", "minimumFollowUp": "select IUT or simulator and record configuration"},
+    {"id": "DEP-TRUTH", "consumers": ["MET-MISS", "MET-FALSE-FAIL", "MET-TRUE-RETAINED", "MET-SINGLETON-CORRECT"], "currentReference": {"kind": "experiment-interface", "ref": "IF-EXP-TRUTH.truthRecord"}, "neededEvidence": "confirmed injection and evaluator-only adjudicated truth", "producer": "independent evaluator", "state": "PROPOSED-CONTRACT-DELTA", "proposalFields": [{"path": "truthRecord.confirmationRef", "type": "string", "producer": "independent evaluator", "visibility": "evaluator-only", "backwardCompatibility": "additive field", "closureMilestone": "pilot"}, {"path": "truthRecord.equivalenceDisposition", "type": "enum", "producer": "fault adjudicator", "visibility": "evaluator-only", "backwardCompatibility": "additive field", "closureMilestone": "confirmatory-registration"}], "decisionIds": ["DEC-TRUTH", "DEC-EQUIV"], "closureTest": "truth leakage review plus independent confirmation witness", "blockingMilestone": "pilot", "minimumFollowUp": "approve generator/adjudicator separation"},
+    {"id": "DEP-CLOCK", "consumers": ["SC-WAIT-CONTINUE", "SC-NO-RESPONSE", "SC-INVALID-OBS"], "currentReference": {"kind": "record-field", "ref": "OBSERVATION-ASSESSMENT.measurementInterval"}, "neededEvidence": "clock chain and error budget", "producer": "test environment owner", "state": "RUNTIME-PENDING", "proposalFields": [{"path": "observationAssessment.clockChainRef", "type": "string", "producer": "observation assessor", "visibility": "algorithm and evaluator", "backwardCompatibility": "additive field", "closureMilestone": "pilot"}], "decisionIds": ["DEC-CLOCK"], "closureTest": "calibration evidence and interval reproduction", "blockingMilestone": "pilot", "minimumFollowUp": "qualify clock and freeze the error budget"},
+    {"id": "DEP-RESET", "consumers": ["SC-NORMAL-UPLOAD", "SC-SINGLE-BATCH"], "currentReference": {"kind": "experiment-interface", "ref": "IF-EXP-SCENE.sceneRecord"}, "neededEvidence": "reset identifier and success evidence", "producer": "scene controller", "state": "PROPOSED-CONTRACT-DELTA", "proposalFields": [{"path": "sceneRecord.resetId", "type": "string", "producer": "scene controller", "visibility": "all arms and evaluator", "backwardCompatibility": "additive field", "closureMilestone": "pilot"}, {"path": "sceneRecord.resetEvidenceRef", "type": "string", "producer": "scene controller", "visibility": "evaluator and audit", "backwardCompatibility": "additive field", "closureMilestone": "pilot"}], "decisionIds": ["DEC-IUT"], "closureTest": "paired run starts from independently confirmed reset", "blockingMilestone": "pilot", "minimumFollowUp": "define reset evidence fields"},
+    {"id": "DEP-OBS-QUAL", "consumers": ["SC-INVALID-OBS", "MET-ERROR"], "currentReference": {"kind": "record-field", "ref": "OBSERVATION-ASSESSMENT.verdict"}, "neededEvidence": "qualification policy separating capture/tool error from IUT verdict", "producer": "observation assessor", "state": "EXISTING-REFERENCE", "proposalFields": [], "decisionIds": ["DEC-CLOCK"], "closureTest": "invalid timestamp/ownership witness produces ERROR without IUT blame", "blockingMilestone": "design-review", "minimumFollowUp": "retain accepted qualification semantics"},
+    {"id": "DEP-RESOURCE", "consumers": ["SC-RESOURCE-ERROR", "MET-COST-VECTOR", "MET-ROUNDS"], "currentReference": {"kind": "algorithm-interface", "ref": "IF-RESOURCE-STOP.trace"}, "neededEvidence": "exclusive resource mode and actual charge log", "producer": "runtime resource controller", "state": "RUNTIME-PENDING", "proposalFields": [{"path": "resourceLog.mode", "type": "enum", "producer": "resource controller", "visibility": "algorithm and evaluator", "backwardCompatibility": "additive field", "closureMilestone": "pilot"}, {"path": "resourceLog.detailCharges", "type": "cost-detail", "producer": "resource controller", "visibility": "evaluator and audit", "backwardCompatibility": "additive field projected to accepted four-vector", "closureMilestone": "pilot"}], "decisionIds": ["DEC-RESOURCE"], "closureTest": "one charge per issued action, recovery folded once into preparation, and named exhaustion", "blockingMilestone": "pilot", "minimumFollowUp": "implement charge trace without changing accepted cost semantics"},
+    {"id": "DEP-REGISTRATION", "consumers": ["EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE", "EXP-CLTAV-ABLATION"], "currentReference": {"kind": "experiment-plan", "ref": "EXP-PLAN-2026-001"}, "neededEvidence": "frozen confirmatory registration", "producer": "experiment registrar and named scientific reviewer", "state": "HUMAN-PENDING", "proposalFields": [], "decisionIds": ["DEC-MATH-REVIEW", "DEC-IUT", "DEC-TRUTH", "DEC-EQUIV", "DEC-SAMPLE", "DEC-RESOURCE", "DEC-CLOCK"], "closureTest": "registration committed before confirmatory runs", "blockingMilestone": "confirmatory-run", "minimumFollowUp": "freeze units, budgets, denominators, adjudication and analysis"},
+    {"id": "DEP-EQUIV", "consumers": ["MET-MISS", "MET-ABLATION-DELTA"], "currentReference": {"kind": "algorithm-interface", "ref": "IF-EQUIV.established"}, "neededEvidence": "evaluator-side mutation-equivalence disposition distinct from runtime IF-EQUIV", "producer": "named fault adjudicator", "state": "PROPOSED-CONTRACT-DELTA", "proposalFields": [{"path": "truthRecord.mutationEquivalence", "type": "enum[confirmed-equivalent,confirmed-non-equivalent,unresolved]", "producer": "fault adjudicator", "visibility": "evaluator-only", "backwardCompatibility": "new evaluator field; does not alter runtime IF-EQUIV", "closureMilestone": "confirmatory-registration"}], "decisionIds": ["DEC-EQUIV"], "closureTest": "confirmed equivalents and unresolved cases remain separately counted without reusing runtime IF-EQUIV", "blockingMilestone": "confirmatory-registration", "minimumFollowUp": "approve evaluator adjudication procedure"},
+    {"id": "DEP-SAMPLE", "consumers": ["MET-ANSWERED-COVERAGE", "MET-MISS", "MET-TRUE-RETAINED", "MET-ABLATION-DELTA"], "currentReference": {"kind": "placeholder", "ref": "PH-STAT-N"}, "neededEvidence": "precision/effect target or finite census basis plus pilot variance/prevalence", "producer": "named scientific reviewer", "state": "HUMAN-PENDING", "proposalFields": [], "decisionIds": ["DEC-SAMPLE"], "closureTest": "sample size, repeat policy, comparison family, and multiplicity role frozen before held-out access", "blockingMilestone": "confirmatory-registration", "minimumFollowUp": "run non-confirmatory pilot then decide"},
+    {"id": "DEP-645-RUNTIME", "consumers": ["EXP-CLTAV-ABLATION"], "currentReference": {"kind": "authority-binding", "ref": "ARINC-645 candidate source and semantic binding"}, "neededEvidence": "implemented and independently checked CRC/check-value/naming oracle", "producer": "future authorized engineering change", "state": "RUNTIME-PENDING", "proposalFields": [{"path": "findingRecord.oracleRef", "type": "string", "producer": "645 oracle", "visibility": "evaluator and audit", "backwardCompatibility": "additive field", "closureMilestone": "645-specific-run"}], "decisionIds": ["DEC-IUT"], "closureTest": "independent vectors and oracle evidence; source presence alone is insufficient", "blockingMilestone": "645-specific-run", "minimumFollowUp": "separate engineering CR if this cell is retained"}
   ],
   "pendingDecisions": [
-    {"id":"DEC-MATH-REVIEW","ownerRole":"independent mathematical reviewer","options":["accept bounded argument","request method correction"],"recommendation":"review C1/C2 against existing R1-R5 and algorithm authorities without expanding the theorem","evidenceNeeded":"argument table and minimum counterexample witnesses","freezeBy":"design acceptance","blocks":["scientific wording advancement"],"status":"OPEN"},
-    {"id":"DEC-IUT","ownerRole":"project owner","options":["simulator","controlled software IUT","hardware IUT"],"recommendation":"select the smallest interactive target that preserves the declared protocol and reset contract","evidenceNeeded":"identity, access, controllability, configuration and reset evidence","freezeBy":"pilot","blocks":["interactive runs"],"status":"OPEN"},
-    {"id":"DEC-TRUTH","ownerRole":"named evaluator","options":["independent generator","dual evidence plus adjudication"],"recommendation":"avoid reusing the algorithm parser as the sole truth source","evidenceNeeded":"confirmation and common-error analysis","freezeBy":"pilot","blocks":["effect metrics"],"status":"OPEN"},
-    {"id":"DEC-EQUIV","ownerRole":"named fault adjudicator","options":["confirmed equivalent","confirmed non-equivalent","unresolved"],"recommendation":"retain unresolved cases rather than silently exclude them","evidenceNeeded":"fault-specific review record","freezeBy":"confirmatory registration","blocks":["mutation denominators"],"status":"OPEN"},
-    {"id":"DEC-SAMPLE","ownerRole":"named scientific reviewer","options":["finite-domain census","precision-based sample","effect-based paired sample"],"recommendation":"choose only after the target population and pilot variability are known","evidenceNeeded":"estimand, precision/effect target, pilot information and dependence structure","freezeBy":"confirmatory registration","blocks":["confirmatory execution"],"status":"OPEN"},
-    {"id":"DEC-DISCLOSURE","ownerRole":"corresponding author","options":["complete author/institution/funding/permission/AI disclosures"],"recommendation":"close against venue and institutional requirements","evidenceNeeded":"author declarations","freezeBy":"submission","blocks":["submission only"],"status":"OPEN"}
+    {"id": "DEC-MATH-REVIEW", "ownerRole": "independent mathematical reviewer", "options": ["accept bounded argument", "request method correction"], "recommendation": "review C1/C2 against accepted R1-R5 without expanding the theorem", "inputEvidence": "argument table and minimum counterexample witnesses", "selectionProcedure": "record proposition-by-proposition disposition and any counterexample", "freezeBy": "design acceptance", "closureWitness": "signed review record naming accepted propositions", "blocks": ["scientific wording advancement"], "status": "OPEN"},
+    {"id": "DEC-IUT", "ownerRole": "project owner", "options": ["simulator", "controlled software IUT", "hardware IUT"], "recommendation": "select the smallest interactive target preserving the declared protocol and reset contract", "inputEvidence": "identity, access, controllability, configuration and reset evidence", "selectionProcedure": "score candidates against scenario access and independent reset", "freezeBy": "pilot", "closureWitness": "versioned IUT/configuration identity plus reset demonstration", "blocks": ["interactive runs"], "status": "OPEN"},
+    {"id": "DEC-TRUTH", "ownerRole": "named evaluator", "options": ["independent generator", "dual evidence plus adjudication"], "recommendation": "avoid reusing the algorithm parser as the sole truth source", "inputEvidence": "confirmation and common-error analysis", "selectionProcedure": "document independence and run a deliberate disagreement witness", "freezeBy": "pilot", "closureWitness": "truth-source protocol and leakage review", "blocks": ["effect metrics"], "status": "OPEN"},
+    {"id": "DEC-EQUIV", "ownerRole": "named fault adjudicator", "options": ["confirmed equivalent", "confirmed non-equivalent", "unresolved"], "recommendation": "retain unresolved and equivalent cases in flow accounting", "inputEvidence": "fault-specific evaluator record plus impact evidence", "selectionProcedure": "two-stage impact screen and named human adjudication with unresolved allowed", "freezeBy": "confirmatory registration", "closureWitness": "adjudication form and population-flow rule", "blocks": ["mutation denominators"], "status": "OPEN"},
+    {"id": "DEC-SAMPLE", "ownerRole": "named scientific reviewer", "options": ["finite-domain census", "precision-based sample", "effect-based paired sample"], "recommendation": "choose after population, randomness, repeat policy, and pilot variability are known", "inputEvidence": "estimand, precision/effect target, pilot information and dependence structure", "selectionProcedure": "select experimental unit and repeat policy first, then compute or justify N and comparison-family treatment", "freezeBy": "confirmatory registration", "closureWitness": "registered N/repeats table and statistical review sign-off", "blocks": ["confirmatory execution"], "status": "OPEN"},
+    {"id": "DEC-RESOURCE", "ownerRole": "experiment owner and runtime implementer", "options": ["fixed action count", "fixed projected cost vector", "dual stop with registered priority"], "recommendation": "use a registered dual stop only when charge observability is demonstrated", "inputEvidence": "pilot charge traces and feasible resource envelope", "selectionProcedure": "project all detail charges to the accepted four-vector, test no-double-charge, then select budget and stop priority", "freezeBy": "confirmatory registration", "closureWitness": "versioned budget table and passing charge-accounting witness", "blocks": ["confirmatory execution", "cost comparison"], "status": "OPEN"},
+    {"id": "DEC-CLOCK", "ownerRole": "test environment owner and metrology reviewer", "options": ["direct calibrated interval", "bounded reconstructed interval", "inadmissible timing cell"], "recommendation": "use interval decisions and reject cells lacking a defensible clock chain", "inputEvidence": "clock accuracy, synchronization, timestamp path, and JCGM 100/106-informed error budget", "selectionProcedure": "construct and independently reproduce the interval; freeze endpoint inclusivity and overlap rule", "freezeBy": "pilot", "closureWitness": "clock-chain report, calibration reference, and interval replay", "blocks": ["timing scenarios", "confirmatory execution"], "status": "OPEN"},
+    {"id": "DEC-DISCLOSURE", "ownerRole": "corresponding author", "options": ["complete author/institution/funding/permission/AI disclosures"], "recommendation": "close against venue and institutional requirements", "inputEvidence": "author declarations", "selectionProcedure": "collect each declaration and reconcile it with the manuscript checklist", "freezeBy": "submission", "closureWitness": "completed disclosure checklist", "blocks": ["submission only"], "status": "OPEN"}
   ],
   "syntheticWalkthroughs": [
-    {"id":"SYN-NORMAL","label":"SYNTHETIC-DESIGN-WALKTHROUGH","scenarioId":"SC-NORMAL-UPLOAD","attemptId":"ATT-001","runId":"RUN-001","truthClass":"NORMAL","validity":"VALID","outcome":"PASS","stopClass":"Stop-Singleton","finalHypotheses":["h-normal"],"denominators":["attempt","answered-subset","qualified-normal"],"chargedCost":{"acquisition":1,"computation":1,"preparation":0,"recovery":0,"retry":0}},
-    {"id":"SYN-FAIL-NONSINGLETON","label":"SYNTHETIC-DESIGN-WALKTHROUGH","scenarioId":"SC-NO-RESPONSE","attemptId":"ATT-002","runId":"RUN-002","truthClass":"FAULT-H1","validity":"VALID","outcome":"FAIL","stopClass":"Stop-Budget","finalHypotheses":["h1","h2"],"denominators":["attempt","answered-subset","confirmed-in-domain-fault","eligible-localization-attempt"],"chargedCost":{"acquisition":1,"computation":1,"preparation":0,"recovery":0,"retry":0}},
-    {"id":"SYN-TRUE-EXCLUDED","label":"SYNTHETIC-DESIGN-WALKTHROUGH","scenarioId":"SC-SAME-KEY","attemptId":"ATT-003","runId":"RUN-003","truthClass":"FAULT-H1","validity":"VALID","outcome":"FAIL","stopClass":"Stop-Singleton","finalHypotheses":["h2"],"denominators":["attempt","answered-subset","confirmed-in-domain-fault","localization-decision","singleton-decision"],"chargedCost":{"acquisition":1,"computation":1,"preparation":0,"recovery":0,"retry":0}},
-    {"id":"SYN-UNCONFIRMED","label":"SYNTHETIC-DESIGN-WALKTHROUGH","scenarioId":"SC-WAIT-CONTINUE","attemptId":"ATT-004","runId":null,"truthClass":"UNCONFIRMED-INJECTION","validity":"UNCONFIRMED-INJECTION","outcome":"NOT-ANSWERED","stopClass":null,"finalHypotheses":[],"denominators":["attempt","unconfirmed-injection"],"chargedCost":{"acquisition":0,"computation":0,"preparation":1,"recovery":0,"retry":0}},
-    {"id":"SYN-INVALID-OBS","label":"SYNTHETIC-DESIGN-WALKTHROUGH","scenarioId":"SC-INVALID-OBS","attemptId":"ATT-005","runId":"RUN-005","truthClass":"NOT-IUT-FAULT","validity":"INVALID-OBSERVATION","outcome":"ERROR","stopClass":"Stop-Error","finalHypotheses":[],"denominators":["attempt","invalid-observation"],"chargedCost":{"acquisition":1,"computation":1,"preparation":0,"recovery":0,"retry":0}},
-    {"id":"SYN-T5-OVERLAP","label":"SYNTHETIC-DESIGN-WALKTHROUGH","scenarioId":"SC-WAIT-CONTINUE","attemptId":"ATT-006","runId":"RUN-006","truthClass":"NORMAL","validity":"VALID","outcome":"INCONCLUSIVE","stopClass":"Stop-Budget","finalHypotheses":["h-normal","h1"],"denominators":["attempt"],"chargedCost":{"acquisition":1,"computation":1,"preparation":0,"recovery":0,"retry":0}},
-    {"id":"SYN-STOP-EMPTY","label":"SYNTHETIC-DESIGN-WALKTHROUGH","scenarioId":"SC-SAME-KEY","attemptId":"ATT-007","runId":"RUN-007","truthClass":"FAULT-H1","validity":"VALID","outcome":"ERROR","stopClass":"Stop-Empty","finalHypotheses":[],"denominators":["attempt","answered-subset","confirmed-in-domain-fault","localization-decision"],"chargedCost":{"acquisition":1,"computation":1,"preparation":0,"recovery":0,"retry":0}},
-    {"id":"SYN-EQUIVALENT","label":"SYNTHETIC-DESIGN-WALKTHROUGH","scenarioId":"SC-SINGLE-BATCH","attemptId":"ATT-008","runId":null,"truthClass":"CONFIRMED-EQUIVALENT","validity":"EQUIVALENT-FAULT","outcome":"NOT-ANSWERED","stopClass":null,"finalHypotheses":[],"denominators":["attempt","equivalent-fault"],"chargedCost":{"acquisition":0,"computation":0,"preparation":1,"recovery":0,"retry":0}},
-    {"id":"SYN-UNRESOLVED","label":"SYNTHETIC-DESIGN-WALKTHROUGH","scenarioId":"SC-SINGLE-BATCH","attemptId":"ATT-009","runId":null,"truthClass":"UNRESOLVED","validity":"UNRESOLVED","outcome":"NOT-ANSWERED","stopClass":null,"finalHypotheses":[],"denominators":["attempt","unresolved-fault"],"chargedCost":{"acquisition":0,"computation":0,"preparation":1,"recovery":0,"retry":0}},
-    {"id":"SYN-STOP-645","label":"SYNTHETIC-DESIGN-WALKTHROUGH","scenarioId":"SC-RESOURCE-ERROR","attemptId":"ATT-010","runId":"RUN-010","truthClass":"FAULT-H645","validity":"ABSTAIN","outcome":"NOT-ANSWERED","stopClass":"Stop-645","finalHypotheses":["h645"],"denominators":["attempt","abstain"],"chargedCost":{"acquisition":1,"computation":1,"preparation":1,"recovery":0,"retry":0}},
-    {"id":"SYN-BUDGET","label":"SYNTHETIC-DESIGN-WALKTHROUGH","scenarioId":"SC-RESOURCE-ERROR","attemptId":"ATT-011","runId":"RUN-011","truthClass":"FAULT-H1","validity":"INCOMPLETE","outcome":"NOT-ANSWERED","stopClass":"Stop-Budget","finalHypotheses":["h1","h2"],"denominators":["attempt","incomplete"],"chargedCost":{"acquisition":2,"computation":2,"preparation":1,"recovery":1,"retry":1}},
-    {"id":"SYN-EMPTY-DENOM","label":"SYNTHETIC-DESIGN-WALKTHROUGH","scenarioId":"SC-NORMAL-UPLOAD","attemptId":"ATT-012","runId":"RUN-012","truthClass":"NORMAL","validity":"VALID","outcome":"INCONCLUSIVE","stopClass":"Stop-Budget","finalHypotheses":["h-normal"],"denominators":["attempt"],"chargedCost":{"acquisition":1,"computation":1,"preparation":0,"recovery":0,"retry":0}}
+    {"id": "SYN-NORMAL", "label": "SYNTHETIC-DESIGN-WALKTHROUGH", "scenarioId": "SC-NORMAL-UPLOAD", "attemptId": "ATT-001", "runId": "RUN-001", "pairingId": null, "truthReference": {"ref": "IF-EXP-TRUTH.truthRecord", "visibility": "EVALUATOR-ONLY", "truthHypothesis": "h-normal"}, "injectionStatus": "NORMAL", "faultDomain": "NORMAL", "validity": "VALID", "outcome": "PASS", "stopClass": "Stop-Singleton", "stage": "TERMINAL", "observationInterval": null, "requirementInterval": null, "historyBefore": ["h-normal", "h1"], "compatibleState": ["h-normal"], "finalHypotheses": ["h-normal"], "localizationDecisionIssued": true, "singletonDecisionIssued": true, "resourcePolicy": "ROUNDS", "resourceStatus": "NORMAL", "actionIssued": true, "chargedCost": {"acquisition": 1, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0}},
+    {"id": "SYN-FAIL-NONSINGLETON", "label": "SYNTHETIC-DESIGN-WALKTHROUGH", "scenarioId": "SC-NO-RESPONSE", "attemptId": "ATT-002", "runId": "RUN-002", "pairingId": "PAIR-01", "truthReference": {"ref": "IF-EXP-TRUTH.truthRecord", "visibility": "EVALUATOR-ONLY", "truthHypothesis": "h1"}, "injectionStatus": "CONFIRMED", "faultDomain": "IN-DOMAIN-NON-EQUIVALENT", "validity": "VALID", "outcome": "FAIL", "stopClass": "Stop-Budget", "stage": "TERMINAL", "observationInterval": null, "requirementInterval": null, "historyBefore": ["h1", "h2", "h3"], "compatibleState": ["h1", "h2"], "finalHypotheses": ["h1", "h2"], "localizationDecisionIssued": true, "singletonDecisionIssued": false, "resourcePolicy": "BUDGET", "resourceStatus": "BUDGET-EXHAUSTED", "actionIssued": true, "chargedCost": {"acquisition": 1, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0}},
+    {"id": "SYN-TRUE-EXCLUDED", "label": "SYNTHETIC-DESIGN-WALKTHROUGH", "scenarioId": "SC-SAME-KEY", "attemptId": "ATT-003", "runId": "RUN-003", "pairingId": "PAIR-01", "truthReference": {"ref": "IF-EXP-TRUTH.truthRecord", "visibility": "EVALUATOR-ONLY", "truthHypothesis": "h1"}, "injectionStatus": "CONFIRMED", "faultDomain": "IN-DOMAIN-NON-EQUIVALENT", "validity": "VALID", "outcome": "FAIL", "stopClass": "Stop-Singleton", "stage": "TERMINAL", "observationInterval": null, "requirementInterval": null, "historyBefore": ["h1", "h2"], "compatibleState": ["h2"], "finalHypotheses": ["h2"], "localizationDecisionIssued": true, "singletonDecisionIssued": true, "resourcePolicy": "BUDGET", "resourceStatus": "NORMAL", "actionIssued": true, "chargedCost": {"acquisition": 1, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0}},
+    {"id": "SYN-UNCONFIRMED", "label": "SYNTHETIC-DESIGN-WALKTHROUGH", "scenarioId": "SC-WAIT-CONTINUE", "attemptId": "ATT-004", "runId": null, "pairingId": null, "truthReference": {"ref": "IF-EXP-TRUTH.truthRecord", "visibility": "EVALUATOR-ONLY", "truthHypothesis": null}, "injectionStatus": "UNCONFIRMED", "faultDomain": "UNKNOWN", "validity": "PRE-RUN-EXCLUDED", "outcome": "NOT-ANSWERED", "stopClass": null, "stage": "PRE-RUN", "observationInterval": null, "requirementInterval": null, "historyBefore": [], "compatibleState": [], "finalHypotheses": [], "localizationDecisionIssued": false, "singletonDecisionIssued": false, "resourcePolicy": "NOT-RUN", "resourceStatus": "NOT-RUN", "actionIssued": false, "chargedCost": {"acquisition": 0, "computation": 0, "preparation": 1, "recovery": 0, "retry": 0}},
+    {"id": "SYN-INVALID-OBS", "label": "SYNTHETIC-DESIGN-WALKTHROUGH", "scenarioId": "SC-INVALID-OBS", "attemptId": "ATT-005", "runId": "RUN-005", "pairingId": null, "truthReference": {"ref": "IF-EXP-TRUTH.truthRecord", "visibility": "EVALUATOR-ONLY", "truthHypothesis": null}, "injectionStatus": "NORMAL", "faultDomain": "OUT-OF-DOMAIN", "validity": "INVALID", "outcome": "ERROR", "stopClass": "Stop-Error", "stage": "TERMINAL", "observationInterval": null, "requirementInterval": null, "historyBefore": ["h-normal", "h1"], "compatibleState": [], "finalHypotheses": [], "localizationDecisionIssued": false, "singletonDecisionIssued": false, "resourcePolicy": "BUDGET", "resourceStatus": "RESOURCE-ERROR", "actionIssued": true, "chargedCost": {"acquisition": 1, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0}},
+    {"id": "SYN-T5-OVERLAP", "label": "SYNTHETIC-DESIGN-WALKTHROUGH", "scenarioId": "SC-WAIT-CONTINUE", "attemptId": "ATT-006", "runId": "RUN-006", "pairingId": null, "truthReference": {"ref": "IF-EXP-TRUTH.truthRecord", "visibility": "EVALUATOR-ONLY", "truthHypothesis": "h-normal"}, "injectionStatus": "NORMAL", "faultDomain": "NORMAL", "validity": "VALID", "outcome": "INCONCLUSIVE", "stopClass": "Stop-Budget", "stage": "TERMINAL", "observationInterval": {"lower": 5.0, "upper": 5.2, "unit": "s"}, "requirementInterval": {"lower": 4.0, "upper": 5.1, "unit": "s"}, "historyBefore": ["h-normal", "h1", "h2"], "compatibleState": ["h-normal", "h1"], "finalHypotheses": ["h-normal", "h1"], "localizationDecisionIssued": false, "singletonDecisionIssued": false, "resourcePolicy": "BUDGET", "resourceStatus": "BUDGET-EXHAUSTED", "actionIssued": true, "chargedCost": {"acquisition": 1, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0}},
+    {"id": "SYN-STOP-EMPTY", "label": "SYNTHETIC-DESIGN-WALKTHROUGH", "scenarioId": "SC-SAME-KEY", "attemptId": "ATT-007", "runId": "RUN-007", "pairingId": null, "truthReference": {"ref": "IF-EXP-TRUTH.truthRecord", "visibility": "EVALUATOR-ONLY", "truthHypothesis": "h1"}, "injectionStatus": "CONFIRMED", "faultDomain": "IN-DOMAIN-NON-EQUIVALENT", "validity": "INVALID", "outcome": "ERROR", "stopClass": "Stop-Empty", "stage": "POST-UPDATE", "observationInterval": null, "requirementInterval": null, "historyBefore": ["h1", "h2"], "compatibleState": [], "finalHypotheses": [], "localizationDecisionIssued": false, "singletonDecisionIssued": false, "resourcePolicy": "BUDGET", "resourceStatus": "RESOURCE-ERROR", "actionIssued": true, "chargedCost": {"acquisition": 1, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0}},
+    {"id": "SYN-EQUIVALENT", "label": "SYNTHETIC-DESIGN-WALKTHROUGH", "scenarioId": "SC-SINGLE-BATCH", "attemptId": "ATT-008", "runId": null, "pairingId": null, "truthReference": {"ref": "IF-EXP-TRUTH.truthRecord", "visibility": "EVALUATOR-ONLY", "truthHypothesis": null}, "injectionStatus": "EQUIVALENT", "faultDomain": "OUT-OF-DOMAIN", "validity": "PRE-RUN-EXCLUDED", "outcome": "NOT-ANSWERED", "stopClass": null, "stage": "PRE-RUN", "observationInterval": null, "requirementInterval": null, "historyBefore": [], "compatibleState": [], "finalHypotheses": [], "localizationDecisionIssued": false, "singletonDecisionIssued": false, "resourcePolicy": "NOT-RUN", "resourceStatus": "NOT-RUN", "actionIssued": false, "chargedCost": {"acquisition": 0, "computation": 0, "preparation": 1, "recovery": 0, "retry": 0}},
+    {"id": "SYN-UNRESOLVED", "label": "SYNTHETIC-DESIGN-WALKTHROUGH", "scenarioId": "SC-SINGLE-BATCH", "attemptId": "ATT-009", "runId": null, "pairingId": null, "truthReference": {"ref": "IF-EXP-TRUTH.truthRecord", "visibility": "EVALUATOR-ONLY", "truthHypothesis": null}, "injectionStatus": "UNRESOLVED", "faultDomain": "UNKNOWN", "validity": "PRE-RUN-EXCLUDED", "outcome": "NOT-ANSWERED", "stopClass": null, "stage": "PRE-RUN", "observationInterval": null, "requirementInterval": null, "historyBefore": [], "compatibleState": [], "finalHypotheses": [], "localizationDecisionIssued": false, "singletonDecisionIssued": false, "resourcePolicy": "NOT-RUN", "resourceStatus": "NOT-RUN", "actionIssued": false, "chargedCost": {"acquisition": 0, "computation": 0, "preparation": 1, "recovery": 0, "retry": 0}},
+    {"id": "SYN-STOP-645", "label": "SYNTHETIC-DESIGN-WALKTHROUGH", "scenarioId": "SC-RESOURCE-ERROR", "attemptId": "ATT-010", "runId": "RUN-010", "pairingId": null, "truthReference": {"ref": "IF-EXP-TRUTH.truthRecord", "visibility": "EVALUATOR-ONLY", "truthHypothesis": "h645"}, "injectionStatus": "CONFIRMED", "faultDomain": "IN-DOMAIN-NON-EQUIVALENT", "validity": "ABSTAIN", "outcome": "NOT-ANSWERED", "stopClass": "Stop-645", "stage": "POST-UPDATE", "observationInterval": null, "requirementInterval": null, "historyBefore": ["h645", "h1", "h2"], "compatibleState": ["h645", "h1"], "finalHypotheses": ["h645", "h1"], "localizationDecisionIssued": false, "singletonDecisionIssued": false, "resourcePolicy": "BUDGET", "resourceStatus": "NORMAL", "actionIssued": true, "chargedCost": {"acquisition": 1, "computation": 1, "preparation": 1, "recovery": 0, "retry": 0}},
+    {"id": "SYN-BUDGET", "label": "SYNTHETIC-DESIGN-WALKTHROUGH", "scenarioId": "SC-RESOURCE-ERROR", "attemptId": "ATT-011", "runId": "RUN-011", "pairingId": null, "truthReference": {"ref": "IF-EXP-TRUTH.truthRecord", "visibility": "EVALUATOR-ONLY", "truthHypothesis": "h1"}, "injectionStatus": "CONFIRMED", "faultDomain": "IN-DOMAIN-NON-EQUIVALENT", "validity": "INCOMPLETE", "outcome": "NOT-ANSWERED", "stopClass": "Stop-Budget", "stage": "TERMINAL", "observationInterval": null, "requirementInterval": null, "historyBefore": ["h1", "h2", "h3"], "compatibleState": ["h1", "h2"], "finalHypotheses": ["h1", "h2"], "localizationDecisionIssued": false, "singletonDecisionIssued": false, "resourcePolicy": "BUDGET", "resourceStatus": "BUDGET-EXHAUSTED", "actionIssued": true, "chargedCost": {"acquisition": 2, "computation": 2, "preparation": 1, "recovery": 1, "retry": 1}},
+    {"id": "SYN-PRE-ACTION", "label": "SYNTHETIC-DESIGN-WALKTHROUGH", "scenarioId": "SC-NORMAL-UPLOAD", "attemptId": "ATT-012", "runId": "RUN-012", "pairingId": null, "truthReference": {"ref": "IF-EXP-TRUTH.truthRecord", "visibility": "EVALUATOR-ONLY", "truthHypothesis": "h-normal"}, "injectionStatus": "NORMAL", "faultDomain": "NORMAL", "validity": "INCOMPLETE", "outcome": "NOT-ANSWERED", "stopClass": "Stop-Budget", "stage": "PRE-ACTION", "observationInterval": null, "requirementInterval": null, "historyBefore": ["h-normal", "h1"], "compatibleState": ["h-normal", "h1"], "finalHypotheses": ["h-normal", "h1"], "localizationDecisionIssued": false, "singletonDecisionIssued": false, "resourcePolicy": "BUDGET", "resourceStatus": "BUDGET-EXHAUSTED", "actionIssued": false, "chargedCost": {"acquisition": 0, "computation": 0, "preparation": 0, "recovery": 0, "retry": 0}}
   ],
   "designAdmission": {
     "designReviewStatus": "CANDIDATE",
     "confirmatoryRunStatus": "BLOCKED",
-    "blockingDecisionIds": ["DEC-MATH-REVIEW", "DEC-IUT", "DEC-TRUTH", "DEC-EQUIV", "DEC-SAMPLE"],
+    "blockingDecisionIds": ["DEC-MATH-REVIEW", "DEC-IUT", "DEC-TRUTH", "DEC-EQUIV", "DEC-SAMPLE", "DEC-RESOURCE", "DEC-CLOCK"],
     "historicalCaptureUse": "EXPLORATORY-OFFLINE-ONLY",
     "syntheticFixtureUse": "DESIGN-ACCOUNTING-ONLY"
   },
   "artifactMap": [
-    {"id":"ART-DESIGN-SPEC","path":"docs/research/EXPERIMENT_IMPLEMENTATION_SPEC.md","role":"bilingual human design authority below EXP-PLAN-2026-001"},
-    {"id":"ART-CLAIMS","path":"docs/research/CLAIM_EVIDENCE_MATRIX.md","role":"claim status and falsification obligations"},
-    {"id":"ART-PLAN","path":"docs/research/EXPERIMENT_PLAN.md","role":"single active experiment-plan authority"},
-    {"id":"ART-CHECKER","path":"scripts/check_experiment_design.py","role":"mechanical validation only"}
+    {"id": "ART-DESIGN-SPEC", "path": "docs/research/EXPERIMENT_IMPLEMENTATION_SPEC.md", "role": "bilingual human design authority below EXP-PLAN-2026-001"},
+    {"id": "ART-DESIGN-DATA", "path": "configs/research/cltav_experiment_design.json", "role": "single structured source for shared design facts"},
+    {"id": "ART-CLAIMS", "path": "docs/research/CLAIM_EVIDENCE_MATRIX.md", "role": "claim status and falsification obligations"},
+    {"id": "ART-PLAN", "path": "docs/research/EXPERIMENT_PLAN.md", "role": "single active experiment-plan authority"},
+    {"id": "ART-CHECKER", "path": "scripts/check_experiment_design.py", "role": "mechanical authority and accounting validation"},
+    {"id": "ART-SYNC", "path": "scripts/sync_experiment_design.py", "role": "generated bilingual shared-table reconciliation"}
   ]
 }

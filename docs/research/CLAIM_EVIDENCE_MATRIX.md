@@ -144,7 +144,14 @@ leakage, omitted cost, TEST-scoring of Prep/Recover, or global-optimality wordin
 falsify the implementation/wording obligation. Independent mathematical and
 scientific review remain open. The full argument and witnesses are in
 `EXPERIMENT_IMPLEMENTATION_SPEC.md`; finite references and synthetic accounting
-are indexed by `configs/research/cltav_experiment_design.json`.
+are indexed by `configs/research/cltav_experiment_design.json`. Version 0.2
+derives answered, fault, normal, localization-decision and singleton populations
+from typed attempt fields rather than handwritten membership tags. `ERROR`,
+`INCONCLUSIVE`, abstention and budget stops remain visible but cannot count as
+answered decisions; stop class alone cannot count as singleton localization.
+Every primary metric is linked to a candidate analysis plan and an open freeze
+decision. These closures improve auditability only and do not advance C1, C2,
+DETECT, LOCATE or ABLATION status.
 
 # 中文版
 
@@ -261,3 +268,7 @@ are indexed by `configs/research/cltav_experiment_design.json`.
 一律判 FAIL 均构成最小反例。`CL-C2` 把实现遵循规格与实测收益分开；预测 gap
 计零、truth 泄漏、漏计成本、把 Prep／Recover 当 TEST 评分或全局最优措辞均不合格。
 独立数学／科学评审仍开放；完整论证与走查位置见上述实施规格和有限 JSON 索引。
+v0.2 由带类型的尝试字段推导回答、故障、正常、定位决定和单点总体，不再依赖手填
+成员标签；`ERROR`、`INCONCLUSIVE`、弃权和预算停止保持可见，但不得计作回答，停止
+类本身也不得计作单点定位。每个主要指标均绑定候选分析方案及待冻结决定。这些闭合
+只增强审计性，不提升 C1、C2、DETECT、LOCATE 或 ABLATION 的状态。
