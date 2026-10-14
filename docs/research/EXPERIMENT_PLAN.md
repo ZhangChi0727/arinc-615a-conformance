@@ -439,3 +439,22 @@ artifacts/experiments/EXP-YYYY-NNN/
 ## 历史 v4.2 登记（非活动设计）
 
 EXP-001～007 仍按 RR-2026-001 v4.2 保留为历史方案，可被引用，但不定义上述四臂与三组。HMM／贝叶斯校准保持非默认比较模型。
+
+## CR-2026-019 implementation-design attachment / 实施设计附件
+
+`EXPERIMENT_IMPLEMENTATION_SPEC.md` refines this plan without replacing it.
+It reuses the three experiment families, four arms, eight scenario IDs, seven
+experiment interfaces and fourteen acceptance-matrix classes. Its closed JSON
+index provides finite field links, metric denominators, dependency gates,
+pending decisions and synthetic accounting. Design-check success is not
+confirmatory registration or run admission. Interactive IUT/reset evidence,
+truth and injection confirmation, equivalent-fault adjudication, independent
+mathematical review and the justified sample/precision decision remain named
+blockers. Historical captures stay exploratory and synthetic fixtures are not
+results.
+
+`EXPERIMENT_IMPLEMENTATION_SPEC.md` 是本计划的下属细化，不取代本计划。它
+复用三实验族、四臂、八场景、七实验接口和十四类 AM；封闭 JSON 仅提供有限字段
+引用、指标分母、依赖门、待决项和合成记账。设计检查通过不等于确认性登记或运行
+准入。交互 IUT／复位、真值与注入确认、等价裁定、独立数学审查及有依据的样本／
+精度决定继续阻塞运行；历史捕获只属探索，合成 fixture 不是结果。
