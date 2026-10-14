@@ -198,6 +198,25 @@ class TftpReconstructor:
     def records(self) -> list[TransferRecord]:
         return list(self._records)
 
+    @property
+    def resource_usage(self) -> dict[str, int]:
+        """Bounded resident-state counters for tests and operational diagnosis.
+
+        These are not protocol evidence and are never serialised into a
+        published envelope.  They make the distinct active/raw and completed
+        parse-payload budgets observable to regression tests.
+        """
+        return {
+            "activeSessionCount": sum(
+                1 for session in self._sessions
+                if not session.superseded and session.record.reconstruction_status == "INCOMPLETE"
+            ),
+            "sessionCount": len(self._sessions),
+            "activeRawPayloadBytes": self._active_payload_bytes,
+            "completedParsePayloadBytes": self._completed_payload_bytes,
+            "retainedBlockDigestCount": sum(len(session.blocks) for session in self._sessions),
+        }
+
     def could_be_tftp(self, udp: UdpDatagram) -> bool:
         return (
             udp.source_port == self.service_port

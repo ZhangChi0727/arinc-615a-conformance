@@ -16,7 +16,7 @@ from pathlib import Path
 import pytest
 from jsonschema import Draft202012Validator
 
-from cltav_offline.capture import CaptureReader, PCAPNG_SECTION_HEADER
+from cltav_offline.capture import CaptureFormatError, CaptureReader, PCAPNG_SECTION_HEADER
 from cltav_offline.cli import main as cli_main
 from cltav_offline import corpus as corpus_module
 from cltav_offline import pipeline as pipeline_module
@@ -27,9 +27,10 @@ from cltav_offline.corpus import audit_manifest, publish_json, run_corpus
 from cltav_offline.development_contract import accepted_record_contracts
 from cltav_offline.evidence import evidence_errors
 from cltav_offline.events import decode_first_slice_header
-from cltav_offline.models import Ipv4Fragment, PacketRef
+from cltav_offline.models import DatagramRecord, Ipv4Fragment, PacketRef, Timestamp, UdpDatagram
 from cltav_offline.network import Ipv4Reassembler
 from cltav_offline.pipeline import IntakeConfig, IntakeError, IntakeResult, run_capture
+from cltav_offline.tftp import TftpReconstructor
 from scripts.check_development_readiness import validate_record_instance
 
 
@@ -258,6 +259,22 @@ def test_partial_first_slice_parse_is_a_controlled_execution_issue(tmp_path: Pat
         "inspect", "--input", str(capture), "--capture-id", "cap-partial-lui", "--output", str(output),
         "--source-commit", "a" * 40,
     ]) == 2
+
+    corpus = tmp_path / "partial-corpus"
+    corpus.mkdir()
+    corpus_capture = corpus / "one.pcapng"
+    corpus_capture.write_bytes(_pcapng([
+        _ethernet_ipv4(_udp(10012, 69, _request(1, "partial.lui")), identification=45),
+        _ethernet_ipv4(_udp(40012, 10012, _data(1, partial_lui)), identification=46, **server),
+    ]))
+    manifest_path = tmp_path / "partial-manifest.json"
+    manifest_path.write_text(json.dumps(_corpus_manifest(corpus)), encoding="utf-8")
+    corpus_output = tmp_path / "partial-output"
+    assert cli_main([
+        "corpus", "--manifest", str(manifest_path), "--corpus-root", str(corpus), "--output-dir", str(corpus_output),
+        "--source-commit", "a" * 40,
+    ]) == 2
+    assert json.loads((corpus_output / "corpus-index.json").read_text(encoding="utf-8"))["captures"][0]["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
 
 
 def test_unknown_linktype_is_controlled_not_silently_complete(tmp_path: Path) -> None:
@@ -777,14 +794,15 @@ def test_corpus_tool_failures_abort_staging_and_preserve_prior_publication(
         config=IntakeConfig(), source_commit="e" * 40,
     )
     old_bytes = {item.name: item.read_bytes() for item in output.iterdir()}
-    original_errors = corpus_module.evidence_errors
+    original_to_dict = pipeline_module.IntakeResult.to_dict
 
-    def fail_projection_on_second(data: object) -> list[str]:
-        if isinstance(data, dict) and data.get("input", {}).get("captureId") == "HC-02":
-            return ["injected projection/schema tool failure"]
-        return original_errors(data)
+    def malformed_second(self: IntakeResult, *, source_commit: str) -> dict[str, object]:
+        rendered = original_to_dict(self, source_commit=source_commit)
+        if self.capture_id == "HC-02":
+            rendered["unexpectedToolField"] = True
+        return rendered
 
-    monkeypatch.setattr(corpus_module, "evidence_errors", fail_projection_on_second)
+    monkeypatch.setattr(pipeline_module.IntakeResult, "to_dict", malformed_second)
     with pytest.raises(IntakeError) as caught:
         run_corpus(
             manifest_path=manifest_path, corpus_root=corpus, output_dir=output,
@@ -795,6 +813,12 @@ def test_corpus_tool_failures_abort_staging_and_preserve_prior_publication(
     assert not list(tmp_path.glob(".result.staging-*"))
 
     fresh = tmp_path / "fresh-result"
+    def malformed_first(self: IntakeResult, *, source_commit: str) -> dict[str, object]:
+        rendered = original_to_dict(self, source_commit=source_commit)
+        rendered["unexpectedToolField"] = True
+        return rendered
+
+    monkeypatch.setattr(pipeline_module.IntakeResult, "to_dict", malformed_first)
     with pytest.raises(IntakeError):
         run_corpus(
             manifest_path=manifest_path, corpus_root=corpus, output_dir=fresh,
@@ -987,6 +1011,31 @@ def test_tftp_terminal_block_set_is_order_independent_and_completed_sessions_rel
     assert capped.transfers[0].reconstruction_status == "COMPLETE"
     assert all("RESOURCE-COMPLETED-PAYLOAD-LIMIT" in item.diagnostics for item in capped.transfers[1:])
 
+    def synthetic_udp(sequence: int, source_port: int, destination_port: int, payload: bytes) -> UdpDatagram:
+        reference = PacketRef("cap-resident", sequence, sequence, 0, 1, len(payload), len(payload), Timestamp(sequence, 1))
+        datagram = DatagramRecord(
+            datagram_id=f"DG-{sequence:08d}", capture_id="cap-resident", interface_id=0,
+            source="10.0.0.1" if destination_port == 69 else "10.0.0.2",
+            destination="10.0.0.2" if destination_port == 69 else "10.0.0.1",
+            protocol=17, identification=sequence, status="COMPLETE", failure_code=None,
+            packet_refs=[reference], fragment_ranges=[(0, len(payload))], payload=payload,
+        )
+        return UdpDatagram(datagram, source_port, destination_port, payload, False)
+
+    reconstructor = TftpReconstructor(
+        capture_id="cap-resident", max_active_transfers=1, max_transfer_bytes=100,
+        max_active_transfer_bytes=100, max_completed_payload_bytes=800,
+    )
+    for index in range(8):
+        client, tid = 10400 + index, 40400 + index
+        reconstructor.process(synthetic_udp(index * 2 + 1, client, 69, _request(1, f"state-{index}.lui")))
+        reconstructor.process(synthetic_udp(index * 2 + 2, tid, client, _data(1, b"x" * 100)))
+    usage = reconstructor.resource_usage
+    assert usage["activeSessionCount"] == 0
+    assert usage["activeRawPayloadBytes"] == 0
+    assert usage["completedParsePayloadBytes"] == 800
+    assert usage["retainedBlockDigestCount"] == 8
+
 
 def test_tftp_option_evidence_and_rollover_are_not_guessed(tmp_path: Path) -> None:
     server = {"source": "10.0.0.2", "destination": "10.0.0.1"}
@@ -1134,6 +1183,39 @@ def test_pcapng_simple_packet_uses_snaplen_not_padding_and_invalid_lengths_stay_
     assert packet.ref.original_length == 10
     assert packet.data == b"abcde"
 
+    # SnapLen zero means no snap-length truncation; padding still never joins
+    # the packet payload.  The same relation is endian-independent.
+    zero_snap = tmp_path / "simple-zero-snap.pcapng"
+    zero_snap.write_bytes(
+        _block(PCAPNG_SECTION_HEADER, section_body)
+        + _block(1, struct.pack("<HHI", 1, 0, 0))
+        + _block(3, struct.pack("<I", 5) + b"abcde" + b"\0" * 3)
+    )
+    assert next(iter(CaptureReader(zero_snap, "cap-spb-zero"))).data == b"abcde"
+
+    def big_block(block_type: int, body: bytes) -> bytes:
+        total = 12 + len(body)
+        assert total % 4 == 0
+        return struct.pack(">II", block_type, total) + body + struct.pack(">I", total)
+
+    big = tmp_path / "simple-big.pcapng"
+    big.write_bytes(
+        big_block(PCAPNG_SECTION_HEADER, struct.pack(">IHHq", 0x1A2B3C4D, 1, 0, -1))
+        + big_block(1, struct.pack(">HHI", 1, 0, 5))
+        + big_block(3, struct.pack(">I", 10) + b"abcde" + b"\0" * 3)
+    )
+    assert next(iter(CaptureReader(big, "cap-spb-big"))).data == b"abcde"
+
+    for name, body in {
+        "short": struct.pack("<I", 10) + b"abcd",
+        "extra": struct.pack("<I", 10) + b"abcde" + b"\0" * 7,
+    }.items():
+        malformed = tmp_path / f"simple-{name}.pcapng"
+        malformed.write_bytes(_block(PCAPNG_SECTION_HEADER, section_body) + _block(1, idb) + _block(3, body))
+        with pytest.raises(CaptureFormatError) as caught:
+            list(CaptureReader(malformed, f"cap-spb-{name}"))
+        assert caught.value.code == "INVALID-PCAPNG-SIMPLE-LENGTH"
+
     invalid_pcap = tmp_path / "caplen-over-orig.pcap"
     invalid_pcap.write_bytes(
         b"\xd4\xc3\xb2\xa1" + struct.pack("<HHIIII", 2, 4, 0, 0, 65535, 1)
@@ -1153,6 +1235,29 @@ def test_pcapng_simple_packet_uses_snaplen_not_padding_and_invalid_lengths_stay_
             item["sourceType"] == "PACKET-REF" and item["reason"] == "CAPLEN-EXCEEDS-ORIGLEN"
             for item in evidence["contractProjection"]["nonProjectable"]
         )
+
+
+def test_nonzero_pcapng_time_offset_is_explicitly_nonprojectable(tmp_path: Path) -> None:
+    record = _valid_exchange()[0]
+    section_body = struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1)
+    # if_tsoffset=7 seconds cannot be represented by the accepted PACKET-REF
+    # payload, which has only raw ticks and resolution.
+    idb = (
+        struct.pack("<HHI", 1, 0, 65535)
+        + struct.pack("<HHq", 14, 8, 7)
+        + struct.pack("<HH", 0, 0)
+    )
+    padding = b"\0" * (-len(record) % 4)
+    epb = struct.pack("<IIIII", 0, 0, 1, len(record), len(record)) + record + padding
+    capture = tmp_path / "offset.pcapng"
+    capture.write_bytes(_block(PCAPNG_SECTION_HEADER, section_body) + _block(1, idb) + _block(6, epb))
+    evidence = run_capture(capture, capture_id="cap-time-offset").to_dict(source_commit="a" * 40)
+    assert evidence_errors(evidence) == []
+    assert not any(item["recordType"] == "PACKET-REF" for item in evidence["contractProjection"]["records"])
+    assert any(
+        item["sourceType"] == "PACKET-REF" and item["reason"] == "TIMESTAMP-OFFSET-NONPROJECTABLE"
+        for item in evidence["contractProjection"]["nonProjectable"]
+    )
 
 
 def test_reassembly_key_prevents_cross_interface_id_reuse_and_empty_datagram_is_complete(
