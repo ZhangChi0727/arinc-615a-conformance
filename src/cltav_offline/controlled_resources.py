@@ -80,7 +80,16 @@ def controlled_resource_json(resource_id: str) -> dict[str, Any]:
 
 
 def controlled_resource_sha256(resource_id: str) -> str:
-    return hashlib.sha256(controlled_resource_bytes(resource_id)).hexdigest()
+    """Return a textual controlled-resource identity independent of Git EOL.
+
+    The package still carries exact source bytes for the platform on which it
+    is built.  The accepted JSON content identity only canonicalises CRLF
+    record separators to LF, so an otherwise identical Windows checkout and
+    Linux Git checkout have the same identity. Escaped ``\\r\\n`` in JSON
+    strings remain the literal bytes ``b"\\\\r\\\\n"`` and are unchanged.
+    """
+    canonical = controlled_resource_bytes(resource_id).replace(b"\r\n", b"\n")
+    return hashlib.sha256(canonical).hexdigest()
 
 
 def source_authority_bytes(resource_id: str) -> bytes | None:
@@ -90,4 +99,3 @@ def source_authority_bytes(resource_id: str) -> bytes | None:
         return source.read_bytes()
     except OSError:
         return None
-

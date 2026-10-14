@@ -15,7 +15,7 @@ from pathlib import Path
 # SHA-256 of the accepted development-contract snapshot consumed by this
 # bounded adapter.  This is deliberately a content identity, not "latest".
 DEVELOPMENT_CONTRACT_PATH = "configs/engineering/cltav_development_contracts.json"
-DEVELOPMENT_CONTRACT_SHA256 = "e9df5397d2b3ffedb8f5e14e655ceb3fba70cd324d37bb170fc9fbd4033d4e7c"
+DEVELOPMENT_CONTRACT_SHA256 = "3331fadf2786133f161eded9d1fb42066ca58d7dd510ce6e775da1cd89a5aae1"
 
 
 def runtime_source_snapshot_sha256() -> str:

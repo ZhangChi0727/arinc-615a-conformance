@@ -1439,6 +1439,16 @@ def test_changed_controlled_contract_resource_is_named_and_prevents_publication(
     development_contract_module.development_contract_snapshot.cache_clear()
 
 
+def test_controlled_resource_identity_normalizes_only_crlf_record_separators(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The content identity is stable across Git CRLF/LF checkout variants."""
+    raw = b'{\r\n  "escaped": "\\\\r\\\\n"\r\n}\r\n'
+    monkeypatch.setattr(controlled_resources, "controlled_resource_bytes", lambda _: raw)
+    expected = hashlib.sha256(b'{\n  "escaped": "\\\\r\\\\n"\n}\n').hexdigest()
+    assert controlled_resources.controlled_resource_sha256("development-contract") == expected
+
+
 def test_noneditable_wheel_contains_authoritative_resources_and_real_cli_runs(tmp_path: Path) -> None:
     """Exercise the installed entry point from an unrelated CWD, offline."""
     root = Path(__file__).resolve().parents[2]
@@ -1462,8 +1472,9 @@ def test_noneditable_wheel_contains_authoritative_resources_and_real_cli_runs(tm
     venv = tmp_path / "wheel-venv"
     create = subprocess.run([sys.executable, "-m", "venv", "--system-site-packages", str(venv)], text=True, capture_output=True)
     assert create.returncode == 0, create.stderr
-    python = venv / "Scripts" / "python.exe"
-    entrypoint = venv / "Scripts" / "cltav-offline.exe"
+    binary_dir = venv / ("Scripts" if os.name == "nt" else "bin")
+    python = binary_dir / ("python.exe" if os.name == "nt" else "python")
+    entrypoint = binary_dir / ("cltav-offline.exe" if os.name == "nt" else "cltav-offline")
     install = subprocess.run([str(python), "-m", "pip", "install", "--no-deps", str(wheel)], text=True, capture_output=True)
     assert install.returncode == 0, install.stderr
     unrelated = tmp_path / "unrelated"

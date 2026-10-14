@@ -112,7 +112,9 @@ identifiers, source-reference closure, default/accepted/unknown block-size
 rules, and the typed adapter projection. The runtime loads both its evidence
 schema and the accepted-record definitions as package resources; the build
 copies the exact controlled source bytes, and the runtime verifies the
-development-contract snapshot identity before it projects records. Every
+development-contract snapshot identity before it projects records. Its textual
+JSON content hash canonicalises only CRLF record separators to LF, so the
+accepted Git content identity is stable across Windows and Linux builds. Every
 normal projection is validated by the shared public record validator and its
 parentage is checked against the originating capture evidence. Unsupported or
 unknown fields remain explicitly non-projectable rather than being guessed or
@@ -220,7 +222,7 @@ does not modify manuscript sources, PDF or research claims.
 
 所有列出的数值上限都是实现资源限额，而不是协议超时或产品需求；每个输出 envelope 都记录这些限额。共享证据保留预算覆盖 packet ref、诊断、接口元数据、数据报、传输和事件；为具名停止记录预留空间，并登记未消费后缀而不宣称全量处理。`maxActiveTransferBytes` 单独约束活跃 TFTP 原始块，`maxCompletedPayloadBytes` 单独约束已完成传输为有限头解析而保留的载荷。每个资源诊断保留输入 SHA-256 以及最后已消费的包／索引／偏移／上下文证据，不依赖保留载荷也能追溯。
 
-该 envelope 是封闭且有版本的记录合同。发布前实际执行声明的 Draft 2020-12 JSON Schema 和跨记录语义检查，之后才可原子替换已有制品。它检查已配置限额、声明计数、唯一 ID、来源引用闭合、默认／已接受／未知块大小规则以及类型化适配投影。运行时将证据 schema 和已接受记录定义作为包资源加载；构建复制精确的受控源字节，运行时在投影前核验开发合同快照身份。每个可投影普通记录均经共享公共记录验证器校验，其父子来源链亦须回指原始捕获证据。无法表达的未知项以具名不可投影原因保留，不得猜测或以零填充。
+该 envelope 是封闭且有版本的记录合同。发布前实际执行声明的 Draft 2020-12 JSON Schema 和跨记录语义检查，之后才可原子替换已有制品。它检查已配置限额、声明计数、唯一 ID、来源引用闭合、默认／已接受／未知块大小规则以及类型化适配投影。运行时将证据 schema 和已接受记录定义作为包资源加载；构建复制精确的受控源字节，运行时在投影前核验开发合同快照身份。其文本 JSON 内容散列仅将 CRLF 记录分隔符规范化为 LF，因此已接受的 Git 内容身份在 Windows 和 Linux 构建间稳定。每个可投影普通记录均经共享公共记录验证器校验，其父子来源链亦须回指原始捕获证据。无法表达的未知项以具名不可投影原因保留，不得猜测或以零填充。
 
 ## 4. 命令行、发布与退出状态
 

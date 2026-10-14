@@ -41,7 +41,7 @@ The caller supplied `db675ccb5b64985999f37161120ba25ef0dc8fa7`, which the
 evidence correctly labels `CLAIMED-UNVERIFIED`. The consumed development
 contract is the exact snapshot
 `configs/engineering/cltav_development_contracts.json` with SHA-256
-`e9df5397d2b3ffedb8f5e14e655ceb3fba70cd324d37bb170fc9fbd4033d4e7c`.
+`3331fadf2786133f161eded9d1fb42066ca58d7dd510ce6e775da1cd89a5aae1`.
 
 The ignored, local-only corpus index was written under `.cltav-local/` and has
 SHA-256:
@@ -174,7 +174,7 @@ use it.
 
 调用方给出了 `db675ccb5b64985999f37161120ba25ef0dc8fa7`，证据将其正确标为 `CLAIMED-UNVERIFIED`。所消费的开发合同为精确快照
 `configs/engineering/cltav_development_contracts.json`，SHA-256 为
-`e9df5397d2b3ffedb8f5e14e655ceb3fba70cd324d37bb170fc9fbd4033d4e7c`。
+`3331fadf2786133f161eded9d1fb42066ca58d7dd510ce6e775da1cd89a5aae1`。
 
 已忽略、仅本地保存的 corpus 索引写入 `.cltav-local/`，其 SHA-256 为：
 
