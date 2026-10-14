@@ -35,9 +35,9 @@ registered captures before the local intake run. The run records a deterministic
 runtime-source snapshot instead of treating a caller-provided Git OID as a
 verified build identity:
 
-`79cbcbeffd65f19f3056605835800fc00f59de89d382e1ea76e84d4ff809be01`
+`ec0bd173836ed285f8c02a2d115e5725033f1af8f0152d2f7f993e611462e345`
 
-The caller supplied `db675ccb5b64985999f37161120ba25ef0dc8fa7`, which the
+The caller supplied `9cfb35ab1a231228b907f7e5b4af3487aea88c66`, which the
 evidence correctly labels `CLAIMED-UNVERIFIED`. The consumed development
 contract is the exact snapshot
 `configs/engineering/cltav_development_contracts.json` with SHA-256
@@ -46,7 +46,7 @@ contract is the exact snapshot
 The ignored, local-only corpus index was written under `.cltav-local/` and has
 SHA-256:
 
-`d3ed4e2211483547dd272b8db11d147a74cf8f6fa2b1a7a0831cf3332a726ffe`
+`a8b091d02f98eed6c15704bb3f857bd9eab90abb4f7738cc1c3495c49fdddd0b`
 
 Aggregate result only:
 
@@ -56,7 +56,7 @@ Aggregate result only:
 | Corpus outputs published | 23 captures plus one corpus index |
 | `COMPLETE` reconstructions | 0 |
 | `COMPLETE-WITH-CONTROLLED-ISSUES` reconstructions | 23 |
-| Runtime source snapshot | `79cbcbe…ff809be01` |
+| Runtime source snapshot | `ec0bd17…1462e345` |
 | Source-claim status | `CLAIMED-UNVERIFIED` |
 
 These figures are an intake-support boundary, not a success rate, a protocol
@@ -170,15 +170,15 @@ use it.
 
 历史输入为调用方提供的探索性清单 `CLTAV-HISTORICAL-CAPTURES` 版本 `1.0`。本地接入运行前已审计全部 23 份已登记捕获的身份。该运行记录确定性的运行源码快照，而不把调用方给出的 Git OID 当作已核验构建身份：
 
-`79cbcbeffd65f19f3056605835800fc00f59de89d382e1ea76e84d4ff809be01`
+`ec0bd173836ed285f8c02a2d115e5725033f1af8f0152d2f7f993e611462e345`
 
-调用方给出了 `db675ccb5b64985999f37161120ba25ef0dc8fa7`，证据将其正确标为 `CLAIMED-UNVERIFIED`。所消费的开发合同为精确快照
+调用方给出了 `9cfb35ab1a231228b907f7e5b4af3487aea88c66`，证据将其正确标为 `CLAIMED-UNVERIFIED`。所消费的开发合同为精确快照
 `configs/engineering/cltav_development_contracts.json`，SHA-256 为
 `3331fadf2786133f161eded9d1fb42066ca58d7dd510ce6e775da1cd89a5aae1`。
 
 已忽略、仅本地保存的 corpus 索引写入 `.cltav-local/`，其 SHA-256 为：
 
-`d3ed4e2211483547dd272b8db11d147a74cf8f6fa2b1a7a0831cf3332a726ffe`
+`a8b091d02f98eed6c15704bb3f857bd9eab90abb4f7738cc1c3495c49fdddd0b`
 
 仅记录聚合结果：
 
@@ -188,7 +188,7 @@ use it.
 | 已发布的 corpus 输出 | 23 份捕获加一个 corpus 索引 |
 | `COMPLETE` 重建 | 0 |
 | `COMPLETE-WITH-CONTROLLED-ISSUES` 重建 | 23 |
-| 运行源码快照 | `79cbcbe…ff809be01` |
+| 运行源码快照 | `ec0bd17…1462e345` |
 | 来源声明状态 | `CLAIMED-UNVERIFIED` |
 
 这些数字是接入支持边界，而不是成功率、协议判定、实验分母或关于被捕获系统的结论。尤其是，受控问题被保留而非通过调高限额等方式消除以制造 `COMPLETE` 结果。本报告不向 Git 提交本地根、文件名、地址、载荷、注释、拓扑、时钟特性、配置或根因标签。
