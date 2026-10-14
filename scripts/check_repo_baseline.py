@@ -3220,17 +3220,30 @@ def pr_required_file_errors(status: dict, changed: set[str] | None = None) -> li
     ]
 
 
-def retired_surface_errors(status: dict) -> list[str]:
+def current_report_population_errors(status: dict, root: Path = ROOT) -> list[str]:
+    """Allow only the immutable historical report plus declared evidence reports."""
     errors: list[str] = []
-    current_dir = ROOT / "artifacts/reports/current"
-    historical_report = ROOT / status["release"]["records"]["historicalReaderReportPath"]
+    current_dir = root / "artifacts/reports/current"
+    records = status["release"]["records"]
+    historical_report = root / records["historicalReaderReportPath"]
+    evidence_paths = records.get("currentEvidenceReportPaths", [])
     current_files = {
         path.resolve() for path in current_dir.iterdir() if path.is_file()
     } if current_dir.is_dir() else set()
-    # The sole legacy path remains only because an atomic baseline references
-    # it. It is historical evidence, not a current-status owner.
-    if current_files != {historical_report.resolve()}:
-        errors.append("legacy reader-report path differs from the single immutable historical record")
+    allowed_files = {historical_report.resolve()}
+    for value in evidence_paths:
+        if isinstance(value, str):
+            allowed_files.add((root / value).resolve())
+    # The legacy report remains historical evidence, not a current-status owner.
+    # Candidate evidence reports must be explicitly named in project status;
+    # arbitrary current files remain a baseline failure.
+    if current_files != allowed_files:
+        errors.append("current report population differs from the controlled historical/evidence record set")
+    return errors
+
+
+def retired_surface_errors(status: dict) -> list[str]:
+    errors = current_report_population_errors(status)
     allowed_handoffs = {
         Path(status["release"]["records"]["migrationReviewPath"]),
         Path(status["release"]["records"]["acknowledgementReviewPath"]),

@@ -14,6 +14,16 @@ from pathlib import Path, PureWindowsPath
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError
 
+from cltav_offline.record_contract import (
+    _definition_for_path as _runtime_definition_for_path,
+    _definitions_for_path as _runtime_definitions_for_path,
+    _field_definition_errors as _runtime_field_definition_errors,
+    _json_schema as _runtime_json_schema,
+    _required_instance_errors as _runtime_required_instance_errors,
+    _type_compatible as _runtime_type_compatible,
+    validate_record_instance as _runtime_validate_record_instance,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_PATH = ROOT / "configs/engineering/cltav_development_contracts.json"
 SCHEMA_PATH = ROOT / "configs/engineering/cltav_development_contracts.schema.json"
@@ -302,6 +312,18 @@ def validate_record_instance(record: dict, payload: object) -> list[tuple[str, t
         if isinstance(statuses, dict) and not set(statuses).issubset(hypotheses):
             results.append(("RC-HISTORY-STATUS", ("statusByHypothesis",), "status refers to a hypothesis outside H"))
     return results
+
+
+# The installed adapter and this source-level gate must consume one validator.
+# Keep the historic public names for existing controlled tests/importers, while
+# routing every later readiness use to the packaged implementation.
+_field_definition_errors = _runtime_field_definition_errors
+_json_schema = _runtime_json_schema
+_type_compatible = _runtime_type_compatible
+_definitions_for_path = _runtime_definitions_for_path
+_definition_for_path = _runtime_definition_for_path
+_required_instance_errors = _runtime_required_instance_errors
+validate_record_instance = _runtime_validate_record_instance
 
 
 

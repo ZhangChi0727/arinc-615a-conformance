@@ -1,53 +1,53 @@
 {
   "schemaVersion": "1.0",
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-13",
   "repository": {
     "role": "instance",
     "displayRole": "ARINC 615A Profile / Binding / Configuration / instance engineering and evidence owner",
     "url": "https://github.com/ZhangChi0727/arinc-615a-conformance"
   },
   "currentIncrement": {
-    "title": "Parallel CL-TAV offline-engineering and TAES evidence-integration candidates",
-    "titleZh": "并行的 CL-TAV 离线工程与 TAES 证据集成候选",
+    "title": "Parallel CL-TAV offline intake and TAES evidence-integration candidates",
+    "titleZh": "并行的 CL-TAV 离线接入与 TAES 证据集成候选",
     "summary": [
-      "CR-2026-017 / DD-041 is the separately owned offline intake and protocol-reconstruction engineering candidate; its completion and review state are not asserted by this paper line.",
-      "CR-2026-018 / DD-042 integrates the accepted literature evidence into the TAES draft, bibliography, bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.",
-      "Both lines start from c5296aedef961ac3d5846ea9ef28847eea928132 in independent worktrees and must merge serially; the second line to land preserves both CR/DD records, reconciles current status and is re-reviewed on its new head.",
-      "No confirmatory result, implementation completion, Configuration, capability, conformance, independent scientific approval, submission, baseline or tag is created."
+      "CR-2026-017 / DD-041 authorizes a separately owned, read-only offline capture-to-evidence engineering candidate: packet identity, finite IPv4/UDP/TFTP reconstruction, bounded UPLOAD/INFORMATION events and traceable reporting; it remains subject to independent Draft-PR review.",
+      "CR-2026-018 / DD-042 integrates accepted literature evidence into the TAES draft, bibliography, bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.",
+      "Both lines began at c5296aedef961ac3d5846ea9ef28847eea928132 in independent worktrees and require serial reconciliation; the later line preserves both CR/DD records and is reviewed on its new head.",
+      "The local historical corpus remains exploratory development input only. No confirmatory result, implementation completion, Configuration, capability, conformance, independent scientific approval, submission, baseline or tag is created."
     ],
     "summaryZh": [
-      "CR-2026-017／DD-041 是由另一工作区负责的离线接入与协议重建工程候选；本论文线不声称其已完成或已评审。",
+      "CR-2026-017／DD-041 授权一条单独负责、只读的“捕获到证据”离线工程候选线：数据包身份、有限 IPv4／UDP／TFTP 重建、有界 UPLOAD／INFORMATION 事件和可追踪报告；它仍须在 Draft PR 上接受独立评审。",
       "CR-2026-018／DD-042 在不改变算法、接口和实验臂的前提下，把已接受文献证据融入 TAES 初稿、参考文献、有界 C1／C2 措辞与评价记账。",
-      "两条线均从 c5296aedef961ac3d5846ea9ef28847eea928132 起步，在独立工作树开发并串行合并；后合入者须保留两套 CR／DD、协调当前状态并在新 Head 上重审。",
-      "本增量不产生确认性结果、实现完成、Configuration、能力、符合性、独立科学批准、投稿、baseline 或 tag。"
+      "两条线均从 c5296aedef961ac3d5846ea9ef28847eea928132 起步，在独立工作树开发并需要串行协调；后合入者保留两套 CR／DD 记录并在新 Head 上接受评审。",
+      "本地历史语料继续仅作探索性开发输入。本增量不产生确认性结果、实现完成、Configuration、能力、符合性、独立科学批准、投稿、baseline 或 tag。"
     ],
     "stateChanges": [
-      "Two separately owned candidate lines are authorized from the same base; this branch records only the paper-line output and the serial-merge rule.",
-      "The TAES literature-access placeholder is resolved for the sources actually used, while result, sample-size and institutional-input placeholders remain open.",
-      "currentStop remains EXECUTABLE-FOUNDATION-GATE for M3 implementation."
+      "CR-2026-017 / DD-041 authorize one bounded offline intake implementation increment on a Draft PR; M3 remains blocked.",
+      "CR-2026-018 / DD-042 authorizes evidence-bounded TAES positioning and evaluation accounting without changing the controlled method.",
+      "currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims."
     ],
     "stateChangesZh": [
-      "两条不同责任人的候选线获准从同一基点并行；本分支只登记论文线输出与串行合并规则。",
-      "实际采用来源的 TAES 文献访问占位已消解，结果、样本量和单位材料占位继续开放。",
-      "对 M3 实现而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。"
+      "CR-2026-017／DD-041 授权在 Draft PR 上实施一个有界离线接入增量；M3 保持阻塞。",
+      "CR-2026-018／DD-042 授权有证据边界的 TAES 定位与评价记账，不改变受控方法。",
+      "对 M3、主动执行和能力主张而言，currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。"
     ],
     "unchangedBoundaries": [
       "Candidate GVS Core and compatibility-disposition identities remain separate and unchanged.",
       "The 18 source mapping rows, 7 instance-only rows and Q-01 through Q-09 remain unchanged.",
       "Project Configuration is NOT YET ESTABLISHED; instance evaluation is NOT-EXERCISED; RQ8 remains OPEN.",
       "Protocol conformance, certification readiness and authority acceptance remain false; no baseline or tag is created.",
-      "This increment creates no codec, executable EFSM engine, verification case, procedure, execution evidence or Project Configuration."
+      "This increment creates no active codec/service engine, executable CL-TAV EFSM/solver, verification verdict, controlled execution evidence or Project Configuration."
     ],
     "unchangedBoundariesZh": [
       "Candidate GVS Core 与兼容性处置身份保持分离且不变。",
       "18 个来源映射行、7 个实例专用行及 Q-01～Q-09 保持不变。",
       "Project Configuration 保持 NOT YET ESTABLISHED；实例评价保持 NOT-EXERCISED；RQ8 保持 OPEN。",
       "协议符合性、认证准备度和权威接受保持 false；不创建 baseline 或 tag。",
-      "本增量不创建 codec、可执行 EFSM 引擎、验证用例、规程、执行证据或 Project Configuration。"
+      "本增量不创建主动 codec／服务引擎、可执行 CL-TAV EFSM／求解器、验证判定、受控执行证据或 Project Configuration。"
     ]
   },
   "development": {
-    "phase": "CL-TAV first-slice development specification accepted under CR-2026-016; M3 still blocked",
+    "phase": "bounded CL-TAV offline intake implementation authorized under CR-2026-017; M3 and controlled execution still blocked",
     "gates": {
       "SOURCE-TECHNICAL-DIRECTION-GATE": "COMPLETED-EXTERNALLY-VERIFIED",
       "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE": "COMPLETED-EXTERNALLY-VERIFIED",
@@ -63,20 +63,20 @@
     "currentStop": {
       "id": "EXECUTABLE-FOUNDATION-GATE",
       "statusPath": "development.gates.EXECUTABLE-FOUNDATION-GATE",
-      "objective": "This stop still blocks M3 implementation. RR-CLTAV-2026-097 accepted the first-slice offline UPLOAD/INFORMATION development specification at PR #19 Head c9ca381, squash-merged as 324d832. That acceptance is not a tool implementation, runtime integrity result, confirmatory experiment, Project Configuration, expanded-CRS approval or M3 activation. M1-CANDIDATE-25 and its open source dependencies retain their controlled dispositions; the post-merge M2 pin correction changes artifact ancestry only. Further implementation requires separate authorization and evidence.",
-      "objectiveZh": "本停点仍禁止 M3 实现。RR-CLTAV-2026-097 接受了 PR #19 Head c9ca381 的首轮离线 UPLOAD／INFORMATION 开发规格，随后以 324d832 压缩合并。该接受不等于工具实现、运行完整性结果、确认性实验、Project Configuration、扩大 CRS 批准或 M3 激活。M1-CANDIDATE-25 及其开放来源依赖保持受控处置；合并后的 M2 重钉只改变制品祖先身份。后续实现须单独授权并提供证据。"
+      "objective": "This stop still blocks M3, active protocol execution and capability claims. RR-CLTAV-2026-097 accepted the first-slice offline UPLOAD/INFORMATION development specification at PR #19 Head c9ca381, squash-merged as 324d832; PR #20 rebounded the M2 input to c5296aed. CR-2026-017 / DD-041 separately authorize only a bounded, read-only offline intake implementation with evidence output. That narrow authorization is not a runtime-integrity result, confirmatory experiment, Project Configuration, expanded-CRS approval or M3 activation. M1-CANDIDATE-25 and its open source dependencies retain their controlled dispositions.",
+      "objectiveZh": "本停点仍禁止 M3、主动协议执行和能力主张。RR-CLTAV-2026-097 接受了 PR #19 Head c9ca381 的首轮离线 UPLOAD／INFORMATION 开发规格，随后以 324d832 压缩合并；PR #20 将 M2 输入重钉至 c5296aed。CR-2026-017／DD-041 仅单独授权一个输出证据的有界、只读离线接入实现。该狭窄授权不等于运行完整性结果、确认性实验、Project Configuration、扩大 CRS 批准或 M3 激活。M1-CANDIDATE-25 及其开放来源依赖保持受控处置。"
     },
   "nextSteps": [
-    "Use the accepted first-slice specification as controlled input for a separately authorized implementation increment. Establish runtime integrity and independent experimental truth before capability or conformance claims; do not start M3 from this specification alone.",
+    "Complete the authorized offline intake increment under CR-2026-017 / DD-041, then obtain independent review on its unchanged Draft PR Head. Establish runtime integrity and independent experimental truth before capability or conformance claims; do not start M3 from this implementation alone.",
     "Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth."
   ],
   "nextStepsZh": [
-    "将已接受的首轮规格作为后续单独授权实现增量的受控输入。建立运行完整性与独立实验真值后方可提出能力或符合性主张；不得仅凭本规格启动 M3。",
+    "完成 CR-2026-017／DD-041 下的授权离线接入增量，再在不变 Draft PR Head 上取得独立评审。建立运行完整性与独立实验真值后方可提出能力或符合性主张；不得仅凭本实现启动 M3。",
     "保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。"
   ],
     "blockedActions": [
       "Do not start M3 or a development-ready CRS PR before this expanded protocol CRS is independently accepted.",
-      "Do not implement protocol behavior before CRS and model gates approve it.",
+      "Do not implement unbounded, active or verdict-producing protocol behavior beyond the narrowly authorized read-only offline intake increment.",
       "Do not execute or evaluate an instance before Project Configuration is established.",
       "Do not promote instance evidence into a Generic Core conclusion.",
       "Do not claim protocol conformance, certification or authority acceptance.",
@@ -109,6 +109,9 @@
       "baselinePath": "docs/control/baselines/RB-2026-001-v4.3.1.md",
       "changePath": "docs/control/changes/CR-2026-005.md",
       "historicalReaderReportPath": "artifacts/reports/current/RPT-2026-002_information_architecture_v4.2.1.md",
+      "currentEvidenceReportPaths": [
+        "artifacts/reports/current/CLTAV_OFFLINE_INTAKE_ACCEPTANCE.md"
+      ],
       "migrationReviewPath": "docs/control/reviews/PR9_GVS_MIGRATION_REVIEW_HANDOFF.md",
       "acknowledgementReviewPath": "docs/control/reviews/PR10_GVS_DISPOSITION_ACK_REVIEW_HANDOFF.md"
     },
