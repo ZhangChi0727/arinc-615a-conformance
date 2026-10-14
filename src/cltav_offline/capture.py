@@ -174,6 +174,14 @@ class CaptureReader:
                     "pcap timestamp fraction exceeds its declared resolution",
                     record_start,
                 )
+            if included_length > original_length:
+                self._add_metadata_diagnostic(Diagnostic(
+                    "INVALID-PCAP-CAPTURE-LENGTH", "CAPTURE",
+                    "pcap captured length exceeds original length; packet is non-projectable",
+                    packet_ref_id=f"{self.capture_id}:P{packet_index + 1:08d}",
+                    container_offset=record_start,
+                    detail={"capturedLength": included_length, "originalLength": original_length},
+                ))
             offset += 16
             if included_length > self.max_packet_bytes:
                 self._add_metadata_diagnostic(Diagnostic(
@@ -300,6 +308,14 @@ class CaptureReader:
                     raise CaptureFormatError(
                         "PCAPNG-UNKNOWN-INTERFACE", "enhanced packet references an unknown interface", block_start
                     )
+                if captured_length > original_length:
+                    self._add_metadata_diagnostic(Diagnostic(
+                        "INVALID-PCAPNG-CAPTURE-LENGTH", "CAPTURE",
+                        "pcapng captured length exceeds original length; packet is non-projectable",
+                        packet_ref_id=f"{self.capture_id}:P{packet_index + 1:08d}",
+                        container_offset=block_start,
+                        detail={"capturedLength": captured_length, "originalLength": original_length},
+                    ))
                 padded = _padded_length(captured_length)
                 if len(body) < 20 + padded:
                     raise CaptureFormatError(
@@ -343,8 +359,18 @@ class CaptureReader:
                         "PCAPNG-UNKNOWN-INTERFACE", "simple packet has no interface zero", block_start
                     )
                 original_length = struct.unpack(f"{endian}I", body[:4])[0]
-                payload = body[4:]
-                captured_length = min(original_length, len(payload))
+                captured_length = (
+                    min(original_length, interface.snap_length)
+                    if interface.snap_length != 0 else original_length
+                )
+                padded = _padded_length(captured_length)
+                if len(body) != 4 + padded:
+                    raise CaptureFormatError(
+                        "INVALID-PCAPNG-SIMPLE-LENGTH",
+                        "simple packet body must contain exactly its snaplen-bounded data and padding",
+                        block_start,
+                    )
+                payload = body[4:4 + captured_length]
                 packet_index += 1
                 self.metadata.packet_count += 1
                 if captured_length > self.max_packet_bytes:
@@ -367,7 +393,7 @@ class CaptureReader:
                         captured_length, original_length, None,
                         section_id=interface.section_id, link_domain=interface.clock_domain,
                     ),
-                    payload[:captured_length],
+                    payload,
                 )
                 continue
             if block_type not in PCAPNG_KNOWN_NON_PACKET_BLOCKS:

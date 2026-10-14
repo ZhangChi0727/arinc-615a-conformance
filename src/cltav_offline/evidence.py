@@ -97,9 +97,16 @@ def _check_execution_shape(data: dict[str, Any], errors: list[str]) -> None:
     non_complete = any(item.get("status") != "COMPLETE" for item in _objects(data["datagrams"])) or any(
         item.get("reconstructionStatus") != "COMPLETE" for item in _objects(data["transfers"])
     )
-    if execution == "COMPLETE" and (diagnostics or non_complete):
+    parse_issue = any(
+        item.get("layer") == "PARSE-RESULT"
+        and isinstance(item.get("fields"), dict)
+        and item["fields"].get("parseStatus") != "PARSED"
+        for item in _objects(data["events"])
+        if isinstance(item, dict)
+    )
+    if execution == "COMPLETE" and (diagnostics or non_complete or parse_issue):
         errors.append("COMPLETE execution cannot contain controlled issues")
-    if execution == "COMPLETE-WITH-CONTROLLED-ISSUES" and not (diagnostics or non_complete):
+    if execution == "COMPLETE-WITH-CONTROLLED-ISSUES" and not (diagnostics or non_complete or parse_issue):
         errors.append("controlled-issues execution must retain a controlled issue")
     if execution == "FATAL-INPUT-ERROR":
         if any(data[key] for key in ("packetRefs", "datagrams", "transfers", "events")):

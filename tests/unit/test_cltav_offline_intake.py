@@ -236,6 +236,30 @@ def test_tftp_accepted_defaulted_unknown_and_zero_terminator(tmp_path: Path) -> 
     assert unknown.reconstruction_status == "GAPPED"
 
 
+def test_partial_first_slice_parse_is_a_controlled_execution_issue(tmp_path: Path) -> None:
+    partial_lui = (9).to_bytes(4, "big") + b"A1" + b"\0\0" + b"\x05"
+    server = {"source": "10.0.0.2", "destination": "10.0.0.1"}
+    capture = tmp_path / "partial-lui.pcap"
+    capture.write_bytes(_pcap([
+        _ethernet_ipv4(_udp(10012, 69, _request(1, "partial.lui")), identification=45),
+        _ethernet_ipv4(_udp(40012, 10012, _data(1, partial_lui)), identification=46, **server),
+    ]))
+    result = run_capture(capture, capture_id="cap-partial-lui")
+    parse = next(event for event in result.events if event.layer == "PARSE-RESULT")
+    assert parse.fields["parseStatus"] == "PARTIAL"
+    assert not any(event.layer == "APPLICATION" for event in result.events)
+    assert result.has_controlled_issue is True
+    evidence = result.to_dict(source_commit="a" * 40)
+    assert evidence["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
+    assert evidence_errors(evidence) == []
+
+    output = tmp_path / "partial-lui.json"
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", "cap-partial-lui", "--output", str(output),
+        "--source-commit", "a" * 40,
+    ]) == 2
+
+
 def test_unknown_linktype_is_controlled_not_silently_complete(tmp_path: Path) -> None:
     capture = tmp_path / "linktype.pcap"
     capture.write_bytes(_pcap([b"\0" * 20], link_type=101))
@@ -707,6 +731,79 @@ def test_corpus_fatal_evidence_is_schema_valid_and_invalid_inspect_does_not_publ
     assert output.read_text(encoding="utf-8") == "old"
 
 
+def test_corpus_only_publishes_per_file_failures_for_actual_capture_input_faults(tmp_path: Path) -> None:
+    corpus = tmp_path / "corpus"
+    corpus.mkdir()
+    malformed = corpus / "one.pcapng"
+    malformed.write_bytes(b"\x0a\x0d\x0d\x0a")
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps(_corpus_manifest(corpus)), encoding="utf-8")
+    output = tmp_path / "result"
+    summary = run_corpus(
+        manifest_path=manifest_path, corpus_root=corpus, output_dir=output,
+        config=IntakeConfig(), source_commit="d" * 40,
+    )
+    assert summary["captures"][0]["executionStatus"] == "FATAL-INPUT-ERROR"
+    failure = json.loads((output / "HC-01.json").read_text(encoding="utf-8"))
+    diagnostic = failure["diagnostics"][0]
+    assert diagnostic["code"] == "TRUNCATED-PCAPNG-BLOCK-HEADER"
+    assert diagnostic["stage"] == "CAPTURE"
+    assert diagnostic["containerOffset"] == 0
+    assert evidence_errors(failure) == []
+
+
+def test_corpus_tool_failures_abort_staging_and_preserve_prior_publication(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    corpus = tmp_path / "corpus"
+    corpus.mkdir()
+    first = corpus / "one.pcapng"
+    second = corpus / "two.pcapng"
+    first.write_bytes(_pcapng(_valid_exchange()))
+    second.write_bytes(_pcapng(_valid_exchange()))
+    digest_one = hashlib.sha256(first.read_bytes()).hexdigest()
+    digest_two = hashlib.sha256(second.read_bytes()).hexdigest()
+    manifest = _corpus_manifest(corpus)
+    manifest["captureCount"] = 2
+    manifest["captures"] = [
+        {**manifest["captures"][0], "captureId": "HC-01", "relativePath": "one.pcapng", "byteCount": first.stat().st_size, "sha256": digest_one},
+        {**manifest["captures"][0], "captureId": "HC-02", "relativePath": "two.pcapng", "byteCount": second.stat().st_size, "sha256": digest_two},
+    ]
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    output = tmp_path / "result"
+    run_corpus(
+        manifest_path=manifest_path, corpus_root=corpus, output_dir=output,
+        config=IntakeConfig(), source_commit="e" * 40,
+    )
+    old_bytes = {item.name: item.read_bytes() for item in output.iterdir()}
+    original_errors = corpus_module.evidence_errors
+
+    def fail_projection_on_second(data: object) -> list[str]:
+        if isinstance(data, dict) and data.get("input", {}).get("captureId") == "HC-02":
+            return ["injected projection/schema tool failure"]
+        return original_errors(data)
+
+    monkeypatch.setattr(corpus_module, "evidence_errors", fail_projection_on_second)
+    with pytest.raises(IntakeError) as caught:
+        run_corpus(
+            manifest_path=manifest_path, corpus_root=corpus, output_dir=output,
+            config=IntakeConfig(), source_commit="e" * 40,
+        )
+    assert caught.value.code == "EVIDENCE-SCHEMA-ERROR"
+    assert {item.name: item.read_bytes() for item in output.iterdir()} == old_bytes
+    assert not list(tmp_path.glob(".result.staging-*"))
+
+    fresh = tmp_path / "fresh-result"
+    with pytest.raises(IntakeError):
+        run_corpus(
+            manifest_path=manifest_path, corpus_root=corpus, output_dir=fresh,
+            config=IntakeConfig(), source_commit="e" * 40,
+        )
+    assert not fresh.exists()
+    assert not list(tmp_path.glob(".fresh-result.staging-*"))
+
+
 def test_normal_capture_has_publicly_valid_typed_contract_projection(tmp_path: Path) -> None:
     capture = tmp_path / "projection.pcap"
     capture.write_bytes(_pcap(_valid_exchange()))
@@ -1024,6 +1121,38 @@ def test_capture_container_variants_and_unsafe_manifest_entries_are_rejected(tmp
         }],
     }
     assert any("unsafe" in item for item in audit_manifest(manifest, corpus))
+
+
+def test_pcapng_simple_packet_uses_snaplen_not_padding_and_invalid_lengths_stay_nonprojectable(tmp_path: Path) -> None:
+    section_body = struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1)
+    idb = struct.pack("<HHI", 1, 0, 5)
+    simple = struct.pack("<I", 10) + b"abcde" + b"\0" * 3
+    simple_capture = tmp_path / "simple.pcapng"
+    simple_capture.write_bytes(_block(PCAPNG_SECTION_HEADER, section_body) + _block(1, idb) + _block(3, simple))
+    packet = next(iter(CaptureReader(simple_capture, "cap-spb")))
+    assert packet.ref.captured_length == 5
+    assert packet.ref.original_length == 10
+    assert packet.data == b"abcde"
+
+    invalid_pcap = tmp_path / "caplen-over-orig.pcap"
+    invalid_pcap.write_bytes(
+        b"\xd4\xc3\xb2\xa1" + struct.pack("<HHIIII", 2, 4, 0, 0, 65535, 1)
+        + struct.pack("<IIII", 1, 0, 10, 5) + b"x" * 10
+    )
+    invalid_epb = tmp_path / "caplen-over-orig.pcapng"
+    epb = struct.pack("<IIIII", 0, 0, 1, 10, 5) + b"y" * 10 + b"\0" * 2
+    invalid_epb.write_bytes(_block(PCAPNG_SECTION_HEADER, section_body) + _block(1, struct.pack("<HHI", 1, 0, 65535)) + _block(6, epb))
+    for capture, capture_id in ((invalid_pcap, "cap-invalid-pcap"), (invalid_epb, "cap-invalid-epb")):
+        result = run_capture(capture, capture_id=capture_id)
+        assert result.has_controlled_issue is True
+        assert result.packet_refs[0].captured_length > result.packet_refs[0].original_length
+        evidence = result.to_dict(source_commit="a" * 40)
+        assert evidence_errors(evidence) == []
+        assert not any(item["recordType"] == "PACKET-REF" for item in evidence["contractProjection"]["records"])
+        assert any(
+            item["sourceType"] == "PACKET-REF" and item["reason"] == "CAPLEN-EXCEEDS-ORIGLEN"
+            for item in evidence["contractProjection"]["nonProjectable"]
+        )
 
 
 def test_reassembly_key_prevents_cross_interface_id_reuse_and_empty_datagram_is_complete(

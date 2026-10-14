@@ -22,9 +22,20 @@ from .tftp import TftpReconstructor
 class IntakeError(ValueError):
     """A fatal invocation/input condition.  Fatal runs never publish output."""
 
-    def __init__(self, code: str, message: str) -> None:
+    def __init__(
+        self,
+        code: str,
+        message: str,
+        *,
+        input_fault: bool = False,
+        stage: str = "TOOL",
+        container_offset: int | None = None,
+    ) -> None:
         super().__init__(message)
         self.code = code
+        self.input_fault = input_fault
+        self.stage = stage
+        self.container_offset = container_offset
 
 
 SOURCE_COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
@@ -106,6 +117,11 @@ class IntakeResult:
             record.status != "COMPLETE" for record in self.datagrams
         ) or any(record.reconstruction_status != "COMPLETE" for record in self.transfers) or (
             self.capture_metadata.get("scanStatus") not in {None, "COMPLETE"}
+        ) or any(
+            event.layer == "PARSE-RESULT"
+            and isinstance(event.fields, dict)
+            and event.fields.get("parseStatus") != "PARSED"
+            for event in self.events
         )
 
     def to_dict(self, *, source_commit: str) -> dict[str, Any]:
@@ -166,7 +182,7 @@ def input_identity(path: Path) -> tuple[int, str]:
             for chunk in iter(lambda: stream.read(1024 * 1024), b""):
                 digest.update(chunk)
     except OSError as exc:
-        raise IntakeError("INPUT-READ-ERROR", str(exc)) from exc
+        raise IntakeError("INPUT-READ-ERROR", str(exc), input_fault=True, stage="INPUT") from exc
     return stat.st_size, digest.hexdigest()
 
 
@@ -184,7 +200,10 @@ def run_capture(
     _validate_config(config)
     before = input_identity(path)
     if expected_identity is not None and before != expected_identity:
-        raise IntakeError("INPUT-IDENTITY-MISMATCH", "input does not match its declared identity")
+        raise IntakeError(
+            "INPUT-IDENTITY-MISMATCH", "input does not match its declared identity",
+            input_fault=True, stage="INPUT",
+        )
     reader = CaptureReader(
         path, capture_id,
         max_packet_bytes=config.max_packet_bytes,
@@ -336,7 +355,9 @@ def run_capture(
             for record in reassembler.finish():
                 accept_datagram(record)
     except CaptureFormatError as exc:
-        raise IntakeError(exc.code, str(exc)) from exc
+        raise IntakeError(
+            exc.code, str(exc), input_fault=True, stage="CAPTURE", container_offset=exc.offset,
+        ) from exc
     finally:
         result.capture_metadata = reader.metadata.to_dict()
         result.container_packet_count = reader.metadata.packet_count
@@ -397,7 +418,8 @@ def run_capture(
     after = input_identity(path)
     if after != before:
         raise IntakeError(
-            "INPUT-IDENTITY-CHANGED", "input identity changed during the read-only intake run"
+            "INPUT-IDENTITY-CHANGED", "input identity changed during the read-only intake run",
+            input_fault=True, stage="INPUT",
         )
     return result
 

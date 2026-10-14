@@ -221,6 +221,12 @@ def run_corpus(
                     "diagnosticCount": data["counts"]["diagnostics"],
                 })
             except IntakeError as exc:
+                # A malformed capture is an observed input condition and may
+                # be represented per-file.  Anything emitted by the tool,
+                # contract/resource loading, schema gate, or publication path
+                # aborts the entire staged corpus transaction instead.
+                if not exc.input_fault:
+                    raise
                 failure = _failure_evidence(capture_id, row, config, source_commit, exc)
                 errors = evidence_errors(failure)
                 if errors:
@@ -420,15 +426,23 @@ def _failure_evidence(
         "datagrams": [],
         "transfers": [],
         "events": [],
-        "diagnostics": [{
-            "code": error.code,
-            "stage": "INPUT",
-            "severity": "ERROR",
-            "message": _public_error_message(error),
-            "detail": {"inputSha256": row["sha256"]},
-        }],
+        "diagnostics": [_failure_diagnostic(error, row["sha256"])],
         "contractProjection": empty_contract_projection(),
     }
+
+
+def _failure_diagnostic(error: IntakeError, input_sha256: str) -> dict[str, Any]:
+    """Render a source-fault diagnosis without erasing its stable location."""
+    result: dict[str, Any] = {
+        "code": error.code,
+        "stage": error.stage,
+        "severity": "ERROR",
+        "message": _public_error_message(error),
+        "detail": {"inputSha256": input_sha256},
+    }
+    if error.container_offset is not None:
+        result["containerOffset"] = error.container_offset
+    return result
 
 
 def _public_error_message(error: IntakeError) -> str:
