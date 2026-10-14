@@ -626,6 +626,286 @@ def test_shared_evidence_budget_counts_interfaces_and_reserves_a_stop_witness(tm
     assert evidence_errors(interface_budget) == []
 
 
+def test_interface_stop_releases_private_reassembly_for_its_budget_witness(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A later IDB is an input boundary even when no second packet arrives.
+
+    The first, incomplete IPv4 fragment may transiently own the reserved final
+    evidence slot.  If the next pcapng item is an IDB, that private accumulator
+    must be released so the actual interface-stop witness is retained rather
+    than publishing an invalid stopped capture without its boundary evidence.
+    """
+    section_body = struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1)
+    idb = struct.pack("<HHI", 1, 0, 65535)
+    fragment_payload = _udp(10000, 69, _request(1, "fragment.lui"))[:16]
+    fragment = _ethernet_ipv4(fragment_payload, identification=90, more_fragments=True)
+    padding = b"\0" * (-len(fragment) % 4)
+    epb = struct.pack("<IIIII", 0, 0, 1, len(fragment), len(fragment)) + fragment + padding
+    capture = tmp_path / "fragment-before-idb.pcapng"
+    capture.write_bytes(
+        _block(PCAPNG_SECTION_HEADER, section_body)
+        + _block(1, idb)
+        + _block(6, epb)
+        + _block(1, idb)
+    )
+
+    evidence = run_capture(
+        capture,
+        capture_id="SYN-IDB-REASSEMBLY-BOUNDARY",
+        config=IntakeConfig(max_evidence_records=3),
+    ).to_dict(source_commit="a" * 40)
+    assert evidence["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert len(evidence["input"]["container"]["interfaces"]) == 1
+    assert len(evidence["packetRefs"]) == 1
+    assert evidence["datagrams"] == []
+    assert [item["code"] for item in evidence["diagnostics"]] == ["RESOURCE-INTERFACE-EVIDENCE-LIMIT"]
+    assert evidence["diagnostics"][0]["detail"]["discardedActivePacketRefId"] == evidence["packetRefs"][0]["packetRefId"]
+    assert evidence_errors(evidence) == []
+
+    # Just enough budget to retain the real stop witness still discards the
+    # private accumulator explicitly.  One extra slot instead admits the IDB
+    # and lets EOF publish the ordinary GAPPED reassembly record.
+    budget_four = run_capture(
+        capture,
+        capture_id="SYN-IDB-REASSEMBLY-FOUR",
+        config=IntakeConfig(max_evidence_records=4),
+    ).to_dict(source_commit="a" * 40)
+    assert budget_four["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert [item["code"] for item in budget_four["diagnostics"]] == ["RESOURCE-INTERFACE-EVIDENCE-LIMIT"]
+    assert budget_four["diagnostics"][0]["detail"]["discardedActivePacketRefId"] == budget_four["packetRefs"][0]["packetRefId"]
+    assert evidence_errors(budget_four) == []
+    budget_five = run_capture(
+        capture,
+        capture_id="SYN-IDB-REASSEMBLY-FIVE",
+        config=IntakeConfig(max_evidence_records=5),
+    ).to_dict(source_commit="a" * 40)
+    assert budget_five["input"]["container"]["scanStatus"] == "COMPLETE"
+    assert len(budget_five["input"]["container"]["interfaces"]) == 2
+    assert [item["status"] for item in budget_five["datagrams"]] == ["GAPPED"]
+    assert budget_five["diagnostics"] == []
+    assert evidence_errors(budget_five) == []
+
+    # A packet boundary must release exactly one borrowed active accumulator.
+    # The other incomplete fragment remains attributable as a GAPPED record;
+    # it cannot disappear merely because the first accumulator was reclaimed
+    # for the packet-stop witness.
+    packet_boundary = tmp_path / "two-fragments-before-packet.pcap"
+    packet_boundary.write_bytes(_pcap([
+        _ethernet_ipv4(fragment_payload, identification=190, more_fragments=True),
+        _ethernet_ipv4(fragment_payload, identification=191, more_fragments=True),
+        _ethernet_ipv4(_udp(10002, 69, _request(1, "later.lui")), identification=192),
+    ]))
+    packet_boundary_evidence = run_capture(
+        packet_boundary,
+        capture_id="SYN-PACKET-REASSEMBLY-BOUNDARY",
+        config=IntakeConfig(max_evidence_records=6),
+    ).to_dict(source_commit="a" * 40)
+    assert packet_boundary_evidence["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert len(packet_boundary_evidence["packetRefs"]) == 2
+    packet_stop = next(
+        item for item in packet_boundary_evidence["diagnostics"]
+        if item["code"] == "RESOURCE-PACKET-REF-LIMIT"
+    )
+    assert packet_stop["detail"]["discardedActivePacketRefId"] == packet_boundary_evidence["packetRefs"][0]["packetRefId"]
+    assert [item["status"] for item in packet_boundary_evidence["datagrams"]] == ["GAPPED"]
+    assert packet_boundary_evidence["datagrams"][0]["packetRefIds"] == [packet_boundary_evidence["packetRefs"][1]["packetRefId"]]
+    assert evidence_errors(packet_boundary_evidence) == []
+
+    output = tmp_path / "fragment-before-idb.json"
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", "SYN-IDB-REASSEMBLY-BOUNDARY",
+        "--output", str(output), "--source-commit", "a" * 40, "--max-evidence-records", "3",
+    ]) == 2
+    published = json.loads(output.read_text(encoding="utf-8"))
+    assert published["diagnostics"] == evidence["diagnostics"]
+    assert evidence_errors(published) == []
+
+    # An ordinary container issue after the fragment has the same final-slot
+    # ownership rule at EOF.  It is not an unread-input stop, so retain the
+    # explicit post-scan diagnostic-retention boundary rather than inventing
+    # one or silently discarding the issue.
+    unknown_capture = tmp_path / "fragment-before-unknown.pcapng"
+    unknown_capture.write_bytes(
+        _block(PCAPNG_SECTION_HEADER, section_body)
+        + _block(1, idb)
+        + _block(6, epb)
+        + _block(0x00000BAD, b"")
+    )
+    unknown = run_capture(
+        unknown_capture,
+        capture_id="SYN-UNKNOWN-REASSEMBLY-BOUNDARY",
+        config=IntakeConfig(max_evidence_records=3),
+    ).to_dict(source_commit="a" * 40)
+    assert unknown["input"]["container"]["scanStatus"] == "COMPLETE"
+    assert "unconsumedSuffix" not in unknown["input"]["container"]
+    assert unknown["datagrams"] == []
+    assert [item["code"] for item in unknown["diagnostics"]] == ["RESOURCE-DIAGNOSTIC-LIMIT"]
+    assert unknown["diagnostics"][0]["detail"]["retentionBoundary"] == "POST-SCAN-DIAGNOSTICS-TRUNCATED"
+    assert unknown["diagnostics"][0]["detail"]["discardedActivePacketRefId"] == unknown["packetRefs"][0]["packetRefId"]
+    assert evidence_errors(unknown) == []
+    unknown_output = tmp_path / "fragment-before-unknown.json"
+    assert cli_main([
+        "inspect", "--input", str(unknown_capture), "--capture-id", "SYN-UNKNOWN-REASSEMBLY-BOUNDARY",
+        "--output", str(unknown_output), "--source-commit", "a" * 40, "--max-evidence-records", "3",
+    ]) == 2
+    assert evidence_errors(json.loads(unknown_output.read_text(encoding="utf-8"))) == []
+
+    # A post-scan diagnostic-retention boundary cannot be relabelled as an
+    # unread-input stop by adding the stop spelling to its envelope.  These
+    # are distinct observation states, even though both are resource related.
+    disguised_post_scan = deepcopy(unknown)
+    disguised_post_scan["input"]["container"]["scanStatus"] = "STOPPED-RESOURCE-LIMIT"
+    disguised_post_scan["input"]["container"]["unconsumedSuffix"] = "NOT-CONSUMED"
+    disguised_post_scan["diagnostics"][0]["detail"]["unconsumedSuffix"] = "NOT-CONSUMED"
+    assert any("either input-stop or post-scan" in item for item in evidence_errors(disguised_post_scan))
+
+    # The container's stopped-scan state is itself an integrity claim.  A
+    # coordinated deletion of its witness and top-level controlled status must
+    # not turn a deliberately bounded observation into a clean completion.
+    def erase_stop_witness(rendered: dict[str, object]) -> None:
+        rendered["executionStatus"] = "COMPLETE"
+        rendered["diagnostics"] = []
+        counts = rendered["counts"]
+        assert isinstance(counts, dict)
+        counts["diagnostics"] = 0
+
+    erased = deepcopy(evidence)
+    erase_stop_witness(erased)
+    assert any("stopped resource-limited scan" in item for item in evidence_errors(erased))
+
+    missing_scan = deepcopy(evidence)
+    del missing_scan["input"]["container"]["scanStatus"]
+    assert any("scanStatus" in item for item in evidence_errors(missing_scan))
+    unknown_scan = deepcopy(evidence)
+    unknown_scan["input"]["container"]["scanStatus"] = "TRUNCATED"
+    assert any("scanStatus" in item for item in evidence_errors(unknown_scan))
+    false_complete_scan = deepcopy(evidence)
+    false_complete_scan["input"]["container"]["scanStatus"] = "COMPLETE"
+    assert any("complete input scan" in item for item in evidence_errors(false_complete_scan))
+    unrelated_witness = deepcopy(evidence)
+    unrelated_witness["diagnostics"][0]["code"] = "RESOURCE-EVENT-LIMIT"
+    assert any("resource stop witness" in item for item in evidence_errors(unrelated_witness))
+
+    # Derived-output truncation is still a controlled COMPLETE scan.  Deleting
+    # its retention fact cannot relabel the missing derived record as clean.
+    post_scan_capture = tmp_path / "post-scan-event-boundary.pcap"
+    post_scan_capture.write_bytes(_pcap(_valid_exchange()))
+    post_scan = run_capture(
+        post_scan_capture,
+        capture_id="SYN-POST-SCAN-RETENTION",
+        config=IntakeConfig(max_evidence_records=10),
+    ).to_dict(source_commit="a" * 40)
+    assert post_scan["input"]["container"]["scanStatus"] == "COMPLETE"
+    assert any(item["code"] == "RESOURCE-EVENT-LIMIT" for item in post_scan["diagnostics"])
+    erased_post_scan = deepcopy(post_scan)
+    erased_post_scan["executionStatus"] = "COMPLETE"
+    erased_post_scan["diagnostics"] = []
+    erased_post_scan["counts"]["diagnostics"] = 0
+    assert evidence_errors(erased_post_scan)
+
+    # A real unread-input stop and a separate later derived-output limit can
+    # coexist.  The validator must require the input witness without treating
+    # an independent post-scan event-retention fact as contradictory.
+    combined_boundaries = run_capture(
+        post_scan_capture,
+        capture_id="SYN-INPUT-AND-POST-SCAN-BOUNDARIES",
+        config=IntakeConfig(max_evidence_records=100, max_packet_refs=2, max_events=1),
+    ).to_dict(source_commit="a" * 40)
+    assert combined_boundaries["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert any(item["code"] == "RESOURCE-PACKET-REF-LIMIT" for item in combined_boundaries["diagnostics"])
+    assert any(
+        item["code"] == "RESOURCE-EVENT-LIMIT" and "retentionBoundary" in item["detail"]
+        for item in combined_boundaries["diagnostics"]
+    )
+    assert evidence_errors(combined_boundaries) == []
+
+    original = pipeline_module.IntakeResult.to_dict
+
+    # First publish the exact bounded observation through the source corpus
+    # entry point.  The later malformed rendering must not replace these
+    # controlled-issues artefacts or leave a staging directory behind.
+    corpus_root = tmp_path / "idb-boundary-corpus"
+    corpus_root.mkdir()
+    (corpus_root / "one.pcapng").write_bytes(capture.read_bytes())
+    manifest_path = tmp_path / "idb-boundary-manifest.json"
+    manifest_path.write_text(json.dumps(_corpus_manifest(corpus_root)), encoding="utf-8")
+    corpus_output = tmp_path / "idb-boundary-output"
+    corpus_summary = run_corpus(
+        manifest_path=manifest_path,
+        corpus_root=corpus_root,
+        output_dir=corpus_output,
+        config=IntakeConfig(max_evidence_records=3),
+        source_commit="a" * 40,
+    )
+    assert corpus_summary["captures"][0]["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
+    corpus_evidence = json.loads((corpus_output / "HC-01.json").read_text(encoding="utf-8"))
+    assert corpus_evidence["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert corpus_evidence["diagnostics"][0]["code"] == "RESOURCE-INTERFACE-EVIDENCE-LIMIT"
+    corpus_prior = {item.name: item.read_bytes() for item in corpus_output.iterdir()}
+
+    def mutated(self: IntakeResult, *, source_commit: str) -> dict[str, object]:
+        rendered = original(self, source_commit=source_commit)
+        erase_stop_witness(rendered)
+        return rendered
+
+    # Exercise both transactional publisher entry points rather than relying
+    # only on the library validator.
+    monkeypatch.setattr(pipeline_module.IntakeResult, "to_dict", mutated)
+    prior = output.read_bytes()
+    assert cli_main([
+        "inspect", "--input", str(capture), "--capture-id", "SYN-IDB-REASSEMBLY-BOUNDARY",
+        "--output", str(output), "--source-commit", "a" * 40, "--max-evidence-records", "3",
+    ]) == 1
+    assert output.read_bytes() == prior
+
+    def disguised_post_scan_rendering(self: IntakeResult, *, source_commit: str) -> dict[str, object]:
+        rendered = original(self, source_commit=source_commit)
+        container = rendered["input"]["container"]
+        assert isinstance(container, dict)
+        container["scanStatus"] = "STOPPED-RESOURCE-LIMIT"
+        container["unconsumedSuffix"] = "NOT-CONSUMED"
+        rendered["diagnostics"][0]["detail"]["unconsumedSuffix"] = "NOT-CONSUMED"
+        return rendered
+
+    monkeypatch.setattr(pipeline_module.IntakeResult, "to_dict", disguised_post_scan_rendering)
+    unknown_prior = unknown_output.read_bytes()
+    assert cli_main([
+        "inspect", "--input", str(unknown_capture), "--capture-id", "SYN-UNKNOWN-REASSEMBLY-BOUNDARY",
+        "--output", str(unknown_output), "--source-commit", "a" * 40, "--max-evidence-records", "3",
+    ]) == 1
+    assert unknown_output.read_bytes() == unknown_prior
+    unknown_corpus_root = tmp_path / "unknown-boundary-corpus"
+    unknown_corpus_root.mkdir()
+    (unknown_corpus_root / "one.pcapng").write_bytes(unknown_capture.read_bytes())
+    unknown_manifest_path = tmp_path / "unknown-boundary-manifest.json"
+    unknown_manifest_path.write_text(json.dumps(_corpus_manifest(unknown_corpus_root)), encoding="utf-8")
+    unknown_corpus_output = tmp_path / "unknown-boundary-output"
+    with pytest.raises(IntakeError) as caught_post_scan:
+        run_corpus(
+            manifest_path=unknown_manifest_path,
+            corpus_root=unknown_corpus_root,
+            output_dir=unknown_corpus_output,
+            config=IntakeConfig(max_evidence_records=3),
+            source_commit="a" * 40,
+        )
+    assert caught_post_scan.value.code == "EVIDENCE-SCHEMA-ERROR"
+    assert not unknown_corpus_output.exists()
+
+    monkeypatch.setattr(pipeline_module.IntakeResult, "to_dict", mutated)
+    with pytest.raises(IntakeError) as caught:
+        run_corpus(
+            manifest_path=manifest_path,
+            corpus_root=corpus_root,
+            output_dir=corpus_output,
+            config=IntakeConfig(max_evidence_records=3),
+            source_commit="a" * 40,
+        )
+    assert caught.value.code == "EVIDENCE-SCHEMA-ERROR"
+    assert {item.name: item.read_bytes() for item in corpus_output.iterdir()} == corpus_prior
+    assert not list(tmp_path.glob(".idb-boundary-output.staging-*"))
+
+
 def test_interface_resource_limit_is_a_named_capture_error(tmp_path: Path) -> None:
     section_body = struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1)
     idb = struct.pack("<HHI", 1, 0, 0)
@@ -2647,6 +2927,32 @@ def test_noneditable_wheel_contains_authoritative_resources_and_real_cli_runs(tm
     assert completed.returncode == 2, completed.stderr
     assert json.loads(controlled_output.read_text(encoding="utf-8"))["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
 
+    # The installed runtime must preserve the same real resource boundary as
+    # the source package when a private incomplete fragment is followed by a
+    # pcapng IDB.  This was previously a source/installed tool error at the
+    # final shared slot rather than a publishable controlled observation.
+    section_body = struct.pack("<IHHq", 0x1A2B3C4D, 1, 0, -1)
+    idb = struct.pack("<HHI", 1, 0, 65535)
+    fragment_payload = _udp(10000, 69, _request(1, "fragment.lui"))[:16]
+    fragment = _ethernet_ipv4(fragment_payload, identification=450, more_fragments=True)
+    padding = b"\0" * (-len(fragment) % 4)
+    epb = struct.pack("<IIIII", 0, 0, 1, len(fragment), len(fragment)) + fragment + padding
+    wheel_boundary = tmp_path / "wheel-fragment-before-idb.pcapng"
+    wheel_boundary.write_bytes(
+        _block(PCAPNG_SECTION_HEADER, section_body) + _block(1, idb) + _block(6, epb) + _block(1, idb)
+    )
+    boundary_output = tmp_path / "wheel-fragment-before-idb.json"
+    completed = subprocess.run([
+        str(entrypoint), "inspect", "--input", str(wheel_boundary), "--capture-id", "cap-wheel-idb-boundary",
+        "--output", str(boundary_output), "--source-commit", "a" * 40, "--max-evidence-records", "3",
+    ], cwd=unrelated, text=True, capture_output=True)
+    assert completed.returncode == 2, completed.stderr
+    boundary = json.loads(boundary_output.read_text(encoding="utf-8"))
+    assert boundary["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
+    assert boundary["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert boundary["diagnostics"][0]["code"] == "RESOURCE-INTERFACE-EVIDENCE-LIMIT"
+    assert evidence_errors(boundary) == []
+
     # A lawful incomplete RRQ is not a tool/schema failure in the packaged
     # entry point: its request event is publishable while its transfer remains
     # explicitly non-projectable until a responder TID is observed.
@@ -2715,3 +3021,19 @@ def test_noneditable_wheel_contains_authoritative_resources_and_real_cli_runs(tm
     ], cwd=unrelated, text=True, capture_output=True)
     assert completed.returncode == 0, completed.stderr
     assert (corpus_output / "corpus-index.json").is_file()
+
+    boundary_corpus_root = tmp_path / "wheel-boundary-corpus"
+    boundary_corpus_root.mkdir()
+    (boundary_corpus_root / "one.pcapng").write_bytes(wheel_boundary.read_bytes())
+    boundary_manifest = tmp_path / "wheel-boundary-manifest.json"
+    boundary_manifest.write_text(json.dumps(_corpus_manifest(boundary_corpus_root)), encoding="utf-8")
+    boundary_corpus_output = tmp_path / "wheel-boundary-corpus-output"
+    completed = subprocess.run([
+        str(entrypoint), "corpus", "--manifest", str(boundary_manifest), "--corpus-root", str(boundary_corpus_root),
+        "--output-dir", str(boundary_corpus_output), "--source-commit", "a" * 40, "--max-evidence-records", "3",
+    ], cwd=unrelated, text=True, capture_output=True)
+    assert completed.returncode == 2, completed.stderr
+    boundary_corpus_evidence = json.loads((boundary_corpus_output / "HC-01.json").read_text(encoding="utf-8"))
+    assert boundary_corpus_evidence["executionStatus"] == "COMPLETE-WITH-CONTROLLED-ISSUES"
+    assert boundary_corpus_evidence["input"]["container"]["scanStatus"] == "STOPPED-RESOURCE-LIMIT"
+    assert boundary_corpus_evidence["diagnostics"][0]["code"] == "RESOURCE-INTERFACE-EVIDENCE-LIMIT"

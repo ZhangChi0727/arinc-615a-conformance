@@ -249,6 +249,7 @@ def run_capture(
     # omitted.
     diagnostic_retention_pending = False
     last_consumed_packet: PacketRef | None = None
+    post_scan_reclaimed_active: PacketRef | None = None
 
     def retained_count() -> int:
         return (
@@ -280,8 +281,10 @@ def run_capture(
     def admit_reassembly(_fragment: object) -> bool:
         """Reserve a live slot before retaining a fragmented IPv4 accumulator."""
         # A reassembly accumulator may use the final slot only until it is
-        # transferred into a terminal datagram at EOF.  If another input packet
-        # arrives, retain_packet_ref releases it for the required stop witness.
+        # transferred into a terminal datagram at EOF.  If a later input
+        # boundary arrives, its stop-witness path releases that private state
+        # before retaining the witness.  The next item can be a pcapng IDB,
+        # not only another packet.
         return retained_count() < config.max_evidence_records
 
     transfers.set_record_admission(admit_transfer)
@@ -307,6 +310,23 @@ def run_capture(
         """Retain a bounded diagnostic stream with one reserved stop witness."""
         nonlocal stopped_for_limit, diagnostic_limit_reported, diagnostic_retention_pending
         boundary_witness = is_final_resource_boundary(diagnostic)
+        # An unfinished IPv4 reassembly is private retained state.  It may
+        # borrow the final slot so that a capture ending at EOF can still
+        # publish its gapped record.  Once an actual unread-input boundary is
+        # known, however, that slot belongs to the truthful boundary witness.
+        # Do this here, rather than only from retain_packet_ref(), because a
+        # pcapng interface-description block can be the next input item.
+        released = None
+        if boundary_witness and input_stop:
+            released = reassembler.discard_oldest_for_resource_stop()
+            if released is not None:
+                detail = dict(diagnostic.detail)
+                detail.setdefault("discardedActivePacketRefId", released.id)
+                diagnostic = Diagnostic(
+                    diagnostic.code, diagnostic.stage, diagnostic.message,
+                    severity=diagnostic.severity, packet_ref_id=diagnostic.packet_ref_id,
+                    container_offset=diagnostic.container_offset, detail=detail,
+                )
         if boundary_witness and last_consumed_packet is not None:
             detail = dict(diagnostic.detail)
             detail.setdefault("lastConsumedPacketRefId", last_consumed_packet.id)
@@ -377,15 +397,12 @@ def run_capture(
             return True
         packet_limit = min(config.max_packet_refs, config.max_evidence_records)
         if len(result.packet_refs) >= packet_limit or retained_count() >= config.max_evidence_records - 1:
-            # An active reassembly may be borrowing the final record slot.  A
-            # subsequent packet proves the scan cannot continue, so release the
-            # private accumulator before emitting the one required witness.
-            released = None
-            if retained_count() >= config.max_evidence_records - 1:
-                released = reassembler.discard_oldest_for_resource_stop()
             detail: dict[str, Any] = {"limit": packet_limit, "unconsumedSuffix": "NOT-CONSUMED"}
-            if released is not None:
-                detail["discardedActivePacketRefId"] = released.id
+            # emit_diagnostic owns the one-time release of a private active
+            # reassembly for every real unread-input boundary.  Keeping that
+            # responsibility there covers packet and IDB boundaries uniformly
+            # and prevents a packet path from silently discarding two active
+            # accumulators for one retained stop witness.
             emit_diagnostic(Diagnostic(
                 "RESOURCE-PACKET-REF-LIMIT",
                 "PIPELINE",
@@ -539,6 +556,14 @@ def run_capture(
             # RESOURCE-DIAGNOSTIC-LIMIT witness before CaptureReader stopped.
             stopped_for_limit = True
         if not stopped_for_limit:
+            # A normal EOF may turn a borrowed active fragment set into one
+            # GAPPED datagram.  If an earlier ordinary diagnostic could not be
+            # retained, that final slot instead belongs to the explicit
+            # post-scan retention boundary.  Otherwise a valid unknown pcapng
+            # block can disappear entirely when the EOF conversion consumes
+            # the slot after the diagnostic was deferred.
+            if diagnostic_retention_pending and retained_count() >= config.max_evidence_records:
+                post_scan_reclaimed_active = reassembler.discard_oldest_for_resource_stop()
             for record in reassembler.finish():
                 accept_datagram(record, input_stop=False)
     except CaptureFormatError as exc:
@@ -598,14 +623,17 @@ def run_capture(
         # An ordinary producer diagnostic was deliberately kept out of the
         # final slot, and no later event boundary consumed it.  State that
         # post-scan fact explicitly instead of silently dropping it.
+        detail: dict[str, Any] = {
+            "limit": min(config.max_diagnostics, config.max_evidence_records),
+            "retentionBoundary": "POST-SCAN-DIAGNOSTICS-TRUNCATED",
+        }
+        if post_scan_reclaimed_active is not None:
+            detail["discardedActivePacketRefId"] = post_scan_reclaimed_active.id
         emit_diagnostic(Diagnostic(
             "RESOURCE-DIAGNOSTIC-LIMIT",
             "PIPELINE",
             "diagnostic retention limit reached after input consumption",
-            detail={
-                "limit": min(config.max_diagnostics, config.max_evidence_records),
-                "retentionBoundary": "POST-SCAN-DIAGNOSTICS-TRUNCATED",
-            },
+            detail=detail,
         ), input_stop=False)
 
     # A quality diagnostic is emitted before its packet can be admitted.  If a

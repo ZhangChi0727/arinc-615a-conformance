@@ -18,6 +18,14 @@ from .identity import DEVELOPMENT_CONTRACT_PATH, DEVELOPMENT_CONTRACT_SHA256
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 SOURCE_COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
 ABSOLUTE_PATH_RE = re.compile(r"(?:^|[\s\"'])((?:[A-Za-z]:[\\/])|/(?:[^\s\"']+))")
+_INPUT_STOP_WITNESS_CODES = frozenset({
+    "RESOURCE-PACKET-REF-LIMIT",
+    "RESOURCE-DATAGRAM-RECORD-LIMIT",
+    "RESOURCE-TRANSFER-EVIDENCE-LIMIT",
+    "RESOURCE-REASSEMBLY-EVIDENCE-LIMIT",
+    "RESOURCE-INTERFACE-EVIDENCE-LIMIT",
+    "RESOURCE-DIAGNOSTIC-LIMIT",
+})
 
 
 def evidence_errors(data: object) -> list[str]:
@@ -155,6 +163,7 @@ def _check_execution_shape(data: dict[str, Any], errors: list[str]) -> None:
     """Tie declared execution status to observable evidence, without verdicts."""
     execution = data["executionStatus"]
     diagnostics = data["diagnostics"]
+    container = data.get("input", {}).get("container") if isinstance(data.get("input"), dict) else None
     non_complete = any(item.get("status") != "COMPLETE" for item in _objects(data["datagrams"])) or any(
         item.get("reconstructionStatus") != "COMPLETE" for item in _objects(data["transfers"])
     )
@@ -174,6 +183,52 @@ def _check_execution_shape(data: dict[str, Any], errors: list[str]) -> None:
             errors.append("fatal input evidence must not publish partial reconstruction records")
         if len(diagnostics) != 1 or diagnostics[0].get("severity") != "ERROR":
             errors.append("fatal input evidence must contain exactly one ERROR diagnostic")
+        return
+
+    # A completed parse and a stopped bounded scan are different observable
+    # states.  Do not let an envelope erase the one retained stop witness and
+    # relabel a not-consumed suffix as COMPLETE: a later publisher could then
+    # mistake a deliberately bounded observation for full input consumption.
+    scan_status = container.get("scanStatus") if isinstance(container, dict) else None
+    if scan_status not in {"COMPLETE", "STOPPED-RESOURCE-LIMIT"}:
+        errors.append("nonfatal evidence must declare a known input container scanStatus")
+        return
+    diagnostic_details = [
+        item.get("detail")
+        for item in _objects(diagnostics)
+        if isinstance(item, dict) and isinstance(item.get("detail"), dict)
+    ]
+    has_input_suffix_diagnostic = any(
+        detail.get("unconsumedSuffix") == "NOT-CONSUMED"
+        for detail in diagnostic_details
+    )
+    has_mixed_boundary = any(
+        detail.get("unconsumedSuffix") == "NOT-CONSUMED" and "retentionBoundary" in detail
+        for detail in diagnostic_details
+    )
+    if has_mixed_boundary:
+        errors.append("a diagnostic boundary must be either input-stop or post-scan, not both")
+    if scan_status == "COMPLETE":
+        if isinstance(container, dict) and "unconsumedSuffix" in container:
+            errors.append("complete input scan must not claim an unconsumed suffix")
+        if has_input_suffix_diagnostic:
+            errors.append("complete input scan must not retain an input-stop diagnostic")
+        return
+    if execution != "COMPLETE-WITH-CONTROLLED-ISSUES":
+        errors.append("stopped resource-limited scan must be COMPLETE-WITH-CONTROLLED-ISSUES")
+    if not isinstance(container, dict) or container.get("unconsumedSuffix") != "NOT-CONSUMED":
+        errors.append("stopped resource-limited scan must declare an unconsumed suffix")
+    has_stop_witness = any(
+        isinstance(item, dict)
+        and isinstance(item.get("code"), str)
+        and item["code"] in _INPUT_STOP_WITNESS_CODES
+        and isinstance(item.get("detail"), dict)
+        and item["detail"].get("unconsumedSuffix") == "NOT-CONSUMED"
+        and "retentionBoundary" not in item["detail"]
+        for item in _objects(diagnostics)
+    )
+    if not has_stop_witness:
+        errors.append("stopped resource-limited scan must retain its resource stop witness")
 
 
 def _check_provenance(data: dict[str, Any], errors: list[str]) -> None:
