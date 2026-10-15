@@ -49,6 +49,10 @@ arrow styles must have declared meanings.
 - PNG is a QA preview, not the authority for line art.
 - Check XML structure, semantic equality, font embedding, final physical size,
   clipping, overlaps, off-canvas objects, arrowheads, and grayscale meaning.
+- Dense control-flow views may use compact guard references only when an
+  adjacent legend expands every guard and preserves mutually exclusive cases.
+- Report the calculated final point size from canvas width and publication
+  width; source font size alone is not a final-size readability result.
 - Preserve repository-relative paths and SHA-256 identities in the manifest.
 
 Official reference points:

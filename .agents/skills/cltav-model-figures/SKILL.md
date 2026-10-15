@@ -32,7 +32,8 @@ reverses, weakens, or relabels a scientific relationship.
    explicit prohibitions. Do not infer missing architecture for visual balance.
 3. Verify that the manifest source hash matches the PlantUML file. If it does
    not, stop the redraw and reconcile the derived manifest with the changed
-   authority first.
+   authority first. Hash text with the declared `UTF8-LF-v1` identity so LF
+   and CRLF checkouts are equivalent while content changes remain visible.
 4. Create or edit native, uncompressed `.drawio` XML. Keep labels as editable
    text and use stable `node-*`, `edge-*`, `group-*`, and `note-*` identifiers.
 5. Preserve semantic equality mechanically with:
@@ -43,7 +44,9 @@ reverses, weakens, or relabels a scientific relationship.
 
    Use `--build-missing` only for absent initial drafts. Use `--force` only
    when the requested work explicitly replaces existing Draw.io geometry; it
-   must never bypass semantic validation.
+   must never bypass semantic validation. Generation preflights the complete
+   nine-figure batch and installs it transactionally; any failure must leave
+   every prior output byte unchanged.
 6. Export SVG and PDF when Draw.io CLI is available. Keep the existing reader
    SVG authoritative until the replacement passes semantic checks, final-size
    visual inspection, manuscript insertion inspection, and human review.
@@ -66,6 +69,11 @@ reverses, weakens, or relabels a scientific relationship.
 - Do not introduce external icons unless their licence, attribution, source,
   and semantic necessity are recorded. Prefer native geometric shapes.
 - Keep evaluator-only truth visibly separated from algorithm-visible inputs.
+- Bind every title, object, relation, and interpretation note to finite source
+  anchors. Object-parent and relation-endpoint bindings must agree with the
+  manifest so a coordinated manifest/XML drift cannot validate itself.
+- Reject absolute, drive-qualified, backslash, traversal, symlink, junction,
+  reparse-point, and non-ordinary-file paths before any write.
 - Preserve uncertainty, forbidden leakage, planned/not-established status,
   retry/stop polarity, and SysML-notation disclaimers.
 - Do not call a view IEEE TAES-compliant or submission-ready without current

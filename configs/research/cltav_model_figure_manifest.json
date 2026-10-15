@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.1",
   "manifestId": "CLTAV-MODEL-FIGURES-2026-001",
   "authority": "Derived, hash-bound Draw.io redraw inventory. The accepted method/algorithm/model contracts and each named PlantUML source remain semantic authority.",
   "targetVenue": "IEEE Transactions on Aerospace and Electronic Systems",
@@ -25,30 +25,300 @@
       "diagramType": "context",
       "status": "DRAFT-REDRAW",
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-01-context.puml",
-      "sourceSha256": "787fbe9aedcfd80aabf15ad1f5e4a72076d70bf6dd2ebebdcdeca3fc18730cd9",
+      "sourceSha256": "29064b0737c742ca8ec76571c9fa52aed8d3a82e996f11ad6720f8b70805d597",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-01-context.drawio",
-      "drawioSha256": "7c1c338f8646310ec25e1592dac5ed936738ef61d56a2f375db03ab88d0856a3",
-      "canvas": {"width": 1250, "height": 620, "publicationWidth": "double-column"},
+      "drawioSha256": "1e96dfd7d72e1938d0b1809e94f554f4638c87c3702b0997bd44246fc8fd3b8b",
+      "canvas": {
+        "width": 1250,
+        "height": 620,
+        "publicationWidth": "double-column"
+      },
       "groups": [],
       "entities": [
-        {"id": "Operator", "label": "Operator", "role": "external", "x": 40, "y": 220, "w": 160, "h": 64},
-        {"id": "TestAdapter", "label": "Test adapter", "role": "core", "x": 290, "y": 200, "w": 200, "h": 88},
-        {"id": "IUT", "label": "IUT", "role": "core", "x": 610, "y": 200, "w": 170, "h": 88},
-        {"id": "NetworkClock", "label": "Network clock", "role": "external", "x": 920, "y": 65, "w": 210, "h": 64},
-        {"id": "Integrity645", "label": "645 integrity boundary\nidentity bound; capability NOT-ESTABLISHED", "role": "risk", "x": 880, "y": 310, "w": 330, "h": 88},
-        {"id": "Msess", "label": "Verification session observation port (Msess)", "role": "evidence", "x": 250, "y": 390, "w": 360, "h": 74}
+        {
+          "id": "Operator",
+          "label": "Operator",
+          "role": "external",
+          "x": 40,
+          "y": 220,
+          "w": 160,
+          "h": 64
+        },
+        {
+          "id": "TestAdapter",
+          "label": "Test adapter",
+          "role": "core",
+          "x": 290,
+          "y": 200,
+          "w": 200,
+          "h": 88
+        },
+        {
+          "id": "IUT",
+          "label": "IUT",
+          "role": "core",
+          "x": 610,
+          "y": 200,
+          "w": 170,
+          "h": 88
+        },
+        {
+          "id": "NetworkClock",
+          "label": "Network clock",
+          "role": "external",
+          "x": 920,
+          "y": 65,
+          "w": 210,
+          "h": 64
+        },
+        {
+          "id": "Integrity645",
+          "label": "645 integrity boundary\nidentity bound; capability NOT-ESTABLISHED",
+          "role": "risk",
+          "x": 880,
+          "y": 310,
+          "w": 330,
+          "h": 88
+        },
+        {
+          "id": "Msess",
+          "label": "Verification session observation port (Msess)",
+          "role": "evidence",
+          "x": 250,
+          "y": 390,
+          "w": 360,
+          "h": 74
+        }
       ],
       "relations": [
-        {"id": "request", "source": "Operator", "target": "TestAdapter", "label": "test request", "role": "flow", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -12},
-        {"id": "stimulus", "source": "TestAdapter", "target": "IUT", "label": "stimulus", "role": "flow", "exitX": 1, "exitY": 0.28, "entryX": 0, "entryY": 0.28, "labelY": -14, "points": [[535, 185], [565, 185]]},
-        {"id": "observation", "source": "IUT", "target": "TestAdapter", "label": "observation Izk", "role": "observation", "exitX": 0, "exitY": 0.75, "entryX": 1, "entryY": 0.75, "labelY": 15, "points": [[565, 305], [535, 305]]},
-        {"id": "clock", "source": "TestAdapter", "target": "NetworkClock", "label": "time / error bound", "role": "dependency", "exitX": 0.7, "exitY": 0, "entryX": 0, "entryY": 0.5, "labelX": 0.45, "labelY": -14, "points": [[430, 155], [850, 155], [850, 97]]},
-        {"id": "integrity", "source": "IUT", "target": "Integrity645", "label": "call and state only; not algorithm evidence", "role": "evidence-only", "exitX": 1, "exitY": 0.65, "entryX": 0, "entryY": 0.5, "labelX": 0.35, "labelY": 15, "points": [[830, 257], [830, 354]]},
-        {"id": "session", "source": "TestAdapter", "target": "Msess", "label": "observation port", "role": "flow", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -12}
+        {
+          "id": "request",
+          "source": "Operator",
+          "target": "TestAdapter",
+          "label": "test request",
+          "role": "flow",
+          "exitX": 1,
+          "exitY": 0.5,
+          "entryX": 0,
+          "entryY": 0.5,
+          "labelY": -12
+        },
+        {
+          "id": "stimulus",
+          "source": "TestAdapter",
+          "target": "IUT",
+          "label": "stimulus",
+          "role": "flow",
+          "exitX": 1,
+          "exitY": 0.28,
+          "entryX": 0,
+          "entryY": 0.28,
+          "labelY": -14,
+          "points": [
+            [
+              535,
+              185
+            ],
+            [
+              565,
+              185
+            ]
+          ]
+        },
+        {
+          "id": "observation",
+          "source": "IUT",
+          "target": "TestAdapter",
+          "label": "observation Izk",
+          "role": "observation",
+          "exitX": 0,
+          "exitY": 0.75,
+          "entryX": 1,
+          "entryY": 0.75,
+          "labelY": 15,
+          "points": [
+            [
+              565,
+              305
+            ],
+            [
+              535,
+              305
+            ]
+          ]
+        },
+        {
+          "id": "clock",
+          "source": "TestAdapter",
+          "target": "NetworkClock",
+          "label": "time / error bound",
+          "role": "dependency",
+          "exitX": 0.7,
+          "exitY": 0,
+          "entryX": 0,
+          "entryY": 0.5,
+          "labelX": 0.45,
+          "labelY": -14,
+          "points": [
+            [
+              430,
+              155
+            ],
+            [
+              850,
+              155
+            ],
+            [
+              850,
+              97
+            ]
+          ]
+        },
+        {
+          "id": "integrity",
+          "source": "IUT",
+          "target": "Integrity645",
+          "label": "boundary-only",
+          "role": "evidence-only",
+          "exitX": 1,
+          "exitY": 0.65,
+          "entryX": 0,
+          "entryY": 0.5,
+          "labelX": 0.35,
+          "labelY": 15,
+          "points": [
+            [
+              830,
+              257
+            ],
+            [
+              830,
+              354
+            ]
+          ]
+        },
+        {
+          "id": "session",
+          "source": "TestAdapter",
+          "target": "Msess",
+          "label": "observation port",
+          "role": "flow",
+          "exitX": 0.5,
+          "exitY": 1,
+          "entryX": 0.5,
+          "entryY": 0,
+          "labelY": -12
+        }
       ],
       "notes": [
-        {"id": "boundary", "label": "Protocol messages and operation states belong to Mprot, not Msess.", "x": 660, "y": 500, "w": 500, "h": 62}
-      ]
+        {
+          "id": "boundary",
+          "label": "Protocol messages and operation states belong to Mprot, not Msess. The boundary-only edge denotes call/state context, not algorithm evidence.",
+          "x": 660,
+          "y": 500,
+          "w": 500,
+          "h": 62
+        }
+      ],
+      "typography": {
+        "nodePt": 22,
+        "edgePt": 18,
+        "notePt": 18
+      },
+      "sourceBindings": {
+        "title": "title FIG-CL-TAV-01 Context\\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\\nsubset of context relations; satisfy/verify are model relations, not executed verification",
+        "objects": {
+          "Operator": {
+            "parent": null,
+            "anchors": [
+              "actor Operator"
+            ]
+          },
+          "TestAdapter": {
+            "parent": null,
+            "anchors": [
+              "Operator --> TestAdapter : test request"
+            ]
+          },
+          "IUT": {
+            "parent": null,
+            "anchors": [
+              "node IUT"
+            ]
+          },
+          "NetworkClock": {
+            "parent": null,
+            "anchors": [
+              "node NetworkClock"
+            ]
+          },
+          "Integrity645": {
+            "parent": null,
+            "anchors": [
+              "cloud Integrity645 as \"645 integrity boundary\\nidentity bound; capability NOT-ESTABLISHED\""
+            ]
+          },
+          "Msess": {
+            "parent": null,
+            "anchors": [
+              "TestAdapter --> Msess : observation port to verification session"
+            ]
+          }
+        },
+        "relations": {
+          "request": {
+            "source": "Operator",
+            "target": "TestAdapter",
+            "anchors": [
+              "Operator --> TestAdapter : test request"
+            ]
+          },
+          "stimulus": {
+            "source": "TestAdapter",
+            "target": "IUT",
+            "anchors": [
+              "TestAdapter --> IUT : stimulus"
+            ]
+          },
+          "observation": {
+            "source": "IUT",
+            "target": "TestAdapter",
+            "anchors": [
+              "TestAdapter --> IUT : stimulus"
+            ]
+          },
+          "clock": {
+            "source": "TestAdapter",
+            "target": "NetworkClock",
+            "anchors": [
+              "TestAdapter --> NetworkClock : time / error bound"
+            ]
+          },
+          "integrity": {
+            "source": "IUT",
+            "target": "Integrity645",
+            "anchors": [
+              "IUT ..> Integrity645 : call and state only\\nnot algorithm evidence"
+            ]
+          },
+          "session": {
+            "source": "TestAdapter",
+            "target": "Msess",
+            "anchors": [
+              "TestAdapter --> Msess : observation port to verification session"
+            ]
+          }
+        },
+        "notes": {
+          "boundary": [
+            "Protocol messages and operation states"
+          ]
+        },
+        "manualReview": [
+          "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
+          "Human promotion remains required for interpretation, guard completeness, and publication layout."
+        ]
+      }
     },
     {
       "id": "FIG-CL-TAV-02",
@@ -56,51 +326,556 @@
       "diagramType": "layered-trace",
       "status": "DRAFT-REDRAW",
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-02-requirement-layers.puml",
-      "sourceSha256": "9f3f3a948e2eaa13c836ae54808ff28944b9046354df40e1fef85e85c0a99486",
+      "sourceSha256": "d13e00b8a2fcf399919f58d2d762a7c85511021f70860d217f5a61043e0f1d6c",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-02-requirement-layers.drawio",
-      "drawioSha256": "74e582b093dc96e58148c68fd2bf2e88f495b0025dd8d308684c3b6f442547bc",
-      "canvas": {"width": 1680, "height": 900, "publicationWidth": "double-column"},
+      "drawioSha256": "fc995ee952214d2b00b2ec9ba8a7785e2ee4e20d3761a1efea07b4e35641e597",
+      "canvas": {
+        "width": 1680,
+        "height": 980,
+        "publicationWidth": "double-column"
+      },
       "groups": [
-        {"id": "MG", "label": "Method goals", "role": "core", "x": 30, "y": 50, "w": 390, "h": 260},
-        {"id": "PCRS", "label": "Protocol CRS", "role": "evidence", "x": 500, "y": 50, "w": 500, "h": 330},
-        {"id": "TR", "label": "Tool requirements", "role": "planned", "x": 1090, "y": 50, "w": 360, "h": 230},
-        {"id": "TRACE", "label": "Representative trace E1 subset", "role": "boundary", "x": 30, "y": 450, "w": 1530, "h": 330}
+        {
+          "id": "MG",
+          "label": "Method goals",
+          "role": "core",
+          "x": 30,
+          "y": 50,
+          "w": 390,
+          "h": 260
+        },
+        {
+          "id": "PCRS",
+          "label": "Protocol CRS",
+          "role": "evidence",
+          "x": 500,
+          "y": 50,
+          "w": 500,
+          "h": 330
+        },
+        {
+          "id": "TR",
+          "label": "Tool requirements",
+          "role": "planned",
+          "x": 1090,
+          "y": 50,
+          "w": 360,
+          "h": 230
+        },
+        {
+          "id": "TRACE",
+          "label": "Representative trace E1 subset",
+          "role": "boundary",
+          "x": 30,
+          "y": 450,
+          "w": 1530,
+          "h": 330
+        }
       ],
       "entities": [
-        {"id": "RQ1", "label": "CL-RQ1 loop consistency", "role": "core", "parent": "MG", "x": 25, "y": 45, "w": 330, "h": 44},
-        {"id": "RQ2", "label": "CL-RQ2 comparative effect", "role": "core", "parent": "MG", "x": 25, "y": 105, "w": 330, "h": 44},
-        {"id": "RQ3", "label": "CL-RQ3 uncertainty and stopping", "role": "core", "parent": "MG", "x": 25, "y": 165, "w": 330, "h": 44},
-        {"id": "INFORMATION", "label": "INFORMATION", "role": "evidence", "parent": "PCRS", "x": 25, "y": 45, "w": 205, "h": 42},
-        {"id": "UPLOAD", "label": "UPLOAD", "role": "evidence", "parent": "PCRS", "x": 260, "y": 45, "w": 205, "h": 42},
-        {"id": "MDD", "label": "Media Defined DOWNLOAD", "role": "planned", "parent": "PCRS", "x": 25, "y": 105, "w": 205, "h": 48},
-        {"id": "ODD", "label": "Operator Defined DOWNLOAD", "role": "planned", "parent": "PCRS", "x": 260, "y": 105, "w": 205, "h": 48},
-        {"id": "FIND", "label": "FIND", "role": "planned", "parent": "PCRS", "x": 25, "y": 175, "w": 205, "h": 42},
-        {"id": "EXCEPTIONS", "label": "abort / reject / exception / retry", "role": "risk", "parent": "PCRS", "x": 260, "y": 175, "w": 205, "h": 56},
-        {"id": "LATER_PR", "label": "later development-ready PR", "role": "planned", "parent": "TR", "x": 25, "y": 55, "w": 310, "h": 48},
-        {"id": "NOT_THIS", "label": "not this increment", "role": "risk", "parent": "TR", "x": 25, "y": 125, "w": 310, "h": 44},
-        {"id": "SRC", "label": "SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E007-7726A816FFE7", "role": "evidence", "parent": "TRACE", "x": 25, "y": 70, "w": 300, "h": 72},
-        {"id": "CRS365", "label": "CRS-M1-00365", "role": "evidence", "parent": "TRACE", "x": 355, "y": 80, "w": 150, "h": 48},
-        {"id": "CRS366", "label": "CRS-M1-00366", "role": "evidence", "parent": "TRACE", "x": 535, "y": 80, "w": 150, "h": 48},
-        {"id": "CRS367", "label": "CRS-M1-00367", "role": "evidence", "parent": "TRACE", "x": 715, "y": 80, "w": 150, "h": 48},
-        {"id": "CON", "label": "constraint: LUR write order", "role": "core", "parent": "TRACE", "x": 895, "y": 75, "w": 190, "h": 58},
-        {"id": "TA", "label": "Test / Analysis planned VC", "role": "planned", "parent": "TRACE", "x": 1115, "y": 75, "w": 180, "h": 58},
-        {"id": "TOOL", "label": "tool module later PR", "role": "planned", "parent": "TRACE", "x": 1325, "y": 55, "w": 160, "h": 48},
-        {"id": "EV", "label": "Evidence not executed", "role": "risk", "parent": "TRACE", "x": 1325, "y": 145, "w": 160, "h": 48}
+        {
+          "id": "RQ1",
+          "label": "CL-RQ1 loop consistency",
+          "role": "core",
+          "parent": "MG",
+          "x": 25,
+          "y": 45,
+          "w": 330,
+          "h": 44
+        },
+        {
+          "id": "RQ2",
+          "label": "CL-RQ2 comparative effect",
+          "role": "core",
+          "parent": "MG",
+          "x": 25,
+          "y": 105,
+          "w": 330,
+          "h": 44
+        },
+        {
+          "id": "RQ3",
+          "label": "CL-RQ3 uncertainty and stopping",
+          "role": "core",
+          "parent": "MG",
+          "x": 25,
+          "y": 165,
+          "w": 330,
+          "h": 44
+        },
+        {
+          "id": "INFORMATION",
+          "label": "INFORMATION",
+          "role": "evidence",
+          "parent": "PCRS",
+          "x": 25,
+          "y": 45,
+          "w": 205,
+          "h": 42
+        },
+        {
+          "id": "UPLOAD",
+          "label": "UPLOAD",
+          "role": "evidence",
+          "parent": "PCRS",
+          "x": 260,
+          "y": 45,
+          "w": 205,
+          "h": 42
+        },
+        {
+          "id": "MDD",
+          "label": "Media Defined DOWNLOAD",
+          "role": "planned",
+          "parent": "PCRS",
+          "x": 25,
+          "y": 105,
+          "w": 205,
+          "h": 48
+        },
+        {
+          "id": "ODD",
+          "label": "Operator Defined DOWNLOAD",
+          "role": "planned",
+          "parent": "PCRS",
+          "x": 260,
+          "y": 105,
+          "w": 205,
+          "h": 48
+        },
+        {
+          "id": "FIND",
+          "label": "FIND",
+          "role": "planned",
+          "parent": "PCRS",
+          "x": 25,
+          "y": 175,
+          "w": 205,
+          "h": 42
+        },
+        {
+          "id": "EXCEPTIONS",
+          "label": "abort / reject / exception / retry",
+          "role": "risk",
+          "parent": "PCRS",
+          "x": 260,
+          "y": 175,
+          "w": 205,
+          "h": 56
+        },
+        {
+          "id": "LATER_PR",
+          "label": "later development-ready PR",
+          "role": "planned",
+          "parent": "TR",
+          "x": 25,
+          "y": 55,
+          "w": 310,
+          "h": 48
+        },
+        {
+          "id": "NOT_THIS",
+          "label": "not this increment",
+          "role": "risk",
+          "parent": "TR",
+          "x": 25,
+          "y": 125,
+          "w": 310,
+          "h": 44
+        },
+        {
+          "id": "SRC",
+          "label": "SU-ARINC-615A-3\n6.3.2 sequence chart A\nE007-7726A816FFE7",
+          "role": "evidence",
+          "parent": "TRACE",
+          "x": 25,
+          "y": 50,
+          "w": 310,
+          "h": 105
+        },
+        {
+          "id": "CRS365",
+          "label": "CRS-M1-00365",
+          "role": "evidence",
+          "parent": "TRACE",
+          "x": 355,
+          "y": 80,
+          "w": 150,
+          "h": 48
+        },
+        {
+          "id": "CRS366",
+          "label": "CRS-M1-00366",
+          "role": "evidence",
+          "parent": "TRACE",
+          "x": 535,
+          "y": 80,
+          "w": 150,
+          "h": 48
+        },
+        {
+          "id": "CRS367",
+          "label": "CRS-M1-00367",
+          "role": "evidence",
+          "parent": "TRACE",
+          "x": 715,
+          "y": 80,
+          "w": 150,
+          "h": 48
+        },
+        {
+          "id": "CON",
+          "label": "constraint: LUR write order",
+          "role": "core",
+          "parent": "TRACE",
+          "x": 895,
+          "y": 75,
+          "w": 190,
+          "h": 58
+        },
+        {
+          "id": "TA",
+          "label": "Test / Analysis\nplanned VC",
+          "role": "planned",
+          "parent": "TRACE",
+          "x": 1115,
+          "y": 75,
+          "w": 200,
+          "h": 58
+        },
+        {
+          "id": "TOOL",
+          "label": "tool module\nlater PR",
+          "role": "planned",
+          "parent": "TRACE",
+          "x": 1325,
+          "y": 55,
+          "w": 170,
+          "h": 48
+        },
+        {
+          "id": "EV",
+          "label": "Evidence not executed",
+          "role": "risk",
+          "parent": "TRACE",
+          "x": 1325,
+          "y": 145,
+          "w": 160,
+          "h": 48
+        }
       ],
       "relations": [
-        {"id": "goals-to-crs", "source": "MG", "target": "PCRS", "label": "method uses protocol obligations", "role": "dependency", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "crs-to-tool", "source": "PCRS", "target": "TR", "label": "tool may later implement", "role": "planned", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "src-crs365", "source": "SRC", "target": "CRS365", "label": "source unit to requirement", "role": "trace", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -16},
-        {"id": "crs365-crs366", "source": "CRS365", "target": "CRS366", "label": "", "role": "trace"},
-        {"id": "crs366-crs367", "source": "CRS366", "target": "CRS367", "label": "", "role": "trace"},
-        {"id": "crs367-con", "source": "CRS367", "target": "CON", "label": "", "role": "trace"},
-        {"id": "con-ta", "source": "CON", "target": "TA", "label": "", "role": "trace"},
-        {"id": "ta-tool", "source": "TA", "target": "TOOL", "label": "planned", "role": "planned"},
-        {"id": "tool-ev", "source": "TOOL", "target": "EV", "label": "planned; model relation, not executed verification", "role": "planned"}
+        {
+          "id": "goals-to-crs",
+          "source": "MG",
+          "target": "PCRS",
+          "label": "",
+          "role": "dependency",
+          "exitX": 1,
+          "exitY": 0.5,
+          "entryX": 0,
+          "entryY": 0.5,
+          "labelY": -14
+        },
+        {
+          "id": "crs-to-tool",
+          "source": "PCRS",
+          "target": "TR",
+          "label": "",
+          "role": "planned",
+          "exitX": 1,
+          "exitY": 0.5,
+          "entryX": 0,
+          "entryY": 0.5,
+          "labelY": -14
+        },
+        {
+          "id": "src-crs365",
+          "source": "SRC",
+          "target": "CRS365",
+          "label": "",
+          "role": "trace",
+          "exitX": 1,
+          "exitY": 0.5,
+          "entryX": 0,
+          "entryY": 0.5,
+          "labelY": -16
+        },
+        {
+          "id": "crs365-crs366",
+          "source": "CRS365",
+          "target": "CRS366",
+          "label": "",
+          "role": "trace"
+        },
+        {
+          "id": "crs366-crs367",
+          "source": "CRS366",
+          "target": "CRS367",
+          "label": "",
+          "role": "trace"
+        },
+        {
+          "id": "crs367-con",
+          "source": "CRS367",
+          "target": "CON",
+          "label": "",
+          "role": "trace"
+        },
+        {
+          "id": "con-ta",
+          "source": "CON",
+          "target": "TA",
+          "label": "",
+          "role": "trace"
+        },
+        {
+          "id": "ta-tool",
+          "source": "TA",
+          "target": "TOOL",
+          "label": "",
+          "role": "planned"
+        },
+        {
+          "id": "tool-ev",
+          "source": "TOOL",
+          "target": "EV",
+          "label": "",
+          "role": "planned"
+        }
       ],
       "notes": [
-        {"id": "trace-boundary", "label": "Real bound-M1 IDs. DOWNLOAD/FIND traces wait for source-unit audit. No executed verify is claimed.", "x": 500, "y": 810, "w": 700, "h": 55}
-      ]
+        {
+          "id": "trace-boundary",
+          "label": "Top: method goals use protocol obligations; protocol CRS may later inform tool requirements. Trace: source unit -> CRS -> constraint -> planned VC -> later tool -> evidence not executed. DOWNLOAD/FIND traces await source-unit audit; no executed verification is claimed.",
+          "x": 360,
+          "y": 805,
+          "w": 960,
+          "h": 130
+        }
+      ],
+      "typography": {
+        "nodePt": 22,
+        "edgePt": 18,
+        "notePt": 18
+      },
+      "sourceBindings": {
+        "title": "title FIG-CL-TAV-02 Requirement layers and representative trace\\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\\nmethod goals, protocol CRS and tool requirements stay distinct",
+        "objects": {
+          "MG": {
+            "parent": null,
+            "anchors": [
+              "package \"Method goals\" as MG {"
+            ]
+          },
+          "PCRS": {
+            "parent": null,
+            "anchors": [
+              "package \"Protocol CRS\" as PCRS {"
+            ]
+          },
+          "TR": {
+            "parent": null,
+            "anchors": [
+              "package \"Tool requirements\" as TR {"
+            ]
+          },
+          "TRACE": {
+            "parent": null,
+            "anchors": [
+              "package \"Representative trace E1 subset\" as TRACE {"
+            ]
+          },
+          "RQ1": {
+            "parent": "MG",
+            "anchors": [
+              "[CL-RQ1 loop consistency]"
+            ]
+          },
+          "RQ2": {
+            "parent": "MG",
+            "anchors": [
+              "[CL-RQ2 comparative effect]"
+            ]
+          },
+          "RQ3": {
+            "parent": "MG",
+            "anchors": [
+              "[CL-RQ3 uncertainty and stopping]"
+            ]
+          },
+          "INFORMATION": {
+            "parent": "PCRS",
+            "anchors": [
+              "[INFORMATION]"
+            ]
+          },
+          "UPLOAD": {
+            "parent": "PCRS",
+            "anchors": [
+              "[UPLOAD]"
+            ]
+          },
+          "MDD": {
+            "parent": "PCRS",
+            "anchors": [
+              "[Media Defined DOWNLOAD]"
+            ]
+          },
+          "ODD": {
+            "parent": "PCRS",
+            "anchors": [
+              "[Operator Defined DOWNLOAD]"
+            ]
+          },
+          "FIND": {
+            "parent": "PCRS",
+            "anchors": [
+              "[FIND]"
+            ]
+          },
+          "EXCEPTIONS": {
+            "parent": "PCRS",
+            "anchors": [
+              "[abort / reject / exception / retry]"
+            ]
+          },
+          "LATER_PR": {
+            "parent": "TR",
+            "anchors": [
+              "[later development-ready PR]"
+            ]
+          },
+          "NOT_THIS": {
+            "parent": "TR",
+            "anchors": [
+              "[not this increment]"
+            ]
+          },
+          "SRC": {
+            "parent": "TRACE",
+            "anchors": [
+              "[SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E007-7726A816FFE7] as SRC"
+            ]
+          },
+          "CRS365": {
+            "parent": "TRACE",
+            "anchors": [
+              "[CRS-M1-00365] as CRS365"
+            ]
+          },
+          "CRS366": {
+            "parent": "TRACE",
+            "anchors": [
+              "[CRS-M1-00366] as CRS366"
+            ]
+          },
+          "CRS367": {
+            "parent": "TRACE",
+            "anchors": [
+              "[CRS-M1-00367] as CRS367"
+            ]
+          },
+          "CON": {
+            "parent": "TRACE",
+            "anchors": [
+              "[constraint: LUR write order] as CON"
+            ]
+          },
+          "TA": {
+            "parent": "TRACE",
+            "anchors": [
+              "[Test / Analysis planned VC] as TA"
+            ]
+          },
+          "TOOL": {
+            "parent": "TRACE",
+            "anchors": [
+              "[tool module later PR] as TOOL"
+            ]
+          },
+          "EV": {
+            "parent": "TRACE",
+            "anchors": [
+              "[Evidence not executed] as EV"
+            ]
+          }
+        },
+        "relations": {
+          "goals-to-crs": {
+            "source": "MG",
+            "target": "PCRS",
+            "anchors": [
+              "MG ..> PCRS : method uses protocol obligations"
+            ]
+          },
+          "crs-to-tool": {
+            "source": "PCRS",
+            "target": "TR",
+            "anchors": [
+              "PCRS ..> TR : tool may later implement"
+            ]
+          },
+          "src-crs365": {
+            "source": "SRC",
+            "target": "CRS365",
+            "anchors": [
+              "SRC --> CRS365 : source unit to requirement"
+            ]
+          },
+          "crs365-crs366": {
+            "source": "CRS365",
+            "target": "CRS366",
+            "anchors": [
+              "CRS365 --> CRS366"
+            ]
+          },
+          "crs366-crs367": {
+            "source": "CRS366",
+            "target": "CRS367",
+            "anchors": [
+              "CRS366 --> CRS367"
+            ]
+          },
+          "crs367-con": {
+            "source": "CRS367",
+            "target": "CON",
+            "anchors": [
+              "CRS367 --> CON"
+            ]
+          },
+          "con-ta": {
+            "source": "CON",
+            "target": "TA",
+            "anchors": [
+              "CON --> TA"
+            ]
+          },
+          "ta-tool": {
+            "source": "TA",
+            "target": "TOOL",
+            "anchors": [
+              "TA ..> TOOL : planned"
+            ]
+          },
+          "tool-ev": {
+            "source": "TOOL",
+            "target": "EV",
+            "anchors": [
+              "TOOL ..> EV : planned; satisfy/verify are model relations,\\nnot executed verification"
+            ]
+          }
+        },
+        "notes": {
+          "trace-boundary": [
+            "Real bound-M1 IDs. DOWNLOAD/FIND traces wait for source-unit audit."
+          ]
+        },
+        "manualReview": [
+          "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
+          "Human promotion remains required for interpretation, guard completeness, and publication layout."
+        ]
+      }
     },
     {
       "id": "FIG-CL-TAV-03",
@@ -108,32 +883,317 @@
       "diagramType": "block-definition",
       "status": "DRAFT-REDRAW",
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-03-bdd.puml",
-      "sourceSha256": "0b12885ea4ce430b121978a6af5315c41c54800ed0691d8ecf51edeecaab9164",
+      "sourceSha256": "9e1020601f475f928ce95aa51c34adc644b8fdc5258f78d6fd9bf4133ba476ac",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-03-bdd.drawio",
-      "drawioSha256": "89cc3ca4f2f6b2e6bd2654280855d1c2c36e09f6fe5bd8d94a31ed3140cdeac0",
-      "canvas": {"width": 1500, "height": 700, "publicationWidth": "double-column"},
+      "drawioSha256": "429ba12ffb75c8c52bb259abaec17be1fe8970cad0386d4c0781dbd93913d903",
+      "canvas": {
+        "width": 1500,
+        "height": 700,
+        "publicationWidth": "double-column"
+      },
       "groups": [],
       "entities": [
-        {"id": "Test", "label": "Test\nt in T(qk)\ncost(t) >= cmin", "role": "core", "x": 70, "y": 220, "w": 190, "h": 100},
-        {"id": "Observation", "label": "Observation\nIzk\nqk observable summary\nERROR if instrument invalid", "role": "evidence", "x": 340, "y": 210, "w": 230, "h": 120},
-        {"id": "Analysis", "label": "Analysis\nconstraint verdict\nsame partitions as scoring", "role": "core", "x": 650, "y": 220, "w": 220, "h": 100},
-        {"id": "Diagnosis", "label": "Diagnosis\nHk candidate set\ncompatibility update", "role": "core", "x": 950, "y": 220, "w": 220, "h": 100},
-        {"id": "Selection", "label": "Selection\none-step minimax s(t)\nPrep action", "role": "core", "x": 1240, "y": 220, "w": 210, "h": 100},
-        {"id": "Evidence", "label": "Evidence\ntraces\nstop class\nbudget remainder", "role": "evidence", "x": 660, "y": 480, "w": 210, "h": 115}
+        {
+          "id": "Test",
+          "label": "Test\nt in T(qk)\ncost(t) >= cmin",
+          "role": "core",
+          "x": 70,
+          "y": 220,
+          "w": 190,
+          "h": 135
+        },
+        {
+          "id": "Observation",
+          "label": "Observation\nIzk; qk summary\nERROR if invalid",
+          "role": "evidence",
+          "x": 340,
+          "y": 210,
+          "w": 230,
+          "h": 135
+        },
+        {
+          "id": "Analysis",
+          "label": "Analysis\nconstraint verdict\nscoring partitions",
+          "role": "core",
+          "x": 650,
+          "y": 220,
+          "w": 220,
+          "h": 135
+        },
+        {
+          "id": "Diagnosis",
+          "label": "Diagnosis\nHk candidate set\ncompatibility update",
+          "role": "core",
+          "x": 950,
+          "y": 220,
+          "w": 220,
+          "h": 135
+        },
+        {
+          "id": "Selection",
+          "label": "Selection\none-step minimax s(t)\nPrep action",
+          "role": "core",
+          "x": 1240,
+          "y": 220,
+          "w": 210,
+          "h": 135
+        },
+        {
+          "id": "Evidence",
+          "label": "Evidence\ntraces\nstop class\nbudget remainder",
+          "role": "evidence",
+          "x": 660,
+          "y": 480,
+          "w": 210,
+          "h": 115
+        }
       ],
       "relations": [
-        {"id": "test-observation", "source": "Test", "target": "Observation", "label": "execute", "role": "flow", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "observation-analysis", "source": "Observation", "target": "Analysis", "label": "Izk", "role": "flow", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "analysis-diagnosis", "source": "Analysis", "target": "Diagnosis", "label": "compatible / inconsistent", "role": "flow", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "diagnosis-selection", "source": "Diagnosis", "target": "Selection", "label": "remaining Hk", "role": "flow", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "selection-test", "source": "Selection", "target": "Test", "label": "next test or stop", "role": "feedback", "exitX": 0.5, "exitY": 0, "entryX": 0.5, "entryY": 0, "labelY": -14, "points": [[1345, 145], [165, 145]]},
-        {"id": "evidence-observation", "source": "Evidence", "target": "Observation", "label": "", "role": "evidence-only", "exitX": 0, "exitY": 0.5, "entryX": 0.5, "entryY": 1, "points": [[580, 538]]},
-        {"id": "evidence-diagnosis", "source": "Evidence", "target": "Diagnosis", "label": "", "role": "evidence-only", "exitX": 1, "exitY": 0.35, "entryX": 0.5, "entryY": 1, "points": [[1060, 520]]},
-        {"id": "evidence-selection", "source": "Evidence", "target": "Selection", "label": "", "role": "evidence-only", "exitX": 1, "exitY": 0.75, "entryX": 0.5, "entryY": 1, "points": [[1345, 565]]}
+        {
+          "id": "test-observation",
+          "source": "Test",
+          "target": "Observation",
+          "label": "execute",
+          "role": "flow",
+          "exitX": 1,
+          "exitY": 0.5,
+          "entryX": 0,
+          "entryY": 0.5,
+          "labelY": -14
+        },
+        {
+          "id": "observation-analysis",
+          "source": "Observation",
+          "target": "Analysis",
+          "label": "Izk",
+          "role": "flow",
+          "exitX": 1,
+          "exitY": 0.5,
+          "entryX": 0,
+          "entryY": 0.5,
+          "labelY": -14
+        },
+        {
+          "id": "analysis-diagnosis",
+          "source": "Analysis",
+          "target": "Diagnosis",
+          "label": "compatible",
+          "role": "flow",
+          "exitX": 1,
+          "exitY": 0.5,
+          "entryX": 0,
+          "entryY": 0.5,
+          "labelY": -14
+        },
+        {
+          "id": "diagnosis-selection",
+          "source": "Diagnosis",
+          "target": "Selection",
+          "label": "Hk",
+          "role": "flow",
+          "exitX": 1,
+          "exitY": 0.5,
+          "entryX": 0,
+          "entryY": 0.5,
+          "labelY": -14
+        },
+        {
+          "id": "selection-test",
+          "source": "Selection",
+          "target": "Test",
+          "label": "next test or stop",
+          "role": "feedback",
+          "exitX": 0.5,
+          "exitY": 0,
+          "entryX": 0.5,
+          "entryY": 0,
+          "labelY": -14,
+          "points": [
+            [
+              1345,
+              145
+            ],
+            [
+              165,
+              145
+            ]
+          ]
+        },
+        {
+          "id": "evidence-observation",
+          "source": "Evidence",
+          "target": "Observation",
+          "label": "",
+          "role": "evidence-only",
+          "exitX": 0,
+          "exitY": 0.5,
+          "entryX": 0.5,
+          "entryY": 1,
+          "points": [
+            [
+              580,
+              538
+            ]
+          ]
+        },
+        {
+          "id": "evidence-diagnosis",
+          "source": "Evidence",
+          "target": "Diagnosis",
+          "label": "",
+          "role": "evidence-only",
+          "exitX": 1,
+          "exitY": 0.35,
+          "entryX": 0.5,
+          "entryY": 1,
+          "points": [
+            [
+              1060,
+              520
+            ]
+          ]
+        },
+        {
+          "id": "evidence-selection",
+          "source": "Evidence",
+          "target": "Selection",
+          "label": "",
+          "role": "evidence-only",
+          "exitX": 1,
+          "exitY": 0.75,
+          "entryX": 0.5,
+          "entryY": 1,
+          "points": [
+            [
+              1345,
+              565
+            ]
+          ]
+        }
       ],
       "notes": [
-        {"id": "logical", "label": "Blocks are logical SysML classifiers, not implemented modules.", "x": 480, "y": 620, "w": 520, "h": 48}
-      ]
+        {
+          "id": "logical",
+          "label": "Blocks are logical SysML classifiers, not implemented modules.",
+          "x": 480,
+          "y": 620,
+          "w": 520,
+          "h": 48
+        }
+      ],
+      "typography": {
+        "nodePt": 22,
+        "edgePt": 18,
+        "notePt": 18
+      },
+      "sourceBindings": {
+        "title": "title FIG-CL-TAV-03 BDD\\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\\nTest, Observation, Analysis, Diagnosis, Selection, Evidence as separate blocks",
+        "objects": {
+          "Test": {
+            "parent": null,
+            "anchors": [
+              "cost(t) >= cmin"
+            ]
+          },
+          "Observation": {
+            "parent": null,
+            "anchors": [
+              "qk observable summary"
+            ]
+          },
+          "Analysis": {
+            "parent": null,
+            "anchors": [
+              "constraint verdict"
+            ]
+          },
+          "Diagnosis": {
+            "parent": null,
+            "anchors": [
+              "Hk candidate set"
+            ]
+          },
+          "Selection": {
+            "parent": null,
+            "anchors": [
+              "Prep action"
+            ]
+          },
+          "Evidence": {
+            "parent": null,
+            "anchors": [
+              "stop class"
+            ]
+          }
+        },
+        "relations": {
+          "test-observation": {
+            "source": "Test",
+            "target": "Observation",
+            "anchors": [
+              "Test --> Observation : execute"
+            ]
+          },
+          "observation-analysis": {
+            "source": "Observation",
+            "target": "Analysis",
+            "anchors": [
+              "Observation --> Analysis : Izk"
+            ]
+          },
+          "analysis-diagnosis": {
+            "source": "Analysis",
+            "target": "Diagnosis",
+            "anchors": [
+              "Analysis --> Diagnosis : compatible / inconsistent"
+            ]
+          },
+          "diagnosis-selection": {
+            "source": "Diagnosis",
+            "target": "Selection",
+            "anchors": [
+              "Diagnosis --> Selection : remaining Hk"
+            ]
+          },
+          "selection-test": {
+            "source": "Selection",
+            "target": "Test",
+            "anchors": [
+              "Selection --> Test : next test or stop"
+            ]
+          },
+          "evidence-observation": {
+            "source": "Evidence",
+            "target": "Observation",
+            "anchors": [
+              "Evidence ..> Observation"
+            ]
+          },
+          "evidence-diagnosis": {
+            "source": "Evidence",
+            "target": "Diagnosis",
+            "anchors": [
+              "Evidence ..> Diagnosis"
+            ]
+          },
+          "evidence-selection": {
+            "source": "Evidence",
+            "target": "Selection",
+            "anchors": [
+              "Evidence ..> Selection"
+            ]
+          }
+        },
+        "notes": {
+          "logical": [
+            "Blocks are logical SysML classifiers, not implemented modules."
+          ]
+        },
+        "manualReview": [
+          "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
+          "Human promotion remains required for interpretation, guard completeness, and publication layout."
+        ]
+      }
     },
     {
       "id": "FIG-CL-TAV-04",
@@ -141,36 +1201,378 @@
       "diagramType": "internal-block",
       "status": "DRAFT-REDRAW",
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-04-ibd.puml",
-      "sourceSha256": "2894f8236a2f75425555d84ee62c400f0acf3c1ced19cc4d3d26e1aed9ec6c90",
+      "sourceSha256": "78089e21331577b9b5dbddc3b631692cd1c8dbeae9111c50073ddb522c53e098",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-04-ibd.drawio",
-      "drawioSha256": "204457cd21ea49ff27960ebfd07511e43efcc2012af30d8daeaca30bc938463c",
-      "canvas": {"width": 1540, "height": 760, "publicationWidth": "double-column"},
+      "drawioSha256": "664d33dcb2c01a5e594106bc8ba89a52bec543750d9b31e8632044023a3c2e76",
+      "canvas": {
+        "width": 1540,
+        "height": 760,
+        "publicationWidth": "double-column"
+      },
       "groups": [
-        {"id": "CTRL", "label": "CL-TAV controller", "role": "core", "x": 430, "y": 100, "w": 640, "h": 480}
+        {
+          "id": "CTRL",
+          "label": "CL-TAV controller",
+          "role": "core",
+          "x": 430,
+          "y": 100,
+          "w": 640,
+          "h": 480
+        }
       ],
       "entities": [
-        {"id": "PTRACE", "label": "trace", "role": "port", "parent": "CTRL", "x": 25, "y": 70, "w": 150, "h": 44},
-        {"id": "PCON", "label": "constraint", "role": "port", "parent": "CTRL", "x": 25, "y": 145, "w": 150, "h": 44},
-        {"id": "PCAND", "label": "candidate-set", "role": "port", "parent": "CTRL", "x": 25, "y": 220, "w": 150, "h": 44},
-        {"id": "PSEL", "label": "test-selection", "role": "port", "parent": "CTRL", "x": 25, "y": 295, "w": 150, "h": 44},
-        {"id": "PBUD", "label": "budget", "role": "port", "parent": "CTRL", "x": 25, "y": 370, "w": 150, "h": 44},
-        {"id": "ADAPT", "label": "Protocol adapter", "role": "external", "x": 90, "y": 180, "w": 220, "h": 58},
-        {"id": "CONS", "label": "Constraint evaluator", "role": "core", "x": 1180, "y": 150, "w": 240, "h": 58},
-        {"id": "CAND", "label": "Candidate store", "role": "evidence", "x": 1180, "y": 265, "w": 240, "h": 58},
-        {"id": "TLIB", "label": "Test library T(qk)", "role": "core", "x": 1180, "y": 380, "w": 240, "h": 58},
-        {"id": "BUD", "label": "Budget / Kmax clock", "role": "external", "x": 1180, "y": 495, "w": 240, "h": 58}
+        {
+          "id": "PTRACE",
+          "label": "trace",
+          "role": "port",
+          "parent": "CTRL",
+          "x": 25,
+          "y": 70,
+          "w": 150,
+          "h": 44
+        },
+        {
+          "id": "PCON",
+          "label": "constraint",
+          "role": "port",
+          "parent": "CTRL",
+          "x": 25,
+          "y": 145,
+          "w": 150,
+          "h": 44
+        },
+        {
+          "id": "PCAND",
+          "label": "candidate-set",
+          "role": "port",
+          "parent": "CTRL",
+          "x": 25,
+          "y": 220,
+          "w": 150,
+          "h": 44
+        },
+        {
+          "id": "PSEL",
+          "label": "test-selection",
+          "role": "port",
+          "parent": "CTRL",
+          "x": 25,
+          "y": 295,
+          "w": 150,
+          "h": 44
+        },
+        {
+          "id": "PBUD",
+          "label": "budget",
+          "role": "port",
+          "parent": "CTRL",
+          "x": 25,
+          "y": 370,
+          "w": 150,
+          "h": 44
+        },
+        {
+          "id": "ADAPT",
+          "label": "Protocol adapter",
+          "role": "external",
+          "x": 90,
+          "y": 180,
+          "w": 220,
+          "h": 58
+        },
+        {
+          "id": "CONS",
+          "label": "Constraint evaluator",
+          "role": "core",
+          "x": 1180,
+          "y": 150,
+          "w": 240,
+          "h": 58
+        },
+        {
+          "id": "CAND",
+          "label": "Candidate store",
+          "role": "evidence",
+          "x": 1180,
+          "y": 265,
+          "w": 240,
+          "h": 58
+        },
+        {
+          "id": "TLIB",
+          "label": "Test library T(qk)",
+          "role": "core",
+          "x": 1180,
+          "y": 380,
+          "w": 240,
+          "h": 58
+        },
+        {
+          "id": "BUD",
+          "label": "Budget / Kmax clock",
+          "role": "external",
+          "x": 1180,
+          "y": 495,
+          "w": 240,
+          "h": 58
+        }
       ],
       "relations": [
-        {"id": "adapter-trace", "source": "ADAPT", "target": "PTRACE", "label": "", "role": "association", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5},
-        {"id": "cons-con", "source": "CONS", "target": "PCON", "label": "", "role": "association", "exitX": 0, "exitY": 0.5, "entryX": 1, "entryY": 0.5, "points": [[1120, 179], [1120, 267], [650, 267]]},
-        {"id": "cand-port", "source": "CAND", "target": "PCAND", "label": "", "role": "association", "exitX": 0, "exitY": 0.5, "entryX": 1, "entryY": 0.5, "points": [[1120, 294], [1120, 342], [650, 342]]},
-        {"id": "tlib-select", "source": "TLIB", "target": "PSEL", "label": "", "role": "association", "exitX": 0, "exitY": 0.5, "entryX": 1, "entryY": 0.5, "points": [[1120, 409], [1120, 417], [650, 417]]},
-        {"id": "budget-port", "source": "BUD", "target": "PBUD", "label": "", "role": "association", "exitX": 0, "exitY": 0.5, "entryX": 1, "entryY": 0.5, "points": [[1120, 524], [1120, 492], [650, 492]]}
+        {
+          "id": "adapter-trace",
+          "source": "ADAPT",
+          "target": "PTRACE",
+          "label": "",
+          "role": "association",
+          "exitX": 1,
+          "exitY": 0.5,
+          "entryX": 0,
+          "entryY": 0.5
+        },
+        {
+          "id": "cons-con",
+          "source": "CONS",
+          "target": "PCON",
+          "label": "",
+          "role": "association",
+          "exitX": 0,
+          "exitY": 0.5,
+          "entryX": 1,
+          "entryY": 0.5,
+          "points": [
+            [
+              1120,
+              179
+            ],
+            [
+              1120,
+              267
+            ],
+            [
+              650,
+              267
+            ]
+          ]
+        },
+        {
+          "id": "cand-port",
+          "source": "CAND",
+          "target": "PCAND",
+          "label": "",
+          "role": "association",
+          "exitX": 0,
+          "exitY": 0.5,
+          "entryX": 1,
+          "entryY": 0.5,
+          "points": [
+            [
+              1120,
+              294
+            ],
+            [
+              1120,
+              342
+            ],
+            [
+              650,
+              342
+            ]
+          ]
+        },
+        {
+          "id": "tlib-select",
+          "source": "TLIB",
+          "target": "PSEL",
+          "label": "",
+          "role": "association",
+          "exitX": 0,
+          "exitY": 0.5,
+          "entryX": 1,
+          "entryY": 0.5,
+          "points": [
+            [
+              1120,
+              409
+            ],
+            [
+              1120,
+              417
+            ],
+            [
+              650,
+              417
+            ]
+          ]
+        },
+        {
+          "id": "budget-port",
+          "source": "BUD",
+          "target": "PBUD",
+          "label": "",
+          "role": "association",
+          "exitX": 0,
+          "exitY": 0.5,
+          "entryX": 1,
+          "entryY": 0.5,
+          "points": [
+            [
+              1120,
+              524
+            ],
+            [
+              1120,
+              492
+            ],
+            [
+              650,
+              492
+            ]
+          ]
+        }
       ],
       "notes": [
-        {"id": "cost", "label": "Every test and every ERROR spends at least cmin or one Kmax round.", "x": 430, "y": 620, "w": 520, "h": 52},
-        {"id": "boundary", "label": "Adapter talks to Mprot. Controller is Msess, not a protocol EFSM.", "x": 40, "y": 300, "w": 300, "h": 68}
-      ]
+        {
+          "id": "cost",
+          "label": "Every test and every ERROR spends at least cmin or one Kmax round.",
+          "x": 430,
+          "y": 620,
+          "w": 520,
+          "h": 52
+        },
+        {
+          "id": "boundary",
+          "label": "Adapter talks to Mprot. Controller is Msess, not a protocol EFSM.",
+          "x": 40,
+          "y": 300,
+          "w": 300,
+          "h": 68
+        }
+      ],
+      "typography": {
+        "nodePt": 22,
+        "edgePt": 18,
+        "notePt": 18
+      },
+      "sourceBindings": {
+        "title": "title FIG-CL-TAV-04 IBD\\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\\ntrace, constraint, candidate-set, test-selection and budget ports",
+        "objects": {
+          "CTRL": {
+            "parent": null,
+            "anchors": [
+              "component \"CL-TAV controller\" as CTRL {"
+            ]
+          },
+          "PTRACE": {
+            "parent": "CTRL",
+            "anchors": [
+              "port \"trace\" as PTRACE"
+            ]
+          },
+          "PCON": {
+            "parent": "CTRL",
+            "anchors": [
+              "port \"constraint\" as PCON"
+            ]
+          },
+          "PCAND": {
+            "parent": "CTRL",
+            "anchors": [
+              "port \"candidate-set\" as PCAND"
+            ]
+          },
+          "PSEL": {
+            "parent": "CTRL",
+            "anchors": [
+              "port \"test-selection\" as PSEL"
+            ]
+          },
+          "PBUD": {
+            "parent": "CTRL",
+            "anchors": [
+              "port \"budget\" as PBUD"
+            ]
+          },
+          "ADAPT": {
+            "parent": null,
+            "anchors": [
+              "component \"Protocol adapter\" as ADAPT"
+            ]
+          },
+          "CONS": {
+            "parent": null,
+            "anchors": [
+              "component \"Constraint evaluator\" as CONS"
+            ]
+          },
+          "CAND": {
+            "parent": null,
+            "anchors": [
+              "component \"Candidate store\" as CAND"
+            ]
+          },
+          "TLIB": {
+            "parent": null,
+            "anchors": [
+              "component \"Test library T(qk)\" as TLIB"
+            ]
+          },
+          "BUD": {
+            "parent": null,
+            "anchors": [
+              "component \"Budget / Kmax clock\" as BUD"
+            ]
+          }
+        },
+        "relations": {
+          "adapter-trace": {
+            "source": "ADAPT",
+            "target": "PTRACE",
+            "anchors": [
+              "ADAPT - PTRACE"
+            ]
+          },
+          "cons-con": {
+            "source": "CONS",
+            "target": "PCON",
+            "anchors": [
+              "CONS - PCON"
+            ]
+          },
+          "cand-port": {
+            "source": "CAND",
+            "target": "PCAND",
+            "anchors": [
+              "port \"candidate-set\" as PCAND"
+            ]
+          },
+          "tlib-select": {
+            "source": "TLIB",
+            "target": "PSEL",
+            "anchors": [
+              "TLIB - PSEL"
+            ]
+          },
+          "budget-port": {
+            "source": "BUD",
+            "target": "PBUD",
+            "anchors": [
+              "port \"budget\" as PBUD"
+            ]
+          }
+        },
+        "notes": {
+          "cost": [
+            "at least cmin or one Kmax round."
+          ],
+          "boundary": [
+            "Controller is Msess, not a protocol EFSM."
+          ]
+        },
+        "manualReview": [
+          "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
+          "Human promotion remains required for interpretation, guard completeness, and publication layout."
+        ]
+      }
     },
     {
       "id": "FIG-CL-TAV-05",
@@ -178,57 +1580,710 @@
       "diagramType": "activity",
       "status": "DRAFT-REDRAW",
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-05-closed-loop-activity.puml",
-      "sourceSha256": "7683fa081b2846f34149f7c3b14eaf7000e2ae0c3a30d33d249c3b331816a9d7",
+      "sourceSha256": "4db0fd73b1b2ff28416ce9f1684c97ef5bd72e10ebe808e5497f5f950dab0e5d",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-05-closed-loop-activity.drawio",
-      "drawioSha256": "52ebc0f68bead209b2bf72ed10254406ca5b1a863907b66043708cb69896fc44",
-      "canvas": {"width": 1320, "height": 1320, "publicationWidth": "double-column"},
+      "drawioSha256": "9a041c8d5db6f00a56eb8379126da46532de6b3819b450c43c064ace8cb747d7",
+      "canvas": {
+        "width": 1500,
+        "height": 2500,
+        "publicationWidth": "double-column"
+      },
       "groups": [],
       "entities": [
-        {"id": "S0", "label": "S0 Idle\nSessionContext unique", "role": "core", "x": 360, "y": 35, "w": 260, "h": 62},
-        {"id": "S1", "label": "S1 IF-RESOURCE-STOP gate", "role": "decision", "x": 350, "y": 135, "w": 280, "h": 70},
-        {"id": "StopGate", "label": "Already decided\nA2-A5 or P1-P5", "role": "stop", "x": 780, "y": 135, "w": 240, "h": 70},
-        {"id": "S2", "label": "S2 IF-PRED-OBS\npredict classes", "role": "core", "x": 350, "y": 250, "w": 280, "h": 70},
-        {"id": "PredictionGap", "label": "PredictionGapError\nTEST-scoped; Recover/Prep ineligible", "role": "stop", "x": 780, "y": 245, "w": 300, "h": 82},
-        {"id": "S3", "label": "S3 IF-SELECT-ADMIT\nfinal action; freeze q/actionId", "role": "decision", "x": 340, "y": 365, "w": 300, "h": 82},
-        {"id": "Admit", "label": "Admit A2-A5 / empty-S spec handling", "role": "stop", "x": 780, "y": 370, "w": 300, "h": 70},
-        {"id": "S4", "label": "S4 charge cost once", "role": "core", "x": 360, "y": 490, "w": 260, "h": 62},
-        {"id": "S5", "label": "S5 IF-EXECUTE-RECORD\neffect class", "role": "core", "x": 350, "y": 590, "w": 280, "h": 74},
-        {"id": "S6", "label": "S6 IF-OBS-INTERPRET", "role": "decision", "x": 355, "y": 705, "w": 270, "h": 66},
-        {"id": "S7", "label": "S7 classify effect\nconfirmed-not-sent keeps q\nunknown-effect invalidates q", "role": "risk", "x": 760, "y": 680, "w": 330, "h": 98},
-        {"id": "StopError", "label": "Stop-Error\nretry cap reached", "role": "stop", "x": 1110, "y": 650, "w": 190, "h": 68},
-        {"id": "LoopS1", "label": "retry remaining", "role": "retry", "x": 1110, "y": 760, "w": 190, "h": 58},
-        {"id": "S8", "label": "S8 sole KNOWN writer\nconfirmed Recover target/evidence", "role": "core", "x": 340, "y": 825, "w": 300, "h": 82},
-        {"id": "Unconfirmed", "label": "unconfirmed Recover", "role": "risk", "x": 780, "y": 835, "w": 250, "h": 60},
-        {"id": "S9", "label": "S9 IF-HIST-UPDATE\nreads qUsedAtSelect; commits postSummary", "role": "core", "x": 330, "y": 950, "w": 320, "h": 82},
-        {"id": "S10", "label": "S10 P1-P5\nIF-RESOURCE-STOP / IF-EQUIV", "role": "decision", "x": 340, "y": 1075, "w": 300, "h": 82},
-        {"id": "StopP", "label": "P-stop return", "role": "stop", "x": 780, "y": 1080, "w": 230, "h": 60}
+        {
+          "id": "S0",
+          "label": "S0 Idle\nSessionContext unique",
+          "role": "core",
+          "x": 360,
+          "y": 35,
+          "w": 440,
+          "h": 147
+        },
+        {
+          "id": "S1",
+          "label": "S1 IF-RESOURCE-STOP gate",
+          "role": "decision",
+          "x": 350,
+          "y": 212,
+          "w": 460,
+          "h": 95
+        },
+        {
+          "id": "StopGate",
+          "label": "Already decided\nA2-A5 or P1-P5",
+          "role": "stop",
+          "x": 920,
+          "y": 205,
+          "w": 390,
+          "h": 105
+        },
+        {
+          "id": "S2",
+          "label": "S2 IF-PRED-OBS\npredict classes",
+          "role": "core",
+          "x": 350,
+          "y": 357,
+          "w": 460,
+          "h": 110
+        },
+        {
+          "id": "PredictionGap",
+          "label": "PredictionGapError\nTEST-scoped; Recover/Prep ineligible",
+          "role": "stop",
+          "x": 920,
+          "y": 345,
+          "w": 390,
+          "h": 135
+        },
+        {
+          "id": "S3",
+          "label": "S3 IF-SELECT-ADMIT\nfinal action; freeze q/actionId",
+          "role": "decision",
+          "x": 340,
+          "y": 517,
+          "w": 480,
+          "h": 115
+        },
+        {
+          "id": "Admit",
+          "label": "Admit A2-A5",
+          "role": "stop",
+          "x": 920,
+          "y": 505,
+          "w": 390,
+          "h": 95
+        },
+        {
+          "id": "SpecError",
+          "label": "Spec error\nTEST with empty S; never argmin",
+          "role": "stop",
+          "x": 920,
+          "y": 630,
+          "w": 390,
+          "h": 115
+        },
+        {
+          "id": "S4",
+          "label": "S4 charge cost once",
+          "role": "core",
+          "x": 360,
+          "y": 690,
+          "w": 440,
+          "h": 90
+        },
+        {
+          "id": "S5",
+          "label": "S5 IF-EXECUTE-RECORD\neffect class",
+          "role": "core",
+          "x": 350,
+          "y": 830,
+          "w": 460,
+          "h": 115
+        },
+        {
+          "id": "S6",
+          "label": "S6 IF-OBS-INTERPRET",
+          "role": "decision",
+          "x": 350,
+          "y": 995,
+          "w": 460,
+          "h": 105
+        },
+        {
+          "id": "S7",
+          "label": "S7 classify effect\nconfirmed-not-sent keeps q\nunknown-effect invalidates q",
+          "role": "risk",
+          "x": 900,
+          "y": 970,
+          "w": 410,
+          "h": 160
+        },
+        {
+          "id": "StopError",
+          "label": "Stop-Error\nretry cap reached",
+          "role": "stop",
+          "x": 830,
+          "y": 1180,
+          "w": 280,
+          "h": 100
+        },
+        {
+          "id": "LoopS1",
+          "label": "retry remaining",
+          "role": "retry",
+          "x": 1160,
+          "y": 1180,
+          "w": 240,
+          "h": 100
+        },
+        {
+          "id": "RecoverConfirmed",
+          "label": "Recover confirmed\ntarget/evidence available",
+          "role": "evidence",
+          "x": 350,
+          "y": 1160,
+          "w": 460,
+          "h": 100
+        },
+        {
+          "id": "S8",
+          "label": "S8 sole KNOWN writer\ndeclaredTarget + evidence",
+          "role": "core",
+          "x": 350,
+          "y": 1310,
+          "w": 460,
+          "h": 125
+        },
+        {
+          "id": "S9",
+          "label": "S9 IF-HIST-UPDATE\nreads qUsedAtSelect; confirmed postSummary",
+          "role": "core",
+          "x": 350,
+          "y": 1490,
+          "w": 460,
+          "h": 140
+        },
+        {
+          "id": "S10",
+          "label": "S10 P1-P5\nIF-RESOURCE-STOP / IF-EQUIV",
+          "role": "decision",
+          "x": 350,
+          "y": 1680,
+          "w": 460,
+          "h": 120
+        },
+        {
+          "id": "StopP",
+          "label": "P-stop",
+          "role": "stop",
+          "x": 920,
+          "y": 1690,
+          "w": 390,
+          "h": 95
+        }
       ],
       "relations": [
-        {"id": "E-S0-S1", "source": "S0", "target": "S1", "label": "", "role": "flow", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0},
-        {"id": "E-S1-S2", "source": "S1", "target": "S2", "label": "no stop", "role": "flow", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -14},
-        {"id": "E-S1-STOP", "source": "S1", "target": "StopGate", "label": "already decided", "role": "stop", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "E-S2-S3", "source": "S2", "target": "S3", "label": "predict", "role": "flow", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -14},
-        {"id": "E-S2-GAP", "source": "S2", "target": "PredictionGap", "label": "Recover and Prep ineligible", "role": "stop", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "E-S3-ADMIT", "source": "S3", "target": "Admit", "label": "A2-A5", "role": "stop", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "E-S3-S4", "source": "S3", "target": "S4", "label": "charge", "role": "flow", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -14},
-        {"id": "E-S4-S5", "source": "S4", "target": "S5", "label": "", "role": "flow", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0},
-        {"id": "E-S5-S6", "source": "S5", "target": "S6", "label": "", "role": "flow", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0},
-        {"id": "E-S6-S7", "source": "S6", "target": "S7", "label": "UNKNOWN-EFFECT", "role": "risk", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "E-S6-S8", "source": "S6", "target": "S8", "label": "KNOWN", "role": "flow", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -14},
-        {"id": "E-S8-UNCONFIRMED", "source": "S8", "target": "Unconfirmed", "label": "unconfirmed", "role": "risk", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "E-UNCONFIRMED-S7", "source": "Unconfirmed", "target": "S7", "label": "unconfirmed", "role": "retry", "exitX": 0.5, "exitY": 0, "entryX": 0.5, "entryY": 1, "labelY": 14, "points": [[905, 810]]},
-        {"id": "E-S7-STOP", "source": "S7", "target": "StopError", "label": "Stop-Error", "role": "stop", "exitX": 1, "exitY": 0.3, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "E-S7-LOOP", "source": "S7", "target": "LoopS1", "label": "retry remaining", "role": "retry", "exitX": 1, "exitY": 0.75, "entryX": 0, "entryY": 0.5, "labelY": 14},
-        {"id": "E-S7-S1", "source": "LoopS1", "target": "S1", "label": "retry back-edge", "role": "retry", "exitX": 1, "exitY": 0.5, "entryX": 0.5, "entryY": 0, "labelY": -14, "points": [[1305, 789], [1305, 115], [490, 115]]},
-        {"id": "E-S8-S9", "source": "S8", "target": "S9", "label": "KNOWN", "role": "flow", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -14},
-        {"id": "E-S6-S9", "source": "S6", "target": "S9", "label": "postSummary", "role": "flow", "exitX": 0, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14, "points": [[260, 738], [260, 991]]},
-        {"id": "E-S9-S10", "source": "S9", "target": "S10", "label": "advance", "role": "flow", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -14},
-        {"id": "E-S10-STOP", "source": "S10", "target": "StopP", "label": "P-stop", "role": "stop", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "E-S10-S1", "source": "S10", "target": "S1", "label": "no stop", "role": "continue", "exitX": 0, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14, "points": [[80, 1116], [80, 170]]}
+        {
+          "id": "E-S0-S1",
+          "source": "S0",
+          "target": "S1",
+          "label": "begin",
+          "role": "flow"
+        },
+        {
+          "id": "E-S1-S2",
+          "source": "S1",
+          "target": "S2",
+          "label": "no prior stop",
+          "role": "flow"
+        },
+        {
+          "id": "E-S1-STOP",
+          "source": "S1",
+          "target": "StopGate",
+          "label": "G-ALREADY",
+          "role": "stop",
+          "guardRef": "G-ALREADY"
+        },
+        {
+          "id": "E-S2-S3",
+          "source": "S2",
+          "target": "S3",
+          "label": "prediction available",
+          "role": "flow"
+        },
+        {
+          "id": "E-S2-GAP",
+          "source": "S2",
+          "target": "PredictionGap",
+          "label": "G-GAP",
+          "role": "stop",
+          "guardRef": "G-GAP"
+        },
+        {
+          "id": "E-S3-ADMIT",
+          "source": "S3",
+          "target": "Admit",
+          "label": "G-ADMIT",
+          "role": "stop",
+          "guardRef": "G-ADMIT"
+        },
+        {
+          "id": "E-S3-SPEC-ERROR",
+          "source": "S3",
+          "target": "SpecError",
+          "label": "G-EMPTY-TEST",
+          "role": "stop",
+          "guardRef": "G-EMPTY-TEST"
+        },
+        {
+          "id": "E-S3-S4",
+          "source": "S3",
+          "target": "S4",
+          "label": "chosen TEST / Prep / Recover",
+          "role": "flow"
+        },
+        {
+          "id": "E-S4-S5",
+          "source": "S4",
+          "target": "S5",
+          "label": "charged",
+          "role": "flow"
+        },
+        {
+          "id": "E-S5-S6",
+          "source": "S5",
+          "target": "S6",
+          "label": "record",
+          "role": "flow"
+        },
+        {
+          "id": "E-S6-S7",
+          "source": "S6",
+          "target": "S7",
+          "label": "G-EFFECT",
+          "role": "risk",
+          "guardRef": "G-EFFECT"
+        },
+        {
+          "id": "E-S7-STOP",
+          "source": "S7",
+          "target": "StopError",
+          "label": "G-CAP",
+          "role": "stop",
+          "guardRef": "G-CAP"
+        },
+        {
+          "id": "E-S7-LOOP",
+          "source": "S7",
+          "target": "LoopS1",
+          "label": "G-RETRY",
+          "role": "retry",
+          "guardRef": "G-RETRY"
+        },
+        {
+          "id": "E-S7-S1",
+          "source": "LoopS1",
+          "target": "S1",
+          "label": "retry back-edge",
+          "role": "retry",
+          "points": [
+            [
+              1430,
+              1230
+            ],
+            [
+              1430,
+              185
+            ],
+            [
+              580,
+              185
+            ]
+          ]
+        },
+        {
+          "id": "E-S6-CONFIRM",
+          "source": "S6",
+          "target": "RecoverConfirmed",
+          "label": "G-VALID",
+          "role": "flow",
+          "guardRef": "G-VALID"
+        },
+        {
+          "id": "E-CONFIRM-S8",
+          "source": "RecoverConfirmed",
+          "target": "S8",
+          "label": "G-RECOVER",
+          "role": "flow",
+          "guardRef": "G-RECOVER"
+        },
+        {
+          "id": "E-CONFIRM-S9",
+          "source": "RecoverConfirmed",
+          "target": "S9",
+          "label": "G-TEST-PREP",
+          "role": "flow",
+          "guardRef": "G-TEST-PREP",
+          "points": [
+            [
+              250,
+              1210
+            ],
+            [
+              250,
+              1560
+            ]
+          ]
+        },
+        {
+          "id": "E-S8-S9",
+          "source": "S8",
+          "target": "S9",
+          "label": "KNOWN",
+          "role": "flow"
+        },
+        {
+          "id": "E-S9-S10",
+          "source": "S9",
+          "target": "S10",
+          "label": "advance",
+          "role": "flow"
+        },
+        {
+          "id": "E-S10-STOP",
+          "source": "S10",
+          "target": "StopP",
+          "label": "P-stop",
+          "role": "stop"
+        },
+        {
+          "id": "E-S10-S1",
+          "source": "S10",
+          "target": "S1",
+          "label": "no stop",
+          "role": "continue",
+          "points": [
+            [
+              100,
+              1740
+            ],
+            [
+              100,
+              255
+            ]
+          ]
+        }
       ],
       "notes": [
-        {"id": "invariants", "label": "Admissible A then selectable S; exclusive TEST/Prep/Recover/Admit; BUDGET xor ROUNDS; charge once; ERROR uses ErrorHandle; P1-P5 priority unchanged.", "x": 100, "y": 1220, "w": 1120, "h": 58}
-      ]
+        {
+          "id": "guards-effect",
+          "label": "G-EFFECT: confirmed-not-sent OR unknown-effect OR prepErr OR unconfirmed Recover\nG-VALID: record valid; branch by selected action kind",
+          "role": "boundary",
+          "x": 80,
+          "y": 1870,
+          "w": 1320,
+          "h": 130
+        },
+        {
+          "id": "guards-admit",
+          "label": "G-ALREADY: prior A2-A5/P1-P5 | G-GAP: TEST prediction gap with Recover/Prep ineligible\nG-ADMIT: kind ADMIT | G-EMPTY-TEST: kind TEST and S empty",
+          "role": "boundary",
+          "x": 80,
+          "y": 2030,
+          "w": 1320,
+          "h": 130
+        },
+        {
+          "id": "guards-update",
+          "label": "G-RECOVER: confirmed Recover only -> S8 -> S9\nG-TEST-PREP: valid TEST/Prep -> S9; S8 remains the sole KNOWN writer",
+          "role": "boundary",
+          "x": 80,
+          "y": 2190,
+          "w": 1320,
+          "h": 120
+        },
+        {
+          "id": "invariants",
+          "label": "Admissible A then selectable S; exclusive TEST/Prep/Recover/Admit; BUDGET xor ROUNDS; charge once; ERROR uses ErrorHandle; P1-P5 priority unchanged.",
+          "role": "boundary",
+          "x": 80,
+          "y": 2340,
+          "w": 1320,
+          "h": 105
+        }
+      ],
+      "typography": {
+        "nodePt": 22,
+        "edgePt": 18,
+        "notePt": 18
+      },
+      "sourceBindings": {
+        "title": "title FIG-CL-TAV-05 Closed-loop activity\\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\\npredict before select; exclusive TEST/Prep/Recover/Admit; charge once; effect classes",
+        "objects": {
+          "S0": {
+            "parent": null,
+            "anchors": [
+              ":S0 Idle; SessionContext unique; HistoryHandle; BUDGET xor ROUNDS; retry=0;"
+            ]
+          },
+          "S1": {
+            "parent": null,
+            "anchors": [
+              ":S1 IF-RESOURCE-STOP gate;"
+            ]
+          },
+          "StopGate": {
+            "parent": null,
+            "anchors": [
+              "if (already A2-A5 or P1-P5?) then (yes)"
+            ]
+          },
+          "S2": {
+            "parent": null,
+            "anchors": [
+              ":S2 IF-PRED-OBS predict classes;"
+            ]
+          },
+          "PredictionGap": {
+            "parent": null,
+            "anchors": [
+              ":E-S2-GAP TEST-scoped named prediction-gap; Recover and Prep ineligible;"
+            ]
+          },
+          "S3": {
+            "parent": null,
+            "anchors": [
+              ":S3 IF-SELECT-ADMIT final action, then freeze qUsedAtSelect/actionId;"
+            ]
+          },
+          "Admit": {
+            "parent": null,
+            "anchors": [
+              "if (kind ADMIT?) then (yes)"
+            ]
+          },
+          "SpecError": {
+            "parent": null,
+            "anchors": [
+              ":named spec error; never argmin empty S;"
+            ]
+          },
+          "S4": {
+            "parent": null,
+            "anchors": [
+              ":S4 Charge cost once;"
+            ]
+          },
+          "S5": {
+            "parent": null,
+            "anchors": [
+              ":S5 IF-EXECUTE-RECORD effect class;"
+            ]
+          },
+          "S6": {
+            "parent": null,
+            "anchors": [
+              ":S6 IF-OBS-INTERPRET unless effect class already returned;"
+            ]
+          },
+          "S7": {
+            "parent": null,
+            "anchors": [
+              ":S7 classify effect; CONFIRMED-NOT-SENT keeps q; UNKNOWN-EFFECT invalidates q;"
+            ]
+          },
+          "StopError": {
+            "parent": null,
+            "anchors": [
+              "if (retry cap reached?) then (yes)"
+            ]
+          },
+          "LoopS1": {
+            "parent": null,
+            "anchors": [
+              "else (retry remaining)"
+            ]
+          },
+          "RecoverConfirmed": {
+            "parent": null,
+            "anchors": [
+              "if (Recover confirmed?) then (yes)"
+            ]
+          },
+          "S8": {
+            "parent": null,
+            "anchors": [
+              ":S8 sole writer of KNOWN(declaredTarget,evidence); IF-PREP-RECOVER does not write Gamma;"
+            ]
+          },
+          "S9": {
+            "parent": null,
+            "anchors": [
+              ":E-S9-S10 S9 IF-HIST-UPDATE reads qUsedAtSelect and commits confirmed postSummary;"
+            ]
+          },
+          "S10": {
+            "parent": null,
+            "anchors": [
+              ":S10 P1-P5 via IF-RESOURCE-STOP and IF-EQUIV;"
+            ]
+          },
+          "StopP": {
+            "parent": null,
+            "anchors": [
+              "if (P-stop?) then (yes)"
+            ]
+          }
+        },
+        "relations": {
+          "E-S0-S1": {
+            "source": "S0",
+            "target": "S1",
+            "anchors": [
+              "no stop returns S10 to S1"
+            ]
+          },
+          "E-S1-S2": {
+            "source": "S1",
+            "target": "S2",
+            "anchors": [
+              "no stop returns S10 to S1"
+            ]
+          },
+          "E-S1-STOP": {
+            "source": "S1",
+            "target": "StopGate",
+            "anchors": [
+              "' E-S1-STOP from=S1 to=StopGate polarity=stop guard=already decided"
+            ]
+          },
+          "E-S2-S3": {
+            "source": "S2",
+            "target": "S3",
+            "anchors": [
+              "' E-S2-GAP from=S2 to=PredictionGap polarity=stop guard=Recover and Prep ineligible"
+            ]
+          },
+          "E-S2-GAP": {
+            "source": "S2",
+            "target": "PredictionGap",
+            "anchors": [
+              "' E-S2-GAP from=S2 to=PredictionGap polarity=stop guard=Recover and Prep ineligible"
+            ]
+          },
+          "E-S3-ADMIT": {
+            "source": "S3",
+            "target": "Admit",
+            "anchors": [
+              ":S3 IF-SELECT-ADMIT final action, then freeze qUsedAtSelect/actionId;"
+            ]
+          },
+          "E-S3-SPEC-ERROR": {
+            "source": "S3",
+            "target": "SpecError",
+            "anchors": [
+              ":S3 IF-SELECT-ADMIT final action, then freeze qUsedAtSelect/actionId;"
+            ]
+          },
+          "E-S3-S4": {
+            "source": "S3",
+            "target": "S4",
+            "anchors": [
+              "strictly-reducing TEST else Prep else Recover"
+            ]
+          },
+          "E-S4-S5": {
+            "source": "S4",
+            "target": "S5",
+            "anchors": [
+              ":S4 Charge cost once;"
+            ]
+          },
+          "E-S5-S6": {
+            "source": "S5",
+            "target": "S6",
+            "anchors": [
+              ":S5 IF-EXECUTE-RECORD effect class;"
+            ]
+          },
+          "E-S6-S7": {
+            "source": "S6",
+            "target": "S7",
+            "anchors": [
+              "unconfirmed Recover joins S7"
+            ]
+          },
+          "E-S7-STOP": {
+            "source": "S7",
+            "target": "StopError",
+            "anchors": [
+              "unconfirmed Recover joins S7"
+            ]
+          },
+          "E-S7-LOOP": {
+            "source": "S7",
+            "target": "LoopS1",
+            "anchors": [
+              "' E-S7-S1 from=S7 to=S1 polarity=retry via=LoopS1"
+            ]
+          },
+          "E-S7-S1": {
+            "source": "LoopS1",
+            "target": "S1",
+            "anchors": [
+              "' E-S7-S1 from=S7 to=S1 polarity=retry via=LoopS1"
+            ]
+          },
+          "E-S6-CONFIRM": {
+            "source": "S6",
+            "target": "RecoverConfirmed",
+            "anchors": [
+              ":S6 IF-OBS-INTERPRET unless effect class already returned;"
+            ]
+          },
+          "E-CONFIRM-S8": {
+            "source": "RecoverConfirmed",
+            "target": "S8",
+            "anchors": [
+              ":S8 sole writer of KNOWN(declaredTarget,evidence); IF-PREP-RECOVER does not write Gamma;"
+            ]
+          },
+          "E-CONFIRM-S9": {
+            "source": "RecoverConfirmed",
+            "target": "S9",
+            "anchors": [
+              "' E-S9-S10 from=S9 to=S10 polarity=advance"
+            ]
+          },
+          "E-S8-S9": {
+            "source": "S8",
+            "target": "S9",
+            "anchors": [
+              ":S8 sole writer of KNOWN(declaredTarget,evidence); IF-PREP-RECOVER does not write Gamma;"
+            ]
+          },
+          "E-S9-S10": {
+            "source": "S9",
+            "target": "S10",
+            "anchors": [
+              "' E-S9-S10 from=S9 to=S10 polarity=advance"
+            ]
+          },
+          "E-S10-STOP": {
+            "source": "S10",
+            "target": "StopP",
+            "anchors": [
+              "if (P-stop?) then (yes)"
+            ]
+          },
+          "E-S10-S1": {
+            "source": "S10",
+            "target": "S1",
+            "anchors": [
+              "' E-S9-S10 from=S9 to=S10 polarity=advance"
+            ]
+          }
+        },
+        "notes": {
+          "guards-effect": [
+            "if (CONFIRMED-NOT-SENT or UNKNOWN-EFFECT or prepErr or unconfirmed Recover?) then (yes)"
+          ],
+          "guards-admit": [
+            ":E-S2-GAP TEST-scoped named prediction-gap; Recover and Prep ineligible;"
+          ],
+          "guards-update": [
+            ":S8 sole writer of KNOWN(declaredTarget,evidence); IF-PREP-RECOVER does not write Gamma;"
+          ],
+          "invariants": [
+            "admissible A then selectable S; Admit A1-A5"
+          ]
+        },
+        "manualReview": [
+          "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
+          "Human promotion remains required for interpretation, guard completeness, and publication layout."
+        ]
+      }
     },
     {
       "id": "FIG-CL-TAV-06",
@@ -236,42 +2291,512 @@
       "diagramType": "sequence-workflow",
       "status": "DRAFT-REDRAW",
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-06-diagnostic-sequence.puml",
-      "sourceSha256": "1c96b369d6619b3429ae32c06087b133c7a7340888bbc3af577bfceeadf0cc72",
+      "sourceSha256": "e44186daca4ace2e1b9b2ca1103232c4c6875a5c859bb9bf3bcdca26c79468ae",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-06-diagnostic-sequence.drawio",
-      "drawioSha256": "1c0d9b1a968e1fd15a51becf1ff88ff054bc23e8e3e7ccaddff8e81562704473",
-      "canvas": {"width": 1650, "height": 930, "publicationWidth": "double-column"},
+      "drawioSha256": "a179a9171c8ffcee00fbb9efc7f082ffdf1f5e9ac39327f7f910829ca4d2c96c",
+      "canvas": {
+        "width": 1680,
+        "height": 1410,
+        "publicationWidth": "double-column"
+      },
       "groups": [
-        {"id": "OperatorLane", "label": "Operator", "role": "external", "x": 30, "y": 50, "w": 300, "h": 760},
-        {"id": "MsessLane", "label": "Msess", "role": "core", "x": 360, "y": 50, "w": 430, "h": 760},
-        {"id": "MprotLane", "label": "Mprot", "role": "external", "x": 820, "y": 50, "w": 330, "h": 760},
-        {"id": "AnalysisLane", "label": "Analysis / Diagnosis", "role": "evidence", "x": 1180, "y": 50, "w": 400, "h": 760}
+        {
+          "id": "OperatorLane",
+          "label": "Operator",
+          "role": "external",
+          "x": 30,
+          "y": 50,
+          "w": 300,
+          "h": 1120
+        },
+        {
+          "id": "MsessLane",
+          "label": "Msess",
+          "role": "core",
+          "x": 360,
+          "y": 50,
+          "w": 470,
+          "h": 1120
+        },
+        {
+          "id": "MprotLane",
+          "label": "Mprot",
+          "role": "external",
+          "x": 860,
+          "y": 50,
+          "w": 330,
+          "h": 1120
+        },
+        {
+          "id": "AnalysisLane",
+          "label": "Analysis / Diagnosis",
+          "role": "evidence",
+          "x": 1220,
+          "y": 50,
+          "w": 410,
+          "h": 1120
+        }
       ],
       "entities": [
-        {"id": "Start", "label": "start session\nH0 = {h_normal} union H_single", "role": "external", "parent": "OperatorLane", "x": 30, "y": 55, "w": 240, "h": 64},
-        {"id": "Overlap", "label": "overlapping {a,b}/{a,c}\nremains strictly-reducing", "role": "core", "parent": "MsessLane", "x": 35, "y": 150, "w": 350, "h": 72},
-        {"id": "Admit", "label": "Admit: uninformative TEST has no strictly-reducing outcome", "role": "decision", "parent": "MsessLane", "x": 35, "y": 260, "w": 350, "h": 72},
-        {"id": "Prep", "label": "Select Prep from A", "role": "core", "parent": "MsessLane", "x": 35, "y": 365, "w": 350, "h": 54},
-        {"id": "PrepEffect", "label": "Prep action updates qk+1", "role": "external", "parent": "MprotLane", "x": 35, "y": 360, "w": 260, "h": 64},
-        {"id": "SelectTb", "label": "Select later distinguishing test tb from A", "role": "core", "parent": "MsessLane", "x": 35, "y": 470, "w": 350, "h": 64},
-        {"id": "ExecuteTb", "label": "Execute tb", "role": "core", "parent": "MsessLane", "x": 35, "y": 565, "w": 350, "h": 52},
-        {"id": "Observation", "label": "observation splits h1 / h2", "role": "external", "parent": "MprotLane", "x": 35, "y": 560, "w": 260, "h": 62},
-        {"id": "Analyse", "label": "Izk of tb", "role": "evidence", "parent": "AnalysisLane", "x": 35, "y": 650, "w": 330, "h": 52},
-        {"id": "Result", "label": "Hk singleton or still indistinguishable", "role": "core", "parent": "MsessLane", "x": 35, "y": 650, "w": 350, "h": 58}
+        {
+          "id": "Start",
+          "label": "start session\nH0 = {h_normal} union H_single",
+          "role": "external",
+          "x": 30,
+          "y": 70,
+          "w": 240,
+          "h": 75,
+          "parent": "OperatorLane"
+        },
+        {
+          "id": "Overlap",
+          "label": "overlapping {a,b}/{a,c}\nremains strictly-reducing",
+          "role": "core",
+          "x": 40,
+          "y": 180,
+          "w": 390,
+          "h": 90,
+          "parent": "MsessLane"
+        },
+        {
+          "id": "Admit",
+          "label": "Admit: uninformative TEST has no strictly-reducing outcome",
+          "role": "decision",
+          "x": 40,
+          "y": 315,
+          "w": 390,
+          "h": 95,
+          "parent": "MsessLane"
+        },
+        {
+          "id": "Prep",
+          "label": "Select Prep from A",
+          "role": "core",
+          "x": 40,
+          "y": 460,
+          "w": 390,
+          "h": 70,
+          "parent": "MsessLane"
+        },
+        {
+          "id": "PrepSelected",
+          "label": "Prep selected and charged\nthrough session boundary",
+          "role": "evidence",
+          "x": 40,
+          "y": 575,
+          "w": 390,
+          "h": 80,
+          "parent": "MsessLane"
+        },
+        {
+          "id": "PrepEffect",
+          "label": "Prep action updates qk+1",
+          "role": "external",
+          "x": 35,
+          "y": 580,
+          "w": 260,
+          "h": 75,
+          "parent": "MprotLane"
+        },
+        {
+          "id": "SelectTb",
+          "label": "Select later distinguishing test tb from A",
+          "role": "core",
+          "x": 40,
+          "y": 705,
+          "w": 390,
+          "h": 80,
+          "parent": "MsessLane"
+        },
+        {
+          "id": "ExecuteTb",
+          "label": "Execute tb",
+          "role": "core",
+          "x": 40,
+          "y": 825,
+          "w": 390,
+          "h": 65,
+          "parent": "MsessLane"
+        },
+        {
+          "id": "Observation",
+          "label": "observation splits h1 / h2",
+          "role": "external",
+          "x": 35,
+          "y": 820,
+          "w": 260,
+          "h": 75,
+          "parent": "MprotLane"
+        },
+        {
+          "id": "ReceiveObservation",
+          "label": "receive observation at Msess\nthen expose Izk",
+          "role": "evidence",
+          "x": 40,
+          "y": 940,
+          "w": 390,
+          "h": 80,
+          "parent": "MsessLane"
+        },
+        {
+          "id": "Analyse",
+          "label": "Izk of tb",
+          "role": "evidence",
+          "x": 35,
+          "y": 940,
+          "w": 340,
+          "h": 65,
+          "parent": "AnalysisLane"
+        },
+        {
+          "id": "Result",
+          "label": "Hk singleton or still indistinguishable",
+          "role": "core",
+          "x": 40,
+          "y": 1050,
+          "w": 390,
+          "h": 70,
+          "parent": "MsessLane"
+        }
       ],
       "relations": [
-        {"id": "start-session", "source": "Start", "target": "Overlap", "label": "start", "role": "sequence", "exitX": 1, "exitY": 0.5, "entryX": 0.5, "entryY": 0, "labelY": -14},
-        {"id": "overlap-admit", "source": "Overlap", "target": "Admit", "label": "worst-case non-shrinkage is not no diagnostic value", "role": "sequence", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -14},
-        {"id": "admit-prep", "source": "Admit", "target": "Prep", "label": "", "role": "sequence"},
-        {"id": "prep-mprot", "source": "Prep", "target": "PrepEffect", "label": "through FIG-CL-TAV-04 ports", "role": "flow", "exitX": 1, "exitY": 0.35, "entryX": 0, "entryY": 0.35, "labelY": -14},
-        {"id": "prep-return", "source": "PrepEffect", "target": "SelectTb", "label": "qk+1", "role": "observation", "exitX": 0, "exitY": 0.75, "entryX": 1, "entryY": 0.5, "labelY": 14, "points": [[805, 458], [805, 552]]},
-        {"id": "select-execute", "source": "SelectTb", "target": "ExecuteTb", "label": "", "role": "sequence"},
-        {"id": "execute-mprot", "source": "ExecuteTb", "target": "Observation", "label": "tb", "role": "flow", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "observation-analysis", "source": "Observation", "target": "Analyse", "label": "Izk", "role": "observation", "exitX": 1, "exitY": 0.5, "entryX": 0.5, "entryY": 0, "labelY": -14},
-        {"id": "analysis-result", "source": "Analyse", "target": "Result", "label": "candidate result", "role": "observation", "exitX": 0, "exitY": 0.5, "entryX": 1, "entryY": 0.5, "labelY": -14}
+        {
+          "id": "start-session",
+          "source": "Start",
+          "target": "Overlap",
+          "label": "start",
+          "role": "sequence"
+        },
+        {
+          "id": "overlap-admit",
+          "source": "Overlap",
+          "target": "Admit",
+          "label": "worst-case non-shrinkage != no value",
+          "role": "sequence"
+        },
+        {
+          "id": "admit-prep",
+          "source": "Admit",
+          "target": "Prep",
+          "label": "",
+          "role": "sequence"
+        },
+        {
+          "id": "prep-selected",
+          "source": "Prep",
+          "target": "PrepSelected",
+          "label": "session selects Prep",
+          "role": "sequence"
+        },
+        {
+          "id": "prep-mprot",
+          "source": "PrepSelected",
+          "target": "PrepEffect",
+          "label": "Prep",
+          "role": "flow"
+        },
+        {
+          "id": "prep-return",
+          "source": "PrepEffect",
+          "target": "SelectTb",
+          "label": "qk+1",
+          "role": "observation",
+          "points": [
+            [
+              845,
+              670
+            ],
+            [
+              845,
+              745
+            ]
+          ]
+        },
+        {
+          "id": "select-execute",
+          "source": "SelectTb",
+          "target": "ExecuteTb",
+          "label": "",
+          "role": "sequence"
+        },
+        {
+          "id": "execute-mprot",
+          "source": "ExecuteTb",
+          "target": "Observation",
+          "label": "t_b",
+          "role": "flow"
+        },
+        {
+          "id": "observation-session",
+          "source": "Observation",
+          "target": "ReceiveObservation",
+          "label": "",
+          "role": "observation",
+          "points": [
+            [
+              850,
+              915
+            ],
+            [
+              850,
+              1030
+            ]
+          ]
+        },
+        {
+          "id": "session-analysis",
+          "source": "ReceiveObservation",
+          "target": "Analyse",
+          "label": "I_zk",
+          "role": "flow"
+        },
+        {
+          "id": "analysis-result",
+          "source": "Analyse",
+          "target": "Result",
+          "label": "H_k+1",
+          "role": "observation",
+          "points": [
+            [
+              1210,
+              1030
+            ],
+            [
+              1210,
+              1085
+            ]
+          ]
+        }
       ],
       "notes": [
-        {"id": "resource", "label": "Prep is a session action in the same admissible set and spends the same selected-mode resource as a test. ERROR with unknown-effect does not keep q; recover first.", "x": 270, "y": 845, "w": 1120, "h": 58}
-      ]
+        {
+          "id": "nonshrink",
+          "label": "Worst-case non-shrinkage is not no diagnostic value.",
+          "role": "boundary",
+          "x": 80,
+          "y": 1190,
+          "w": 620,
+          "h": 80
+        },
+        {
+          "id": "edge-labels",
+          "label": "Edge labels: Prep = preparation through FIG-CL-TAV-04 ports; obs = protocol observation returned to Msess; I_zk = session observation exposed to analysis; H_k+1 = candidate result.",
+          "role": "boundary",
+          "x": 730,
+          "y": 1190,
+          "w": 870,
+          "h": 95
+        },
+        {
+          "id": "resource",
+          "label": "Prep is a session action in the same admissible set and spends the same selected-mode resource as a test. ERROR with unknown-effect does not keep q; recover first.",
+          "role": "boundary",
+          "x": 200,
+          "y": 1305,
+          "w": 1280,
+          "h": 80
+        }
+      ],
+      "typography": {
+        "nodePt": 22,
+        "edgePt": 18,
+        "notePt": 18
+      },
+      "sourceBindings": {
+        "title": "title FIG-CL-TAV-06 Diagnostic sequence\\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\\nfailure, overlapping observation, preparatory action, later distinguishing test",
+        "objects": {
+          "OperatorLane": {
+            "parent": null,
+            "anchors": [
+              "actor Operator"
+            ]
+          },
+          "MsessLane": {
+            "parent": null,
+            "anchors": [
+              "participant \"Msess\" as S"
+            ]
+          },
+          "MprotLane": {
+            "parent": null,
+            "anchors": [
+              "participant \"Mprot\" as P"
+            ]
+          },
+          "AnalysisLane": {
+            "parent": null,
+            "anchors": [
+              "participant \"Analysis / Diagnosis\" as A"
+            ]
+          },
+          "Start": {
+            "parent": "OperatorLane",
+            "anchors": [
+              "Operator -> S : start session, H0 = {h_normal} union H_single"
+            ]
+          },
+          "Overlap": {
+            "parent": "MsessLane",
+            "anchors": [
+              "S -> S : overlapping {a,b}/{a,c} stays strictly-reducing even if s(t)=|H|"
+            ]
+          },
+          "Admit": {
+            "parent": "MsessLane",
+            "anchors": [
+              "S -> S : Admit; uninformative TEST has no strictly-reducing outcome"
+            ]
+          },
+          "Prep": {
+            "parent": "MsessLane",
+            "anchors": [
+              "S -> S : Select Prep from A, not the uninformative test"
+            ]
+          },
+          "PrepSelected": {
+            "parent": "MsessLane",
+            "anchors": [
+              "S -> P : Prep action through FIG-CL-TAV-04 ports"
+            ]
+          },
+          "PrepEffect": {
+            "parent": "MprotLane",
+            "anchors": [
+              "S -> P : Prep action through FIG-CL-TAV-04 ports"
+            ]
+          },
+          "SelectTb": {
+            "parent": "MsessLane",
+            "anchors": [
+              "S -> S : Select later distinguishing test tb from A"
+            ]
+          },
+          "ExecuteTb": {
+            "parent": "MsessLane",
+            "anchors": [
+              "S -> P : Execute tb"
+            ]
+          },
+          "Observation": {
+            "parent": "MprotLane",
+            "anchors": [
+              "P --> S : observation that splits h1 / h2"
+            ]
+          },
+          "ReceiveObservation": {
+            "parent": "MsessLane",
+            "anchors": [
+              "P --> S : observation that splits h1 / h2"
+            ]
+          },
+          "Analyse": {
+            "parent": "AnalysisLane",
+            "anchors": [
+              "S -> A : Izk of tb"
+            ]
+          },
+          "Result": {
+            "parent": "MsessLane",
+            "anchors": [
+              "A --> S : Hk singleton or still indistinguishable"
+            ]
+          }
+        },
+        "relations": {
+          "start-session": {
+            "source": "Start",
+            "target": "Overlap",
+            "anchors": [
+              "Operator -> S : start session, H0 = {h_normal} union H_single"
+            ]
+          },
+          "overlap-admit": {
+            "source": "Overlap",
+            "target": "Admit",
+            "anchors": [
+              "Worst-case non-shrinkage is not"
+            ]
+          },
+          "admit-prep": {
+            "source": "Admit",
+            "target": "Prep",
+            "anchors": [
+              "S -> P : Prep action through FIG-CL-TAV-04 ports"
+            ]
+          },
+          "prep-selected": {
+            "source": "Prep",
+            "target": "PrepSelected",
+            "anchors": [
+              "Prep is a session action in the same admissible set."
+            ]
+          },
+          "prep-mprot": {
+            "source": "PrepSelected",
+            "target": "PrepEffect",
+            "anchors": [
+              "S -> P : Prep action through FIG-CL-TAV-04 ports"
+            ]
+          },
+          "prep-return": {
+            "source": "PrepEffect",
+            "target": "SelectTb",
+            "anchors": [
+              "P --> S : qk+1"
+            ]
+          },
+          "select-execute": {
+            "source": "SelectTb",
+            "target": "ExecuteTb",
+            "anchors": [
+              "end note"
+            ]
+          },
+          "execute-mprot": {
+            "source": "ExecuteTb",
+            "target": "Observation",
+            "anchors": [
+              "P --> S : observation that splits h1 / h2"
+            ]
+          },
+          "observation-session": {
+            "source": "Observation",
+            "target": "ReceiveObservation",
+            "anchors": [
+              "P --> S : observation that splits h1 / h2"
+            ]
+          },
+          "session-analysis": {
+            "source": "ReceiveObservation",
+            "target": "Analyse",
+            "anchors": [
+              "end note"
+            ]
+          },
+          "analysis-result": {
+            "source": "Analyse",
+            "target": "Result",
+            "anchors": [
+              "end note"
+            ]
+          }
+        },
+        "notes": {
+          "nonshrink": [
+            "Worst-case non-shrinkage is not"
+          ],
+          "edge-labels": [
+            "S -> P : Prep action through FIG-CL-TAV-04 ports"
+          ],
+          "resource": [
+            "Prep is a session action in the same admissible set."
+          ]
+        },
+        "manualReview": [
+          "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
+          "Human promotion remains required for interpretation, guard completeness, and publication layout."
+        ]
+      }
     },
     {
       "id": "FIG-CL-TAV-07",
@@ -279,60 +2804,944 @@
       "diagramType": "state-machines",
       "status": "DRAFT-REDRAW",
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-07-two-state-machines.puml",
-      "sourceSha256": "fb0a4d561f994896cd44a0b526ea6133e0e065cbfa46c8f4d5450667ab6d9190",
+      "sourceSha256": "effab552f5ce971a0d0fa45bf1f19f96ac172e0e55cc423c956cf4f21df74380",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-07-two-state-machines.drawio",
-      "drawioSha256": "92e3ecfcf93f57f88171af50d0e3ade5c2fc7416127e39cee8d046252222aef5",
-      "canvas": {"width": 1900, "height": 940, "publicationWidth": "double-column"},
+      "drawioSha256": "b82f77c382e9fb6cd9bc7aa30ab4b2af84cba5e22b2d02586234ce79a2e899ad",
+      "canvas": {
+        "width": 1800,
+        "height": 2750,
+        "publicationWidth": "double-column"
+      },
       "groups": [
-        {"id": "MsessMachine", "label": "Msess verification session", "role": "core", "x": 30, "y": 45, "w": 1340, "h": 760},
-        {"id": "MprotMachine", "label": "Mprot protocol black box", "role": "external", "x": 1420, "y": 45, "w": 430, "h": 430}
+        {
+          "id": "MsessMachine",
+          "label": "Msess verification session",
+          "role": "core",
+          "x": 40,
+          "y": 45,
+          "w": 1720,
+          "h": 2170
+        },
+        {
+          "id": "MprotMachine",
+          "label": "Mprot protocol black box",
+          "role": "external",
+          "x": 40,
+          "y": 2260,
+          "w": 1720,
+          "h": 300
+        }
       ],
       "entities": [
-        {"id": "Idle", "label": "Idle", "role": "state", "parent": "MsessMachine", "x": 40, "y": 70, "w": 150, "h": 48},
-        {"id": "Admit", "label": "Admit", "role": "state", "parent": "MsessMachine", "x": 260, "y": 70, "w": 150, "h": 48},
-        {"id": "Select", "label": "Select", "role": "state", "parent": "MsessMachine", "x": 480, "y": 70, "w": 150, "h": 48},
-        {"id": "Execute", "label": "Execute", "role": "state", "parent": "MsessMachine", "x": 700, "y": 70, "w": 150, "h": 48},
-        {"id": "Update", "label": "Update", "role": "state", "parent": "MsessMachine", "x": 920, "y": 70, "w": 150, "h": 48},
-        {"id": "RecoverConfirm", "label": "RecoverConfirm", "role": "state", "parent": "MsessMachine", "x": 700, "y": 230, "w": 180, "h": 48},
-        {"id": "ErrorHandle", "label": "ErrorHandle", "role": "risk", "parent": "MsessMachine", "x": 700, "y": 390, "w": 180, "h": 48},
-        {"id": "StopEmpty", "label": "StopEmpty (P1)", "role": "stop", "parent": "MsessMachine", "x": 1040, "y": 210, "w": 210, "h": 48},
-        {"id": "StopSingleton", "label": "StopSingleton (P2)", "role": "stop", "parent": "MsessMachine", "x": 1040, "y": 285, "w": 210, "h": 48},
-        {"id": "Stop645", "label": "Stop645 (P3)", "role": "stop", "parent": "MsessMachine", "x": 1040, "y": 360, "w": 210, "h": 48},
-        {"id": "StopEquivalent", "label": "StopEquivalent (P4)", "role": "stop", "parent": "MsessMachine", "x": 1040, "y": 435, "w": 210, "h": 48},
-        {"id": "StopBudget", "label": "StopBudget (A2/A5/P5)", "role": "stop", "parent": "MsessMachine", "x": 260, "y": 620, "w": 240, "h": 52},
-        {"id": "StopNoDistinguisher", "label": "StopNoDistinguisher (A3)", "role": "stop", "parent": "MsessMachine", "x": 540, "y": 620, "w": 250, "h": 52},
-        {"id": "StopError", "label": "StopError (A4 / retry cap)", "role": "stop", "parent": "MsessMachine", "x": 830, "y": 620, "w": 240, "h": 52},
-        {"id": "BoundM2", "label": "bound M2 INFORMATION / UPLOAD\napproved model identity; no new behavior edges", "role": "evidence", "parent": "MprotMachine", "x": 35, "y": 90, "w": 350, "h": 88},
-        {"id": "PlannedScope", "label": "planned CRS scope; no behavior edges\nMedia/Operator Defined DOWNLOAD; FIND", "role": "planned", "parent": "MprotMachine", "x": 35, "y": 230, "w": 350, "h": 88}
+        {
+          "id": "Initial",
+          "label": "[*]",
+          "role": "state",
+          "x": 40,
+          "y": 80,
+          "w": 130,
+          "h": 70,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "Idle",
+          "label": "Idle",
+          "role": "state",
+          "x": 220,
+          "y": 80,
+          "w": 190,
+          "h": 80,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "Admit",
+          "label": "Admit",
+          "role": "state",
+          "x": 500,
+          "y": 80,
+          "w": 190,
+          "h": 80,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "Select",
+          "label": "Select",
+          "role": "state",
+          "x": 780,
+          "y": 80,
+          "w": 190,
+          "h": 80,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "Execute",
+          "label": "Execute",
+          "role": "state",
+          "x": 1060,
+          "y": 80,
+          "w": 190,
+          "h": 80,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "Update",
+          "label": "Update",
+          "role": "state",
+          "x": 1390,
+          "y": 80,
+          "w": 190,
+          "h": 80,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "RecoverConfirm",
+          "label": "RecoverConfirm",
+          "role": "state",
+          "x": 1030,
+          "y": 310,
+          "w": 250,
+          "h": 80,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "ErrorHandle",
+          "label": "ErrorHandle",
+          "role": "risk",
+          "x": 780,
+          "y": 610,
+          "w": 250,
+          "h": 90,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "StopEmpty",
+          "label": "StopEmpty (P1)",
+          "role": "stop",
+          "x": 1380,
+          "y": 310,
+          "w": 260,
+          "h": 75,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "StopSingleton",
+          "label": "StopSingleton (P2)",
+          "role": "stop",
+          "x": 1380,
+          "y": 440,
+          "w": 260,
+          "h": 75,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "Stop645",
+          "label": "Stop645 (P3)",
+          "role": "stop",
+          "x": 1380,
+          "y": 570,
+          "w": 260,
+          "h": 75,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "StopEquivalent",
+          "label": "StopEquivalent (P4)",
+          "role": "stop",
+          "x": 1380,
+          "y": 700,
+          "w": 260,
+          "h": 75,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "StopBudget",
+          "label": "StopBudget (A2/A5/P5)",
+          "role": "stop",
+          "x": 100,
+          "y": 930,
+          "w": 320,
+          "h": 85,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "StopNoDistinguisher",
+          "label": "StopNoDistinguisher (A3)",
+          "role": "stop",
+          "x": 450,
+          "y": 930,
+          "w": 340,
+          "h": 85,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "StopError",
+          "label": "StopError (A4 / retry cap)",
+          "role": "stop",
+          "x": 800,
+          "y": 930,
+          "w": 340,
+          "h": 85,
+          "parent": "MsessMachine"
+        },
+        {
+          "id": "BoundM2",
+          "label": "bound M2 INFORMATION / UPLOAD\napproved identity; no new behavior edges",
+          "role": "evidence",
+          "x": 120,
+          "y": 80,
+          "w": 650,
+          "h": 105,
+          "parent": "MprotMachine"
+        },
+        {
+          "id": "PlannedScope",
+          "label": "planned CRS scope; no behavior edges\nMedia/Operator Defined DOWNLOAD; FIND",
+          "role": "planned",
+          "x": 950,
+          "y": 80,
+          "w": 650,
+          "h": 105,
+          "parent": "MprotMachine"
+        }
       ],
       "relations": [
-        {"id": "idle-admit", "source": "Idle", "target": "Admit", "label": "", "role": "transition", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5},
-        {"id": "admit-select", "source": "Admit", "target": "Select", "label": "A1 selectable S nonempty", "role": "transition", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -18},
-        {"id": "admit-budget-a2", "source": "Admit", "target": "StopBudget", "label": "A2 unaffordable", "role": "stop", "labelY": -14},
-        {"id": "admit-no-distinguisher", "source": "Admit", "target": "StopNoDistinguisher", "label": "A3", "role": "stop", "labelY": -14},
-        {"id": "admit-error", "source": "Admit", "target": "StopError", "label": "A4", "role": "stop", "labelY": -14},
-        {"id": "admit-budget-a5", "source": "Admit", "target": "StopBudget", "label": "A5", "role": "stop", "labelY": 14},
-        {"id": "select-execute", "source": "Select", "target": "Execute", "label": "chosen from S", "role": "transition", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": 18},
-        {"id": "execute-update", "source": "Execute", "target": "Update", "label": "TEST or Prep valid Izk", "role": "transition", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -18},
-        {"id": "execute-recover", "source": "Execute", "target": "RecoverConfirm", "label": "Recover valid record", "role": "transition", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -14},
-        {"id": "execute-error", "source": "Execute", "target": "ErrorHandle", "label": "ERROR", "role": "risk", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": 14},
-        {"id": "recover-update", "source": "RecoverConfirm", "target": "Update", "label": "target confirmed", "role": "transition", "exitX": 1, "exitY": 0.5, "entryX": 0.5, "entryY": 1, "labelY": -14},
-        {"id": "recover-admit", "source": "RecoverConfirm", "target": "Admit", "label": "unconfirmed; q UNKNOWN", "role": "retry", "exitX": 0, "exitY": 0.5, "entryX": 0.5, "entryY": 1, "labelY": -14},
-        {"id": "error-cap", "source": "ErrorHandle", "target": "StopError", "label": "retry cap reached", "role": "stop"},
-        {"id": "error-a4", "source": "ErrorHandle", "target": "StopError", "label": "retry remaining; A4 Recover ineligible", "role": "stop"},
-        {"id": "error-a5", "source": "ErrorHandle", "target": "StopBudget", "label": "retry remaining; A5 unaffordable", "role": "stop"},
-        {"id": "error-not-sent", "source": "ErrorHandle", "target": "Admit", "label": "confirmed not sent; retry remaining", "role": "retry"},
-        {"id": "error-recover", "source": "ErrorHandle", "target": "Admit", "label": "unknown-effect and Recover in S", "role": "retry"},
-        {"id": "update-empty", "source": "Update", "target": "StopEmpty", "label": "P1 Hk empty", "role": "stop"},
-        {"id": "update-singleton", "source": "Update", "target": "StopSingleton", "label": "P2 |Hk| == 1", "role": "stop"},
-        {"id": "update-645", "source": "Update", "target": "Stop645", "label": "P3 named 645-blocked", "role": "stop"},
-        {"id": "update-equivalent", "source": "Update", "target": "StopEquivalent", "label": "P4 equivalence established", "role": "stop"},
-        {"id": "update-budget", "source": "Update", "target": "StopBudget", "label": "P5 resource exhausted", "role": "stop", "exitX": 0.4, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -14, "points": [[1000, 580], [410, 580]]},
-        {"id": "update-admit", "source": "Update", "target": "Admit", "label": "else |Hk| > 1 and resource remains", "role": "continue", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 1, "labelY": 14, "points": [[1025, 190], [365, 190]]}
+        {
+          "id": "initial-idle",
+          "source": "Initial",
+          "target": "Idle",
+          "label": "",
+          "role": "transition"
+        },
+        {
+          "id": "idle-admit",
+          "source": "Idle",
+          "target": "Admit",
+          "label": "",
+          "role": "transition"
+        },
+        {
+          "id": "admit-select",
+          "source": "Admit",
+          "target": "Select",
+          "label": "A1",
+          "role": "transition",
+          "guardRef": "A1"
+        },
+        {
+          "id": "admit-budget-a2",
+          "source": "Admit",
+          "target": "StopBudget",
+          "label": "",
+          "role": "stop",
+          "guardRef": "A2",
+          "points": [
+            [
+              430,
+              260
+            ],
+            [
+              260,
+              260
+            ],
+            [
+              260,
+              900
+            ]
+          ]
+        },
+        {
+          "id": "admit-no-distinguisher",
+          "source": "Admit",
+          "target": "StopNoDistinguisher",
+          "label": "",
+          "role": "stop",
+          "guardRef": "A3",
+          "points": [
+            [
+              560,
+              300
+            ],
+            [
+              560,
+              900
+            ]
+          ]
+        },
+        {
+          "id": "admit-error",
+          "source": "Admit",
+          "target": "StopError",
+          "label": "",
+          "role": "stop",
+          "guardRef": "A4",
+          "points": [
+            [
+              700,
+              350
+            ],
+            [
+              900,
+              350
+            ],
+            [
+              900,
+              900
+            ]
+          ]
+        },
+        {
+          "id": "admit-budget-a5",
+          "source": "Admit",
+          "target": "StopBudget",
+          "label": "",
+          "role": "stop",
+          "guardRef": "A5",
+          "points": [
+            [
+              400,
+              320
+            ],
+            [
+              220,
+              320
+            ],
+            [
+              220,
+              900
+            ]
+          ]
+        },
+        {
+          "id": "select-execute",
+          "source": "Select",
+          "target": "Execute",
+          "label": "SELECT",
+          "role": "transition",
+          "guardRef": "SELECT"
+        },
+        {
+          "id": "execute-update",
+          "source": "Execute",
+          "target": "Update",
+          "label": "VALID",
+          "role": "transition",
+          "guardRef": "VALID"
+        },
+        {
+          "id": "execute-recover",
+          "source": "Execute",
+          "target": "RecoverConfirm",
+          "label": "REC",
+          "role": "transition",
+          "guardRef": "REC"
+        },
+        {
+          "id": "execute-error",
+          "source": "Execute",
+          "target": "ErrorHandle",
+          "label": "ERROR",
+          "role": "risk",
+          "guardRef": "ERROR",
+          "points": [
+            [
+              1000,
+              250
+            ],
+            [
+              905,
+              250
+            ],
+            [
+              905,
+              580
+            ]
+          ]
+        },
+        {
+          "id": "recover-update",
+          "source": "RecoverConfirm",
+          "target": "Update",
+          "label": "RC-YES",
+          "role": "transition",
+          "guardRef": "RC-YES",
+          "points": [
+            [
+              1320,
+              350
+            ],
+            [
+              1320,
+              230
+            ],
+            [
+              1485,
+              230
+            ]
+          ]
+        },
+        {
+          "id": "recover-admit",
+          "source": "RecoverConfirm",
+          "target": "Admit",
+          "label": "RC-NO",
+          "role": "retry",
+          "guardRef": "RC-NO",
+          "points": [
+            [
+              900,
+              350
+            ],
+            [
+              900,
+              230
+            ],
+            [
+              595,
+              230
+            ]
+          ]
+        },
+        {
+          "id": "error-cap",
+          "source": "ErrorHandle",
+          "target": "StopError",
+          "label": "CAP",
+          "role": "stop",
+          "guardRef": "CAP",
+          "points": [
+            [
+              850,
+              760
+            ],
+            [
+              850,
+              900
+            ]
+          ]
+        },
+        {
+          "id": "error-a4",
+          "source": "ErrorHandle",
+          "target": "StopError",
+          "label": "E-A4",
+          "role": "stop",
+          "guardRef": "E-A4",
+          "points": [
+            [
+              960,
+              760
+            ],
+            [
+              960,
+              900
+            ]
+          ]
+        },
+        {
+          "id": "error-a5",
+          "source": "ErrorHandle",
+          "target": "StopBudget",
+          "label": "E-A5",
+          "role": "stop",
+          "guardRef": "E-A5",
+          "points": [
+            [
+              700,
+              760
+            ],
+            [
+              260,
+              760
+            ],
+            [
+              260,
+              900
+            ]
+          ]
+        },
+        {
+          "id": "error-not-sent",
+          "source": "ErrorHandle",
+          "target": "Admit",
+          "label": "NOT-SENT",
+          "role": "retry",
+          "guardRef": "NOT-SENT",
+          "points": [
+            [
+              760,
+              655
+            ],
+            [
+              760,
+              230
+            ],
+            [
+              595,
+              230
+            ]
+          ]
+        },
+        {
+          "id": "error-recover",
+          "source": "ErrorHandle",
+          "target": "Admit",
+          "label": "E-RETRY",
+          "role": "retry",
+          "guardRef": "E-RETRY",
+          "points": [
+            [
+              710,
+              720
+            ],
+            [
+              710,
+              250
+            ],
+            [
+              595,
+              250
+            ]
+          ]
+        },
+        {
+          "id": "update-empty",
+          "source": "Update",
+          "target": "StopEmpty",
+          "label": "",
+          "role": "stop",
+          "guardRef": "P1"
+        },
+        {
+          "id": "update-singleton",
+          "source": "Update",
+          "target": "StopSingleton",
+          "label": "",
+          "role": "stop",
+          "guardRef": "P2"
+        },
+        {
+          "id": "update-645",
+          "source": "Update",
+          "target": "Stop645",
+          "label": "",
+          "role": "stop",
+          "guardRef": "P3"
+        },
+        {
+          "id": "update-equivalent",
+          "source": "Update",
+          "target": "StopEquivalent",
+          "label": "",
+          "role": "stop",
+          "guardRef": "P4"
+        },
+        {
+          "id": "update-budget",
+          "source": "Update",
+          "target": "StopBudget",
+          "label": "",
+          "role": "stop",
+          "guardRef": "P5",
+          "points": [
+            [
+              1660,
+              250
+            ],
+            [
+              1660,
+              850
+            ],
+            [
+              260,
+              850
+            ],
+            [
+              260,
+              900
+            ]
+          ]
+        },
+        {
+          "id": "update-admit",
+          "source": "Update",
+          "target": "Admit",
+          "label": "CONTINUE",
+          "role": "continue",
+          "guardRef": "CONTINUE",
+          "points": [
+            [
+              1485,
+              230
+            ],
+            [
+              595,
+              230
+            ]
+          ]
+        }
       ],
       "notes": [
-        {"id": "separation", "label": "Independent machines communicate through FIG-CL-TAV-04 ports; there is no cross-machine state transition.", "x": 1000, "y": 850, "w": 800, "h": 52}
-      ]
+        {
+          "id": "admit-guards",
+          "label": "A1: selectable S nonempty | A2: strictly-reducing TEST or Prep unaffordable | A3: no strictly-reducing TEST and no Prep\nA4: q unknown and Recover not eligible | A5: q unknown and Recover eligible but unaffordable",
+          "role": "boundary",
+          "x": 100,
+          "y": 1110,
+          "w": 1600,
+          "h": 135
+        },
+        {
+          "id": "execute-guards",
+          "label": "SELECT: chosen from S | VALID: TEST/Prep valid Izk | REC: Recover valid record | ERROR: execution error\nRC-YES: target confirmed | RC-NO: unconfirmed; q UNKNOWN",
+          "role": "boundary",
+          "x": 100,
+          "y": 1280,
+          "w": 1600,
+          "h": 125
+        },
+        {
+          "id": "error-guards",
+          "label": "ErrorHandle order: CAP first; then E-A4/E-A5 or retry\nE-A4: retry remains AND unknown-effect AND Recover ineligible | E-A5: retry remains AND unknown-effect AND Recover eligible but unaffordable\nNOT-SENT: confirmed not sent AND retry remains | E-RETRY: retry remains AND unknown-effect AND Recover in S",
+          "role": "boundary",
+          "x": 100,
+          "y": 1440,
+          "w": 1600,
+          "h": 180
+        },
+        {
+          "id": "update-guards",
+          "label": "P1: Hk empty | P2: singleton | P3: named 645-blocked | P4: observational equivalence | P5: selected-mode resource exhausted\nCONTINUE: |Hk| > 1 and resource remains",
+          "role": "boundary",
+          "x": 100,
+          "y": 1660,
+          "w": 1600,
+          "h": 140
+        },
+        {
+          "id": "separation",
+          "label": "Independent machines communicate through FIG-CL-TAV-04 ports; there is no cross-machine state transition. A nonempty A does not imply Execute; S empty uses A2-A5.",
+          "role": "boundary",
+          "x": 100,
+          "y": 1840,
+          "w": 1600,
+          "h": 120
+        }
+      ],
+      "typography": {
+        "nodePt": 22,
+        "edgePt": 18,
+        "notePt": 18
+      },
+      "sourceBindings": {
+        "title": "title FIG-CL-TAV-07 Two state machines\\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\\nindependent machines; communication is FIG-CL-TAV-04 ports, not a cross-machine state transition",
+        "objects": {
+          "MsessMachine": {
+            "parent": null,
+            "anchors": [
+              "state Msess as \"Msess verification session\" {"
+            ]
+          },
+          "MprotMachine": {
+            "parent": null,
+            "anchors": [
+              "state Mprot as \"Mprot protocol black box\" {"
+            ]
+          },
+          "Initial": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "}"
+            ]
+          },
+          "Idle": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "[*] --> Idle"
+            ]
+          },
+          "Admit": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "Idle --> Admit"
+            ]
+          },
+          "Select": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "Select --> Execute : chosen from S"
+            ]
+          },
+          "Execute": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "Execute --> ErrorHandle : ERROR"
+            ]
+          },
+          "Update": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "Update --> StopEmpty : P1 Hk empty"
+            ]
+          },
+          "RecoverConfirm": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "RecoverConfirm --> Update : target confirmed"
+            ]
+          },
+          "ErrorHandle": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "Execute --> ErrorHandle : ERROR"
+            ]
+          },
+          "StopEmpty": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "Update --> StopEmpty : P1 Hk empty"
+            ]
+          },
+          "StopSingleton": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "Update --> StopSingleton : P2 |Hk| == 1"
+            ]
+          },
+          "Stop645": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "Update --> Stop645 : P3 named 645-blocked"
+            ]
+          },
+          "StopEquivalent": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "Update --> StopEquivalent : P4 observational equivalence established"
+            ]
+          },
+          "StopBudget": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "Update --> StopBudget : P5 selected-mode resource exhausted"
+            ]
+          },
+          "StopNoDistinguisher": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "Admit --> StopNoDistinguisher : A3 no strictly-reducing TEST and no Prep"
+            ]
+          },
+          "StopError": {
+            "parent": "MsessMachine",
+            "anchors": [
+              "ErrorHandle --> StopError : retry cap reached"
+            ]
+          },
+          "BoundM2": {
+            "parent": "MprotMachine",
+            "anchors": [
+              "state BoundM2 as \"bound M2 INFORMATION / UPLOAD\\napproved model identity; no new behavior edges\""
+            ]
+          },
+          "PlannedScope": {
+            "parent": "MprotMachine",
+            "anchors": [
+              "state PlannedScope as \"planned CRS scope, no behavior edges\\nMedia Defined DOWNLOAD\\nOperator Defined DOWNLOAD\\nFIND\""
+            ]
+          }
+        },
+        "relations": {
+          "initial-idle": {
+            "source": "Initial",
+            "target": "Idle",
+            "anchors": [
+              "[*] --> Idle"
+            ]
+          },
+          "idle-admit": {
+            "source": "Idle",
+            "target": "Admit",
+            "anchors": [
+              "Idle --> Admit"
+            ]
+          },
+          "admit-select": {
+            "source": "Admit",
+            "target": "Select",
+            "anchors": [
+              "Admit --> Select : A1 selectable S nonempty"
+            ]
+          },
+          "admit-budget-a2": {
+            "source": "Admit",
+            "target": "StopBudget",
+            "anchors": [
+              "Admit --> StopBudget : A2 strictly-reducing TEST or Prep unaffordable"
+            ]
+          },
+          "admit-no-distinguisher": {
+            "source": "Admit",
+            "target": "StopNoDistinguisher",
+            "anchors": [
+              "Admit --> StopNoDistinguisher : A3 no strictly-reducing TEST and no Prep"
+            ]
+          },
+          "admit-error": {
+            "source": "Admit",
+            "target": "StopError",
+            "anchors": [
+              "Admit --> StopError : A4 q unknown and Recover not eligible"
+            ]
+          },
+          "admit-budget-a5": {
+            "source": "Admit",
+            "target": "StopBudget",
+            "anchors": [
+              "Admit --> StopBudget : A2 strictly-reducing TEST or Prep unaffordable"
+            ]
+          },
+          "select-execute": {
+            "source": "Select",
+            "target": "Execute",
+            "anchors": [
+              "Select --> Execute : chosen from S"
+            ]
+          },
+          "execute-update": {
+            "source": "Execute",
+            "target": "Update",
+            "anchors": [
+              "Execute --> Update : TEST or Prep valid Izk"
+            ]
+          },
+          "execute-recover": {
+            "source": "Execute",
+            "target": "RecoverConfirm",
+            "anchors": [
+              "Execute --> RecoverConfirm : Recover valid record"
+            ]
+          },
+          "execute-error": {
+            "source": "Execute",
+            "target": "ErrorHandle",
+            "anchors": [
+              "Execute --> ErrorHandle : ERROR"
+            ]
+          },
+          "recover-update": {
+            "source": "RecoverConfirm",
+            "target": "Update",
+            "anchors": [
+              "RecoverConfirm --> Update : target confirmed"
+            ]
+          },
+          "recover-admit": {
+            "source": "RecoverConfirm",
+            "target": "Admit",
+            "anchors": [
+              "RecoverConfirm --> Admit : unconfirmed; q UNKNOWN"
+            ]
+          },
+          "error-cap": {
+            "source": "ErrorHandle",
+            "target": "StopError",
+            "anchors": [
+              "ErrorHandle --> StopError : retry cap reached"
+            ]
+          },
+          "error-a4": {
+            "source": "ErrorHandle",
+            "target": "StopError",
+            "anchors": [
+              "ErrorHandle --> StopError : retry cap reached"
+            ]
+          },
+          "error-a5": {
+            "source": "ErrorHandle",
+            "target": "StopBudget",
+            "anchors": [
+              "ErrorHandle --> StopBudget : retry remaining and unknown-effect A5 Recover eligible unaffordable"
+            ]
+          },
+          "error-not-sent": {
+            "source": "ErrorHandle",
+            "target": "Admit",
+            "anchors": [
+              "ErrorHandle --> Admit : confirmed not sent and retry remaining"
+            ]
+          },
+          "error-recover": {
+            "source": "ErrorHandle",
+            "target": "Admit",
+            "anchors": [
+              "ErrorHandle --> Admit : confirmed not sent and retry remaining"
+            ]
+          },
+          "update-empty": {
+            "source": "Update",
+            "target": "StopEmpty",
+            "anchors": [
+              "Update --> StopEmpty : P1 Hk empty"
+            ]
+          },
+          "update-singleton": {
+            "source": "Update",
+            "target": "StopSingleton",
+            "anchors": [
+              "Update --> StopSingleton : P2 |Hk| == 1"
+            ]
+          },
+          "update-645": {
+            "source": "Update",
+            "target": "Stop645",
+            "anchors": [
+              "Update --> Stop645 : P3 named 645-blocked"
+            ]
+          },
+          "update-equivalent": {
+            "source": "Update",
+            "target": "StopEquivalent",
+            "anchors": [
+              "Update --> StopEquivalent : P4 observational equivalence established"
+            ]
+          },
+          "update-budget": {
+            "source": "Update",
+            "target": "StopBudget",
+            "anchors": [
+              "Update --> StopBudget : P5 selected-mode resource exhausted"
+            ]
+          },
+          "update-admit": {
+            "source": "Update",
+            "target": "Admit",
+            "anchors": [
+              "Update --> Admit : else |Hk| > 1 and resource remains"
+            ]
+          }
+        },
+        "notes": {
+          "admit-guards": [
+            "Admit --> StopBudget : A2 strictly-reducing TEST or Prep unaffordable"
+          ],
+          "execute-guards": [
+            "Execute --> Update : TEST or Prep valid Izk"
+          ],
+          "error-guards": [
+            "ErrorHandle --> StopBudget : retry remaining and unknown-effect A5 Recover eligible unaffordable"
+          ],
+          "update-guards": [
+            "Update --> StopBudget : P5 selected-mode resource exhausted"
+          ],
+          "separation": [
+            "A nonempty does not imply Execute. S empty uses A2-A5."
+          ]
+        },
+        "manualReview": [
+          "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
+          "Human promotion remains required for interpretation, guard completeness, and publication layout."
+        ]
+      }
     },
     {
       "id": "FIG-CL-TAV-08",
@@ -340,31 +3749,239 @@
       "diagramType": "parametric",
       "status": "DRAFT-REDRAW",
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-08-parametric.puml",
-      "sourceSha256": "efd1aeb9e8329b3a2cb1f18a6128fcb62f5ef27f227b6a3b4d3a4971a18a1381",
+      "sourceSha256": "c750c58f3082b1613695828f85879e6f7218001bd3e90691a2405f87ad8894b8",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-08-parametric.drawio",
-      "drawioSha256": "2eff403ee4aeeb50fc6d5645d8853c1fd9c65316b9dd23ab6f9606bc2c9c191b",
-      "canvas": {"width": 1500, "height": 760, "publicationWidth": "double-column"},
+      "drawioSha256": "609cbb9b545a5623d474c10c3220c53220b794e287d89e25dd9b6fb1be9c8115",
+      "canvas": {
+        "width": 1500,
+        "height": 760,
+        "publicationWidth": "double-column"
+      },
       "groups": [],
       "entities": [
-        {"id": "I_allow", "label": "I_allow <<constraint>>\nI: allowed timing interval", "role": "constraint", "x": 60, "y": 120, "w": 250, "h": 80},
-        {"id": "eps", "label": "eps <<constraint>>\nepsilon: measurement error bound", "role": "constraint", "x": 60, "y": 280, "w": 250, "h": 80},
-        {"id": "J_meas", "label": "J_meas <<constraint>>\nJ: feasible interval from measurement", "role": "constraint", "x": 420, "y": 200, "w": 280, "h": 80},
-        {"id": "cmin_b", "label": "cmin_b <<constraint>>\ncmin > 0; cost(t) >= cmin\ncost(ERROR) >= cmin", "role": "constraint", "x": 60, "y": 490, "w": 280, "h": 94},
-        {"id": "budget", "label": "budget <<constraint>>\nB finite XOR Kmax finite", "role": "constraint", "x": 440, "y": 500, "w": 250, "h": 76},
-        {"id": "score", "label": "score <<constraint>>\ns(t) = worst remaining |Hk|\nover Obs(t,qk)", "role": "constraint", "x": 820, "y": 500, "w": 280, "h": 92},
-        {"id": "update", "label": "update <<constraint>>\nHk+1 = {h in Hk | O(h,t,qk) intersects Izk}", "role": "constraint", "x": 1040, "y": 210, "w": 380, "h": 92}
+        {
+          "id": "I_allow",
+          "label": "I_allow <<constraint>>\nI: allowed timing interval",
+          "role": "constraint",
+          "x": 60,
+          "y": 120,
+          "w": 250,
+          "h": 80
+        },
+        {
+          "id": "eps",
+          "label": "eps <<constraint>>\nepsilon: measurement error bound",
+          "role": "constraint",
+          "x": 60,
+          "y": 280,
+          "w": 250,
+          "h": 80
+        },
+        {
+          "id": "J_meas",
+          "label": "J_meas <<constraint>>\nJ: feasible interval from measurement",
+          "role": "constraint",
+          "x": 420,
+          "y": 200,
+          "w": 280,
+          "h": 80
+        },
+        {
+          "id": "cmin_b",
+          "label": "cmin_b <<constraint>>\ncmin > 0; cost(t) >= cmin\ncost(ERROR) >= cmin",
+          "role": "constraint",
+          "x": 60,
+          "y": 490,
+          "w": 280,
+          "h": 94
+        },
+        {
+          "id": "budget",
+          "label": "budget <<constraint>>\nB finite XOR Kmax finite",
+          "role": "constraint",
+          "x": 440,
+          "y": 500,
+          "w": 250,
+          "h": 76
+        },
+        {
+          "id": "score",
+          "label": "score <<constraint>>\ns(t) = worst remaining |Hk|\nover Obs(t,qk)",
+          "role": "constraint",
+          "x": 820,
+          "y": 500,
+          "w": 280,
+          "h": 92
+        },
+        {
+          "id": "update",
+          "label": "update <<constraint>>\nHk+1 = {h in Hk | O(h,t,qk) intersects Izk}",
+          "role": "constraint",
+          "x": 1040,
+          "y": 210,
+          "w": 380,
+          "h": 92
+        }
       ],
       "relations": [
-        {"id": "allow-meas", "source": "I_allow", "target": "J_meas", "label": "", "role": "constraint-link"},
-        {"id": "eps-meas", "source": "eps", "target": "J_meas", "label": "", "role": "constraint-link"},
-        {"id": "meas-update", "source": "J_meas", "target": "update", "label": "", "role": "constraint-link"},
-        {"id": "cmin-budget", "source": "cmin_b", "target": "budget", "label": "", "role": "constraint-link"},
-        {"id": "score-update", "source": "score", "target": "update", "label": "", "role": "constraint-link"},
-        {"id": "budget-score", "source": "budget", "target": "score", "label": "", "role": "constraint-link"}
+        {
+          "id": "allow-meas",
+          "source": "I_allow",
+          "target": "J_meas",
+          "label": "",
+          "role": "constraint-link"
+        },
+        {
+          "id": "eps-meas",
+          "source": "eps",
+          "target": "J_meas",
+          "label": "",
+          "role": "constraint-link"
+        },
+        {
+          "id": "meas-update",
+          "source": "J_meas",
+          "target": "update",
+          "label": "",
+          "role": "constraint-link"
+        },
+        {
+          "id": "cmin-budget",
+          "source": "cmin_b",
+          "target": "budget",
+          "label": "",
+          "role": "constraint-link"
+        },
+        {
+          "id": "score-update",
+          "source": "score",
+          "target": "update",
+          "label": "",
+          "role": "constraint-link"
+        },
+        {
+          "id": "budget-score",
+          "source": "budget",
+          "target": "score",
+          "label": "",
+          "role": "constraint-link"
+        }
       ],
       "notes": [
-        {"id": "unsolved", "label": "Constraints are displayed, not claimed solved. Positive-but-vanishing costs are not a termination proof. ERROR uses the selected constraint. Mode is BUDGET XOR ROUNDS.", "x": 260, "y": 650, "w": 980, "h": 58}
-      ]
+        {
+          "id": "unsolved",
+          "label": "Constraints are displayed, not claimed solved. Positive-but-vanishing costs are not a termination proof. ERROR uses the selected constraint. Mode is BUDGET XOR ROUNDS.",
+          "x": 260,
+          "y": 650,
+          "w": 980,
+          "h": 58
+        }
+      ],
+      "typography": {
+        "nodePt": 22,
+        "edgePt": 18,
+        "notePt": 18
+      },
+      "sourceBindings": {
+        "title": "title FIG-CL-TAV-08 Parametric\\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\\nconstraints shown, not claimed solved",
+        "objects": {
+          "I_allow": {
+            "parent": null,
+            "anchors": [
+              "I : allowed timing interval"
+            ]
+          },
+          "eps": {
+            "parent": null,
+            "anchors": [
+              "epsilon : measurement error bound"
+            ]
+          },
+          "J_meas": {
+            "parent": null,
+            "anchors": [
+              "J : feasible interval from measurement"
+            ]
+          },
+          "cmin_b": {
+            "parent": null,
+            "anchors": [
+              "cost(ERROR) >= cmin"
+            ]
+          },
+          "budget": {
+            "parent": null,
+            "anchors": [
+              "B finite XOR Kmax finite"
+            ]
+          },
+          "score": {
+            "parent": null,
+            "anchors": [
+              "over Obs(t,qk)"
+            ]
+          },
+          "update": {
+            "parent": null,
+            "anchors": [
+              "Hk+1 = {h in Hk | O(h,t,qk) intersects Izk}"
+            ]
+          }
+        },
+        "relations": {
+          "allow-meas": {
+            "source": "I_allow",
+            "target": "J_meas",
+            "anchors": [
+              "I_allow .. J_meas"
+            ]
+          },
+          "eps-meas": {
+            "source": "eps",
+            "target": "J_meas",
+            "anchors": [
+              "eps .. J_meas"
+            ]
+          },
+          "meas-update": {
+            "source": "J_meas",
+            "target": "update",
+            "anchors": [
+              "J_meas .. update"
+            ]
+          },
+          "cmin-budget": {
+            "source": "cmin_b",
+            "target": "budget",
+            "anchors": [
+              "cmin_b .. budget"
+            ]
+          },
+          "score-update": {
+            "source": "score",
+            "target": "update",
+            "anchors": [
+              "score .. update"
+            ]
+          },
+          "budget-score": {
+            "source": "budget",
+            "target": "score",
+            "anchors": [
+              "budget .. score"
+            ]
+          }
+        },
+        "notes": {
+          "unsolved": [
+            "Selected mode is BUDGET XOR ROUNDS."
+          ]
+        },
+        "manualReview": [
+          "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
+          "Human promotion remains required for interpretation, guard completeness, and publication layout."
+        ]
+      }
     },
     {
       "id": "FIG-CL-TAV-09",
@@ -372,34 +3989,338 @@
       "diagramType": "experiment-architecture",
       "status": "DRAFT-REDRAW",
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-09-experiment-architecture.puml",
-      "sourceSha256": "0b0ddb1b0afdcea10eca963c9a923fd2adc56f6b87d136b0604b58e84cd49e54",
+      "sourceSha256": "a882a7234e59c98103cdd95dc0254c051b5c3cea30442e340af800125baf2a72",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-09-experiment-architecture.drawio",
-      "drawioSha256": "c2c4072fcd46b6b53529914fa1772a4b04ab1753619296c855bda386be7566a7",
-      "canvas": {"width": 1600, "height": 820, "publicationWidth": "double-column"},
+      "drawioSha256": "6a6c0afe74ced800cbe6602fa8252f6f08c2eecec22c49a73e39840f10456ee8",
+      "canvas": {
+        "width": 1600,
+        "height": 820,
+        "publicationWidth": "double-column"
+      },
       "groups": [],
       "entities": [
-        {"id": "Scene", "label": "Controlled scene / config\nIUT, fault plan, resource mode", "role": "external", "x": 70, "y": 90, "w": 300, "h": 82},
-        {"id": "Truth", "label": "Independent truth record\nevaluator only", "role": "truth", "x": 620, "y": 80, "w": 300, "h": 82},
-        {"id": "Arms", "label": "Comparison arms\nCL-T / CL-A / CL-TA / CL-LOOP", "role": "core", "x": 70, "y": 300, "w": 330, "h": 88},
-        {"id": "Obs", "label": "Observations and resource log\nalgorithm-visible", "role": "evidence", "x": 500, "y": 300, "w": 320, "h": 88},
-        {"id": "Valid", "label": "Validity check\nunconfirmed / invalid / equivalent / abstain", "role": "decision", "x": 980, "y": 290, "w": 360, "h": 98},
-        {"id": "Metrics", "label": "Metrics with denominators\nEXP-CLTAV-DETECT / LOCATE / ABLATION", "role": "evidence", "x": 760, "y": 500, "w": 440, "h": 92},
-        {"id": "Claims", "label": "RQ / claims\nno unrun numbers", "role": "risk", "x": 790, "y": 680, "w": 380, "h": 66}
+        {
+          "id": "Scene",
+          "label": "Controlled scene / config\nIUT, fault plan, resource mode",
+          "role": "external",
+          "x": 70,
+          "y": 90,
+          "w": 300,
+          "h": 82
+        },
+        {
+          "id": "Truth",
+          "label": "Independent truth record\nevaluator only",
+          "role": "truth",
+          "x": 620,
+          "y": 80,
+          "w": 300,
+          "h": 82
+        },
+        {
+          "id": "Arms",
+          "label": "Comparison arms\nCL-T / CL-A / CL-TA / CL-LOOP",
+          "role": "core",
+          "x": 70,
+          "y": 300,
+          "w": 330,
+          "h": 88
+        },
+        {
+          "id": "Obs",
+          "label": "Observations and resource log\nalgorithm-visible",
+          "role": "evidence",
+          "x": 500,
+          "y": 300,
+          "w": 320,
+          "h": 88
+        },
+        {
+          "id": "Valid",
+          "label": "Validity check\nunconfirmed / invalid / equivalent / abstain",
+          "role": "decision",
+          "x": 980,
+          "y": 290,
+          "w": 360,
+          "h": 98
+        },
+        {
+          "id": "Metrics",
+          "label": "Metrics with denominators\nEXP-CLTAV-DETECT / LOCATE / ABLATION",
+          "role": "evidence",
+          "x": 760,
+          "y": 500,
+          "w": 440,
+          "h": 92
+        },
+        {
+          "id": "Claims",
+          "label": "RQ / claims\nno unrun numbers",
+          "role": "risk",
+          "x": 790,
+          "y": 680,
+          "w": 380,
+          "h": 66
+        }
       ],
       "relations": [
-        {"id": "scene-arms", "source": "Scene", "target": "Arms", "label": "same declared pool and action library", "role": "flow", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -14},
-        {"id": "scene-truth", "source": "Scene", "target": "Truth", "label": "injection plan + execution confirmation", "role": "evaluation", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": 16},
-        {"id": "truth-arms", "source": "Truth", "target": "Arms", "label": "FORBIDDEN LEAKAGE", "role": "forbidden", "exitX": 0, "exitY": 0.75, "entryX": 1, "entryY": 0.5, "labelY": -14, "points": [[450, 142], [450, 344]]},
-        {"id": "arms-obs", "source": "Arms", "target": "Obs", "label": "algorithm-visible Izk, q, cost", "role": "flow", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5, "labelY": -14},
-        {"id": "obs-valid", "source": "Obs", "target": "Valid", "label": "", "role": "flow", "exitX": 1, "exitY": 0.5, "entryX": 0, "entryY": 0.5},
-        {"id": "truth-valid", "source": "Truth", "target": "Valid", "label": "evaluator-only confirmation", "role": "evaluation", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -14, "points": [[770, 230], [1160, 230]]},
-        {"id": "valid-metrics", "source": "Valid", "target": "Metrics", "label": "attempt and answered-subset denominators", "role": "evaluation", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -14},
-        {"id": "metrics-claims", "source": "Metrics", "target": "Claims", "label": "comparable projections only", "role": "evidence-only", "exitX": 0.5, "exitY": 1, "entryX": 0.5, "entryY": 0, "labelY": -14}
+        {
+          "id": "scene-arms",
+          "source": "Scene",
+          "target": "Arms",
+          "label": "same declared pool and action library",
+          "role": "flow",
+          "exitX": 0.5,
+          "exitY": 1,
+          "entryX": 0.5,
+          "entryY": 0,
+          "labelY": -14
+        },
+        {
+          "id": "scene-truth",
+          "source": "Scene",
+          "target": "Truth",
+          "label": "truth record",
+          "role": "evaluation",
+          "exitX": 1,
+          "exitY": 0.5,
+          "entryX": 0,
+          "entryY": 0.5,
+          "labelY": 16
+        },
+        {
+          "id": "truth-arms",
+          "source": "Truth",
+          "target": "Arms",
+          "label": "FORBIDDEN",
+          "role": "forbidden",
+          "exitX": 0,
+          "exitY": 0.75,
+          "entryX": 1,
+          "entryY": 0.5,
+          "labelY": -14,
+          "points": [
+            [
+              450,
+              142
+            ],
+            [
+              450,
+              344
+            ]
+          ]
+        },
+        {
+          "id": "arms-obs",
+          "source": "Arms",
+          "target": "Obs",
+          "label": "Izk, q, cost",
+          "role": "flow",
+          "exitX": 1,
+          "exitY": 0.5,
+          "entryX": 0,
+          "entryY": 0.5,
+          "labelY": -14
+        },
+        {
+          "id": "obs-valid",
+          "source": "Obs",
+          "target": "Valid",
+          "label": "",
+          "role": "flow",
+          "exitX": 1,
+          "exitY": 0.5,
+          "entryX": 0,
+          "entryY": 0.5
+        },
+        {
+          "id": "truth-valid",
+          "source": "Truth",
+          "target": "Valid",
+          "label": "evaluator only",
+          "role": "evaluation",
+          "exitX": 0.5,
+          "exitY": 1,
+          "entryX": 0.5,
+          "entryY": 0,
+          "labelY": -14,
+          "points": [
+            [
+              770,
+              230
+            ],
+            [
+              1160,
+              230
+            ]
+          ]
+        },
+        {
+          "id": "valid-metrics",
+          "source": "Valid",
+          "target": "Metrics",
+          "label": "denominators",
+          "role": "evaluation",
+          "exitX": 0.5,
+          "exitY": 1,
+          "entryX": 0.5,
+          "entryY": 0,
+          "labelY": -14
+        },
+        {
+          "id": "metrics-claims",
+          "source": "Metrics",
+          "target": "Claims",
+          "label": "comparable only",
+          "role": "evidence-only",
+          "exitX": 0.5,
+          "exitY": 1,
+          "entryX": 0.5,
+          "entryY": 0,
+          "labelY": -14
+        }
       ],
       "notes": [
-        {"id": "truth-boundary", "label": "Evaluator truth must not enter IF-SELECT-ADMIT, IF-PRED-OBS, IF-HIST-UPDATE, or IF-EXECUTE-RECORD.", "x": 1030, "y": 70, "w": 450, "h": 68},
-        {"id": "fairness", "label": "Same pool does not gift later CL-LOOP records to other arms and does not invent sampling cost for CL-A.", "x": 80, "y": 500, "w": 500, "h": 66}
-      ]
+        {
+          "id": "truth-boundary",
+          "label": "Evaluator truth must not enter IF-SELECT-ADMIT, IF-PRED-OBS, IF-HIST-UPDATE, or IF-EXECUTE-RECORD.",
+          "x": 1030,
+          "y": 70,
+          "w": 450,
+          "h": 68
+        },
+        {
+          "id": "fairness",
+          "label": "Same pool does not gift later CL-LOOP records to other arms and does not invent sampling cost for CL-A.",
+          "x": 80,
+          "y": 500,
+          "w": 500,
+          "h": 66
+        }
+      ],
+      "typography": {
+        "nodePt": 22,
+        "edgePt": 18,
+        "notePt": 18
+      },
+      "sourceBindings": {
+        "title": "title FIG-CL-TAV-09 Experiment architecture\\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\\nevaluator-only truth is never an algorithm input",
+        "objects": {
+          "Scene": {
+            "parent": null,
+            "anchors": [
+              "rectangle \"Controlled scene / config\\n(IUT, fault plan, resource mode)\" as Scene"
+            ]
+          },
+          "Truth": {
+            "parent": null,
+            "anchors": [
+              "rectangle \"Independent truth record\\n(evaluator only)\" as Truth"
+            ]
+          },
+          "Arms": {
+            "parent": null,
+            "anchors": [
+              "rectangle \"Comparison arms\\nCL-T / CL-A / CL-TA / CL-LOOP\" as Arms"
+            ]
+          },
+          "Obs": {
+            "parent": null,
+            "anchors": [
+              "rectangle \"Observations and resource log\\n(algorithm-visible)\" as Obs"
+            ]
+          },
+          "Valid": {
+            "parent": null,
+            "anchors": [
+              "rectangle \"Validity check\\n(invalid, equivalent, missing)\" as Valid"
+            ]
+          },
+          "Metrics": {
+            "parent": null,
+            "anchors": [
+              "rectangle \"Metrics with denominators\\nEXP-CLTAV-DETECT / LOCATE / ABLATION\" as Metrics"
+            ]
+          },
+          "Claims": {
+            "parent": null,
+            "anchors": [
+              "rectangle \"RQ / claims\\n(no unrun numbers)\" as Claims"
+            ]
+          }
+        },
+        "relations": {
+          "scene-arms": {
+            "source": "Scene",
+            "target": "Arms",
+            "anchors": [
+              "Scene --> Arms : same declared pool and action library"
+            ]
+          },
+          "scene-truth": {
+            "source": "Scene",
+            "target": "Truth",
+            "anchors": [
+              "Scene --> Truth : injection plan + execution confirmation"
+            ]
+          },
+          "truth-arms": {
+            "source": "Truth",
+            "target": "Arms",
+            "anchors": [
+              "Truth -[#red,dashed]-> Arms : forbidden leakage"
+            ]
+          },
+          "arms-obs": {
+            "source": "Arms",
+            "target": "Obs",
+            "anchors": [
+              "Arms --> Obs : algorithm-visible Izk, q, cost"
+            ]
+          },
+          "obs-valid": {
+            "source": "Obs",
+            "target": "Valid",
+            "anchors": [
+              "Obs --> Valid"
+            ]
+          },
+          "truth-valid": {
+            "source": "Truth",
+            "target": "Valid",
+            "anchors": [
+              "Truth --> Valid : evaluator-only confirmation"
+            ]
+          },
+          "valid-metrics": {
+            "source": "Valid",
+            "target": "Metrics",
+            "anchors": [
+              "Valid --> Metrics : attempt and answered-subset denominators"
+            ]
+          },
+          "metrics-claims": {
+            "source": "Metrics",
+            "target": "Claims",
+            "anchors": [
+              "Metrics --> Claims : comparable projections only"
+            ]
+          }
+        },
+        "notes": {
+          "truth-boundary": [
+            "Evaluator truth must not enter"
+          ],
+          "fairness": [
+            "Same pool is not a gift of later CL-LOOP"
+          ]
+        },
+        "manualReview": [
+          "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
+          "Human promotion remains required for interpretation, guard completeness, and publication layout."
+        ]
+      }
     }
-  ]
+  ],
+  "textIdentity": "UTF8-LF-v1"
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "updatedAt": "2026-10-13",
+  "updatedAt": "2026-10-15",
   "repository": {
     "role": "instance",
     "displayRole": "ARINC 615A Profile / Binding / Configuration / instance engineering and evidence owner",
@@ -13,22 +13,26 @@
       "CR-2026-017 / DD-041 authorizes a separately owned, read-only offline capture-to-evidence engineering candidate: packet identity, finite IPv4/UDP/TFTP reconstruction, bounded UPLOAD/INFORMATION events and traceable reporting; it remains subject to independent Draft-PR review.",
       "CR-2026-018 / DD-042 integrates accepted literature evidence into the TAES draft, bibliography, bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.",
       "Both lines began at c5296aedef961ac3d5846ea9ef28847eea928132 in independent worktrees and require serial reconciliation; the later line preserves both CR/DD records and is reviewed on its new head.",
+      "CR-2026-020 / DD-044 adds nine source-bound, transactional Draw.io model redraw candidates for IEEE TAES visual review; PlantUML remains authority and every redraw remains DRAFT-REDRAW.",
       "The local historical corpus remains exploratory development input only. No confirmatory result, implementation completion, Configuration, capability, conformance, independent scientific approval, submission, baseline or tag is created."
     ],
     "summaryZh": [
       "CR-2026-017／DD-041 授权一条单独负责、只读的“捕获到证据”离线工程候选线：数据包身份、有限 IPv4／UDP／TFTP 重建、有界 UPLOAD／INFORMATION 事件和可追踪报告；它仍须在 Draft PR 上接受独立评审。",
       "CR-2026-018／DD-042 在不改变算法、接口和实验臂的前提下，把已接受文献证据融入 TAES 初稿、参考文献、有界 C1／C2 措辞与评价记账。",
       "两条线均从 c5296aedef961ac3d5846ea9ef28847eea928132 起步，在独立工作树开发并需要串行协调；后合入者保留两套 CR／DD 记录并在新 Head 上接受评审。",
+      "CR-2026-020／DD-044 增加九张具来源绑定、事务生成的 IEEE TAES Draw.io 模型图候选；PlantUML 保持权威，全部重绘保持 DRAFT-REDRAW。",
       "本地历史语料继续仅作探索性开发输入。本增量不产生确认性结果、实现完成、Configuration、能力、符合性、独立科学批准、投稿、baseline 或 tag。"
     ],
     "stateChanges": [
       "CR-2026-017 / DD-041 authorize one bounded offline intake implementation increment on a Draft PR; M3 remains blocked.",
       "CR-2026-018 / DD-042 authorizes evidence-bounded TAES positioning and evaluation accounting without changing the controlled method.",
+      "CR-2026-020 / DD-044 authorizes only an editable publication-redraw workflow with finite source bindings, topology checks and draft exports; reader-figure promotion remains blocked on human review.",
       "currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims."
     ],
     "stateChangesZh": [
       "CR-2026-017／DD-041 授权在 Draft PR 上实施一个有界离线接入增量；M3 保持阻塞。",
       "CR-2026-018／DD-042 授权有证据边界的 TAES 定位与评价记账，不改变受控方法。",
+      "CR-2026-020／DD-044 仅授权具有限来源绑定、拓扑检查和草稿导出的可编辑论文重绘工作流；reader 图晋级仍等待人工评审。",
       "对 M3、主动执行和能力主张而言，currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。"
     ],
     "unchangedBoundaries": [
@@ -68,10 +72,12 @@
     },
   "nextSteps": [
     "Complete the authorized offline intake increment under CR-2026-017 / DD-041, then obtain independent review on its unchanged Draft PR Head. Establish runtime integrity and independent experimental truth before capability or conformance claims; do not start M3 from this implementation alone.",
+    "Complete final-size visual review and independent final-head review of the CR-2026-020 model redraw candidates before replacing any reader SVG or manuscript figure.",
     "Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth."
   ],
   "nextStepsZh": [
     "完成 CR-2026-017／DD-041 下的授权离线接入增量，再在不变 Draft PR Head 上取得独立评审。建立运行完整性与独立实验真值后方可提出能力或符合性主张；不得仅凭本实现启动 M3。",
+    "在替换任何 reader SVG 或稿件图之前，完成 CR-2026-020 模型重绘候选的最终尺寸目检和最终 Head 独立评审。",
     "保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。"
   ],
     "blockedActions": [

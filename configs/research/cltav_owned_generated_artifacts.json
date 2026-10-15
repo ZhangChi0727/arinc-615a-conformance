@@ -60,6 +60,105 @@
       "generator": "pdflatex via scripts/build_taes_manuscript.py",
       "notProprietarySource": true,
       "safetyCheck": "TAES first-draft supplement; accepted algorithm modules; no ARINC source-text payload"
+    },
+    {
+      "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-01-context.pdf",
+      "kind": "OWNED-GENERATED-PUBLICATION",
+      "trackedSources": [
+        "configs/research/cltav_model_figure_manifest.json",
+        "docs/research/publication/models/FIG-CL-TAV-01-context.puml"
+      ],
+      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "notProprietarySource": true,
+      "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
+    },
+    {
+      "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-02-requirement-layers.pdf",
+      "kind": "OWNED-GENERATED-PUBLICATION",
+      "trackedSources": [
+        "configs/research/cltav_model_figure_manifest.json",
+        "docs/research/publication/models/FIG-CL-TAV-02-requirement-layers.puml"
+      ],
+      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "notProprietarySource": true,
+      "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
+    },
+    {
+      "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-03-bdd.pdf",
+      "kind": "OWNED-GENERATED-PUBLICATION",
+      "trackedSources": [
+        "configs/research/cltav_model_figure_manifest.json",
+        "docs/research/publication/models/FIG-CL-TAV-03-bdd.puml"
+      ],
+      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "notProprietarySource": true,
+      "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
+    },
+    {
+      "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-04-ibd.pdf",
+      "kind": "OWNED-GENERATED-PUBLICATION",
+      "trackedSources": [
+        "configs/research/cltav_model_figure_manifest.json",
+        "docs/research/publication/models/FIG-CL-TAV-04-ibd.puml"
+      ],
+      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "notProprietarySource": true,
+      "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
+    },
+    {
+      "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-05-closed-loop-activity.pdf",
+      "kind": "OWNED-GENERATED-PUBLICATION",
+      "trackedSources": [
+        "configs/research/cltav_model_figure_manifest.json",
+        "docs/research/publication/models/FIG-CL-TAV-05-closed-loop-activity.puml"
+      ],
+      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "notProprietarySource": true,
+      "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
+    },
+    {
+      "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-06-diagnostic-sequence.pdf",
+      "kind": "OWNED-GENERATED-PUBLICATION",
+      "trackedSources": [
+        "configs/research/cltav_model_figure_manifest.json",
+        "docs/research/publication/models/FIG-CL-TAV-06-diagnostic-sequence.puml"
+      ],
+      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "notProprietarySource": true,
+      "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
+    },
+    {
+      "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-07-two-state-machines.pdf",
+      "kind": "OWNED-GENERATED-PUBLICATION",
+      "trackedSources": [
+        "configs/research/cltav_model_figure_manifest.json",
+        "docs/research/publication/models/FIG-CL-TAV-07-two-state-machines.puml"
+      ],
+      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "notProprietarySource": true,
+      "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
+    },
+    {
+      "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-08-parametric.pdf",
+      "kind": "OWNED-GENERATED-PUBLICATION",
+      "trackedSources": [
+        "configs/research/cltav_model_figure_manifest.json",
+        "docs/research/publication/models/FIG-CL-TAV-08-parametric.puml"
+      ],
+      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "notProprietarySource": true,
+      "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
+    },
+    {
+      "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-09-experiment-architecture.pdf",
+      "kind": "OWNED-GENERATED-PUBLICATION",
+      "trackedSources": [
+        "configs/research/cltav_model_figure_manifest.json",
+        "docs/research/publication/models/FIG-CL-TAV-09-experiment-architecture.puml"
+      ],
+      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "notProprietarySource": true,
+      "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
     }
   ]
 }

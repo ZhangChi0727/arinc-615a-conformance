@@ -1134,6 +1134,30 @@ are required before acceptance.  This decision supersedes CR-2026-016 only for
 the narrow implementation authorization, not for its historical
 specification-only meaning.
 
+## DD-044 — Source-bound transactional model-figure redraws
+
+**Decision:** The nine CL-TAV Draw.io files are editable publication redraws
+derived from the matching PlantUML authorities. Their manifest uses canonical
+UTF-8/LF identities and finite title, object, relation and note bindings;
+object parents and relation endpoints are bound independently of the generated
+XML. The shared validator checks actual graph topology, polarity and inventory.
+Generation rejects path/link escapes, preflights the complete batch, stages on
+the repository volume and rolls back every prior output on installation failure.
+All redraws remain `DRAFT-REDRAW` until export, final-size inspection,
+manuscript insertion inspection and human semantic review are complete.
+
+**Why:** Hash-only XML comparison can accept coordinated drift, and per-file
+overwrites can leave a mixed generation after failure. A finite source-bound
+inventory plus transactional installation makes the publication view auditable
+without promoting it into a second model authority.
+
+**Scope:** Draw.io generation, validation, layout and review exports under
+CR-2026-020. PlantUML, algorithms, interfaces, reader SVGs, experiments and
+scientific claims are unchanged.
+
+**Status:** Candidate under CR-2026-020; final-head CI and independent review
+required. Reader-figure promotion remains a separate human decision.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -1694,6 +1718,24 @@ CRS、M2、开发合同、实验臂或结果。
 **范围：** 仅稿件结构、页预算、占位与写作门禁。
 
 **状态：** 在 CR-2026-015 下为候选。
+
+## DD-044——来源绑定、事务式模型图重绘
+
+**决定：** 九张 CL-TAV Draw.io 文件是从对应 PlantUML 权威派生的可编辑论文
+重绘。其 manifest 使用规范化 UTF-8／LF 身份及有限的标题、对象、关系和注记绑定；
+对象父边界与关系端点独立于生成 XML 进行绑定。共享检查器验证真实图拓扑、极性和
+封闭清单。生成过程拒绝路径／链接逃逸，预检完整批次，在仓库卷内暂存，并在安装
+失败时回滚所有既有输出。完成导出、最终尺寸目检、稿件插入检查和人工语义复核前，
+全部重绘保持 `DRAFT-REDRAW`。
+
+**理由：** 仅比较 XML 散列可能接受协同漂移，逐文件覆盖也可能在失败后留下混合
+代次。有限来源绑定清单和事务安装让论文视图可审计，同时不把它晋级为第二模型权威。
+
+**范围：** CR-2026-020 下的 Draw.io 生成、验证、布局和评审导出；PlantUML、算法、
+接口、reader SVG、实验和科学主张保持不变。
+
+**状态：** 在 CR-2026-020 下为候选；需要最终 Head CI 和独立评审。reader 图晋级
+仍是单独的人工决定。
 
 ## DD-036——算法呈现层、契约与等价性验收
 

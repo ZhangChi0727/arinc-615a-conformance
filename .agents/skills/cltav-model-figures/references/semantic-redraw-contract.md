@@ -37,9 +37,24 @@ defines the abbreviation.
 - interpretation note: `note-<manifest-id>`.
 
 The checker compares those identities, endpoints, semantic labels, relation
-roles, the bound PlantUML SHA-256, and the Draw.io source SHA-256. After an
+roles, actual vertex/edge flags, parents, arrow polarity, guard references,
+the finite title/object/relation/note source bindings, the bound canonical
+PlantUML SHA-256, and the canonical Draw.io source SHA-256. Canonical text
+identity is UTF-8 with every line ending normalized to LF; this tolerates
+platform checkout conversion but not content drift. After an
 intentional manual layout edit, review the rendered result and deliberately
 refresh `drawioSha256`; unexplained hash drift is a failed integrity check.
+
+The manifest inventory is closed: rendered or semantic cells not declared in
+the inventory are errors. Source bindings also retain object parents and
+relation endpoints so editing the manifest and XML together cannot erase the
+PlantUML-bound topology. Short visible labels require a bound source label and
+an explicit note or legend that restores the interpretation.
+
+All paths are repository-relative forward-slash paths to ordinary files.
+Generation rejects traversal and link/reparse escapes, preflights all nine
+authorities and generated identities before writing, stages on the repository
+volume, and restores every prior output if installation fails.
 
 ## Redraw lifecycle
 

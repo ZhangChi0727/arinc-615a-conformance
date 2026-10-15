@@ -110,6 +110,15 @@ not replace a reader SVG until semantic checks, final-size rendering, manuscript
 insertion inspection, and human review pass. The quantitative manifest remains
 separate and does not duplicate either authority.
 
+The Draw.io inventory uses `UTF8-LF-v1` canonical text identity and finite
+source bindings for every title, object, relation, and interpretation note.
+The shared validator checks real XML topology (including vertex/edge flags,
+parents, endpoints, arrow polarity, guard references, and undeclared cells),
+rejects path/link escapes, and regenerates the nine-file batch transactionally.
+Generated SVG/PDF files under `artifacts/publications/cltav/model-drafts/`
+remain review exports while status is `DRAFT-REDRAW`; they do not replace the
+reader SVGs or establish manuscript acceptance.
+
 ## 5. Validation
 
 Run from the repository root:

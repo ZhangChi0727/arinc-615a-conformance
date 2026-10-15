@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import importlib.util
 import json
 import shutil
 from pathlib import Path
@@ -250,6 +251,16 @@ def validate_environment(root: Path = ROOT) -> list[str]:
             model_figures = model_figure_data.get("figures")
             if not isinstance(model_figures, list) or len(model_figures) != 9:
                 errors.append("model figure manifest must contain nine figures")
+            model_script = root / ".agents/skills/cltav-model-figures/scripts/model_drawio.py"
+            try:
+                spec = importlib.util.spec_from_file_location("cltav_model_drawio_environment", model_script)
+                if spec is None or spec.loader is None:
+                    raise ImportError("cannot create model-figure validator module")
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+                errors.extend(f"model figure: {item}" for item in module.validate_package(root))
+            except (OSError, ImportError, ValueError) as exc:
+                errors.append(f"cannot run model-figure validator: {exc}")
 
     skills = data.get("skills")
     if not isinstance(skills, list) or not skills:

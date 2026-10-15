@@ -2341,6 +2341,16 @@ def _figure05_control_errors(graphs: dict, found_pairs: set[tuple[str, str]], ro
 def cltav_figure_errors() -> list[str]:
     """Reader SVG completeness, labeled structural edges, and XML-valid edges."""
     errors: list[str] = []
+    model_script = ROOT / ".agents/skills/cltav-model-figures/scripts/model_drawio.py"
+    try:
+        spec = importlib.util.spec_from_file_location("cltav_model_drawio_baseline", model_script)
+        if spec is None or spec.loader is None:
+            raise ImportError("cannot create model-figure validator module")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        errors.extend(f"model redraw: {item}" for item in module.validate_package(ROOT))
+    except (OSError, ImportError, ValueError) as exc:
+        errors.append(f"cannot run model-redraw validator: {exc}")
     critical = {
         "FIG-CL-TAV-01-context.svg",
         "FIG-CL-TAV-05-closed-loop-activity.svg",
