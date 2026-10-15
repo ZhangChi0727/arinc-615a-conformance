@@ -152,11 +152,15 @@ answered decisions; stop class alone cannot count as singleton localization.
 Every primary metric is linked to a candidate analysis plan and an open freeze
 decision. These closures improve auditability only and do not advance C1, C2,
 DETECT, LOCATE or ABLATION status.
-The correction contract additionally requires a safe algorithm-visible scene
-projection, evaluator-only truth/equivalence fields, same-scene reciprocal-arm
-pairing with independent resets, ERROR history preservation, closed-interval T5
-classification, one resource mode per session, and a missing-input
-`WAIT-DEC-SAMPLE` branch. These remain design obligations, not observed evidence.
+The correction contract additionally requires an exact typed algorithm-visible
+member allowlist, evaluator-only truth/equivalence fields, parent-specific
+pairing derived from registered construction identity and confirmed resets,
+explicit truth-scorable and truth-missing flows, update-status-based ERROR
+preservation and empty/singleton priority, the source-bound CRS-M1-00101 status
+file/abort timeline, closed-interval T5 classification, one resource mode per
+session, and statistical branches derived from independence, pair, or cluster
+evidence. Only the independent Bernoulli branch currently names a sourced
+interval candidate. These remain design obligations, not observed evidence.
 
 # 中文版
 
@@ -277,3 +281,9 @@ v0.2 由带类型的尝试字段推导回答、故障、正常、定位决定和
 成员标签；`ERROR`、`INCONCLUSIVE`、弃权和预算停止保持可见，但不得计作回答，停止
 类本身也不得计作单点定位。每个主要指标均绑定候选分析方案及待冻结决定。这些闭合
 只增强审计性，不提升 C1、C2、DETECT、LOCATE 或 ABLATION 的状态。
+
+修正合同还要求：算法可见投影采用精确类型化成员白名单；真值与等价字段仅评估者
+可见；配对按父指标从注册构造身份与确认复位证据派生；真值可计分与缺失流显式分开；
+错误保留及空集／单例优先级由更新状态而非停止标签决定；CRS-M1-00101 绑定到收到携带
+异常延迟的状态文件以及规定的中止后备时间线；统计分支必须由独立、配对或聚类证据
+推导。当前只有独立伯努利分支列出有直接来源的区间候选。以上仍是设计义务，不是观测证据。

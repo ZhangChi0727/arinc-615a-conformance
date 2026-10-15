@@ -14,9 +14,12 @@ rules only and is excluded from all result panels.
 Coverage metrics retain the finite all-attempt denominator: zero answered
 attempts among \(N>0\) are reported as \(0/N\). Metrics conditional on the
 answered subset, such as conditional detection error, are N/A when that subset
-is empty. Every localization panel first reports decision coverage; truth
+is empty. Truth-dependent cells use explicit truth-scorable subsets: a
+truth-missing answered or localization attempt remains in coverage, appears in a
+named missing-truth flow, and leaves only the corresponding truth-scored
+denominator. Every localization panel first reports decision coverage; truth
 retention/exclusion and singleton correctness do not silently discard eligible
-attempts that ended without a decision.
+attempts that ended without a decision or lack evaluator truth.
 
 \subsection{CL-RQ2: verdict reliability}
 \begin{figure}[!t]
@@ -25,7 +28,8 @@ attempts that ended without a decision.
 denominator: (i) the all-attempt ledger and attempt coverage; (ii) named
 unconfirmed, invalid, equivalent, undecided, ERROR, abstain and unconcluded
 flows; (iii) refusal among attempts; (iv) conditional error on the detection
-answered subset; and (v) miss and false-FAIL on the registered valid detection
+answered truth-scorable subset, with truth-scorable coverage and missing-truth
+flow shown alongside; and (v) miss and false-FAIL on the registered valid detection
 denominator. Abstain is not PASS/FAIL. Source: EXP-CLTAV-DETECT.}
 \caption{Reserved detection panel. Not a result.}
 \label{fig:res-detect}
@@ -35,7 +39,7 @@ denominator. Abstain is not PASS/FAIL. Source: EXP-CLTAV-DETECT.}
 \begin{figure}[!t]
 \centering
 \phboxhigh{PH-RES-LOCATE}{EXPERIMENT-RESULT}{Cells: final \(|H|\), true-fault
-retention/exclusion, decision issued, singleton correctness, refusal and charged
+retention/exclusion on the truth-scorable subset, truth-missing flow, decision issued, singleton correctness, refusal and charged
 resource. Denominator: confirmed in-domain injections, reported separately from
 the detection answered subset. A valid FAIL with a nonsingleton \(H\) is not
 completed localization. Out-of-domain faults are separate; singleton
@@ -65,8 +69,10 @@ FIND-abort waiver & forbidden & forbidden & forbidden & forbidden \\
 \end{table}
 \phbox{PH-RES-ABLATION}{EXPERIMENT-RESULT}{Table~\ref{tab:res-ablation} uses the
 registered ablation factors, not a generic ``disable cost accounting.'' Complete
-when parent DETECT/LOCATE cells exist on the same paired base scenes with
-independent reset evidence, disclosed common components and actual cost fields.}
+when each named parent metric independently yields a pair on the same registered
+base scene, seed, construction and contrast, with distinct confirmed resets,
+disclosed common components and actual cost fields. A missing truth parent does
+not erase an otherwise eligible cost pair.}
 Recovery may remain a runtime detail, but the evaluator folds it into
 preparation once and never reports or charges it again as a fifth coordinate.
 Pre-run review/setup effort is retained in a separate audit total and never

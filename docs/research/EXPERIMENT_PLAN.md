@@ -283,21 +283,33 @@ names missing/censoring rules, comparison families, analysis plans, dependency
 fields, and separate sample/repeat, resource, and clock decisions. The
 bilingual shared tables are generated from that index and checked for drift.
 Algorithm arms receive only the proposed safe projection
-`IF-EXP-SCENE.algorithmVisibleFields`; the parent `sceneRecord`, injection
-confirmation, validity class and evaluator truth remain evaluator/operator
-information. A pair is eligible only for reciprocal registered arms on the
-same base scene/seed with distinct reset evidence and parent-metric eligibility.
+`IF-EXP-SCENE.algorithmVisibleFields`, whose typed member allowlist is exactly
+`sceneId`, `serviceScope`, `registeredArm`, `resourceMode`, and
+`publicConfigurationRef`; fault plan, truth source, injection confirmation,
+validity, equivalence, and post-hoc adjudication remain explicitly forbidden.
+A pair is derived separately for each parent metric and requires reciprocal
+registered arms on the same base scene, seed, construction, and registered
+contrast with distinct confirmed resets. Loss of truth-scoring eligibility does
+not erase a still-valid cost pair.
 Pre-run review/setup effort is audited separately from issued-action cost.
 Design-check success is not
 confirmatory registration or run admission. Interactive IUT/reset evidence,
 truth and injection confirmation, equivalent-fault adjudication, independent
 mathematical review, justified sample/repeat policy, resource budget, and clock
 error budget remain named blockers. A zero answered count is reported as
-coverage `0/N`, while answered-conditional error is `N/A`; `ERROR` and stop
-classes never manufacture answered or singleton-localization outcomes.
-The bounded statistical choice table distinguishes a complete finite census,
-independent randomized attempts and paired/clustered scenes, and returns
-`WAIT-DEC-SAMPLE` when the needed independence or pairing evidence is absent.
+coverage `0/N`, while answered-conditional error is `N/A`; missing truth remains
+in coverage and an explicit truth-missing flow but leaves only truth-scored
+denominators. Update status, not a mutable stop label, determines whether `H`
+must be preserved; valid empty and singleton updates force `Stop-Empty` and
+`Stop-Singleton` before later stops. The bounded statistical routine derives a
+complete-census, independent, paired, clustered, or wait branch from explicit
+randomization, dependence, evidence, and independent-unit inputs. Only the
+independent Bernoulli branch currently names Clopper--Pearson; paired and
+clustered inference remain `WAIT-DEC-SAMPLE` until a direct method is frozen.
+For CRS-M1-00101, the scored trigger is the data loader receiving a status file
+that carries an exception delay for the active operation; a new status within
+the delay or the required abort fallback after expiry passes, while generic
+request suppression is method-only and not scored against that requirement.
 Exactly one `BUDGET` or `ROUNDS` resource mode is selected per session; a retry
 cap is a separate execution-safety bound, not a second resource stop mode.
 Historical captures stay exploratory and synthetic fixtures are not results.
@@ -481,4 +493,11 @@ EXP-001～007 仍按 RR-2026-001 v4.2 保留为历史方案，可被引用，但
 漂移。设计检查通过不等于确认性登记或运行准入。交互 IUT／复位、真值与注入确认、
 等价裁定、独立数学审查、有依据的样本／重复、资源和时钟决定继续阻塞运行。零回答
 时回答覆盖率写作 `0/N`，以回答为条件的错误率写作 `N/A`；`ERROR` 或停止类不得虚构
-回答或单点定位决定。历史捕获只属探索，合成 fixture 不是结果。
+回答或单点定位决定。算法可见投影固定为五个类型化初始成员，并显式禁止真值、注入、
+有效性、等价性和事后裁定字段。配对按父指标分别从场景、种子、构造、注册对比和互异
+确认复位证据推导。真值缺失保留在覆盖率与显式缺失流中，只退出真值计分分母。更新
+状态而非停止标签决定是否保留 `H`，有效空集与单例分别优先触发 `Stop-Empty` 与
+`Stop-Singleton`。统计分支由随机化、依赖、配对／聚类证据及独立单位推导；当前仅独立
+伯努利分支列出 Clopper--Pearson，配对和聚类推断继续等待决定。CRS-M1-00101 的计分
+触发是数据加载器收到携带异常延迟的当前操作状态文件；延迟内新状态或到期后的规定
+中止后备为通过，通用请求抑制不按该条计分。历史捕获只属探索，合成 fixture 不是结果。

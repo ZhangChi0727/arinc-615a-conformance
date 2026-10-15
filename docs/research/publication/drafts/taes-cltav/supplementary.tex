@@ -92,7 +92,8 @@ independent mathematical approval.
 The candidate design reuses four arms, three families and eight registered
 scenario identifiers. One unique \texttt{attemptId} is the all-ledger unit;
 \texttt{runId} exists only after admission. Truth joins arm output only at
-evaluation. Detection answered, localization decision, true-hypothesis
+evaluation. Detection answered, localization decision, truth-scorable subsets,
+explicit missing-truth flow, true-hypothesis
 retention, singleton correctness, abstention, error, equivalence, unresolved
 fault and budget exit remain distinct, potentially overlapping labels. Every
 result cell names its finite population, missing/censoring rule and
@@ -101,10 +102,12 @@ answers, answered coverage is (0/N) while answered-conditional error is N/A.
 Recovery detail is folded into preparation exactly once in the accepted
 four-component cost projection.
 Pre-run review/setup effort is reported separately from issued-action cost.
-An \texttt{ERROR} preserves the preceding hypothesis set; only a valid empty
-compatibility update produces \texttt{Stop-Empty}. A registered pair requires
-the same base scene/seed, reciprocal arms, distinct reset evidence and parent
-metric eligibility. The closed-interval T5 rule assigns containment PASS,
+An update rejected as \texttt{ERROR} preserves the preceding hypothesis set
+regardless of its stop tag; only a valid empty compatibility update produces
+\texttt{Stop-Empty}, and a valid singleton update first produces
+\texttt{Stop-Singleton}. A registered pair is derived separately for each parent
+metric and requires the same base scene, seed, construction and registered
+contrast, reciprocal arms, and distinct confirmed resets. The closed-interval T5 rule assigns containment PASS,
 disjointness FAIL and partial overlap INCONCLUSIVE.
 Confirmatory execution is blocked until the IUT/reset, truth/injection,
 equivalence, mathematical-review, sample/repeat, resource-budget and clock/error

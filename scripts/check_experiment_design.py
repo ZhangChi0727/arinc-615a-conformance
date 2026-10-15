@@ -50,12 +50,12 @@ REQUIRED_METRICS = {
     "MET-ERROR", "MET-INCOMPLETE", "MET-LOCALIZATION-COVERAGE",
     "MET-TRUE-RETAINED", "MET-TRUE-EXCLUDED", "MET-SINGLETON-CORRECT",
     "MET-FINAL-CANDIDATES", "MET-COST-VECTOR", "MET-ROUNDS",
-    "MET-ABLATION-DELTA",
+    "MET-ABLATION-DELTA", "MET-TRUTH-SCORABLE-COVERAGE", "MET-TRUTH-MISSING",
 }
 REQUIRED_ANALYSES = {"AN-FLOW", "AN-PROPORTION", "AN-DISTRIBUTION", "AN-PAIRED"}
 REQUIRED_METRIC_CONTRACTS = {
     "MET-ANSWERED-COVERAGE": ("POP-ANSWERED", "POP-ATTEMPTS", {"attemptId", "validity", "outcome"}),
-    "MET-CONDITIONAL-DETECTION-ERROR": ("POP-CONDITIONAL-ERROR", "POP-ANSWERED", {"validity", "outcome", "truthReference.truthHypothesis"}),
+    "MET-CONDITIONAL-DETECTION-ERROR": ("POP-CONDITIONAL-ERROR", "POP-ANSWERED-TRUTH-SCORABLE", {"validity", "outcome", "truthReference.truthHypothesis"}),
     "MET-LOCALIZATION-COVERAGE": ("POP-LOCALIZATION-DECISION", "POP-LOCALIZATION-ELIGIBLE", {"localizationDecisionIssued", "injectionStatus", "faultDomain"}),
 }
 REQUIRED_POPULATIONS = {
@@ -65,6 +65,8 @@ REQUIRED_POPULATIONS = {
     "POP-INCOMPLETE", "POP-LOCALIZATION-ELIGIBLE", "POP-LOCALIZATION-DECISION",
     "POP-TRUE-RETAINED", "POP-TRUE-EXCLUDED", "POP-SINGLETON-DECISION",
     "POP-SINGLETON-CORRECT", "POP-PAIRED-ELIGIBLE", "POP-ROUNDS",
+    "POP-ANSWERED-TRUTH-SCORABLE", "POP-TRUTH-MISSING",
+    "POP-LOCALIZATION-TRUTH-SCORABLE", "POP-SINGLETON-TRUTH-SCORABLE",
 }
 REQUIRED_SCENARIO_CRS = {
     "SC-NORMAL-UPLOAD": {"CRS-M1-00077"},
@@ -75,14 +77,19 @@ REQUIRED_SCENARIO_CRS = {
     "SC-SINGLE-BATCH": set(), "SC-RESOURCE-ERROR": set(),
 }
 REQUIRED_DEPENDENCY_EDGES = {
-    "DEP-TRUTH": {"MET-MISS", "MET-FALSE-FAIL", "MET-TRUE-RETAINED", "MET-SINGLETON-CORRECT"},
+    "DEP-TRUTH": {
+        "MET-MISS", "MET-FALSE-FAIL", "MET-CONDITIONAL-DETECTION-ERROR",
+        "MET-TRUE-RETAINED", "MET-TRUE-EXCLUDED", "MET-SINGLETON-CORRECT",
+        "MET-TRUTH-SCORABLE-COVERAGE", "MET-TRUTH-MISSING",
+    },
     "DEP-CLOCK": {"SC-WAIT-CONTINUE", "SC-NO-RESPONSE", "SC-INVALID-OBS"},
     "DEP-RESOURCE": {"SC-RESOURCE-ERROR", "MET-COST-VECTOR", "MET-ROUNDS"},
     "DEP-EQUIV": {"MET-MISS", "MET-ABLATION-DELTA"},
 }
 ROW_FIELDS = {
     "attemptId", "runId", "armId", "baseSceneId", "pairingId", "pairedArmId",
-    "resetEvidenceRef", "parentMetricEligible", "pairingExpectedEligibility",
+    "resetEvidenceRef", "resetConfirmed", "sceneSeed", "constructionId",
+    "contrastId", "pairParentMetricIds", "updateStatus",
     "injectionStatus", "faultDomain", "validity",
     "outcome", "stopClass", "stage", "observationInterval", "requirementInterval",
     "historyBefore", "compatibleState", "finalHypotheses", "localizationDecisionIssued",
@@ -266,66 +273,112 @@ def _population_sets(data: dict[str, Any]) -> dict[str, set[str]]:
     faults = {aid for aid, row in by_id.items() if row.get("injectionStatus") == "CONFIRMED" and row.get("faultDomain") == "IN-DOMAIN-NON-EQUIVALENT" and row.get("runId") is not None}
     misses = {aid for aid in faults if by_id[aid].get("outcome") == "PASS"}
     false_fails = {aid for aid in normal if by_id[aid].get("outcome") == "FAIL"}
-    conditional_error = (misses | false_fails) & answered
+    answered_truth_scorable = {
+        aid for aid in answered
+        if by_id[aid].get("truthReference", {}).get("truthHypothesis") is not None
+    }
+    conditional_error = (misses | false_fails) & answered_truth_scorable
     abstain = {aid for aid, row in by_id.items() if row.get("validity") == "ABSTAIN"}
     inconclusive = {aid for aid, row in by_id.items() if row.get("outcome") == "INCONCLUSIVE"}
     error = {aid for aid, row in by_id.items() if row.get("outcome") == "ERROR" or row.get("validity") == "INVALID"}
     incomplete = {aid for aid, row in by_id.items() if row.get("validity") == "INCOMPLETE" or row.get("resourceStatus") == "BUDGET-EXHAUSTED"}
     loc_eligible = set(faults)
     loc_decision = {aid for aid in loc_eligible if by_id[aid].get("localizationDecisionIssued") is True}
-    truth_known = {
+    loc_truth_scorable = {
         aid for aid in loc_decision
-        if by_id[aid].get("truthReference", {}).get("truthHypothesis") is not None
+        if by_id[aid].get("validity") == "VALID"
+        and by_id[aid].get("truthReference", {}).get("truthHypothesis") is not None
     }
     retained = {
         aid for aid in loc_decision
-        if aid in truth_known and by_id[aid].get("truthReference", {}).get("truthHypothesis") in by_id[aid].get("finalHypotheses", [])
+        if aid in loc_truth_scorable and by_id[aid].get("truthReference", {}).get("truthHypothesis") in by_id[aid].get("finalHypotheses", [])
     }
-    excluded = truth_known - retained
+    excluded = loc_truth_scorable - retained
     singleton = {
         aid for aid in loc_decision
         if by_id[aid].get("singletonDecisionIssued") is True
         and len(by_id[aid].get("finalHypotheses", [])) == 1
     }
-    singleton_correct = {
+    singleton_truth_scorable = {
         aid for aid in singleton
+        if aid in loc_truth_scorable
+    }
+    singleton_correct = {
+        aid for aid in singleton_truth_scorable
         if by_id[aid].get("truthReference", {}).get("truthHypothesis") == by_id[aid].get("finalHypotheses", [None])[0]
+    }
+    truth_missing = {
+        aid for aid in attempts
+        if by_id[aid].get("truthReference", {}).get("truthHypothesis") is None
+        and (aid in answered or aid in loc_decision or aid in singleton)
     }
     pair_groups: dict[str, list[dict[str, Any]]] = {}
     for row in rows:
         if row.get("pairingId") is not None:
             pair_groups.setdefault(str(row["pairingId"]), []).append(row)
-    paired = set()
+    paired: set[str] = set()
+    contrasts = {
+        str(row.get("id")): row for row in _rows(data, "registeredContrasts")
+    }
+    parent_metrics = {
+        "MET-ANSWERED-COVERAGE", "MET-TRUE-RETAINED", "MET-COST-VECTOR"
+    }
+
+    def eligible_parents(row: dict[str, Any]) -> set[str]:
+        aid = str(row.get("attemptId", ""))
+        result = {"MET-ANSWERED-COVERAGE"} if aid in attempts else set()
+        if aid in loc_truth_scorable:
+            result.add("MET-TRUE-RETAINED")
+        charged = row.get("chargedCost", {})
+        if isinstance(charged, dict) and all(
+            isinstance(charged.get(key), (int, float))
+            for key in ("acquisition", "computation", "preparation", "recovery", "retry")
+        ):
+            result.add("MET-COST-VECTOR")
+        return result
+
     for pair_id, members in pair_groups.items():
         if len(members) != 2:
             continue
         left, right = members
-        eligible = (
+        contrast = contrasts.get(str(left.get("contrastId")), {})
+        structural = (
             left.get("baseSceneId") == right.get("baseSceneId")
+            and left.get("sceneSeed") == right.get("sceneSeed")
+            and left.get("constructionId") == right.get("constructionId")
+            and left.get("contrastId") == right.get("contrastId")
             and left.get("armId") != right.get("armId")
             and left.get("pairedArmId") == right.get("armId")
             and right.get("pairedArmId") == left.get("armId")
+            and set(contrast.get("armIds", [])) == {left.get("armId"), right.get("armId")}
             and left.get("resetEvidenceRef")
             and right.get("resetEvidenceRef")
             and left.get("resetEvidenceRef") != right.get("resetEvidenceRef")
-            and left.get("parentMetricEligible") is True
-            and right.get("parentMetricEligible") is True
+            and left.get("resetConfirmed") is True
+            and right.get("resetConfirmed") is True
         )
-        if eligible:
-            paired.add(pair_id)
+        if structural:
+            for parent_id in parent_metrics & set(contrast.get("parentMetricIds", [])):
+                if parent_id in eligible_parents(left) and parent_id in eligible_parents(right):
+                    paired.add(f"{pair_id}::{parent_id}")
     rounds = {
         aid for aid, row in by_id.items()
         if row.get("runId") is not None and row.get("resourcePolicy") == "ROUNDS"
     }
     return {
         "POP-ATTEMPTS": attempts, "POP-ANSWERED": answered,
+        "POP-ANSWERED-TRUTH-SCORABLE": answered_truth_scorable,
+        "POP-TRUTH-MISSING": truth_missing,
         "POP-QUALIFIED-NORMAL": normal, "POP-CONFIRMED-FAULT": faults,
         "POP-MISSES": misses, "POP-FALSE-FAILS": false_fails,
         "POP-CONDITIONAL-ERROR": conditional_error, "POP-ABSTAIN": abstain,
         "POP-INCONCLUSIVE": inconclusive, "POP-ERROR": error,
         "POP-INCOMPLETE": incomplete, "POP-LOCALIZATION-ELIGIBLE": loc_eligible,
-        "POP-LOCALIZATION-DECISION": loc_decision, "POP-TRUE-RETAINED": retained,
+        "POP-LOCALIZATION-DECISION": loc_decision,
+        "POP-LOCALIZATION-TRUTH-SCORABLE": loc_truth_scorable,
+        "POP-TRUE-RETAINED": retained,
         "POP-TRUE-EXCLUDED": excluded, "POP-SINGLETON-DECISION": singleton,
+        "POP-SINGLETON-TRUTH-SCORABLE": singleton_truth_scorable,
         "POP-SINGLETON-CORRECT": singleton_correct, "POP-PAIRED-ELIGIBLE": paired,
         "POP-ROUNDS": rounds,
     }
@@ -361,27 +414,57 @@ def _validate_walkthroughs(data: dict[str, Any], scenario_ids: set[str]) -> list
         final = row.get("finalHypotheses", [])
         history = row.get("historyBefore", [])
         compatible = row.get("compatibleState", [])
-        if row.get("stopClass") == "Stop-Error" and final != history:
-            errors.append(f"walkthrough {row_id} ERROR must preserve the preceding hypothesis set")
-        if row.get("stopClass") != "Stop-Error" and row.get("stage") in {"POST-UPDATE", "TERMINAL"} and final != compatible:
-            errors.append(f"walkthrough {row_id} final hypotheses must equal the valid compatibility update")
+        update_status = row.get("updateStatus")
+        if update_status == "NOT-APPLIED-ERROR":
+            if set(final) != set(history) or row.get("outcome") != "ERROR":
+                errors.append(
+                    f"walkthrough {row_id} rejected update must preserve H and remain ERROR independent of the stop label"
+                )
+        elif update_status == "VALID-UPDATE":
+            if set(final) != set(compatible) or not set(final) <= set(history):
+                errors.append(
+                    f"walkthrough {row_id} valid successor must equal compatibility intersection and be a subset of H"
+                )
+            if not final and (
+                row.get("stopClass") != "Stop-Empty"
+                or row.get("stage") != "POST-UPDATE"
+                or row.get("outcome") != "ERROR"
+            ):
+                errors.append(f"walkthrough {row_id} empty valid update has mandatory Stop-Empty priority")
+            if len(final) == 1 and row.get("stopClass") != "Stop-Singleton":
+                errors.append(f"walkthrough {row_id} singleton valid update has mandatory Stop-Singleton priority")
+        elif update_status == "NO-UPDATE" and set(final) != set(history):
+            errors.append(f"walkthrough {row_id} no-update exit must preserve H")
         if row.get("singletonDecisionIssued") and (not row.get("localizationDecisionIssued") or len(final) != 1):
             errors.append(f"walkthrough {row_id} has an invalid singleton decision")
         if row.get("stopClass") in {"Stop-645", "Stop-Budget"} and row.get("singletonDecisionIssued"):
             errors.append(f"walkthrough {row_id} lets {row.get('stopClass')} masquerade as a singleton decision")
         if row.get("stopClass") == "Stop-Empty":
-            if final or row.get("stage") != "POST-UPDATE" or row.get("outcome") != "ERROR":
+            if update_status != "VALID-UPDATE" or final or row.get("stage") != "POST-UPDATE" or row.get("outcome") != "ERROR":
                 errors.append(f"walkthrough {row_id} violates Stop-Empty stage/outcome priority")
         if row.get("stopClass") == "Stop-645" and row.get("stage") != "POST-UPDATE":
             errors.append(f"walkthrough {row_id} violates Stop-645 stage priority")
         if row.get("stage") == "POST-UPDATE" and len(final) == 1 and row.get("stopClass") != "Stop-Singleton":
             errors.append(f"walkthrough {row_id} bypasses Stop-Singleton priority")
+        if row.get("stage") == "POST-UPDATE" and not final and row.get("stopClass") != "Stop-Empty":
+            errors.append(f"walkthrough {row_id} bypasses Stop-Empty priority")
         if row.get("stage") == "PRE-ACTION" and (row.get("actionIssued") or any(row.get("chargedCost", {}).values())):
             errors.append(f"walkthrough {row_id} charges or issues an action before admission")
         if not row.get("actionIssued") and any(row.get("chargedCost", {}).values()):
             errors.append(f"walkthrough {row_id} charges an unissued arm action")
         if row.get("stopClass") in {"Stop-645", "Stop-Budget"} and row.get("actionIssued") and sum(row.get("chargedCost", {}).values()) <= 0:
             errors.append(f"walkthrough {row_id} hides spent cost at {row.get('stopClass')}")
+        allowed_costs = {
+            arm.get("id"): set(arm.get("costComponents", []))
+            for arm in _rows(data, "arms")
+        }.get(row.get("armId"), set())
+        charged = row.get("chargedCost", {})
+        for detail, amount in charged.items() if isinstance(charged, dict) else []:
+            projected = "preparation" if detail == "recovery" else detail
+            if amount and projected not in allowed_costs:
+                errors.append(
+                    f"walkthrough {row_id} charges {detail} outside arm {row.get('armId')} cost contract"
+                )
         if row_id == "SYN-T5-OVERLAP":
             observed = row.get("observationInterval")
             required = row.get("requirementInterval")
@@ -399,11 +482,91 @@ def _validate_walkthroughs(data: dict[str, Any], scenario_ids: set[str]) -> list
                 expected = "PASS" if contained else "FAIL" if disjoint else "INCONCLUSIVE"
                 if row.get("endpointTopology") != "CLOSED" or not valid_order or row.get("outcome") != expected:
                     errors.append(f"SYN-T5-OVERLAP violates closed-interval T5 classification; expected {expected}")
-    derived_pairs = _population_sets(data)["POP-PAIRED-ELIGIBLE"]
+    populations = _population_sets(data)
+    derived_pairs = populations["POP-PAIRED-ELIGIBLE"]
     for row in rows:
-        actual = row.get("pairingId") in derived_pairs if row.get("pairingId") is not None else False
-        if actual != row.get("pairingExpectedEligibility"):
-            errors.append(f"walkthrough {row.get('id')} pairing eligibility disagrees with its finite evidence")
+        declared = set(row.get("pairParentMetricIds", []))
+        prefix = f"{row.get('pairingId')}::"
+        expected = {
+            item.split("::", 1)[1]
+            for item in derived_pairs if row.get("pairingId") is not None and item.startswith(prefix)
+        }
+        if declared != expected:
+            errors.append(
+                f"walkthrough {row.get('id')} pairing eligibility and parent metrics disagree with derived finite evidence"
+            )
+    return errors
+
+
+def _analysis_choice(row: dict[str, Any]) -> tuple[str, str]:
+    if row.get("domainEnumeration") == "COMPLETE":
+        return "DETERMINISTIC-EXHAUSTIVE", "CANDIDATE-METHOD"
+    if (
+        row.get("domainEnumeration") == "INCOMPLETE"
+        and row.get("randomAssignment") == "INDEPENDENT"
+        and row.get("dependence") == "NONE"
+        and row.get("independentUnit") == "ATTEMPT"
+    ):
+        return "INDEPENDENT-RANDOMIZED", "CANDIDATE-METHOD"
+    if (
+        row.get("domainEnumeration") == "INCOMPLETE"
+        and row.get("randomAssignment") == "NOT-INDEPENDENT"
+        and row.get("dependence") == "PAIRED"
+        and row.get("pairingEvidence") is True
+        and row.get("independentUnit") == "PAIR"
+    ):
+        return "PAIRED-OR-CLUSTERED", "CANDIDATE-METHOD"
+    if (
+        row.get("domainEnumeration") == "INCOMPLETE"
+        and row.get("randomAssignment") == "NOT-INDEPENDENT"
+        and row.get("dependence") == "CLUSTERED"
+        and row.get("clusterEvidence") is True
+        and row.get("independentUnit") == "CLUSTER"
+    ):
+        return "PAIRED-OR-CLUSTERED", "CANDIDATE-METHOD"
+    return "NONE", "WAIT-DEC-SAMPLE"
+
+
+def _translation_keys(data: dict[str, Any]) -> set[str]:
+    groups = {
+        "claimArguments": "claimId", "arms": "id", "scenarios": "id",
+        "metrics": "id", "analysisPlans": "id", "dependencies": "id",
+        "pendingDecisions": "id", "comparisonFamilies": "id",
+    }
+    result: set[str] = set()
+    for group, id_field in groups.items():
+        for row in _rows(data, group):
+            result.add(f"{group}.{row.get(id_field)}.summary")
+    return result
+
+
+def _validate_protocol_timelines(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for row in _rows(data, "protocolTimelineWalkthroughs"):
+        row_id = row.get("id")
+        if row.get("scenarioId") != "SC-NO-RESPONSE" or row.get("crsRef") != "CRS-M1-00101":
+            errors.append(f"protocol timeline {row_id} must bind SC-NO-RESPONSE and CRS-M1-00101")
+            continue
+        trigger = row.get("trigger", {})
+        received = row.get("receivedEvent", {})
+        elapsed = row.get("elapsedSeconds")
+        delay = trigger.get("exceptionDelaySeconds")
+        same_operation = (
+            trigger.get("actor") == "DATA-LOADER"
+            and trigger.get("event") == "RECEIVED-STATUS-WITH-EXCEPTION-DELAY"
+            and trigger.get("operationKey")
+            and trigger.get("operationKey") == received.get("operationKey")
+        )
+        expected = "NOT-SCORED"
+        if same_operation and isinstance(elapsed, (int, float)) and isinstance(delay, (int, float)):
+            if received.get("event") == "NEW-STATUS" and elapsed <= delay:
+                expected = "PASS"
+            elif received.get("event") == "ABORT" and received.get("requiredFallback") is True and elapsed > delay:
+                expected = "PASS"
+            elif received.get("event") == "NONE" and elapsed > delay:
+                expected = "FAIL"
+        if row.get("outcome") != expected:
+            errors.append(f"protocol timeline {row_id} expected {expected}, got {row.get('outcome')}")
     return errors
 
 
@@ -490,6 +653,17 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
     argument_ids = {value for value in argument_values if value}
     if argument_ids != {"CL-C1", "CL-C2"}:
         errors.append("claimArguments must contain exactly CL-C1 and CL-C2")
+
+    contrast_ids = _ids(data.get("registeredContrasts"), "registered contrast", errors)
+    expected_contrasts = {
+        "CONTRAST-DETECT-LOOP-T", "CONTRAST-LOCATE-LOOP-T",
+        "CONTRAST-LOCATE-LOOP-TA",
+    }
+    if contrast_ids != expected_contrasts:
+        errors.append("registered contrasts must remain complete")
+    for contrast in _rows(data, "registeredContrasts"):
+        errors.extend(_refs(contrast.get("armIds"), registry_arms, "contrast arm"))
+        errors.extend(_refs(contrast.get("parentMetricIds"), REQUIRED_METRICS, "contrast parent metric"))
 
     arm_ids = _ids(data.get("arms"), "arm", errors)
     if arm_ids != registry_arms:
@@ -583,8 +757,28 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
         errors.extend(_refs(analysis.get("methodEvidenceIds"), evidence_ids, "method evidence"))
         if analysis.get("freezeDecisionId") not in decision_ids:
             errors.append(f"analysis plan {analysis.get('id')} has unknown freeze decision")
-        if analysis.get("missingInputResult") != "WAIT-DEC-SAMPLE" or not analysis.get("directSourceLocators"):
-            errors.append(f"analysis plan {analysis.get('id')} lacks a bounded missing-input wait or direct source locator")
+        if analysis.get("missingInputResult") != "WAIT-DEC-SAMPLE" or not analysis.get("sourceLocators"):
+            errors.append(f"analysis plan {analysis.get('id')} lacks a bounded missing-input wait or source locator")
+        status = analysis.get("methodStatus")
+        locators = analysis.get("sourceLocators", [])
+        for locator in locators if isinstance(locators, list) else []:
+            path = locator.get("path", "") if isinstance(locator, dict) else ""
+            start = locator.get("lineStart") if isinstance(locator, dict) else None
+            end = locator.get("lineEnd") if isinstance(locator, dict) else None
+            role = locator.get("role") if isinstance(locator, dict) else None
+            if path not in snapshot:
+                errors.append(f"analysis plan {analysis.get('id')} source locator is not a bound path: {path}")
+                continue
+            line_count = len(snapshot[path].decode("utf-8-sig", errors="replace").splitlines())
+            if not isinstance(start, int) or not isinstance(end, int) or start < 1 or end < start or end > line_count:
+                errors.append(f"analysis plan {analysis.get('id')} source locator has an invalid line range")
+            if role not in {"DIRECT", "CONTEXT-ONLY"}:
+                errors.append(f"analysis plan {analysis.get('id')} source locator has an invalid role")
+        direct = [item for item in locators if isinstance(item, dict) and item.get("role") == "DIRECT"]
+        if status == "NAMED-CANDIDATE" and not direct:
+            errors.append(f"analysis plan {analysis.get('id')} names a method without a direct source")
+        if status in {"DESCRIPTIVE-ONLY", "METHOD-WAIT"} and direct:
+            errors.append(f"analysis plan {analysis.get('id')} overstates context as a direct method source")
 
     metric_ids = _ids(data.get("metrics"), "metric", errors)
     if metric_ids != REQUIRED_METRICS:
@@ -654,8 +848,40 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
     if any(field.get("path", "").startswith("IF-EQUIV") for field in equiv.get("proposalFields", []) if isinstance(field, dict)):
         errors.append("evaluator mutation equivalence must not redefine runtime IF-EQUIV")
     truth_dependency = next((row for row in _rows(data, "dependencies") if row.get("id") == "DEP-TRUTH"), {})
-    if not {"DEC-TRUTH", "DEC-EQUIV"} <= set(truth_dependency.get("decisionIds", [])):
-        errors.append("DEP-TRUTH must retain truth and equivalence decisions")
+    if set(truth_dependency.get("decisionIds", [])) != {"DEC-TRUTH", "DEC-EQUIV"}:
+        errors.append("DEP-TRUTH must retain exactly the truth and equivalence decisions")
+    if truth_dependency.get("blockingMilestone") != "pilot":
+        errors.append("DEP-TRUTH blocking milestone must remain pilot")
+    safe_projection = next(
+        (
+            field for field in next(
+                (row for row in _rows(data, "dependencies") if row.get("id") == "DEP-IUT"), {}
+            ).get("proposalFields", [])
+            if isinstance(field, dict) and field.get("path") == "IF-EXP-SCENE.algorithmVisibleFields"
+        ),
+        {},
+    )
+    expected_safe_members = {
+        ("sceneId", "string", "ALGORITHM-INITIAL"),
+        ("serviceScope", "enum", "ALGORITHM-INITIAL"),
+        ("registeredArm", "enum", "ALGORITHM-INITIAL"),
+        ("resourceMode", "enum", "ALGORITHM-INITIAL"),
+        ("publicConfigurationRef", "reference", "ALGORITHM-INITIAL"),
+    }
+    actual_safe_members = {
+        (item.get("name"), item.get("type"), item.get("role"))
+        for item in safe_projection.get("members", []) if isinstance(item, dict)
+    }
+    forbidden_safe_members = {
+        "faultPlan", "truthSource", "injectionConfirmed", "validityClass",
+        "equivalenceDisposition", "posthocAdjudication",
+    }
+    if actual_safe_members != expected_safe_members:
+        errors.append("safe projection must retain the exact typed algorithm-visible member allowlist")
+    if set(safe_projection.get("limits", {}).get("forbiddenMembers", [])) != forbidden_safe_members:
+        errors.append("safe projection must retain the exact evaluator-only member denylist")
+    if any(item[0] in forbidden_safe_members for item in actual_safe_members):
+        errors.append("safe projection leaks evaluator-only truth or adjudication members")
 
     admission = data.get("designAdmission", {}) if isinstance(data.get("designAdmission"), dict) else {}
     if admission.get("confirmatoryRunStatus") != "BLOCKED":
@@ -685,6 +911,26 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
     actual_choice_results = {(row.get("selectedBranch"), row.get("result")) for row in choice_rows}
     if not required_choice_results <= actual_choice_results:
         errors.append("analysis choice walkthroughs must cover census, independent, paired/clustered and missing-input WAIT branches")
+    if not any(row.get("dependence") == "CLUSTERED" for row in choice_rows):
+        errors.append("analysis choice walkthroughs must distinguish clustered evidence from paired evidence")
+    for row in choice_rows:
+        derived = _analysis_choice(row)
+        actual = (row.get("selectedBranch"), row.get("result"))
+        if derived != actual:
+            errors.append(f"analysis choice {row.get('id')} disagrees with its independence/pairing inputs")
+    translations = data.get("translationsZh", {})
+    required_translation_keys = _translation_keys(data)
+    if not isinstance(translations, dict):
+        errors.append("translationsZh must be an object")
+    else:
+        missing_translations = required_translation_keys - set(translations)
+        for key in sorted(missing_translations):
+            errors.append(f"missing controlled Chinese translation {key}")
+        for key in required_translation_keys & set(translations):
+            value = translations.get(key)
+            if not isinstance(value, str) or not value.strip() or not re.search(r"[\u3400-\u9fff]", value):
+                errors.append(f"controlled Chinese translation is not substantive: {key}")
+    errors.extend(_validate_protocol_timelines(data))
     errors.extend(_validate_walkthroughs(data, development_scenarios))
 
     # Exercise the derived sets so malformed nested values become diagnostics, never exceptions.

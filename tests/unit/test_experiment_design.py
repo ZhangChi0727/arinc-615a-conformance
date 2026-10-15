@@ -44,9 +44,7 @@ def _run_git(root: Path, *args: str) -> str:
 
 @pytest.fixture()
 def isolated_snapshot_repo() -> tuple[Path, dict]:
-    workspace_tmp = ROOT / "tmp"
-    workspace_tmp.mkdir(exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix="experiment-snapshot-", dir=workspace_tmp) as directory:
+    with tempfile.TemporaryDirectory(prefix="experiment-snapshot-") as directory:
         root = Path(directory)
         subprocess.run(["git", "init", "-q"], cwd=root, check=True)
         subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=root, check=True)
@@ -133,7 +131,11 @@ def test_v05_excluded_unresolved_abstain_and_pairing_remain_visible_without_dupl
     assert summary["equivalentFault"] == 1
     assert summary["unresolvedFault"] == 1
     assert summary["abstain"] == 1
-    assert populations["POP-PAIRED-ELIGIBLE"] == {"PAIR-01"}
+    assert populations["POP-PAIRED-ELIGIBLE"] == {
+        "PAIR-01::MET-ANSWERED-COVERAGE",
+        "PAIR-01::MET-TRUE-RETAINED",
+        "PAIR-01::MET-COST-VECTOR",
+    }
     assert populations["POP-ROUNDS"] == {"ATT-001"}
     assert any("duplicate synthetic attempt" in item for item in errors_for(lambda d: d["syntheticWalkthroughs"][1].update(attemptId="ATT-001")))
 
@@ -292,7 +294,11 @@ def test_w04_missing_truth_is_unscorable_not_excluded() -> None:
 
 
 def test_w05_pair_requires_scene_arms_reset_and_parent_eligibility() -> None:
-    assert _population_sets(DESIGN)["POP-PAIRED-ELIGIBLE"] == {"PAIR-01"}
+    assert _population_sets(DESIGN)["POP-PAIRED-ELIGIBLE"] == {
+        "PAIR-01::MET-ANSWERED-COVERAGE",
+        "PAIR-01::MET-TRUE-RETAINED",
+        "PAIR-01::MET-COST-VECTOR",
+    }
     assert any("pairing eligibility" in item for item in errors_for(lambda d: next(row for row in d["syntheticWalkthroughs"] if row["id"] == "SYN-PAIR-COMPARATOR").update(baseSceneId="OTHER")))
     assert "PAIR-MISMATCH" not in _population_sets(DESIGN)["POP-PAIRED-ELIGIBLE"]
 
@@ -334,3 +340,122 @@ def test_w14_hypothetical_choice_branches_include_wait() -> None:
     assert ("INDEPENDENT-RANDOMIZED", "CANDIDATE-METHOD") in choices
     assert ("PAIRED-OR-CLUSTERED", "CANDIDATE-METHOD") in choices
     assert ("NONE", "WAIT-DEC-SAMPLE") in choices
+
+
+def test_q01_error_preservation_cannot_be_bypassed_by_relabeling_stop() -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["syntheticWalkthroughs"] if row["id"] == "SYN-INVALID-OBS")
+        row["stopClass"] = "Stop-645"
+        row["finalHypotheses"] = []
+
+    assert any("preserve H" in item for item in errors_for(mutate))
+
+
+def test_q02_empty_and_singleton_update_priorities_precede_other_stops() -> None:
+    assert any(
+        "Stop-Empty" in item
+        for item in errors_for(
+            lambda d: next(row for row in d["syntheticWalkthroughs"] if row["id"] == "SYN-STOP-EMPTY").update(stopClass="Stop-645")
+        )
+    )
+    assert any(
+        "Stop-Singleton" in item
+        for item in errors_for(
+            lambda d: next(row for row in d["syntheticWalkthroughs"] if row["id"] == "SYN-NORMAL").update(stopClass="Stop-645")
+        )
+    )
+
+
+def test_q03_valid_update_is_history_intersection_not_arbitrary_replacement() -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["syntheticWalkthroughs"] if row["id"] == "SYN-FAIL-NONSINGLETON")
+        row["compatibleState"].append("h-extra")
+        row["finalHypotheses"].append("h-extra")
+
+    assert any("subset of H" in item for item in errors_for(mutate))
+
+
+def test_q04_missing_truth_keeps_coverage_but_leaves_truth_scored_denominators() -> None:
+    candidate = copy.deepcopy(DESIGN)
+    row = next(row for row in candidate["syntheticWalkthroughs"] if row["id"] == "SYN-PAIR-COMPARATOR")
+    row["truthReference"]["truthHypothesis"] = None
+    row["pairParentMetricIds"].remove("MET-TRUE-RETAINED")
+    populations = _population_sets(candidate)
+    assert "ATT-013" in populations["POP-ANSWERED"]
+    assert "ATT-013" in populations["POP-TRUTH-MISSING"]
+    assert "ATT-013" not in populations["POP-ANSWERED-TRUTH-SCORABLE"]
+    assert "ATT-013" not in populations["POP-LOCALIZATION-TRUTH-SCORABLE"]
+
+
+def test_q05_pairing_is_derived_independently_for_each_parent_metric() -> None:
+    candidate = copy.deepcopy(DESIGN)
+    row = next(row for row in candidate["syntheticWalkthroughs"] if row["id"] == "SYN-PAIR-COMPARATOR")
+    row["validity"] = "INVALID"
+    row["outcome"] = "ERROR"
+    row["localizationDecisionIssued"] = False
+    row["pairParentMetricIds"] = ["MET-ANSWERED-COVERAGE", "MET-COST-VECTOR"]
+    pairs = _population_sets(candidate)["POP-PAIRED-ELIGIBLE"]
+    assert "PAIR-01::MET-COST-VECTOR" in pairs
+    assert "PAIR-01::MET-TRUE-RETAINED" not in pairs
+
+
+def test_q06_pairing_requires_registered_construction_identity_and_confirmed_reset() -> None:
+    assert errors_for(
+        lambda d: next(row for row in d["syntheticWalkthroughs"] if row["id"] == "SYN-PAIR-COMPARATOR").update(sceneSeed="OTHER")
+    )
+    assert errors_for(
+        lambda d: next(row for row in d["syntheticWalkthroughs"] if row["id"] == "SYN-PAIR-COMPARATOR").update(resetConfirmed=False)
+    )
+
+
+def test_q07_no_response_timeline_is_source_bound_and_not_generic_suppression() -> None:
+    assert any(row["outcome"] == "NOT-SCORED" for row in DESIGN["protocolTimelineWalkthroughs"])
+    assert errors_for(
+        lambda d: next(row for row in d["protocolTimelineWalkthroughs"] if row["id"] == "TL-MISSING-BOTH").update(outcome="PASS")
+    )
+
+
+def test_q08_safe_projection_rejects_nested_truth_member_and_denylist_trimming() -> None:
+    def leak(data: dict) -> None:
+        dep = next(row for row in data["dependencies"] if row["id"] == "DEP-IUT")
+        projection = next(field for field in dep["proposalFields"] if field["path"] == "IF-EXP-SCENE.algorithmVisibleFields")
+        projection["members"].append({"name": "truthSource", "type": "reference", "role": "ALGORITHM-INITIAL"})
+
+    assert any("safe projection" in item for item in errors_for(leak))
+
+
+def test_q09_truth_consumers_decisions_and_pilot_milestone_are_not_trimmable() -> None:
+    assert errors_for(lambda d: next(row for row in d["dependencies"] if row["id"] == "DEP-TRUTH")["consumers"].remove("MET-TRUE-EXCLUDED"))
+    assert errors_for(lambda d: next(row for row in d["dependencies"] if row["id"] == "DEP-TRUTH").update(blockingMilestone="submission"))
+
+
+def test_q10_controlled_chinese_and_required_fields_are_rendered() -> None:
+    rendered = render_shared_block(DESIGN)
+    assert DESIGN["translationsZh"]["scenarios.SC-NO-RESPONSE.summary"] in rendered
+    assert "truthReference.truthHypothesis" in rendered
+    assert any("missing controlled Chinese" in item for item in errors_for(lambda d: d["translationsZh"].pop("metrics.MET-TRUE-EXCLUDED.summary")))
+
+
+def test_q11_analysis_branch_is_derived_from_independence_evidence() -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["analysisChoiceWalkthroughs"] if row["id"] == "CHOICE-INDEPENDENT")
+        row["independentUnit"] = "UNKNOWN"
+
+    assert any("independence/pairing inputs" in item for item in errors_for(mutate))
+
+
+def test_q12_paired_and_clustered_evidence_are_not_interchangeable() -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["analysisChoiceWalkthroughs"] if row["id"] == "CHOICE-PAIRED")
+        row["pairingEvidence"] = False
+        row["clusterEvidence"] = True
+
+    assert any("independence/pairing inputs" in item for item in errors_for(mutate))
+
+
+def test_q13_statistical_source_locator_must_resolve_to_bound_lines() -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["analysisPlans"] if row["id"] == "AN-PROPORTION")
+        row["sourceLocators"][0]["path"] = "docs/research/DOES-NOT-EXIST.md"
+
+    assert any("not a bound path" in item for item in errors_for(mutate))

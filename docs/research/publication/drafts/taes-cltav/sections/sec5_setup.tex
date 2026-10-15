@@ -29,7 +29,10 @@ Truth is typed evaluator-only. It never enters \IFsel, \IFpred, \IFhist{} or
 and records produced by that arm's own actions. In particular, arms receive the
 proposed allowlisted \texttt{algorithmVisibleFields} projection, never the parent
 scene record containing the fault plan, truth source, injection confirmation,
-validity class or post-hoc adjudication. Runtime \texttt{IF-EQUIV}
+validity class or post-hoc adjudication. The projection is a typed member
+allowlist containing only scene ID, service scope, registered arm, resource mode
+and public-configuration reference; truth, injection, validity, equivalence and
+post-hoc members remain forbidden inside the object. Runtime \texttt{IF-EQUIV}
 candidate equivalence is distinct from evaluator-side injected-fault
 equivalence. The all-attempt ledger retains every registered attempt, including
 unconfirmed injection, invalid observation, equivalent or undecided fault,
@@ -39,7 +42,8 @@ uses confirmed in-domain non-equivalent injections and separately reports
 localization-decision coverage, whether the true fault remains or is excluded,
 whether an issued singleton is correct, and final \(|H|\). These finite
 populations are derived from attempt fields rather than handwritten denominator
-tags. Thus a valid detection FAIL with
+tags. Missing truth remains in answered or decision coverage and an explicit
+truth-missing flow, but leaves only the relevant truth-scored subset. Thus a valid detection FAIL with
 \(H=\{h_1,h_2\}\) is an answered detection outcome but not singleton
 localization; \(H=\{h_{\mathrm{normal}}\}\) is not protocol PASS. Mutation
 scores exclude only confirmed equivalents while equivalent and undecided counts
@@ -47,7 +51,9 @@ and adjudication effort remain visible~\cite{jia2011,gruen2009}.
 If no attempt is answered, answered coverage is reported as \(0/N\) for
 \(N>0\), whereas answered-conditional error is not applicable. An
 \texttt{ERROR}, \texttt{Stop-Empty}, \texttt{Stop-645}, or budget stop cannot
-manufacture an answered or singleton-localization decision.
+manufacture an answered or singleton-localization decision. Rejected updates
+preserve (H) independently of the stop tag; valid empty and singleton updates
+force \texttt{Stop-Empty} and \texttt{Stop-Singleton} before later stops.
 
 \begin{figure}[!t]
 \centering
@@ -87,8 +93,9 @@ parameters. An experimental unit is a unique registered attempt on one base
 scene, arm and control/fault construction; packets, events, timestamps and
 hypotheses are within-attempt observations. Development, pilot and held-out
 lineages are disjoint, and paired arms require independent reset evidence.
-Pair eligibility additionally requires the same registered base scene/seed,
-reciprocal distinct arm identities and eligibility for the named parent metric;
+Pair eligibility is derived separately for each parent metric and additionally
+requires the same registered base scene, seed, construction and contrast,
+reciprocal distinct arm identities and distinct confirmed resets;
 an unmatched or mismatched row remains in flow accounting but is not imputed.
 Eight existing scenario IDs cover normal, WAIT/continue, no-response, abort,
 invalid observation, same-key ownership, single-batch comparison and resource
@@ -97,15 +104,27 @@ DOWNLOAD, AFDX and runtime integrity capability remain outside first-run
 admission. Design review therefore precedes engineering feasibility, pilot,
 frozen registration, execution and result acceptance.
 
+For the no-response scenario bound to CRS-M1-00101, the scored trigger is the
+data loader receiving a status file that carries an exception delay for the
+active operation. A new status within that delay or the required data-loader
+abort fallback after expiry satisfies the registered timeline; absence of both
+fails it. Generic request/response suppression remains a method-only case and is
+not scored against CRS-M1-00101; the abort is a prescribed fallback, not a
+cancellation waiver.
+
 The registered statistical decision must classify comparisons as primary,
 secondary or exploratory and map each primary estimand to its finite domain,
 unit, pairing, estimator, interval, applicability and effect scale. Numeric
 sample/repeat policy, resource budget and stop priority, and clock/error budget
 are separate open decisions with named owners and closure witnesses; none is
 selected by this draft. The finite decision table distinguishes a complete
-deterministic census, independently randomized attempts and paired/clustered
-scenes. Missing domain, independence or pairing inputs produce
-\texttt{WAIT-DEC-SAMPLE}; the examples are hypothetical, not power calculations
+deterministic census, independently randomized attempts, paired units and
+clustered units. The independent branch requires independent random assignment,
+no dependence and attempt as the unit; the paired and clustered branches require
+their respective evidence and units. Missing or inconsistent inputs produce
+\texttt{WAIT-DEC-SAMPLE}. Only the independent Bernoulli branch currently names
+Clopper--Pearson from a bound direct source; paired and clustered inference remain
+method-wait. The examples are hypothetical, not power calculations
 or results. One session selects exactly one \texttt{BUDGET} or \texttt{ROUNDS}
 mode. A retry cap is an independent execution-safety bound, not a second budget
 stop. The timing witness in the design contract uses closed intervals

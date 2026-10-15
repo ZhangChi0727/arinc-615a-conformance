@@ -55,7 +55,7 @@ silently redefine the Core.
 
 - CR-2026-017 / DD-041 delivered the separately owned, read-only offline capture-to-evidence increment merged as eddec443; its packet, finite reconstruction and bounded UPLOAD/INFORMATION evidence scope remains unchanged and receives no new work here.
 - CR-2026-018 / DD-042 integrated accepted literature evidence into bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.
-- CR-2026-019 / DD-043 refines those bounded claims into a corrected Draft experiment implementation design while preserving the four arms, three families, eight scenarios and accepted method/interface authorities; RR-PR23-2026-002 / 003 re-review remains pending.
+- CR-2026-019 / DD-043 refines those bounded claims into a corrected Draft experiment implementation design while preserving the four arms, three families, eight scenarios and accepted method/interface authorities; RR-PR23-2026-004 rework is implemented and Decision Maker re-review remains pending.
 - Design acceptance remains separate from run admission: no confirmatory result, Configuration, expanded capability, conformance, independent scientific approval, submission, baseline or tag is created.
 
 State changes:
@@ -107,7 +107,7 @@ Unchanged boundaries:
 
 - CR-2026-017／DD-041 交付了由另一责任线完成、以 eddec443 合并的只读“捕获到证据”增量；其数据包、有限重建和有界 UPLOAD／INFORMATION 证据范围保持不变，本研究线不追加任务。
 - CR-2026-018／DD-042 在不改变算法、接口和实验臂的前提下，把已接受文献证据融入有界 C1／C2 措辞与评价记账。
-- CR-2026-019／DD-043 把这些受限主张细化为已修正的 Draft 实验实施设计，同时保持四臂、三实验族、八场景和已接受的方法／接口权威；RR-PR23-2026-002／003 复审仍待完成。
+- CR-2026-019／DD-043 把这些受限主张细化为已修正的 Draft 实验实施设计，同时保持四臂、三实验族、八场景和已接受的方法／接口权威；RR-PR23-2026-004 返工已实现，仍待 Decision Maker 复审。
 - 设计接受与运行准入继续分离；本增量不产生确认性结果、Configuration、扩大能力、符合性、独立科学批准、投稿、baseline 或 tag。
 
 状态变化：

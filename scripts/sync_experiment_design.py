@@ -67,7 +67,25 @@ def render_shared_block(data: dict[str, Any]) -> str:
     analyses = sorted(data["analysisPlans"], key=lambda row: row["id"])
     comparisons = sorted(data["comparisonFamilies"], key=lambda row: row["id"])
     choices = sorted(data["analysisChoiceWalkthroughs"], key=lambda row: row["id"])
+    contrasts = sorted(data["registeredContrasts"], key=lambda row: row["id"])
+    timelines = sorted(data["protocolTimelineWalkthroughs"], key=lambda row: row["id"])
+    translations = data["translationsZh"]
     summary = accounting_summary(data)
+
+    def zh(group: str, row_id: str) -> str:
+        return translations[f"{group}.{row_id}.summary"]
+
+    def proposal(field: dict[str, Any]) -> list[Any]:
+        return [
+            f"{field['path']} ({field['type']}; {field['visibility']})",
+            *[
+                f"member {item['name']}:{item['type']} [{item['role']}]"
+                for item in field.get("members", [])
+            ],
+            *[
+                f"forbidden {name}" for name in field.get("limits", {}).get("forbiddenMembers", [])
+            ],
+        ]
 
     parts = [
         START,
@@ -78,25 +96,31 @@ def render_shared_block(data: dict[str, Any]) -> str:
         "### Claim and arm boundary / 主张与实验臂边界",
         "",
         _table(
-            ["Claim / 主张", "Bounded proposition / 有界命题", "Assumptions / 前提", "Falsifiers / 反证条件", "Gate / 门禁"],
-            ((row["claimId"], row["boundedProposition"], row["assumptions"], row["falsifiers"], row["reviewGate"]) for row in claims),
+            ["Claim / 主张", "Bounded proposition", "Assumptions", "Falsifiers", "Controlled Chinese / 受控中文", "Gate / 门禁"],
+            ((row["claimId"], row["boundedProposition"], row["assumptions"], row["falsifiers"], zh("claimArguments", row["claimId"]), row["reviewGate"]) for row in claims),
         ),
         "",
         _table(
-            ["Arm / 实验臂", "Visible inputs / 可见输入", "Actions / 动作", "Feedback / 反馈", "Prohibited / 禁止"],
-            ((row["id"], [f"{item['ref']} ({_bilingual_token(item['role'])})" for item in row["visibleInputs"]], row["actions"], row["feedback"], row["prohibitedRefs"]) for row in arms),
+            ["Arm / 实验臂", "Visible inputs / 可见输入", "Actions", "Feedback / 反馈", "Prohibited", "Controlled Chinese / 受控中文"],
+            ((row["id"], [f"{item['ref']} ({_bilingual_token(item['role'])})" for item in row["visibleInputs"]], row["actions"], row["feedback"], row["prohibitedRefs"], zh("arms", row["id"])) for row in arms),
+        ),
+        "",
+        _table(
+            ["Registered contrast / 注册对比", "Family / 实验族", "Arms / 实验臂", "Parent metrics / 父指标"],
+            ((row["id"], row["familyId"], row["armIds"], row["parentMetricIds"]) for row in contrasts),
         ),
         "",
         "### Scenario contract / 场景合同",
         "",
         _table(
-            ["Scenario / 场景", "Scope / 服务", "Development + CRS / 开发与需求", "Acceptance / 验收", "Perturbation / 扰动点", "Records / 记录", "Admission / 准入"],
+            ["Scenario / 场景", "Scope / 服务", "Development + CRS / 开发与需求", "Acceptance / 验收", "Perturbation", "Records / 记录", "Admission", "Controlled Chinese / 受控中文"],
             (
                 (
                     row["id"], row["serviceScope"],
                     [row["developmentScenarioRef"], row["crsDisposition"], *row["crsRefs"]],
                     [*row["acceptanceCaseRefs"], *row["acceptanceMatrixRefs"]],
-                    row["perturbationPoint"], row["requiredRecords"], row["admissionRule"],
+                    [row["perturbationPoint"], row["truthConfirmation"], row["observableOutcome"]],
+                    row["requiredRecords"], row["admissionRule"], zh("scenarios", row["id"]),
                 )
                 for row in scenarios
             ),
@@ -112,12 +136,12 @@ def render_shared_block(data: dict[str, Any]) -> str:
         "### Metric dictionary / 指标字典",
         "",
         _table(
-            ["Metric / 指标", "Population / 分母总体", "Numerator / 分子总体", "Calculation / 计算", "Missing + censoring / 缺失与删失", "Analysis / 分析", "Primary / 主要"],
+            ["Metric / 指标", "Population / 分母总体", "Numerator / 分子总体", "Calculation", "Missing + censoring", "Required fields / 必需字段", "Controlled Chinese / 受控中文", "Analysis / 分析", "Primary / 主要"],
             (
                 (
                     row["id"], row["populationId"], row["numeratorPopulationId"], row["calculation"],
                     [row["missingRule"], row["censoringRule"], f"zero={row['zeroDenominator']}"],
-                    row["analysisPlanId"], row["primary"],
+                    row["requiredFields"], zh("metrics", row["id"]), row["analysisPlanId"], row["primary"],
                 )
                 for row in metrics
             ),
@@ -126,12 +150,12 @@ def render_shared_block(data: dict[str, Any]) -> str:
         "### Analysis decisions / 分析决定",
         "",
         _table(
-            ["Plan / 方案", "Estimand / 估计目标", "Unit + pairing / 单位与配对", "Estimator + interval / 估计量与区间", "Applicability / 适用性", "Evidence / 方法证据", "Freeze / 冻结决定"],
+            ["Plan / 方案", "Estimand", "Unit + pairing / 单位与配对", "Estimator + interval", "Applicability", "Controlled Chinese / 受控中文", "Method status / 方法状态", "Evidence / 方法证据", "Freeze / 冻结决定"],
             (
                 (
                     row["id"], row["estimand"], [row["unit"], row["pairing"]],
                     [row["estimator"], row["interval"], _bilingual_token(row["choiceBranch"]), _bilingual_token(row["missingInputResult"])], row["applicability"],
-                    [*row["methodEvidenceIds"], *row["directSourceLocators"]], row["freezeDecisionId"],
+                    zh("analysisPlans", row["id"]), row["methodStatus"], [*row["methodEvidenceIds"], *row["sourceLocators"]], row["freezeDecisionId"],
                 )
                 for row in analyses
             ),
@@ -140,19 +164,19 @@ def render_shared_block(data: dict[str, Any]) -> str:
         "### Comparison families / 比较族",
         "",
         _table(
-            ["Family / 比较族", "Class / 类别", "Metrics / 指标", "Contrasts / 对比", "Joint conclusion / 联合结论", "Multiplicity / 多重性"],
-            ((row["id"], _bilingual_token(row["classification"]), row["metricIds"], row["contrasts"], row["jointConclusion"], row["multiplicityDisposition"]) for row in comparisons),
+            ["Family / 比较族", "Class / 类别", "Metrics / 指标", "Contrasts", "Joint conclusion", "Multiplicity", "Controlled Chinese / 受控中文"],
+            ((row["id"], _bilingual_token(row["classification"]), row["metricIds"], row["contrasts"], row["jointConclusion"], row["multiplicityDisposition"], zh("comparisonFamilies", row["id"])) for row in comparisons),
         ),
         "",
         "### Engineering dependencies / 工程依赖",
         "",
         _table(
-            ["Dependency / 依赖", "Consumers / 使用方", "Current ref / 当前引用", "Evidence + producer / 证据与产出方", "State + proposal / 状态与提议", "Decisions / 决定", "Closure + follow-up / 闭合与后续", "Milestone / 里程碑"],
+            ["Dependency / 依赖", "Consumers / 使用方", "Current ref / 当前引用", "Evidence + producer", "State + typed proposal / 状态与类型化提议", "Decisions / 决定", "Closure + follow-up", "Controlled Chinese / 受控中文", "Milestone / 里程碑"],
             (
                 (
                     row["id"], row["consumers"], row["currentReference"], [row["neededEvidence"], row["producer"]],
-                    [row["state"], *[f"{field['path']} [{field['visibility']}]" for field in row["proposalFields"]]], row["decisionIds"],
-                    [row["closureTest"], row["minimumFollowUp"]], row["blockingMilestone"],
+                    [row["state"], *[item for field in row["proposalFields"] for item in proposal(field)]], row["decisionIds"],
+                    [row["closureTest"], row["minimumFollowUp"]], zh("dependencies", row["id"]), row["blockingMilestone"],
                 )
                 for row in dependencies
             ),
@@ -162,17 +186,24 @@ def render_shared_block(data: dict[str, Any]) -> str:
         "",
         _table(
             ["Choice / 选择", "Label / 标签", "Inputs / 输入", "Branch / 分支", "Result / 结果", "Rationale / 理由"],
-            ((row["id"], "HYPOTHETICAL-NOT-RESULT / 假设示例，非结果", [row["domainEnumeration"], row["randomAssignment"], row["dependence"], row["pairingEvidence"]], _bilingual_token(row["selectedBranch"]), _bilingual_token(row["result"]), row["rationale"]) for row in choices),
+            ((row["id"], "HYPOTHETICAL-NOT-RESULT / 假设示例，非结果", [row["domainEnumeration"], row["randomAssignment"], row["dependence"], f"pair={row['pairingEvidence']}", f"cluster={row['clusterEvidence']}", f"unit={row['independentUnit']}"] , _bilingual_token(row["selectedBranch"]), _bilingual_token(row["result"]), row["rationale"]) for row in choices),
+        ),
+        "",
+        "### CRS-M1-00101 protocol timelines / CRS-M1-00101 协议时间线",
+        "",
+        _table(
+            ["Timeline / 时间线", "Trigger / 触发", "Observed / 观测", "Elapsed / 经过时间", "Outcome / 结果"],
+            ((row["id"], row["trigger"], row["receivedEvent"], row["elapsedSeconds"], row["outcome"]) for row in timelines),
         ),
         "",
         "### Open decisions / 待定决定",
         "",
         _table(
-            ["Decision / 决定", "Owner / 负责人", "Inputs / 输入", "Procedure / 程序", "Freeze / 冻结点", "Closure witness / 闭合证据"],
+            ["Decision / 决定", "Owner / 负责人", "Inputs", "Procedure", "Freeze / 冻结点", "Closure witness", "Controlled Chinese / 受控中文"],
             (
                 (
                     row["id"], row["ownerRole"], row["inputEvidence"], row["selectionProcedure"],
-                    row["freezeBy"], row["closureWitness"],
+                    row["freezeBy"], row["closureWitness"], zh("pendingDecisions", row["id"]),
                 )
                 for row in decisions
             ),

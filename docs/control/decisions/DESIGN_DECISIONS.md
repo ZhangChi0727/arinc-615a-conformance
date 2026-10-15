@@ -1153,8 +1153,9 @@ leaving every parameter as an unnamed TBD would make the design unactionable.
 interfaces, records, engineering contracts and the merged CR-2026-017 / DD-041
 offline increment are unchanged and receive no new task.
 
-**Status:** Corrected Draft candidate under CR-2026-019 after RR-PR23-2026-002 /
-003 rework; Decision Maker re-review, independent scientific review and all
+**Status:** Corrected Draft candidate under CR-2026-019 after RR-PR23-2026-004
+rework against reviewed Head `5854324d3247d1e5c03877e9aaab39578cbc9af9`;
+Decision Maker re-review, independent scientific review and all
 run-admission decisions remain open. This is not acceptance.
 
 # 中文版
@@ -1692,8 +1693,9 @@ CRS、M2、开发合同、实验臂或结果。
 **范围：** 仅 CR-2026-019 研究设计；不改变方法、算法、接口、记录、开发合同或
 PR #22 所有权。
 
-**状态：** CR-2026-019 下的已修正 Draft 候选；RR-PR23-2026-002／003 要求的返工已
-提交但仍待 Decision Maker 复审，独立科学评审和全部运行准入决定仍开放；这不是接受。
+**状态：** CR-2026-019 下的已修正 Draft 候选；已针对 RR-PR23-2026-004 所审 Head
+`5854324d3247d1e5c03877e9aaab39578cbc9af9` 完成返工，但仍待 Decision Maker 复审；
+独立科学评审和全部运行准入决定仍开放；这不是接受。
 
 ## DD-038——首轮需求分层与就绪边界
 
