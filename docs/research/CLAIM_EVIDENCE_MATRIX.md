@@ -152,6 +152,11 @@ answered decisions; stop class alone cannot count as singleton localization.
 Every primary metric is linked to a candidate analysis plan and an open freeze
 decision. These closures improve auditability only and do not advance C1, C2,
 DETECT, LOCATE or ABLATION status.
+The correction contract additionally requires a safe algorithm-visible scene
+projection, evaluator-only truth/equivalence fields, same-scene reciprocal-arm
+pairing with independent resets, ERROR history preservation, closed-interval T5
+classification, one resource mode per session, and a missing-input
+`WAIT-DEC-SAMPLE` branch. These remain design obligations, not observed evidence.
 
 # 中文版
 

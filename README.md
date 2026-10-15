@@ -55,7 +55,7 @@ silently redefine the Core.
 
 - CR-2026-017 / DD-041 delivered the separately owned, read-only offline capture-to-evidence increment merged as eddec443; its packet, finite reconstruction and bounded UPLOAD/INFORMATION evidence scope remains unchanged and receives no new work here.
 - CR-2026-018 / DD-042 integrated accepted literature evidence into bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.
-- CR-2026-019 / DD-043 refines those bounded claims into a Draft experiment implementation design while preserving the four arms, three families, eight scenarios and accepted method/interface authorities.
+- CR-2026-019 / DD-043 refines those bounded claims into a corrected Draft experiment implementation design while preserving the four arms, three families, eight scenarios and accepted method/interface authorities; RR-PR23-2026-002 / 003 re-review remains pending.
 - Design acceptance remains separate from run admission: no confirmatory result, Configuration, expanded capability, conformance, independent scientific approval, submission, baseline or tag is created.
 
 State changes:
@@ -78,7 +78,7 @@ Unchanged boundaries:
 
 ## Next development steps
 
-- Complete the authorized offline intake increment under CR-2026-017 / DD-041, then obtain independent review on its unchanged Draft PR Head. Establish runtime integrity and independent experimental truth before capability or conformance claims; do not start M3 from this implementation alone.
+- Obtain Decision Maker re-review of the corrected unchanged Draft PR #23 Head across the full and correction ranges. Keep all run-admission decisions OPEN and establish runtime integrity and independent experimental truth before capability or conformance claims; do not start M3 from this design.
 - Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth.
 
 ## 当前开发图景
@@ -107,7 +107,7 @@ Unchanged boundaries:
 
 - CR-2026-017／DD-041 交付了由另一责任线完成、以 eddec443 合并的只读“捕获到证据”增量；其数据包、有限重建和有界 UPLOAD／INFORMATION 证据范围保持不变，本研究线不追加任务。
 - CR-2026-018／DD-042 在不改变算法、接口和实验臂的前提下，把已接受文献证据融入有界 C1／C2 措辞与评价记账。
-- CR-2026-019／DD-043 把这些受限主张细化为 Draft 实验实施设计，同时保持四臂、三实验族、八场景和已接受的方法／接口权威。
+- CR-2026-019／DD-043 把这些受限主张细化为已修正的 Draft 实验实施设计，同时保持四臂、三实验族、八场景和已接受的方法／接口权威；RR-PR23-2026-002／003 复审仍待完成。
 - 设计接受与运行准入继续分离；本增量不产生确认性结果、Configuration、扩大能力、符合性、独立科学批准、投稿、baseline 或 tag。
 
 状态变化：
@@ -130,7 +130,7 @@ Unchanged boundaries:
 
 ## 下一步开发计划
 
-- 完成 CR-2026-017／DD-041 下的授权离线接入增量，再在不变 Draft PR Head 上取得独立评审。建立运行完整性与独立实验真值后方可提出能力或符合性主张；不得仅凭本实现启动 M3。
+- 在不变的 Draft PR #23 最终 Head 上按完整范围与修正范围取得 Decision Maker 复审。所有运行准入决定保持 OPEN；建立运行完整性与独立实验真值后方可提出能力或符合性主张；不得仅凭本设计启动 M3。
 - 保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。
 <!-- project-status:end -->
 

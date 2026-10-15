@@ -282,6 +282,12 @@ detail into the accepted four-component cost vector exactly once. It also
 names missing/censoring rules, comparison families, analysis plans, dependency
 fields, and separate sample/repeat, resource, and clock decisions. The
 bilingual shared tables are generated from that index and checked for drift.
+Algorithm arms receive only the proposed safe projection
+`IF-EXP-SCENE.algorithmVisibleFields`; the parent `sceneRecord`, injection
+confirmation, validity class and evaluator truth remain evaluator/operator
+information. A pair is eligible only for reciprocal registered arms on the
+same base scene/seed with distinct reset evidence and parent-metric eligibility.
+Pre-run review/setup effort is audited separately from issued-action cost.
 Design-check success is not
 confirmatory registration or run admission. Interactive IUT/reset evidence,
 truth and injection confirmation, equivalent-fault adjudication, independent
@@ -289,6 +295,11 @@ mathematical review, justified sample/repeat policy, resource budget, and clock
 error budget remain named blockers. A zero answered count is reported as
 coverage `0/N`, while answered-conditional error is `N/A`; `ERROR` and stop
 classes never manufacture answered or singleton-localization outcomes.
+The bounded statistical choice table distinguishes a complete finite census,
+independent randomized attempts and paired/clustered scenes, and returns
+`WAIT-DEC-SAMPLE` when the needed independence or pairing evidence is absent.
+Exactly one `BUDGET` or `ROUNDS` resource mode is selected per session; a retry
+cap is a separate execution-safety bound, not a second resource stop mode.
 Historical captures stay exploratory and synthetic fixtures are not results.
 
 # 中文版

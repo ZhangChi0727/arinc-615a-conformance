@@ -26,7 +26,10 @@ only; no invented sampling cost.
 
 Truth is typed evaluator-only. It never enters \IFsel, \IFpred, \IFhist{} or
 \IFexec; algorithm-visible references are limited to registered initial inputs
-and records produced by that arm's own actions. Runtime \texttt{IF-EQUIV}
+and records produced by that arm's own actions. In particular, arms receive the
+proposed allowlisted \texttt{algorithmVisibleFields} projection, never the parent
+scene record containing the fault plan, truth source, injection confirmation,
+validity class or post-hoc adjudication. Runtime \texttt{IF-EQUIV}
 candidate equivalence is distinct from evaluator-side injected-fault
 equivalence. The all-attempt ledger retains every registered attempt, including
 unconfirmed injection, invalid observation, equivalent or undecided fault,
@@ -84,6 +87,9 @@ parameters. An experimental unit is a unique registered attempt on one base
 scene, arm and control/fault construction; packets, events, timestamps and
 hypotheses are within-attempt observations. Development, pilot and held-out
 lineages are disjoint, and paired arms require independent reset evidence.
+Pair eligibility additionally requires the same registered base scene/seed,
+reciprocal distinct arm identities and eligibility for the named parent metric;
+an unmatched or mismatched row remains in flow accounting but is not imputed.
 Eight existing scenario IDs cover normal, WAIT/continue, no-response, abort,
 invalid observation, same-key ownership, single-batch comparison and resource
 error. Their specification coverage does not establish fault coverage. FIND,
@@ -96,10 +102,16 @@ secondary or exploratory and map each primary estimand to its finite domain,
 unit, pairing, estimator, interval, applicability and effect scale. Numeric
 sample/repeat policy, resource budget and stop priority, and clock/error budget
 are separate open decisions with named owners and closure witnesses; none is
-selected by this draft. The timing witness in the design contract uses
+selected by this draft. The finite decision table distinguishes a complete
+deterministic census, independently randomized attempts and paired/clustered
+scenes. Missing domain, independence or pairing inputs produce
+\texttt{WAIT-DEC-SAMPLE}; the examples are hypothetical, not power calculations
+or results. One session selects exactly one \texttt{BUDGET} or \texttt{ROUNDS}
+mode. A retry cap is an independent execution-safety bound, not a second budget
+stop. The timing witness in the design contract uses closed intervals
 \(I_{\mathrm{obs}}=[5.0,5.2]~\mathrm{s}\) and
 \(I_r=[4.0,5.1]~\mathrm{s}\), whose overlap without containment is
-\texttt{INCONCLUSIVE}.
+\texttt{INCONCLUSIVE}; containment is PASS and disjointness is FAIL.
 
 Literature methods are not automatically experimental arms. Köhl--Hermanns and
 Fränzle~\textit{et al.} are C1 concept comparators because their passive or
