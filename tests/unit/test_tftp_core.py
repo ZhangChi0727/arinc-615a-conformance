@@ -322,12 +322,14 @@ class TestDuplicateData:
         port = _free_port()
         payload = b"X" * 200  # single block, < blksize
         stop = threading.Event()
+        ready = threading.Event()
 
         # Custom server: send DATA(1), then duplicate DATA(1), then wait for ACKs
         def _serve_dup():
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.bind(("127.0.0.1", port))
             sock.settimeout(3.0)
+            ready.set()
             try:
                 # Wait for RRQ
                 data, client = sock.recvfrom(65535)
@@ -350,6 +352,7 @@ class TestDuplicateData:
 
         srv = threading.Thread(target=_serve_dup, daemon=True)
         srv.start()
+        assert ready.wait(timeout=3.0), "duplicate-data fixture did not bind its UDP port"
         try:
             result = read_file(("127.0.0.1", port), "dup.bin", timeout=3.0)
             assert result == payload  # not payload * 2

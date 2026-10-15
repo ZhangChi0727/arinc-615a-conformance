@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:arinc615a:cltav-offline-intake-evidence:1.0",
+  "title": "CL-TAV bounded offline intake evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifactType", "schemaVersion", "evidenceBoundary", "tool", "input",
+    "runParameters", "executionStatus", "counts", "packetRefs", "datagrams",
+    "transfers", "events", "diagnostics", "contractProjection"
+  ],
+  "properties": {
+    "artifactType": {"const": "CLTAV-OFFLINE-INTAKE-EVIDENCE"},
+    "schemaVersion": {"const": "1.0"},
+    "evidenceBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["purpose", "conformanceVerdict"],
+      "properties": {
+        "purpose": {"const": "EXPLORATORY-DEVELOPMENT-ONLY"},
+        "statement": {"type": "string", "minLength": 1},
+        "conformanceVerdict": {"const": "NOT-EVALUATED"},
+        "integrity": {"const": "NOT-EVALUATED"}
+      }
+    },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "sourceCommit", "sourceCommitStatus", "runtimeSourceSha256", "contractIdentities"],
+      "properties": {
+        "name": {"const": "cltav-offline"},
+        "version": {"type": "string", "minLength": 1},
+        "sourceCommit": {"oneOf": [{"const": "UNVERIFIED"}, {"type": "string", "pattern": "^[0-9a-f]{40}$"}]},
+        "sourceCommitStatus": {"enum": ["CLAIMED-UNVERIFIED", "UNAVAILABLE"]},
+        "runtimeSourceSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "contractIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+        ,"contractIdentities": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["path", "sha256", "version"],
+            "properties": {
+              "path": {"const": "configs/engineering/cltav_development_contracts.json"},
+              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "version": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["captureId", "byteCount", "sha256"],
+      "properties": {
+        "captureId": {"type": "string", "minLength": 1},
+        "byteCount": {"type": "integer", "minimum": 0},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "container": {"$ref": "#/$defs/container"}
+      }
+    },
+    "runParameters": {"$ref": "#/$defs/runParameters"},
+    "executionStatus": {"enum": ["COMPLETE", "COMPLETE-WITH-CONTROLLED-ISSUES", "FATAL-INPUT-ERROR"]},
+    "counts": {"$ref": "#/$defs/counts"},
+    "packetRefs": {"type": "array", "items": {"$ref": "#/$defs/packetRef"}},
+    "datagrams": {"type": "array", "items": {"$ref": "#/$defs/datagram"}},
+    "transfers": {"type": "array", "items": {"$ref": "#/$defs/transfer"}},
+    "events": {"type": "array", "items": {"$ref": "#/$defs/event"}},
+    "diagnostics": {"type": "array", "items": {"$ref": "#/$defs/diagnostic"}},
+    "contractProjection": {"$ref": "#/$defs/contractProjection"}
+  },
+  "$defs": {
+    "container": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["containerFormat", "byteOrder", "interfaces", "containerPacketCount"],
+      "properties": {
+        "containerFormat": {"type": "string", "minLength": 1},
+        "byteOrder": {"type": "string", "minLength": 1},
+        "containerPacketCount": {"type": "integer", "minimum": 0},
+        "interfaces": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["sectionId", "interfaceId", "linkType", "snapLength", "ticksPerSecond", "offsetSeconds", "clockDomain", "clockAccuracy"],
+            "properties": {
+              "sectionId": {"type": "integer", "minimum": 0},
+              "interfaceId": {"type": "integer", "minimum": 0},
+              "linkType": {"type": "integer", "minimum": 0},
+              "snapLength": {"type": "integer", "minimum": 0},
+              "ticksPerSecond": {"type": "integer", "minimum": 1},
+              "offsetSeconds": {"type": "integer"},
+              "clockDomain": {"type": "string", "minLength": 1},
+              "clockAccuracy": {"const": "UNKNOWN"}
+            }
+          }
+        }
+      }
+    },
+    "runParameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxPacketBytes", "maxContainerBlockBytes", "maxActiveDatagrams",
+        "maxDatagramBytes", "maxFragmentsPerDatagram", "maxActiveTransfers",
+        "maxTransferRecords", "maxTransferBytes", "maxActiveTransferBytes", "maxCompletedPayloadBytes", "maxEvidenceRecords", "maxPacketRefs",
+        "maxDiagnostics", "maxEvents", "maxInterfaces", "tftpServicePort"
+      ],
+      "properties": {
+        "maxPacketBytes": {"type": "integer", "minimum": 1},
+        "maxContainerBlockBytes": {"type": "integer", "minimum": 1},
+        "maxActiveDatagrams": {"type": "integer", "minimum": 1},
+        "maxDatagramBytes": {"type": "integer", "minimum": 1, "maximum": 65535},
+        "maxFragmentsPerDatagram": {"type": "integer", "minimum": 1},
+        "maxActiveTransfers": {"type": "integer", "minimum": 1},
+        "maxTransferRecords": {"type": "integer", "minimum": 1},
+        "maxTransferBytes": {"type": "integer", "minimum": 1},
+        "maxActiveTransferBytes": {"type": "integer", "minimum": 1},
+        "maxCompletedPayloadBytes": {"type": "integer", "minimum": 1},
+        "maxEvidenceRecords": {"type": "integer", "minimum": 1},
+        "maxPacketRefs": {"type": "integer", "minimum": 1},
+        "maxDiagnostics": {"type": "integer", "minimum": 1},
+        "maxEvents": {"type": "integer", "minimum": 1},
+        "maxInterfaces": {"type": "integer", "minimum": 1},
+        "tftpServicePort": {"type": "integer", "minimum": 1, "maximum": 65535}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["containerPackets", "evidencePacketRefs", "datagrams", "transfers", "events", "diagnostics"],
+      "properties": {
+        "containerPackets": {"type": "integer", "minimum": 0},
+        "evidencePacketRefs": {"type": "integer", "minimum": 0},
+        "datagrams": {"type": "integer", "minimum": 0},
+        "transfers": {"type": "integer", "minimum": 0},
+        "events": {"type": "integer", "minimum": 0},
+        "diagnostics": {"type": "integer", "minimum": 0}
+      }
+    },
+    "timestamp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ticks", "ticksPerSecond", "offsetSeconds", "clockDomain", "accuracy"],
+      "properties": {
+        "ticks": {"type": "integer", "minimum": 0},
+        "ticksPerSecond": {"type": "integer", "minimum": 1},
+        "offsetSeconds": {"type": "integer"},
+        "clockDomain": {"type": "string", "minLength": 1},
+        "accuracy": {"const": "UNKNOWN"}
+      }
+    },
+    "packetRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packetRefId", "captureId", "packetIndex", "containerOffset", "sectionId", "interfaceId", "linkType", "linkDomain", "capturedLength", "originalLength", "captureSnapLength", "qualityCodes", "timestamp"],
+      "properties": {
+        "packetRefId": {"type": "string", "minLength": 1},
+        "captureId": {"type": "string", "minLength": 1},
+        "packetIndex": {"type": "integer", "minimum": 1},
+        "containerOffset": {"type": "integer", "minimum": 0},
+        "sectionId": {"type": "integer", "minimum": 0},
+        "interfaceId": {"type": "integer", "minimum": 0},
+        "linkType": {"type": "integer", "minimum": 0},
+        "linkDomain": {"type": "string", "minLength": 1},
+        "capturedLength": {"type": "integer", "minimum": 0},
+        "originalLength": {"type": "integer", "minimum": 0},
+        "captureSnapLength": {"type": ["integer", "null"], "minimum": 0},
+        "qualityCodes": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "timestamp": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/timestamp"}]}
+      }
+    },
+    "range": {
+      "type": "array",
+      "prefixItems": [{"type": "integer", "minimum": 0}, {"type": "integer", "minimum": 0}],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "datagram": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["datagramId", "captureId", "sectionId", "interfaceId", "linkDomain", "source", "destination", "protocol", "ipv4Identification", "status", "failureCode", "payloadLength", "packetRefIds", "fragmentRanges", "missingRanges", "conflictRanges", "vlanTags", "tftpMessage"],
+      "properties": {
+        "datagramId": {"type": "string", "minLength": 1},
+        "captureId": {"type": "string", "minLength": 1},
+        "sectionId": {"type": "integer", "minimum": 0},
+        "interfaceId": {"type": "integer", "minimum": 0},
+        "linkDomain": {"type": "string", "minLength": 1},
+        "source": {"type": "string", "minLength": 1},
+        "destination": {"type": "string", "minLength": 1},
+        "protocol": {"type": "integer", "minimum": 0, "maximum": 255},
+        "ipv4Identification": {"type": "integer", "minimum": 0, "maximum": 65535},
+        "status": {"enum": ["COMPLETE", "GAPPED", "CONFLICT"]},
+        "failureCode": {"type": ["string", "null"]},
+        "payloadLength": {"type": ["integer", "null"], "minimum": 0},
+        "packetRefIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "fragmentRanges": {"type": "array", "items": {"$ref": "#/$defs/range"}},
+        "missingRanges": {"type": "array", "items": {"$ref": "#/$defs/range"}},
+        "conflictRanges": {"type": "array", "items": {"$ref": "#/$defs/range"}},
+        "vlanTags": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 4095}},
+        "tftpMessage": {
+          "anyOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind", "blockNumber"],
+              "properties": {
+                "kind": {"enum": ["RRQ", "WRQ", "DATA", "ACK", "ERROR", "OACK"]},
+                "blockNumber": {"type": ["integer", "null"], "minimum": 0, "maximum": 65535}
+              }
+            }
+          ]
+        }
+      }
+    },
+    "endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["address", "port"],
+      "properties": {
+        "address": {"type": "string", "minLength": 1},
+        "port": {"type": ["integer", "null"], "minimum": 1, "maximum": 65535}
+      }
+    },
+    "transfer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transferId", "captureId", "sectionId", "interfaceId", "linkDomain", "vlanTags", "requestKind", "filename", "mode", "clientEndpoint", "serverEndpoint", "associationStatus", "reconstructionStatus", "blockSize", "terminalBlock", "packetRefIds", "datagramIds", "sourceWitness", "diagnosticCodes", "completePayloadLength", "integrity"],
+      "properties": {
+        "transferId": {"type": "string", "minLength": 1},
+        "captureId": {"type": "string", "minLength": 1},
+        "sectionId": {"type": "integer", "minimum": 0},
+        "interfaceId": {"type": "integer", "minimum": 0},
+        "linkDomain": {"type": "string", "minLength": 1},
+        "vlanTags": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 4095}},
+        "requestKind": {"type": ["string", "null"]},
+        "filename": {"type": ["string", "null"]},
+        "mode": {"type": ["string", "null"]},
+        "clientEndpoint": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/endpoint"}]},
+        "serverEndpoint": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/endpoint"}]},
+        "associationStatus": {"type": "string", "minLength": 1},
+        "reconstructionStatus": {"enum": ["INCOMPLETE", "COMPLETE", "GAPPED", "CONFLICT", "ERROR"]},
+        "blockSize": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "value"],
+          "properties": {
+            "status": {"enum": ["ACCEPTED", "DEFAULTED", "UNKNOWN"]},
+            "value": {"type": ["integer", "null"], "minimum": 1}
+          }
+        },
+        "terminalBlock": {"type": ["integer", "null"], "minimum": 1, "maximum": 65535},
+        "packetRefIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "datagramIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "sourceWitness": {
+          "type": "object", "additionalProperties": false,
+          "required": ["packetRefIds", "datagramIds", "requestPacketRefId", "requestDatagramId", "blockPacketRefIds", "blockDatagramIds", "completionPacketRefId", "completionDatagramId"],
+          "properties": {
+            "packetRefIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+            "datagramIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+            "requestPacketRefId": {"type": ["string", "null"], "minLength": 1},
+            "requestDatagramId": {"type": ["string", "null"], "minLength": 1},
+            "blockPacketRefIds": {
+              "type": "object",
+              "additionalProperties": {"type": "string", "minLength": 1}
+            },
+            "blockDatagramIds": {
+              "type": "object",
+              "additionalProperties": {"type": "string", "minLength": 1}
+            },
+            "completionPacketRefId": {"type": ["string", "null"], "minLength": 1},
+            "completionDatagramId": {"type": ["string", "null"], "minLength": 1}
+          }
+        },
+        "diagnosticCodes": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "completePayloadLength": {"type": ["integer", "null"], "minimum": 0},
+        "integrity": {"const": "NOT-EVALUATED"}
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eventId", "eventType", "layer", "serviceScope", "fileRole", "transferId", "sourceDatagramIds", "sourcePacketRefIds", "fields", "evidenceStatus", "conformanceVerdict"],
+      "properties": {
+        "eventId": {"type": "string", "minLength": 1},
+        "eventType": {"type": "string", "minLength": 1},
+        "layer": {"enum": ["WIRE", "PARSE-RESULT", "APPLICATION", "ENVIRONMENT"]},
+        "serviceScope": {"type": "string", "minLength": 1},
+        "fileRole": {"type": ["string", "null"]},
+        "transferId": {"type": "string", "minLength": 1},
+        "sourceDatagramIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "sourcePacketRefIds": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "fields": {"type": "object"},
+        "evidenceStatus": {"type": "string", "minLength": 1},
+        "conformanceVerdict": {"const": "NOT-EVALUATED"}
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "stage", "severity", "message"],
+      "properties": {
+        "code": {"type": "string", "minLength": 1},
+        "stage": {"type": "string", "minLength": 1},
+        "severity": {"enum": ["ERROR", "WARNING"]},
+        "message": {"type": "string", "minLength": 1},
+        "packetRefId": {"type": "string", "minLength": 1},
+        "containerOffset": {"type": "integer", "minimum": 0},
+        "detail": {"type": "object"}
+      }
+    },
+    "contractProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["adapterVersion", "contractIdentity", "records", "nonProjectable"],
+      "properties": {
+        "adapterVersion": {"const": "1.0"},
+        "contractIdentity": {
+          "type": "object", "additionalProperties": false,
+          "required": ["path", "sha256", "version"],
+          "properties": {
+            "path": {"const": "configs/engineering/cltav_development_contracts.json"},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "version": {"type": "string", "minLength": 1}
+          }
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["recordType", "sourceId", "payload"],
+            "properties": {
+              "recordType": {"enum": ["PACKET-REF", "DATAGRAM-RECORD", "TRANSFER-RECORD", "PROTOCOL-EVENT"]},
+              "sourceId": {"type": "string", "minLength": 1},
+              "payload": {"type": "object"}
+            }
+          }
+        },
+        "nonProjectable": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["sourceType", "sourceId", "reason"],
+            "properties": {
+              "sourceType": {"type": "string", "minLength": 1},
+              "sourceId": {"type": "string", "minLength": 1},
+              "reason": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    }
+  }
+}
