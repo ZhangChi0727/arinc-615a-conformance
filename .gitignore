@@ -53,5 +53,9 @@ thesis/**/*~
 **/_filelist.txt
 **/__tmp__/
 
+# Explicit local output directory for bounded offline-intake evidence runs.
+# Never commit external captures, their payloads, or machine-local run output.
+.cltav-local/
+
 # Local research sources retained for analysis but never published
 local-references/

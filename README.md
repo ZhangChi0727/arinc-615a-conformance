@@ -51,18 +51,18 @@ silently redefine the Core.
 
 ## Current increment
 
-**Parallel CL-TAV offline-engineering and experiment-design candidates**
+**Merged bounded offline intake and Draft experiment-design candidate**
 
-- CR-2026-017 / DD-041 is the separately owned Draft offline intake and protocol-reconstruction engineering candidate; this research line assigns it no new work and asserts no completion.
-- CR-2026-019 / DD-043 refines the merged literature-bounded C1/C2 claims into a candidate experiment implementation design while preserving the four arms, three families, eight scenarios and existing method/interface authorities.
-- Both active candidates start from f55b69f0c8df8f40e5d75fd631289e8e6eb3a01c in independent worktrees and must merge serially; the second line to land preserves both CR/DD records, reconciles this shared status and is re-reviewed on its new head.
-- Design acceptance remains separate from run admission: no confirmatory result, implementation completion, Configuration, capability, conformance, independent scientific approval, submission, baseline or tag is created.
+- CR-2026-017 / DD-041 delivered the separately owned, read-only offline capture-to-evidence increment merged as eddec443; its packet, finite reconstruction and bounded UPLOAD/INFORMATION evidence scope remains unchanged and receives no new work here.
+- CR-2026-018 / DD-042 integrated accepted literature evidence into bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.
+- CR-2026-019 / DD-043 refines those bounded claims into a Draft experiment implementation design while preserving the four arms, three families, eight scenarios and accepted method/interface authorities.
+- Design acceptance remains separate from run admission: no confirmatory result, Configuration, expanded capability, conformance, independent scientific approval, submission, baseline or tag is created.
 
 State changes:
 
-- Two separately owned candidate lines are active from the same merged-paper base; this branch records only the research-design output and serial-merge rule.
-- The finite experiment design index, denominators, synthetic accounting and dependency/decision gates are candidate review material, not execution readiness.
-- currentStop remains EXECUTABLE-FOUNDATION-GATE for M3 implementation.
+- The bounded offline intake is merged but remains only the accepted narrow engineering increment; it does not close truth, reset, active execution or confirmatory-run dependencies.
+- The finite experiment design index, denominators, synthetic accounting and dependency/decision gates remain Draft candidate review material, not execution readiness.
+- currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims.
 
 Unchanged boundaries:
 
@@ -70,15 +70,15 @@ Unchanged boundaries:
 - The 18 source mapping rows, 7 instance-only rows and Q-01 through Q-09 remain unchanged.
 - Project Configuration is NOT YET ESTABLISHED; instance evaluation is NOT-EXERCISED; RQ8 remains OPEN.
 - Protocol conformance, certification readiness and authority acceptance remain false; no baseline or tag is created.
-- This increment creates no codec, executable EFSM engine, verification case, procedure, execution evidence or Project Configuration.
+- This increment creates no active codec/service engine, executable CL-TAV EFSM/solver, verification verdict, controlled execution evidence or Project Configuration.
 
 ## Current stop
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3 implementation. RR-CLTAV-2026-097 accepted the first-slice offline UPLOAD/INFORMATION development specification at PR #19 Head c9ca381, squash-merged as 324d832. That acceptance is not a tool implementation, runtime integrity result, confirmatory experiment, Project Configuration, expanded-CRS approval or M3 activation. M1-CANDIDATE-25 and its open source dependencies retain their controlled dispositions; the post-merge M2 pin correction changes artifact ancestry only. Further implementation requires separate authorization and evidence.
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3, active protocol execution and capability claims. RR-CLTAV-2026-097 accepted the first-slice offline UPLOAD/INFORMATION development specification at PR #19 Head c9ca381, squash-merged as 324d832; PR #20 rebounded the M2 input to c5296aed. CR-2026-017 / DD-041 separately authorize only a bounded, read-only offline intake implementation with evidence output. That narrow authorization is not a runtime-integrity result, confirmatory experiment, Project Configuration, expanded-CRS approval or M3 activation. M1-CANDIDATE-25 and its open source dependencies retain their controlled dispositions.
 
 ## Next development steps
 
-- Use the accepted first-slice specification as controlled input for a separately authorized implementation increment. Establish runtime integrity and independent experimental truth before capability or conformance claims; do not start M3 from this specification alone.
+- Complete the authorized offline intake increment under CR-2026-017 / DD-041, then obtain independent review on its unchanged Draft PR Head. Establish runtime integrity and independent experimental truth before capability or conformance claims; do not start M3 from this implementation alone.
 - Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth.
 
 ## 当前开发图景
@@ -103,18 +103,18 @@ Unchanged boundaries:
 
 ## 本次集成增量
 
-**并行的 CL-TAV 离线工程与实验实施设计候选**
+**已合并的有界离线接入与 Draft 实验实施设计候选**
 
-- CR-2026-017／DD-041 是由另一工作区负责的离线接入与协议重建 Draft 工程候选；本研究线不向其追加任务，也不声称其已完成。
-- CR-2026-019／DD-043 把已合并且受文献限定的 C1／C2 细化为候选实验实施设计，同时保持四臂、三实验族、八场景和既有方法／接口权威。
-- 两条活动候选均从 f55b69f0c8df8f40e5d75fd631289e8e6eb3a01c 起步，在独立工作树开发并串行合并；后合入者须保留两套 CR／DD、协调共享状态并在新 Head 上重审。
-- 设计接受与运行准入继续分离；本增量不产生确认性结果、实现完成、Configuration、能力、符合性、独立科学批准、投稿、baseline 或 tag。
+- CR-2026-017／DD-041 交付了由另一责任线完成、以 eddec443 合并的只读“捕获到证据”增量；其数据包、有限重建和有界 UPLOAD／INFORMATION 证据范围保持不变，本研究线不追加任务。
+- CR-2026-018／DD-042 在不改变算法、接口和实验臂的前提下，把已接受文献证据融入有界 C1／C2 措辞与评价记账。
+- CR-2026-019／DD-043 把这些受限主张细化为 Draft 实验实施设计，同时保持四臂、三实验族、八场景和已接受的方法／接口权威。
+- 设计接受与运行准入继续分离；本增量不产生确认性结果、Configuration、扩大能力、符合性、独立科学批准、投稿、baseline 或 tag。
 
 状态变化：
 
-- 两条不同责任人的候选线从同一已合并论文基点并行；本分支只登记研究设计输出与串行合并规则。
-- 有限实验设计索引、分母、合成记账及依赖／决定门只是候选评审材料，不构成执行就绪。
-- 对 M3 实现而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。
+- 有界离线接入已经合并，但仍只代表已接受的狭窄工程增量；它不关闭真值、复位、主动执行或确认性运行依赖。
+- 有限实验设计索引、分母、合成记账及依赖／决定门仍只是 Draft 候选评审材料，不构成执行就绪。
+- 对 M3、主动执行和能力主张而言，currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。
 
 保持不变的边界：
 
@@ -122,15 +122,15 @@ Unchanged boundaries:
 - 18 个来源映射行、7 个实例专用行及 Q-01～Q-09 保持不变。
 - Project Configuration 保持 NOT YET ESTABLISHED；实例评价保持 NOT-EXERCISED；RQ8 保持 OPEN。
 - 协议符合性、认证准备度和权威接受保持 false；不创建 baseline 或 tag。
-- 本增量不创建 codec、可执行 EFSM 引擎、验证用例、规程、执行证据或 Project Configuration。
+- 本增量不创建主动 codec／服务引擎、可执行 CL-TAV EFSM／求解器、验证判定、受控执行证据或 Project Configuration。
 
 ## 当前停点
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3 实现。RR-CLTAV-2026-097 接受了 PR #19 Head c9ca381 的首轮离线 UPLOAD／INFORMATION 开发规格，随后以 324d832 压缩合并。该接受不等于工具实现、运行完整性结果、确认性实验、Project Configuration、扩大 CRS 批准或 M3 激活。M1-CANDIDATE-25 及其开放来源依赖保持受控处置；合并后的 M2 重钉只改变制品祖先身份。后续实现须单独授权并提供证据。
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3、主动协议执行和能力主张。RR-CLTAV-2026-097 接受了 PR #19 Head c9ca381 的首轮离线 UPLOAD／INFORMATION 开发规格，随后以 324d832 压缩合并；PR #20 将 M2 输入重钉至 c5296aed。CR-2026-017／DD-041 仅单独授权一个输出证据的有界、只读离线接入实现。该狭窄授权不等于运行完整性结果、确认性实验、Project Configuration、扩大 CRS 批准或 M3 激活。M1-CANDIDATE-25 及其开放来源依赖保持受控处置。
 
 ## 下一步开发计划
 
-- 将已接受的首轮规格作为后续单独授权实现增量的受控输入。建立运行完整性与独立实验真值后方可提出能力或符合性主张；不得仅凭本规格启动 M3。
+- 完成 CR-2026-017／DD-041 下的授权离线接入增量，再在不变 Draft PR Head 上取得独立评审。建立运行完整性与独立实验真值后方可提出能力或符合性主张；不得仅凭本实现启动 M3。
 - 保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。
 <!-- project-status:end -->
 

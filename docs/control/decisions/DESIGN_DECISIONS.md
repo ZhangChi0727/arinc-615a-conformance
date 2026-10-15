@@ -1105,6 +1105,35 @@ submission, implementation and unrun numbers would reverse the evidence order.
 
 **Status:** Candidate under CR-2026-016; independent data/experiment review required.
 
+## DD-041 — Bounded offline intake implementation boundary
+
+**Decision:** Permit one separately controlled implementation increment under
+CR-2026-017: a deterministic, read-only offline intake pipeline from a caller
+provided capture to traceable packet, IPv4 datagram, UDP/TFTP transfer and
+bounded first-slice protocol-event evidence.  The pipeline has explicit
+resource limits, diagnostics and transactional output, and treats unsupported,
+incomplete and uncertain observations as evidence states rather than protocol
+verdicts.
+
+**Why:** The accepted first-slice specification needs a small executable
+surface that can test parser/reconstruction contracts and preserve evidence
+provenance before later ownership, observation, history, active-execution and
+experiment work.  A narrow one-way intake boundary prevents runtime code from
+silently becoming a general solver or a conformance instrument.
+
+**Scope:** pcap/pcapng intake, packet records, finite IPv4/UDP/TFTP
+reconstruction, first-slice UPLOAD/INFORMATION event extraction and a
+traceable evidence index only.  The local historical corpus is
+exploratory-development input only.  No network activity, IUT interaction,
+protocol verdict, root-cause finding, integrity establishment, Project
+Configuration, M3 activation, confirmation experiment, capability claim or
+certification claim is authorized.
+
+**Status:** Candidate under CR-2026-017; implementation and independent review
+are required before acceptance.  This decision supersedes CR-2026-016 only for
+the narrow implementation authorization, not for its historical
+specification-only meaning.
+
 ## DD-043 — Separate research-design acceptance from run admission
 
 **Decision:** Accept a finite, reviewable experiment implementation design as
@@ -1121,7 +1150,8 @@ as execution readiness would manufacture capabilities and approvals. Conversely,
 leaving every parameter as an unnamed TBD would make the design unactionable.
 
 **Scope:** CR-2026-019 research design only. Existing method, algorithms,
-interfaces, records, engineering contracts and PR #22 ownership are unchanged.
+interfaces, records, engineering contracts and the merged CR-2026-017 / DD-041
+offline increment are unchanged and receive no new task.
 
 **Status:** Candidate under CR-2026-019; independent scientific review and all
 run-admission decisions remain open.
@@ -1610,6 +1640,16 @@ ARINC 615A 数据加载是合法操作、观测和实验场景的来源。CL-TAV
 **范围：** 仅项目状态面及其生成器；不改 CRS 内容。
 
 **状态：** 在 CR-2026-014 下为候选。
+
+## DD-041——有界离线接入实现边界
+
+**决定：** 在 CR-2026-017 下许可一个单独受控的实现增量：从调用方提供的捕获文件，经只读、确定性的离线接入管线，生成可追踪的数据包、IPv4 数据报、UDP/TFTP 传输和有界首轮协议事件证据。该管线具有显式资源限额、诊断和事务输出，并将不支持、未完成和不确定观察作为证据状态，而不是协议判定。
+
+**理由：** 已接受的首轮规格需要一个小型可执行面，用于在后续所有权、观测、历史、主动执行和实验工作之前验证解析／重建合同并保留证据出处。狭窄的单向接入边界防止运行代码悄然成为通用求解器或符合性工具。
+
+**范围：** 仅包括 pcap／pcapng 接入、数据包记录、有限 IPv4／UDP／TFTP 重建、首轮 UPLOAD／INFORMATION 事件提取和可追踪证据索引。本地历史语料仅是探索性开发输入。不授权网络活动、IUT 交互、协议判定、根因 finding、完整性建立、Project Configuration、M3 激活、确认性实验、能力主张或认证主张。
+
+**状态：** 在 CR-2026-017 下为候选；接受前需要实现和独立评审。本决定仅在狭窄的实现授权上取代 CR-2026-016，不改变后者作为历史“仅规格”记录的含义。
 
 ## DD-042——证据有界的 TAES 定位与评价记账
 
