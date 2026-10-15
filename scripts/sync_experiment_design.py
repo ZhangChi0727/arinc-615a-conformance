@@ -35,13 +35,38 @@ def _table(headers: list[str], rows: Iterable[Iterable[Any]]) -> str:
     return "\n".join(output)
 
 
+ZH = {
+    "ALGORITHM-INITIAL": "算法初始可见",
+    "ALGORITHM-OWN-ACTION": "算法自身动作所得",
+    "EVALUATOR-ONLY": "仅评估方可见",
+    "PRIMARY": "主要",
+    "SECONDARY": "次要",
+    "EXPLORATORY": "探索性",
+    "CANDIDATE-METHOD": "候选方法",
+    "WAIT-DEC-SAMPLE": "等待样本量决定",
+    "DETERMINISTIC-EXHAUSTIVE": "确定性穷举",
+    "INDEPENDENT-RANDOMIZED": "独立随机",
+    "PAIRED-OR-CLUSTERED": "配对或聚类",
+    "FLOW-ONLY": "仅流程描述",
+}
+
+
+def _bilingual_token(value: Any) -> str:
+    text = str(value)
+    return f"{text} / {ZH[text]}" if text in ZH else text
+
+
 def render_shared_block(data: dict[str, Any]) -> str:
+    claims = sorted(data["claimArguments"], key=lambda row: row["claimId"])
+    arms = sorted(data["arms"], key=lambda row: row["id"])
     scenarios = sorted(data["scenarios"], key=lambda row: row["id"])
     dispositions = sorted(data["acceptanceMatrixDispositions"], key=lambda row: row["id"])
     metrics = sorted(data["metrics"], key=lambda row: row["id"])
     dependencies = sorted(data["dependencies"], key=lambda row: row["id"])
     decisions = sorted(data["pendingDecisions"], key=lambda row: row["id"])
     analyses = sorted(data["analysisPlans"], key=lambda row: row["id"])
+    comparisons = sorted(data["comparisonFamilies"], key=lambda row: row["id"])
+    choices = sorted(data["analysisChoiceWalkthroughs"], key=lambda row: row["id"])
     summary = accounting_summary(data)
 
     parts = [
@@ -49,6 +74,18 @@ def render_shared_block(data: dict[str, Any]) -> str:
         "",
         "> Generated from `configs/research/cltav_experiment_design.json`; edit the JSON and run "
         "`python scripts/sync_experiment_design.py --write`. / 本区由结构化设计合同生成；请勿直接修改。",
+        "",
+        "### Claim and arm boundary / 主张与实验臂边界",
+        "",
+        _table(
+            ["Claim / 主张", "Bounded proposition / 有界命题", "Assumptions / 前提", "Falsifiers / 反证条件", "Gate / 门禁"],
+            ((row["claimId"], row["boundedProposition"], row["assumptions"], row["falsifiers"], row["reviewGate"]) for row in claims),
+        ),
+        "",
+        _table(
+            ["Arm / 实验臂", "Visible inputs / 可见输入", "Actions / 动作", "Feedback / 反馈", "Prohibited / 禁止"],
+            ((row["id"], [f"{item['ref']} ({_bilingual_token(item['role'])})" for item in row["visibleInputs"]], row["actions"], row["feedback"], row["prohibitedRefs"]) for row in arms),
+        ),
         "",
         "### Scenario contract / 场景合同",
         "",
@@ -93,25 +130,39 @@ def render_shared_block(data: dict[str, Any]) -> str:
             (
                 (
                     row["id"], row["estimand"], [row["unit"], row["pairing"]],
-                    [row["estimator"], row["interval"]], row["applicability"],
-                    row["methodEvidenceIds"], row["freezeDecisionId"],
+                    [row["estimator"], row["interval"], _bilingual_token(row["choiceBranch"]), _bilingual_token(row["missingInputResult"])], row["applicability"],
+                    [*row["methodEvidenceIds"], *row["directSourceLocators"]], row["freezeDecisionId"],
                 )
                 for row in analyses
             ),
         ),
         "",
+        "### Comparison families / 比较族",
+        "",
+        _table(
+            ["Family / 比较族", "Class / 类别", "Metrics / 指标", "Contrasts / 对比", "Joint conclusion / 联合结论", "Multiplicity / 多重性"],
+            ((row["id"], _bilingual_token(row["classification"]), row["metricIds"], row["contrasts"], row["jointConclusion"], row["multiplicityDisposition"]) for row in comparisons),
+        ),
+        "",
         "### Engineering dependencies / 工程依赖",
         "",
         _table(
-            ["Dependency / 依赖", "Current ref / 当前引用", "State / 状态", "Proposal fields / 提议字段", "Decisions / 决定", "Closure / 闭合", "Milestone / 里程碑"],
+            ["Dependency / 依赖", "Consumers / 使用方", "Current ref / 当前引用", "Evidence + producer / 证据与产出方", "State + proposal / 状态与提议", "Decisions / 决定", "Closure + follow-up / 闭合与后续", "Milestone / 里程碑"],
             (
                 (
-                    row["id"], row["currentReference"], row["state"],
-                    [field["path"] for field in row["proposalFields"]], row["decisionIds"],
-                    row["closureTest"], row["blockingMilestone"],
+                    row["id"], row["consumers"], row["currentReference"], [row["neededEvidence"], row["producer"]],
+                    [row["state"], *[f"{field['path']} [{field['visibility']}]" for field in row["proposalFields"]]], row["decisionIds"],
+                    [row["closureTest"], row["minimumFollowUp"]], row["blockingMilestone"],
                 )
                 for row in dependencies
             ),
+        ),
+        "",
+        "### Hypothetical method-choice walkthroughs / 假设性方法选择见证",
+        "",
+        _table(
+            ["Choice / 选择", "Label / 标签", "Inputs / 输入", "Branch / 分支", "Result / 结果", "Rationale / 理由"],
+            ((row["id"], "HYPOTHETICAL-NOT-RESULT / 假设示例，非结果", [row["domainEnumeration"], row["randomAssignment"], row["dependence"], row["pairingEvidence"]], _bilingual_token(row["selectedBranch"]), _bilingual_token(row["result"]), row["rationale"]) for row in choices),
         ),
         "",
         "### Open decisions / 待定决定",
@@ -130,12 +181,12 @@ def render_shared_block(data: dict[str, Any]) -> str:
         "### Synthetic accounting witness / 合成记账见证",
         "",
         _table(
-            ["Attempts / 尝试", "Answered / 已回答", "Coverage / 覆盖", "Conditional error / 条件错误", "Localization coverage / 定位覆盖", "Projected cost / 投影成本"],
+            ["Attempts / 尝试", "Answered / 已回答", "Coverage / 覆盖", "Conditional error / 条件错误", "Localization coverage / 定位覆盖", "Projected cost / 投影成本", "Review/setup / 评审准备工作量"],
             [
                 (
                     summary["attempts"], summary["answered"], summary["answeredCoverage"],
                     summary["conditionalDetectionError"], summary["localizationDecisionCoverage"],
-                    summary["projectedCostTotals"],
+                    summary["projectedCostTotals"], summary["reviewSetupEffort"],
                 )
             ],
         ),

@@ -53,6 +53,11 @@ REQUIRED_METRICS = {
     "MET-ABLATION-DELTA",
 }
 REQUIRED_ANALYSES = {"AN-FLOW", "AN-PROPORTION", "AN-DISTRIBUTION", "AN-PAIRED"}
+REQUIRED_METRIC_CONTRACTS = {
+    "MET-ANSWERED-COVERAGE": ("POP-ANSWERED", "POP-ATTEMPTS", {"attemptId", "validity", "outcome"}),
+    "MET-CONDITIONAL-DETECTION-ERROR": ("POP-CONDITIONAL-ERROR", "POP-ANSWERED", {"validity", "outcome", "truthReference.truthHypothesis"}),
+    "MET-LOCALIZATION-COVERAGE": ("POP-LOCALIZATION-DECISION", "POP-LOCALIZATION-ELIGIBLE", {"localizationDecisionIssued", "injectionStatus", "faultDomain"}),
+}
 REQUIRED_POPULATIONS = {
     "POP-ATTEMPTS", "POP-ANSWERED", "POP-QUALIFIED-NORMAL",
     "POP-CONFIRMED-FAULT", "POP-MISSES", "POP-FALSE-FAILS",
@@ -61,11 +66,28 @@ REQUIRED_POPULATIONS = {
     "POP-TRUE-RETAINED", "POP-TRUE-EXCLUDED", "POP-SINGLETON-DECISION",
     "POP-SINGLETON-CORRECT", "POP-PAIRED-ELIGIBLE", "POP-ROUNDS",
 }
+REQUIRED_SCENARIO_CRS = {
+    "SC-NORMAL-UPLOAD": {"CRS-M1-00077"},
+    "SC-WAIT-CONTINUE": {"CRS-M1-00106", "CRS-M1-00107"},
+    "SC-NO-RESPONSE": {"CRS-M1-00101"},
+    "SC-ABORT": {"CRS-M1-00104", "CRS-M1-00108"},
+    "SC-INVALID-OBS": set(), "SC-SAME-KEY": set(),
+    "SC-SINGLE-BATCH": set(), "SC-RESOURCE-ERROR": set(),
+}
+REQUIRED_DEPENDENCY_EDGES = {
+    "DEP-TRUTH": {"MET-MISS", "MET-FALSE-FAIL", "MET-TRUE-RETAINED", "MET-SINGLETON-CORRECT"},
+    "DEP-CLOCK": {"SC-WAIT-CONTINUE", "SC-NO-RESPONSE", "SC-INVALID-OBS"},
+    "DEP-RESOURCE": {"SC-RESOURCE-ERROR", "MET-COST-VECTOR", "MET-ROUNDS"},
+    "DEP-EQUIV": {"MET-MISS", "MET-ABLATION-DELTA"},
+}
 ROW_FIELDS = {
-    "attemptId", "runId", "pairingId", "injectionStatus", "faultDomain", "validity",
+    "attemptId", "runId", "armId", "baseSceneId", "pairingId", "pairedArmId",
+    "resetEvidenceRef", "parentMetricEligible", "pairingExpectedEligibility",
+    "injectionStatus", "faultDomain", "validity",
     "outcome", "stopClass", "stage", "observationInterval", "requirementInterval",
     "historyBefore", "compatibleState", "finalHypotheses", "localizationDecisionIssued",
     "singletonDecisionIssued", "resourcePolicy", "resourceStatus", "actionIssued", "chargedCost",
+    "endpointTopology", "reviewSetupEffort",
 }
 NESTED_ROW_FIELDS = {
     "truthReference.ref", "truthReference.visibility", "truthReference.truthHypothesis",
@@ -251,11 +273,15 @@ def _population_sets(data: dict[str, Any]) -> dict[str, set[str]]:
     incomplete = {aid for aid, row in by_id.items() if row.get("validity") == "INCOMPLETE" or row.get("resourceStatus") == "BUDGET-EXHAUSTED"}
     loc_eligible = set(faults)
     loc_decision = {aid for aid in loc_eligible if by_id[aid].get("localizationDecisionIssued") is True}
+    truth_known = {
+        aid for aid in loc_decision
+        if by_id[aid].get("truthReference", {}).get("truthHypothesis") is not None
+    }
     retained = {
         aid for aid in loc_decision
-        if by_id[aid].get("truthReference", {}).get("truthHypothesis") in by_id[aid].get("finalHypotheses", [])
+        if aid in truth_known and by_id[aid].get("truthReference", {}).get("truthHypothesis") in by_id[aid].get("finalHypotheses", [])
     }
-    excluded = loc_decision - retained
+    excluded = truth_known - retained
     singleton = {
         aid for aid in loc_decision
         if by_id[aid].get("singletonDecisionIssued") is True
@@ -265,10 +291,28 @@ def _population_sets(data: dict[str, Any]) -> dict[str, set[str]]:
         aid for aid in singleton
         if by_id[aid].get("truthReference", {}).get("truthHypothesis") == by_id[aid].get("finalHypotheses", [None])[0]
     }
-    pairing_counts = Counter(
-        str(row.get("pairingId")) for row in rows if row.get("pairingId") is not None
-    )
-    paired = {pair_id for pair_id, count in pairing_counts.items() if count == 2}
+    pair_groups: dict[str, list[dict[str, Any]]] = {}
+    for row in rows:
+        if row.get("pairingId") is not None:
+            pair_groups.setdefault(str(row["pairingId"]), []).append(row)
+    paired = set()
+    for pair_id, members in pair_groups.items():
+        if len(members) != 2:
+            continue
+        left, right = members
+        eligible = (
+            left.get("baseSceneId") == right.get("baseSceneId")
+            and left.get("armId") != right.get("armId")
+            and left.get("pairedArmId") == right.get("armId")
+            and right.get("pairedArmId") == left.get("armId")
+            and left.get("resetEvidenceRef")
+            and right.get("resetEvidenceRef")
+            and left.get("resetEvidenceRef") != right.get("resetEvidenceRef")
+            and left.get("parentMetricEligible") is True
+            and right.get("parentMetricEligible") is True
+        )
+        if eligible:
+            paired.add(pair_id)
     rounds = {
         aid for aid, row in by_id.items()
         if row.get("runId") is not None and row.get("resourcePolicy") == "ROUNDS"
@@ -315,6 +359,12 @@ def _validate_walkthroughs(data: dict[str, Any], scenario_ids: set[str]) -> list
         if row.get("outcome") == "ERROR" and row.get("localizationDecisionIssued"):
             errors.append(f"walkthrough {row_id} cannot count ERROR as a localization decision")
         final = row.get("finalHypotheses", [])
+        history = row.get("historyBefore", [])
+        compatible = row.get("compatibleState", [])
+        if row.get("stopClass") == "Stop-Error" and final != history:
+            errors.append(f"walkthrough {row_id} ERROR must preserve the preceding hypothesis set")
+        if row.get("stopClass") != "Stop-Error" and row.get("stage") in {"POST-UPDATE", "TERMINAL"} and final != compatible:
+            errors.append(f"walkthrough {row_id} final hypotheses must equal the valid compatibility update")
         if row.get("singletonDecisionIssued") and (not row.get("localizationDecisionIssued") or len(final) != 1):
             errors.append(f"walkthrough {row_id} has an invalid singleton decision")
         if row.get("stopClass") in {"Stop-645", "Stop-Budget"} and row.get("singletonDecisionIssued"):
@@ -324,8 +374,12 @@ def _validate_walkthroughs(data: dict[str, Any], scenario_ids: set[str]) -> list
                 errors.append(f"walkthrough {row_id} violates Stop-Empty stage/outcome priority")
         if row.get("stopClass") == "Stop-645" and row.get("stage") != "POST-UPDATE":
             errors.append(f"walkthrough {row_id} violates Stop-645 stage priority")
+        if row.get("stage") == "POST-UPDATE" and len(final) == 1 and row.get("stopClass") != "Stop-Singleton":
+            errors.append(f"walkthrough {row_id} bypasses Stop-Singleton priority")
         if row.get("stage") == "PRE-ACTION" and (row.get("actionIssued") or any(row.get("chargedCost", {}).values())):
             errors.append(f"walkthrough {row_id} charges or issues an action before admission")
+        if not row.get("actionIssued") and any(row.get("chargedCost", {}).values()):
+            errors.append(f"walkthrough {row_id} charges an unissued arm action")
         if row.get("stopClass") in {"Stop-645", "Stop-Budget"} and row.get("actionIssued") and sum(row.get("chargedCost", {}).values()) <= 0:
             errors.append(f"walkthrough {row_id} hides spent cost at {row.get('stopClass')}")
         if row_id == "SYN-T5-OVERLAP":
@@ -338,11 +392,18 @@ def _validate_walkthroughs(data: dict[str, Any], scenario_ids: set[str]) -> list
                     errors.append("SYN-T5-OVERLAP interval units do not match")
                 try:
                     valid_order = observed["lower"] <= observed["upper"] and required["lower"] <= required["upper"]
-                    overlaps = max(observed["lower"], required["lower"]) <= min(observed["upper"], required["upper"])
+                    contained = required["lower"] <= observed["lower"] and observed["upper"] <= required["upper"]
+                    disjoint = observed["upper"] < required["lower"] or required["upper"] < observed["lower"]
                 except (KeyError, TypeError):
-                    valid_order = overlaps = False
-                if not valid_order or not overlaps or row.get("outcome") != "INCONCLUSIVE":
-                    errors.append("SYN-T5-OVERLAP does not witness an inconclusive interval overlap")
+                    valid_order = contained = disjoint = False
+                expected = "PASS" if contained else "FAIL" if disjoint else "INCONCLUSIVE"
+                if row.get("endpointTopology") != "CLOSED" or not valid_order or row.get("outcome") != expected:
+                    errors.append(f"SYN-T5-OVERLAP violates closed-interval T5 classification; expected {expected}")
+    derived_pairs = _population_sets(data)["POP-PAIRED-ELIGIBLE"]
+    for row in rows:
+        actual = row.get("pairingId") in derived_pairs if row.get("pairingId") is not None else False
+        if actual != row.get("pairingExpectedEligibility"):
+            errors.append(f"walkthrough {row.get('id')} pairing eligibility disagrees with its finite evidence")
     return errors
 
 
@@ -390,6 +451,17 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
     interface_outputs = {
         row.get("id"): set(row.get("outputs", [])) for row in [*algorithm_rows, *experiment_rows]
     }
+    proposed_interface_outputs: dict[str, set[str]] = {}
+    for dependency in _rows(data, "dependencies"):
+        for field in dependency.get("proposalFields", []):
+            if not isinstance(field, dict):
+                continue
+            owner, separator, name = str(field.get("path", "")).partition(".")
+            if separator and owner.startswith("IF-"):
+                proposed_interface_outputs.setdefault(owner, set()).add(name)
+    reference_outputs = {key: set(value) for key, value in interface_outputs.items()}
+    for owner, fields in proposed_interface_outputs.items():
+        reference_outputs.setdefault(owner, set()).update(fields)
     crs_ids = {row.get("id") for row in m1.get("requirements", []) if isinstance(row, dict)}
 
     refs = data.get("references", {}) if isinstance(data.get("references"), dict) else {}
@@ -428,19 +500,33 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
         "CL-TA": {"acquisition", "computation", "preparation", "retry"},
         "CL-LOOP": {"acquisition", "computation", "preparation", "retry"},
     }
+    expected_arm_inputs = {
+        "CL-T": {("IF-EXP-SCENE.algorithmVisibleFields", "ALGORITHM-INITIAL"), ("IF-EXP-COLLECT.observationLog", "ALGORITHM-OWN-ACTION")},
+        "CL-A": {("IF-EXP-SCENE.algorithmVisibleFields", "ALGORITHM-INITIAL")},
+        "CL-TA": {("IF-EXP-SCENE.algorithmVisibleFields", "ALGORITHM-INITIAL"), ("IF-EXP-COLLECT.observationLog", "ALGORITHM-OWN-ACTION")},
+        "CL-LOOP": {("IF-EXP-SCENE.algorithmVisibleFields", "ALGORITHM-INITIAL"), ("IF-EXP-COLLECT.observationLog", "ALGORITHM-OWN-ACTION"), ("IF-EXP-COLLECT.resourceLog", "ALGORITHM-OWN-ACTION")},
+    }
     for arm in _rows(data, "arms"):
         for item in arm.get("visibleInputs", []) if isinstance(arm.get("visibleInputs"), list) else []:
             if not isinstance(item, dict):
                 continue
             reference = item.get("ref", "")
-            if reference.startswith("IF-EXP-TRUTH.") or item.get("role") not in {"ALGORITHM-INITIAL", "ALGORITHM-OWN-ACTION"}:
+            evaluator_only = (
+                reference.startswith("IF-EXP-TRUTH.")
+                or reference.startswith("truthReference.")
+                or reference in {"IF-EXP-INJECT.injectionConfirmed", "IF-EXP-FILTER.validityClass"}
+            )
+            if evaluator_only or item.get("role") not in {"ALGORITHM-INITIAL", "ALGORITHM-OWN-ACTION"}:
                 errors.append(f"typed truth leakage or invalid visibility in arm {arm.get('id')}: {reference}")
-            errors.extend(_field_reference_errors([reference], development_records, interface_outputs))
+            errors.extend(_field_reference_errors([reference], development_records, reference_outputs))
         if arm.get("id") in {"CL-T", "CL-A", "CL-TA"} and arm.get("feedback"):
             errors.append(f"non-loop arm {arm.get('id')} cannot receive feedback")
         if arm.get("id") == "CL-A" and any(item.get("role") == "ALGORITHM-OWN-ACTION" for item in arm.get("visibleInputs", []) if isinstance(item, dict)):
             errors.append("CL-A cannot receive records from an action it did not execute")
         arm_id = arm.get("id")
+        actual_inputs = {(item.get("ref"), item.get("role")) for item in arm.get("visibleInputs", []) if isinstance(item, dict)}
+        if arm_id in expected_arm_inputs and actual_inputs != expected_arm_inputs[arm_id]:
+            errors.append(f"arm {arm_id} visible inputs must equal the reviewed fixed allowlist")
         if arm_id in expected_arm_costs and set(arm.get("costComponents", [])) != expected_arm_costs[arm_id]:
             errors.append(f"arm {arm_id} cost projection disagrees with the registered fair-comparison contract")
 
@@ -467,6 +553,7 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
         errors.extend(_refs(scenario.get("acceptanceCaseRefs"), acceptance_cases, "acceptance-case"))
         errors.extend(_refs(scenario.get("dependencyIds"), dependency_ids, "dependency"))
         errors.extend(_refs(scenario.get("crsRefs"), crs_ids, "CRS"))
+        errors.extend(_refs(scenario.get("requiredRecords"), set(development_records), "required record"))
         if scenario.get("developmentScenarioRef") != scenario_id:
             errors.append(f"scenario {scenario_id} must bind its exact development scenario")
         accepted = development_scenario_rows.get(scenario_id, {})
@@ -476,6 +563,8 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
             errors.append(f"scenario {scenario_id} cannot combine N/A CRS disposition with CRS references")
         if scenario.get("crsDisposition") == "APPLICABLE" and not scenario.get("crsRefs"):
             errors.append(f"scenario {scenario_id} lacks applicable CRS references")
+        if set(scenario.get("crsRefs", [])) != REQUIRED_SCENARIO_CRS.get(str(scenario_id), set()):
+            errors.append(f"scenario {scenario_id} CRS references disagree with the reviewed proposition binding")
 
     disposition_ids = _ids(data.get("acceptanceMatrixDispositions"), "acceptance-matrix disposition", errors)
     if disposition_ids != development_matrix:
@@ -494,6 +583,8 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
         errors.extend(_refs(analysis.get("methodEvidenceIds"), evidence_ids, "method evidence"))
         if analysis.get("freezeDecisionId") not in decision_ids:
             errors.append(f"analysis plan {analysis.get('id')} has unknown freeze decision")
+        if analysis.get("missingInputResult") != "WAIT-DEC-SAMPLE" or not analysis.get("directSourceLocators"):
+            errors.append(f"analysis plan {analysis.get('id')} lacks a bounded missing-input wait or direct source locator")
 
     metric_ids = _ids(data.get("metrics"), "metric", errors)
     if metric_ids != REQUIRED_METRICS:
@@ -512,12 +603,22 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
         if not metric.get("missingRule") or not metric.get("censoringRule"):
             errors.append(f"metric {metric_id} lacks missing/censoring rules")
         errors.extend(_field_reference_errors(metric.get("requiredFields"), development_records, interface_outputs))
+        if metric_id in REQUIRED_METRIC_CONTRACTS:
+            expected_numerator, expected_denominator, expected_fields = REQUIRED_METRIC_CONTRACTS[metric_id]
+            if (
+                metric.get("numeratorPopulationId") != expected_numerator
+                or metric.get("populationId") != expected_denominator
+                or set(metric.get("requiredFields", [])) != expected_fields
+            ):
+                errors.append(f"metric {metric_id} disagrees with its reviewed finite computation contract")
 
     primary_metric_ids = {row.get("id") for row in _rows(data, "metrics") if row.get("primary") is True}
     family_metric_ids: set[str] = set()
     for family in _rows(data, "comparisonFamilies"):
         errors.extend(_refs(family.get("metricIds"), metric_ids, "comparison metric"))
         family_metric_ids.update(family.get("metricIds", []))
+        if not family.get("contrasts") or not family.get("jointConclusion"):
+            errors.append(f"comparison family {family.get('id')} lacks explicit contrasts or joint conclusion")
     if not primary_metric_ids <= family_metric_ids:
         errors.append(f"primary metrics lack comparison-family assignment: {sorted(primary_metric_ids-family_metric_ids)}")
 
@@ -526,16 +627,35 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
         dep_id = dependency.get("id")
         errors.extend(_refs(dependency.get("consumers"), dependency_consumers, "dependency consumer"))
         errors.extend(_refs(dependency.get("decisionIds"), decision_ids, "dependency decision"))
+        missing_edges = REQUIRED_DEPENDENCY_EDGES.get(str(dep_id), set()) - set(dependency.get("consumers", []))
+        if missing_edges:
+            errors.append(f"dependency {dep_id} is missing required consumers {sorted(missing_edges)}")
         if not dependency.get("closureTest"):
             errors.append(f"dependency {dep_id} lacks closure evidence")
         if dependency.get("state") == "PROPOSED-CONTRACT-DELTA" and not dependency.get("proposalFields"):
             errors.append(f"proposed dependency {dep_id} lacks concrete proposal fields")
+        for field in dependency.get("proposalFields", []):
+            if not isinstance(field, dict):
+                continue
+            if str(field.get("path", "")).startswith("truthRecord.") and field.get("visibility") != "evaluator-only":
+                errors.append(f"dependency {dep_id} exposes evaluator truth proposal outside evaluator-only visibility")
+            if str(field.get("type", "")).endswith("[]"):
+                errors.append(f"dependency {dep_id} proposal field has an empty type domain")
         current = dependency.get("currentReference", {})
-        if isinstance(current, dict) and current.get("kind") in {"algorithm-interface", "experiment-interface", "record-field"}:
+        allowed_reference_kinds = {
+            "algorithm-interface", "contrast-only-algorithm-interface", "experiment-interface",
+            "record-field", "experiment-plan", "experiment-plan-section", "placeholder", "authority-binding",
+        }
+        if not isinstance(current, dict) or current.get("kind") not in allowed_reference_kinds:
+            errors.append(f"dependency {dep_id} has unknown currentReference kind")
+        elif current.get("kind") in {"algorithm-interface", "contrast-only-algorithm-interface", "experiment-interface", "record-field"}:
             errors.extend(_field_reference_errors([current.get("ref", "")], development_records, interface_outputs))
     equiv = next((row for row in _rows(data, "dependencies") if row.get("id") == "DEP-EQUIV"), {})
     if any(field.get("path", "").startswith("IF-EQUIV") for field in equiv.get("proposalFields", []) if isinstance(field, dict)):
         errors.append("evaluator mutation equivalence must not redefine runtime IF-EQUIV")
+    truth_dependency = next((row for row in _rows(data, "dependencies") if row.get("id") == "DEP-TRUTH"), {})
+    if not {"DEC-TRUTH", "DEC-EQUIV"} <= set(truth_dependency.get("decisionIds", [])):
+        errors.append("DEP-TRUTH must retain truth and equivalence decisions")
 
     admission = data.get("designAdmission", {}) if isinstance(data.get("designAdmission"), dict) else {}
     if admission.get("confirmatoryRunStatus") != "BLOCKED":
@@ -551,6 +671,20 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
         errors.append("recovery detail must project to preparation")
     if data.get("costAccounting", {}).get("acceptedProjection") != ["acquisition", "computation", "preparation", "retry"]:
         errors.append("accepted cost projection must remain four-dimensional")
+    resource_decision = next((row for row in _rows(data, "pendingDecisions") if row.get("id") == "DEC-RESOURCE"), {})
+    resource_text = " ".join(str(resource_decision.get(key, "")) for key in ("options", "recommendation", "selectionProcedure"))
+    if "dual stop" in resource_text.lower() or "exactly one" not in resource_text.lower():
+        errors.append("DEC-RESOURCE must select exactly one BUDGET or ROUNDS mode; retry cap remains separate")
+    choice_rows = _rows(data, "analysisChoiceWalkthroughs")
+    required_choice_results = {
+        ("DETERMINISTIC-EXHAUSTIVE", "CANDIDATE-METHOD"),
+        ("INDEPENDENT-RANDOMIZED", "CANDIDATE-METHOD"),
+        ("PAIRED-OR-CLUSTERED", "CANDIDATE-METHOD"),
+        ("NONE", "WAIT-DEC-SAMPLE"),
+    }
+    actual_choice_results = {(row.get("selectedBranch"), row.get("result")) for row in choice_rows}
+    if not required_choice_results <= actual_choice_results:
+        errors.append("analysis choice walkthroughs must cover census, independent, paired/clustered and missing-input WAIT branches")
     errors.extend(_validate_walkthroughs(data, development_scenarios))
 
     # Exercise the derived sets so malformed nested values become diagnostics, never exceptions.
@@ -579,9 +713,16 @@ def _fraction(numerator: int, denominator: int) -> str:
 def accounting_summary(data: dict[str, Any]) -> dict[str, object]:
     rows = _rows(data, "syntheticWalkthroughs")
     populations = _population_sets(data)
+    metric_rows = {row.get("id"): row for row in _rows(data, "metrics")}
+
+    def metric_fraction(metric_id: str) -> str:
+        metric = metric_rows[metric_id]
+        numerator = populations[str(metric["numeratorPopulationId"])]
+        denominator = populations[str(metric["populationId"])]
+        return _fraction(len(numerator), len(denominator))
+
     answered = populations["POP-ANSWERED"]
     attempts = populations["POP-ATTEMPTS"]
-    conditional_errors = populations["POP-CONDITIONAL-ERROR"]
     projected = {"acquisition": 0.0, "computation": 0.0, "preparation": 0.0, "retry": 0.0}
     for row in rows:
         charged = row.get("chargedCost", {})
@@ -595,9 +736,9 @@ def accounting_summary(data: dict[str, Any]) -> dict[str, object]:
         "answered": len(answered),
         "fails": sum(row.get("attemptId") in answered and row.get("outcome") == "FAIL" for row in rows),
         "pass": sum(row.get("attemptId") in answered and row.get("outcome") == "PASS" for row in rows),
-        "answeredCoverage": _fraction(len(answered), len(attempts)),
-        "conditionalDetectionError": _fraction(len(conditional_errors), len(answered)),
-        "localizationDecisionCoverage": _fraction(len(populations["POP-LOCALIZATION-DECISION"]), len(populations["POP-LOCALIZATION-ELIGIBLE"])),
+        "answeredCoverage": metric_fraction("MET-ANSWERED-COVERAGE"),
+        "conditionalDetectionError": metric_fraction("MET-CONDITIONAL-DETECTION-ERROR"),
+        "localizationDecisionCoverage": metric_fraction("MET-LOCALIZATION-COVERAGE"),
         "singletonLocalizationDecisions": len(populations["POP-SINGLETON-DECISION"]),
         "abstain": len(populations["POP-ABSTAIN"]),
         "unconfirmedInjection": sum(row.get("injectionStatus") == "UNCONFIRMED" for row in rows),
@@ -605,6 +746,7 @@ def accounting_summary(data: dict[str, Any]) -> dict[str, object]:
         "equivalentFault": sum(row.get("injectionStatus") == "EQUIVALENT" for row in rows),
         "unresolvedFault": sum(row.get("injectionStatus") == "UNRESOLVED" for row in rows),
         "projectedCostTotals": projected_clean,
+        "reviewSetupEffort": sum(float(row.get("reviewSetupEffort", 0)) for row in rows),
     }
 
 

@@ -118,18 +118,18 @@ def test_v04_zero_answer_and_conditional_error_denominators() -> None:
     for row in candidate["syntheticWalkthroughs"]:
         row["outcome"] = "NOT-ANSWERED"
     summary = accounting_summary(candidate)
-    assert summary["answeredCoverage"] == "0/12"
+    assert summary["answeredCoverage"] == "0/13"
     assert summary["conditionalDetectionError"] == "N/A"
 
     candidate = copy.deepcopy(DESIGN)
     candidate["syntheticWalkthroughs"][0]["outcome"] = "FAIL"
-    assert accounting_summary(candidate)["conditionalDetectionError"] == "1/3"
+    assert accounting_summary(candidate)["conditionalDetectionError"] == "1/4"
 
 
 def test_v05_excluded_unresolved_abstain_and_pairing_remain_visible_without_duplication() -> None:
     populations = _population_sets(DESIGN)
     summary = accounting_summary(DESIGN)
-    assert len(populations["POP-ATTEMPTS"]) == 12
+    assert len(populations["POP-ATTEMPTS"]) == 13
     assert summary["equivalentFault"] == 1
     assert summary["unresolvedFault"] == 1
     assert summary["abstain"] == 1
@@ -141,7 +141,7 @@ def test_v05_excluded_unresolved_abstain_and_pairing_remain_visible_without_dupl
 def test_v06_t5_contains_a_real_interval_overlap_and_rejects_endpoint_or_unit_drift() -> None:
     row = next(row for row in DESIGN["syntheticWalkthroughs"] if row["id"] == "SYN-T5-OVERLAP")
     assert row["observationInterval"] == {"lower": 5.0, "upper": 5.2, "unit": "s"}
-    assert any("interval overlap" in item for item in errors_for(lambda d: next(row for row in d["syntheticWalkthroughs"] if row["id"] == "SYN-T5-OVERLAP")["requirementInterval"].update(upper=4.9)))
+    assert any("T5 classification" in item for item in errors_for(lambda d: next(row for row in d["syntheticWalkthroughs"] if row["id"] == "SYN-T5-OVERLAP")["requirementInterval"].update(upper=4.9)))
     assert any("units" in item for item in errors_for(lambda d: next(row for row in d["syntheticWalkthroughs"] if row["id"] == "SYN-T5-OVERLAP")["observationInterval"].update(unit="ms")))
 
 
@@ -157,7 +157,8 @@ def test_v07_stop_priority_is_stage_sensitive() -> None:
 
 def test_v08_recovery_projects_to_preparation_once() -> None:
     summary = accounting_summary(DESIGN)
-    assert summary["projectedCostTotals"]["preparation"] == 6
+    assert summary["projectedCostTotals"]["preparation"] == 3
+    assert summary["reviewSetupEffort"] == 3
     assert errors_for(lambda d: d["costAccounting"]["detailToProjection"].update(recovery="retry"))
     assert any("fair-comparison" in item for item in errors_for(lambda d: d["arms"][1]["costComponents"].append("acquisition")))
 
@@ -251,3 +252,85 @@ def test_v15_primary_metrics_have_analysis_decision_and_freeze_gates() -> None:
 def test_repository_spec_is_synchronized() -> None:
     ok, message = sync(ROOT, write=False)
     assert ok, message
+
+
+def test_w01_error_preserves_history_and_empty_update_is_distinct() -> None:
+    assert any("preserve" in item for item in errors_for(lambda d: next(row for row in d["syntheticWalkthroughs"] if row["id"] == "SYN-INVALID-OBS").update(finalHypotheses=[])))
+    empty = next(row for row in DESIGN["syntheticWalkthroughs"] if row["id"] == "SYN-STOP-EMPTY")
+    assert empty["compatibleState"] == empty["finalHypotheses"] == []
+
+
+def test_w02_closed_t5_containment_disjoint_overlap_and_endpoint() -> None:
+    def classify(observation: tuple[float, float], requirement: tuple[float, float], outcome: str) -> list[str]:
+        def mutate(data: dict) -> None:
+            row = next(row for row in data["syntheticWalkthroughs"] if row["id"] == "SYN-T5-OVERLAP")
+            row["observationInterval"].update(lower=observation[0], upper=observation[1])
+            row["requirementInterval"].update(lower=requirement[0], upper=requirement[1])
+            row["outcome"] = outcome
+        return errors_for(mutate)
+
+    assert classify((5.0, 5.2), (4.0, 6.0), "PASS") == []
+    assert classify((6.1, 6.2), (4.0, 6.0), "FAIL") == []
+    assert classify((5.0, 5.2), (4.0, 5.1), "INCONCLUSIVE") == []
+    assert classify((6.0, 6.0), (4.0, 6.0), "PASS") == []
+
+
+def test_w03_post_update_singleton_cannot_fall_through() -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["syntheticWalkthroughs"] if row["id"] == "SYN-STOP-645")
+        row["compatibleState"] = row["finalHypotheses"] = ["h645"]
+    assert any("Stop-Singleton priority" in item for item in errors_for(mutate))
+
+
+def test_w04_missing_truth_is_unscorable_not_excluded() -> None:
+    candidate = copy.deepcopy(DESIGN)
+    row = next(row for row in candidate["syntheticWalkthroughs"] if row["id"] == "SYN-TRUE-EXCLUDED")
+    row["truthReference"]["truthHypothesis"] = None
+    populations = _population_sets(candidate)
+    assert "ATT-003" not in populations["POP-TRUE-EXCLUDED"]
+    assert "ATT-003" not in populations["POP-SINGLETON-CORRECT"]
+
+
+def test_w05_pair_requires_scene_arms_reset_and_parent_eligibility() -> None:
+    assert _population_sets(DESIGN)["POP-PAIRED-ELIGIBLE"] == {"PAIR-01"}
+    assert any("pairing eligibility" in item for item in errors_for(lambda d: next(row for row in d["syntheticWalkthroughs"] if row["id"] == "SYN-PAIR-COMPARATOR").update(baseSceneId="OTHER")))
+    assert "PAIR-MISMATCH" not in _population_sets(DESIGN)["POP-PAIRED-ELIGIBLE"]
+
+
+def test_w06_metric_contract_is_single_source_and_reorder_safe() -> None:
+    assert any("finite computation contract" in item for item in errors_for(lambda d: next(row for row in d["metrics"] if row["id"] == "MET-ANSWERED-COVERAGE").update(numeratorPopulationId="POP-ATTEMPTS")))
+    candidate = copy.deepcopy(DESIGN)
+    candidate["metrics"].reverse()
+    assert accounting_summary(candidate) == accounting_summary(DESIGN)
+
+
+def test_w08_w09_safe_projection_and_fixed_roles() -> None:
+    assert all(all(item["ref"] != "IF-EXP-SCENE.sceneRecord" for item in arm["visibleInputs"]) for arm in DESIGN["arms"])
+    assert any("unknown" in item or "leakage" in item for item in errors_for(lambda d: d["arms"][0]["visibleInputs"].append({"ref":"truthReference.truthHypothesis","role":"ALGORITHM-INITIAL"})))
+    assert any("CL-A" in item for item in errors_for(lambda d: d["arms"][1]["visibleInputs"].append({"ref":"IF-EXP-COLLECT.observationLog","role":"ALGORITHM-OWN-ACTION"})))
+
+
+def test_w10_current_reference_kind_and_required_edges_are_closed() -> None:
+    assert any("unknown currentReference kind" in item for item in errors_for(lambda d: d["dependencies"][0]["currentReference"].update(kind="invented-kind")))
+    assert errors_for(lambda d: next(row for row in d["dependencies"] if row["id"] == "DEP-TRUTH").update(consumers=[]))
+
+
+def test_w11_equivalence_is_one_evaluator_only_proposal() -> None:
+    fields = [field for dep in DESIGN["dependencies"] for field in dep["proposalFields"] if field["path"] == "truthRecord.equivalenceDisposition"]
+    assert fields and all(field["visibility"] == "evaluator-only" for field in fields)
+    assert not any(field["path"] == "truthRecord.mutationEquivalence" for dep in DESIGN["dependencies"] for field in dep["proposalFields"])
+
+
+def test_w13_single_resource_mode_and_separate_retry_cap() -> None:
+    decision = next(row for row in DESIGN["pendingDecisions"] if row["id"] == "DEC-RESOURCE")
+    assert len(decision["options"]) == 2
+    assert "exactly one" in decision["recommendation"]
+    assert "retry cap" in decision["recommendation"]
+
+
+def test_w14_hypothetical_choice_branches_include_wait() -> None:
+    choices = {(row["selectedBranch"], row["result"]) for row in DESIGN["analysisChoiceWalkthroughs"]}
+    assert ("DETERMINISTIC-EXHAUSTIVE", "CANDIDATE-METHOD") in choices
+    assert ("INDEPENDENT-RANDOMIZED", "CANDIDATE-METHOD") in choices
+    assert ("PAIRED-OR-CLUSTERED", "CANDIDATE-METHOD") in choices
+    assert ("NONE", "WAIT-DEC-SAMPLE") in choices

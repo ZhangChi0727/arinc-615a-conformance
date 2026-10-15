@@ -8,7 +8,7 @@
     "schemaVersion", "identity", "inputBindings", "references", "claimArguments",
     "costAccounting", "arms", "scenarios", "acceptanceMatrixDispositions",
     "populations", "metrics", "comparisonFamilies", "analysisPlans", "dependencies",
-    "pendingDecisions", "syntheticWalkthroughs", "designAdmission", "artifactMap"
+    "pendingDecisions", "syntheticWalkthroughs", "analysisChoiceWalkthroughs", "designAdmission", "artifactMap"
   ],
   "$defs": {
     "id": {"type": "string", "minLength": 1},
@@ -123,7 +123,7 @@
     },
     "costAccounting": {
       "type": "object", "additionalProperties": false,
-      "required": ["acceptedProjection", "detailToProjection", "doubleChargeRule"],
+      "required": ["acceptedProjection", "detailToProjection", "doubleChargeRule", "reviewSetupRule"],
       "properties": {
         "acceptedProjection": {"const": ["acquisition", "computation", "preparation", "retry"]},
         "detailToProjection": {
@@ -137,7 +137,8 @@
             "retry": {"const": "retry"}
           }
         },
-        "doubleChargeRule": {"const": "recovery is a preparation detail and is never added twice to the projected preparation component"}
+        "doubleChargeRule": {"const": "recovery is a preparation detail and is never added twice to the projected preparation component"},
+        "reviewSetupRule": {"const": "pre-run review/setup effort is reported separately and is never charged as an issued arm action"}
       }
     },
     "arms": {
@@ -238,11 +239,13 @@
       "type": "array", "minItems": 3,
       "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["id", "classification", "metricIds", "multiplicityDisposition"],
+        "required": ["id", "classification", "metricIds", "contrasts", "jointConclusion", "multiplicityDisposition"],
         "properties": {
           "id": {"type": "string", "pattern": "^CF-[A-Z0-9-]+$"},
           "classification": {"enum": ["PRIMARY", "SECONDARY", "EXPLORATORY"]},
           "metricIds": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "contrasts": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "jointConclusion": {"type": "string", "minLength": 1},
           "multiplicityDisposition": {"type": "string", "minLength": 1}
         }
       }
@@ -251,7 +254,7 @@
       "type": "array", "minItems": 4,
       "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["id", "estimand", "domain", "unit", "pairing", "estimator", "interval", "applicability", "effectMeasure", "pilotInputs", "methodEvidenceIds", "reviewStatus", "freezeDecisionId"],
+        "required": ["id", "estimand", "domain", "unit", "pairing", "estimator", "interval", "applicability", "effectMeasure", "pilotInputs", "choiceBranch", "missingInputResult", "directSourceLocators", "methodEvidenceIds", "reviewStatus", "freezeDecisionId"],
         "properties": {
           "id": {"type": "string", "pattern": "^AN-[A-Z0-9-]+$"},
           "estimand": {"type": "string", "minLength": 1},
@@ -263,6 +266,9 @@
           "applicability": {"type": "string", "minLength": 1},
           "effectMeasure": {"type": "string", "minLength": 1},
           "pilotInputs": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "choiceBranch": {"enum": ["DETERMINISTIC-EXHAUSTIVE", "INDEPENDENT-RANDOMIZED", "PAIRED-OR-CLUSTERED", "FLOW-ONLY"]},
+          "missingInputResult": {"const": "WAIT-DEC-SAMPLE"},
+          "directSourceLocators": {"$ref": "#/$defs/nonEmptyStringArray"},
           "methodEvidenceIds": {"$ref": "#/$defs/nonEmptyStringArray"},
           "reviewStatus": {"enum": ["METHOD-CANDIDATE", "PENDING-STATISTICAL-REVIEW"]},
           "freezeDecisionId": {"type": "string", "pattern": "^DEC-[A-Z0-9-]+$"}
@@ -316,14 +322,20 @@
       "type": "array", "minItems": 12,
       "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["id", "label", "scenarioId", "attemptId", "runId", "pairingId", "truthReference", "injectionStatus", "faultDomain", "validity", "outcome", "stopClass", "stage", "observationInterval", "requirementInterval", "historyBefore", "compatibleState", "finalHypotheses", "localizationDecisionIssued", "singletonDecisionIssued", "resourcePolicy", "resourceStatus", "actionIssued", "chargedCost"],
+        "required": ["id", "label", "scenarioId", "attemptId", "runId", "armId", "baseSceneId", "pairingId", "pairedArmId", "resetEvidenceRef", "parentMetricEligible", "pairingExpectedEligibility", "truthReference", "injectionStatus", "faultDomain", "validity", "outcome", "stopClass", "stage", "observationInterval", "requirementInterval", "endpointTopology", "historyBefore", "compatibleState", "finalHypotheses", "localizationDecisionIssued", "singletonDecisionIssued", "resourcePolicy", "resourceStatus", "actionIssued", "chargedCost", "reviewSetupEffort"],
         "properties": {
           "id": {"type": "string", "pattern": "^SYN-[A-Z0-9-]+$"},
           "label": {"const": "SYNTHETIC-DESIGN-WALKTHROUGH"},
           "scenarioId": {"type": "string", "minLength": 1},
           "attemptId": {"type": "string", "minLength": 1},
           "runId": {"type": ["string", "null"]},
+          "armId": {"enum": ["CL-T", "CL-A", "CL-TA", "CL-LOOP"]},
+          "baseSceneId": {"type": "string", "minLength": 1},
           "pairingId": {"type": ["string", "null"]},
+          "pairedArmId": {"type": ["string", "null"]},
+          "resetEvidenceRef": {"type": ["string", "null"]},
+          "parentMetricEligible": {"type": "boolean"},
+          "pairingExpectedEligibility": {"type": "boolean"},
           "truthReference": {
             "type": "object", "additionalProperties": false,
             "required": ["ref", "visibility", "truthHypothesis"],
@@ -341,6 +353,7 @@
           "stage": {"enum": ["PRE-RUN", "PRE-ACTION", "POST-UPDATE", "TERMINAL"]},
           "observationInterval": {"anyOf": [{"$ref": "#/$defs/interval"}, {"type": "null"}]},
           "requirementInterval": {"anyOf": [{"$ref": "#/$defs/interval"}, {"type": "null"}]},
+          "endpointTopology": {"enum": ["CLOSED", "NOT-APPLICABLE"]},
           "historyBefore": {"$ref": "#/$defs/stringArray"},
           "compatibleState": {"$ref": "#/$defs/stringArray"},
           "finalHypotheses": {"$ref": "#/$defs/stringArray"},
@@ -349,7 +362,26 @@
           "resourcePolicy": {"enum": ["BUDGET", "ROUNDS", "NOT-RUN"]},
           "resourceStatus": {"enum": ["NORMAL", "BUDGET-EXHAUSTED", "RESOURCE-ERROR", "NOT-RUN"]},
           "actionIssued": {"type": "boolean"},
-          "chargedCost": {"$ref": "#/$defs/cost"}
+          "chargedCost": {"$ref": "#/$defs/cost"},
+          "reviewSetupEffort": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    "analysisChoiceWalkthroughs": {
+      "type": "array", "minItems": 3,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "label", "domainEnumeration", "randomAssignment", "dependence", "pairingEvidence", "selectedBranch", "result", "rationale"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^CHOICE-[A-Z0-9-]+$"},
+          "label": {"const": "HYPOTHETICAL-NOT-RESULT"},
+          "domainEnumeration": {"enum": ["COMPLETE", "INCOMPLETE", "UNKNOWN"]},
+          "randomAssignment": {"enum": ["INDEPENDENT", "NOT-INDEPENDENT", "UNKNOWN"]},
+          "dependence": {"enum": ["NONE", "PAIRED", "CLUSTERED", "UNKNOWN"]},
+          "pairingEvidence": {"type": "boolean"},
+          "selectedBranch": {"enum": ["DETERMINISTIC-EXHAUSTIVE", "INDEPENDENT-RANDOMIZED", "PAIRED-OR-CLUSTERED", "NONE"]},
+          "result": {"enum": ["CANDIDATE-METHOD", "WAIT-DEC-SAMPLE"]},
+          "rationale": {"type": "string", "minLength": 1}
         }
       }
     },

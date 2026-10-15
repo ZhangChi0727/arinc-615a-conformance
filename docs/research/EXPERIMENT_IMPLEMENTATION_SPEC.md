@@ -55,36 +55,50 @@ normalizes line endings and rejects handwritten drift.
 
 > Generated from `configs/research/cltav_experiment_design.json`; edit the JSON and run `python scripts/sync_experiment_design.py --write`. / 本区由结构化设计合同生成；请勿直接修改。
 
+### Claim and arm boundary / 主张与实验臂边界
+
+| Claim / 主张 | Bounded proposition / 有界命题 | Assumptions / 前提 | Falsifiers / 反证条件 | Gate / 门禁 |
+|---|---|---|---|---|
+| CL-C1 | For admitted histories and the accepted compatibility update, every non-empty update is a subset of the preceding hypothesis set and contains each hypothesis compatible with the accumulated history. | the initial set covers the registered hypothesis domain<br>observation compatibility is evaluated using the accepted interval rule | an accepted update adds a hypothesis absent from the preceding set<br>a compatible truth hypothesis is removed by the accepted update | DEC-MATH-REVIEW |
+| CL-C2 | Under the registered arm contracts, CL-LOOP may condition a later admissible action on its own earlier observations while CL-T, CL-A, and CL-TA may not; any empirical gain remains pending execution. | all arms receive the same registered initial information<br>evaluator truth is never algorithm-visible<br>cost is charged on issued actions | a comparator receives later CL-LOOP observations<br>CL-LOOP sees evaluator truth<br>a reported gain disappears under the registered parent metric | DEC-MATH-REVIEW |
+
+| Arm / 实验臂 | Visible inputs / 可见输入 | Actions / 动作 | Feedback / 反馈 | Prohibited / 禁止 |
+|---|---|---|---|---|
+| CL-A | IF-EXP-SCENE.algorithmVisibleFields (ALGORITHM-INITIAL / 算法初始可见) | analysis only | no / 否 | IF-EXP-TRUTH.truthRecord<br>invented acquisition<br>records acquired by another arm |
+| CL-LOOP | IF-EXP-SCENE.algorithmVisibleFields (ALGORITHM-INITIAL / 算法初始可见)<br>IF-EXP-COLLECT.observationLog (ALGORITHM-OWN-ACTION / 算法自身动作所得)<br>IF-EXP-COLLECT.resourceLog (ALGORITHM-OWN-ACTION / 算法自身动作所得) | TEST<br>Prep<br>Recover<br>analysis-guided next action | yes / 是 | IF-EXP-TRUTH.truthRecord |
+| CL-T | IF-EXP-SCENE.algorithmVisibleFields (ALGORITHM-INITIAL / 算法初始可见)<br>IF-EXP-COLLECT.observationLog (ALGORITHM-OWN-ACTION / 算法自身动作所得) | predetermined TEST<br>declared Prep/Recover when executed | no / 否 | IF-EXP-TRUTH.truthRecord<br>records acquired by another arm |
+| CL-TA | IF-EXP-SCENE.algorithmVisibleFields (ALGORITHM-INITIAL / 算法初始可见)<br>IF-EXP-COLLECT.observationLog (ALGORITHM-OWN-ACTION / 算法自身动作所得) | frozen collection policy<br>analysis after frozen collection | no / 否 | IF-EXP-TRUTH.truthRecord<br>adaptive selection after analysis |
+
 ### Scenario contract / 场景合同
 
 | Scenario / 场景 | Scope / 服务 | Development + CRS / 开发与需求 | Acceptance / 验收 | Perturbation / 扰动点 | Records / 记录 | Admission / 准入 |
 |---|---|---|---|---|---|---|
 | SC-ABORT | UPLOAD | SC-ABORT<br>APPLICABLE<br>CRS-M1-00104<br>CRS-M1-00108 | AC-EXP-SCENE<br>AC-EXP-CAUSAL<br>AC-SYN-TRANSFER<br>AM-OWNERSHIP<br>AM-TIMING | owned abort event during active transfer | TRANSFER-RECORD<br>PROTOCOL-EVENT<br>OWNERSHIP-RESULT | admit only when the abort is causally linked to one request instance |
 | SC-INVALID-OBS | INFORMATION | SC-INVALID-OBS<br>TOOL-OR-EXPERIMENT-N/A | AC-EXP-SCENE<br>AC-EXP-CAUSAL<br>AC-SYN-OBSERVATION<br>AM-LABEL<br>AM-TIMING<br>AM-EXPERIMENT | capture timestamp, coverage, or ownership evidence | CAPTURE-IDENTITY<br>PACKET-REF<br>OBSERVATION-ASSESSMENT<br>FINDING-RECORD | retain in all-attempt accounting but exclude from IUT PASS/FAIL denominators |
-| SC-NO-RESPONSE | INFORMATION | SC-NO-RESPONSE<br>APPLICABLE<br>CRS-M1-00101 | AC-EXP-SCENE<br>AC-EXP-CAUSAL<br>AC-SYN-OBSERVATION<br>AM-OWNERSHIP<br>AM-TIMING | owned response suppression after a confirmed request | PACKET-REF<br>PROTOCOL-EVENT<br>OWNERSHIP-RESULT<br>OBSERVATION-ASSESSMENT | admit only confirmed, non-equivalent suppression with a complete qualified horizon |
+| SC-NO-RESPONSE | INFORMATION | SC-NO-RESPONSE<br>APPLICABLE<br>CRS-M1-00101 | AC-EXP-SCENE<br>AC-EXP-CAUSAL<br>AC-SYN-OBSERVATION<br>AM-OWNERSHIP<br>AM-TIMING | owned response suppression after the CRS-M1-00101 request trigger; evaluator tracks exception delay and abort cancellation | PACKET-REF<br>PROTOCOL-EVENT<br>OWNERSHIP-RESULT<br>OBSERVATION-ASSESSMENT | admit only confirmed, non-equivalent suppression with a complete qualified horizon |
 | SC-NORMAL-UPLOAD | UPLOAD | SC-NORMAL-UPLOAD<br>APPLICABLE<br>CRS-M1-00077 | AC-EXP-SCENE<br>AC-EXP-CAUSAL<br>AM-EXPERIMENT<br>AM-STATE | no perturbation; qualified upload completion control | TRANSFER-RECORD<br>PROTOCOL-EVENT<br>OBSERVATION-ASSESSMENT<br>HISTORY-HANDLE | admit only after scene identity, reset, and observation qualification pass |
-| SC-RESOURCE-ERROR | INFORMATION | SC-RESOURCE-ERROR<br>APPLICABLE<br>CRS-M1-00167 | AC-EXP-SCENE<br>AC-EXP-CAUSAL<br>AC-SYN-RESOURCE-STOP<br>AM-RESOURCE<br>AM-STATE | declared resource controller or tool-error path | INTAKE-METADATA<br>FINDING-RECORD<br>HISTORY-HANDLE | retain every registered attempt and distinguish budget exhaustion from tool error |
+| SC-RESOURCE-ERROR | INFORMATION | SC-RESOURCE-ERROR<br>TOOL-OR-EXPERIMENT-N/A | AC-EXP-SCENE<br>AC-EXP-CAUSAL<br>AC-SYN-RESOURCE-STOP<br>AM-RESOURCE<br>AM-STATE | declared resource controller or tool-error path | INTAKE-METADATA<br>FINDING-RECORD<br>HISTORY-HANDLE | retain every registered attempt and distinguish budget exhaustion from tool error |
 | SC-SAME-KEY | INFORMATION | SC-SAME-KEY<br>TOOL-OR-EXPERIMENT-N/A | AC-EXP-SCENE<br>AC-EXP-CAUSAL<br>AC-SYN-HISTORY<br>AM-OWNERSHIP<br>AM-HISTORY | concurrent requests sharing a correlation key | PROTOCOL-EVENT<br>OWNERSHIP-RESULT<br>HISTORY-HANDLE | admit only when ambiguity is represented rather than silently resolved |
-| SC-SINGLE-BATCH | UPLOAD | SC-SINGLE-BATCH<br>APPLICABLE<br>CRS-M1-00084 | AC-EXP-SCENE<br>AC-EXP-CAUSAL<br>AC-SYN-SELECT<br>AM-EXPERIMENT<br>AM-HISTORY | registered single-versus-batch selection policy | TRANSFER-RECORD<br>PROTOCOL-EVENT<br>HISTORY-HANDLE | admit paired units only when configuration differs solely at the registered perturbation |
+| SC-SINGLE-BATCH | UPLOAD | SC-SINGLE-BATCH<br>TOOL-OR-EXPERIMENT-N/A | AC-EXP-SCENE<br>AC-EXP-CAUSAL<br>AC-SYN-SELECT<br>AM-EXPERIMENT<br>AM-HISTORY | registered single-versus-batch selection policy | TRANSFER-RECORD<br>PROTOCOL-EVENT<br>HISTORY-HANDLE | admit paired units only when configuration differs solely at the registered perturbation |
 | SC-WAIT-CONTINUE | UPLOAD | SC-WAIT-CONTINUE<br>APPLICABLE<br>CRS-M1-00106<br>CRS-M1-00107 | AC-EXP-SCENE<br>AC-EXP-CAUSAL<br>AC-SYN-HISTORY<br>AM-TIMING<br>AM-STATE | WAIT/continuation event timing and state transition | PROTOCOL-EVENT<br>OBSERVATION-ASSESSMENT<br>HISTORY-HANDLE | admit only when event ownership and both measurement intervals are reconstructable |
 
 ### Acceptance-matrix disposition / 验收矩阵处置
 
 | AM id / 编号 | Disposition / 处置 | Consumers / 使用方 | Rationale / 理由 |
 |---|---|---|---|
-| AM-ADMIT | CONTROL-GATE | DEP-REGISTRATION | admission must pass before analysis |
+| AM-ADMIT | CONTROL-GATE | EXP-CLTAV-DETECT<br>EXP-CLTAV-LOCATE<br>EXP-CLTAV-ABLATION | applies algorithm action admission A1-A5: affordable distinguishing TEST, minimax/cost/id ordering, and declared Prep/Recover |
 | AM-DRIFT | CONTROL-GATE | DEP-REGISTRATION | authority drift invalidates the registered design |
 | AM-EXPERIMENT | CONTROL-GATE | DEP-REGISTRATION<br>SC-NORMAL-UPLOAD<br>SC-INVALID-OBS<br>SC-SINGLE-BATCH | experiment identity and pairing are control-plane gates |
 | AM-FIELDS | SCENARIO-EVIDENCE | SC-NORMAL-UPLOAD<br>SC-ABORT | field evidence is collected by protocol scenarios |
 | AM-FORMAT | PRE-RUN-CONTRACT | DEP-IUT | format preconditions belong to the selected environment |
 | AM-HISTORY | SCENARIO-EVIDENCE | SC-SAME-KEY<br>SC-SINGLE-BATCH | history state is reconstructed per run |
-| AM-IDENTITY | PRE-RUN-CONTRACT | DEP-IUT<br>DEP-REGISTRATION | fixes artifact and IUT identity before a run |
-| AM-IP | PRE-RUN-CONTRACT | DEP-IUT | network identity is frozen with the IUT configuration |
+| AM-IDENTITY | PRE-RUN-CONTRACT | DEP-REGISTRATION | binds capture manifest, path, hash and byte-length identity before evidence use |
+| AM-IP | SCENARIO-EVIDENCE | SC-NORMAL-UPLOAD<br>SC-WAIT-CONTINUE<br>SC-NO-RESPONSE<br>SC-ABORT<br>SC-SAME-KEY | records IP reconstruction as COMPLETE, GAPPED or CONFLICT with overlap and epoch handling |
 | AM-LABEL | SCENARIO-EVIDENCE | SC-INVALID-OBS | separates tool/capture anomalies from IUT findings |
 | AM-OWNERSHIP | SCENARIO-EVIDENCE | SC-NO-RESPONSE<br>SC-ABORT<br>SC-SAME-KEY | ownership is a per-attempt causal fact |
 | AM-RESOURCE | CONTROL-GATE | DEP-RESOURCE<br>SC-RESOURCE-ERROR | budget and charge modes are frozen before execution |
 | AM-STATE | SCENARIO-EVIDENCE | SC-NORMAL-UPLOAD<br>SC-WAIT-CONTINUE<br>SC-RESOURCE-ERROR | state transitions support outcome and stop attribution |
-| AM-TFTP | PRE-RUN-CONTRACT | DEP-IUT | transport setup is verified before scenario admission |
+| AM-TFTP | SCENARIO-EVIDENCE | SC-NORMAL-UPLOAD<br>SC-WAIT-CONTINUE<br>SC-NO-RESPONSE<br>SC-ABORT<br>SC-SINGLE-BATCH | records TID, option, retransmission, wrap and final-block reconstruction semantics |
 | AM-TIMING | SCENARIO-EVIDENCE | SC-WAIT-CONTINUE<br>SC-NO-RESPONSE<br>SC-ABORT<br>SC-INVALID-OBS | timing intervals are per-attempt evidence |
 
 ### Metric dictionary / 指标字典
@@ -113,25 +127,42 @@ normalizes line endings and rejects handwritten drift.
 
 | Plan / 方案 | Estimand / 估计目标 | Unit + pairing / 单位与配对 | Estimator + interval / 估计量与区间 | Applicability / 适用性 | Evidence / 方法证据 | Freeze / 冻结决定 |
 |---|---|---|---|---|---|---|
-| AN-DISTRIBUTION | distribution of survivor count, cost, or rounds | attempt or run<br>paired summaries when the scenario contract supplies pairingId | median and empirical distribution with a registered nonparametric contrast if stochastic<br>bootstrap or finite-domain interval only after randomness and dependence are established | count/cost metrics; no automatic large-sample assumption | EVID-2026-063<br>EVID-2026-064<br>EVID-2026-065 | DEC-SAMPLE |
-| AN-FLOW | finite attempt-flow proportion or count | attempt<br>none | finite count and empirical proportion<br>exact or score interval selected before confirmatory execution; 0/N is reported for zero events with N>0 | flow and coverage metrics | EVID-2026-064<br>EVID-2026-065 | DEC-SAMPLE |
-| AN-PAIRED | within-scene ablation change in a named parent metric | pair<br>same registered scene/seed with independent reset | paired difference on the parent metric scale<br>paired interval selected after repeat and dependence decisions | only when parent metric semantics and pair completeness both hold | EVID-2026-063<br>EVID-2026-064<br>EVID-2026-065 | DEC-SAMPLE |
-| AN-PROPORTION | finite-population decision or error proportion | attempt<br>paired by scene/seed when registered, otherwise independent | empirical proportion and registered arm contrast<br>method chosen from finite/exact/score alternatives after population and dependence are fixed | binary primary and secondary metrics with nonzero denominator | EVID-2026-063<br>EVID-2026-064<br>EVID-2026-065 | DEC-SAMPLE |
+| AN-DISTRIBUTION | distribution of survivor count, cost, or rounds | registered scene attempt or independently reset run as explicitly registered<br>use paired/clustered branch when scenes or seeds are shared; never infer independence from row count | finite empirical distribution for exhaustive domain; paired or cluster-aware descriptive contrast when dependence is registered<br>no resampling interval until randomness and resampling unit are established; otherwise WAIT-DEC-SAMPLE<br>PAIRED-OR-CLUSTERED / 配对或聚类<br>WAIT-DEC-SAMPLE / 等待样本量决定 | count/cost metrics; no automatic large-sample or bootstrap assumption | EVID-2026-063<br>EVID-2026-064<br>EVID-2026-065<br>METHOD.md §6.2 lines 995-1023: conditional i.i.d. example and clustered-data warning | DEC-SAMPLE |
+| AN-FLOW | finite attempt-flow proportion or count | attempt<br>none | finite count and empirical proportion<br>descriptive finite enumeration; no superpopulation interval unless DEC-SAMPLE selects an independent-random branch<br>FLOW-ONLY / 仅流程描述<br>WAIT-DEC-SAMPLE / 等待样本量决定 | flow and coverage metrics | EVID-2026-064<br>EVID-2026-065<br>METHOD.md §6.2 lines 995-1023: conditional i.i.d. example and clustered-data warning | DEC-SAMPLE |
+| AN-PAIRED | within-scene ablation change in a named parent metric | registered pair<br>same base scene/seed, reciprocal registered arms, distinct independently confirmed resets, and parent eligibility | paired difference on the named parent metric scale<br>paired candidate only after pair independence/repeat structure and direct method source are frozen; otherwise WAIT-DEC-SAMPLE<br>PAIRED-OR-CLUSTERED / 配对或聚类<br>WAIT-DEC-SAMPLE / 等待样本量决定 | only when parent metric semantics and every pair-eligibility field hold | EVID-2026-063<br>EVID-2026-064<br>EVID-2026-065<br>METHOD.md §6.2 lines 995-1023: conditional i.i.d. example and clustered-data warning | DEC-SAMPLE |
+| AN-PROPORTION | finite-population decision or error proportion | registered scene attempt<br>independent only after scene/seed and shared-run clustering are excluded | finite-domain proportion for a complete census, otherwise empirical proportion and registered risk difference<br>finite-domain enumeration for a census; independent-binomial candidate only with verified independent random assignment; otherwise WAIT-DEC-SAMPLE<br>INDEPENDENT-RANDOMIZED / 独立随机<br>WAIT-DEC-SAMPLE / 等待样本量决定 | binary metrics with nonzero denominator and branch inputs frozen before held-out access | EVID-2026-063<br>EVID-2026-064<br>EVID-2026-065<br>METHOD.md §6.2 lines 995-1023: conditional i.i.d. example and clustered-data warning | DEC-SAMPLE |
+
+### Comparison families / 比较族
+
+| Family / 比较族 | Class / 类别 | Metrics / 指标 | Contrasts / 对比 | Joint conclusion / 联合结论 | Multiplicity / 多重性 |
+|---|---|---|---|---|---|
+| CF-EXPLORATORY | EXPLORATORY / 探索性 | MET-ABLATION-DELTA | registered within-scene CL-LOOP versus comparator ablation pair | hypothesis-generating only unless parent estimand and family role are preregistered | label exploratory unless its parent estimand and multiplicity treatment are frozen before held-out access |
+| CF-PRIMARY | PRIMARY / 主要 | MET-ANSWERED-COVERAGE<br>MET-CONDITIONAL-DETECTION-ERROR<br>MET-MISS<br>MET-FALSE-FAIL<br>MET-LOCALIZATION-COVERAGE<br>MET-TRUE-RETAINED<br>MET-FINAL-CANDIDATES<br>MET-COST-VECTOR | EXP-CLTAV-DETECT: CL-LOOP versus CL-T<br>EXP-CLTAV-LOCATE: CL-LOOP versus CL-T<br>EXP-CLTAV-LOCATE: CL-LOOP versus CL-TA | no primary superiority conclusion unless the registered detection/localization benefit and cost/coverage safeguards jointly hold | DEC-SAMPLE must freeze one family-wise procedure before held-out access; until then report estimates and uncertainty without confirmatory rejection claims |
+| CF-SECONDARY | SECONDARY / 次要 | MET-ABSTAIN<br>MET-INCONCLUSIVE<br>MET-ERROR<br>MET-INCOMPLETE<br>MET-TRUE-EXCLUDED<br>MET-SINGLETON-CORRECT<br>MET-ROUNDS | same registered arm contrasts as CF-PRIMARY where the metric applies | supports interpretation and failure-mode accounting but cannot replace a failed primary safeguard | descriptive with interval estimates; no confirmatory multiplicity claim |
 
 ### Engineering dependencies / 工程依赖
 
-| Dependency / 依赖 | Current ref / 当前引用 | State / 状态 | Proposal fields / 提议字段 | Decisions / 决定 | Closure / 闭合 | Milestone / 里程碑 |
-|---|---|---|---|---|---|---|
-| DEP-645-RUNTIME | kind=authority-binding; ref=ARINC-645 candidate source and semantic binding | RUNTIME-PENDING | findingRecord.oracleRef | DEC-IUT | independent vectors and oracle evidence; source presence alone is insufficient | 645-specific-run |
-| DEP-CLOCK | kind=record-field; ref=OBSERVATION-ASSESSMENT.measurementInterval | RUNTIME-PENDING | observationAssessment.clockChainRef | DEC-CLOCK | calibration evidence and interval reproduction | pilot |
-| DEP-EQUIV | kind=algorithm-interface; ref=IF-EQUIV.established | PROPOSED-CONTRACT-DELTA | truthRecord.mutationEquivalence | DEC-EQUIV | confirmed equivalents and unresolved cases remain separately counted without reusing runtime IF-EQUIV | confirmatory-registration |
-| DEP-IUT | kind=experiment-plan-section; ref=EXP-PLAN-2026-001:prerequisites | RUNTIME-PENDING | sceneRecord.iutIdentity | DEC-IUT | reviewed IUT/configuration identity resolves before registration | pilot |
-| DEP-OBS-QUAL | kind=record-field; ref=OBSERVATION-ASSESSMENT.verdict | EXISTING-REFERENCE | — | DEC-CLOCK | invalid timestamp/ownership witness produces ERROR without IUT blame | design-review |
-| DEP-REGISTRATION | kind=experiment-plan; ref=EXP-PLAN-2026-001 | HUMAN-PENDING | — | DEC-MATH-REVIEW<br>DEC-IUT<br>DEC-TRUTH<br>DEC-EQUIV<br>DEC-SAMPLE<br>DEC-RESOURCE<br>DEC-CLOCK | registration committed before confirmatory runs | confirmatory-run |
-| DEP-RESET | kind=experiment-interface; ref=IF-EXP-SCENE.sceneRecord | PROPOSED-CONTRACT-DELTA | sceneRecord.resetId<br>sceneRecord.resetEvidenceRef | DEC-IUT | paired run starts from independently confirmed reset | pilot |
-| DEP-RESOURCE | kind=algorithm-interface; ref=IF-RESOURCE-STOP.trace | RUNTIME-PENDING | resourceLog.mode<br>resourceLog.detailCharges | DEC-RESOURCE | one charge per issued action, recovery folded once into preparation, and named exhaustion | pilot |
-| DEP-SAMPLE | kind=placeholder; ref=PH-STAT-N | HUMAN-PENDING | — | DEC-SAMPLE | sample size, repeat policy, comparison family, and multiplicity role frozen before held-out access | confirmatory-registration |
-| DEP-TRUTH | kind=experiment-interface; ref=IF-EXP-TRUTH.truthRecord | PROPOSED-CONTRACT-DELTA | truthRecord.confirmationRef<br>truthRecord.equivalenceDisposition | DEC-TRUTH<br>DEC-EQUIV | truth leakage review plus independent confirmation witness | pilot |
+| Dependency / 依赖 | Consumers / 使用方 | Current ref / 当前引用 | Evidence + producer / 证据与产出方 | State + proposal / 状态与提议 | Decisions / 决定 | Closure + follow-up / 闭合与后续 | Milestone / 里程碑 |
+|---|---|---|---|---|---|---|---|
+| DEP-645-RUNTIME | EXP-CLTAV-ABLATION | kind=authority-binding; ref=ARINC-645 candidate source and semantic binding | implemented and independently checked CRC/check-value/naming oracle<br>future authorized engineering change | RUNTIME-PENDING<br>findingRecord.oracleRef [evaluator and audit] | DEC-IUT | independent vectors and oracle evidence; source presence alone is insufficient<br>separate engineering CR if this cell is retained | 645-specific-run |
+| DEP-CLOCK | SC-WAIT-CONTINUE<br>SC-NO-RESPONSE<br>SC-INVALID-OBS | kind=record-field; ref=OBSERVATION-ASSESSMENT.measurementInterval | clock chain and error budget<br>test environment owner | RUNTIME-PENDING<br>observationAssessment.clockChainRef [algorithm and evaluator] | DEC-CLOCK | calibration evidence and interval reproduction<br>qualify clock and freeze the error budget | pilot |
+| DEP-EQUIV | MET-MISS<br>MET-ABLATION-DELTA | kind=contrast-only-algorithm-interface; ref=IF-EQUIV.established | evaluator-side equivalenceDisposition distinct from runtime candidate equivalence<br>named fault adjudicator | PROPOSED-CONTRACT-DELTA<br>truthRecord.equivalenceDisposition [evaluator-only] | DEC-EQUIV | one evaluator field yields equivalent, non-equivalent or unresolved accounting without reusing runtime IF-EQUIV<br>approve evaluator adjudication procedure | confirmatory-registration |
+| DEP-IUT | SC-NORMAL-UPLOAD<br>SC-WAIT-CONTINUE<br>SC-NO-RESPONSE<br>SC-ABORT<br>SC-SAME-KEY<br>SC-SINGLE-BATCH<br>SC-RESOURCE-ERROR | kind=experiment-plan-section; ref=EXP-PLAN-2026-001:prerequisites | interactive IUT identity, behavior boundary, and reviewed safe initial projection<br>project owner and later authorized implementer | PROPOSED-CONTRACT-DELTA<br>sceneRecord.iutIdentity [evaluator and audit]<br>IF-EXP-SCENE.algorithmVisibleFields [all arms; excludes faultPlan, truthSource, injection confirmation, validity and posthoc adjudication] | DEC-IUT | reviewed IUT/configuration identity resolves and leakage test proves only the safe projection is algorithm-visible<br>select IUT and approve the projected initial-field allowlist | pilot |
+| DEP-OBS-QUAL | SC-INVALID-OBS<br>MET-ERROR | kind=record-field; ref=OBSERVATION-ASSESSMENT.verdict | qualification policy separating capture/tool error from IUT verdict<br>observation assessor | EXISTING-REFERENCE | DEC-CLOCK | invalid timestamp/ownership witness produces ERROR without IUT blame<br>retain accepted qualification semantics | design-review |
+| DEP-REGISTRATION | EXP-CLTAV-DETECT<br>EXP-CLTAV-LOCATE<br>EXP-CLTAV-ABLATION | kind=experiment-plan; ref=EXP-PLAN-2026-001 | frozen confirmatory registration<br>experiment registrar and named scientific reviewer | HUMAN-PENDING | DEC-MATH-REVIEW<br>DEC-IUT<br>DEC-TRUTH<br>DEC-EQUIV<br>DEC-SAMPLE<br>DEC-RESOURCE<br>DEC-CLOCK | registration committed before confirmatory runs<br>freeze units, budgets, denominators, adjudication and analysis | confirmatory-run |
+| DEP-RESET | SC-NORMAL-UPLOAD<br>SC-SINGLE-BATCH | kind=experiment-interface; ref=IF-EXP-SCENE.sceneRecord | reset identifier and success evidence<br>scene controller | PROPOSED-CONTRACT-DELTA<br>sceneRecord.resetId [all arms and evaluator]<br>sceneRecord.resetEvidenceRef [evaluator and audit] | DEC-IUT | paired run starts from independently confirmed reset<br>define reset evidence fields | pilot |
+| DEP-RESOURCE | SC-RESOURCE-ERROR<br>MET-COST-VECTOR<br>MET-ROUNDS | kind=algorithm-interface; ref=IF-RESOURCE-STOP.trace | exclusive resource mode and actual charge log<br>runtime resource controller | RUNTIME-PENDING<br>resourceLog.mode [algorithm and evaluator]<br>resourceLog.detailCharges [evaluator and audit] | DEC-RESOURCE | one charge per issued action, recovery folded once into preparation, and named exhaustion<br>implement charge trace without changing accepted cost semantics | pilot |
+| DEP-SAMPLE | MET-ANSWERED-COVERAGE<br>MET-MISS<br>MET-TRUE-RETAINED<br>MET-ABLATION-DELTA | kind=placeholder; ref=PH-STAT-N | precision/effect target or finite census basis plus pilot variance/prevalence<br>named scientific reviewer | HUMAN-PENDING | DEC-SAMPLE | sample size, repeat policy, comparison family, and multiplicity role frozen before held-out access<br>run non-confirmatory pilot then decide | confirmatory-registration |
+| DEP-TRUTH | MET-MISS<br>MET-FALSE-FAIL<br>MET-TRUE-RETAINED<br>MET-SINGLETON-CORRECT | kind=experiment-interface; ref=IF-EXP-TRUTH.truthRecord | confirmed injection and evaluator-only adjudicated truth<br>independent evaluator | PROPOSED-CONTRACT-DELTA<br>truthRecord.confirmationRef [evaluator-only]<br>truthRecord.equivalenceDisposition [evaluator-only] | DEC-TRUTH<br>DEC-EQUIV | truth leakage review plus independent confirmation witness<br>approve generator/adjudicator separation | pilot |
+
+### Hypothetical method-choice walkthroughs / 假设性方法选择见证
+
+| Choice / 选择 | Label / 标签 | Inputs / 输入 | Branch / 分支 | Result / 结果 | Rationale / 理由 |
+|---|---|---|---|---|---|
+| CHOICE-CENSUS | HYPOTHETICAL-NOT-RESULT / 假设示例，非结果 | COMPLETE<br>UNKNOWN<br>NONE<br>no / 否 | DETERMINISTIC-EXHAUSTIVE / 确定性穷举 | CANDIDATE-METHOD / 候选方法 | A completely enumerated registered finite domain uses finite counts/proportions without a superpopulation claim. |
+| CHOICE-INDEPENDENT | HYPOTHETICAL-NOT-RESULT / 假设示例，非结果 | INCOMPLETE<br>INDEPENDENT<br>NONE<br>no / 否 | INDEPENDENT-RANDOMIZED / 独立随机 | CANDIDATE-METHOD / 候选方法 | Independent randomized scene attempts permit the registered independent-sample candidate, subject to DEC-SAMPLE. |
+| CHOICE-PAIRED | HYPOTHETICAL-NOT-RESULT / 假设示例，非结果 | INCOMPLETE<br>NOT-INDEPENDENT<br>PAIRED<br>yes / 是 | PAIRED-OR-CLUSTERED / 配对或聚类 | CANDIDATE-METHOD / 候选方法 | Shared scenes with reciprocal arms and reset evidence require a paired or cluster-aware candidate. |
+| CHOICE-WAIT | HYPOTHETICAL-NOT-RESULT / 假设示例，非结果 | UNKNOWN<br>UNKNOWN<br>UNKNOWN<br>no / 否 | NONE | WAIT-DEC-SAMPLE / 等待样本量决定 | Missing domain, independence and pairing inputs stops method selection; this is not a power calculation or observed result. |
 
 ### Open decisions / 待定决定
 
@@ -142,15 +173,15 @@ normalizes line endings and rejects handwritten drift.
 | DEC-EQUIV | named fault adjudicator | fault-specific evaluator record plus impact evidence | two-stage impact screen and named human adjudication with unresolved allowed | confirmatory registration | adjudication form and population-flow rule |
 | DEC-IUT | project owner | identity, access, controllability, configuration and reset evidence | score candidates against scenario access and independent reset | pilot | versioned IUT/configuration identity plus reset demonstration |
 | DEC-MATH-REVIEW | independent mathematical reviewer | argument table and minimum counterexample witnesses | record proposition-by-proposition disposition and any counterexample | design acceptance | signed review record naming accepted propositions |
-| DEC-RESOURCE | experiment owner and runtime implementer | pilot charge traces and feasible resource envelope | project all detail charges to the accepted four-vector, test no-double-charge, then select budget and stop priority | confirmatory registration | versioned budget table and passing charge-accounting witness |
+| DEC-RESOURCE | experiment owner and runtime implementer | pilot charge traces, feasible resource envelope and retry-safety evidence | project detail charges to the accepted four-vector, test no-double-charge, select exactly one session mode, then register a separate retry cap that reports execution error without creating another Stop-Budget mode | confirmatory registration | versioned single-mode budget table, retry-cap rule and passing charge-accounting witness |
 | DEC-SAMPLE | named scientific reviewer | estimand, precision/effect target, pilot information and dependence structure | select experimental unit and repeat policy first, then compute or justify N and comparison-family treatment | confirmatory registration | registered N/repeats table and statistical review sign-off |
 | DEC-TRUTH | named evaluator | confirmation and common-error analysis | document independence and run a deliberate disagreement witness | pilot | truth-source protocol and leakage review |
 
 ### Synthetic accounting witness / 合成记账见证
 
-| Attempts / 尝试 | Answered / 已回答 | Coverage / 覆盖 | Conditional error / 条件错误 | Localization coverage / 定位覆盖 | Projected cost / 投影成本 |
-|---|---|---|---|---|---|
-| 12 | 3 | 3/12 | 0/3 | 2/5 | acquisition=9; computation=9; preparation=6; retry=1 |
+| Attempts / 尝试 | Answered / 已回答 | Coverage / 覆盖 | Conditional error / 条件错误 | Localization coverage / 定位覆盖 | Projected cost / 投影成本 | Review/setup / 评审准备工作量 |
+|---|---|---|---|---|---|---|
+| 13 | 4 | 4/13 | 0/4 | 3/6 | acquisition=10; computation=9; preparation=3; retry=1 | 3.0 |
 
 <!-- experiment-design-shared:end -->
 
@@ -207,7 +238,7 @@ conditional detection error is `N/A` because its denominator is empty.
 
 指标总体由行字段推导，不使用手填分母标签。只有 `validity == VALID` 且结果为
 `PASS` 或 `FAIL` 才算已回答；`ERROR`、`INCONCLUSIVE` 与 `NOT-ANSWERED` 均不算。
-因此十二次尝试中零次回答时，回答覆盖率为 `0/12`，而条件检测错误率因分母为空为
+因此十三次尝试中零次回答时，回答覆盖率为 `0/13`，而条件检测错误率因分母为空为
 `N/A`。
 
 Stop processing is stage-sensitive. `Stop-Empty` is a post-update `ERROR` with
@@ -221,9 +252,10 @@ action cost.
 `Stop-645` 是更新后弃权，不能因只剩一个候选而变成单点决定；`Stop-Budget` 保留部分
 集合和已花成本但不产生单点决定。动作前准入失败不得发出动作或计动作成本。
 
-The T5 synthetic witness uses measured interval `[5.0, 5.2] s` and requirement
+The T5 synthetic witness uses closed measured interval `[5.0, 5.2] s` and requirement
 interval `[4.0, 5.1] s`. They overlap without containment, so the outcome is
-`INCONCLUSIVE`; endpoint order, unit mismatch, or a forced PASS/FAIL is rejected.
+`INCONCLUSIVE`; full containment is `PASS`, disjointness is `FAIL`, and closed
+endpoint contact is overlap. Endpoint order, unit mismatch, or a wrong class is rejected.
 
 ## 7. Cost and statistical boundary / 成本与统计边界
 
@@ -231,33 +263,40 @@ The accepted comparison vector is `(acquisition, computation, preparation,
 retry)`. Runtime detail may retain `recovery`, but projection folds it into
 `preparation` exactly once. Charges attach only to issued actions. Incomplete,
 budget, abstention, and error attempts retain all spent cost.
+Pre-run review/setup effort is retained in a separate audit total and is never
+charged to an unissued arm action.
 
 接受的比较向量为 `(acquisition, computation, preparation, retry)`。运行细节可保留
 `recovery`，但投影时只合并到 `preparation` 一次；只有实际发出的动作才计费。未完成、
 预算、弃权及错误尝试均保留全部已花成本。
 
-Primary, secondary, and exploratory families are explicit. Every primary metric
+Primary, secondary, and exploratory families name the existing arm contrasts
+and their joint conclusion rule. Every primary metric
 has a finite population, missing/censoring rule, analysis plan, and freeze
 decision. The current statistical procedures are candidates only. Experimental
 unit, pairing/repeat policy, randomness, target precision/effect, resource budget,
 and clock/error budget must be frozen by their named decisions before held-out or
-confirmatory access. `EVID-2026-063`--`065` support conditional use of independent
+confirmatory access. The finite choice table selects deterministic exhaustive,
+independent-randomized, or paired/clustered candidates only when their inputs are
+present; otherwise it returns `WAIT-DEC-SAMPLE`. Its examples are hypothetical,
+not power calculations, pilots, or results. `EVID-2026-063`--`065` support conditional use of independent
 runs, censoring-aware reporting, effect sizes, and transparent raw results; they
 do not prescribe a universal repeat count. JCGM 100/106 guide the open clock and
 measurement-error decision but do not themselves validate this apparatus.
 
 ## 8. Synthetic witness and admission limit / 合成见证与准入限制
 
-The twelve walkthrough rows are synthetic design/accounting witnesses only.
+The thirteen walkthrough rows are synthetic design/accounting witnesses only.
 They exercise normal PASS, non-singleton fault FAIL, wrong singleton, unconfirmed
 injection, invalid observation, interval overlap, `Stop-Empty`, confirmed
 equivalent, unresolved equivalence, `Stop-645`, spent-cost budget exit, and
-pre-action admission failure. They are not observed experiment results and must
+pre-action admission failure, and a reciprocal same-scene paired comparator.
+They are not observed experiment results and must
 not appear in a confirmatory result table.
 
-十二行走查只用于合成设计与记账核对，覆盖正常 PASS、非单点故障 FAIL、错误单点、
+十三行走查只用于合成设计与记账核对，覆盖正常 PASS、非单点故障 FAIL、错误单点、
 未确认注入、无效观测、区间重叠、`Stop-Empty`、确认等价、等价性未决、`Stop-645`、
-保留成本的预算退出及动作前准入失败。它们不是观测实验结果，不得进入确认性结果表。
+保留成本的预算退出、动作前准入失败及同场景互为对照的有效配对。它们不是观测实验结果，不得进入确认性结果表。
 
 Historical captures remain `EXPLORATORY-OFFLINE-ONLY`. Confirmatory execution is
 `BLOCKED` until the seven listed scientific/runtime decisions close. Disclosure
