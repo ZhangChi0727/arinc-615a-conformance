@@ -105,7 +105,9 @@ Pre-run review/setup effort is reported separately from issued-action cost.
 An update rejected as \texttt{ERROR} preserves the preceding hypothesis set
 regardless of its stop tag; only a valid empty compatibility update produces
 \texttt{Stop-Empty}, and a valid singleton update first produces
-\texttt{Stop-Singleton}. A registered pair is derived separately for each parent
+\texttt{Stop-Singleton}. A record without a \texttt{runId} remains a pre-run
+exclusion and cannot produce PASS, FAIL, a decision, an action, or charged cost.
+A registered pair is derived separately for each parent
 metric and requires the same base scene, seed, construction and registered
 contrast, reciprocal arms, and distinct confirmed resets. The closed-interval T5 rule assigns containment PASS,
 disjointness FAIL and partial overlap INCONCLUSIVE.

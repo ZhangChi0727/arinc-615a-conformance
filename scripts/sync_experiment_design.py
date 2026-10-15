@@ -192,8 +192,17 @@ def render_shared_block(data: dict[str, Any]) -> str:
         "### CRS-M1-00101 protocol timelines / CRS-M1-00101 协议时间线",
         "",
         _table(
-            ["Timeline / 时间线", "Trigger / 触发", "Observed / 观测", "Elapsed / 经过时间", "Outcome / 结果"],
-            ((row["id"], row["trigger"], row["receivedEvent"], row["elapsedSeconds"], row["outcome"]) for row in timelines),
+            ["Timeline / 时间线", "Trigger / 触发", "Observed / 观测", "Elapsed / 经过时间", "Expiry / 到期端点", "Abort duty / 中止义务", "Finite observation / 有限观察终点", "Outcome / 结果"],
+            (
+                (
+                    row["id"], row["trigger"], row["receivedEvent"], row["elapsedSeconds"],
+                    row["timerExpiryBoundary"],
+                    [row["abortObligation"], f"completionBound={row['abortCompletionBoundSeconds']}"],
+                    [f"end={row['observationEndSeconds']}", f"qualified={row['observationEndQualified']}"],
+                    row["outcome"],
+                )
+                for row in timelines
+            ),
         ),
         "",
         "### Open decisions / 待定决定",

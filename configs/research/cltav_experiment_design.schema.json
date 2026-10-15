@@ -419,7 +419,7 @@
       "type": "array", "minItems": 4,
       "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["id", "label", "scenarioId", "crsRef", "trigger", "receivedEvent", "elapsedSeconds", "outcome"],
+        "required": ["id", "label", "scenarioId", "crsRef", "trigger", "receivedEvent", "elapsedSeconds", "timerExpiryBoundary", "abortObligation", "abortCompletionBoundSeconds", "observationEndSeconds", "observationEndQualified", "outcome"],
         "properties": {
           "id": {"type": "string", "pattern": "^TL-[A-Z0-9-]+$"},
           "label": {"const": "SYNTHETIC-PROTOCOL-TIMELINE"},
@@ -445,6 +445,11 @@
             }
           },
           "elapsedSeconds": {"type": "number", "minimum": 0},
+          "timerExpiryBoundary": {"enum": ["OPEN", "CLOSED", "UNRESOLVED"]},
+          "abortObligation": {"enum": ["REQUIRED-IF-NO-TIMELY-STATUS", "NOT-APPLICABLE"]},
+          "abortCompletionBoundSeconds": {"type": ["number", "null"], "minimum": 0},
+          "observationEndSeconds": {"type": "number", "minimum": 0},
+          "observationEndQualified": {"type": "boolean"},
           "outcome": {"enum": ["PASS", "FAIL", "NOT-SCORED"]}
         }
       }

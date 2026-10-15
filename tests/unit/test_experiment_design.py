@@ -16,6 +16,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from check_experiment_design import (  # noqa: E402
     REQUIRED_BINDINGS,
+    REQUIRED_METRIC_CONTRACTS,
     _population_sets,
     accounting_summary,
     validate_design,
@@ -375,6 +376,31 @@ def test_q03_valid_update_is_history_intersection_not_arbitrary_replacement() ->
     assert any("subset of H" in item for item in errors_for(mutate))
 
 
+def test_r01_invalid_observation_cannot_be_relabelled_as_valid_update() -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["syntheticWalkthroughs"] if row["id"] == "SYN-INVALID-OBS")
+        row.update(
+            updateStatus="VALID-UPDATE",
+            compatibleState=["h-normal"],
+            finalHypotheses=["h-normal"],
+            stopClass="Stop-Singleton",
+        )
+
+    assert any("invalid observation must reject" in item for item in errors_for(mutate))
+
+
+def test_r02_non_run_attempt_cannot_be_counted_as_pass() -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["syntheticWalkthroughs"] if row["id"] == "SYN-UNCONFIRMED")
+        row.update(validity="VALID", outcome="PASS")
+
+    assert any("non-run record" in item for item in errors_for(mutate))
+    candidate = copy.deepcopy(DESIGN)
+    row = next(row for row in candidate["syntheticWalkthroughs"] if row["id"] == "SYN-UNCONFIRMED")
+    row.update(validity="VALID", outcome="PASS")
+    assert row["attemptId"] not in _population_sets(candidate)["POP-ANSWERED"]
+
+
 def test_q04_missing_truth_keeps_coverage_but_leaves_truth_scored_denominators() -> None:
     candidate = copy.deepcopy(DESIGN)
     row = next(row for row in candidate["syntheticWalkthroughs"] if row["id"] == "SYN-PAIR-COMPARATOR")
@@ -412,6 +438,32 @@ def test_q07_no_response_timeline_is_source_bound_and_not_generic_suppression() 
     assert any(row["outcome"] == "NOT-SCORED" for row in DESIGN["protocolTimelineWalkthroughs"])
     assert errors_for(
         lambda d: next(row for row in d["protocolTimelineWalkthroughs"] if row["id"] == "TL-MISSING-BOTH").update(outcome="PASS")
+    )
+
+
+def test_r03_exception_timer_endpoint_abort_duty_and_finite_horizon_are_closed() -> None:
+    at_expiry = next(row for row in DESIGN["protocolTimelineWalkthroughs"] if row["id"] == "TL-STATUS-AT-EXPIRY")
+    missing = next(row for row in DESIGN["protocolTimelineWalkthroughs"] if row["id"] == "TL-MISSING-BOTH")
+    assert at_expiry["timerExpiryBoundary"] == "UNRESOLVED"
+    assert at_expiry["outcome"] == "NOT-SCORED"
+    assert missing["abortObligation"] == "REQUIRED-IF-NO-TIMELY-STATUS"
+    assert missing["abortCompletionBoundSeconds"] is None
+    assert missing["observationEndSeconds"] >= missing["elapsedSeconds"]
+    assert missing["outcome"] == "NOT-SCORED"
+    assert errors_for(
+        lambda d: next(row for row in d["protocolTimelineWalkthroughs"] if row["id"] == "TL-STATUS-AT-EXPIRY").update(
+            timerExpiryBoundary="CLOSED", outcome="PASS"
+        )
+    )
+    assert errors_for(
+        lambda d: next(row for row in d["protocolTimelineWalkthroughs"] if row["id"] == "TL-MISSING-BOTH").update(
+            abortObligation="NOT-APPLICABLE"
+        )
+    )
+    assert errors_for(
+        lambda d: next(row for row in d["protocolTimelineWalkthroughs"] if row["id"] == "TL-MISSING-BOTH").update(
+            observationEndSeconds=10, outcome="FAIL"
+        )
     )
 
 
@@ -459,3 +511,23 @@ def test_q13_statistical_source_locator_must_resolve_to_bound_lines() -> None:
         row["sourceLocators"][0]["path"] = "docs/research/DOES-NOT-EXIST.md"
 
     assert any("not a bound path" in item for item in errors_for(mutate))
+
+
+def test_r04_all_metric_population_and_required_field_contracts_are_closed() -> None:
+    assert set(REQUIRED_METRIC_CONTRACTS) == {row["id"] for row in DESIGN["metrics"]}
+    assert any(
+        "finite computation contract" in item
+        for item in errors_for(
+            lambda d: next(row for row in d["metrics"] if row["id"] == "MET-MISS")["requiredFields"].remove(
+                "truthReference.truthHypothesis"
+            )
+        )
+    )
+    assert any(
+        "finite computation contract" in item
+        for item in errors_for(
+            lambda d: next(row for row in d["metrics"] if row["id"] == "MET-TRUE-RETAINED").update(
+                populationId="POP-ATTEMPTS"
+            )
+        )
+    )

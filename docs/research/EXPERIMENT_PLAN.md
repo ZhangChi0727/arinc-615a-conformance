@@ -307,9 +307,12 @@ randomization, dependence, evidence, and independent-unit inputs. Only the
 independent Bernoulli branch currently names Clopper--Pearson; paired and
 clustered inference remain `WAIT-DEC-SAMPLE` until a direct method is frozen.
 For CRS-M1-00101, the scored trigger is the data loader receiving a status file
-that carries an exception delay for the active operation; a new status within
-the delay or the required abort fallback after expiry passes, while generic
-request suppression is method-only and not scored against that requirement.
+that carries an exception delay for the active operation.  A new status strictly
+before the unresolved expiry endpoint or an observed required abort fallback
+after expiry passes.  Equality stays unscored until DEC-CLOCK freezes endpoint
+inclusivity; absence of both cannot fail from a finite trace unless a separately
+justified abort-completion bound is covered.  Generic request suppression is
+method-only and is not scored against that requirement.
 Exactly one `BUDGET` or `ROUNDS` resource mode is selected per session; a retry
 cap is a separate execution-safety bound, not a second resource stop mode.
 Historical captures stay exploratory and synthetic fixtures are not results.
@@ -499,5 +502,7 @@ EXP-001～007 仍按 RR-2026-001 v4.2 保留为历史方案，可被引用，但
 状态而非停止标签决定是否保留 `H`，有效空集与单例分别优先触发 `Stop-Empty` 与
 `Stop-Singleton`。统计分支由随机化、依赖、配对／聚类证据及独立单位推导；当前仅独立
 伯努利分支列出 Clopper--Pearson，配对和聚类推断继续等待决定。CRS-M1-00101 的计分
-触发是数据加载器收到携带异常延迟的当前操作状态文件；延迟内新状态或到期后的规定
-中止后备为通过，通用请求抑制不按该条计分。历史捕获只属探索，合成 fixture 不是结果。
+触发是数据加载器收到携带异常延迟的当前操作状态文件；在 DEC-CLOCK 冻结端点前，
+恰逢到期的事件保持不计分；到期后的规定中止是后备义务而非取消豁免。有限轨迹只有在
+覆盖另行论证的中止完成界限后，才能把两者缺失计为失败。通用请求抑制不按该条计分。
+历史捕获只属探索，合成 fixture 不是结果。

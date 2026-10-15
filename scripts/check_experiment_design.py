@@ -54,9 +54,25 @@ REQUIRED_METRICS = {
 }
 REQUIRED_ANALYSES = {"AN-FLOW", "AN-PROPORTION", "AN-DISTRIBUTION", "AN-PAIRED"}
 REQUIRED_METRIC_CONTRACTS = {
+    "MET-ATTEMPTS": (None, "POP-ATTEMPTS", {"attemptId"}),
     "MET-ANSWERED-COVERAGE": ("POP-ANSWERED", "POP-ATTEMPTS", {"attemptId", "validity", "outcome"}),
     "MET-CONDITIONAL-DETECTION-ERROR": ("POP-CONDITIONAL-ERROR", "POP-ANSWERED-TRUTH-SCORABLE", {"validity", "outcome", "truthReference.truthHypothesis"}),
+    "MET-TRUTH-SCORABLE-COVERAGE": ("POP-ANSWERED-TRUTH-SCORABLE", "POP-ANSWERED", {"outcome", "validity", "truthReference.truthHypothesis"}),
+    "MET-TRUTH-MISSING": ("POP-TRUTH-MISSING", "POP-ATTEMPTS", {"truthReference.truthHypothesis", "outcome", "localizationDecisionIssued"}),
+    "MET-MISS": ("POP-MISSES", "POP-CONFIRMED-FAULT", {"injectionStatus", "faultDomain", "outcome", "truthReference.truthHypothesis"}),
+    "MET-FALSE-FAIL": ("POP-FALSE-FAILS", "POP-QUALIFIED-NORMAL", {"injectionStatus", "faultDomain", "validity", "outcome"}),
+    "MET-ABSTAIN": ("POP-ABSTAIN", "POP-ATTEMPTS", {"validity"}),
+    "MET-INCONCLUSIVE": ("POP-INCONCLUSIVE", "POP-ATTEMPTS", {"outcome", "observationInterval", "requirementInterval"}),
+    "MET-ERROR": ("POP-ERROR", "POP-ATTEMPTS", {"validity", "outcome"}),
+    "MET-INCOMPLETE": ("POP-INCOMPLETE", "POP-ATTEMPTS", {"validity", "resourceStatus", "chargedCost"}),
     "MET-LOCALIZATION-COVERAGE": ("POP-LOCALIZATION-DECISION", "POP-LOCALIZATION-ELIGIBLE", {"localizationDecisionIssued", "injectionStatus", "faultDomain"}),
+    "MET-TRUE-RETAINED": ("POP-TRUE-RETAINED", "POP-LOCALIZATION-TRUTH-SCORABLE", {"truthReference.truthHypothesis", "finalHypotheses", "localizationDecisionIssued"}),
+    "MET-TRUE-EXCLUDED": ("POP-TRUE-EXCLUDED", "POP-LOCALIZATION-TRUTH-SCORABLE", {"truthReference.truthHypothesis", "finalHypotheses", "localizationDecisionIssued"}),
+    "MET-SINGLETON-CORRECT": ("POP-SINGLETON-CORRECT", "POP-SINGLETON-TRUTH-SCORABLE", {"singletonDecisionIssued", "finalHypotheses", "truthReference.truthHypothesis"}),
+    "MET-FINAL-CANDIDATES": (None, "POP-LOCALIZATION-ELIGIBLE", {"finalHypotheses", "stopClass"}),
+    "MET-COST-VECTOR": (None, "POP-ATTEMPTS", {"chargedCost.acquisition", "chargedCost.computation", "chargedCost.preparation", "chargedCost.recovery", "chargedCost.retry"}),
+    "MET-ROUNDS": (None, "POP-ROUNDS", {"runId", "actionIssued", "resourcePolicy"}),
+    "MET-ABLATION-DELTA": (None, "POP-PAIRED-ELIGIBLE", {"pairingId", "outcome", "chargedCost"}),
 }
 REQUIRED_POPULATIONS = {
     "POP-ATTEMPTS", "POP-ANSWERED", "POP-QUALIFIED-NORMAL",
@@ -268,8 +284,19 @@ def _population_sets(data: dict[str, Any]) -> dict[str, set[str]]:
     rows = _rows(data, "syntheticWalkthroughs")
     by_id = {str(row.get("attemptId", "")): row for row in rows if row.get("attemptId")}
     attempts = set(by_id)
-    answered = {aid for aid, row in by_id.items() if row.get("validity") == "VALID" and row.get("outcome") in {"PASS", "FAIL"}}
-    normal = {aid for aid, row in by_id.items() if row.get("injectionStatus") == "NORMAL" and row.get("faultDomain") == "NORMAL" and row.get("validity") == "VALID"}
+    answered = {
+        aid for aid, row in by_id.items()
+        if row.get("runId") is not None
+        and row.get("validity") == "VALID"
+        and row.get("outcome") in {"PASS", "FAIL"}
+    }
+    normal = {
+        aid for aid, row in by_id.items()
+        if row.get("runId") is not None
+        and row.get("injectionStatus") == "NORMAL"
+        and row.get("faultDomain") == "NORMAL"
+        and row.get("validity") == "VALID"
+    }
     faults = {aid for aid, row in by_id.items() if row.get("injectionStatus") == "CONFIRMED" and row.get("faultDomain") == "IN-DOMAIN-NON-EQUIVALENT" and row.get("runId") is not None}
     misses = {aid for aid in faults if by_id[aid].get("outcome") == "PASS"}
     false_fails = {aid for aid in normal if by_id[aid].get("outcome") == "FAIL"}
@@ -401,10 +428,26 @@ def _validate_walkthroughs(data: dict[str, Any], scenario_ids: set[str]) -> list
             errors.append(f"walkthrough {row_id} lacks typed evaluator-only truth")
         if row.get("injectionStatus") in {"UNCONFIRMED", "EQUIVALENT", "UNRESOLVED"} and row.get("runId") is not None:
             errors.append(f"walkthrough {row_id} invents a run for a pre-run excluded injection")
-        if row.get("runId") is None and (row.get("resourcePolicy") != "NOT-RUN" or row.get("resourceStatus") != "NOT-RUN"):
-            errors.append(f"walkthrough {row_id} assigns a resource policy/status to a non-run")
-        if row.get("runId") is not None and row.get("resourcePolicy") == "NOT-RUN":
-            errors.append(f"walkthrough {row_id} hides the resource policy of an admitted run")
+        if row.get("runId") is None:
+            non_run_ok = (
+                row.get("stage") == "PRE-RUN"
+                and row.get("validity") == "PRE-RUN-EXCLUDED"
+                and row.get("outcome") == "NOT-ANSWERED"
+                and row.get("updateStatus") == "NO-UPDATE"
+                and row.get("stopClass") is None
+                and row.get("resourcePolicy") == "NOT-RUN"
+                and row.get("resourceStatus") == "NOT-RUN"
+                and row.get("actionIssued") is False
+                and row.get("localizationDecisionIssued") is False
+                and row.get("singletonDecisionIssued") is False
+                and not any(row.get("chargedCost", {}).values())
+            )
+            if not non_run_ok:
+                errors.append(
+                    f"walkthrough {row_id} non-run record must remain PRE-RUN/PRE-RUN-EXCLUDED/NOT-ANSWERED with no update, decision, action, stop or charge"
+                )
+        elif row.get("resourcePolicy") == "NOT-RUN" or row.get("stage") == "PRE-RUN" or row.get("validity") == "PRE-RUN-EXCLUDED":
+            errors.append(f"walkthrough {row_id} hides or mislabels an admitted run")
         if row.get("resourceStatus") == "BUDGET-EXHAUSTED" and row.get("stopClass") != "Stop-Budget":
             errors.append(f"walkthrough {row_id} has budget exhaustion without Stop-Budget")
         if row.get("outcome") in {"PASS", "FAIL"} and row.get("validity") != "VALID":
@@ -415,6 +458,16 @@ def _validate_walkthroughs(data: dict[str, Any], scenario_ids: set[str]) -> list
         history = row.get("historyBefore", [])
         compatible = row.get("compatibleState", [])
         update_status = row.get("updateStatus")
+        if row.get("scenarioId") == "SC-INVALID-OBS" and (
+            update_status != "NOT-APPLIED-ERROR"
+            or row.get("validity") != "INVALID"
+            or row.get("outcome") != "ERROR"
+            or row.get("localizationDecisionIssued") is not False
+            or row.get("singletonDecisionIssued") is not False
+        ):
+            errors.append(
+                f"walkthrough {row_id} invalid observation must reject the update, preserve H, remain ERROR, and issue no localization decision"
+            )
         if update_status == "NOT-APPLIED-ERROR":
             if set(final) != set(history) or row.get("outcome") != "ERROR":
                 errors.append(
@@ -551,6 +604,11 @@ def _validate_protocol_timelines(data: dict[str, Any]) -> list[str]:
         received = row.get("receivedEvent", {})
         elapsed = row.get("elapsedSeconds")
         delay = trigger.get("exceptionDelaySeconds")
+        boundary = row.get("timerExpiryBoundary")
+        abort_obligation = row.get("abortObligation")
+        abort_bound = row.get("abortCompletionBoundSeconds")
+        observation_end = row.get("observationEndSeconds")
+        horizon_qualified = row.get("observationEndQualified") is True
         same_operation = (
             trigger.get("actor") == "DATA-LOADER"
             and trigger.get("event") == "RECEIVED-STATUS-WITH-EXCEPTION-DELAY"
@@ -558,13 +616,39 @@ def _validate_protocol_timelines(data: dict[str, Any]) -> list[str]:
             and trigger.get("operationKey") == received.get("operationKey")
         )
         expected = "NOT-SCORED"
-        if same_operation and isinstance(elapsed, (int, float)) and isinstance(delay, (int, float)):
-            if received.get("event") == "NEW-STATUS" and elapsed <= delay:
+        timing_values = all(
+            isinstance(value, (int, float)) for value in (elapsed, delay, observation_end)
+        )
+        horizon_valid = timing_values and observation_end >= elapsed
+        if same_operation and horizon_valid and horizon_qualified:
+            if abort_obligation != "REQUIRED-IF-NO-TIMELY-STATUS":
+                errors.append(f"protocol timeline {row_id} drops the required abort fallback obligation")
+            event = received.get("event")
+            if event == "NEW-STATUS":
+                if elapsed < delay:
+                    expected = "PASS"
+                elif elapsed == delay and boundary == "CLOSED":
+                    expected = "PASS"
+            elif (
+                event == "ABORT"
+                and received.get("requiredFallback") is True
+                and elapsed > delay
+                and abort_obligation == "REQUIRED-IF-NO-TIMELY-STATUS"
+            ):
                 expected = "PASS"
-            elif received.get("event") == "ABORT" and received.get("requiredFallback") is True and elapsed > delay:
-                expected = "PASS"
-            elif received.get("event") == "NONE" and elapsed > delay:
+            elif (
+                event == "NONE"
+                and isinstance(abort_bound, (int, float))
+                and observation_end >= delay + abort_bound
+                and abort_obligation == "REQUIRED-IF-NO-TIMELY-STATUS"
+            ):
                 expected = "FAIL"
+        elif not same_operation and abort_obligation != "NOT-APPLICABLE":
+            errors.append(f"protocol timeline {row_id} assigns the CRS abort obligation to an unbound trigger")
+        if boundary != "UNRESOLVED":
+            errors.append(f"protocol timeline {row_id} must retain the bound authority's unresolved timer endpoint until DEC-CLOCK closes")
+        if not horizon_valid:
+            errors.append(f"protocol timeline {row_id} lacks a finite qualified observation endpoint covering its event")
         if row.get("outcome") != expected:
             errors.append(f"protocol timeline {row_id} expected {expected}, got {row.get('outcome')}")
     return errors
