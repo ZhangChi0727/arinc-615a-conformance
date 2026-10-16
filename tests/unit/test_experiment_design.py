@@ -41,6 +41,23 @@ def errors_for(mutator) -> list[str]:
     return validate_design(ROOT, candidate)
 
 
+def _project_declared_metric_source(design: dict, field: str, source_store: dict) -> object:
+    errors = validate_design(ROOT, design)
+    if errors:
+        raise ValueError("invalid design source contract: " + "; ".join(errors))
+    contract = next(row for row in design["metricFieldContracts"] if row["field"] == field)
+    source_key = contract["proposalFieldPath"] if contract["sourceKind"] == "PROPOSED" else contract["sourcePath"]
+    if source_key not in source_store:
+        raise KeyError(f"missing declared source {source_key} for {field}")
+    return copy.deepcopy(source_store[source_key])
+
+
+def _classify_t5_from_declared_sources(design: dict, source_store: dict) -> str:
+    observed = _project_declared_metric_source(design, "observationInterval", source_store)
+    required = _project_declared_metric_source(design, "requirementInterval", source_store)
+    return checker._classify_t5_intervals(observed, required)
+
+
 def _run_git(root: Path, *args: str) -> str:
     return subprocess.check_output(["git", *args], cwd=root, text=True).strip()
 
@@ -660,7 +677,7 @@ def test_s08_direct_statistical_source_uses_reviewed_proposition_anchor() -> Non
     assert any("reviewed proposition anchor" in item for item in errors_for(mutate))
 
 
-@pytest.mark.parametrize("case", ["update", "timing", "handoff", "requirement-source", "truth-source"])
+@pytest.mark.parametrize("case", ["update", "timing", "handoff", "requirement-source", "truth-source", "fault-source"])
 def test_s09_invalid_candidates_fail_real_entrypoints_without_rewriting_view(case: str, monkeypatch, capsys) -> None:
     candidate = copy.deepcopy(DESIGN)
     if case == "update":
@@ -678,9 +695,12 @@ def test_s09_invalid_candidates_fail_real_entrypoints_without_rewriting_view(cas
             sourceKind="DIRECT", sourcePath="OBSERVATION-ASSESSMENT.measurementInterval",
             sourceInputPaths=["OBSERVATION-ASSESSMENT.measurementInterval"], proposalFieldPath=None,
         )
-    else:
+    elif case == "truth-source":
         row = next(row for row in candidate["metricFieldContracts"] if row["field"] == "truthReference.truthHypothesis")
         row.update(sourceKind="DERIVED", sourcePath="finalHypotheses", sourceInputPaths=["finalHypotheses"], proposalFieldPath=None)
+    else:
+        row = next(row for row in candidate["metricFieldContracts"] if row["field"] == "faultDomain")
+        row["proposalFieldPath"] = "truthRecord.equivalenceDisposition"
 
     original_read_json = checker._read_json
 
@@ -728,14 +748,11 @@ def test_r6_w01_all_metric_fields_classify_value_provenance_and_reorder_stably()
 
 
 def test_r6_w02_t5_witness_uses_distinct_observation_and_requirement_sources() -> None:
-    contracts = {row["field"]: row for row in DESIGN["metricFieldContracts"]}
-    assert contracts["observationInterval"]["sourcePath"] == "OBSERVATION-ASSESSMENT.measurementInterval"
-    assert contracts["requirementInterval"]["proposalFieldPath"] == "sceneRecord.requirementInterval"
-    assert contracts["observationInterval"]["sourcePath"] not in contracts["requirementInterval"]["sourceInputPaths"]
-    witness = next(row for row in DESIGN["syntheticWalkthroughs"] if row["id"] == "SYN-T5-OVERLAP")
-    assert witness["observationInterval"] == {"lower": 5.0, "upper": 5.2, "unit": "s"}
-    assert witness["requirementInterval"] == {"lower": 4.0, "upper": 5.1, "unit": "s"}
-    assert witness["outcome"] == "INCONCLUSIVE"
+    source_store = {
+        "OBSERVATION-ASSESSMENT.measurementInterval": {"lower": 5.0, "upper": 5.2, "unit": "s"},
+        "sceneRecord.requirementInterval": {"lower": 4.0, "upper": 5.1, "unit": "s"},
+    }
+    assert _classify_t5_from_declared_sources(DESIGN, source_store) == "INCONCLUSIVE"
 
 
 def test_r6_w03_requirement_interval_cannot_alias_measurement_interval() -> None:
@@ -809,3 +826,77 @@ def test_r6_w10_legal_source_rule_change_round_trips_after_stale_detection(
     assert sync(root, write=False) == (False, "experiment design spec has generated-table drift; run with --write")
     assert sync(root, write=True)[0] is True
     assert sync(root, write=False)[0] is True
+
+
+@pytest.mark.parametrize(
+    ("equivalence", "domain"),
+    [
+        ("confirmed-non-equivalent", "IN-DOMAIN-NON-EQUIVALENT"),
+        ("confirmed-non-equivalent", "OUT-OF-DOMAIN"),
+        ("confirmed-equivalent", "NORMAL"),
+        ("unresolved", "UNKNOWN"),
+    ],
+)
+def test_r7_z02_z03_fault_domain_is_independent_of_equivalence(equivalence: str, domain: str) -> None:
+    store = {
+        "truthRecord.equivalenceDisposition": equivalence,
+        "truthRecord.faultDomainClass": domain,
+    }
+    assert _project_declared_metric_source(DESIGN, "faultDomain", store) == domain
+
+
+@pytest.mark.parametrize("status", ["NORMAL", "BUDGET-EXHAUSTED", "RESOURCE-ERROR"])
+def test_r7_z04_equal_charges_do_not_determine_resource_status(status: str) -> None:
+    equal_charges = {"acquisition": 1, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0}
+    store = {"resourceLog.detailCharges": equal_charges, "resourceLog.statusClass": status}
+    assert _project_declared_metric_source(DESIGN, "resourceStatus", store) == status
+    assert store["resourceLog.detailCharges"] == equal_charges
+
+
+@pytest.mark.parametrize(
+    ("field", "old_proposal"),
+    [("faultDomain", "truthRecord.equivalenceDisposition"), ("resourceStatus", "resourceLog.detailCharges")],
+)
+def test_r7_z05_classification_sources_cannot_regress_to_insufficient_evidence(field: str, old_proposal: str) -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["metricFieldContracts"] if row["field"] == field)
+        row["proposalFieldPath"] = old_proposal
+
+    assert any(field in item and "value-source semantics" in item for item in errors_for(mutate))
+
+
+@pytest.mark.parametrize(
+    ("measurement", "expected"),
+    [
+        ({"lower": 5.0, "upper": 5.2, "unit": "s"}, "INCONCLUSIVE"),
+        ({"lower": 4.2, "upper": 4.3, "unit": "s"}, "PASS"),
+        ({"lower": 6.0, "upper": 6.1, "unit": "s"}, "FAIL"),
+    ],
+)
+def test_r7_z06_z08_t5_consumes_changed_measurement_source(measurement: dict, expected: str) -> None:
+    store = {
+        "OBSERVATION-ASSESSMENT.measurementInterval": measurement,
+        "sceneRecord.requirementInterval": {"lower": 4.0, "upper": 5.1, "unit": "s"},
+    }
+    assert _classify_t5_from_declared_sources(DESIGN, store) == expected
+
+
+def test_r7_z09_t5_missing_or_same_source_is_controlled_failure() -> None:
+    measurement = {"lower": 5.0, "upper": 5.2, "unit": "s"}
+    with pytest.raises(KeyError, match="sceneRecord.requirementInterval"):
+        _classify_t5_from_declared_sources(
+            DESIGN,
+            {"OBSERVATION-ASSESSMENT.measurementInterval": measurement},
+        )
+
+    candidate = copy.deepcopy(DESIGN)
+    row = next(row for row in candidate["metricFieldContracts"] if row["field"] == "requirementInterval")
+    row.update(
+        sourceKind="DIRECT", sourcePath="OBSERVATION-ASSESSMENT.measurementInterval",
+        sourceInputPaths=["OBSERVATION-ASSESSMENT.measurementInterval"], proposalFieldPath=None,
+    )
+    with pytest.raises(ValueError, match="requirementInterval violates its reviewed value-source semantics"):
+        _classify_t5_from_declared_sources(
+            candidate,
+            {"OBSERVATION-ASSESSMENT.measurementInterval": measurement},
+        )
