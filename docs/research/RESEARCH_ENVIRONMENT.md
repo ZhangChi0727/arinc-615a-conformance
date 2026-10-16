@@ -114,9 +114,13 @@ separate and does not duplicate either authority.
 
 The Draw.io inventory uses `UTF8-LF-v1` canonical text identity and finite
 source bindings for every title, object, relation, and interpretation note.
-The shared validator checks real XML topology (including vertex/edge flags,
+The review-export registry `cltav_model_figure_exports.json` binds each PDF and
+SVG byte identity to its Draw.io identity and caption. The shared validator
+checks the declared finite source subset and real XML topology (including vertex/edge flags,
 parents, endpoints, arrow polarity, guard references, and undeclared cells),
 rejects path/link escapes, and regenerates the nine-file batch transactionally.
+It does not prove semantic equivalence across PlantUML and Draw.io; implicit
+activity order, meaning and geometry remain independent review obligations.
 Generated SVG/PDF files under `artifacts/publications/cltav/model-drafts/`
 remain review exports while status is `DRAFT-REDRAW`; they do not replace the
 reader SVGs or establish manuscript acceptance.

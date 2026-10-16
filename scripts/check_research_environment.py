@@ -262,6 +262,14 @@ def validate_environment(root: Path = ROOT) -> list[str]:
             except (OSError, ImportError, ValueError) as exc:
                 errors.append(f"cannot run model-figure validator: {exc}")
 
+    model_export_relative = registries.get("modelFigureExports")
+    if not isinstance(model_export_relative, str) or not model_export_relative:
+        errors.append("missing modelFigureExports path")
+    elif model_export_relative != "configs/research/cltav_model_figure_exports.json":
+        errors.append("modelFigureExports must use the controlled registry path")
+    elif not (root / model_export_relative).is_file():
+        errors.append(f"missing registry file {model_export_relative}")
+
     skills = data.get("skills")
     if not isinstance(skills, list) or not skills:
         errors.append("skills must be a nonempty list")
