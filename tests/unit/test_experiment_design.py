@@ -599,7 +599,7 @@ def test_s05_metric_field_handoffs_bind_truth_producer_and_closure() -> None:
         return next(row for row in data["dependencies"] if row["id"] == "DEP-TRUTH")
 
     assert any(
-        "lacks required proposal truthRecord.confirmationRef" in item
+        "separate truth identity" in item
         for item in errors_for(
             lambda d: truth_dependency(d).update(
                 proposalFields=[field for field in truth_dependency(d)["proposalFields"] if field["path"] != "truthRecord.confirmationRef"]
@@ -660,7 +660,7 @@ def test_s08_direct_statistical_source_uses_reviewed_proposition_anchor() -> Non
     assert any("reviewed proposition anchor" in item for item in errors_for(mutate))
 
 
-@pytest.mark.parametrize("case", ["update", "timing", "handoff"])
+@pytest.mark.parametrize("case", ["update", "timing", "handoff", "requirement-source", "truth-source"])
 def test_s09_invalid_candidates_fail_real_entrypoints_without_rewriting_view(case: str, monkeypatch, capsys) -> None:
     candidate = copy.deepcopy(DESIGN)
     if case == "update":
@@ -669,9 +669,18 @@ def test_s09_invalid_candidates_fail_real_entrypoints_without_rewriting_view(cas
     elif case == "timing":
         row = next(row for row in candidate["protocolTimelineWalkthroughs"] if row["id"] == "TL-MISSING-BOTH")
         row.update(abortCompletionBoundSeconds=1, outcome="FAIL")
-    else:
+    elif case == "handoff":
         dep = next(row for row in candidate["dependencies"] if row["id"] == "DEP-TRUTH")
         dep["proposalFields"][0]["producer"] = "algorithm under evaluation"
+    elif case == "requirement-source":
+        row = next(row for row in candidate["metricFieldContracts"] if row["field"] == "requirementInterval")
+        row.update(
+            sourceKind="DIRECT", sourcePath="OBSERVATION-ASSESSMENT.measurementInterval",
+            sourceInputPaths=["OBSERVATION-ASSESSMENT.measurementInterval"], proposalFieldPath=None,
+        )
+    else:
+        row = next(row for row in candidate["metricFieldContracts"] if row["field"] == "truthReference.truthHypothesis")
+        row.update(sourceKind="DERIVED", sourcePath="finalHypotheses", sourceInputPaths=["finalHypotheses"], proposalFieldPath=None)
 
     original_read_json = checker._read_json
 
@@ -705,3 +714,98 @@ def test_s10_controlled_chinese_covers_645_clock_and_handoffs() -> None:
             )
         )
     )
+
+
+def test_r6_w01_all_metric_fields_classify_value_provenance_and_reorder_stably() -> None:
+    contracts = DESIGN["metricFieldContracts"]
+    assert len(contracts) == 23
+    assert {row["sourceKind"] for row in contracts} == {"DIRECT", "DERIVED", "PROPOSED"}
+    assert all(row["sourceInputPaths"] and row["derivationRule"] for row in contracts)
+    candidate = copy.deepcopy(DESIGN)
+    candidate["metricFieldContracts"].reverse()
+    assert validate_design(ROOT, candidate) == []
+    assert render_shared_block(candidate) == render_shared_block(DESIGN)
+
+
+def test_r6_w02_t5_witness_uses_distinct_observation_and_requirement_sources() -> None:
+    contracts = {row["field"]: row for row in DESIGN["metricFieldContracts"]}
+    assert contracts["observationInterval"]["sourcePath"] == "OBSERVATION-ASSESSMENT.measurementInterval"
+    assert contracts["requirementInterval"]["proposalFieldPath"] == "sceneRecord.requirementInterval"
+    assert contracts["observationInterval"]["sourcePath"] not in contracts["requirementInterval"]["sourceInputPaths"]
+    witness = next(row for row in DESIGN["syntheticWalkthroughs"] if row["id"] == "SYN-T5-OVERLAP")
+    assert witness["observationInterval"] == {"lower": 5.0, "upper": 5.2, "unit": "s"}
+    assert witness["requirementInterval"] == {"lower": 4.0, "upper": 5.1, "unit": "s"}
+    assert witness["outcome"] == "INCONCLUSIVE"
+
+
+def test_r6_w03_requirement_interval_cannot_alias_measurement_interval() -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["metricFieldContracts"] if row["field"] == "requirementInterval")
+        row.update(
+            sourceKind="DIRECT", sourcePath="OBSERVATION-ASSESSMENT.measurementInterval",
+            sourceInputPaths=["OBSERVATION-ASSESSMENT.measurementInterval"], proposalFieldPath=None,
+        )
+
+    assert any("requirementInterval violates its reviewed value-source semantics" in item for item in errors_for(mutate))
+
+
+@pytest.mark.parametrize("source", ["finalHypotheses", "IF-EXP-RUN.traceRef", "IF-EXP-SCENE.algorithmVisibleFields"])
+def test_r6_w04_w05_truth_never_comes_from_candidate_or_algorithm_visible_output(source: str) -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["metricFieldContracts"] if row["field"] == "truthReference.truthHypothesis")
+        row.update(sourceKind="DERIVED", sourcePath=source, sourceInputPaths=[source], proposalFieldPath=None)
+
+    assert any("truthReference.truthHypothesis violates its reviewed value-source semantics" in item for item in errors_for(mutate))
+    truth = next(row for row in DESIGN["metricFieldContracts"] if row["field"] == "truthReference.truthHypothesis")
+    assert truth["producerRole"] == "independent evaluator" and truth["visibility"] == "evaluator-only"
+
+
+@pytest.mark.parametrize("source", ["IF-EXP-SCENE.unconfirmed", "IF-EXP-EVAL.metricCells"])
+def test_r6_w06_attempt_outcome_cannot_come_from_unrelated_or_aggregate_output(source: str) -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["metricFieldContracts"] if row["field"] == "outcome")
+        row.update(sourceKind="DERIVED", sourcePath=source, sourceInputPaths=[source])
+
+    assert any("outcome violates its reviewed value-source semantics" in item for item in errors_for(mutate))
+
+
+def test_r6_w07_pair_identity_and_reset_evidence_are_separate() -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["metricFieldContracts"] if row["field"] == "pairingId")
+        row["proposalFieldPath"] = "sceneRecord.resetEvidenceRef"
+
+    assert any("pairingId" in item and "resetEvidenceRef" in item for item in errors_for(mutate))
+    pair = [row for row in DESIGN["syntheticWalkthroughs"] if row.get("pairingId") == "PAIR-01"]
+    assert len(pair) == 2 and len({row["resetEvidenceRef"] for row in pair}) == 2
+
+
+def test_r6_w08_proposed_value_source_cannot_be_downgraded_to_existing() -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["metricFieldContracts"] if row["field"] == "requirementInterval")
+        row.update(sourceKind="DIRECT", proposalFieldPath=None)
+
+    errors = errors_for(mutate)
+    assert any("requirementInterval" in item and "value-source semantics" in item for item in errors)
+
+
+def test_r6_w10_legal_source_rule_change_round_trips_after_stale_detection(
+    isolated_snapshot_repo: tuple[Path, dict],
+) -> None:
+    root, candidate = isolated_snapshot_repo
+    design_path = root / checker.DESIGN_PATH
+    spec_path = root / generator.SPEC_PATH
+    spec_path.parent.mkdir(parents=True, exist_ok=True)
+    spec_path.write_text(
+        f"before\n{render_shared_block(candidate)}\nafter\n",
+        encoding="utf-8",
+    )
+    row = next(row for row in candidate["metricFieldContracts"] if row["field"] == "attemptId")
+    row["derivationRule"] += "; preserve the registered text form"
+    design_path.parent.mkdir(parents=True, exist_ok=True)
+    design_path.write_text(json.dumps(candidate), encoding="utf-8")
+    assert validate_design(root, candidate) == []
+    refreshed = render_shared_block(candidate)
+    assert refreshed != render_shared_block(DESIGN)
+    assert sync(root, write=False) == (False, "experiment design spec has generated-table drift; run with --write")
+    assert sync(root, write=True)[0] is True
+    assert sync(root, write=False)[0] is True
