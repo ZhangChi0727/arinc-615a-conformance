@@ -1,0 +1,385 @@
+{
+  "schemaVersion": "1.0",
+  "recordId": "CLTAV-MODEL-FIGURE-EXPORTS-2026-001",
+  "rawIdentity": "RAW-BYTES-SHA256",
+  "figures": [
+    {
+      "figureId": "FIG-CL-TAV-01",
+      "drawioPath": "docs/research/publication/models/drawio/FIG-CL-TAV-01-context.drawio",
+      "drawioSha256": "1e96dfd7d72e1938d0b1809e94f554f4638c87c3702b0997bd44246fc8fd3b8b",
+      "caption": "title FIG-CL-TAV-01 Context — SysML 1.6 notation-based views; executable/metamodel conformance is not claimed — subset of context relations; satisfy/verify are model relations, not executed verification. Editable DRAFT-REDRAW; PlantUML remains authority.",
+      "captionSha256": "b560e970e9929d1febb329139b27464d1f189ca10585256e1f5897cc8c648173",
+      "exporter": {
+        "name": "Draw.io Desktop",
+        "version": "32.4.1",
+        "parameters": "--export --format {svg|pdf} --crop"
+      },
+      "outputs": [
+        {
+          "format": "pdf",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-01-context.pdf",
+          "rawSha256": "84e9061f1cf703e3e749ba3539fd873711e346e00f3339dc886d1c7aa7209406",
+          "bytes": 37196,
+          "pages": 1,
+          "pageWidthPt": 844.08,
+          "pageHeightPt": 360.0
+        },
+        {
+          "format": "svg",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-01-context.svg",
+          "rawSha256": "6ef16b37c96a57a4fb6ea93ea335ad9652e90c8225327d27995f4d86f398ce74",
+          "bytes": 434489
+        }
+      ],
+      "checkedAt": "2026-10-16",
+      "qa": {
+        "renderer": "Poppler pdftoppm 26.07.0 at 110 dpi",
+        "pageCountChecked": 1,
+        "nativePreviewStatus": "INSPECTED",
+        "minimumPdfTextPt": 18.0,
+        "intendedWidthMm": 182,
+        "estimatedMinimumFinalPt": 11.002
+      },
+      "semanticStatus": "CHECKED-PENDING-INDEPENDENT-REVIEW",
+      "exportStatus": "EXPORTED-AND-HASHED",
+      "finalSizeStatus": "FINAL-SIZE-PENDING",
+      "promotionStatus": "DRAFT-REDRAW"
+    },
+    {
+      "figureId": "FIG-CL-TAV-02",
+      "drawioPath": "docs/research/publication/models/drawio/FIG-CL-TAV-02-requirement-layers.drawio",
+      "drawioSha256": "ab47929e653977aefd70734c37f71991d56bbd4bf45cbec1c50c4c9bfad12666",
+      "caption": "title FIG-CL-TAV-02 Requirement layers and representative trace — SysML 1.6 notation-based views; executable/metamodel conformance is not claimed — method goals, protocol CRS and tool requirements stay distinct. Editable DRAFT-REDRAW; PlantUML remains authority.",
+      "captionSha256": "b06fe8d072127306ec96807473728c786cb90e2e99d6f91e9f44e6a98ecec2ac",
+      "exporter": {
+        "name": "Draw.io Desktop",
+        "version": "32.4.1",
+        "parameters": "--export --format {svg|pdf} --crop"
+      },
+      "outputs": [
+        {
+          "format": "pdf",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-02-requirement-layers.pdf",
+          "rawSha256": "d67e1d4c1dbba6eb03fca2f2efc5488dbe0e3828988a992da322f8f6d810dae4",
+          "bytes": 72935,
+          "pages": 1,
+          "pageWidthPt": 1103.04,
+          "pageHeightPt": 639.12
+        },
+        {
+          "format": "svg",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-02-requirement-layers.svg",
+          "rawSha256": "0debcb6744ed4830f21161b5be5df4ac551602d4402aaf03c9e665892970b774",
+          "bytes": 1021972
+        }
+      ],
+      "checkedAt": "2026-10-16",
+      "qa": {
+        "renderer": "Poppler pdftoppm 26.07.0 at 110 dpi",
+        "pageCountChecked": 1,
+        "nativePreviewStatus": "INSPECTED",
+        "minimumPdfTextPt": 18.0,
+        "intendedWidthMm": 182,
+        "estimatedMinimumFinalPt": 8.419
+      },
+      "semanticStatus": "CHECKED-PENDING-INDEPENDENT-REVIEW",
+      "exportStatus": "EXPORTED-AND-HASHED",
+      "finalSizeStatus": "FINAL-SIZE-PENDING",
+      "promotionStatus": "DRAFT-REDRAW"
+    },
+    {
+      "figureId": "FIG-CL-TAV-03",
+      "drawioPath": "docs/research/publication/models/drawio/FIG-CL-TAV-03-bdd.drawio",
+      "drawioSha256": "358d53abb43dc8db01119fe9ecd6c986ba42ae1d22010aa2f75ac6c6579b77ae",
+      "caption": "title FIG-CL-TAV-03 BDD — SysML 1.6 notation-based views; executable/metamodel conformance is not claimed — Test, Observation, Analysis, Diagnosis, Selection, Evidence as separate blocks. Editable DRAFT-REDRAW; PlantUML remains authority.",
+      "captionSha256": "44d4fc005975758f0571961ef55bb40a0fb3b2a7c3486e95e5814c57a2f19d88",
+      "exporter": {
+        "name": "Draw.io Desktop",
+        "version": "32.4.1",
+        "parameters": "--export --format {svg|pdf} --crop"
+      },
+      "outputs": [
+        {
+          "format": "pdf",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-03-bdd.pdf",
+          "rawSha256": "b825a6d32f2d35a17ca94f29b51ce6f15da6908d6d2a0f6c3a28aae47dd295cd",
+          "bytes": 37717,
+          "pages": 1,
+          "pageWidthPt": 995.04,
+          "pageHeightPt": 396.0
+        },
+        {
+          "format": "svg",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-03-bdd.svg",
+          "rawSha256": "15831d7e3edc616b2a33db1608dd29159af21f205e07fad39c1015d1bb074465",
+          "bytes": 477526
+        }
+      ],
+      "checkedAt": "2026-10-16",
+      "qa": {
+        "renderer": "Poppler pdftoppm 26.07.0 at 110 dpi",
+        "pageCountChecked": 1,
+        "nativePreviewStatus": "INSPECTED",
+        "minimumPdfTextPt": 18.0,
+        "intendedWidthMm": 182,
+        "estimatedMinimumFinalPt": 9.333
+      },
+      "semanticStatus": "CHECKED-PENDING-INDEPENDENT-REVIEW",
+      "exportStatus": "EXPORTED-AND-HASHED",
+      "finalSizeStatus": "FINAL-SIZE-PENDING",
+      "promotionStatus": "DRAFT-REDRAW"
+    },
+    {
+      "figureId": "FIG-CL-TAV-04",
+      "drawioPath": "docs/research/publication/models/drawio/FIG-CL-TAV-04-ibd.drawio",
+      "drawioSha256": "664d33dcb2c01a5e594106bc8ba89a52bec543750d9b31e8632044023a3c2e76",
+      "caption": "title FIG-CL-TAV-04 IBD — SysML 1.6 notation-based views; executable/metamodel conformance is not claimed — trace, constraint, candidate-set, test-selection and budget ports. Editable DRAFT-REDRAW; PlantUML remains authority.",
+      "captionSha256": "d08d4f578151a21649e889ef52c7fbc7eefacb3e075fbebc5884aa18b04c1464",
+      "exporter": {
+        "name": "Draw.io Desktop",
+        "version": "32.4.1",
+        "parameters": "--export --format {svg|pdf} --crop"
+      },
+      "outputs": [
+        {
+          "format": "pdf",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-04-ibd.pdf",
+          "rawSha256": "818ff9e0c073f145cbfc5ab53da64eec184094e4409fe0e06544068912dbf15b",
+          "bytes": 40744,
+          "pages": 1,
+          "pageWidthPt": 995.04,
+          "pageHeightPt": 413.04
+        },
+        {
+          "format": "svg",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-04-ibd.svg",
+          "rawSha256": "ca4ec1f8f858b7cdd6f583c5a8d89cc886eacb27006853ac9f6881fed35b52b0",
+          "bytes": 386195
+        }
+      ],
+      "checkedAt": "2026-10-16",
+      "qa": {
+        "renderer": "Poppler pdftoppm 26.07.0 at 110 dpi",
+        "pageCountChecked": 1,
+        "nativePreviewStatus": "INSPECTED",
+        "minimumPdfTextPt": 18.0,
+        "intendedWidthMm": 182,
+        "estimatedMinimumFinalPt": 9.333
+      },
+      "semanticStatus": "CHECKED-PENDING-INDEPENDENT-REVIEW",
+      "exportStatus": "EXPORTED-AND-HASHED",
+      "finalSizeStatus": "FINAL-SIZE-PENDING",
+      "promotionStatus": "DRAFT-REDRAW"
+    },
+    {
+      "figureId": "FIG-CL-TAV-05",
+      "drawioPath": "docs/research/publication/models/drawio/FIG-CL-TAV-05-closed-loop-activity.drawio",
+      "drawioSha256": "434066d07172692037e47f34728785311fc54ff42e954ef79ba07fd8a0f43a87",
+      "caption": "title FIG-CL-TAV-05 Closed-loop activity — SysML 1.6 notation-based views; executable/metamodel conformance is not claimed — predict before select; exclusive TEST/Prep/Recover/Admit; charge once; effect classes. Editable DRAFT-REDRAW; PlantUML remains authority.",
+      "captionSha256": "149d173072876f74ae48950adbd95b3e4f16311d118a19cdaee1892cd510078b",
+      "exporter": {
+        "name": "Draw.io Desktop",
+        "version": "32.4.1",
+        "parameters": "--export --format {svg|pdf} --crop"
+      },
+      "outputs": [
+        {
+          "format": "pdf",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-05-closed-loop-activity.pdf",
+          "rawSha256": "9137f1b35b072e7c1857bb05c7426a09a5fcf633ae101cdcf207d5b763cc4af5",
+          "bytes": 62893,
+          "pages": 1,
+          "pageWidthPt": 1025.04,
+          "pageHeightPt": 1736.88
+        },
+        {
+          "format": "svg",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-05-closed-loop-activity.svg",
+          "rawSha256": "d2306f8a518c243a811033ac86b63bc9b89703a93a67f1b0d2ce484ab9428530",
+          "bytes": 1819458
+        }
+      ],
+      "checkedAt": "2026-10-16",
+      "qa": {
+        "renderer": "Poppler pdftoppm 26.07.0 at 110 dpi",
+        "pageCountChecked": 1,
+        "nativePreviewStatus": "INSPECTED",
+        "minimumPdfTextPt": 18.0,
+        "intendedWidthMm": 182,
+        "estimatedMinimumFinalPt": 9.059
+      },
+      "semanticStatus": "CHECKED-PENDING-INDEPENDENT-REVIEW",
+      "exportStatus": "EXPORTED-AND-HASHED",
+      "finalSizeStatus": "FINAL-SIZE-PENDING",
+      "promotionStatus": "DRAFT-REDRAW"
+    },
+    {
+      "figureId": "FIG-CL-TAV-06",
+      "drawioPath": "docs/research/publication/models/drawio/FIG-CL-TAV-06-diagnostic-sequence.drawio",
+      "drawioSha256": "a179a9171c8ffcee00fbb9efc7f082ffdf1f5e9ac39327f7f910829ca4d2c96c",
+      "caption": "title FIG-CL-TAV-06 Diagnostic sequence — SysML 1.6 notation-based views; executable/metamodel conformance is not claimed — failure, overlapping observation, preparatory action, later distinguishing test. Editable DRAFT-REDRAW; PlantUML remains authority.",
+      "captionSha256": "2e78c13a5cccd5ced53c4cdfbc14f291c5dab7261918ebdd32483c8a39888743",
+      "exporter": {
+        "name": "Draw.io Desktop",
+        "version": "32.4.1",
+        "parameters": "--export --format {svg|pdf} --crop"
+      },
+      "outputs": [
+        {
+          "format": "pdf",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-06-diagnostic-sequence.pdf",
+          "rawSha256": "83b57e1ebcd02025ddd5d02898f0349717217ae533d39b9b4a761e90c5a3a56c",
+          "bytes": 57893,
+          "pages": 1,
+          "pageWidthPt": 1152.96,
+          "pageHeightPt": 962.88
+        },
+        {
+          "format": "svg",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-06-diagnostic-sequence.svg",
+          "rawSha256": "9b475cc15db84b12867f108392747b1018a6feeff46854f1b5f57f97d9373817",
+          "bytes": 1049369
+        }
+      ],
+      "checkedAt": "2026-10-16",
+      "qa": {
+        "renderer": "Poppler pdftoppm 26.07.0 at 110 dpi",
+        "pageCountChecked": 1,
+        "nativePreviewStatus": "INSPECTED",
+        "minimumPdfTextPt": 18.0,
+        "intendedWidthMm": 182,
+        "estimatedMinimumFinalPt": 8.054
+      },
+      "semanticStatus": "CHECKED-PENDING-INDEPENDENT-REVIEW",
+      "exportStatus": "EXPORTED-AND-HASHED",
+      "finalSizeStatus": "FINAL-SIZE-PENDING",
+      "promotionStatus": "DRAFT-REDRAW"
+    },
+    {
+      "figureId": "FIG-CL-TAV-07",
+      "drawioPath": "docs/research/publication/models/drawio/FIG-CL-TAV-07-two-state-machines.drawio",
+      "drawioSha256": "12058facedc86378d97e7d2e2ba64e97230613cc4531bc45f917828b6f17df8d",
+      "caption": "title FIG-CL-TAV-07 Two state machines — SysML 1.6 notation-based views; executable/metamodel conformance is not claimed — independent machines; communication is FIG-CL-TAV-04 ports, not a cross-machine state transition. Editable DRAFT-REDRAW; PlantUML remains authority.",
+      "captionSha256": "54690e303e8243da1f85ad66703198c09dd4caafe58ae94cb62627c027f73578",
+      "exporter": {
+        "name": "Draw.io Desktop",
+        "version": "32.4.1",
+        "parameters": "--export --format {svg|pdf} --crop"
+      },
+      "outputs": [
+        {
+          "format": "pdf",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-07-two-state-machines.pdf",
+          "rawSha256": "933802adf5c193700d56f2aba3b95c4837fd3af0fa567e89bce4582d1af52f89",
+          "bytes": 74357,
+          "pages": 1,
+          "pageWidthPt": 1260.0,
+          "pageHeightPt": 1812.0
+        },
+        {
+          "format": "svg",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-07-two-state-machines.svg",
+          "rawSha256": "33fc3bae80fd08996af949f948e16d3adaec00a17036fcde16ff0f2e3725287c",
+          "bytes": 1659136
+        }
+      ],
+      "checkedAt": "2026-10-16",
+      "qa": {
+        "renderer": "Poppler pdftoppm 26.07.0 at 110 dpi",
+        "pageCountChecked": 1,
+        "nativePreviewStatus": "INSPECTED",
+        "minimumPdfTextPt": 18.0,
+        "intendedWidthMm": 182,
+        "estimatedMinimumFinalPt": 7.37
+      },
+      "semanticStatus": "CHECKED-PENDING-INDEPENDENT-REVIEW",
+      "exportStatus": "EXPORTED-AND-HASHED",
+      "finalSizeStatus": "NEEDS-LAYOUT",
+      "promotionStatus": "DRAFT-REDRAW"
+    },
+    {
+      "figureId": "FIG-CL-TAV-08",
+      "drawioPath": "docs/research/publication/models/drawio/FIG-CL-TAV-08-parametric.drawio",
+      "drawioSha256": "716e83c7c228e6172884f57e09e0cc73f5f3928202a1a892ff6326fd88b632f5",
+      "caption": "title FIG-CL-TAV-08 Parametric — SysML 1.6 notation-based views; executable/metamodel conformance is not claimed — constraints shown, not claimed solved. Editable DRAFT-REDRAW; PlantUML remains authority.",
+      "captionSha256": "2c44f23f7f147302963b9b9a6406f8764c81d2a9db04985d083b04b86e703005",
+      "exporter": {
+        "name": "Draw.io Desktop",
+        "version": "32.4.1",
+        "parameters": "--export --format {svg|pdf} --crop"
+      },
+      "outputs": [
+        {
+          "format": "pdf",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-08-parametric.pdf",
+          "rawSha256": "d1f5e06feee701dcbfac0770685ba28cce0531e65e1f9fe7100a3c6bf4c6bb15",
+          "bytes": 36317,
+          "pages": 1,
+          "pageWidthPt": 980.88,
+          "pageHeightPt": 425.04
+        },
+        {
+          "format": "svg",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-08-parametric.svg",
+          "rawSha256": "6692757eec8f311b8013aa99d4fa7614091c6ba00ea8dea8dce2a94dd741ed93",
+          "bytes": 646823
+        }
+      ],
+      "checkedAt": "2026-10-16",
+      "qa": {
+        "renderer": "Poppler pdftoppm 26.07.0 at 110 dpi",
+        "pageCountChecked": 1,
+        "nativePreviewStatus": "INSPECTED",
+        "minimumPdfTextPt": 18.0,
+        "intendedWidthMm": 182,
+        "estimatedMinimumFinalPt": 9.467
+      },
+      "semanticStatus": "CHECKED-PENDING-INDEPENDENT-REVIEW",
+      "exportStatus": "EXPORTED-AND-HASHED",
+      "finalSizeStatus": "FINAL-SIZE-PENDING",
+      "promotionStatus": "DRAFT-REDRAW"
+    },
+    {
+      "figureId": "FIG-CL-TAV-09",
+      "drawioPath": "docs/research/publication/models/drawio/FIG-CL-TAV-09-experiment-architecture.drawio",
+      "drawioSha256": "8ed4e16b2ffcadcf535f00421671795f5cf1b5439a501ba6db9fb6048205f7bd",
+      "caption": "title FIG-CL-TAV-09 Experiment architecture — SysML 1.6 notation-based views; executable/metamodel conformance is not claimed — evaluator-only truth is never an algorithm input. Editable DRAFT-REDRAW; PlantUML remains authority.",
+      "captionSha256": "5dc165e013321e4091b4aa1c870e51067e99eb6e581de16d72f48ca5ed736735",
+      "exporter": {
+        "name": "Draw.io Desktop",
+        "version": "32.4.1",
+        "parameters": "--export --format {svg|pdf} --crop"
+      },
+      "outputs": [
+        {
+          "format": "pdf",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-09-experiment-architecture.pdf",
+          "rawSha256": "67feed24c58fbd7d74996c9b76328e0ae8d3fc0a08739ebc846a726afa6e2562",
+          "bytes": 37915,
+          "pages": 1,
+          "pageWidthPt": 1044.96,
+          "pageHeightPt": 516.0
+        },
+        {
+          "format": "svg",
+          "path": "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-09-experiment-architecture.svg",
+          "rawSha256": "d04109b519d9ea47b5981ddf4e4e517e8346c856b04780d7f64c43ce78484908",
+          "bytes": 1028003
+        }
+      ],
+      "checkedAt": "2026-10-16",
+      "qa": {
+        "renderer": "Poppler pdftoppm 26.07.0 at 110 dpi",
+        "pageCountChecked": 1,
+        "nativePreviewStatus": "INSPECTED",
+        "minimumPdfTextPt": 18.0,
+        "intendedWidthMm": 182,
+        "estimatedMinimumFinalPt": 8.887
+      },
+      "semanticStatus": "CHECKED-PENDING-INDEPENDENT-REVIEW",
+      "exportStatus": "EXPORTED-AND-HASHED",
+      "finalSizeStatus": "FINAL-SIZE-PENDING",
+      "promotionStatus": "DRAFT-REDRAW"
+    }
+  ]
+}

@@ -66,7 +66,9 @@
       "kind": "OWNED-GENERATED-PUBLICATION",
       "trackedSources": [
         "configs/research/cltav_model_figure_manifest.json",
-        "docs/research/publication/models/FIG-CL-TAV-01-context.puml"
+        "docs/research/publication/models/FIG-CL-TAV-01-context.puml",
+        "docs/research/publication/models/drawio/FIG-CL-TAV-01-context.drawio",
+        "configs/research/cltav_model_figure_exports.json"
       ],
       "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
       "notProprietarySource": true,
@@ -77,7 +79,9 @@
       "kind": "OWNED-GENERATED-PUBLICATION",
       "trackedSources": [
         "configs/research/cltav_model_figure_manifest.json",
-        "docs/research/publication/models/FIG-CL-TAV-02-requirement-layers.puml"
+        "docs/research/publication/models/FIG-CL-TAV-02-requirement-layers.puml",
+        "docs/research/publication/models/drawio/FIG-CL-TAV-02-requirement-layers.drawio",
+        "configs/research/cltav_model_figure_exports.json"
       ],
       "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
       "notProprietarySource": true,
@@ -88,7 +92,9 @@
       "kind": "OWNED-GENERATED-PUBLICATION",
       "trackedSources": [
         "configs/research/cltav_model_figure_manifest.json",
-        "docs/research/publication/models/FIG-CL-TAV-03-bdd.puml"
+        "docs/research/publication/models/FIG-CL-TAV-03-bdd.puml",
+        "docs/research/publication/models/drawio/FIG-CL-TAV-03-bdd.drawio",
+        "configs/research/cltav_model_figure_exports.json"
       ],
       "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
       "notProprietarySource": true,
@@ -99,7 +105,9 @@
       "kind": "OWNED-GENERATED-PUBLICATION",
       "trackedSources": [
         "configs/research/cltav_model_figure_manifest.json",
-        "docs/research/publication/models/FIG-CL-TAV-04-ibd.puml"
+        "docs/research/publication/models/FIG-CL-TAV-04-ibd.puml",
+        "docs/research/publication/models/drawio/FIG-CL-TAV-04-ibd.drawio",
+        "configs/research/cltav_model_figure_exports.json"
       ],
       "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
       "notProprietarySource": true,
@@ -110,7 +118,9 @@
       "kind": "OWNED-GENERATED-PUBLICATION",
       "trackedSources": [
         "configs/research/cltav_model_figure_manifest.json",
-        "docs/research/publication/models/FIG-CL-TAV-05-closed-loop-activity.puml"
+        "docs/research/publication/models/FIG-CL-TAV-05-closed-loop-activity.puml",
+        "docs/research/publication/models/drawio/FIG-CL-TAV-05-closed-loop-activity.drawio",
+        "configs/research/cltav_model_figure_exports.json"
       ],
       "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
       "notProprietarySource": true,
@@ -121,7 +131,9 @@
       "kind": "OWNED-GENERATED-PUBLICATION",
       "trackedSources": [
         "configs/research/cltav_model_figure_manifest.json",
-        "docs/research/publication/models/FIG-CL-TAV-06-diagnostic-sequence.puml"
+        "docs/research/publication/models/FIG-CL-TAV-06-diagnostic-sequence.puml",
+        "docs/research/publication/models/drawio/FIG-CL-TAV-06-diagnostic-sequence.drawio",
+        "configs/research/cltav_model_figure_exports.json"
       ],
       "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
       "notProprietarySource": true,
@@ -132,7 +144,9 @@
       "kind": "OWNED-GENERATED-PUBLICATION",
       "trackedSources": [
         "configs/research/cltav_model_figure_manifest.json",
-        "docs/research/publication/models/FIG-CL-TAV-07-two-state-machines.puml"
+        "docs/research/publication/models/FIG-CL-TAV-07-two-state-machines.puml",
+        "docs/research/publication/models/drawio/FIG-CL-TAV-07-two-state-machines.drawio",
+        "configs/research/cltav_model_figure_exports.json"
       ],
       "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
       "notProprietarySource": true,
@@ -143,7 +157,9 @@
       "kind": "OWNED-GENERATED-PUBLICATION",
       "trackedSources": [
         "configs/research/cltav_model_figure_manifest.json",
-        "docs/research/publication/models/FIG-CL-TAV-08-parametric.puml"
+        "docs/research/publication/models/FIG-CL-TAV-08-parametric.puml",
+        "docs/research/publication/models/drawio/FIG-CL-TAV-08-parametric.drawio",
+        "configs/research/cltav_model_figure_exports.json"
       ],
       "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
       "notProprietarySource": true,
@@ -154,7 +170,9 @@
       "kind": "OWNED-GENERATED-PUBLICATION",
       "trackedSources": [
         "configs/research/cltav_model_figure_manifest.json",
-        "docs/research/publication/models/FIG-CL-TAV-09-experiment-architecture.puml"
+        "docs/research/publication/models/FIG-CL-TAV-09-experiment-architecture.puml",
+        "docs/research/publication/models/drawio/FIG-CL-TAV-09-experiment-architecture.drawio",
+        "configs/research/cltav_model_figure_exports.json"
       ],
       "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
       "notProprietarySource": true,

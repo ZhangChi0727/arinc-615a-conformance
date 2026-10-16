@@ -284,7 +284,7 @@
             "source": "IUT",
             "target": "TestAdapter",
             "anchors": [
-              "TestAdapter --> IUT : stimulus"
+              "IUT --> TestAdapter : observation Izk"
             ]
           },
           "clock": {
@@ -328,7 +328,7 @@
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-02-requirement-layers.puml",
       "sourceSha256": "d13e00b8a2fcf399919f58d2d762a7c85511021f70860d217f5a61043e0f1d6c",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-02-requirement-layers.drawio",
-      "drawioSha256": "fc995ee952214d2b00b2ec9ba8a7785e2ee4e20d3761a1efea07b4e35641e597",
+      "drawioSha256": "ab47929e653977aefd70734c37f71991d56bbd4bf45cbec1c50c4c9bfad12666",
       "canvas": {
         "width": 1680,
         "height": 980,
@@ -885,7 +885,7 @@
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-03-bdd.puml",
       "sourceSha256": "9e1020601f475f928ce95aa51c34adc644b8fdc5258f78d6fd9bf4133ba476ac",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-03-bdd.drawio",
-      "drawioSha256": "429ba12ffb75c8c52bb259abaec17be1fe8970cad0386d4c0781dbd93913d903",
+      "drawioSha256": "358d53abb43dc8db01119fe9ecd6c986ba42ae1d22010aa2f75ac6c6579b77ae",
       "canvas": {
         "width": 1500,
         "height": 700,
@@ -1582,7 +1582,7 @@
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-05-closed-loop-activity.puml",
       "sourceSha256": "4db0fd73b1b2ff28416ce9f1684c97ef5bd72e10ebe808e5497f5f950dab0e5d",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-05-closed-loop-activity.drawio",
-      "drawioSha256": "9a041c8d5db6f00a56eb8379126da46532de6b3819b450c43c064ace8cb747d7",
+      "drawioSha256": "434066d07172692037e47f34728785311fc54ff42e954ef79ba07fd8a0f43a87",
       "canvas": {
         "width": 1500,
         "height": 2500,
@@ -1682,7 +1682,7 @@
         },
         {
           "id": "S6",
-          "label": "S6 IF-OBS-INTERPRET",
+          "label": "S6 IF-OBS-INTERPRET\nunless effect class already returned",
           "role": "decision",
           "x": 350,
           "y": 995,
@@ -1789,7 +1789,7 @@
           "id": "E-S2-S3",
           "source": "S2",
           "target": "S3",
-          "label": "prediction available",
+          "label": "not G-GAP",
           "role": "flow"
         },
         {
@@ -1958,7 +1958,7 @@
       "notes": [
         {
           "id": "guards-effect",
-          "label": "G-EFFECT: confirmed-not-sent OR unknown-effect OR prepErr OR unconfirmed Recover\nG-VALID: record valid; branch by selected action kind",
+          "label": "G-EFFECT: confirmed-not-sent OR unknown-effect OR prepErr OR unconfirmed Recover\nG-VALID: record valid; branch by selected action kind. Returned effect class bypasses reinterpretation.",
           "role": "boundary",
           "x": 80,
           "y": 1870,
@@ -2142,7 +2142,7 @@
             "source": "S2",
             "target": "S3",
             "anchors": [
-              "' E-S2-GAP from=S2 to=PredictionGap polarity=stop guard=Recover and Prep ineligible"
+              ":S3 IF-SELECT-ADMIT final action, then freeze qUsedAtSelect/actionId;"
             ]
           },
           "E-S2-GAP": {
@@ -2205,14 +2205,14 @@
             "source": "S7",
             "target": "LoopS1",
             "anchors": [
-              "' E-S7-S1 from=S7 to=S1 polarity=retry via=LoopS1"
+              "else (retry remaining)"
             ]
           },
           "E-S7-S1": {
             "source": "LoopS1",
             "target": "S1",
             "anchors": [
-              "' E-S7-S1 from=S7 to=S1 polarity=retry via=LoopS1"
+              ":E-S7-S1 unconfirmed Recover and effect classes share the retry back-edge to S1;"
             ]
           },
           "E-S6-CONFIRM": {
@@ -2233,7 +2233,7 @@
             "source": "RecoverConfirmed",
             "target": "S9",
             "anchors": [
-              "' E-S9-S10 from=S9 to=S10 polarity=advance"
+              "else (TEST or Prep)"
             ]
           },
           "E-S8-S9": {
@@ -2261,7 +2261,7 @@
             "source": "S10",
             "target": "S1",
             "anchors": [
-              "' E-S9-S10 from=S9 to=S10 polarity=advance"
+              "' E-S10-S1 from=S10 to=S1 polarity=continue guard=no stop"
             ]
           }
         },
@@ -2749,7 +2749,7 @@
             "source": "SelectTb",
             "target": "ExecuteTb",
             "anchors": [
-              "end note"
+              "S -> P : Execute tb"
             ]
           },
           "execute-mprot": {
@@ -2770,14 +2770,14 @@
             "source": "ReceiveObservation",
             "target": "Analyse",
             "anchors": [
-              "end note"
+              "S -> A : Izk of tb"
             ]
           },
           "analysis-result": {
             "source": "Analyse",
             "target": "Result",
             "anchors": [
-              "end note"
+              "A --> S : Hk singleton or still indistinguishable"
             ]
           }
         },
@@ -2806,7 +2806,7 @@
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-07-two-state-machines.puml",
       "sourceSha256": "effab552f5ce971a0d0fa45bf1f19f96ac172e0e55cc423c956cf4f21df74380",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-07-two-state-machines.drawio",
-      "drawioSha256": "b82f77c382e9fb6cd9bc7aa30ab4b2af84cba5e22b2d02586234ce79a2e899ad",
+      "drawioSha256": "12058facedc86378d97e7d2e2ba64e97230613cc4531bc45f917828b6f17df8d",
       "canvas": {
         "width": 1800,
         "height": 2750,
@@ -2917,9 +2917,9 @@
           "id": "StopEmpty",
           "label": "StopEmpty (P1)",
           "role": "stop",
-          "x": 1380,
-          "y": 310,
-          "w": 260,
+          "x": 1220,
+          "y": 350,
+          "w": 230,
           "h": 75,
           "parent": "MsessMachine"
         },
@@ -2927,9 +2927,9 @@
           "id": "StopSingleton",
           "label": "StopSingleton (P2)",
           "role": "stop",
-          "x": 1380,
-          "y": 440,
-          "w": 260,
+          "x": 1490,
+          "y": 350,
+          "w": 230,
           "h": 75,
           "parent": "MsessMachine"
         },
@@ -2937,9 +2937,9 @@
           "id": "Stop645",
           "label": "Stop645 (P3)",
           "role": "stop",
-          "x": 1380,
-          "y": 570,
-          "w": 260,
+          "x": 1220,
+          "y": 480,
+          "w": 230,
           "h": 75,
           "parent": "MsessMachine"
         },
@@ -2947,9 +2947,9 @@
           "id": "StopEquivalent",
           "label": "StopEquivalent (P4)",
           "role": "stop",
-          "x": 1380,
-          "y": 700,
-          "w": 260,
+          "x": 1490,
+          "y": 480,
+          "w": 230,
           "h": 75,
           "parent": "MsessMachine"
         },
@@ -3031,7 +3031,7 @@
           "id": "admit-budget-a2",
           "source": "Admit",
           "target": "StopBudget",
-          "label": "",
+          "label": "A2",
           "role": "stop",
           "guardRef": "A2",
           "points": [
@@ -3053,7 +3053,7 @@
           "id": "admit-no-distinguisher",
           "source": "Admit",
           "target": "StopNoDistinguisher",
-          "label": "",
+          "label": "A3",
           "role": "stop",
           "guardRef": "A3",
           "points": [
@@ -3071,7 +3071,7 @@
           "id": "admit-error",
           "source": "Admit",
           "target": "StopError",
-          "label": "",
+          "label": "A4",
           "role": "stop",
           "guardRef": "A4",
           "points": [
@@ -3080,11 +3080,19 @@
               350
             ],
             [
-              900,
+              1100,
               350
             ],
             [
-              900,
+              1100,
+              860
+            ],
+            [
+              970,
+              860
+            ],
+            [
+              970,
               900
             ]
           ]
@@ -3093,7 +3101,7 @@
           "id": "admit-budget-a5",
           "source": "Admit",
           "target": "StopBudget",
-          "label": "",
+          "label": "A5",
           "role": "stop",
           "guardRef": "A5",
           "points": [
@@ -3142,17 +3150,19 @@
           "label": "ERROR",
           "role": "risk",
           "guardRef": "ERROR",
+          "labelX": 0.75,
+          "labelY": 18,
           "points": [
             [
               1000,
-              250
+              210
             ],
             [
-              905,
-              250
+              930,
+              210
             ],
             [
-              905,
+              930,
               580
             ]
           ]
@@ -3164,6 +3174,8 @@
           "label": "RC-YES",
           "role": "transition",
           "guardRef": "RC-YES",
+          "labelX": 0.7,
+          "labelY": -22,
           "points": [
             [
               1320,
@@ -3186,6 +3198,8 @@
           "label": "RC-NO",
           "role": "retry",
           "guardRef": "RC-NO",
+          "labelX": -0.2,
+          "labelY": -22,
           "points": [
             [
               900,
@@ -3307,48 +3321,118 @@
           "id": "update-empty",
           "source": "Update",
           "target": "StopEmpty",
-          "label": "",
+          "label": "P1",
           "role": "stop",
-          "guardRef": "P1"
+          "guardRef": "P1",
+          "labelY": -14,
+          "points": [
+            [
+              1450,
+              250
+            ],
+            [
+              1335,
+              250
+            ],
+            [
+              1335,
+              350
+            ]
+          ]
         },
         {
           "id": "update-singleton",
           "source": "Update",
           "target": "StopSingleton",
-          "label": "",
+          "label": "P2",
           "role": "stop",
-          "guardRef": "P2"
+          "guardRef": "P2",
+          "labelY": -14,
+          "points": [
+            [
+              1510,
+              260
+            ],
+            [
+              1605,
+              260
+            ],
+            [
+              1605,
+              350
+            ]
+          ]
         },
         {
           "id": "update-645",
           "source": "Update",
           "target": "Stop645",
-          "label": "",
+          "label": "P3",
           "role": "stop",
-          "guardRef": "P3"
+          "guardRef": "P3",
+          "labelX": 0.8,
+          "labelY": 18,
+          "points": [
+            [
+              1430,
+              270
+            ],
+            [
+              1170,
+              270
+            ],
+            [
+              1170,
+              518
+            ],
+            [
+              1220,
+              518
+            ]
+          ]
         },
         {
           "id": "update-equivalent",
           "source": "Update",
           "target": "StopEquivalent",
-          "label": "",
+          "label": "P4",
           "role": "stop",
-          "guardRef": "P4"
+          "guardRef": "P4",
+          "labelY": -14,
+          "points": [
+            [
+              1530,
+              280
+            ],
+            [
+              1760,
+              280
+            ],
+            [
+              1760,
+              518
+            ],
+            [
+              1720,
+              518
+            ]
+          ]
         },
         {
           "id": "update-budget",
           "source": "Update",
           "target": "StopBudget",
-          "label": "",
+          "label": "P5",
           "role": "stop",
           "guardRef": "P5",
+          "labelY": -14,
           "points": [
             [
-              1660,
-              250
+              1780,
+              300
             ],
             [
-              1660,
+              1780,
               850
             ],
             [
@@ -3368,14 +3452,16 @@
           "label": "CONTINUE",
           "role": "continue",
           "guardRef": "CONTINUE",
+          "labelX": -0.75,
+          "labelY": -18,
           "points": [
             [
               1485,
-              230
+              190
             ],
             [
               595,
-              230
+              190
             ]
           ]
         }
@@ -3450,7 +3536,7 @@
           "Initial": {
             "parent": "MsessMachine",
             "anchors": [
-              "}"
+              "[*] --> Idle"
             ]
           },
           "Idle": {
@@ -3576,7 +3662,7 @@
             "source": "Admit",
             "target": "StopBudget",
             "anchors": [
-              "Admit --> StopBudget : A2 strictly-reducing TEST or Prep unaffordable"
+              "Admit --> StopBudget : A5 q unknown and Recover eligible unaffordable"
             ]
           },
           "admit-no-distinguisher": {
@@ -3751,7 +3837,7 @@
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-08-parametric.puml",
       "sourceSha256": "c750c58f3082b1613695828f85879e6f7218001bd3e90691a2405f87ad8894b8",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-08-parametric.drawio",
-      "drawioSha256": "609cbb9b545a5623d474c10c3220c53220b794e287d89e25dd9b6fb1be9c8115",
+      "drawioSha256": "716e83c7c228e6172884f57e09e0cc73f5f3928202a1a892ff6326fd88b632f5",
       "canvas": {
         "width": 1500,
         "height": 760,
@@ -3991,10 +4077,10 @@
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-09-experiment-architecture.puml",
       "sourceSha256": "a882a7234e59c98103cdd95dc0254c051b5c3cea30442e340af800125baf2a72",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-09-experiment-architecture.drawio",
-      "drawioSha256": "6a6c0afe74ced800cbe6602fa8252f6f08c2eecec22c49a73e39840f10456ee8",
+      "drawioSha256": "8ed4e16b2ffcadcf535f00421671795f5cf1b5439a501ba6db9fb6048205f7bd",
       "canvas": {
         "width": 1600,
-        "height": 820,
+        "height": 950,
         "publicationWidth": "double-column"
       },
       "groups": [],
@@ -4037,7 +4123,7 @@
         },
         {
           "id": "Valid",
-          "label": "Validity check\nunconfirmed / invalid / equivalent / abstain",
+          "label": "Validity check\nunconfirmed / invalid / equivalent / missing / abstain",
           "role": "decision",
           "x": 980,
           "y": 290,
@@ -4080,7 +4166,7 @@
           "id": "scene-truth",
           "source": "Scene",
           "target": "Truth",
-          "label": "truth record",
+          "label": "INJECT-CONFIRM",
           "role": "evaluation",
           "exitX": 1,
           "exitY": 0.5,
@@ -4159,7 +4245,7 @@
           "id": "valid-metrics",
           "source": "Valid",
           "target": "Metrics",
-          "label": "denominators",
+          "label": "ATTEMPT/ANSWERED DENOM.",
           "role": "evaluation",
           "exitX": 0.5,
           "exitY": 1,
@@ -4183,11 +4269,11 @@
       "notes": [
         {
           "id": "truth-boundary",
-          "label": "Evaluator truth must not enter IF-SELECT-ADMIT, IF-PRED-OBS, IF-HIST-UPDATE, or IF-EXECUTE-RECORD.",
+          "label": "Evaluator truth must not enter IF-SELECT-ADMIT, IF-PRED-OBS, IF-HIST-UPDATE, or IF-EXECUTE-RECORD. IF-OBS-INTERPRET, IF-PREP-RECOVER, IF-EQUIV, and IF-RESOURCE-STOP stay algorithm-visible only. Experiment I/O: IF-EXP-SCENE, IF-EXP-INJECT, IF-EXP-TRUTH, IF-EXP-COLLECT, IF-EXP-RUN, IF-EXP-FILTER, IF-EXP-EVAL.",
           "x": 1030,
           "y": 70,
           "w": 450,
-          "h": 68
+          "h": 175
         },
         {
           "id": "fairness",
@@ -4196,6 +4282,15 @@
           "y": 500,
           "w": 500,
           "h": 66
+        },
+        {
+          "id": "relation-legend",
+          "label": "INJECT-CONFIRM = injection plan + execution confirmation\nATTEMPT/ANSWERED DENOM. = attempt and answered-subset denominators",
+          "role": "boundary",
+          "x": 30,
+          "y": 680,
+          "w": 650,
+          "h": 105
         }
       ],
       "typography": {
@@ -4313,6 +4408,10 @@
           ],
           "fairness": [
             "Same pool is not a gift of later CL-LOOP"
+          ],
+          "relation-legend": [
+            "Scene --> Truth : injection plan + execution confirmation",
+            "Valid --> Metrics : attempt and answered-subset denominators"
           ]
         },
         "manualReview": [
