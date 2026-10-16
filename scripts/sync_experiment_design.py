@@ -153,10 +153,11 @@ def render_shared_block(data: dict[str, Any]) -> str:
         "### Metric-field handoff / 指标字段交接",
         "",
         _table(
-            ["Field / 字段", "Source + proposal / 来源与提议", "Producer / 生产者", "Visibility + compatibility / 可见性与兼容性", "Dependency + closure / 依赖与闭合", "Consumers / 使用指标"],
+            ["Field / 字段", "Kind + source / 类型与来源", "Inputs + rule / 输入与规则", "Proposal / 提议", "Producer / 生产者", "Visibility + compatibility / 可见性与兼容性", "Dependency + closure / 依赖与闭合", "Consumers / 使用指标"],
             (
                 (
-                    row["field"], [row["sourcePath"], f"proposal={row['proposalFieldPath']}"], row["producerRole"],
+                    row["field"], [row["sourceKind"], row["sourcePath"]], [*row["sourceInputPaths"], row["derivationRule"]],
+                    f"proposal={row['proposalFieldPath']}", row["producerRole"],
                     [row["visibility"], row["backwardCompatibility"]], [row["dependencyId"], row["closureMilestone"]],
                     row["consumerMetricIds"],
                 )

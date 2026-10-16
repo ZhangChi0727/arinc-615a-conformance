@@ -95,6 +95,37 @@ MILESTONE_ORDER = {
     "submission": 4,
     "645-specific-run": 4,
 }
+REQUIRED_FIELD_SOURCE_SEMANTICS = {
+    "outcome": (
+        "DERIVED", "IF-EXP-RUN.traceRef",
+        {"IF-EXP-RUN.traceRef", "IF-EXP-FILTER.validityClass", "OBSERVATION-ASSESSMENT.verdict"},
+        None,
+    ),
+    "truthReference.truthHypothesis": (
+        "PROPOSED", "IF-EXP-TRUTH.truthRecord", {"IF-EXP-TRUTH.truthRecord"},
+        "truthRecord.truthHypothesis",
+    ),
+    "injectionStatus": (
+        "PROPOSED", "IF-EXP-TRUTH.truthRecord", {"IF-EXP-TRUTH.truthRecord"},
+        "truthRecord.injectionStatus",
+    ),
+    "faultDomain": (
+        "PROPOSED", "IF-EXP-TRUTH.truthRecord", {"IF-EXP-TRUTH.truthRecord"},
+        "truthRecord.equivalenceDisposition",
+    ),
+    "observationInterval": (
+        "DIRECT", "OBSERVATION-ASSESSMENT.measurementInterval",
+        {"OBSERVATION-ASSESSMENT.measurementInterval"}, None,
+    ),
+    "requirementInterval": (
+        "PROPOSED", "IF-EXP-SCENE.sceneRecord", {"IF-EXP-SCENE.sceneRecord"},
+        "sceneRecord.requirementInterval",
+    ),
+    "pairingId": (
+        "PROPOSED", "IF-EXP-SCENE.sceneRecord", {"IF-EXP-SCENE.sceneRecord"},
+        "sceneRecord.pairingId",
+    ),
+}
 REQUIRED_POPULATIONS = {
     "POP-ATTEMPTS", "POP-ANSWERED", "POP-QUALIFIED-NORMAL",
     "POP-CONFIRMED-FAULT", "POP-MISSES", "POP-FALSE-FAILS",
@@ -971,6 +1002,18 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
             errors.append(f"metric field {field} has stale or incomplete consumer relationships")
         source_path = contract.get("sourcePath", "")
         errors.extend(_field_reference_errors([source_path], development_records, interface_outputs))
+        source_inputs = contract.get("sourceInputPaths", [])
+        errors.extend(_field_reference_errors(source_inputs, development_records, interface_outputs))
+        source_kind = contract.get("sourceKind")
+        proposal_path = contract.get("proposalFieldPath")
+        if source_kind == "DIRECT" and (source_inputs != [source_path] or proposal_path is not None):
+            errors.append(f"metric field {field} DIRECT source must be one exact existing leaf and no proposal")
+        if source_kind == "DERIVED" and (not source_inputs or proposal_path is not None):
+            errors.append(f"metric field {field} DERIVED source requires declared inputs and no proposal")
+        if source_kind == "PROPOSED" and proposal_path is None:
+            errors.append(f"metric field {field} PROPOSED source requires a registered proposal")
+        if not str(contract.get("derivationRule", "")).strip():
+            errors.append(f"metric field {field} lacks a bounded value derivation rule")
         dependency_id = str(contract.get("dependencyId", ""))
         dependency = dependencies_by_id.get(dependency_id)
         if dependency is None:
@@ -980,7 +1023,6 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
         blocking = dependency.get("blockingMilestone")
         if closure not in MILESTONE_ORDER or blocking not in MILESTONE_ORDER or MILESTONE_ORDER[closure] > MILESTONE_ORDER[blocking]:
             errors.append(f"metric field {field} closes after its dependency blocking milestone")
-        proposal_path = contract.get("proposalFieldPath")
         if proposal_path is not None:
             proposal = next(
                 (item for item in dependency.get("proposalFields", []) if item.get("path") == proposal_path),
@@ -996,11 +1038,46 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
             ):
                 errors.append(f"metric field {field} disagrees with its producer/visibility/compatibility/milestone proposal")
 
+    for field, expected in REQUIRED_FIELD_SOURCE_SEMANTICS.items():
+        contract = field_contracts.get(field, {})
+        actual = (
+            contract.get("sourceKind"), contract.get("sourcePath"),
+            set(contract.get("sourceInputPaths", [])), contract.get("proposalFieldPath"),
+        )
+        if actual != expected:
+            errors.append(f"metric field {field} violates its reviewed value-source semantics")
+
+    if field_contracts.get("pairingId", {}).get("proposalFieldPath") == "sceneRecord.resetEvidenceRef":
+        errors.append("metric field pairingId must remain distinct from per-arm resetEvidenceRef")
+
     critical_truth_contracts = {
-        "truthReference.truthHypothesis": ("truthRecord.confirmationRef", "independent evaluator", "DEP-TRUTH", "pilot"),
-        "injectionStatus": ("truthRecord.confirmationRef", "independent evaluator", "DEP-TRUTH", "pilot"),
+        "truthReference.truthHypothesis": ("truthRecord.truthHypothesis", "independent evaluator", "DEP-TRUTH", "pilot"),
+        "injectionStatus": ("truthRecord.injectionStatus", "independent evaluator", "DEP-TRUTH", "pilot"),
         "faultDomain": ("truthRecord.equivalenceDisposition", "fault adjudicator", "DEP-EQUIV", "confirmatory-registration"),
     }
+    truth_proposals = {
+        str(item.get("path", ""))
+        for item in dependencies_by_id.get("DEP-TRUTH", {}).get("proposalFields", [])
+        if isinstance(item, dict)
+    }
+    required_truth_proposals = {
+        "truthRecord.confirmationRef", "truthRecord.truthHypothesis",
+        "truthRecord.injectionStatus", "truthRecord.equivalenceDisposition",
+    }
+    if not required_truth_proposals <= truth_proposals:
+        errors.append("DEP-TRUTH must keep separate truth identity, injection status, equivalence, and confirmation evidence proposals")
+    confirmation = next(
+        (
+            item for item in dependencies_by_id.get("DEP-TRUTH", {}).get("proposalFields", [])
+            if isinstance(item, dict) and item.get("path") == "truthRecord.confirmationRef"
+        ),
+        {},
+    )
+    if (
+        confirmation.get("producer"), confirmation.get("visibility"),
+        confirmation.get("backwardCompatibility"), confirmation.get("closureMilestone"),
+    ) != ("independent evaluator", "evaluator-only", "additive field", "pilot"):
+        errors.append("metric truth confirmation evidence disagrees with its producer/visibility/compatibility/milestone proposal")
     for field, expected in critical_truth_contracts.items():
         contract = field_contracts.get(field, {})
         actual = (

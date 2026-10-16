@@ -270,10 +270,13 @@
       "type": "array", "minItems": 20,
       "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["field", "sourcePath", "proposalFieldPath", "producerRole", "visibility", "backwardCompatibility", "dependencyId", "closureMilestone", "consumerMetricIds"],
+        "required": ["field", "sourceKind", "sourcePath", "sourceInputPaths", "derivationRule", "proposalFieldPath", "producerRole", "visibility", "backwardCompatibility", "dependencyId", "closureMilestone", "consumerMetricIds"],
         "properties": {
           "field": {"type": "string", "minLength": 1},
+          "sourceKind": {"enum": ["DIRECT", "DERIVED", "PROPOSED"]},
           "sourcePath": {"type": "string", "minLength": 1},
+          "sourceInputPaths": {"$ref": "#/$defs/nonEmptyStringArray"},
+          "derivationRule": {"type": "string", "minLength": 1},
           "proposalFieldPath": {"type": ["string", "null"]},
           "producerRole": {"type": "string", "minLength": 1},
           "visibility": {"type": "string", "minLength": 1},
