@@ -20,6 +20,8 @@ accountability.
 | `configs/research/literature/claim_citation_ledger.csv` | Mapping from project or manuscript claims to extracted evidence |
 | `configs/research/quantitative_figure_manifest.json` | Reproducibility contract for data-derived publication figures |
 | `configs/research/cltav_model_figure_manifest.json` | Hash-bound derived inventory for editable Draw.io redraws of the controlled PlantUML model figures |
+| `configs/research/cltav_experiment_design.json` | Candidate finite-population, scenario, metric, analysis and dependency contract; not run authority |
+| `docs/research/EXPERIMENT_IMPLEMENTATION_SPEC.md` | Bilingual human view whose shared tables are generated from the design JSON |
 | `docs/research/publication/drafts/taes-cltav/references.bib` | Current TAES draft bibliography |
 | `local-references/` and Zotero | Private full text, lawful copies, and annotations; never published from this repository |
 
@@ -127,13 +129,23 @@ Run from the repository root:
 python scripts/check_research_environment.py
 python scripts/check_research_environment.py --tools
 python .agents/skills/cltav-model-figures/scripts/model_drawio.py --check
+python scripts/check_experiment_design.py --summary
+python scripts/sync_experiment_design.py --check
 python -m pytest tests/unit/test_research_environment.py -q
+python -m pytest tests/unit/test_experiment_design.py -q
 ```
 
 The default check is deterministic and network-free. `--tools` reports local
 capabilities for Python, TeX, bibliography, PlantUML, Graphviz, Pandoc, and SVG
 inspection; optional missing tools are reported without converting a source-only
 change into a failure.
+
+The experiment-design checker resolves all nine declared inputs at the bound
+base commit, verifies Git blob OIDs and SHA-256 values, and parses accepted
+authorities from those verified bytes. The synchronization command rejects
+invalid authority/design input and detects drift in the generated bilingual
+scenario, AM-disposition, metric, analysis, dependency and decision tables.
+Neither command approves a design or authorizes a run.
 
 ## 6. Human gates
 

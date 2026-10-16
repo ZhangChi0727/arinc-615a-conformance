@@ -8,6 +8,11 @@
   "supplement": "supplementary.tex",
   "bibliography": "references.bib",
   "pageBudgetMain": 10,
+  "experimentDesign": {
+    "humanSpecification": "docs/research/EXPERIMENT_IMPLEMENTATION_SPEC.md",
+    "machineIndex": "configs/research/cltav_experiment_design.json",
+    "status": "candidate-design-not-run-admission"
+  },
   "outputs": {
     "main": "artifacts/publications/cltav/CLTAV_TAES_DRAFT.pdf",
     "supplement": "artifacts/publications/cltav/CLTAV_TAES_SUPPLEMENT.pdf"
@@ -56,7 +61,7 @@
       "section": "sec:setup",
       "clrq": ["CL-RQ2", "CL-RQ3"],
       "dependsOn": ["confirmatory registration"],
-      "completion": "n, seeds and interval method are frozen in the experiment register."
+      "completion": "Experimental unit, n/repeats/seeds and interval/effect method are frozen in the experiment register; resource/stop and clock/error budgets close under separate named decisions."
     },
     {
       "id": "PH-RES-DETECT",
@@ -64,7 +69,7 @@
       "section": "sec:results",
       "clrq": ["CL-RQ2"],
       "dependsOn": ["EXP-CLTAV-DETECT"],
-      "completion": "DETECT metric cells with attempt and answered-subset denominators."
+      "completion": "Registered DETECT cells derive finite populations from unique attemptId fields; all-attempt flow, 0/N answered coverage, explicit truth-scorable coverage and missing-truth flow, truth-scorable conditional error, missing/censoring rules, filtering, unit and four-component charged projection are frozen and auditable."
     },
     {
       "id": "PH-RES-LOCATE",
@@ -72,7 +77,7 @@
       "section": "sec:results",
       "clrq": ["CL-RQ2"],
       "dependsOn": ["EXP-CLTAV-LOCATE"],
-      "completion": "LOCATE metric cells; evaluator truth never entered arm inputs."
+      "completion": "Registered LOCATE cells expose eligible-attempt decision coverage and missing-truth flow before truth-scorable retention/exclusion, singleton correctness and final cardinality; the typed member allowlist excludes evaluator truth, and update status rather than a mutable stop tag determines preservation and empty/singleton priority."
     },
     {
       "id": "PH-RES-ABLATION",
@@ -80,7 +85,7 @@
       "section": "sec:results",
       "clrq": ["CL-RQ3"],
       "dependsOn": ["EXP-CLTAV-ABLATION"],
-      "completion": "Ablation cells from the same scenes; common-error risks named."
+      "completion": "Paired ablation cells derive eligibility independently for each named parent metric from the same scene, seed, construction, registered contrast and distinct confirmed resets; they disclose common-error risks, retain unmatched/censored rows and preserve cost pairs even when truth scoring is unavailable."
     },
     {
       "id": "PH-RES-INTERPRET",

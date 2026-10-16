@@ -132,6 +132,38 @@ permitted.
 
 ---
 
+## CR-2026-019 implementation-design obligations
+
+This attachment does not promote any claim. `CL-C1` remains conditional on the
+finite domain, ownership/pairing, conservative interpretation, R1--R5 and a
+versioned whole-history handle. Its minimum falsifiers include uncertainty
+identity drift, treating an observation class as H, exclusion of a valid true
+hypothesis, or unconditional FAIL from insufficient evidence. `CL-C2` separates
+implementation conformance from measured benefit; prediction gaps, truth
+leakage, omitted cost, TEST-scoring of Prep/Recover, or global-optimality wording
+falsify the implementation/wording obligation. Independent mathematical and
+scientific review remain open. The full argument and witnesses are in
+`EXPERIMENT_IMPLEMENTATION_SPEC.md`; finite references and synthetic accounting
+are indexed by `configs/research/cltav_experiment_design.json`. Version 0.2
+derives answered, fault, normal, localization-decision and singleton populations
+from typed attempt fields rather than handwritten membership tags. `ERROR`,
+`INCONCLUSIVE`, abstention and budget stops remain visible but cannot count as
+answered decisions; stop class alone cannot count as singleton localization.
+Every primary metric is linked to a candidate analysis plan and an open freeze
+decision. These closures improve auditability only and do not advance C1, C2,
+DETECT, LOCATE or ABLATION status.
+The correction contract additionally requires an exact typed algorithm-visible
+member allowlist, evaluator-only truth/equivalence fields, parent-specific
+pairing derived from registered construction identity and confirmed resets,
+explicit truth-scorable and truth-missing flows, a scenario-independent
+interpretation/update-source relation for rejected steps and valid empty/singleton
+updates, field-level metric producer/dependency/closure handoffs, the source-bound
+CRS-M1-00101 status-file/abort timeline with no unreviewed abort-completion
+constant, closed-interval T5 classification, one resource mode per
+session, and statistical branches derived from independence, pair, or cluster
+evidence. Only the independent Bernoulli branch currently names a sourced
+interval candidate. These remain design obligations, not observed evidence.
+
 # 中文版
 
 本矩阵控制报告、发布和论文允许使用的主张。状态由证据获得，实现进度本身不能晋级。
@@ -239,3 +271,23 @@ permitted.
 ## 状态转换
 
 认证向：`Planned → Evidence Collected → In Review → Supported / Not Supported / Open`；研究向：`Planned → Reproduced → Evaluated → Held-Out / Calibrated / Replicated`。每次转换必须记录证据版本与门禁记录；否定和不完整结果不得通过事后改写主张删除。禁止从执行判定自动晋级到目标状态，或从目标状态自动晋级到合规状态。
+
+## CR-2026-019 实施设计义务
+
+本附件不提升主张状态。`CL-C1` 仍依赖有限域、所有权／配对、保守解释、R1--R5
+与版本化全历史；不确定性身份漂移、把观测类当 H、排除有效真实假设、把证据不足
+一律判 FAIL 均构成最小反例。`CL-C2` 把实现遵循规格与实测收益分开；预测 gap
+计零、truth 泄漏、漏计成本、把 Prep／Recover 当 TEST 评分或全局最优措辞均不合格。
+独立数学／科学评审仍开放；完整论证与走查位置见上述实施规格和有限 JSON 索引。
+v0.2 由带类型的尝试字段推导回答、故障、正常、定位决定和单点总体，不再依赖手填
+成员标签；`ERROR`、`INCONCLUSIVE`、弃权和预算停止保持可见，但不得计作回答，停止
+类本身也不得计作单点定位。每个主要指标均绑定候选分析方案及待冻结决定。这些闭合
+只增强审计性，不提升 C1、C2、DETECT、LOCATE 或 ABLATION 的状态。
+
+修正合同还要求：算法可见投影采用精确类型化成员白名单；真值与等价字段仅评估者
+可见；配对按父指标从注册构造身份与确认复位证据派生；真值可计分与缺失流显式分开；
+统一的解释／更新来源关系区分被拒绝当前步骤与合法空集／单例更新；未运行记录不得产生
+PASS／FAIL。指标必需字段逐项绑定生产者、依赖和闭合里程碑，独立真值不得由被评估算法
+生产。CRS-M1-00101 绑定到收到携带异常延迟的状态文件以及规定的中止后备时间线；本候选
+不接纳未审定的中止完成常数，到期端点和有限观察终点在时钟决定闭合前不得制造失败；统计分支必须由独立、配对或聚类证据
+推导。当前只有独立伯努利分支列出有直接来源的区间候选。以上仍是设计义务，不是观测证据。

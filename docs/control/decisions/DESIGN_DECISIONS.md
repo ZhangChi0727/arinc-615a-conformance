@@ -1157,6 +1157,29 @@ scientific claims are unchanged.
 
 **Status:** Candidate under CR-2026-020; final-head CI and independent review
 required. Reader-figure promotion remains a separate human decision.
+## DD-043 — Separate research-design acceptance from run admission
+
+**Decision:** Accept a finite, reviewable experiment implementation design as
+an attachment below `EXP-PLAN-2026-001`, while keeping confirmatory run
+admission blocked until named evidence is frozen. The bilingual specification
+is the human design authority; the closed JSON is only its mechanically checked
+reference/accounting index. Dependencies freeze at the latest relevant
+milestone: design review, engineering feasibility, pilot/calibration,
+confirmatory registration, run, or result acceptance.
+
+**Rationale:** A useful engineering handoff can exist before an IUT, independent
+truth, reset evidence and sample decision exist. Treating design completeness
+as execution readiness would manufacture capabilities and approvals. Conversely,
+leaving every parameter as an unnamed TBD would make the design unactionable.
+
+**Scope:** CR-2026-019 research design only. Existing method, algorithms,
+interfaces, records, engineering contracts and the merged CR-2026-017 / DD-041
+offline increment are unchanged and receive no new task.
+
+**Status:** Corrected Draft candidate under CR-2026-019 addressing RR-PR23-2026-008
+against reviewed Head `8ffbe6cb79c3de886148907ea3e4d5b31a52c728`;
+Decision Maker re-review, independent scientific review and all
+run-admission decisions remain open. This is not acceptance.
 
 # 中文版
 
@@ -1678,6 +1701,24 @@ ARINC 615A 数据加载是合法操作、观测和实验场景的来源。CL-TAV
 CRS、M2、开发合同、实验臂或结果。
 
 **状态：** CR-2026-018 下候选；须独立科学评审。
+
+## DD-043——研究设计接受与运行准入分离
+
+**决定：** 接受一份位于 `EXP-PLAN-2026-001` 下的有限、可评审实验实施设计，
+但确认性运行必须等待具名证据冻结。双语规格是人类设计权威；封闭 JSON 只作机械
+引用／记账索引。依赖最迟在其对应的设计评审、工程可行性、pilot／校准、确认性
+登记、运行或结果接纳里程碑冻结。
+
+**理由：** 即使 IUT、独立真值、复位证据和样本决定尚不存在，也可以形成有用的
+工程交接；把设计完整误作执行就绪会伪造能力与批准。反之，把参数都留成无名 TBD
+也不可执行。
+
+**范围：** 仅 CR-2026-019 研究设计；不改变方法、算法、接口、记录、开发合同或
+PR #22 所有权。
+
+**状态：** CR-2026-019 下的已修正 Draft 候选；正针对 RR-PR23-2026-008 所审 Head
+`8ffbe6cb79c3de886148907ea3e4d5b31a52c728` 返工，仍待 Decision Maker 复审；
+独立科学评审和全部运行准入决定仍开放；这不是接受。
 
 ## DD-038——首轮需求分层与就绪边界
 

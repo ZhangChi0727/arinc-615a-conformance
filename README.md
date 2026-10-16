@@ -51,19 +51,19 @@ silently redefine the Core.
 
 ## Current increment
 
-**Parallel CL-TAV offline intake and TAES evidence-integration candidates**
+**Accepted bounded experiment design and Draft model-figure workflow**
 
-- CR-2026-017 / DD-041 authorizes a separately owned, read-only offline capture-to-evidence engineering candidate: packet identity, finite IPv4/UDP/TFTP reconstruction, bounded UPLOAD/INFORMATION events and traceable reporting; it remains subject to independent Draft-PR review.
-- CR-2026-018 / DD-042 integrates accepted literature evidence into the TAES draft, bibliography, bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.
-- Both lines began at c5296aedef961ac3d5846ea9ef28847eea928132 in independent worktrees and require serial reconciliation; the later line preserves both CR/DD records and is reviewed on its new head.
-- CR-2026-020 / DD-044 adds nine source-bound, transactional Draw.io model redraw candidates for IEEE TAES visual review; PlantUML remains authority and every redraw remains DRAFT-REDRAW.
-- The local historical corpus remains exploratory development input only. No confirmatory result, implementation completion, Configuration, capability, conformance, independent scientific approval, submission, baseline or tag is created.
+- CR-2026-017 / DD-041 delivered the separately owned, read-only offline capture-to-evidence increment merged as eddec443; its bounded evidence scope remains unchanged.
+- CR-2026-018 / DD-042 integrated accepted literature evidence into bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.
+- PR #23 was independently accepted at Head 04b7c56eb70e458cec46e54bd7b37aaa9185cc7f and squash-merged as 868ee3c3e99bee2bcb0a2aedb206fe15d2a4e0e9; main CI 38864201591 passed. CR-2026-019 / DD-043 remains a bounded design authority, not run admission.
+- CR-2026-020 / DD-044 provides nine editable Draw.io model-redraw candidates under resumed Draft PR #24; PlantUML remains authority, final-size promotion remains pending, and independent re-review is required.
+- No confirmatory result, Configuration, expanded capability, conformance, submission, baseline or tag is created.
 
 State changes:
 
-- CR-2026-017 / DD-041 authorize one bounded offline intake implementation increment on a Draft PR; M3 remains blocked.
-- CR-2026-018 / DD-042 authorizes evidence-bounded TAES positioning and evaluation accounting without changing the controlled method.
-- CR-2026-020 / DD-044 authorizes only an editable publication-redraw workflow with finite source bindings, topology checks and draft exports; reader-figure promotion remains blocked on human review.
+- The bounded offline intake remains the accepted narrow engineering increment and closes no run-admission dependency.
+- The finite experiment design is accepted as a design attachment while all run-admission decisions remain OPEN.
+- The CR-2026-020 / DD-044 redraw workflow remains DRAFT-REDRAW and requires final-head independent review; reader-figure promotion remains blocked.
 - currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims.
 
 Unchanged boundaries:
@@ -80,8 +80,8 @@ Unchanged boundaries:
 
 ## Next development steps
 
-- Complete the authorized offline intake increment under CR-2026-017 / DD-041, then obtain independent review on its unchanged Draft PR Head. Establish runtime integrity and independent experimental truth before capability or conformance claims; do not start M3 from this implementation alone.
-- Complete final-size visual review and independent final-head review of the CR-2026-020 model redraw candidates before replacing any reader SVG or manuscript figure.
+- Complete PR #24 source binding, visible-semantic, export-identity and native-layout closure, then obtain independent review on its unchanged final Draft Head before any reader-figure promotion.
+- Keep every experiment run-admission decision OPEN and establish runtime integrity and independent truth before capability or conformance claims; do not start M3 from the accepted design alone.
 - Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth.
 
 ## 当前开发图景
@@ -106,19 +106,19 @@ Unchanged boundaries:
 
 ## 本次集成增量
 
-**并行的 CL-TAV 离线接入与 TAES 证据集成候选**
+**已接受的有界实验设计与 Draft 模型图工作流**
 
-- CR-2026-017／DD-041 授权一条单独负责、只读的“捕获到证据”离线工程候选线：数据包身份、有限 IPv4／UDP／TFTP 重建、有界 UPLOAD／INFORMATION 事件和可追踪报告；它仍须在 Draft PR 上接受独立评审。
-- CR-2026-018／DD-042 在不改变算法、接口和实验臂的前提下，把已接受文献证据融入 TAES 初稿、参考文献、有界 C1／C2 措辞与评价记账。
-- 两条线均从 c5296aedef961ac3d5846ea9ef28847eea928132 起步，在独立工作树开发并需要串行协调；后合入者保留两套 CR／DD 记录并在新 Head 上接受评审。
-- CR-2026-020／DD-044 增加九张具来源绑定、事务生成的 IEEE TAES Draw.io 模型图候选；PlantUML 保持权威，全部重绘保持 DRAFT-REDRAW。
-- 本地历史语料继续仅作探索性开发输入。本增量不产生确认性结果、实现完成、Configuration、能力、符合性、独立科学批准、投稿、baseline 或 tag。
+- CR-2026-017／DD-041 交付了以 eddec443 合并的只读“捕获到证据”增量；其有界证据范围保持不变。
+- CR-2026-018／DD-042 在不改变算法、接口和实验臂的前提下，把已接受文献证据融入有界 C1／C2 措辞与评价记账。
+- PR #23 已在 Head 04b7c56eb70e458cec46e54bd7b37aaa9185cc7f 获独立接受，并压缩合并为 868ee3c3e99bee2bcb0a2aedb206fe15d2a4e0e9；main CI 38864201591 通过。CR-2026-019／DD-043 仍只是有界设计权威，不是运行准入。
+- CR-2026-020／DD-044 在已恢复的 Draft PR #24 中提供九张可编辑 Draw.io 模型重绘候选；PlantUML 保持权威，最终尺寸晋级仍待处理，并须独立复审。
+- 本增量不产生确认性结果、Configuration、扩大能力、符合性、投稿、baseline 或 tag。
 
 状态变化：
 
-- CR-2026-017／DD-041 授权在 Draft PR 上实施一个有界离线接入增量；M3 保持阻塞。
-- CR-2026-018／DD-042 授权有证据边界的 TAES 定位与评价记账，不改变受控方法。
-- CR-2026-020／DD-044 仅授权具有限来源绑定、拓扑检查和草稿导出的可编辑论文重绘工作流；reader 图晋级仍等待人工评审。
+- 有界离线接入已经合并，但仍只代表已接受的狭窄工程增量；它不关闭真值、复位、主动执行或确认性运行依赖。
+- 有限实验设计已作为设计附件接受，但所有运行准入决定保持 OPEN。
+- CR-2026-020／DD-044 重绘工作流保持 DRAFT-REDRAW，并须在最终 Head 上独立复审；reader 图晋级仍被阻塞。
 - 对 M3、主动执行和能力主张而言，currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。
 
 保持不变的边界：
@@ -135,8 +135,8 @@ Unchanged boundaries:
 
 ## 下一步开发计划
 
-- 完成 CR-2026-017／DD-041 下的授权离线接入增量，再在不变 Draft PR Head 上取得独立评审。建立运行完整性与独立实验真值后方可提出能力或符合性主张；不得仅凭本实现启动 M3。
-- 在替换任何 reader SVG 或稿件图之前，完成 CR-2026-020 模型重绘候选的最终尺寸目检和最终 Head 独立评审。
+- 完成 PR #24 的来源绑定、可见语义、导出身份和原尺寸布局收口，再在不变的最终 Draft Head 上取得独立复审；此前不得晋级 reader 图。
+- 所有实验运行准入决定保持 OPEN；建立运行完整性与独立真值后方可提出能力或符合性主张，不得仅凭已接受设计启动 M3。
 - 保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。
 <!-- project-status:end -->
 
