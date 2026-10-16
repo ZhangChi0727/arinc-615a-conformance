@@ -214,6 +214,16 @@ def test_authority_rejects_missing_note_anchor(tmp_path: Path) -> None:
     assert any("source notes anchor missing" in error for error in module.authority_errors(data, tmp_path))
 
 
+@pytest.mark.parametrize("separator", ["end note", "}"])
+def test_authority_rejects_separator_as_semantic_evidence(tmp_path: Path, separator: str) -> None:
+    module = load_module()
+    data = copy_package(tmp_path, module)
+    figure = data["figures"][0]
+    note = next(iter(figure["sourceBindings"]["notes"]))
+    figure["sourceBindings"]["notes"][note] = [separator]
+    assert any("is a separator, not semantic evidence" in error for error in module.authority_errors(data, tmp_path))
+
+
 def test_coordinated_note_inventory_binding_and_xml_deletion_is_rejected(tmp_path: Path) -> None:
     module = load_module()
     data = copy_package(tmp_path, module)
@@ -237,6 +247,24 @@ def test_coordinated_manifest_xml_endpoint_drift_fails_source_binding() -> None:
     relation = data["figures"][0]["relations"][0]
     relation["source"], relation["target"] = relation["target"], relation["source"]
     assert any("endpoints differ from manifest" in error for error in module.validate_manifest(data))
+
+
+def test_coordinated_manifest_binding_and_xml_endpoint_reversal_fails_authority(tmp_path: Path) -> None:
+    module = load_module()
+    data = copy_package(tmp_path, module)
+    figure = data["figures"][0]
+    relation = figure["relations"][0]
+    relation["source"], relation["target"] = relation["target"], relation["source"]
+    binding = figure["sourceBindings"]["relations"][relation["id"]]
+    binding["source"], binding["target"] = relation["source"], relation["target"]
+    path = tmp_path / figure["drawioSource"]
+    def mutate(tree):
+        edge = cell(tree, f"edge-{relation['id']}")
+        edge.set("source", f"node-{relation['source']}")
+        edge.set("target", f"node-{relation['target']}")
+    rewrite_tree(path, mutate)
+    figure["drawioSha256"] = module.sha256(path)
+    assert any("finite source relation endpoints disagree" in error for error in module.authority_errors(data, tmp_path))
 
 
 def test_coordinated_guard_condition_drift_cannot_reuse_another_source_relation(tmp_path: Path) -> None:
@@ -304,6 +332,18 @@ def test_hidden_semantic_cells_and_collapsed_ancestors_are_rejected(tmp_path: Pa
     rewrite_tree(path, change)
     figure["drawioSha256"] = module.sha256(path)
     assert any("hidden or inside collapsed ancestor" in error for error in module.validate_figure(figure, tmp_path))
+
+
+def test_guard_reference_without_visible_label_is_rejected(tmp_path: Path) -> None:
+    module = load_module()
+    data = copy_package(tmp_path, module)
+    figure = data["figures"][6]
+    relation = next(row for row in figure["relations"] if row.get("guardRef"))
+    relation["label"] = ""
+    path = tmp_path / figure["drawioSource"]
+    rewrite_tree(path, lambda tree: cell(tree, f"edge-{relation['id']}").set("value", ""))
+    figure["drawioSha256"] = module.sha256(path)
+    assert any("guarded relation lacks a visible guard id" in error for error in module.validate_figure(figure, tmp_path))
 
 
 def test_missing_relation_is_rejected(tmp_path: Path) -> None:
