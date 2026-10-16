@@ -36,7 +36,7 @@ reverses, weakens, or relabels a scientific relationship.
    and CRLF checkouts are equivalent while content changes remain visible.
 4. Create or edit native, uncompressed `.drawio` XML. Keep labels as editable
    text and use stable `node-*`, `edge-*`, `group-*`, and `note-*` identifiers.
-5. Preserve semantic equality mechanically with:
+5. Run the finite mechanical consistency checks with:
 
    ```text
    python .agents/skills/cltav-model-figures/scripts/model_drawio.py --check
@@ -44,7 +44,9 @@ reverses, weakens, or relabels a scientific relationship.
 
    Use `--build-missing` only for absent initial drafts. Use `--force` only
    when the requested work explicitly replaces existing Draw.io geometry; it
-   must never bypass semantic validation. Generation preflights the complete
+   must never bypass the registered checks. These checks cover declared source
+   units, topology, labels, visibility, identities, and review exports; they do
+   not prove full PlantUML/Draw.io semantic equivalence. Generation preflights the complete
    nine-figure batch and installs it transactionally; any failure must leave
    every prior output byte unchanged.
 6. Export SVG and PDF when Draw.io CLI is available. Keep the existing reader
@@ -70,8 +72,10 @@ reverses, weakens, or relabels a scientific relationship.
   and semantic necessity are recorded. Prefer native geometric shapes.
 - Keep evaluator-only truth visibly separated from algorithm-visible inputs.
 - Bind every title, object, relation, and interpretation note to finite source
-  anchors. Object-parent and relation-endpoint bindings must agree with the
-  manifest so a coordinated manifest/XML drift cannot validate itself.
+  units. Object-parent and relation-endpoint bindings must agree with the
+  manifest. The checker can reject omissions and direct-edge drift within this
+  declared subset; independent review remains required for activity ordering,
+  implicit PlantUML meaning, layout, and coordinated changes outside the subset.
 - Reject absolute, drive-qualified, backslash, traversal, symlink, junction,
   reparse-point, and non-ordinary-file paths before any write.
 - Preserve uncertainty, forbidden leakage, planned/not-established status,
@@ -82,5 +86,5 @@ reverses, weakens, or relabels a scientific relationship.
 ## Completion packet
 
 Return the edited `.drawio` source, generated exports if available, source and
-output hashes, semantic-check result, final-size visual-QA result, style status,
+output hashes, finite consistency-check result, final-size visual-QA result, style status,
 and unresolved review items. Do not silently replace manuscript figures.

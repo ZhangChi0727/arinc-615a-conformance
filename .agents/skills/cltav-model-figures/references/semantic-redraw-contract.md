@@ -39,7 +39,9 @@ defines the abbreviation.
 The checker compares those identities, endpoints, semantic labels, relation
 roles, actual vertex/edge flags, parents, arrow polarity, guard references,
 the finite title/object/relation/note source bindings, the bound canonical
-PlantUML SHA-256, and the canonical Draw.io source SHA-256. Canonical text
+PlantUML SHA-256, the canonical Draw.io source SHA-256, and registered review
+export identities. This is a finite consistency check, not a proof that the
+two notations are semantically equivalent. Canonical text
 identity is UTF-8 with every line ending normalized to LF; this tolerates
 platform checkout conversion but not content drift. After an
 intentional manual layout edit, review the rendered result and deliberately
@@ -47,8 +49,10 @@ refresh `drawioSha256`; unexplained hash drift is a failed integrity check.
 
 The manifest inventory is closed: rendered or semantic cells not declared in
 the inventory are errors. Source bindings also retain object parents and
-relation endpoints so editing the manifest and XML together cannot erase the
-PlantUML-bound topology. Short visible labels require a bound source label and
+relation endpoints, and the checker extracts complete title/note units plus
+directly expressed relation endpoints from the PlantUML source. These checks
+reject covered omissions and drift, but cannot exclude coordinated changes to
+implicit activity order or other meaning outside the extracted subset. Short visible labels require a bound source label and
 an explicit note or legend that restores the interpretation.
 
 All paths are repository-relative forward-slash paths to ordinary files.
@@ -63,7 +67,7 @@ Use `DRAFT-REDRAW` until all gates below pass:
 1. source hash current;
 2. semantic manifest complete;
 3. Draw.io XML well formed and editable;
-4. semantic equality checker passes;
+4. finite consistency checker passes and independent semantic review remains open;
 5. SVG/PDF export succeeds or is explicitly `NEEDS-RENDER`;
 6. preview inspected at final size;
 7. manuscript insertion inspected;

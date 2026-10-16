@@ -36,6 +36,20 @@ def copy_package(tmp_path: Path, module):
     return data
 
 
+def copy_exports(tmp_path: Path, module):
+    source = ROOT / module.EXPORT_MANIFEST_RELATIVE
+    exports = json.loads(source.read_text(encoding="utf-8"))
+    target = tmp_path / module.EXPORT_MANIFEST_RELATIVE
+    target.parent.mkdir(parents=True, exist_ok=True)
+    for figure in exports["figures"]:
+        for output in figure["outputs"]:
+            source_output, target_output = ROOT / output["path"], tmp_path / output["path"]
+            target_output.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source_output, target_output)
+    target.write_text(json.dumps(exports, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return exports
+
+
 def rewrite_tree(path: Path, mutate) -> None:
     tree = ET.parse(path)
     mutate(tree)
@@ -69,6 +83,9 @@ def test_fig05_preserves_effect_and_update_partition() -> None:
     assert edges["E-CONFIRM-S9"] == ("RecoverConfirmed", "S9", "G-TEST-PREP")
     assert "Unconfirmed" not in {r["id"] for r in figure["entities"]}
     assert ("S3", "SpecError") in {(r["source"], r["target"]) for r in figure["relations"]}
+    labels = {r["id"]: r["label"] for r in figure["relations"]}
+    assert labels["E-S2-S3"] == "not G-GAP"
+    assert "unless effect class already returned" in next(r["label"] for r in figure["entities"] if r["id"] == "S6")
 
 
 def test_fig06_routes_protocol_observation_through_session() -> None:
@@ -86,6 +103,23 @@ def test_fig07_records_error_guard_order_and_four_witnesses() -> None:
     notes = "\n".join(r["label"] for r in figure["notes"])
     for witness in ("E-A4", "E-A5", "NOT-SENT", "E-RETRY"):
         assert witness in notes
+    for relation in figure["relations"]:
+        if relation.get("guardRef"):
+            assert relation["label"].strip()
+
+
+def test_fig09_preserves_truth_validity_denominators_and_interface_boundary() -> None:
+    figure = load_module().load_manifest()["figures"][8]
+    entities = {row["id"]: row["label"] for row in figure["entities"]}
+    relations = {row["id"]: row["label"] for row in figure["relations"]}
+    notes = {row["id"]: row["label"] for row in figure["notes"]}
+    assert "missing" in entities["Valid"]
+    assert relations["scene-truth"] == "INJECT-CONFIRM"
+    assert relations["valid-metrics"] == "ATTEMPT/ANSWERED DENOM."
+    assert "INJECT-CONFIRM = injection plan + execution confirmation" in notes["relation-legend"]
+    assert "ATTEMPT/ANSWERED DENOM. = attempt and answered-subset denominators" in notes["relation-legend"]
+    for interface in ("IF-OBS-INTERPRET", "IF-PREP-RECOVER", "IF-EQUIV", "IF-RESOURCE-STOP", "IF-EXP-EVAL"):
+        assert interface in notes["truth-boundary"]
 
 
 def test_generated_drawio_keeps_editable_text_and_semantic_ids() -> None:
@@ -96,6 +130,14 @@ def test_generated_drawio_keeps_editable_text_and_semantic_ids() -> None:
     assert cells["edge-truth-arms"].get("semanticRole") == "forbidden"
     assert cells["edge-truth-arms"].get("source") == "node-Truth"
     assert cells["edge-truth-arms"].get("target") == "node-Arms"
+
+
+def test_html_label_round_trip_preserves_literal_constraints_and_entities() -> None:
+    module = load_module()
+    for label in ("<<constraint>>", "a < b & c > d", "line one\nline <two>"):
+        encoded = module.label_value(label)
+        assert module.normalized_label(encoded) == label
+        assert "<constraint>" not in encoded
 
 
 def test_crlf_and_lf_have_same_canonical_identity(tmp_path: Path) -> None:
@@ -160,7 +202,7 @@ def test_authority_rejects_missing_title_anchor(tmp_path: Path) -> None:
     module = load_module()
     data = copy_package(tmp_path, module)
     data["figures"][0]["sourceBindings"]["title"] = "title not present"
-    assert any("source title missing" in error for error in module.authority_errors(data, tmp_path))
+    assert any("complete title unit" in error for error in module.authority_errors(data, tmp_path))
 
 
 def test_authority_rejects_missing_note_anchor(tmp_path: Path) -> None:
@@ -170,6 +212,23 @@ def test_authority_rejects_missing_note_anchor(tmp_path: Path) -> None:
     note = next(iter(figure["sourceBindings"]["notes"]))
     figure["sourceBindings"]["notes"][note] = ["not present in PlantUML"]
     assert any("source notes anchor missing" in error for error in module.authority_errors(data, tmp_path))
+
+
+def test_coordinated_note_inventory_binding_and_xml_deletion_is_rejected(tmp_path: Path) -> None:
+    module = load_module()
+    data = copy_package(tmp_path, module)
+    figure = data["figures"][0]
+    figure["notes"] = []
+    figure["sourceBindings"]["notes"] = {}
+    path = tmp_path / figure["drawioSource"]
+    def mutate(tree):
+        graph_root = next(node for node in tree.getroot().iter("root"))
+        for item in list(graph_root):
+            if (item.get("id") or "").startswith("note-"):
+                graph_root.remove(item)
+    rewrite_tree(path, mutate)
+    figure["drawioSha256"] = module.sha256(path)
+    assert any("unaccounted complete source note unit" in error for error in module.authority_errors(data, tmp_path))
 
 
 def test_coordinated_manifest_xml_endpoint_drift_fails_source_binding() -> None:
@@ -208,6 +267,22 @@ def test_xml_semantic_mutations_are_rejected(tmp_path: Path, mutation, message: 
     rewrite_tree(path, mutation)
     figure["drawioSha256"] = module.sha256(path)
     assert any(message in error for error in module.validate_figure(figure, tmp_path))
+
+
+@pytest.mark.parametrize("mutation", ["cell", "ancestor"])
+def test_hidden_semantic_cells_and_collapsed_ancestors_are_rejected(tmp_path: Path, mutation: str) -> None:
+    module = load_module()
+    data = copy_package(tmp_path, module)
+    figure = data["figures"][1]
+    path = tmp_path / figure["drawioSource"]
+    def change(tree):
+        if mutation == "cell":
+            cell(tree, "edge-goals-to-crs").set("visible", "0")
+        else:
+            cell(tree, "group-MG").set("collapsed", "1")
+    rewrite_tree(path, change)
+    figure["drawioSha256"] = module.sha256(path)
+    assert any("hidden or inside collapsed ancestor" in error for error in module.validate_figure(figure, tmp_path))
 
 
 def test_missing_relation_is_rejected(tmp_path: Path) -> None:
@@ -288,3 +363,35 @@ def test_generated_payload_hashes_match_manifest() -> None:
     for figure in module.load_manifest()["figures"]:
         payload = module._tree_bytes(module.build_tree(figure))
         assert hashlib.sha256(module.canonical_text(payload)).hexdigest() == figure["drawioSha256"]
+
+
+def test_export_registry_rejects_stale_drawio_identity(tmp_path: Path) -> None:
+    module = load_module()
+    data = copy_package(tmp_path, module)
+    copy_exports(tmp_path, module)
+    data["figures"][0]["drawioSha256"] = "0" * 64
+    assert any("export Draw.io identity is stale" in error for error in module.export_errors(data, tmp_path))
+
+
+@pytest.mark.parametrize("mutation", ["missing", "changed"])
+def test_export_registry_rejects_missing_or_changed_output(tmp_path: Path, mutation: str) -> None:
+    module = load_module()
+    data = copy_package(tmp_path, module)
+    exports = copy_exports(tmp_path, module)
+    output = tmp_path / exports["figures"][0]["outputs"][0]["path"]
+    if mutation == "missing":
+        output.unlink()
+    else:
+        output.write_bytes(output.read_bytes() + b"drift")
+    errors = module.export_errors(data, tmp_path)
+    assert any(("missing declared export" if mutation == "missing" else "raw export identity drift") in error for error in errors)
+
+
+def test_export_registry_rejects_caption_change_without_identity_refresh(tmp_path: Path) -> None:
+    module = load_module()
+    data = copy_package(tmp_path, module)
+    exports = copy_exports(tmp_path, module)
+    exports["figures"][0]["caption"] += " changed"
+    path = tmp_path / module.EXPORT_MANIFEST_RELATIVE
+    path.write_text(json.dumps(exports, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    assert any("export caption identity is invalid" in error for error in module.export_errors(data, tmp_path))

@@ -217,6 +217,7 @@ REQUIRED_FIXED_FILES = [
     ROOT / "configs/research/cltav_interface_registry.json",
     ROOT / "configs/research/cltav_figure_graphs.json",
     ROOT / "configs/research/cltav_model_figure_manifest.json",
+    ROOT / "configs/research/cltav_model_figure_exports.json",
     ROOT / "configs/research/cltav_owned_generated_artifacts.json",
     ROOT / "artifacts/publications/cltav/ALG-CLTAV-01.pdf",
     ROOT / "scripts/cltav_loop_spec.py",
@@ -3789,7 +3790,7 @@ def governed_status_errors(
 
 OWNED_PUBLICATION_PREFIX = "artifacts/publications/"
 OWNED_ARTIFACT_KIND = "OWNED-GENERATED-PUBLICATION"
-OWNED_SOURCE_SUFFIXES = {".tex", ".md", ".puml", ".svg", ".json", ".bib"}
+OWNED_SOURCE_SUFFIXES = {".tex", ".md", ".puml", ".drawio", ".svg", ".json", ".bib"}
 OWNED_FORBIDDEN_PARTS = {"local-references", "tmp"}
 OWNED_DANGEROUS_SUFFIXES = {".pdf", ".patch", ".diff", ".exe", ".dll", ".bin", ".zip"}
 

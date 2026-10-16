@@ -47,7 +47,7 @@ arrow styles must have declared meanings.
 - Canonical editable source: uncompressed `.drawio` XML.
 - Preferred manuscript exports: SVG and PDF with editable or embedded fonts.
 - PNG is a QA preview, not the authority for line art.
-- Check XML structure, semantic equality, font embedding, final physical size,
+- Check XML structure, finite registered semantic consistency, font embedding, final physical size,
   clipping, overlaps, off-canvas objects, arrowheads, and grayscale meaning.
 - Dense control-flow views may use compact guard references only when an
   adjacent legend expands every guard and preserves mutually exclusive cases.

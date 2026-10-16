@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import html
 import json
 import os
+import re
 import stat
 import sys
 import tempfile
@@ -17,6 +19,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[4]
 MANIFEST_RELATIVE = Path("configs/research/cltav_model_figure_manifest.json")
+EXPORT_MANIFEST_RELATIVE = Path("configs/research/cltav_model_figure_exports.json")
 CANONICALIZATION = "UTF8-LF-v1"
 
 ROLE_STYLES = {
@@ -64,6 +67,10 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(canonical_text(path.read_bytes())).hexdigest()
 
 
+def raw_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
 def repository_root(root: Path | None = None) -> Path:
     return (root or ROOT).resolve()
 
@@ -103,11 +110,37 @@ def load_manifest(root: Path | None = None) -> dict[str, Any]:
 
 
 def label_value(value: str) -> str:
-    return value.replace("\r\n", "\n").replace("\r", "\n").replace("\n", "<br>")
+    text = value.replace("\r\n", "\n").replace("\r", "\n")
+    return html.escape(text, quote=False).replace("\n", "<br>")
 
 
 def normalized_label(value: str | None) -> str:
-    return (value or "").replace("<br/>", "\n").replace("<br />", "\n").replace("<br>", "\n")
+    text = (value or "").replace("<br/>", "\n").replace("<br />", "\n").replace("<br>", "\n")
+    return html.unescape(text)
+
+
+def _source_units(text: str) -> tuple[list[str], list[str]]:
+    """Extract the finite title and note forms used by the nine frozen sources."""
+    lines = text.splitlines()
+    titles = [line.strip() for line in lines if line.strip().startswith("title ")]
+    notes: list[str] = []
+    start: int | None = None
+    for index, line in enumerate(lines):
+        stripped = line.strip()
+        if start is None and stripped.startswith("note "):
+            start = index
+        elif start is not None and stripped == "end note":
+            notes.append("\n".join(item.strip() for item in lines[start:index + 1]))
+            start = None
+    return titles, notes
+
+
+def _relation_endpoints(anchor: str) -> tuple[str, str] | None:
+    annotated = re.search(r"\bfrom=([^\s]+)\s+to=([^\s]+)", anchor)
+    if annotated:
+        return annotated.group(1), annotated.group(2)
+    statement = re.match(r"^\s*([A-Za-z_][\w-]*)\s+(?:-\[[^]]+\])?(?:-->|\.\.>|\.\.|-)\s+([A-Za-z_][\w-]*)", anchor)
+    return statement.groups() if statement else None
 
 
 def node_style(role: str, font_size: float = 12) -> str:
@@ -288,7 +321,19 @@ def authority_errors(data: dict[str, Any], root: Path | None = None) -> list[str
         actual_hash = sha256(source)
         if actual_hash != figure.get("sourceSha256"): errors.append(f"{figure_id}: PlantUML hash drift {actual_hash}; expected {figure.get('sourceSha256')}")
         text = canonical_text(source.read_bytes()).decode("utf-8"); bindings = figure.get("sourceBindings", {}); title = bindings.get("title")
-        if isinstance(title, str) and text.count(title) != 1: errors.append(f"{figure_id}: bound source title missing or ambiguous")
+        titles, note_units = _source_units(text)
+        if isinstance(title, str) and title not in titles: errors.append(f"{figure_id}: bound source title is not an extracted complete title unit")
+        note_mapping = bindings.get("notes", {})
+        note_anchors = []
+        if isinstance(note_mapping, dict):
+            for binding in note_mapping.values():
+                anchors = _binding_anchors(binding)
+                note_anchors.extend([anchors] if isinstance(anchors, str) else anchors if isinstance(anchors, list) else [])
+        for unit in note_units:
+            if not any(isinstance(anchor, str) and anchor.strip() not in {"end note", "}"} and anchor in unit for anchor in note_anchors):
+                errors.append(f"{figure_id}: unaccounted complete source note unit: {unit.splitlines()[0]}")
+        relation_inventory = {str(row["id"]): row for row in figure.get("relations", [])}
+        aliases = {str(row.get("authorityAlias", row["id"])): str(row["id"]) for row in figure.get("groups", []) + figure.get("entities", [])}
         for key in ("objects", "relations", "notes"):
             mapping = bindings.get(key, {})
             if not isinstance(mapping, dict): continue
@@ -297,7 +342,19 @@ def authority_errors(data: dict[str, Any], root: Path | None = None) -> list[str
                 values = [anchors] if isinstance(anchors, str) else anchors
                 if isinstance(values, list):
                     for anchor in values:
-                        if isinstance(anchor, str) and anchor not in text: errors.append(f"{figure_id}: source {key} anchor missing for {item_id}: {anchor}")
+                        if not isinstance(anchor, str):
+                            continue
+                        if anchor.strip() in {"end note", "}"}:
+                            errors.append(f"{figure_id}: source {key} anchor for {item_id} is a separator, not semantic evidence")
+                        elif anchor not in text:
+                            errors.append(f"{figure_id}: source {key} anchor missing for {item_id}: {anchor}")
+                        elif key == "relations":
+                            endpoints = _relation_endpoints(anchor)
+                            if endpoints and all(value in aliases or value in aliases.values() for value in endpoints):
+                                resolved = tuple(aliases.get(value, value) for value in endpoints)
+                                row = relation_inventory.get(str(item_id), {})
+                                if resolved != (row.get("source"), row.get("target")):
+                                    errors.append(f"{figure_id}: finite source relation endpoints disagree for {item_id}: {resolved}")
     return errors
 
 
@@ -326,6 +383,18 @@ def validate_figure(figure: dict[str, Any], root: Path | None = None) -> list[st
     cells = {cell.get("id"): cell for cell in all_cells}
     if "0" not in cells or "1" not in cells: errors.append(f"{figure_id}: Draw.io root cells 0 and 1 are required")
     expected: set[str] = set(); groups = {row["id"] for row in figure.get("groups", [])}
+    def hidden(cell: ET.Element) -> bool:
+        seen: set[str] = set()
+        current: ET.Element | None = cell
+        while current is not None:
+            cell_id = current.get("id") or ""
+            if cell_id in seen:
+                break
+            seen.add(cell_id)
+            if current.get("visible") == "0" or current.get("collapsed") == "1":
+                return True
+            current = cells.get(current.get("parent"))
+        return False
     for kind, prefix in (("groups", "group"), ("entities", "node"), ("notes", "note")):
         for row in figure.get(kind, []):
             cell_id = f"{prefix}-{row['id']}"; expected.add(cell_id); cell = cells.get(cell_id)
@@ -333,6 +402,7 @@ def validate_figure(figure: dict[str, Any], root: Path | None = None) -> list[st
             expected_parent = f"group-{row['parent']}" if kind == "entities" and row.get("parent") else "1"; expected_role = "interpretation-boundary" if kind == "notes" else row["role"]
             expected_kind = "group" if kind == "groups" else "entity" if kind == "entities" else "note"
             if cell.get("semanticKind") != expected_kind: errors.append(f"{figure_id}: semantic kind drift in {cell_id}")
+            if hidden(cell): errors.append(f"{figure_id}: semantic cell hidden or inside collapsed ancestor: {cell_id}")
             if cell.get("vertex") != "1" or cell.get("edge") == "1": errors.append(f"{figure_id}: {cell_id} is not a rendered vertex")
             if cell.get("parent") != expected_parent: errors.append(f"{figure_id}: parent/boundary drift in {cell_id}")
             if normalized_label(cell.get("value")) != row["label"]: errors.append(f"{figure_id}: label drift in {cell_id}")
@@ -345,11 +415,13 @@ def validate_figure(figure: dict[str, Any], root: Path | None = None) -> list[st
         if cell is None: errors.append(f"{figure_id}: missing semantic relation {cell_id}"); continue
         source_prefix = "group" if row["source"] in groups else "node"; target_prefix = "group" if row["target"] in groups else "node"
         if cell.get("semanticKind") != "relation" or cell.get("edge") != "1" or cell.get("vertex") == "1": errors.append(f"{figure_id}: {cell_id} is not a rendered semantic edge")
+        if hidden(cell): errors.append(f"{figure_id}: semantic relation hidden or inside collapsed ancestor: {cell_id}")
         if cell.get("parent") != "1": errors.append(f"{figure_id}: relation parent drift in {cell_id}")
         if cell.get("source") != f"{source_prefix}-{row['source']}" or cell.get("target") != f"{target_prefix}-{row['target']}": errors.append(f"{figure_id}: endpoint drift in {cell_id}")
         if normalized_label(cell.get("value")) != row["label"]: errors.append(f"{figure_id}: relation label drift in {cell_id}")
         if cell.get("semanticRole") != row["role"]: errors.append(f"{figure_id}: relation role drift in {cell_id}")
         if cell.get("guardRef") != row.get("guardRef"): errors.append(f"{figure_id}: guard reference drift in {cell_id}")
+        if row.get("guardRef") and not row.get("label", "").strip(): errors.append(f"{figure_id}: guarded relation lacks a visible guard id in {cell_id}")
         style = _style_map(cell.get("style") or ""); expected_style = _style_map(EDGE_STYLES[row["role"]])
         if any(style.get(key) != value for key, value in expected_style.items()): errors.append(f"{figure_id}: arrow/style polarity drift in {cell_id}")
         if style.get("startArrow", "none") != "none": errors.append(f"{figure_id}: reversed start arrow in {cell_id}")
@@ -368,6 +440,54 @@ def validate_package(root: Path | None = None) -> list[str]:
     if errors: return errors
     errors.extend(authority_errors(data, root))
     for figure in data["figures"]: errors.extend(validate_figure(figure, root))
+    errors.extend(export_errors(data, root))
+    return errors
+
+
+def export_errors(data: dict[str, Any], root: Path | None = None) -> list[str]:
+    """Bind committed review exports to the current Draw.io and caption identities."""
+    base = repository_root(root)
+    path = base / EXPORT_MANIFEST_RELATIVE
+    if not path.is_file():
+        return [f"missing model export manifest {EXPORT_MANIFEST_RELATIVE.as_posix()}"]
+    try:
+        exports = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"cannot load model export manifest: {exc}"]
+    errors: list[str] = []
+    rows = exports.get("figures") if isinstance(exports, dict) else None
+    if not isinstance(exports, dict) or exports.get("schemaVersion") != "1.0" or not isinstance(rows, list):
+        return ["model export manifest requires schemaVersion 1.0 and figures list"]
+    figures = {row["id"]: row for row in data.get("figures", [])}
+    if {row.get("figureId") for row in rows} != set(figures):
+        errors.append("model export figure set differs from model manifest")
+    for row in rows:
+        figure_id = row.get("figureId")
+        figure = figures.get(figure_id)
+        if not figure:
+            continue
+        if row.get("drawioSha256") != figure.get("drawioSha256"):
+            errors.append(f"{figure_id}: export Draw.io identity is stale")
+        caption = row.get("caption")
+        if not isinstance(caption, str) or hashlib.sha256(caption.encode("utf-8")).hexdigest() != row.get("captionSha256"):
+            errors.append(f"{figure_id}: export caption identity is invalid")
+        outputs = row.get("outputs")
+        if not isinstance(outputs, list) or {item.get("format") for item in outputs} != {"pdf", "svg"}:
+            errors.append(f"{figure_id}: PDF and SVG export records are required")
+            continue
+        for item in outputs:
+            suffix = "." + str(item.get("format", ""))
+            try:
+                output = safe_path(item.get("path"), suffix=suffix, root=base)
+            except ValueError as exc:
+                errors.append(f"{figure_id}: unsafe export path: {exc}")
+                continue
+            if not output.is_file():
+                errors.append(f"{figure_id}: missing declared export {item.get('path')}")
+            elif raw_sha256(output) != item.get("rawSha256"):
+                errors.append(f"{figure_id}: raw export identity drift in {item.get('path')}")
+        if row.get("promotionStatus") != "DRAFT-REDRAW" or row.get("finalSizeStatus") not in {"FINAL-SIZE-PENDING", "NEEDS-LAYOUT"}:
+            errors.append(f"{figure_id}: export status must remain draft with an honest final-size disposition")
     return errors
 
 
@@ -430,6 +550,7 @@ def main() -> int:
     if args.check:
         errors = authority_errors(data)
         for figure in data["figures"]: errors.extend(validate_figure(figure))
+        errors.extend(export_errors(data))
         if errors:
             print("Model Draw.io check failed:")
             for error in errors: print(f"  - {error}")
