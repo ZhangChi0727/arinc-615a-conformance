@@ -111,7 +111,11 @@ REQUIRED_FIELD_SOURCE_SEMANTICS = {
     ),
     "faultDomain": (
         "PROPOSED", "IF-EXP-TRUTH.truthRecord", {"IF-EXP-TRUTH.truthRecord"},
-        "truthRecord.equivalenceDisposition",
+        "truthRecord.faultDomainClass",
+    ),
+    "resourceStatus": (
+        "PROPOSED", "IF-EXP-COLLECT.resourceLog", {"IF-EXP-COLLECT.resourceLog"},
+        "resourceLog.statusClass",
     ),
     "observationInterval": (
         "DIRECT", "OBSERVATION-ASSESSMENT.measurementInterval",
@@ -330,6 +334,23 @@ def _field_reference_errors(
         elif owner not in records and owner not in interfaces:
             errors.append(f"unknown field-reference owner {owner}")
     return errors
+
+
+def _classify_t5_intervals(observed: Any, required: Any) -> str:
+    """Classify one closed measured/requirement interval pair for the T5 witness."""
+    if not isinstance(observed, dict) or not isinstance(required, dict):
+        raise ValueError("missing measurement or requirement interval")
+    if observed.get("unit") != required.get("unit"):
+        raise ValueError("interval units do not match")
+    try:
+        valid_order = observed["lower"] <= observed["upper"] and required["lower"] <= required["upper"]
+        contained = required["lower"] <= observed["lower"] and observed["upper"] <= required["upper"]
+        disjoint = observed["upper"] < required["lower"] or required["upper"] < observed["lower"]
+    except (KeyError, TypeError) as exc:
+        raise ValueError("interval endpoints are incomplete") from exc
+    if not valid_order:
+        raise ValueError("interval endpoint order is invalid")
+    return "PASS" if contained else "FAIL" if disjoint else "INCONCLUSIVE"
 
 
 def _population_sets(data: dict[str, Any]) -> dict[str, set[str]]:
@@ -604,19 +625,12 @@ def _validate_walkthroughs(data: dict[str, Any], scenario_ids: set[str]) -> list
         if row_id == "SYN-T5-OVERLAP":
             observed = row.get("observationInterval")
             required = row.get("requirementInterval")
-            if not isinstance(observed, dict) or not isinstance(required, dict):
-                errors.append("SYN-T5-OVERLAP lacks a real measurement/requirement interval witness")
+            try:
+                expected = _classify_t5_intervals(observed, required)
+            except ValueError as exc:
+                errors.append(f"SYN-T5-OVERLAP lacks a valid measurement/requirement interval witness: {exc}")
             else:
-                if observed.get("unit") != required.get("unit"):
-                    errors.append("SYN-T5-OVERLAP interval units do not match")
-                try:
-                    valid_order = observed["lower"] <= observed["upper"] and required["lower"] <= required["upper"]
-                    contained = required["lower"] <= observed["lower"] and observed["upper"] <= required["upper"]
-                    disjoint = observed["upper"] < required["lower"] or required["upper"] < observed["lower"]
-                except (KeyError, TypeError):
-                    valid_order = contained = disjoint = False
-                expected = "PASS" if contained else "FAIL" if disjoint else "INCONCLUSIVE"
-                if row.get("endpointTopology") != "CLOSED" or not valid_order or row.get("outcome") != expected:
+                if row.get("endpointTopology") != "CLOSED" or row.get("outcome") != expected:
                     errors.append(f"SYN-T5-OVERLAP violates closed-interval T5 classification; expected {expected}")
     populations = _population_sets(data)
     derived_pairs = populations["POP-PAIRED-ELIGIBLE"]
@@ -1053,7 +1067,7 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
     critical_truth_contracts = {
         "truthReference.truthHypothesis": ("truthRecord.truthHypothesis", "independent evaluator", "DEP-TRUTH", "pilot"),
         "injectionStatus": ("truthRecord.injectionStatus", "independent evaluator", "DEP-TRUTH", "pilot"),
-        "faultDomain": ("truthRecord.equivalenceDisposition", "fault adjudicator", "DEP-EQUIV", "confirmatory-registration"),
+        "faultDomain": ("truthRecord.faultDomainClass", "fault adjudicator", "DEP-EQUIV", "confirmatory-registration"),
     }
     truth_proposals = {
         str(item.get("path", ""))
@@ -1063,6 +1077,7 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
     required_truth_proposals = {
         "truthRecord.confirmationRef", "truthRecord.truthHypothesis",
         "truthRecord.injectionStatus", "truthRecord.equivalenceDisposition",
+        "truthRecord.faultDomainClass",
     }
     if not required_truth_proposals <= truth_proposals:
         errors.append("DEP-TRUTH must keep separate truth identity, injection status, equivalence, and confirmation evidence proposals")
