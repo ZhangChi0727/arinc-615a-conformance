@@ -239,6 +239,27 @@ def test_coordinated_manifest_xml_endpoint_drift_fails_source_binding() -> None:
     assert any("endpoints differ from manifest" in error for error in module.validate_manifest(data))
 
 
+def test_coordinated_guard_condition_drift_cannot_reuse_another_source_relation(tmp_path: Path) -> None:
+    module = load_module()
+    data = copy_package(tmp_path, module)
+    figure = data["figures"][6]
+    relations = {row["id"]: row for row in figure["relations"]}
+    binding = figure["sourceBindings"]["relations"]
+    relations["error-recover"]["label"] = relations["error-cap"]["label"]
+    relations["error-recover"]["guardRef"] = relations["error-cap"]["guardRef"]
+    binding["error-recover"]["anchors"] = list(binding["error-cap"]["anchors"])
+    path = tmp_path / figure["drawioSource"]
+    def mutate(tree):
+        edge = cell(tree, "edge-error-recover")
+        edge.set("value", module.label_value(relations["error-recover"]["label"]))
+        edge.set("guardRef", relations["error-recover"]["guardRef"])
+    rewrite_tree(path, mutate)
+    figure["drawioSha256"] = module.sha256(path)
+    errors = module.authority_errors(data, tmp_path)
+    assert any("unaccounted finite source relation unit" in error for error in errors)
+    assert any("finite source relation unit is bound more than once" in error for error in errors)
+
+
 def test_coordinated_manifest_xml_parent_drift_fails_source_binding() -> None:
     module = load_module()
     data = copy.deepcopy(module.load_manifest())

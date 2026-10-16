@@ -3739,7 +3739,7 @@
             "source": "ErrorHandle",
             "target": "StopError",
             "anchors": [
-              "ErrorHandle --> StopError : retry cap reached"
+              "ErrorHandle --> StopError : retry remaining and unknown-effect A4 Recover not eligible"
             ]
           },
           "error-a5": {
@@ -3760,7 +3760,7 @@
             "source": "ErrorHandle",
             "target": "Admit",
             "anchors": [
-              "ErrorHandle --> Admit : confirmed not sent and retry remaining"
+              "ErrorHandle --> Admit : retry remaining and unknown-effect and Recover in S"
             ]
           },
           "update-empty": {

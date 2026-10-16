@@ -334,6 +334,26 @@ def authority_errors(data: dict[str, Any], root: Path | None = None) -> list[str
                 errors.append(f"{figure_id}: unaccounted complete source note unit: {unit.splitlines()[0]}")
         relation_inventory = {str(row["id"]): row for row in figure.get("relations", [])}
         aliases = {str(row.get("authorityAlias", row["id"])): str(row["id"]) for row in figure.get("groups", []) + figure.get("entities", [])}
+        relation_mapping = bindings.get("relations", {})
+        relation_anchor_owners: dict[str, list[str]] = {}
+        if isinstance(relation_mapping, dict):
+            for item_id, binding in relation_mapping.items():
+                anchors = _binding_anchors(binding)
+                values = [anchors] if isinstance(anchors, str) else anchors if isinstance(anchors, list) else []
+                for anchor in values:
+                    if isinstance(anchor, str):
+                        relation_anchor_owners.setdefault(anchor.strip(), []).append(str(item_id))
+        for line in (item.strip() for item in text.splitlines()):
+            if line.startswith("'") or not any(token in line for token in ("-->", "..>")):
+                continue
+            endpoints = _relation_endpoints(line)
+            if not endpoints or not all(value in aliases or value in aliases.values() for value in endpoints):
+                continue
+            owners = relation_anchor_owners.get(line, [])
+            if not owners:
+                errors.append(f"{figure_id}: unaccounted finite source relation unit: {line}")
+            elif len(owners) > 1:
+                errors.append(f"{figure_id}: finite source relation unit is bound more than once by {', '.join(owners)}: {line}")
         for key in ("objects", "relations", "notes"):
             mapping = bindings.get(key, {})
             if not isinstance(mapping, dict): continue
