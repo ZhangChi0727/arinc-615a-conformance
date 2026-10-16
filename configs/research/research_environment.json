@@ -30,6 +30,8 @@
     "evidenceLedger": "configs/research/literature/evidence_ledger.csv",
     "claimCitationLedger": "configs/research/literature/claim_citation_ledger.csv",
     "quantitativeFigureManifest": "configs/research/quantitative_figure_manifest.json",
+    "experimentDesign": "configs/research/cltav_experiment_design.json",
+    "experimentDesignSchema": "configs/research/cltav_experiment_design.schema.json",
     "manuscriptBibliography": "docs/research/publication/drafts/taes-cltav/references.bib"
   },
   "skills": [

@@ -76,8 +76,11 @@ unknown result without deleting a hypothesis. Only prediction, selection,
 history update, equivalence and stop selection consume kernel results;
 execute, interpretation and Prep/Recover do not. Feasibility alone never
 establishes equivalence. Unsupported syntax, computation unknown and limits
-preserve (H), the summary and charge state. Stop-Empty requires an empty
-history proved by complete in-domain intersection. This contract maps every
+preserve \(H\), the summary and charge state, irrespective of a later stop label.
+A valid successor equals the registered compatibility intersection and is a
+subset of \(H\). Its empty result forces Stop-Empty and its singleton result
+forces Stop-Singleton before 645, equivalence or budget exits. Stop-Empty thus
+requires an empty history proved by complete in-domain intersection. This contract maps every
 reachable result and marks every other interface/result pair unreachable; it does not claim
 completeness, polynomial complexity, or deployed code.
 
@@ -129,5 +132,7 @@ Stop-Error and Stop-NoDistinguisher. Stop-Error is not Stop-Budget.
 Admit reasons A2--A5 and post-update P1--P5 are tabulated in the supplement.
 CONFIRMED-NOT-SENT does not assign UNKNOWN. UNKNOWN-EFFECT must not be read
 back as the previous KNOWN summary. Unconfirmed Recover with \(R_{\max}=1\)
-and remaining budget is Stop-Error. An executed empty \(H\) is Stop-Empty.
+and remaining budget is Stop-Error. The update disposition is evaluated before
+the mutable stop label: a rejected/error update preserves \(H\), while a valid
+empty or singleton update forces Stop-Empty or Stop-Singleton, respectively.
 Kernels remain unimplemented interfaces.

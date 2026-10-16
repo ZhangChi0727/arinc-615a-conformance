@@ -271,6 +271,57 @@ non-default comparison model.
 
 ---
 
+## CR-2026-019 implementation-design attachment
+
+`EXPERIMENT_IMPLEMENTATION_SPEC.md` refines this plan without replacing it.
+It reuses the three experiment families, four arms, eight scenario IDs, seven
+experiment interfaces and fourteen acceptance-matrix classes. Its closed JSON
+index v0.2 binds nine exact base-commit blobs by role, derives finite metric
+populations from attempt fields, disposes every AM class, and maps any recovery
+detail into the accepted four-component cost vector exactly once. It also
+names missing/censoring rules, comparison families, analysis plans, dependency
+fields, and separate sample/repeat, resource, and clock decisions. The
+bilingual shared tables are generated from that index and checked for drift.
+Algorithm arms receive only the proposed safe projection
+`IF-EXP-SCENE.algorithmVisibleFields`, whose typed member allowlist is exactly
+`sceneId`, `serviceScope`, `registeredArm`, `resourceMode`, and
+`publicConfigurationRef`; fault plan, truth source, injection confirmation,
+validity, equivalence, and post-hoc adjudication remain explicitly forbidden.
+A pair is derived separately for each parent metric and requires reciprocal
+registered arms on the same base scene, seed, construction, and registered
+contrast with distinct confirmed resets. Loss of truth-scoring eligibility does
+not erase a still-valid cost pair.
+Pre-run review/setup effort is audited separately from issued-action cost.
+Design-check success is not
+confirmatory registration or run admission. Interactive IUT/reset evidence,
+truth and injection confirmation, equivalent-fault adjudication, independent
+mathematical review, justified sample/repeat policy, resource budget, and clock
+error budget remain named blockers. A zero answered count is reported as
+coverage `0/N`, while answered-conditional error is `N/A`; missing truth remains
+in coverage and an explicit truth-missing flow but leaves only truth-scored
+denominators. A scenario-independent interpretation/update relation distinguishes
+accepted current interpretations, rejected current steps, and no-current-update
+exits. Rejected steps preserve the preceding `H` and spent cost and issue no
+current localization decision; valid empty and singleton updates still force
+`Stop-Empty` and `Stop-Singleton` before later stops. Every metric input is also
+bound to a record/interface field, producer role, dependency and closure milestone;
+truth confirmation remains an evaluator-only pilot prerequisite. The bounded statistical routine derives a
+complete-census, independent, paired, clustered, or wait branch from explicit
+randomization, dependence, evidence, and independent-unit inputs. Only the
+independent Bernoulli branch currently names Clopper--Pearson; paired and
+clustered inference remain `WAIT-DEC-SAMPLE` until a direct method is frozen.
+For CRS-M1-00101, the scored trigger is the data loader receiving a status file
+that carries an exception delay for the active operation.  A new status strictly
+before the unresolved expiry endpoint or an observed required abort fallback
+after expiry passes only the observed fallback-action proposition. Equality stays
+unscored until DEC-CLOCK freezes endpoint inclusivity. This candidate admits no
+abort-completion constant: the field remains null, arbitrary numeric bounds are
+rejected, and finite absence of both events remains `NOT-SCORED`. Generic request suppression is
+method-only and is not scored against that requirement.
+Exactly one `BUDGET` or `ROUNDS` resource mode is selected per session; a retry
+cap is a separate execution-safety bound, not a second resource stop mode.
+Historical captures stay exploratory and synthetic fixtures are not results.
+
 # 中文版
 
 本文件是 CL-TAV 增量的**活动**实验方案。RR-2026-001 v4.2 下的 EXP-001～007 只作为冻结登记保留，不再作为当前对照设计。本 PR 不填确认性数字；正式样本量与效应阈值须在声明的 pilot 或外部依据之后冻结。单元测试通过不表示 CL-TAV 优于任一对照臂。
@@ -439,3 +490,27 @@ artifacts/experiments/EXP-YYYY-NNN/
 ## 历史 v4.2 登记（非活动设计）
 
 EXP-001～007 仍按 RR-2026-001 v4.2 保留为历史方案，可被引用，但不定义上述四臂与三组。HMM／贝叶斯校准保持非默认比较模型。
+
+## CR-2026-019 实施设计附件
+
+`EXPERIMENT_IMPLEMENTATION_SPEC.md` 是本计划的下属细化，不取代本计划。它
+复用三实验族、四臂、八场景、七实验接口和十四类 AM。v0.2 封闭 JSON 按角色绑定
+九个基线 Git blob，由尝试字段推导有限总体，逐项处置全部 AM，并把 recovery 明细
+恰好一次并入接受的四维成本向量；同时规定缺失／删失、比较族、分析方案、依赖字段，
+并把样本／重复、资源预算和时钟误差预算分开决策。双语共享表由该 JSON 生成并检查
+漂移。设计检查通过不等于确认性登记或运行准入。交互 IUT／复位、真值与注入确认、
+等价裁定、独立数学审查、有依据的样本／重复、资源和时钟决定继续阻塞运行。零回答
+时回答覆盖率写作 `0/N`，以回答为条件的错误率写作 `N/A`；`ERROR` 或停止类不得虚构
+回答或单点定位决定。算法可见投影固定为五个类型化初始成员，并显式禁止真值、注入、
+有效性、等价性和事后裁定字段。配对按父指标分别从场景、种子、构造、注册对比和互异
+确认复位证据推导。真值缺失保留在覆盖率与显式缺失流中，只退出真值计分分母。统一的
+解释／更新关系区分已接受解释、被拒绝当前步骤和无当前更新；被拒绝步骤保留此前 `H`、
+历史及已花成本，不产生当前定位决定。有效空集与单例仍分别优先触发 `Stop-Empty` 与
+`Stop-Singleton`。每个指标输入均绑定记录／接口字段、生产者角色、依赖和闭合里程碑，
+真值确认必须由独立评估者在试点前提供。统计分支由随机化、依赖、配对／聚类证据及独立单位推导；当前仅独立
+伯努利分支列出 Clopper--Pearson，配对和聚类推断继续等待决定。CRS-M1-00101 的计分
+触发是数据加载器收到携带异常延迟的当前操作状态文件；在 DEC-CLOCK 冻结端点前，
+恰逢到期的事件保持不计分；到期后的规定中止是后备义务而非取消豁免，观察到该中止的
+PASS 只覆盖后备动作命题。本候选不接纳中止完成常数，字段保持为空，任意注入数字均被
+拒绝，因此有限缺失迹继续为 `NOT-SCORED`。通用请求抑制不按该条计分。
+历史捕获只属探索，合成 fixture 不是结果。
