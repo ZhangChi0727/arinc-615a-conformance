@@ -28,6 +28,8 @@ from sync_experiment_design import (  # noqa: E402
     render_shared_block,
     sync,
 )
+import check_experiment_design as checker  # noqa: E402
+import sync_experiment_design as generator  # noqa: E402
 
 
 DESIGN = json.loads((ROOT / "configs/research/cltav_experiment_design.json").read_text(encoding="utf-8"))
@@ -386,7 +388,7 @@ def test_r01_invalid_observation_cannot_be_relabelled_as_valid_update() -> None:
             stopClass="Stop-Singleton",
         )
 
-    assert any("invalid observation must reject" in item for item in errors_for(mutate))
+    assert any("common interpretation/update-source" in item for item in errors_for(mutate))
 
 
 def test_r02_non_run_attempt_cannot_be_counted_as_pass() -> None:
@@ -523,6 +525,178 @@ def test_r04_all_metric_population_and_required_field_contracts_are_closed() -> 
             )
         )
     )
+
+
+def test_s01_update_relation_is_common_across_scenarios() -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["syntheticWalkthroughs"] if row["id"] == "SYN-INVALID-OBS")
+        row.update(
+            scenarioId="SC-RESOURCE-ERROR",
+            updateStatus="VALID-UPDATE",
+            compatibleState=["h-normal"],
+            finalHypotheses=["h-normal"],
+            stopClass="Stop-Singleton",
+        )
+
+    errors = errors_for(mutate)
+    assert any("common interpretation/update-source" in item for item in errors)
+    assert any("preserve preceding H/history" in item for item in errors)
+
+
+def test_s02_accepted_empty_update_and_rejected_history_cost_both_remain_valid() -> None:
+    empty = next(row for row in DESIGN["syntheticWalkthroughs"] if row["id"] == "SYN-STOP-EMPTY")
+    rejected = next(row for row in DESIGN["syntheticWalkthroughs"] if row["id"] == "SYN-INVALID-OBS")
+    assert empty["updateStatus"] == "VALID-UPDATE" and empty["finalHypotheses"] == []
+    assert empty["stopClass"] == "Stop-Empty"
+    assert rejected["finalHypotheses"] == rejected["historyBefore"]
+    assert sum(rejected["chargedCost"].values()) > 0
+    assert not rejected["localizationDecisionIssued"]
+    assert validate_design(ROOT) == []
+
+
+@pytest.mark.parametrize("bound", [0, 1, 10**9])
+def test_s03_unreviewed_abort_completion_bounds_are_rejected(bound: int) -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["protocolTimelineWalkthroughs"] if row["id"] == "TL-MISSING-BOTH")
+        row.update(abortCompletionBoundSeconds=bound, outcome="FAIL")
+
+    assert any("unreviewed abort completion bound" in item for item in errors_for(mutate))
+
+
+def test_s04_abort_branch_cannot_ignore_an_invented_completion_bound() -> None:
+    def mutate(data: dict) -> None:
+        row = next(row for row in data["protocolTimelineWalkthroughs"] if row["id"] == "TL-ABORT-AFTER-DELAY")
+        row.update(abortCompletionBoundSeconds=1, elapsedSeconds=100, observationEndSeconds=100)
+
+    assert any("unreviewed abort completion bound" in item for item in errors_for(mutate))
+
+
+def test_s04b_timeline_boundary_pairing_generic_and_horizon_matrix() -> None:
+    assert next(row for row in DESIGN["protocolTimelineWalkthroughs"] if row["id"] == "TL-STATUS-WITHIN-DELAY")["outcome"] == "PASS"
+    assert next(row for row in DESIGN["protocolTimelineWalkthroughs"] if row["id"] == "TL-GENERIC-SUPPRESSION")["outcome"] == "NOT-SCORED"
+    assert errors_for(
+        lambda d: next(row for row in d["protocolTimelineWalkthroughs"] if row["id"] == "TL-STATUS-WITHIN-DELAY").update(
+            elapsedSeconds=11, observationEndSeconds=11, outcome="PASS"
+        )
+    )
+    assert errors_for(
+        lambda d: next(row for row in d["protocolTimelineWalkthroughs"] if row["id"] == "TL-STATUS-WITHIN-DELAY")["receivedEvent"].update(
+            operationKey="OTHER-OP"
+        )
+    )
+    assert any(
+        "finite qualified observation endpoint" in item
+        for item in errors_for(
+            lambda d: next(row for row in d["protocolTimelineWalkthroughs"] if row["id"] == "TL-STATUS-WITHIN-DELAY").update(
+                observationEndSeconds=7
+            )
+        )
+    )
+
+
+def test_s05_metric_field_handoffs_bind_truth_producer_and_closure() -> None:
+    def truth_dependency(data: dict) -> dict:
+        return next(row for row in data["dependencies"] if row["id"] == "DEP-TRUTH")
+
+    assert any(
+        "lacks required proposal truthRecord.confirmationRef" in item
+        for item in errors_for(
+            lambda d: truth_dependency(d).update(
+                proposalFields=[field for field in truth_dependency(d)["proposalFields"] if field["path"] != "truthRecord.confirmationRef"]
+            )
+        )
+    )
+    assert any(
+        "producer/visibility/compatibility/milestone" in item
+        for item in errors_for(
+            lambda d: next(field for field in truth_dependency(d)["proposalFields"] if field["path"] == "truthRecord.confirmationRef").update(
+                producer="algorithm under evaluation"
+            )
+        )
+    )
+    assert any(
+        "producer/visibility/compatibility/milestone" in item
+        for item in errors_for(
+            lambda d: next(field for field in truth_dependency(d)["proposalFields"] if field["path"] == "truthRecord.confirmationRef").update(
+                closureMilestone="submission"
+            )
+        )
+    )
+    assert any(
+        "producer/visibility/compatibility/milestone" in item
+        for item in errors_for(
+            lambda d: next(field for field in truth_dependency(d)["proposalFields"] if field["path"] == "truthRecord.confirmationRef").update(
+                backwardCompatibility="replace existing truth field"
+            )
+        )
+    )
+
+
+def test_s06_shared_proposal_fields_have_one_cross_dependency_meaning() -> None:
+    def mutate(data: dict) -> None:
+        dep = next(row for row in data["dependencies"] if row["id"] == "DEP-EQUIV")
+        dep["proposalFields"][0]["producer"] = "algorithm under evaluation"
+
+    assert any("inconsistent cross-dependency" in item for item in errors_for(mutate))
+
+
+def test_s07_field_handoff_changes_are_visible_and_reordering_is_stable() -> None:
+    candidate = copy.deepcopy(DESIGN)
+    row = next(row for row in candidate["metricFieldContracts"] if row["field"] == "attemptId")
+    row["backwardCompatibility"] = "versioned additive registration field"
+    assert render_shared_block(candidate) != render_shared_block(DESIGN)
+    candidate = copy.deepcopy(DESIGN)
+    candidate["metricFieldContracts"].reverse()
+    candidate["walkthroughInterpretationContracts"].reverse()
+    assert validate_design(ROOT, candidate) == []
+    assert render_shared_block(candidate) == render_shared_block(DESIGN)
+
+
+def test_s08_direct_statistical_source_uses_reviewed_proposition_anchor() -> None:
+    def mutate(data: dict) -> None:
+        locator = next(row for row in data["analysisPlans"] if row["id"] == "AN-PROPORTION")["sourceLocators"][0]
+        locator.update(lineStart=1, lineEnd=2)
+
+    assert any("reviewed proposition anchor" in item for item in errors_for(mutate))
+
+
+@pytest.mark.parametrize("case", ["update", "timing", "handoff"])
+def test_s09_invalid_candidates_fail_real_entrypoints_without_rewriting_view(case: str, monkeypatch, capsys) -> None:
+    candidate = copy.deepcopy(DESIGN)
+    if case == "update":
+        row = next(row for row in candidate["syntheticWalkthroughs"] if row["id"] == "SYN-INVALID-OBS")
+        row.update(scenarioId="SC-RESOURCE-ERROR", updateStatus="VALID-UPDATE", compatibleState=["h-normal"], finalHypotheses=["h-normal"], stopClass="Stop-Singleton")
+    elif case == "timing":
+        row = next(row for row in candidate["protocolTimelineWalkthroughs"] if row["id"] == "TL-MISSING-BOTH")
+        row.update(abortCompletionBoundSeconds=1, outcome="FAIL")
+    else:
+        dep = next(row for row in candidate["dependencies"] if row["id"] == "DEP-TRUTH")
+        dep["proposalFields"][0]["producer"] = "algorithm under evaluation"
+
+    original_read_json = checker._read_json
+
+    def read_candidate(path: Path):
+        if path.resolve() == (ROOT / checker.DESIGN_PATH).resolve():
+            return candidate
+        return original_read_json(path)
+
+    monkeypatch.setattr(checker, "_read_json", read_candidate)
+    monkeypatch.setattr(sys, "argv", ["check_experiment_design.py"])
+    spec_path = ROOT / generator.SPEC_PATH
+    before = spec_path.read_bytes()
+    assert checker.main() != 0
+    assert generator.sync(ROOT, write=True)[0] is False
+    assert spec_path.read_bytes() == before
+    assert "failed" in capsys.readouterr().out.lower()
+
+
+def test_s10_controlled_chinese_covers_645_clock_and_handoffs() -> None:
+    translations = DESIGN["translationsZh"]
+    assert all(token in translations["dependencies.DEP-645-RUNTIME.summary"] for token in ["645-1", "CRC", "校验值", "命名", "不建立"])
+    assert all(token in translations["pendingDecisions.DEC-CLOCK.summary"] for token in ["端点开闭性", "不得改写", "保持为空"])
+    rendered = render_shared_block(DESIGN)
+    assert "Metric-field handoff / 指标字段交接" in rendered
+    assert "Interpretation/update decision relation / 解释与更新决定关系" in rendered
     assert any(
         "finite computation contract" in item
         for item in errors_for(

@@ -62,6 +62,7 @@ def render_shared_block(data: dict[str, Any]) -> str:
     scenarios = sorted(data["scenarios"], key=lambda row: row["id"])
     dispositions = sorted(data["acceptanceMatrixDispositions"], key=lambda row: row["id"])
     metrics = sorted(data["metrics"], key=lambda row: row["id"])
+    field_contracts = sorted(data["metricFieldContracts"], key=lambda row: row["field"])
     dependencies = sorted(data["dependencies"], key=lambda row: row["id"])
     decisions = sorted(data["pendingDecisions"], key=lambda row: row["id"])
     analyses = sorted(data["analysisPlans"], key=lambda row: row["id"])
@@ -69,6 +70,8 @@ def render_shared_block(data: dict[str, Any]) -> str:
     choices = sorted(data["analysisChoiceWalkthroughs"], key=lambda row: row["id"])
     contrasts = sorted(data["registeredContrasts"], key=lambda row: row["id"])
     timelines = sorted(data["protocolTimelineWalkthroughs"], key=lambda row: row["id"])
+    update_relations = sorted(data["updateDecisionRelations"], key=lambda row: row["interpretationDisposition"])
+    interpretation_contracts = sorted(data["walkthroughInterpretationContracts"], key=lambda row: row["walkthroughId"])
     translations = data["translationsZh"]
     summary = accounting_summary(data)
 
@@ -147,6 +150,20 @@ def render_shared_block(data: dict[str, Any]) -> str:
             ),
         ),
         "",
+        "### Metric-field handoff / 指标字段交接",
+        "",
+        _table(
+            ["Field / 字段", "Source + proposal / 来源与提议", "Producer / 生产者", "Visibility + compatibility / 可见性与兼容性", "Dependency + closure / 依赖与闭合", "Consumers / 使用指标"],
+            (
+                (
+                    row["field"], [row["sourcePath"], f"proposal={row['proposalFieldPath']}"], row["producerRole"],
+                    [row["visibility"], row["backwardCompatibility"]], [row["dependencyId"], row["closureMilestone"]],
+                    row["consumerMetricIds"],
+                )
+                for row in field_contracts
+            ),
+        ),
+        "",
         "### Analysis decisions / 分析决定",
         "",
         _table(
@@ -180,6 +197,24 @@ def render_shared_block(data: dict[str, Any]) -> str:
                 )
                 for row in dependencies
             ),
+        ),
+        "",
+        "### Interpretation/update decision relation / 解释与更新决定关系",
+        "",
+        _table(
+            ["Interpretation / 解释", "Update source / 更新来源", "Update status / 更新状态", "Preserve history / 保留历史", "Current decision / 当前决定"],
+            (
+                (
+                    row["interpretationDisposition"], row["updateSource"], row["updateStatus"],
+                    row["preserveHistory"], row["currentDecisionPermitted"],
+                )
+                for row in update_relations
+            ),
+        ),
+        "",
+        _table(
+            ["Walkthrough / 走查", "Interpretation / 解释", "Update source / 更新来源"],
+            ((row["walkthroughId"], row["interpretationDisposition"], row["updateSource"]) for row in interpretation_contracts),
         ),
         "",
         "### Hypothetical method-choice walkthroughs / 假设性方法选择见证",

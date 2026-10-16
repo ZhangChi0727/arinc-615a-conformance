@@ -74,6 +74,27 @@ REQUIRED_METRIC_CONTRACTS = {
     "MET-ROUNDS": (None, "POP-ROUNDS", {"runId", "actionIssued", "resourcePolicy"}),
     "MET-ABLATION-DELTA": (None, "POP-PAIRED-ELIGIBLE", {"pairingId", "outcome", "chargedCost"}),
 }
+REQUIRED_UPDATE_RELATIONS = {
+    ("ACCEPTED", "CURRENT-QUALIFIED-INTERPRETATION", "VALID-UPDATE", False, True),
+    ("REJECTED", "NO-CURRENT-UPDATE", "NOT-APPLIED-ERROR", True, False),
+    ("NOT-EVALUATED", "NO-CURRENT-UPDATE", "NO-UPDATE", True, False),
+}
+REQUIRED_DIRECT_SOURCE_ANCHORS = {
+    "SRC-ANCHOR-BERNOULLI-EXACT-INTERVAL": (
+        "docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md",
+        995,
+        1019,
+        "55215e23ca1ae18f01ed40dd8bc68c6c9e02cb0b3a521569c28368bf35e13dc2",
+    ),
+}
+MILESTONE_ORDER = {
+    "design-review": 0,
+    "pilot": 1,
+    "confirmatory-registration": 2,
+    "confirmatory-run": 3,
+    "submission": 4,
+    "645-specific-run": 4,
+}
 REQUIRED_POPULATIONS = {
     "POP-ATTEMPTS", "POP-ANSWERED", "POP-QUALIFIED-NORMAL",
     "POP-CONFIRMED-FAULT", "POP-MISSES", "POP-FALSE-FAILS",
@@ -415,6 +436,28 @@ def _validate_walkthroughs(data: dict[str, Any], scenario_ids: set[str]) -> list
     errors: list[str] = []
     rows = _rows(data, "syntheticWalkthroughs")
     attempt_ids = [str(row.get("attemptId", "")) for row in rows]
+    row_ids = {str(row.get("id", "")) for row in rows}
+    relation_rows = _rows(data, "updateDecisionRelations")
+    actual_relations = {
+        (
+            row.get("interpretationDisposition"), row.get("updateSource"), row.get("updateStatus"),
+            row.get("preserveHistory"), row.get("currentDecisionPermitted"),
+        )
+        for row in relation_rows
+    }
+    if actual_relations != REQUIRED_UPDATE_RELATIONS or len(relation_rows) != len(REQUIRED_UPDATE_RELATIONS):
+        errors.append("update decision relation must retain the reviewed interpretation/source/update truth table")
+    relation_by_input = {
+        (row.get("interpretationDisposition"), row.get("updateSource")): row
+        for row in relation_rows
+    }
+    interpretation_rows = _rows(data, "walkthroughInterpretationContracts")
+    interpretation_ids = [str(row.get("walkthroughId", "")) for row in interpretation_rows]
+    if set(interpretation_ids) != row_ids or len(interpretation_ids) != len(row_ids):
+        errors.append("every synthetic walkthrough requires exactly one interpretation/update-source contract")
+    interpretation_by_id = {
+        str(row.get("walkthroughId", "")): row for row in interpretation_rows
+    }
     for duplicate in _duplicates(attempt_ids):
         errors.append(f"duplicate synthetic attempt {duplicate}")
     for row in rows:
@@ -458,16 +501,25 @@ def _validate_walkthroughs(data: dict[str, Any], scenario_ids: set[str]) -> list
         history = row.get("historyBefore", [])
         compatible = row.get("compatibleState", [])
         update_status = row.get("updateStatus")
-        if row.get("scenarioId") == "SC-INVALID-OBS" and (
-            update_status != "NOT-APPLIED-ERROR"
-            or row.get("validity") != "INVALID"
-            or row.get("outcome") != "ERROR"
-            or row.get("localizationDecisionIssued") is not False
-            or row.get("singletonDecisionIssued") is not False
-        ):
+        interpretation = interpretation_by_id.get(str(row_id), {})
+        relation = relation_by_input.get(
+            (interpretation.get("interpretationDisposition"), interpretation.get("updateSource")),
+            {},
+        )
+        if not relation or update_status != relation.get("updateStatus"):
             errors.append(
-                f"walkthrough {row_id} invalid observation must reject the update, preserve H, remain ERROR, and issue no localization decision"
+                f"walkthrough {row_id} violates the common interpretation/update-source decision relation"
             )
+        if relation.get("preserveHistory") is True and set(final) != set(history):
+            errors.append(f"walkthrough {row_id} non-applied current step must preserve preceding H/history")
+        if relation.get("currentDecisionPermitted") is False and (
+            row.get("localizationDecisionIssued") or row.get("singletonDecisionIssued")
+        ):
+            errors.append(f"walkthrough {row_id} non-applied current step cannot issue a current localization decision")
+        if interpretation.get("interpretationDisposition") == "REJECTED" and (
+            update_status != "NOT-APPLIED-ERROR" or row.get("outcome") != "ERROR"
+        ):
+            errors.append(f"walkthrough {row_id} rejected interpretation must remain a non-applied ERROR")
         if update_status == "NOT-APPLIED-ERROR":
             if set(final) != set(history) or row.get("outcome") != "ERROR":
                 errors.append(
@@ -616,6 +668,10 @@ def _validate_protocol_timelines(data: dict[str, Any]) -> list[str]:
             and trigger.get("operationKey") == received.get("operationKey")
         )
         expected = "NOT-SCORED"
+        if abort_bound is not None:
+            errors.append(
+                f"protocol timeline {row_id} supplies an unreviewed abort completion bound while DEC-CLOCK is OPEN"
+            )
         timing_values = all(
             isinstance(value, (int, float)) for value in (elapsed, delay, observation_end)
         )
@@ -636,13 +692,6 @@ def _validate_protocol_timelines(data: dict[str, Any]) -> list[str]:
                 and abort_obligation == "REQUIRED-IF-NO-TIMELY-STATUS"
             ):
                 expected = "PASS"
-            elif (
-                event == "NONE"
-                and isinstance(abort_bound, (int, float))
-                and observation_end >= delay + abort_bound
-                and abort_obligation == "REQUIRED-IF-NO-TIMELY-STATUS"
-            ):
-                expected = "FAIL"
         elif not same_operation and abort_obligation != "NOT-APPLICABLE":
             errors.append(f"protocol timeline {row_id} assigns the CRS abort obligation to an unbound trigger")
         if boundary != "UNRESOLVED":
@@ -858,6 +907,19 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
                 errors.append(f"analysis plan {analysis.get('id')} source locator has an invalid line range")
             if role not in {"DIRECT", "CONTEXT-ONLY"}:
                 errors.append(f"analysis plan {analysis.get('id')} source locator has an invalid role")
+            if role == "DIRECT":
+                anchor_id = locator.get("anchorId")
+                excerpt_sha = locator.get("excerptSha256")
+                expected_anchor = REQUIRED_DIRECT_SOURCE_ANCHORS.get(str(anchor_id))
+                if expected_anchor is None:
+                    errors.append(f"analysis plan {analysis.get('id')} DIRECT source lacks a reviewed stable proposition anchor")
+                elif (path, start, end, excerpt_sha) != expected_anchor:
+                    errors.append(f"analysis plan {analysis.get('id')} DIRECT source locator drifted from its reviewed proposition anchor")
+                elif isinstance(start, int) and isinstance(end, int) and 1 <= start <= end <= line_count:
+                    source_lines = snapshot[path].decode("utf-8-sig", errors="replace").splitlines()
+                    actual_excerpt_sha = hashlib.sha256("\n".join(source_lines[start - 1:end]).encode("utf-8")).hexdigest()
+                    if actual_excerpt_sha != excerpt_sha:
+                        errors.append(f"analysis plan {analysis.get('id')} DIRECT proposition excerpt identity does not match its anchor")
         direct = [item for item in locators if isinstance(item, dict) and item.get("role") == "DIRECT"]
         if status == "NAMED-CANDIDATE" and not direct:
             errors.append(f"analysis plan {analysis.get('id')} names a method without a direct source")
@@ -889,6 +951,78 @@ def validate_design(root: Path = ROOT, design: dict[str, Any] | None = None) -> 
                 or set(metric.get("requiredFields", [])) != expected_fields
             ):
                 errors.append(f"metric {metric_id} disagrees with its reviewed finite computation contract")
+
+    metric_consumers_by_field: dict[str, set[str]] = {}
+    for metric in _rows(data, "metrics"):
+        for field in metric.get("requiredFields", []):
+            metric_consumers_by_field.setdefault(str(field), set()).add(str(metric.get("id")))
+    field_contract_rows = _rows(data, "metricFieldContracts")
+    field_contracts = {str(row.get("field", "")): row for row in field_contract_rows}
+    if len(field_contracts) != len(field_contract_rows):
+        errors.append("metric field handoff contracts contain duplicate field identities")
+    if set(field_contracts) != set(metric_consumers_by_field):
+        errors.append(
+            "metric field handoff contracts must cover exactly every registered metric required field"
+        )
+    dependencies_by_id = {str(row.get("id", "")): row for row in _rows(data, "dependencies")}
+    for field, consumers in metric_consumers_by_field.items():
+        contract = field_contracts.get(field, {})
+        if set(contract.get("consumerMetricIds", [])) != consumers:
+            errors.append(f"metric field {field} has stale or incomplete consumer relationships")
+        source_path = contract.get("sourcePath", "")
+        errors.extend(_field_reference_errors([source_path], development_records, interface_outputs))
+        dependency_id = str(contract.get("dependencyId", ""))
+        dependency = dependencies_by_id.get(dependency_id)
+        if dependency is None:
+            errors.append(f"metric field {field} has unknown dependency {dependency_id}")
+            continue
+        closure = contract.get("closureMilestone")
+        blocking = dependency.get("blockingMilestone")
+        if closure not in MILESTONE_ORDER or blocking not in MILESTONE_ORDER or MILESTONE_ORDER[closure] > MILESTONE_ORDER[blocking]:
+            errors.append(f"metric field {field} closes after its dependency blocking milestone")
+        proposal_path = contract.get("proposalFieldPath")
+        if proposal_path is not None:
+            proposal = next(
+                (item for item in dependency.get("proposalFields", []) if item.get("path") == proposal_path),
+                None,
+            )
+            if proposal is None:
+                errors.append(f"metric field {field} lacks required proposal {proposal_path} in {dependency_id}")
+            elif (
+                proposal.get("producer") != contract.get("producerRole")
+                or proposal.get("visibility") != contract.get("visibility")
+                or proposal.get("backwardCompatibility") != contract.get("backwardCompatibility")
+                or proposal.get("closureMilestone") != closure
+            ):
+                errors.append(f"metric field {field} disagrees with its producer/visibility/compatibility/milestone proposal")
+
+    critical_truth_contracts = {
+        "truthReference.truthHypothesis": ("truthRecord.confirmationRef", "independent evaluator", "DEP-TRUTH", "pilot"),
+        "injectionStatus": ("truthRecord.confirmationRef", "independent evaluator", "DEP-TRUTH", "pilot"),
+        "faultDomain": ("truthRecord.equivalenceDisposition", "fault adjudicator", "DEP-EQUIV", "confirmatory-registration"),
+    }
+    for field, expected in critical_truth_contracts.items():
+        contract = field_contracts.get(field, {})
+        actual = (
+            contract.get("proposalFieldPath"), contract.get("producerRole"),
+            contract.get("dependencyId"), contract.get("closureMilestone"),
+        )
+        if actual != expected or contract.get("visibility") != "evaluator-only":
+            errors.append(f"metric field {field} must retain its reviewed independent evaluator handoff")
+
+    proposal_signatures: dict[str, set[tuple[Any, ...]]] = {}
+    for dependency in _rows(data, "dependencies"):
+        for proposal in dependency.get("proposalFields", []):
+            path = str(proposal.get("path", ""))
+            proposal_signatures.setdefault(path, set()).add(
+                (
+                    proposal.get("type"), proposal.get("producer"), proposal.get("visibility"),
+                    proposal.get("backwardCompatibility"), proposal.get("closureMilestone"),
+                )
+            )
+    for path, signatures in proposal_signatures.items():
+        if len(signatures) > 1:
+            errors.append(f"proposal field {path} has inconsistent cross-dependency handoff semantics")
 
     primary_metric_ids = {row.get("id") for row in _rows(data, "metrics") if row.get("primary") is True}
     family_metric_ids: set[str] = set()

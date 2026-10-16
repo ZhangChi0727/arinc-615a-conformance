@@ -7,8 +7,8 @@
   "required": [
     "schemaVersion", "identity", "inputBindings", "references", "claimArguments",
     "costAccounting", "arms", "registeredContrasts", "scenarios", "acceptanceMatrixDispositions",
-    "populations", "metrics", "comparisonFamilies", "analysisPlans", "dependencies",
-    "pendingDecisions", "syntheticWalkthroughs", "protocolTimelineWalkthroughs",
+    "populations", "metrics", "metricFieldContracts", "comparisonFamilies", "analysisPlans", "dependencies",
+    "pendingDecisions", "updateDecisionRelations", "walkthroughInterpretationContracts", "syntheticWalkthroughs", "protocolTimelineWalkthroughs",
     "analysisChoiceWalkthroughs", "translationsZh", "designAdmission", "artifactMap"
   ],
   "$defs": {
@@ -266,6 +266,24 @@
         }
       }
     },
+    "metricFieldContracts": {
+      "type": "array", "minItems": 20,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["field", "sourcePath", "proposalFieldPath", "producerRole", "visibility", "backwardCompatibility", "dependencyId", "closureMilestone", "consumerMetricIds"],
+        "properties": {
+          "field": {"type": "string", "minLength": 1},
+          "sourcePath": {"type": "string", "minLength": 1},
+          "proposalFieldPath": {"type": ["string", "null"]},
+          "producerRole": {"type": "string", "minLength": 1},
+          "visibility": {"type": "string", "minLength": 1},
+          "backwardCompatibility": {"type": "string", "minLength": 1},
+          "dependencyId": {"type": "string", "pattern": "^DEP-[A-Z0-9-]+$"},
+          "closureMilestone": {"enum": ["design-review", "pilot", "confirmatory-registration"]},
+          "consumerMetricIds": {"$ref": "#/$defs/nonEmptyStringArray"}
+        }
+      }
+    },
     "comparisonFamilies": {
       "type": "array", "minItems": 3,
       "items": {
@@ -309,7 +327,9 @@
                 "path": {"type": "string", "minLength": 1},
                 "lineStart": {"type": "integer", "minimum": 1},
                 "lineEnd": {"type": "integer", "minimum": 1},
-                "role": {"enum": ["DIRECT", "CONTEXT-ONLY"]}
+                "role": {"enum": ["DIRECT", "CONTEXT-ONLY"]},
+                "anchorId": {"type": "string", "pattern": "^SRC-ANCHOR-[A-Z0-9-]+$"},
+                "excerptSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
               }
             }
           },
@@ -359,6 +379,32 @@
           "closureWitness": {"type": "string", "minLength": 1},
           "blocks": {"$ref": "#/$defs/nonEmptyStringArray"},
           "status": {"const": "OPEN"}
+        }
+      }
+    },
+    "updateDecisionRelations": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["interpretationDisposition", "updateSource", "updateStatus", "preserveHistory", "currentDecisionPermitted"],
+        "properties": {
+          "interpretationDisposition": {"enum": ["ACCEPTED", "REJECTED", "NOT-EVALUATED"]},
+          "updateSource": {"enum": ["CURRENT-QUALIFIED-INTERPRETATION", "NO-CURRENT-UPDATE"]},
+          "updateStatus": {"enum": ["VALID-UPDATE", "NOT-APPLIED-ERROR", "NO-UPDATE"]},
+          "preserveHistory": {"type": "boolean"},
+          "currentDecisionPermitted": {"type": "boolean"}
+        }
+      }
+    },
+    "walkthroughInterpretationContracts": {
+      "type": "array", "minItems": 12,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["walkthroughId", "interpretationDisposition", "updateSource"],
+        "properties": {
+          "walkthroughId": {"type": "string", "pattern": "^SYN-[A-Z0-9-]+$"},
+          "interpretationDisposition": {"enum": ["ACCEPTED", "REJECTED", "NOT-EVALUATED"]},
+          "updateSource": {"enum": ["CURRENT-QUALIFIED-INTERPRETATION", "NO-CURRENT-UPDATE"]}
         }
       }
     },

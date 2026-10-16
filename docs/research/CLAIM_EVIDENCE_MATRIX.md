@@ -155,9 +155,11 @@ DETECT, LOCATE or ABLATION status.
 The correction contract additionally requires an exact typed algorithm-visible
 member allowlist, evaluator-only truth/equivalence fields, parent-specific
 pairing derived from registered construction identity and confirmed resets,
-explicit truth-scorable and truth-missing flows, update-status-based ERROR
-preservation and empty/singleton priority, the source-bound CRS-M1-00101 status
-file/abort timeline, closed-interval T5 classification, one resource mode per
+explicit truth-scorable and truth-missing flows, a scenario-independent
+interpretation/update-source relation for rejected steps and valid empty/singleton
+updates, field-level metric producer/dependency/closure handoffs, the source-bound
+CRS-M1-00101 status-file/abort timeline with no unreviewed abort-completion
+constant, closed-interval T5 classification, one resource mode per
 session, and statistical branches derived from independence, pair, or cluster
 evidence. Only the independent Bernoulli branch currently names a sourced
 interval candidate. These remain design obligations, not observed evidence.
@@ -284,7 +286,8 @@ v0.2 由带类型的尝试字段推导回答、故障、正常、定位决定和
 
 修正合同还要求：算法可见投影采用精确类型化成员白名单；真值与等价字段仅评估者
 可见；配对按父指标从注册构造身份与确认复位证据派生；真值可计分与缺失流显式分开；
-错误保留及空集／单例优先级由更新状态而非停止标签决定；未运行记录不得产生 PASS／FAIL；
-CRS-M1-00101 绑定到收到携带异常延迟的状态文件以及规定的中止后备时间线，到期端点和
-有限观察终点在时钟决定闭合前不得制造失败；统计分支必须由独立、配对或聚类证据
+统一的解释／更新来源关系区分被拒绝当前步骤与合法空集／单例更新；未运行记录不得产生
+PASS／FAIL。指标必需字段逐项绑定生产者、依赖和闭合里程碑，独立真值不得由被评估算法
+生产。CRS-M1-00101 绑定到收到携带异常延迟的状态文件以及规定的中止后备时间线；本候选
+不接纳未审定的中止完成常数，到期端点和有限观察终点在时钟决定闭合前不得制造失败；统计分支必须由独立、配对或聚类证据
 推导。当前只有独立伯努利分支列出有直接来源的区间候选。以上仍是设计义务，不是观测证据。

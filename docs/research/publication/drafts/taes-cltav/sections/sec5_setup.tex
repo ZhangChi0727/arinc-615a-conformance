@@ -107,11 +107,11 @@ frozen registration, execution and result acceptance.
 For the no-response scenario bound to CRS-M1-00101, the scored trigger is the
 data loader receiving a status file that carries an exception delay for the
 active operation. A new status strictly before the unresolved expiry endpoint,
-or an observed required data-loader abort fallback after expiry, satisfies the
-candidate timeline. Equality remains unscored until DEC-CLOCK freezes endpoint
-inclusivity. Absence of both is not a failure from a finite trace unless the
-qualified observation endpoint covers a separately justified abort-completion
-bound. Generic request/response suppression remains a method-only case and is
+or an observed required data-loader abort fallback after expiry, satisfies only
+the corresponding continuation or fallback-action proposition. Equality remains
+unscored until DEC-CLOCK freezes endpoint inclusivity. This candidate registers
+no abort-completion constant: the bound remains null, arbitrary numeric values
+are rejected, and finite absence of both events remains unscored. Generic request/response suppression remains a method-only case and is
 not scored against CRS-M1-00101; the abort is a prescribed fallback, not a
 cancellation waiver.
 

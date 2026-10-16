@@ -107,6 +107,12 @@ regardless of its stop tag; only a valid empty compatibility update produces
 \texttt{Stop-Empty}, and a valid singleton update first produces
 \texttt{Stop-Singleton}. A record without a \texttt{runId} remains a pre-run
 exclusion and cannot produce PASS, FAIL, a decision, an action, or charged cost.
+The interpretation disposition and update source jointly select this rule for
+every scenario; scenario labels do not grant update permission. Metric input
+handoffs additionally name their source field, producer, visibility,
+backward-compatibility disposition, dependency, closure milestone, and consumer
+metrics. Evaluator truth confirmation must close at pilot and cannot be produced
+by the algorithm under evaluation.
 A registered pair is derived separately for each parent
 metric and requires the same base scene, seed, construction and registered
 contrast, reciprocal arms, and distinct confirmed resets. The closed-interval T5 rule assigns containment PASS,
