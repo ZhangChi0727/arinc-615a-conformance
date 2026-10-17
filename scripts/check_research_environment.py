@@ -249,8 +249,8 @@ def validate_environment(root: Path = ROOT) -> list[str]:
         model_figure_data = _load_json(root / model_figure_relative, errors)
         if isinstance(model_figure_data, dict):
             model_figures = model_figure_data.get("figures")
-            if not isinstance(model_figures, list) or len(model_figures) != 9:
-                errors.append("model figure manifest must contain nine figures")
+            if not isinstance(model_figures, list) or not model_figures:
+                errors.append("model figure manifest must contain at least one candidate")
             model_script = root / ".agents/skills/cltav-model-figures/scripts/model_drawio.py"
             try:
                 spec = importlib.util.spec_from_file_location("cltav_model_drawio_environment", model_script)
@@ -269,6 +269,12 @@ def validate_environment(root: Path = ROOT) -> list[str]:
         errors.append("modelFigureExports must use the controlled registry path")
     elif not (root / model_export_relative).is_file():
         errors.append(f"missing registry file {model_export_relative}")
+
+    model_index_relative = registries.get("modelFigureReviewIndex")
+    if model_index_relative != "artifacts/publications/cltav/model-drafts/MODEL_FIGURE_REVIEW_INDEX.md":
+        errors.append("modelFigureReviewIndex must use the controlled reader path")
+    elif not (root / model_index_relative).is_file():
+        errors.append(f"missing model figure review index {model_index_relative}")
 
     skills = data.get("skills")
     if not isinstance(skills, list) or not skills:
