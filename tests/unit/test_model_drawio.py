@@ -520,10 +520,6 @@ def test_reader_index_closes_editable_caption_output_mapping() -> None:
 def test_real_git_checkout_preserves_raw_svg_hashes(tmp_path: Path, autocrlf: str) -> None:
     module = load_module(); clone = tmp_path / "clone"
     subprocess.run(["git", "clone", "--no-hardlinks", str(ROOT), str(clone)], check=True, capture_output=True)
-    for relative in (Path(".gitattributes"), SCRIPT.relative_to(ROOT), module.MANIFEST_RELATIVE, module.EXPORT_MANIFEST_RELATIVE, module.REVIEW_INDEX_RELATIVE):
-        target = clone / relative; target.parent.mkdir(parents=True, exist_ok=True); shutil.copyfile(ROOT / relative, target)
-    subprocess.run(["git", "-C", str(clone), "add", ".gitattributes", str(SCRIPT.relative_to(ROOT)), str(module.MANIFEST_RELATIVE), str(module.EXPORT_MANIFEST_RELATIVE), str(module.REVIEW_INDEX_RELATIVE)], check=True)
-    subprocess.run(["git", "-C", str(clone), "-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-m", "test state"], check=True, capture_output=True)
     subprocess.run(["git", "-C", str(clone), "config", "core.autocrlf", autocrlf], check=True)
     subprocess.run(["git", "-C", str(clone), "reset", "--hard", "HEAD"], check=True, capture_output=True)
     result = subprocess.run([sys.executable, str(clone / SCRIPT.relative_to(ROOT)), "--check"], cwd=clone, text=True, capture_output=True)
