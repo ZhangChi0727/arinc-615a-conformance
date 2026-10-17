@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "1.1",
+  "schemaVersion": "2.0",
   "manifestId": "CLTAV-MODEL-FIGURES-2026-001",
-  "authority": "Derived, hash-bound Draw.io redraw inventory. The accepted method/algorithm/model contracts and each named PlantUML source remain semantic authority.",
+  "authority": "Registered PlantUML and accepted cross-domain contracts are traceable inputs to controlled editable candidates. Automated checks cover only the declared finite inventory; semantic correctness, consumer migration, publication suitability, and promotion require human review.",
   "targetVenue": "IEEE Transactions on Aerospace and Electronic Systems",
   "styleProfile": {
     "status": "VERIFIED",
@@ -318,6 +318,35 @@
           "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
           "Human promotion remains required for interpretation, guard completeness, and publication layout."
         ]
+      },
+      "revision": {
+        "modelVersionId": "FIG-CL-TAV-01@72fcf95-DRAFT",
+        "disposition": "RETAINED-DRAFT-INSTANCE",
+        "revisionType": "REFERENCE-REDRAW",
+        "reason": "Retain the current editable instance while establishing an honest controlled review workflow.",
+        "affectedScope": [
+          "MODEL-FIGURE-WORKFLOW",
+          "FIG-CL-TAV-01"
+        ],
+        "relatedContracts": [
+          "CR-2026-020",
+          "DD-044"
+        ],
+        "contractImpact": "No accepted downstream consumer is changed; any later semantic change requires explicit impact review.",
+        "inputIdentity": {
+          "startingHead": "72fcf95163b9d8868c1d7bd3b5ecf8bcce76869a",
+          "sourceSha256": "29064b0737c742ca8ec76571c9fa52aed8d3a82e996f11ad6720f8b70805d597",
+          "drawioSha256": "1e96dfd7d72e1938d0b1809e94f554f4638c87c3702b0997bd44246fc8fd3b8b"
+        },
+        "promotionStatus": "DRAFT-NOT-PROMOTED",
+        "modelContentSha256": "c0e96025374cea24d4f5bd1c823e1ec9759644a1b4f5f297bf54b29250d36d5b",
+        "semanticReview": {
+          "status": "PENDING-INDEPENDENT-REVIEW",
+          "modelContentSha256": "c0e96025374cea24d4f5bd1c823e1ec9759644a1b4f5f297bf54b29250d36d5b",
+          "reviewedBy": null,
+          "reviewedAt": null,
+          "decision": null
+        }
       }
     },
     {
@@ -875,6 +904,35 @@
           "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
           "Human promotion remains required for interpretation, guard completeness, and publication layout."
         ]
+      },
+      "revision": {
+        "modelVersionId": "FIG-CL-TAV-02@72fcf95-DRAFT",
+        "disposition": "RETAINED-DRAFT-INSTANCE",
+        "revisionType": "REFERENCE-REDRAW",
+        "reason": "Retain the current editable instance while establishing an honest controlled review workflow.",
+        "affectedScope": [
+          "MODEL-FIGURE-WORKFLOW",
+          "FIG-CL-TAV-02"
+        ],
+        "relatedContracts": [
+          "CR-2026-020",
+          "DD-044"
+        ],
+        "contractImpact": "No accepted downstream consumer is changed; any later semantic change requires explicit impact review.",
+        "inputIdentity": {
+          "startingHead": "72fcf95163b9d8868c1d7bd3b5ecf8bcce76869a",
+          "sourceSha256": "d13e00b8a2fcf399919f58d2d762a7c85511021f70860d217f5a61043e0f1d6c",
+          "drawioSha256": "ab47929e653977aefd70734c37f71991d56bbd4bf45cbec1c50c4c9bfad12666"
+        },
+        "promotionStatus": "DRAFT-NOT-PROMOTED",
+        "modelContentSha256": "9ff7deaee66e0f2de6239c73188f5bc4bc5ba940d7d0cf0a27a3b6c93647978d",
+        "semanticReview": {
+          "status": "PENDING-INDEPENDENT-REVIEW",
+          "modelContentSha256": "9ff7deaee66e0f2de6239c73188f5bc4bc5ba940d7d0cf0a27a3b6c93647978d",
+          "reviewedBy": null,
+          "reviewedAt": null,
+          "decision": null
+        }
       }
     },
     {
@@ -1193,6 +1251,35 @@
           "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
           "Human promotion remains required for interpretation, guard completeness, and publication layout."
         ]
+      },
+      "revision": {
+        "modelVersionId": "FIG-CL-TAV-03@72fcf95-DRAFT",
+        "disposition": "RETAINED-DRAFT-INSTANCE",
+        "revisionType": "REFERENCE-REDRAW",
+        "reason": "Retain the current editable instance while establishing an honest controlled review workflow.",
+        "affectedScope": [
+          "MODEL-FIGURE-WORKFLOW",
+          "FIG-CL-TAV-03"
+        ],
+        "relatedContracts": [
+          "CR-2026-020",
+          "DD-044"
+        ],
+        "contractImpact": "No accepted downstream consumer is changed; any later semantic change requires explicit impact review.",
+        "inputIdentity": {
+          "startingHead": "72fcf95163b9d8868c1d7bd3b5ecf8bcce76869a",
+          "sourceSha256": "9e1020601f475f928ce95aa51c34adc644b8fdc5258f78d6fd9bf4133ba476ac",
+          "drawioSha256": "358d53abb43dc8db01119fe9ecd6c986ba42ae1d22010aa2f75ac6c6579b77ae"
+        },
+        "promotionStatus": "DRAFT-NOT-PROMOTED",
+        "modelContentSha256": "3aed7f5072706e98619624e593f2d7425cb05a735c2a31c32ae93236172e9215",
+        "semanticReview": {
+          "status": "PENDING-INDEPENDENT-REVIEW",
+          "modelContentSha256": "3aed7f5072706e98619624e593f2d7425cb05a735c2a31c32ae93236172e9215",
+          "reviewedBy": null,
+          "reviewedAt": null,
+          "decision": null
+        }
       }
     },
     {
@@ -1572,6 +1659,35 @@
           "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
           "Human promotion remains required for interpretation, guard completeness, and publication layout."
         ]
+      },
+      "revision": {
+        "modelVersionId": "FIG-CL-TAV-04@72fcf95-DRAFT",
+        "disposition": "RETAINED-DRAFT-INSTANCE",
+        "revisionType": "REFERENCE-REDRAW",
+        "reason": "Retain the current editable instance while establishing an honest controlled review workflow.",
+        "affectedScope": [
+          "MODEL-FIGURE-WORKFLOW",
+          "FIG-CL-TAV-04"
+        ],
+        "relatedContracts": [
+          "CR-2026-020",
+          "DD-044"
+        ],
+        "contractImpact": "No accepted downstream consumer is changed; any later semantic change requires explicit impact review.",
+        "inputIdentity": {
+          "startingHead": "72fcf95163b9d8868c1d7bd3b5ecf8bcce76869a",
+          "sourceSha256": "78089e21331577b9b5dbddc3b631692cd1c8dbeae9111c50073ddb522c53e098",
+          "drawioSha256": "664d33dcb2c01a5e594106bc8ba89a52bec543750d9b31e8632044023a3c2e76"
+        },
+        "promotionStatus": "DRAFT-NOT-PROMOTED",
+        "modelContentSha256": "d139794bc0542e2fc677cc3cd8db95e5cde9b464f97ae614b89812fa7f555a2c",
+        "semanticReview": {
+          "status": "PENDING-INDEPENDENT-REVIEW",
+          "modelContentSha256": "d139794bc0542e2fc677cc3cd8db95e5cde9b464f97ae614b89812fa7f555a2c",
+          "reviewedBy": null,
+          "reviewedAt": null,
+          "decision": null
+        }
       }
     },
     {
@@ -2283,6 +2399,35 @@
           "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
           "Human promotion remains required for interpretation, guard completeness, and publication layout."
         ]
+      },
+      "revision": {
+        "modelVersionId": "FIG-CL-TAV-05@72fcf95-DRAFT",
+        "disposition": "RETAINED-DRAFT-INSTANCE",
+        "revisionType": "REFERENCE-REDRAW",
+        "reason": "Retain the current editable instance while establishing an honest controlled review workflow.",
+        "affectedScope": [
+          "MODEL-FIGURE-WORKFLOW",
+          "FIG-CL-TAV-05"
+        ],
+        "relatedContracts": [
+          "CR-2026-020",
+          "DD-044"
+        ],
+        "contractImpact": "No accepted downstream consumer is changed; any later semantic change requires explicit impact review.",
+        "inputIdentity": {
+          "startingHead": "72fcf95163b9d8868c1d7bd3b5ecf8bcce76869a",
+          "sourceSha256": "4db0fd73b1b2ff28416ce9f1684c97ef5bd72e10ebe808e5497f5f950dab0e5d",
+          "drawioSha256": "434066d07172692037e47f34728785311fc54ff42e954ef79ba07fd8a0f43a87"
+        },
+        "promotionStatus": "DRAFT-NOT-PROMOTED",
+        "modelContentSha256": "04d569a0a85279970b8ce2e4f697e311dd4afd217445fc44e93cd3b9f778f2a7",
+        "semanticReview": {
+          "status": "PENDING-INDEPENDENT-REVIEW",
+          "modelContentSha256": "04d569a0a85279970b8ce2e4f697e311dd4afd217445fc44e93cd3b9f778f2a7",
+          "reviewedBy": null,
+          "reviewedAt": null,
+          "decision": null
+        }
       }
     },
     {
@@ -2796,6 +2941,35 @@
           "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
           "Human promotion remains required for interpretation, guard completeness, and publication layout."
         ]
+      },
+      "revision": {
+        "modelVersionId": "FIG-CL-TAV-06@72fcf95-DRAFT",
+        "disposition": "RETAINED-DRAFT-INSTANCE",
+        "revisionType": "REFERENCE-REDRAW",
+        "reason": "Retain the current editable instance while establishing an honest controlled review workflow.",
+        "affectedScope": [
+          "MODEL-FIGURE-WORKFLOW",
+          "FIG-CL-TAV-06"
+        ],
+        "relatedContracts": [
+          "CR-2026-020",
+          "DD-044"
+        ],
+        "contractImpact": "No accepted downstream consumer is changed; any later semantic change requires explicit impact review.",
+        "inputIdentity": {
+          "startingHead": "72fcf95163b9d8868c1d7bd3b5ecf8bcce76869a",
+          "sourceSha256": "e44186daca4ace2e1b9b2ca1103232c4c6875a5c859bb9bf3bcdca26c79468ae",
+          "drawioSha256": "a179a9171c8ffcee00fbb9efc7f082ffdf1f5e9ac39327f7f910829ca4d2c96c"
+        },
+        "promotionStatus": "DRAFT-NOT-PROMOTED",
+        "modelContentSha256": "4f09c7ca658d2fa12d2028bebabb58fbf92f36a9a47ed111504d25c00e2d64a4",
+        "semanticReview": {
+          "status": "PENDING-INDEPENDENT-REVIEW",
+          "modelContentSha256": "4f09c7ca658d2fa12d2028bebabb58fbf92f36a9a47ed111504d25c00e2d64a4",
+          "reviewedBy": null,
+          "reviewedAt": null,
+          "decision": null
+        }
       }
     },
     {
@@ -3827,6 +4001,35 @@
           "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
           "Human promotion remains required for interpretation, guard completeness, and publication layout."
         ]
+      },
+      "revision": {
+        "modelVersionId": "FIG-CL-TAV-07@72fcf95-DRAFT",
+        "disposition": "RETAINED-DRAFT-INSTANCE",
+        "revisionType": "REFERENCE-REDRAW",
+        "reason": "Retain the current editable instance while establishing an honest controlled review workflow.",
+        "affectedScope": [
+          "MODEL-FIGURE-WORKFLOW",
+          "FIG-CL-TAV-07"
+        ],
+        "relatedContracts": [
+          "CR-2026-020",
+          "DD-044"
+        ],
+        "contractImpact": "No accepted downstream consumer is changed; any later semantic change requires explicit impact review.",
+        "inputIdentity": {
+          "startingHead": "72fcf95163b9d8868c1d7bd3b5ecf8bcce76869a",
+          "sourceSha256": "effab552f5ce971a0d0fa45bf1f19f96ac172e0e55cc423c956cf4f21df74380",
+          "drawioSha256": "12058facedc86378d97e7d2e2ba64e97230613cc4531bc45f917828b6f17df8d"
+        },
+        "promotionStatus": "DRAFT-NOT-PROMOTED",
+        "modelContentSha256": "b013aaaf4639b5810978c954aec2462f9db103bb3e18e32b02945ab940c249f6",
+        "semanticReview": {
+          "status": "PENDING-INDEPENDENT-REVIEW",
+          "modelContentSha256": "b013aaaf4639b5810978c954aec2462f9db103bb3e18e32b02945ab940c249f6",
+          "reviewedBy": null,
+          "reviewedAt": null,
+          "decision": null
+        }
       }
     },
     {
@@ -4067,6 +4270,35 @@
           "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
           "Human promotion remains required for interpretation, guard completeness, and publication layout."
         ]
+      },
+      "revision": {
+        "modelVersionId": "FIG-CL-TAV-08@72fcf95-DRAFT",
+        "disposition": "RETAINED-DRAFT-INSTANCE",
+        "revisionType": "REFERENCE-REDRAW",
+        "reason": "Retain the current editable instance while establishing an honest controlled review workflow.",
+        "affectedScope": [
+          "MODEL-FIGURE-WORKFLOW",
+          "FIG-CL-TAV-08"
+        ],
+        "relatedContracts": [
+          "CR-2026-020",
+          "DD-044"
+        ],
+        "contractImpact": "No accepted downstream consumer is changed; any later semantic change requires explicit impact review.",
+        "inputIdentity": {
+          "startingHead": "72fcf95163b9d8868c1d7bd3b5ecf8bcce76869a",
+          "sourceSha256": "c750c58f3082b1613695828f85879e6f7218001bd3e90691a2405f87ad8894b8",
+          "drawioSha256": "716e83c7c228e6172884f57e09e0cc73f5f3928202a1a892ff6326fd88b632f5"
+        },
+        "promotionStatus": "DRAFT-NOT-PROMOTED",
+        "modelContentSha256": "a77fb1bbc997280c50dfee2480068f2872781499e51164f2e9c2beaa54adf33e",
+        "semanticReview": {
+          "status": "PENDING-INDEPENDENT-REVIEW",
+          "modelContentSha256": "a77fb1bbc997280c50dfee2480068f2872781499e51164f2e9c2beaa54adf33e",
+          "reviewedBy": null,
+          "reviewedAt": null,
+          "decision": null
+        }
       }
     },
     {
@@ -4418,8 +4650,42 @@
           "Bindings prove finite source-location identity and topology, not full PlantUML semantic equivalence.",
           "Human promotion remains required for interpretation, guard completeness, and publication layout."
         ]
+      },
+      "revision": {
+        "modelVersionId": "FIG-CL-TAV-09@72fcf95-DRAFT",
+        "disposition": "RETAINED-DRAFT-INSTANCE",
+        "revisionType": "REFERENCE-REDRAW",
+        "reason": "Retain the current editable instance while establishing an honest controlled review workflow.",
+        "affectedScope": [
+          "MODEL-FIGURE-WORKFLOW",
+          "FIG-CL-TAV-09"
+        ],
+        "relatedContracts": [
+          "CR-2026-020",
+          "DD-044"
+        ],
+        "contractImpact": "No accepted downstream consumer is changed; any later semantic change requires explicit impact review.",
+        "inputIdentity": {
+          "startingHead": "72fcf95163b9d8868c1d7bd3b5ecf8bcce76869a",
+          "sourceSha256": "a882a7234e59c98103cdd95dc0254c051b5c3cea30442e340af800125baf2a72",
+          "drawioSha256": "8ed4e16b2ffcadcf535f00421671795f5cf1b5439a501ba6db9fb6048205f7bd"
+        },
+        "promotionStatus": "DRAFT-NOT-PROMOTED",
+        "modelContentSha256": "2032be0f20ad47a986b2f0d924eef7b86dae26865aa8bd0f1a60b281bf4873f4",
+        "semanticReview": {
+          "status": "PENDING-INDEPENDENT-REVIEW",
+          "modelContentSha256": "2032be0f20ad47a986b2f0d924eef7b86dae26865aa8bd0f1a60b281bf4873f4",
+          "reviewedBy": null,
+          "reviewedAt": null,
+          "decision": null
+        }
       }
     }
   ],
-  "textIdentity": "UTF8-LF-v1"
+  "textIdentity": "UTF8-LF-v1",
+  "collectionPolicy": {
+    "cardinality": "VARIABLE-CONTROLLED-CANDIDATE-SET",
+    "currentDisposition": "Nine current candidates retained; none replaced, split, merged, or retired in this change.",
+    "consumerPolicy": "New semantics must be versioned and may not silently migrate method, algorithm, engineering, CRS, M2, experiment, or manuscript consumers."
+  }
 }

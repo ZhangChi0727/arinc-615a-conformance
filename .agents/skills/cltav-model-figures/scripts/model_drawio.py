@@ -1,4 +1,4 @@
-"""Build and validate semantic-preserving CL-TAV Draw.io redraw sources."""
+"""Build and validate controlled CL-TAV Draw.io model candidates."""
 
 from __future__ import annotations
 
@@ -20,6 +20,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[4]
 MANIFEST_RELATIVE = Path("configs/research/cltav_model_figure_manifest.json")
 EXPORT_MANIFEST_RELATIVE = Path("configs/research/cltav_model_figure_exports.json")
+REVIEW_INDEX_RELATIVE = Path("artifacts/publications/cltav/model-drafts/MODEL_FIGURE_REVIEW_INDEX.md")
 CANONICALIZATION = "UTF8-LF-v1"
 
 ROLE_STYLES = {
@@ -69,6 +70,30 @@ def sha256(path: Path) -> str:
 
 def raw_sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def json_sha256(value: object) -> str:
+    payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def model_content_sha256(figure: dict[str, Any]) -> str:
+    """Identify the complete controlled candidate independently of its review."""
+    keys = ("id", "sourcePuml", "sourceSha256", "drawioSource", "drawioSha256",
+            "canvas", "typography", "groups", "entities", "notes", "relations",
+            "sourceBindings")
+    return json_sha256({key: figure.get(key) for key in keys})
+
+
+def review_bundle_sha256(figure: dict[str, Any], caption: str) -> str:
+    revision = figure.get("revision", {})
+    return json_sha256({
+        "figureId": figure.get("id"),
+        "modelVersionId": revision.get("modelVersionId"),
+        "modelContentSha256": revision.get("modelContentSha256"),
+        "drawioSha256": figure.get("drawioSha256"),
+        "caption": caption,
+    })
 
 
 def repository_root(root: Path | None = None) -> Path:
@@ -265,16 +290,50 @@ def _anchor_map_errors(figure: dict[str, Any], key: str, expected: set[str]) -> 
 
 def validate_manifest(data: dict[str, Any], root: Path | None = None) -> list[str]:
     errors: list[str] = []
-    if data.get("schemaVersion") != "1.1": errors.append("manifest schemaVersion must be 1.1")
+    if data.get("schemaVersion") != "2.0": errors.append("manifest schemaVersion must be 2.0")
     if data.get("textIdentity") != CANONICALIZATION: errors.append(f"manifest textIdentity must be {CANONICALIZATION}")
     figures = data.get("figures")
-    if not isinstance(figures, list) or len(figures) != 9: return errors + ["manifest must contain the nine FIG-CL-TAV redraws"]
-    figure_ids: set[str] = set(); paths: set[str] = set()
+    if not isinstance(figures, list) or not figures: return errors + ["manifest must contain at least one registered model candidate"]
+    figure_ids: set[str] = set(); paths: set[str] = set(); version_ids: set[str] = set()
     for figure in figures:
         figure_id = figure.get("id")
         if not isinstance(figure_id, str) or figure_id in figure_ids: errors.append(f"duplicate or missing figure id: {figure_id!r}"); continue
         figure_ids.add(figure_id)
         if figure.get("status") != "DRAFT-REDRAW": errors.append(f"{figure_id} must remain DRAFT-REDRAW pending human promotion")
+        revision = figure.get("revision")
+        if not isinstance(revision, dict):
+            errors.append(f"{figure_id} revision record is required")
+        else:
+            version_id = revision.get("modelVersionId")
+            if not isinstance(version_id, str) or not version_id or version_id in version_ids:
+                errors.append(f"{figure_id} duplicate or missing modelVersionId")
+            else:
+                version_ids.add(version_id)
+            if revision.get("disposition") not in {"RETAINED-DRAFT-INSTANCE", "REVISED-DRAFT-INSTANCE", "SPLIT-DRAFT-INSTANCE", "MERGED-DRAFT-INSTANCE", "RETIRED"}:
+                errors.append(f"{figure_id} invalid revision disposition")
+            if revision.get("revisionType") not in {"REFERENCE-REDRAW", "LAYOUT-ONLY", "SEMANTIC-CANDIDATE", "SPLIT", "MERGE", "RETIRE"}:
+                errors.append(f"{figure_id} invalid revisionType")
+            for field in ("reason", "affectedScope", "relatedContracts", "contractImpact"):
+                if not revision.get(field): errors.append(f"{figure_id} revision.{field} is required")
+            actual_content = model_content_sha256(figure)
+            if revision.get("modelContentSha256") != actual_content:
+                errors.append(f"{figure_id} model content identity is stale")
+            inputs = revision.get("inputIdentity")
+            if not isinstance(inputs, dict) or not all(inputs.get(key) for key in ("startingHead", "sourceSha256", "drawioSha256")):
+                errors.append(f"{figure_id} revision.inputIdentity is incomplete")
+            elif inputs.get("sourceSha256") != figure.get("sourceSha256") or inputs.get("drawioSha256") != figure.get("drawioSha256"):
+                errors.append(f"{figure_id} revision input identity is stale")
+            review = revision.get("semanticReview")
+            if not isinstance(review, dict) or review.get("status") not in {"PENDING-INDEPENDENT-REVIEW", "ACCEPTED", "REJECTED"}:
+                errors.append(f"{figure_id} semanticReview status is invalid")
+            elif review.get("modelContentSha256") != actual_content:
+                errors.append(f"{figure_id} semantic review is not bound to current content")
+            elif review.get("status") == "PENDING-INDEPENDENT-REVIEW" and any(review.get(key) for key in ("reviewedBy", "reviewedAt", "decision")):
+                errors.append(f"{figure_id} pending semantic review cannot claim a decision")
+            elif review.get("status") in {"ACCEPTED", "REJECTED"} and not all(review.get(key) for key in ("reviewedBy", "reviewedAt", "decision")):
+                errors.append(f"{figure_id} completed semantic review requires reviewer, date, and decision")
+            if revision.get("promotionStatus") != "DRAFT-NOT-PROMOTED":
+                errors.append(f"{figure_id} must remain DRAFT-NOT-PROMOTED")
         for key, suffix in (("sourcePuml", ".puml"), ("drawioSource", ".drawio")):
             value = figure.get(key)
             if not isinstance(value, str) or value in paths: errors.append(f"{figure_id} duplicate or missing {key}")
@@ -306,8 +365,6 @@ def validate_manifest(data: dict[str, Any], root: Path | None = None) -> list[st
         if not isinstance(title, str) or not title: errors.append(f"{figure_id} sourceBindings.title is required")
         manual = figure.get("sourceBindings", {}).get("manualReview")
         if not isinstance(manual, list) or not manual or any(not isinstance(v, str) or not v for v in manual): errors.append(f"{figure_id} sourceBindings.manualReview must disclose bounded-parser limits")
-    expected = {f"FIG-CL-TAV-{index:02d}" for index in range(1, 10)}
-    if figure_ids != expected: errors.append(f"figure id set mismatch: {sorted(figure_ids)}")
     return errors
 
 
@@ -465,7 +522,7 @@ def validate_package(root: Path | None = None) -> list[str]:
 
 
 def export_errors(data: dict[str, Any], root: Path | None = None) -> list[str]:
-    """Bind committed review exports to the current Draw.io and caption identities."""
+    """Bind review outputs to one candidate, caption, facet, and measured PDF QA."""
     base = repository_root(root)
     path = base / EXPORT_MANIFEST_RELATIVE
     if not path.is_file():
@@ -476,11 +533,15 @@ def export_errors(data: dict[str, Any], root: Path | None = None) -> list[str]:
         return [f"cannot load model export manifest: {exc}"]
     errors: list[str] = []
     rows = exports.get("figures") if isinstance(exports, dict) else None
-    if not isinstance(exports, dict) or exports.get("schemaVersion") != "1.0" or not isinstance(rows, list):
-        return ["model export manifest requires schemaVersion 1.0 and figures list"]
+    if not isinstance(exports, dict) or exports.get("schemaVersion") != "2.0" or not isinstance(rows, list):
+        return ["model export manifest requires schemaVersion 2.0 and figures list"]
     figures = {row["id"]: row for row in data.get("figures", [])}
-    if {row.get("figureId") for row in rows} != set(figures):
+    row_ids = [row.get("figureId") for row in rows]
+    if len(set(row_ids)) != len(row_ids):
+        errors.append("model export figure ids must be unique")
+    if set(row_ids) != set(figures):
         errors.append("model export figure set differs from model manifest")
+    output_ids: set[str] = set(); output_paths: set[str] = set()
     for row in rows:
         figure_id = row.get("figureId")
         figure = figures.get(figure_id)
@@ -488,27 +549,116 @@ def export_errors(data: dict[str, Any], root: Path | None = None) -> list[str]:
             continue
         if row.get("drawioSha256") != figure.get("drawioSha256"):
             errors.append(f"{figure_id}: export Draw.io identity is stale")
+        revision = figure.get("revision", {})
+        if row.get("modelVersionId") != revision.get("modelVersionId") or row.get("modelContentSha256") != revision.get("modelContentSha256"):
+            errors.append(f"{figure_id}: export candidate identity is stale")
         caption = row.get("caption")
         if not isinstance(caption, str) or hashlib.sha256(caption.encode("utf-8")).hexdigest() != row.get("captionSha256"):
             errors.append(f"{figure_id}: export caption identity is invalid")
+        if isinstance(caption, str) and row.get("reviewBundleSha256") != review_bundle_sha256(figure, caption):
+            errors.append(f"{figure_id}: review bundle identity is stale")
         outputs = row.get("outputs")
-        if not isinstance(outputs, list) or {item.get("format") for item in outputs} != {"pdf", "svg"}:
-            errors.append(f"{figure_id}: PDF and SVG export records are required")
+        if not isinstance(outputs, list):
+            errors.append(f"{figure_id}: outputs must be a list")
             continue
+        if row.get("exportStatus") == "EXPORTED-AND-HASHED" and {item.get("format") for item in outputs if item.get("facet") == "main"} != {"pdf", "svg"}:
+            errors.append(f"{figure_id}: main-facet PDF and SVG export records are required")
         for item in outputs:
+            output_id, output_path = item.get("outputId"), item.get("path")
+            if not isinstance(output_id, str) or not output_id or output_id in output_ids:
+                errors.append(f"{figure_id}: duplicate or missing outputId")
+            else: output_ids.add(output_id)
+            if not isinstance(output_path, str) or output_path in output_paths:
+                errors.append(f"{figure_id}: duplicate or missing output path")
+            else: output_paths.add(output_path)
+            if item.get("figureId") != figure_id or item.get("modelVersionId") != revision.get("modelVersionId"):
+                errors.append(f"{figure_id}: output is assigned to the wrong candidate")
+            if item.get("sourceDrawioSha256") != figure.get("drawioSha256") or item.get("reviewBundleSha256") != row.get("reviewBundleSha256"):
+                errors.append(f"{figure_id}: output provenance identity is stale")
+            if not isinstance(item.get("facet"), str) or not item.get("facet"):
+                errors.append(f"{figure_id}: output facet is required")
             suffix = "." + str(item.get("format", ""))
             try:
-                output = safe_path(item.get("path"), suffix=suffix, root=base)
+                output = safe_path(output_path, suffix=suffix, root=base)
             except ValueError as exc:
                 errors.append(f"{figure_id}: unsafe export path: {exc}")
                 continue
+            if figure_id not in output.name:
+                errors.append(f"{figure_id}: export filename must retain the figure id")
             if not output.is_file():
-                errors.append(f"{figure_id}: missing declared export {item.get('path')}")
+                errors.append(f"{figure_id}: missing declared export {output_path}")
             elif raw_sha256(output) != item.get("rawSha256"):
-                errors.append(f"{figure_id}: raw export identity drift in {item.get('path')}")
-        if row.get("promotionStatus") != "DRAFT-REDRAW" or row.get("finalSizeStatus") not in {"FINAL-SIZE-PENDING", "NEEDS-LAYOUT"}:
+                errors.append(f"{figure_id}: raw export identity drift in {output_path}")
+        qa = row.get("qa")
+        if not isinstance(qa, dict):
+            errors.append(f"{figure_id}: measured PDF QA record is required")
+        else:
+            measured, page_width, intended, placed = (qa.get("measuredMinimumPdfTextPt"), qa.get("pageWidthPt"), qa.get("intendedWidthMm"), qa.get("placedMinimumTextPt"))
+            if not all(isinstance(value, (int, float)) and value > 0 for value in (measured, page_width, intended, placed)):
+                errors.append(f"{figure_id}: PDF text QA must use positive measured point values")
+            else:
+                expected = measured * (intended * 72 / 25.4) / page_width
+                if abs(expected - placed) > 0.002:
+                    errors.append(f"{figure_id}: placed PDF text point calculation is invalid")
+            if qa.get("measurementMethod") != "PDF-TEXT-SPAN-POINT-SIZE":
+                errors.append(f"{figure_id}: QA must use rendered PDF text spans, not Draw.io fontSize")
+        if row.get("semanticStatus") != revision.get("semanticReview", {}).get("status"):
+            errors.append(f"{figure_id}: export semantic status differs from revision review")
+        if row.get("promotionStatus") != "DRAFT-NOT-PROMOTED" or row.get("finalSizeStatus") not in {"TARGET-WIDTH-BELOW-8PT", "NEEDS-LAYOUT-AND-BELOW-8PT", "FINAL-SIZE-PENDING"}:
             errors.append(f"{figure_id}: export status must remain draft with an honest final-size disposition")
+    index = exports.get("readerIndex")
+    if not isinstance(index, dict) or index.get("path") != REVIEW_INDEX_RELATIVE.as_posix():
+        errors.append("controlled reader index path is required")
+    else:
+        try: index_path = safe_path(index.get("path"), suffix=".md", root=base)
+        except ValueError as exc: errors.append(f"unsafe reader index path: {exc}")
+        else:
+            if not index_path.is_file(): errors.append("controlled reader index is missing")
+            elif sha256(index_path) != index.get("textSha256"): errors.append("controlled reader index identity is stale")
     return errors
+
+
+def render_review_index(data: dict[str, Any], exports: dict[str, Any]) -> str:
+    """Create the deterministic reader-facing map without implying scientific approval."""
+    models = {row["id"]: row for row in data["figures"]}
+    lines = [
+        "# CL-TAV model-figure review index", "",
+        "> Controlled draft candidates only. Mechanical checks do not establish semantic correctness, publication readiness, or promotion.", "",
+        "## Check boundary", "",
+        "| Check | Automated | Human decision required |", "| --- | --- | --- |",
+        "| File identity, registered topology, visible labels, output assignment and hashes | Yes | No |",
+        "| Scientific meaning, omissions, downstream contract impact and publication suitability | No | Yes |", "",
+        "## Candidate and output map", "",
+        "| Figure | Version | Disposition | Editable source | Caption | Review outputs | Semantic review | Final-size status | Promotion |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for row in exports["figures"]:
+        figure = models[row["figureId"]]; rev = figure["revision"]
+        source = f"[{Path(figure['drawioSource']).name}](../../../../{figure['drawioSource']})"
+        outputs = ", ".join(f"[{item['format'].upper()}](../../../../{item['path']})" for item in row["outputs"])
+        caption = str(row["caption"]).replace("|", "\\|")
+        lines.append(f"| {row['figureId']} | `{rev['modelVersionId']}` | {rev['disposition']} | {source} | {caption} | {outputs} | {row['semanticStatus']} | {row['finalSizeStatus']} | {row['promotionStatus']} |")
+    lines += ["", "## Deferred publication work", "", "Layout refinement, final manuscript placement, independent semantic approval, and promotion remain separate controlled tasks.", ""]
+    return "\n".join(lines)
+
+
+def write_review_index(data: dict[str, Any], root: Path | None = None) -> None:
+    base = repository_root(root); registry_path = base / EXPORT_MANIFEST_RELATIVE
+    exports = json.loads(registry_path.read_text(encoding="utf-8"))
+    payload = render_review_index(data, exports).encode("utf-8")
+    exports["readerIndex"] = {"path": REVIEW_INDEX_RELATIVE.as_posix(), "textSha256": hashlib.sha256(payload).hexdigest()}
+    registry_before = registry_path.read_bytes(); index_path = base / REVIEW_INDEX_RELATIVE
+    index_before = index_path.read_bytes() if index_path.exists() else None
+    try:
+        registry_path.write_text(json.dumps(exports, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        index_path.parent.mkdir(parents=True, exist_ok=True); index_path.write_bytes(payload)
+        errors = export_errors(data, base)
+        if errors: raise ValueError("; ".join(errors))
+    except Exception:
+        registry_path.write_bytes(registry_before)
+        if index_before is None: index_path.unlink(missing_ok=True)
+        else: index_path.write_bytes(index_before)
+        raise
 
 
 def _tree_bytes(tree: ET.ElementTree) -> bytes:
@@ -554,9 +704,9 @@ def build(data: dict[str, Any], *, missing_only: bool, force: bool, root: Path |
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--build-missing", action="store_true"); parser.add_argument("--force", action="store_true"); parser.add_argument("--check", action="store_true"); parser.add_argument("--summary", action="store_true")
+    parser.add_argument("--build-missing", action="store_true"); parser.add_argument("--force", action="store_true"); parser.add_argument("--check", action="store_true"); parser.add_argument("--summary", action="store_true"); parser.add_argument("--write-review-index", action="store_true")
     args = parser.parse_args()
-    if not any((args.build_missing, args.force, args.check, args.summary)): parser.error("select --build-missing, --force, --check, or --summary")
+    if not any((args.build_missing, args.force, args.check, args.summary, args.write_review_index)): parser.error("select --build-missing, --force, --check, --summary, or --write-review-index")
     try: data = load_manifest()
     except (OSError, json.JSONDecodeError) as exc: print(f"cannot load {MANIFEST_RELATIVE.as_posix()}: {exc}"); return 1
     errors = validate_manifest(data)
@@ -567,6 +717,11 @@ def main() -> int:
     if args.force or args.build_missing:
         result = build(data, missing_only=args.build_missing, force=args.force)
         if result: return result
+    if args.write_review_index:
+        try: write_review_index(data)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"cannot write controlled review index: {exc}"); return 1
+        print(f"wrote {REVIEW_INDEX_RELATIVE.as_posix()}")
     if args.check:
         errors = authority_errors(data)
         for figure in data["figures"]: errors.extend(validate_figure(figure))
@@ -578,7 +733,7 @@ def main() -> int:
         print(f"Model Draw.io check passed: figures={len(data['figures'])}")
     if args.summary:
         print(f"manifest={data['manifestId']} figures={len(data['figures'])} identity={CANONICALIZATION}")
-        for figure in data["figures"]: print(f"{figure['id']} {figure['diagramType']} {figure['status']} entities={len(figure['entities'])} relations={len(figure['relations'])}")
+        for figure in data["figures"]: print(f"{figure['id']} {figure['diagramType']} {figure['status']} semantic={figure['revision']['semanticReview']['status']} entities={len(figure['entities'])} relations={len(figure['relations'])}")
     return 0
 
 

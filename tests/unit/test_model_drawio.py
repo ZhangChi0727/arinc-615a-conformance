@@ -6,6 +6,8 @@ import importlib.util
 import json
 import os
 import shutil
+import subprocess
+import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -46,6 +48,9 @@ def copy_exports(tmp_path: Path, module):
             source_output, target_output = ROOT / output["path"], tmp_path / output["path"]
             target_output.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(source_output, target_output)
+    source_index, target_index = ROOT / module.REVIEW_INDEX_RELATIVE, tmp_path / module.REVIEW_INDEX_RELATIVE
+    target_index.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(source_index, target_index)
     target.write_text(json.dumps(exports, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return exports
 
@@ -64,11 +69,14 @@ def test_repository_package_is_valid() -> None:
     assert load_module().validate_package() == []
 
 
-def test_all_nine_redraws_are_draft_and_source_bound() -> None:
+def test_current_nine_candidates_are_retained_draft_and_source_bound() -> None:
     data = load_module().load_manifest()
     assert len(data["figures"]) == 9
     assert {f["status"] for f in data["figures"]} == {"DRAFT-REDRAW"}
     for figure in data["figures"]:
+        assert figure["revision"]["disposition"] == "RETAINED-DRAFT-INSTANCE"
+        assert figure["revision"]["semanticReview"]["status"] == "PENDING-INDEPENDENT-REVIEW"
+        assert figure["revision"]["promotionStatus"] == "DRAFT-NOT-PROMOTED"
         bindings = figure["sourceBindings"]
         assert set(bindings["objects"]) == {r["id"] for r in figure["groups"] + figure["entities"]}
         assert set(bindings["relations"]) == {r["id"] for r in figure["relations"]}
@@ -456,3 +464,70 @@ def test_export_registry_rejects_caption_change_without_identity_refresh(tmp_pat
     path = tmp_path / module.EXPORT_MANIFEST_RELATIVE
     path.write_text(json.dumps(exports, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     assert any("export caption identity is invalid" in error for error in module.export_errors(data, tmp_path))
+
+
+def test_caption_self_hash_cannot_reuse_old_review_bundle(tmp_path: Path) -> None:
+    module = load_module(); data = copy_package(tmp_path, module); exports = copy_exports(tmp_path, module)
+    row = exports["figures"][0]; row["caption"] += " changed"
+    row["captionSha256"] = hashlib.sha256(row["caption"].encode()).hexdigest()
+    (tmp_path / module.EXPORT_MANIFEST_RELATIVE).write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
+    assert any("review bundle identity is stale" in error for error in module.export_errors(data, tmp_path))
+
+
+def test_changed_candidate_cannot_reuse_old_review_or_exports(tmp_path: Path) -> None:
+    module = load_module(); data = copy_package(tmp_path, module); copy_exports(tmp_path, module)
+    figure = data["figures"][0]; figure["entities"][0]["label"] += " changed"
+    current = module.model_content_sha256(figure); figure["revision"]["modelContentSha256"] = current
+    assert any("semantic review is not bound" in error for error in module.validate_manifest(data))
+    assert any("export candidate identity is stale" in error for error in module.export_errors(data, tmp_path))
+
+
+def test_wrong_figure_output_assignment_is_rejected(tmp_path: Path) -> None:
+    module = load_module(); data = copy_package(tmp_path, module); exports = copy_exports(tmp_path, module)
+    exports["figures"][0]["outputs"][0]["figureId"] = exports["figures"][1]["figureId"]
+    (tmp_path / module.EXPORT_MANIFEST_RELATIVE).write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
+    assert any("wrong candidate" in error for error in module.export_errors(data, tmp_path))
+
+
+def test_registered_candidate_set_is_not_fixed_to_nine(tmp_path: Path) -> None:
+    module = load_module(); data = copy_package(tmp_path, module); exports = copy_exports(tmp_path, module)
+    removed = data["figures"].pop(); exports["figures"] = [r for r in exports["figures"] if r["figureId"] != removed["id"]]
+    payload = module.render_review_index(data, exports).encode()
+    index = tmp_path / module.REVIEW_INDEX_RELATIVE; index.write_bytes(payload)
+    exports["readerIndex"]["textSha256"] = hashlib.sha256(payload).hexdigest()
+    (tmp_path / module.EXPORT_MANIFEST_RELATIVE).write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
+    assert module.validate_manifest(data, tmp_path) == []
+    assert module.export_errors(data, tmp_path) == []
+
+
+def test_pdf_qa_uses_measured_points_and_valid_scaling(tmp_path: Path) -> None:
+    module = load_module(); data = copy_package(tmp_path, module); exports = copy_exports(tmp_path, module)
+    exports["figures"][0]["qa"]["measurementMethod"] = "DRAWIO-FONTSIZE"
+    (tmp_path / module.EXPORT_MANIFEST_RELATIVE).write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
+    assert any("rendered PDF text spans" in error for error in module.export_errors(data, tmp_path))
+
+
+def test_reader_index_closes_editable_caption_output_mapping() -> None:
+    module = load_module(); data = module.load_manifest()
+    exports = json.loads((ROOT / module.EXPORT_MANIFEST_RELATIVE).read_text(encoding="utf-8"))
+    text = (ROOT / module.REVIEW_INDEX_RELATIVE).read_text(encoding="utf-8")
+    assert text == module.render_review_index(data, exports)
+    for row in exports["figures"]:
+        assert row["figureId"] in text and Path(next(f for f in data["figures"] if f["id"] == row["figureId"])["drawioSource"]).name in text
+
+
+@pytest.mark.parametrize("autocrlf", ["true", "false"])
+def test_real_git_checkout_preserves_raw_svg_hashes(tmp_path: Path, autocrlf: str) -> None:
+    module = load_module(); clone = tmp_path / "clone"
+    subprocess.run(["git", "clone", "--no-hardlinks", str(ROOT), str(clone)], check=True, capture_output=True)
+    for relative in (Path(".gitattributes"), SCRIPT.relative_to(ROOT), module.MANIFEST_RELATIVE, module.EXPORT_MANIFEST_RELATIVE, module.REVIEW_INDEX_RELATIVE):
+        target = clone / relative; target.parent.mkdir(parents=True, exist_ok=True); shutil.copyfile(ROOT / relative, target)
+    subprocess.run(["git", "-C", str(clone), "add", ".gitattributes", str(SCRIPT.relative_to(ROOT)), str(module.MANIFEST_RELATIVE), str(module.EXPORT_MANIFEST_RELATIVE), str(module.REVIEW_INDEX_RELATIVE)], check=True)
+    subprocess.run(["git", "-C", str(clone), "-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-m", "test state"], check=True, capture_output=True)
+    subprocess.run(["git", "-C", str(clone), "config", "core.autocrlf", autocrlf], check=True)
+    subprocess.run(["git", "-C", str(clone), "reset", "--hard", "HEAD"], check=True, capture_output=True)
+    result = subprocess.run([sys.executable, str(clone / SCRIPT.relative_to(ROOT)), "--check"], cwd=clone, text=True, capture_output=True)
+    assert result.returncode == 0, result.stdout + result.stderr
+    svg = next((clone / "artifacts/publications/cltav/model-drafts").glob("*.svg")); svg.write_bytes(svg.read_bytes() + b"drift")
+    result = subprocess.run([sys.executable, str(clone / SCRIPT.relative_to(ROOT)), "--check"], cwd=clone, text=True, capture_output=True)
+    assert result.returncode == 1 and "raw export identity drift" in result.stdout
