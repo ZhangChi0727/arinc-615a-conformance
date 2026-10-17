@@ -1157,6 +1157,17 @@ scientific claims are unchanged.
 
 **Status:** Candidate under CR-2026-020; final-head CI and independent review
 required. Reader-figure promotion remains a separate human decision.
+
+### DD-044 boundary addendum — 2026-10-17
+
+The fixed nine-view set and PlantUML-authority wording above are superseded for
+workflow purposes. A model figure is a versioned controlled candidate constrained
+by accepted cross-domain contracts. PlantUML and Draw.io identities support
+traceability but do not prove semantic equality. Retain/revise/split/merge/retire
+decisions, semantic review, downstream migration, final-size acceptance, and
+promotion are explicit and separate. This change retains the current nine draft
+instances and changes no downstream consumer.
+
 ## DD-043 — Separate research-design acceptance from run admission
 
 **Decision:** Accept a finite, reviewable experiment implementation design as
@@ -1780,6 +1791,13 @@ PR #22 所有权。
 
 **状态：** 在 CR-2026-020 下为候选；需要最终 Head CI 和独立评审。reader 图晋级
 仍是单独的人工决定。
+
+### DD-044 边界补充——2026-10-17
+
+上文固定九图及 PlantUML 权威表述在工作流范围内由本补充取代。模型图是受已接受跨域
+合同约束的版本化受控候选；PlantUML 与 Draw.io 身份用于追踪，不证明语义相等。保留／
+修订／拆分／合并／退役、语义评审、下游迁移、最终尺寸验收和晋级均须分别显式记录。
+本次仅保留现有九个草稿实例，不改变方法、算法、工程、CRS／M2、实验或稿件消费者。
 
 ## DD-036——算法呈现层、契约与等价性验收
 

@@ -56,7 +56,7 @@ silently redefine the Core.
 - CR-2026-017 / DD-041 delivered the separately owned, read-only offline capture-to-evidence increment merged as eddec443; its bounded evidence scope remains unchanged.
 - CR-2026-018 / DD-042 integrated accepted literature evidence into bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.
 - PR #23 was independently accepted at Head 04b7c56eb70e458cec46e54bd7b37aaa9185cc7f and squash-merged as 868ee3c3e99bee2bcb0a2aedb206fe15d2a4e0e9; main CI 38864201591 passed. CR-2026-019 / DD-043 remains a bounded design authority, not run admission.
-- CR-2026-020 / DD-044 provides nine editable Draw.io model-redraw candidates under resumed Draft PR #24; PlantUML remains authority, final-size promotion remains pending, and independent re-review is required.
+- CR-2026-020 / DD-044 now governs versioned editable model-figure candidates under Draft PR #24; the current nine are retained, automated checks are explicitly finite, and semantic review, final-size acceptance, downstream migration, and promotion remain pending human decisions.
 - No confirmatory result, Configuration, expanded capability, conformance, submission, baseline or tag is created.
 
 State changes:
@@ -80,7 +80,7 @@ Unchanged boundaries:
 
 ## Next development steps
 
-- Complete PR #24 source binding, visible-semantic, export-identity and native-layout closure, then obtain independent review on its unchanged final Draft Head before any reader-figure promotion.
+- Obtain independent review of PR #24's controlled candidate workflow and unchanged final Draft Head; do not promote reader figures or migrate downstream consumers until the separate human gates close.
 - Keep every experiment run-admission decision OPEN and establish runtime integrity and independent truth before capability or conformance claims; do not start M3 from the accepted design alone.
 - Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth.
 
@@ -111,7 +111,7 @@ Unchanged boundaries:
 - CR-2026-017／DD-041 交付了以 eddec443 合并的只读“捕获到证据”增量；其有界证据范围保持不变。
 - CR-2026-018／DD-042 在不改变算法、接口和实验臂的前提下，把已接受文献证据融入有界 C1／C2 措辞与评价记账。
 - PR #23 已在 Head 04b7c56eb70e458cec46e54bd7b37aaa9185cc7f 获独立接受，并压缩合并为 868ee3c3e99bee2bcb0a2aedb206fe15d2a4e0e9；main CI 38864201591 通过。CR-2026-019／DD-043 仍只是有界设计权威，不是运行准入。
-- CR-2026-020／DD-044 在已恢复的 Draft PR #24 中提供九张可编辑 Draw.io 模型重绘候选；PlantUML 保持权威，最终尺寸晋级仍待处理，并须独立复审。
+- CR-2026-020／DD-044 现用于管理 Draft PR #24 中版本化、可编辑的模型图候选；当前九图保持不变，自动检查边界被明确限定，语义评审、最终尺寸验收、下游迁移与晋级仍须人工决定。
 - 本增量不产生确认性结果、Configuration、扩大能力、符合性、投稿、baseline 或 tag。
 
 状态变化：

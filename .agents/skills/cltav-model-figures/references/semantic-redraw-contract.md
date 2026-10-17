@@ -1,12 +1,12 @@
-# Semantic redraw contract
+# Controlled model-candidate contract
 
 ## Authority order
 
 1. Accepted method, algorithm, CRS/model, and experiment contracts.
-2. The matching `docs/research/publication/models/FIG-CL-TAV-*.puml` file.
+2. The matching `docs/research/publication/models/FIG-CL-TAV-*.puml` candidate input.
 3. Existing controlled graph and generated-artifact registries.
-4. `configs/research/cltav_model_figure_manifest.json`, which is a
-   hash-bound derived redraw inventory and never a second semantic authority.
+4. `configs/research/cltav_model_figure_manifest.json`, a hash-bound candidate
+   inventory and review-state record, not an authority or correctness proof.
 5. Draw.io geometry and style.
 
 If a lower item disagrees with a higher item, fix or withdraw the lower item.
@@ -47,7 +47,7 @@ platform checkout conversion but not content drift. After an
 intentional manual layout edit, review the rendered result and deliberately
 refresh `drawioSha256`; unexplained hash drift is a failed integrity check.
 
-The manifest inventory is closed: rendered or semantic cells not declared in
+Each registered candidate inventory is closed: rendered or semantic cells not declared in
 the inventory are errors. Source bindings also retain object parents and
 relation endpoints, and the checker extracts complete title/note units plus
 directly expressed relation endpoints from the PlantUML source. These checks
@@ -56,13 +56,18 @@ implicit activity order or other meaning outside the extracted subset. Short vis
 an explicit note or legend that restores the interpretation.
 
 All paths are repository-relative forward-slash paths to ordinary files.
-Generation rejects traversal and link/reparse escapes, preflights all nine
-authorities and generated identities before writing, stages on the repository
+Generation rejects traversal and link/reparse escapes, preflights the current
+registered candidate set (whose size is not fixed) before writing, stages on the repository
 volume, and restores every prior output if installation fails.
 
 ## Redraw lifecycle
 
-Use `DRAFT-REDRAW` until all gates below pass:
+Retain, revise, split, merge, or retire a candidate only through a versioned
+revision record. Layout-only work and semantic proposals must be distinguished.
+Any new meaning remains pending until a human reviews its effect on method,
+algorithm, engineering, CRS, M2, experiment, and manuscript consumers.
+
+Use `DRAFT-REDRAW` and `DRAFT-NOT-PROMOTED` until all gates below pass:
 
 1. source hash current;
 2. semantic manifest complete;

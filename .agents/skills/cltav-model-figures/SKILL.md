@@ -1,14 +1,15 @@
 ---
 name: cltav-model-figures
-description: Redraw, revise, export, or audit CL-TAV architecture, workflow, state, sequence, parametric, and experiment model figures for the IEEE TAES manuscript while preserving the controlled PlantUML semantics. Use for FIG-CL-TAV model diagrams; use cltav-research-figures for data-derived plots instead.
+description: Create, revise, export, or audit controlled CL-TAV architecture, workflow, state, sequence, parametric, and experiment model-figure candidates for the IEEE TAES manuscript. Use for FIG-CL-TAV model diagrams; use cltav-research-figures for data-derived plots instead.
 ---
 
 # CL-TAV Model Figures
 
-Use the controlled PlantUML source and its registered model identity as the
-semantic authority. Draw.io is the editable publication view, not a second
-method or algorithm. A prettier figure is invalid if it adds, removes,
-reverses, weakens, or relabels a scientific relationship.
+Treat accepted method, algorithm, CRS/model, experiment, and manuscript
+contracts as constraints. PlantUML is a traceable candidate input, and Draw.io
+is an editable candidate source. Neither file nor an automated comparison is a
+proof of correctness. New semantics require a new version, recorded impact,
+independent human review, and explicit downstream migration.
 
 ## Route the task
 
@@ -47,11 +48,12 @@ reverses, weakens, or relabels a scientific relationship.
    must never bypass the registered checks. These checks cover declared source
    units, topology, labels, visibility, identities, and review exports; they do
    not prove full PlantUML/Draw.io semantic equivalence. Generation preflights the complete
-   nine-figure batch and installs it transactionally; any failure must leave
+   registered candidate set and installs it transactionally; any failure must leave
    every prior output byte unchanged.
-6. Export SVG and PDF when Draw.io CLI is available. Keep the existing reader
-   SVG authoritative until the replacement passes semantic checks, final-size
-   visual inspection, manuscript insertion inspection, and human review.
+6. Export SVG and PDF when Draw.io CLI is available. Bind every output to its
+   figure ID, model version, Draw.io identity, caption bundle, and facet. Keep
+   candidates unpromoted until semantic review, final-size inspection, and
+   manuscript insertion review are separately complete.
 7. Inspect a rendered preview at IEEE single-column width and, when intended,
    double-column width. Check clipping, overlaps, edge crossings, arrow
    direction, guard placement, grayscale meaning, font embedding, and
@@ -63,8 +65,12 @@ reverses, weakens, or relabels a scientific relationship.
 
 ## Non-negotiable boundaries
 
-- PlantUML remains the semantic authority unless a separately reviewed change
-  explicitly changes that policy.
+- Do not claim that PlantUML, Draw.io, or the checker alone is the semantic
+  authority or proves equivalence. Accepted cross-domain contracts constrain
+  every candidate.
+- Figures may be retained, revised, split, merged, or retired. Record the
+  disposition, reason, affected scope, related contracts, content identity,
+  review identity, and promotion status; never assume a fixed count of nine.
 - Never use image generation to decide nodes, edges, guards, states, ports,
   requirements, evidence status, or algorithm behaviour. A raster concept may
   inspire spacing only after the semantic inventory is frozen.

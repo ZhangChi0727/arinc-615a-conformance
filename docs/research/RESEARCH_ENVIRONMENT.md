@@ -19,7 +19,8 @@ accountability.
 | `configs/research/literature/evidence_ledger.csv` | Source proposition, locator, access level, and verification state |
 | `configs/research/literature/claim_citation_ledger.csv` | Mapping from project or manuscript claims to extracted evidence |
 | `configs/research/quantitative_figure_manifest.json` | Reproducibility contract for data-derived publication figures |
-| `configs/research/cltav_model_figure_manifest.json` | Hash-bound derived inventory for editable Draw.io redraws of the controlled PlantUML model figures |
+| `configs/research/cltav_model_figure_manifest.json` | Versioned, hash-bound inventory and review state for controlled editable model-figure candidates |
+| `artifacts/publications/cltav/model-drafts/MODEL_FIGURE_REVIEW_INDEX.md` | Reader-facing map from each candidate and caption to editable source and review outputs |
 | `configs/research/cltav_experiment_design.json` | Candidate finite-population, scenario, metric, analysis and dependency contract; not run authority |
 | `docs/research/EXPERIMENT_IMPLEMENTATION_SPEC.md` | Bilingual human view whose shared tables are generated from the design JSON |
 | `docs/research/publication/drafts/taes-cltav/references.bib` | Current TAES draft bibliography |
@@ -103,14 +104,16 @@ records source data, generator, parameters, random seed when applicable, output
 paths, hashes, and review state. Prefer vector PDF/SVG for publication; use PNG
 only when raster output is necessary.
 
-The existing PlantUML architecture figures remain semantic authority under
-`cltav_figure_graphs.json` and `cltav_owned_generated_artifacts.json`. Editable
-Draw.io redraws are governed by the project skill `cltav-model-figures` and the
-hash-bound derived inventory `cltav_model_figure_manifest.json`. A Draw.io file
-is a publication view, not a second algorithm or model authority, and it does
-not replace a reader SVG until semantic checks, final-size rendering, manuscript
-insertion inspection, and human review pass. The quantitative manifest remains
-separate and does not duplicate either authority.
+Accepted cross-domain contracts constrain model-figure meaning. PlantUML files
+are traceable inputs and Draw.io files are editable controlled candidates;
+neither is an automated semantic authority or correctness proof. The project
+skill `cltav-model-figures` and `cltav_model_figure_manifest.json` record
+candidate versions, dispositions, input/content identities, contract impact,
+review state, and promotion state. The current nine instances are retained, but
+the workflow permits reviewed revision, split, merge, or retirement without a
+fixed count. No candidate replaces a reader figure or migrates a downstream
+consumer until the relevant human decisions are explicit. The quantitative
+manifest remains separate.
 
 The Draw.io inventory uses `UTF8-LF-v1` canonical text identity and finite
 source bindings for every title, object, relation, and interpretation note.
@@ -118,9 +121,13 @@ The review-export registry `cltav_model_figure_exports.json` binds each PDF and
 SVG byte identity to its Draw.io identity and caption. The shared validator
 checks the declared finite source subset and real XML topology (including vertex/edge flags,
 parents, endpoints, arrow polarity, guard references, and undeclared cells),
-rejects path/link escapes, and regenerates the nine-file batch transactionally.
+rejects path/link escapes, and regenerates the registered candidate set transactionally.
 It does not prove semantic equivalence across PlantUML and Draw.io; implicit
 activity order, meaning and geometry remain independent review obligations.
+Each export is bound to a figure ID, version, editable-source identity, caption
+bundle, and facet. SVGs use raw-byte identities under a `-text` Git attribute,
+and final-size evidence uses measured PDF text spans and PDF page width rather
+than Draw.io source `fontSize`.
 Generated SVG/PDF files under `artifacts/publications/cltav/model-drafts/`
 remain review exports while status is `DRAFT-REDRAW`; they do not replace the
 reader SVGs or establish manuscript acceptance.

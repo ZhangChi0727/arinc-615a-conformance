@@ -51,8 +51,11 @@ arrow styles must have declared meanings.
   clipping, overlaps, off-canvas objects, arrowheads, and grayscale meaning.
 - Dense control-flow views may use compact guard references only when an
   adjacent legend expands every guard and preserves mutually exclusive cases.
-- Report the calculated final point size from canvas width and publication
-  width; source font size alone is not a final-size readability result.
+- Measure text spans in the exported PDF, record the PDF page width in points,
+  and calculate placed text size from the intended physical width. Draw.io
+  `fontSize` and source canvas dimensions are not PDF text measurements.
+- Report semantic review, export integrity, final-size readability, visual
+  inspection, and promotion as separate statuses.
 - Preserve repository-relative paths and SHA-256 identities in the manifest.
 
 Official reference points:
