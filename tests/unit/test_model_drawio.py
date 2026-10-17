@@ -65,6 +65,19 @@ def cell(tree: ET.ElementTree, cell_id: str):
     return next(item for item in tree.getroot().iter("mxCell") if item.get("id") == cell_id)
 
 
+def make_directory_link(link: Path, target: Path) -> None:
+    if os.name == "nt":
+        result = subprocess.run(["cmd", "/c", "mklink", "/J", str(link), str(target)], capture_output=True, text=True)
+        assert result.returncode == 0, result.stdout + result.stderr
+    else:
+        os.symlink(target, link, target_is_directory=True)
+
+
+def remove_directory_link(link: Path) -> None:
+    if os.name == "nt": os.rmdir(link)
+    else: link.unlink()
+
+
 def test_repository_package_is_valid() -> None:
     assert load_module().validate_package() == []
 
@@ -607,6 +620,41 @@ def test_needs_render_candidate_is_legal_and_visible_in_reader_index(tmp_path: P
     (tmp_path / module.EXPORT_MANIFEST_RELATIVE).write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
     assert module.export_errors(data, tmp_path) == []
     assert b"No current export" in payload and b"fresh exports are pending" in payload
+
+
+@pytest.mark.parametrize("target_kind", ["registry-parent", "index-parent", "staging-parent"])
+@pytest.mark.parametrize("arguments", [["--write-review-index"], ["--write-review-index", "--check"]])
+def test_index_writer_rejects_directory_link_escape_without_external_writes(
+    tmp_path: Path, monkeypatch, capsys, target_kind: str, arguments: list[str]
+) -> None:
+    module = load_module(); root = tmp_path / "fixture"; root.mkdir()
+    data = copy_package(root, module); exports = copy_exports(root, module)
+    row = exports["figures"][0]; figure = data["figures"][0]
+    row["caption"] += " revised"; row["captionSha256"] = hashlib.sha256(row["caption"].encode()).hexdigest()
+    row["reviewBundleSha256"] = module.review_bundle_sha256(figure, row["caption"])
+    for output in row["outputs"]: output["reviewBundleSha256"] = row["reviewBundleSha256"]
+    registry = root / module.EXPORT_MANIFEST_RELATIVE; registry.write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
+    index = root / module.REVIEW_INDEX_RELATIVE
+    if target_kind == "registry-parent":
+        link = registry.parent; outside = tmp_path / "outside-research"; shutil.move(str(link), str(outside))
+    elif target_kind == "index-parent":
+        link = index.parent; outside = tmp_path / "outside-model-drafts"; shutil.move(str(link), str(outside))
+    else:
+        link = root / "tmp"; outside = tmp_path / "outside-staging"; outside.mkdir()
+    make_directory_link(link, outside)
+    external_registry = outside / registry.name if target_kind == "registry-parent" else registry
+    external_index = outside / index.name if target_kind == "index-parent" else index
+    before_registry = external_registry.read_bytes(); before_index = external_index.read_bytes()
+    try:
+        monkeypatch.setattr(module, "ROOT", root)
+        monkeypatch.setattr(module.sys, "argv", ["model_drawio.py", *arguments])
+        assert module.main() == 1
+        diagnostic = capsys.readouterr().out
+        assert "outside repository" in diagnostic or "link/reparse" in diagnostic
+        assert external_registry.read_bytes() == before_registry
+        assert external_index.read_bytes() == before_index
+    finally:
+        remove_directory_link(link)
 
 
 @pytest.mark.parametrize("autocrlf", ["true", "false"])

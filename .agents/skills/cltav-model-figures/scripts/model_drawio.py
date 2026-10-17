@@ -113,7 +113,10 @@ def safe_path(relative: object, *, suffix: str, root: Path | None = None) -> Pat
     if posix.suffix != suffix:
         raise ValueError(f"expected {suffix} path: {relative}")
     target = base.joinpath(*posix.parts)
-    target.resolve(strict=False).relative_to(base)
+    try:
+        target.resolve(strict=False).relative_to(base)
+    except ValueError as exc:
+        raise ValueError(f"path resolves outside repository: {relative}") from exc
     cursor = target
     while cursor != base:
         if cursor.exists() or cursor.is_symlink():
@@ -126,6 +129,35 @@ def safe_path(relative: object, *, suffix: str, root: Path | None = None) -> Pat
                 raise ValueError(f"target is not an ordinary file: {relative}")
             if cursor != target and not stat.S_ISDIR(info.st_mode):
                 raise ValueError(f"parent is not a directory: {relative}")
+        cursor = cursor.parent
+    return target
+
+
+def safe_directory(relative: object, *, root: Path | None = None) -> Path:
+    """Resolve a repository-relative directory without crossing links or reparse points."""
+    base = repository_root(root)
+    if not isinstance(relative, str) or not relative or "\\" in relative:
+        raise ValueError("directory must be a nonempty forward-slash repository-relative string")
+    posix, windows = PurePosixPath(relative), PureWindowsPath(relative)
+    if posix.is_absolute() or windows.is_absolute() or windows.drive or ":" in relative:
+        raise ValueError(f"absolute/drive directory is forbidden: {relative}")
+    if any(part in {"", ".", ".."} for part in relative.split("/")):
+        raise ValueError(f"directory traversal is forbidden: {relative}")
+    target = base.joinpath(*posix.parts)
+    try:
+        target.resolve(strict=False).relative_to(base)
+    except ValueError as exc:
+        raise ValueError(f"directory resolves outside repository: {relative}") from exc
+    cursor = target
+    while cursor != base:
+        if cursor.exists() or cursor.is_symlink():
+            info = cursor.lstat()
+            attributes = getattr(info, "st_file_attributes", 0)
+            reparse = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 1024)
+            if stat.S_ISLNK(info.st_mode) or attributes & reparse:
+                raise ValueError(f"link/reparse directory traversal is forbidden: {relative}")
+            if not stat.S_ISDIR(info.st_mode):
+                raise ValueError(f"directory path contains a non-directory: {relative}")
         cursor = cursor.parent
     return target
 
@@ -692,7 +724,10 @@ def render_review_index(data: dict[str, Any], exports: dict[str, Any]) -> str:
 
 
 def write_review_index(data: dict[str, Any], root: Path | None = None) -> None:
-    base = repository_root(root); registry_path = base / EXPORT_MANIFEST_RELATIVE
+    base = repository_root(root)
+    registry_path = safe_path(EXPORT_MANIFEST_RELATIVE.as_posix(), suffix=".json", root=base)
+    index_path = safe_path(REVIEW_INDEX_RELATIVE.as_posix(), suffix=".md", root=base)
+    staging_parent = safe_directory("tmp", root=base)
     exports = json.loads(registry_path.read_text(encoding="utf-8"))
     preflight = validate_manifest(data, base) + authority_errors(data, base)
     for figure in data.get("figures", []):
@@ -702,13 +737,13 @@ def write_review_index(data: dict[str, Any], root: Path | None = None) -> None:
         raise ValueError("index publish preflight failed: " + "; ".join(preflight))
     payload = render_review_index(data, exports).encode("utf-8")
     exports["readerIndex"] = {"path": REVIEW_INDEX_RELATIVE.as_posix(), "textSha256": hashlib.sha256(payload).hexdigest()}
-    registry_before = registry_path.read_bytes(); index_path = base / REVIEW_INDEX_RELATIVE
+    registry_before = registry_path.read_bytes()
     index_before = index_path.read_bytes() if index_path.exists() else None
     candidate_errors = export_errors(data, base, exports_override=exports, index_bytes_override=payload)
     if candidate_errors:
         raise ValueError("index publish candidate is invalid: " + "; ".join(candidate_errors))
     try:
-        staging_parent = base / "tmp"; staging_parent.mkdir(parents=True, exist_ok=True)
+        staging_parent.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(prefix="cltav-model-index-", dir=staging_parent) as tmp:
             staged_registry = Path(tmp) / "exports.json"
             staged_index = Path(tmp) / "review-index.md"
