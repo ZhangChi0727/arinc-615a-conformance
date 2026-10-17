@@ -7,6 +7,7 @@
 | Check | Automated | Human decision required |
 | --- | --- | --- |
 | File identity, registered topology, visible labels, output assignment and hashes | Yes | No |
+| Recorded PDF measurement method, positive point values, and placement formula | Yes | PDF span extraction is performed separately with the named tool |
 | Scientific meaning, omissions, downstream contract impact and publication suitability | No | Yes |
 
 ## Candidate and output map

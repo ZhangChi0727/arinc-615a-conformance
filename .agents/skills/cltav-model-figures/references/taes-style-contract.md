@@ -54,6 +54,9 @@ arrow styles must have declared meanings.
 - Measure text spans in the exported PDF, record the PDF page width in points,
   and calculate placed text size from the intended physical width. Draw.io
   `fontSize` and source canvas dimensions are not PDF text measurements.
+- Record the extraction tool and method. The current production checker validates
+  the artifact hash, recorded values, method label, and scaling formula; it does
+  not itself reopen the PDF and repeat span extraction.
 - Report semantic review, export integrity, final-size readability, visual
   inspection, and promotion as separate statuses.
 - Preserve repository-relative paths and SHA-256 identities in the manifest.

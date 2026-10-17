@@ -521,16 +521,27 @@ def validate_package(root: Path | None = None) -> list[str]:
     return errors
 
 
-def export_errors(data: dict[str, Any], root: Path | None = None) -> list[str]:
+def export_errors(
+    data: dict[str, Any],
+    root: Path | None = None,
+    *,
+    exports_override: dict[str, Any] | None = None,
+    index_bytes_override: bytes | None = None,
+    validate_index: bool = True,
+    check_index_freshness: bool = True,
+) -> list[str]:
     """Bind review outputs to one candidate, caption, facet, and measured PDF QA."""
     base = repository_root(root)
-    path = base / EXPORT_MANIFEST_RELATIVE
-    if not path.is_file():
-        return [f"missing model export manifest {EXPORT_MANIFEST_RELATIVE.as_posix()}"]
-    try:
-        exports = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        return [f"cannot load model export manifest: {exc}"]
+    if exports_override is None:
+        path = base / EXPORT_MANIFEST_RELATIVE
+        if not path.is_file():
+            return [f"missing model export manifest {EXPORT_MANIFEST_RELATIVE.as_posix()}"]
+        try:
+            exports = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            return [f"cannot load model export manifest: {exc}"]
+    else:
+        exports = exports_override
     errors: list[str] = []
     rows = exports.get("figures") if isinstance(exports, dict) else None
     if not isinstance(exports, dict) or exports.get("schemaVersion") != "2.0" or not isinstance(rows, list):
@@ -557,12 +568,29 @@ def export_errors(data: dict[str, Any], root: Path | None = None) -> list[str]:
             errors.append(f"{figure_id}: export caption identity is invalid")
         if isinstance(caption, str) and row.get("reviewBundleSha256") != review_bundle_sha256(figure, caption):
             errors.append(f"{figure_id}: review bundle identity is stale")
+        export_status = row.get("exportStatus")
+        if export_status not in {"EXPORTED-AND-HASHED", "NEEDS-RENDER"}:
+            errors.append(f"{figure_id}: unsupported or missing exportStatus")
         outputs = row.get("outputs")
         if not isinstance(outputs, list):
             errors.append(f"{figure_id}: outputs must be a list")
             continue
-        if row.get("exportStatus") == "EXPORTED-AND-HASHED" and {item.get("format") for item in outputs if item.get("facet") == "main"} != {"pdf", "svg"}:
-            errors.append(f"{figure_id}: main-facet PDF and SVG export records are required")
+        if export_status == "NEEDS-RENDER":
+            if outputs:
+                errors.append(f"{figure_id}: NEEDS-RENDER cannot claim current outputs")
+            if not isinstance(row.get("exportDispositionReason"), str) or not row.get("exportDispositionReason", "").strip():
+                errors.append(f"{figure_id}: NEEDS-RENDER requires exportDispositionReason")
+        elif export_status == "EXPORTED-AND-HASHED":
+            if not outputs:
+                errors.append(f"{figure_id}: EXPORTED-AND-HASHED requires declared outputs")
+            facets: dict[str, set[str]] = {}
+            for item in outputs:
+                facet = item.get("facet")
+                if isinstance(facet, str) and facet:
+                    facets.setdefault(facet, set()).add(str(item.get("format")))
+            for facet, formats in facets.items():
+                if formats != {"pdf", "svg"}:
+                    errors.append(f"{figure_id}: exported facet {facet!r} requires PDF and SVG")
         for item in outputs:
             output_id, output_path = item.get("outputId"), item.get("path")
             if not isinstance(output_id, str) or not output_id or output_id in output_ids:
@@ -590,9 +618,9 @@ def export_errors(data: dict[str, Any], root: Path | None = None) -> list[str]:
             elif raw_sha256(output) != item.get("rawSha256"):
                 errors.append(f"{figure_id}: raw export identity drift in {output_path}")
         qa = row.get("qa")
-        if not isinstance(qa, dict):
+        if export_status == "EXPORTED-AND-HASHED" and not isinstance(qa, dict):
             errors.append(f"{figure_id}: measured PDF QA record is required")
-        else:
+        elif export_status == "EXPORTED-AND-HASHED":
             measured, page_width, intended, placed = (qa.get("measuredMinimumPdfTextPt"), qa.get("pageWidthPt"), qa.get("intendedWidthMm"), qa.get("placedMinimumTextPt"))
             if not all(isinstance(value, (int, float)) and value > 0 for value in (measured, page_width, intended, placed)):
                 errors.append(f"{figure_id}: PDF text QA must use positive measured point values")
@@ -604,17 +632,35 @@ def export_errors(data: dict[str, Any], root: Path | None = None) -> list[str]:
                 errors.append(f"{figure_id}: QA must use rendered PDF text spans, not Draw.io fontSize")
         if row.get("semanticStatus") != revision.get("semanticReview", {}).get("status"):
             errors.append(f"{figure_id}: export semantic status differs from revision review")
-        if row.get("promotionStatus") != "DRAFT-NOT-PROMOTED" or row.get("finalSizeStatus") not in {"TARGET-WIDTH-BELOW-8PT", "NEEDS-LAYOUT-AND-BELOW-8PT", "FINAL-SIZE-PENDING"}:
+        allowed_final = {"TARGET-WIDTH-BELOW-8PT", "NEEDS-LAYOUT-AND-BELOW-8PT", "FINAL-SIZE-PENDING"}
+        if row.get("promotionStatus") != "DRAFT-NOT-PROMOTED" or row.get("finalSizeStatus") not in allowed_final:
             errors.append(f"{figure_id}: export status must remain draft with an honest final-size disposition")
     index = exports.get("readerIndex")
+    if not validate_index:
+        return errors
     if not isinstance(index, dict) or index.get("path") != REVIEW_INDEX_RELATIVE.as_posix():
         errors.append("controlled reader index path is required")
     else:
         try: index_path = safe_path(index.get("path"), suffix=".md", root=base)
         except ValueError as exc: errors.append(f"unsafe reader index path: {exc}")
         else:
-            if not index_path.is_file(): errors.append("controlled reader index is missing")
-            elif sha256(index_path) != index.get("textSha256"): errors.append("controlled reader index identity is stale")
+            actual_index: bytes | None
+            if index_bytes_override is not None:
+                actual_index = index_bytes_override
+            elif index_path.is_file():
+                actual_index = index_path.read_bytes()
+            else:
+                actual_index = None
+            if actual_index is None:
+                errors.append("controlled reader index is missing")
+            else:
+                canonical_index = canonical_text(actual_index)
+                if hashlib.sha256(canonical_index).hexdigest() != index.get("textSha256"):
+                    errors.append("controlled reader index identity is stale")
+                if check_index_freshness:
+                    expected_index = canonical_text(render_review_index(data, exports).encode("utf-8"))
+                    if canonical_index != expected_index:
+                        errors.append("controlled reader index content is stale for current candidates and exports")
     return errors
 
 
@@ -627,6 +673,7 @@ def render_review_index(data: dict[str, Any], exports: dict[str, Any]) -> str:
         "## Check boundary", "",
         "| Check | Automated | Human decision required |", "| --- | --- | --- |",
         "| File identity, registered topology, visible labels, output assignment and hashes | Yes | No |",
+        "| Recorded PDF measurement method, positive point values, and placement formula | Yes | PDF span extraction is performed separately with the named tool |",
         "| Scientific meaning, omissions, downstream contract impact and publication suitability | No | Yes |", "",
         "## Candidate and output map", "",
         "| Figure | Version | Disposition | Editable source | Caption | Review outputs | Semantic review | Final-size status | Promotion |",
@@ -636,6 +683,8 @@ def render_review_index(data: dict[str, Any], exports: dict[str, Any]) -> str:
         figure = models[row["figureId"]]; rev = figure["revision"]
         source = f"[{Path(figure['drawioSource']).name}](../../../../{figure['drawioSource']})"
         outputs = ", ".join(f"[{item['format'].upper()}](../../../../{item['path']})" for item in row["outputs"])
+        if not outputs:
+            outputs = "No current export — " + str(row.get("exportDispositionReason", "render pending"))
         caption = str(row["caption"]).replace("|", "\\|")
         lines.append(f"| {row['figureId']} | `{rev['modelVersionId']}` | {rev['disposition']} | {source} | {caption} | {outputs} | {row['semanticStatus']} | {row['finalSizeStatus']} | {row['promotionStatus']} |")
     lines += ["", "## Deferred publication work", "", "Layout refinement, final manuscript placement, independent semantic approval, and promotion remain separate controlled tasks.", ""]
@@ -645,15 +694,29 @@ def render_review_index(data: dict[str, Any], exports: dict[str, Any]) -> str:
 def write_review_index(data: dict[str, Any], root: Path | None = None) -> None:
     base = repository_root(root); registry_path = base / EXPORT_MANIFEST_RELATIVE
     exports = json.loads(registry_path.read_text(encoding="utf-8"))
+    preflight = validate_manifest(data, base) + authority_errors(data, base)
+    for figure in data.get("figures", []):
+        preflight.extend(validate_figure(figure, base))
+    preflight.extend(export_errors(data, base, exports_override=exports, validate_index=False))
+    if preflight:
+        raise ValueError("index publish preflight failed: " + "; ".join(preflight))
     payload = render_review_index(data, exports).encode("utf-8")
     exports["readerIndex"] = {"path": REVIEW_INDEX_RELATIVE.as_posix(), "textSha256": hashlib.sha256(payload).hexdigest()}
     registry_before = registry_path.read_bytes(); index_path = base / REVIEW_INDEX_RELATIVE
     index_before = index_path.read_bytes() if index_path.exists() else None
+    candidate_errors = export_errors(data, base, exports_override=exports, index_bytes_override=payload)
+    if candidate_errors:
+        raise ValueError("index publish candidate is invalid: " + "; ".join(candidate_errors))
     try:
-        registry_path.write_text(json.dumps(exports, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        index_path.parent.mkdir(parents=True, exist_ok=True); index_path.write_bytes(payload)
-        errors = export_errors(data, base)
-        if errors: raise ValueError("; ".join(errors))
+        staging_parent = base / "tmp"; staging_parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="cltav-model-index-", dir=staging_parent) as tmp:
+            staged_registry = Path(tmp) / "exports.json"
+            staged_index = Path(tmp) / "review-index.md"
+            staged_registry.write_text(json.dumps(exports, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            staged_index.write_bytes(payload)
+            index_path.parent.mkdir(parents=True, exist_ok=True)
+            os.replace(staged_registry, registry_path)
+            os.replace(staged_index, index_path)
     except Exception:
         registry_path.write_bytes(registry_before)
         if index_before is None: index_path.unlink(missing_ok=True)

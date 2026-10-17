@@ -11,9 +11,9 @@
 
 If a lower item disagrees with a higher item, fix or withdraw the lower item.
 
-## Equality rules
+## Representation-preserving edits and semantic revisions
 
-Every Draw.io redraw must preserve:
+A representation-preserving redraw of a selected model version must preserve:
 
 - all registered semantic entities and their exact manuscript terminology;
 - directed source/target pairs, including reverse observation paths;
@@ -24,10 +24,17 @@ Every Draw.io redraw must preserve:
 - notes that bound interpretation, including `NOT-ESTABLISHED`,
   evaluator-only, no-unrun-numbers, and notation-only disclaimers.
 
-Permitted changes are geometry, whitespace, alignment, font, line routing,
+For that representation-preserving mode, permitted changes are geometry, whitespace, alignment, font, line routing,
 non-semantic grouping, and redundant visual cues. A label may be shortened only
 when the manifest retains the exact semantic label and the caption or legend
 defines the abbreviation.
+
+A semantic model revision follows a different path: update the candidate source
+and mappings, assign a new content/version identity, record the changed scope and
+contract impact, and leave semantic review pending. This workflow does not require
+an unchanged meaning merely because an earlier PlantUML file exists. Additional
+coordination is required only when the proposal changes an accepted downstream
+method, algorithm, engineering, CRS/M2, experiment, or manuscript contract.
 
 ## Stable Draw.io identities
 

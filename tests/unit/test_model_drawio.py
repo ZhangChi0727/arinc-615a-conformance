@@ -516,6 +516,99 @@ def test_reader_index_closes_editable_caption_output_mapping() -> None:
         assert row["figureId"] in text and Path(next(f for f in data["figures"] if f["id"] == row["figureId"])["drawioSource"]).name in text
 
 
+def test_stale_reader_index_is_rejected_after_legal_caption_rebind(tmp_path: Path) -> None:
+    module = load_module(); data = copy_package(tmp_path, module); exports = copy_exports(tmp_path, module)
+    row = exports["figures"][0]; figure = data["figures"][0]
+    row["caption"] += " revised"
+    row["captionSha256"] = hashlib.sha256(row["caption"].encode()).hexdigest()
+    row["reviewBundleSha256"] = module.review_bundle_sha256(figure, row["caption"])
+    for output in row["outputs"]: output["reviewBundleSha256"] = row["reviewBundleSha256"]
+    registry = tmp_path / module.EXPORT_MANIFEST_RELATIVE
+    registry.write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
+    errors = module.export_errors(data, tmp_path)
+    assert any("content is stale" in error for error in errors)
+    module.write_review_index(data, tmp_path)
+    assert module.export_errors(data, tmp_path) == []
+
+
+@pytest.mark.parametrize("damage", ["missing-source", "invalid-drawio"])
+def test_index_writer_preflights_complete_inputs_without_writing(tmp_path: Path, damage: str) -> None:
+    module = load_module(); data = copy_package(tmp_path, module); copy_exports(tmp_path, module)
+    registry = tmp_path / module.EXPORT_MANIFEST_RELATIVE; index = tmp_path / module.REVIEW_INDEX_RELATIVE
+    before = registry.read_bytes(), index.read_bytes()
+    figure = data["figures"][0]
+    if damage == "missing-source":
+        (tmp_path / figure["sourcePuml"]).unlink()
+    else:
+        (tmp_path / figure["drawioSource"]).write_text("not XML", encoding="utf-8")
+    with pytest.raises(ValueError, match="preflight failed"):
+        module.write_review_index(data, tmp_path)
+    assert (registry.read_bytes(), index.read_bytes()) == before
+
+
+@pytest.mark.parametrize("arguments", [["--write-review-index"], ["--write-review-index", "--check"]])
+def test_index_writer_cli_failure_never_publishes_before_check(tmp_path: Path, monkeypatch, arguments: list[str]) -> None:
+    module = load_module(); data = copy_package(tmp_path, module); copy_exports(tmp_path, module)
+    registry = tmp_path / module.EXPORT_MANIFEST_RELATIVE; index = tmp_path / module.REVIEW_INDEX_RELATIVE
+    before = registry.read_bytes(), index.read_bytes()
+    (tmp_path / data["figures"][0]["sourcePuml"]).unlink()
+    monkeypatch.setattr(module, "ROOT", tmp_path)
+    monkeypatch.setattr(module.sys, "argv", ["model_drawio.py", *arguments])
+    assert module.main() == 1
+    assert (registry.read_bytes(), index.read_bytes()) == before
+
+
+@pytest.mark.parametrize("first_publication", [False, True])
+def test_index_writer_rolls_back_both_files_on_second_install_failure(tmp_path: Path, monkeypatch, first_publication: bool) -> None:
+    module = load_module(); data = copy_package(tmp_path, module); exports = copy_exports(tmp_path, module)
+    registry = tmp_path / module.EXPORT_MANIFEST_RELATIVE; index = tmp_path / module.REVIEW_INDEX_RELATIVE
+    row = exports["figures"][0]; figure = data["figures"][0]
+    row["caption"] += " revised"; row["captionSha256"] = hashlib.sha256(row["caption"].encode()).hexdigest()
+    row["reviewBundleSha256"] = module.review_bundle_sha256(figure, row["caption"])
+    for output in row["outputs"]: output["reviewBundleSha256"] = row["reviewBundleSha256"]
+    registry.write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
+    if first_publication: index.unlink()
+    before_registry = registry.read_bytes(); before_index = index.read_bytes() if index.exists() else None
+    real_replace, calls = module.os.replace, 0
+    def fail_second(source, target):
+        nonlocal calls
+        calls += 1
+        if calls == 2: raise OSError("injected second-file failure")
+        return real_replace(source, target)
+    monkeypatch.setattr(module.os, "replace", fail_second)
+    with pytest.raises(OSError, match="second-file"):
+        module.write_review_index(data, tmp_path)
+    assert registry.read_bytes() == before_registry
+    assert (index.read_bytes() if index.exists() else None) == before_index
+
+
+@pytest.mark.parametrize("mutation", ["bogus", "missing", "exported-empty"])
+def test_export_status_contract_is_closed(tmp_path: Path, mutation: str) -> None:
+    module = load_module(); data = copy_package(tmp_path, module); exports = copy_exports(tmp_path, module)
+    row = exports["figures"][0]
+    if mutation == "bogus": row["exportStatus"] = "BOGUS"
+    elif mutation == "missing": row.pop("exportStatus")
+    else: row["outputs"] = []
+    payload = module.render_review_index(data, exports).encode(); (tmp_path / module.REVIEW_INDEX_RELATIVE).write_bytes(payload)
+    exports["readerIndex"]["textSha256"] = hashlib.sha256(payload).hexdigest()
+    (tmp_path / module.EXPORT_MANIFEST_RELATIVE).write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
+    errors = module.export_errors(data, tmp_path)
+    assert any("exportStatus" in error or "requires declared outputs" in error for error in errors)
+
+
+def test_needs_render_candidate_is_legal_and_visible_in_reader_index(tmp_path: Path) -> None:
+    module = load_module(); data = copy_package(tmp_path, module); exports = copy_exports(tmp_path, module)
+    row = exports["figures"][0]
+    row["exportStatus"] = "NEEDS-RENDER"; row["outputs"] = []
+    row["exportDispositionReason"] = "Candidate changed; fresh exports are pending."
+    row["finalSizeStatus"] = "FINAL-SIZE-PENDING"; row.pop("qa")
+    payload = module.render_review_index(data, exports).encode(); (tmp_path / module.REVIEW_INDEX_RELATIVE).write_bytes(payload)
+    exports["readerIndex"]["textSha256"] = hashlib.sha256(payload).hexdigest()
+    (tmp_path / module.EXPORT_MANIFEST_RELATIVE).write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
+    assert module.export_errors(data, tmp_path) == []
+    assert b"No current export" in payload and b"fresh exports are pending" in payload
+
+
 @pytest.mark.parametrize("autocrlf", ["true", "false"])
 def test_real_git_checkout_preserves_raw_svg_hashes(tmp_path: Path, autocrlf: str) -> None:
     module = load_module(); clone = tmp_path / "clone"
