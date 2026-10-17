@@ -1134,6 +1134,40 @@ are required before acceptance.  This decision supersedes CR-2026-016 only for
 the narrow implementation authorization, not for its historical
 specification-only meaning.
 
+## DD-044 — Source-bound transactional model-figure redraws
+
+**Decision:** The nine CL-TAV Draw.io files are editable publication redraws
+derived from the matching PlantUML authorities. Their manifest uses canonical
+UTF-8/LF identities and finite title, object, relation and note bindings;
+object parents and relation endpoints are bound independently of the generated
+XML. The shared validator checks actual graph topology, polarity and inventory.
+Generation rejects path/link escapes, preflights the complete batch, stages on
+the repository volume and rolls back every prior output on installation failure.
+All redraws remain `DRAFT-REDRAW` until export, final-size inspection,
+manuscript insertion inspection and human semantic review are complete.
+
+**Why:** Hash-only XML comparison can accept coordinated drift, and per-file
+overwrites can leave a mixed generation after failure. A finite source-bound
+inventory plus transactional installation makes the publication view auditable
+without promoting it into a second model authority.
+
+**Scope:** Draw.io generation, validation, layout and review exports under
+CR-2026-020. PlantUML, algorithms, interfaces, reader SVGs, experiments and
+scientific claims are unchanged.
+
+**Status:** Candidate under CR-2026-020; final-head CI and independent review
+required. Reader-figure promotion remains a separate human decision.
+
+### DD-044 boundary addendum — 2026-10-17
+
+The fixed nine-view set and PlantUML-authority wording above are superseded for
+workflow purposes. A model figure is a versioned controlled candidate constrained
+by accepted cross-domain contracts. PlantUML and Draw.io identities support
+traceability but do not prove semantic equality. Retain/revise/split/merge/retire
+decisions, semantic review, downstream migration, final-size acceptance, and
+promotion are explicit and separate. This change retains the current nine draft
+instances and changes no downstream consumer.
+
 ## DD-043 — Separate research-design acceptance from run admission
 
 **Decision:** Accept a finite, reviewable experiment implementation design as
@@ -1736,6 +1770,34 @@ PR #22 所有权。
 **范围：** 仅稿件结构、页预算、占位与写作门禁。
 
 **状态：** 在 CR-2026-015 下为候选。
+
+## DD-044——来源绑定、事务式模型图重绘
+
+**决定：** 九张 CL-TAV Draw.io 文件是从对应 PlantUML 权威派生的可编辑论文
+重绘。其 manifest 使用规范化 UTF-8／LF 身份及有限的标题、对象、关系和注记绑定；
+对象父边界与关系端点由 manifest 记录，并在有限解析范围内从 PlantUML 提取完整
+标题／注记单元及直接表达的关系端点。共享检查器验证声明子集、真实图拓扑、极性和
+封闭清单，但不证明跨记法语义等价；隐含活动顺序、含义和几何布局仍须独立复核。
+生成过程拒绝路径／链接逃逸，预检完整批次，在仓库卷内暂存，并在安装
+失败时回滚所有既有输出。完成导出、最终尺寸目检、稿件插入检查和人工语义复核前，
+全部重绘保持 `DRAFT-REDRAW`。
+
+**理由：** 仅比较 XML 散列不能揭示来源遗漏，逐文件覆盖也可能在失败后留下混合
+代次。有限来源绑定、导出身份登记和事务安装让论文视图可审计，同时明确保留人工
+语义判断，不把它晋级为第二模型权威。
+
+**范围：** CR-2026-020 下的 Draw.io 生成、验证、布局和评审导出；PlantUML、算法、
+接口、reader SVG、实验和科学主张保持不变。
+
+**状态：** 在 CR-2026-020 下为候选；需要最终 Head CI 和独立评审。reader 图晋级
+仍是单独的人工决定。
+
+### DD-044 边界补充——2026-10-17
+
+上文固定九图及 PlantUML 权威表述在工作流范围内由本补充取代。模型图是受已接受跨域
+合同约束的版本化受控候选；PlantUML 与 Draw.io 身份用于追踪，不证明语义相等。保留／
+修订／拆分／合并／退役、语义评审、下游迁移、最终尺寸验收和晋级均须分别显式记录。
+本次仅保留现有九个草稿实例，不改变方法、算法、工程、CRS／M2、实验或稿件消费者。
 
 ## DD-036——算法呈现层、契约与等价性验收
 

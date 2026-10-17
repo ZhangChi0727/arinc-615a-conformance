@@ -102,6 +102,8 @@ CLTAV_PUML_FILES = (
     "FIG-CL-TAV-08-parametric.puml",
     "FIG-CL-TAV-09-experiment-architecture.puml",
 )
+CLTAV_DRAWIO_DIR = CLTAV_PUML_DIR / "drawio"
+CLTAV_DRAWIO_FILES = tuple(name.replace(".puml", ".drawio") for name in CLTAV_PUML_FILES)
 CLTAV_SVG_DIR = ROOT / "artifacts/publications/cltav/figures"
 CLTAV_SVG_FILES = tuple(name.replace(".puml", ".svg") for name in CLTAV_PUML_FILES)
 AUDIT_STATUS_GENERATION = {
@@ -214,10 +216,13 @@ REQUIRED_FIXED_FILES = [
     ROOT / "configs/research/cltav_protocol_source_audit.json",
     ROOT / "configs/research/cltav_interface_registry.json",
     ROOT / "configs/research/cltav_figure_graphs.json",
+    ROOT / "configs/research/cltav_model_figure_manifest.json",
+    ROOT / "configs/research/cltav_model_figure_exports.json",
     ROOT / "configs/research/cltav_owned_generated_artifacts.json",
     ROOT / "artifacts/publications/cltav/ALG-CLTAV-01.pdf",
     ROOT / "scripts/cltav_loop_spec.py",
     *[CLTAV_PUML_DIR / name for name in CLTAV_PUML_FILES],
+    *[CLTAV_DRAWIO_DIR / name for name in CLTAV_DRAWIO_FILES],
     *[CLTAV_SVG_DIR / name for name in CLTAV_SVG_FILES],
     ROOT / "docs/engineering/ENGINEERING_CONTROL.md",
     ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md",
@@ -2337,6 +2342,16 @@ def _figure05_control_errors(graphs: dict, found_pairs: set[tuple[str, str]], ro
 def cltav_figure_errors() -> list[str]:
     """Reader SVG completeness, labeled structural edges, and XML-valid edges."""
     errors: list[str] = []
+    model_script = ROOT / ".agents/skills/cltav-model-figures/scripts/model_drawio.py"
+    try:
+        spec = importlib.util.spec_from_file_location("cltav_model_drawio_baseline", model_script)
+        if spec is None or spec.loader is None:
+            raise ImportError("cannot create model-figure validator module")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        errors.extend(f"model redraw: {item}" for item in module.validate_package(ROOT))
+    except (OSError, ImportError, ValueError) as exc:
+        errors.append(f"cannot run model-redraw validator: {exc}")
     critical = {
         "FIG-CL-TAV-01-context.svg",
         "FIG-CL-TAV-05-closed-loop-activity.svg",
@@ -3775,7 +3790,7 @@ def governed_status_errors(
 
 OWNED_PUBLICATION_PREFIX = "artifacts/publications/"
 OWNED_ARTIFACT_KIND = "OWNED-GENERATED-PUBLICATION"
-OWNED_SOURCE_SUFFIXES = {".tex", ".md", ".puml", ".svg", ".json", ".bib"}
+OWNED_SOURCE_SUFFIXES = {".tex", ".md", ".puml", ".drawio", ".svg", ".json", ".bib"}
 OWNED_FORBIDDEN_PARTS = {"local-references", "tmp"}
 OWNED_DANGEROUS_SUFFIXES = {".pdf", ".patch", ".diff", ".exe", ".dll", ".bin", ".zip"}
 

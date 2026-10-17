@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" agent="cltav-model-figures/1.1" version="24.7.17" type="device" compressed="false">
+  <diagram id="fig-cl-tav-03" name="FIG-CL-TAV-03">
+    <mxGraphModel dx="0" dy="0" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="700" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="node-Test" value="Test&lt;br&gt;t in T(qk)&lt;br&gt;cost(t) &amp;gt;= cmin" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=22;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core" authorityAlias="Test">
+          <mxGeometry as="geometry" x="70" y="220" width="190" height="135" />
+        </mxCell>
+        <mxCell id="node-Observation" value="Observation&lt;br&gt;Izk; qk summary&lt;br&gt;ERROR if invalid" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#9A7B1F;strokeWidth=1.25;fontFamily=Helvetica;fontSize=22;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="evidence" authorityAlias="Observation">
+          <mxGeometry as="geometry" x="340" y="210" width="230" height="135" />
+        </mxCell>
+        <mxCell id="node-Analysis" value="Analysis&lt;br&gt;constraint verdict&lt;br&gt;scoring partitions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=22;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core" authorityAlias="Analysis">
+          <mxGeometry as="geometry" x="650" y="220" width="220" height="135" />
+        </mxCell>
+        <mxCell id="node-Diagnosis" value="Diagnosis&lt;br&gt;Hk candidate set&lt;br&gt;compatibility update" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=22;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core" authorityAlias="Diagnosis">
+          <mxGeometry as="geometry" x="950" y="220" width="220" height="135" />
+        </mxCell>
+        <mxCell id="node-Selection" value="Selection&lt;br&gt;one-step minimax s(t)&lt;br&gt;Prep action" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=22;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core" authorityAlias="Selection">
+          <mxGeometry as="geometry" x="1240" y="220" width="210" height="135" />
+        </mxCell>
+        <mxCell id="node-Evidence" value="Evidence&lt;br&gt;traces&lt;br&gt;stop class&lt;br&gt;budget remainder" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#9A7B1F;strokeWidth=1.25;fontFamily=Helvetica;fontSize=22;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="evidence" authorityAlias="Evidence">
+          <mxGeometry as="geometry" x="660" y="480" width="210" height="115" />
+        </mxCell>
+        <mxCell id="note-logical" value="Blocks are logical SysML classifiers, not implemented modules." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#8C8C8C;strokeWidth=1;fontFamily=Helvetica;fontSize=18;fontColor=#333333;align=left;verticalAlign=middle;spacing=8;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="note" semanticRole="interpretation-boundary" sourceNote="logical">
+          <mxGeometry as="geometry" x="480" y="620" width="520" height="48" />
+        </mxCell>
+        <mxCell id="edge-test-observation" value="execute" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Test" target="node-Observation" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-observation-analysis" value="Izk" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Observation" target="node-Analysis" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-analysis-diagnosis" value="compatible" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Analysis" target="node-Diagnosis" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-diagnosis-selection" value="Hk" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Diagnosis" target="node-Selection" semanticKind="relation" semanticRole="flow">
+          <mxGeometry as="geometry" relative="1" y="-14" />
+        </mxCell>
+        <mxCell id="edge-selection-test" value="next test or stop" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=0;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Selection" target="node-Test" semanticKind="relation" semanticRole="feedback">
+          <mxGeometry as="geometry" relative="1" y="-14">
+            <Array as="points">
+              <mxPoint x="1345" y="145" />
+              <mxPoint x="165" y="145" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-evidence-observation" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=open;strokeColor=#9A7B1F;exitX=0;exitY=0.5;entryX=0.5;entryY=1;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Evidence" target="node-Observation" semanticKind="relation" semanticRole="evidence-only">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="580" y="538" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-evidence-diagnosis" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=open;strokeColor=#9A7B1F;exitX=1;exitY=0.35;entryX=0.5;entryY=1;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Evidence" target="node-Diagnosis" semanticKind="relation" semanticRole="evidence-only">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="1060" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-evidence-selection" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;dashed=1;endArrow=open;strokeColor=#9A7B1F;exitX=1;exitY=0.75;entryX=0.5;entryY=1;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-Evidence" target="node-Selection" semanticKind="relation" semanticRole="evidence-only">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="1345" y="565" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

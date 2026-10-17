@@ -1,0 +1,4 @@
+interface:
+  display_name: "CL-TAV Model Figures"
+  short_description: "Build and audit controlled TAES model-figure candidates"
+  default_prompt: "Use $cltav-model-figures to redraw and validate a CL-TAV model figure for IEEE TAES."

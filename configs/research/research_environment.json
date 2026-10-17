@@ -30,6 +30,9 @@
     "evidenceLedger": "configs/research/literature/evidence_ledger.csv",
     "claimCitationLedger": "configs/research/literature/claim_citation_ledger.csv",
     "quantitativeFigureManifest": "configs/research/quantitative_figure_manifest.json",
+    "modelFigureManifest": "configs/research/cltav_model_figure_manifest.json",
+    "modelFigureExports": "configs/research/cltav_model_figure_exports.json",
+    "modelFigureReviewIndex": "artifacts/publications/cltav/model-drafts/MODEL_FIGURE_REVIEW_INDEX.md",
     "experimentDesign": "configs/research/cltav_experiment_design.json",
     "experimentDesignSchema": "configs/research/cltav_experiment_design.schema.json",
     "manuscriptBibliography": "docs/research/publication/drafts/taes-cltav/references.bib"
@@ -37,6 +40,7 @@
   "skills": [
     ".agents/skills/cltav-literature-review/SKILL.md",
     ".agents/skills/cltav-research-figures/SKILL.md",
+    ".agents/skills/cltav-model-figures/SKILL.md",
     ".agents/skills/cltav-manuscript-audit/SKILL.md"
   ],
   "humanGates": [

@@ -1,1 +1,3 @@
 docs/review/diffs/*.diff -whitespace
+artifacts/publications/cltav/model-drafts/*.svg -text
+artifacts/publications/cltav/model-drafts/*.pdf binary
