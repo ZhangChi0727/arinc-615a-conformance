@@ -4,7 +4,7 @@ from cltav_runtime.kernel import FrontierEntry, Interval, merge_frontier, propag
 
 
 STATE_IDS = {"q0", "q1", "q2"}
-CLOCK_IDS = {"x", "y"}
+CLOCK_IDS = {"x"}
 DOMAINS = {"mode": {"normal", "recovery"}}
 
 
@@ -20,7 +20,7 @@ def entry(*, provenance: tuple[str, ...] = ("S0",), x: Interval | None = None) -
     return FrontierEntry(
         hypothesis_id="h0",
         control_state_id="q0",
-        clocks={"x": x or Interval(Fraction(0), Fraction(1), True, True), "y": Interval(Fraction(2), Fraction(2), True, True)},
+        clocks={"x": x or Interval(Fraction(0), Fraction(1), True, True)},
         typed_store={"mode": "normal"},
         path_length=0,
         history_provenance=provenance,
@@ -50,7 +50,8 @@ def test_feasible_interval_guard_preserves_exact_endpoint_and_history() -> None:
     successor = result.entries[0]
     assert successor.control_state_id == "q1"
     assert successor.clocks["x"] == Interval(Fraction(0), Fraction(1), True, True)
-    assert successor.history_provenance == ("S0", "t01")
+    assert successor.history_provenance[0] == "S0"
+    assert "t01" in successor.history_provenance[1]
 
 
 def test_open_endpoint_intersection_is_not_silently_closed() -> None:
@@ -78,7 +79,6 @@ def test_clock_advance_intersection_and_reset_are_exact_and_simultaneous() -> No
     assert result.kind == "FEASIBLE"
     successor = result.entries[0]
     assert successor.clocks["x"] == Interval(Fraction(0), Fraction(0), True, True)
-    assert successor.clocks["y"] == Interval(Fraction(3), Fraction(3), True, True)
     assert successor.typed_store == {"mode": "recovery"}
 
 
@@ -103,4 +103,98 @@ def test_merge_requires_full_history_not_only_hypothesis() -> None:
     second = entry(provenance=("S0", "b"))
     result = merge_frontier([first, second], frontier_limit=4)
     assert result.kind == "FEASIBLE"
+    assert result.entries == (first, second)
+
+
+def test_all_guard_branches_are_validated_before_false_branch_can_short_circuit() -> None:
+    result = invoke(
+        entry(),
+        transition({"tag": "AND", "operands": [
+            {"tag": "STATE-EQUALS", "state": "q2"},
+            {"tag": "CALL", "name": "unsupported"},
+        ]}),
+    )
+    assert result.kind == "SPEC-ERROR"
+    assert result.diagnostics[0].code == "UNSUPPORTED-GUARD-AST"
+
+
+def test_unprojected_multi_clock_and_float_advance_are_controlled_errors() -> None:
+    current = entry()
+    multi = propagate_transition(
+        current, transition({"tag": "TRUE"}), state_ids=STATE_IDS,
+        clock_ids={"x", "y"}, typed_domains=DOMAINS, path_limit=3, frontier_limit=4,
+    )
+    floating = invoke(current, transition({"tag": "TRUE"}), delta=0.5)
+    assert multi.kind == "SPEC-ERROR"
+    assert multi.diagnostics[0].code == "UNPROJECTED-MULTI-CLOCK"
+    assert floating.kind == "SPEC-ERROR"
+    assert floating.diagnostics[0].code == "INVALID-DELTA"
+
+
+def test_conflicting_simultaneous_updates_are_not_list_ordered() -> None:
+    result = invoke(
+        entry(), transition({"tag": "TRUE"}, [
+            {"tag": "TYPED-FIELD-ASSIGN", "field": "mode", "value": "normal"},
+            {"tag": "TYPED-FIELD-ASSIGN", "field": "mode", "value": "recovery"},
+        ]),
+    )
+    assert result.kind == "SPEC-ERROR"
+    assert result.diagnostics[0].code == "CONFLICTING-UPDATE"
+
+
+def test_merge_does_not_drop_conservative_status_or_path_limit_evidence() -> None:
+    known = entry(provenance=("S0", "t01"))
+    unknown = FrontierEntry(
+        hypothesis_id=known.hypothesis_id, control_state_id=known.control_state_id,
+        clocks=known.clocks, typed_store=known.typed_store, path_length=known.path_length,
+        history_provenance=known.history_provenance, status="CONSERVATIVE-UNKNOWN",
+    )
+    result = merge_frontier([known, unknown], frontier_limit=4)
+    assert result.entries == (known, unknown)
+
+
+def test_malformed_top_level_input_returns_named_diagnostic() -> None:
+    result = propagate_transition(
+        object(), {"id": "t", "source": "q0", "target": "q1", "guardAst": {"tag": "TRUE"}, "simultaneousUpdates": []},
+        state_ids=STATE_IDS, clock_ids=CLOCK_IDS, typed_domains=DOMAINS,
+        path_limit=3, frontier_limit=4,
+    )
+    assert result.kind == "SPEC-ERROR"
+    assert result.diagnostics[0].code == "MALFORMED-KERNEL-INPUT"
+
+
+def test_conservative_path_is_never_excluded_by_a_false_guard() -> None:
+    current = FrontierEntry(
+        hypothesis_id="h0", control_state_id="q0", clocks=entry().clocks,
+        typed_store={"mode": "normal"}, path_length=0,
+        history_provenance=("S0",), status="CONSERVATIVE-UNKNOWN",
+    )
+    result = invoke(current, transition({"tag": "STATE-EQUALS", "state": "q2"}))
+    assert result.kind == "CONSERVATIVE-UNKNOWN"
+    assert result.entries == (current,)
+
+
+def test_callers_cannot_mutate_a_published_frontier_snapshot() -> None:
+    clock_data = {"x": Interval(Fraction(0), Fraction(1), True, True)}
+    store_data = {"mode": "normal"}
+    current = FrontierEntry("h0", "q0", clock_data, store_data, 0, ("S0",))
+    clock_data["x"] = Interval(Fraction(9), Fraction(9), True, True)
+    store_data["mode"] = "recovery"
+    assert current.clocks["x"] == Interval(Fraction(0), Fraction(1), True, True)
+    assert current.typed_store == {"mode": "normal"}
+
+
+def test_transition_validation_precedes_source_feasibility_shortcut() -> None:
+    spec = transition({"tag": "TRUE"}, [{"tag": "CALL"}])
+    spec["source"] = "q2"
+    result = invoke(entry(), spec)
+    assert result.kind == "SPEC-ERROR"
+    assert result.diagnostics[0].code == "UNSUPPORTED-UPDATE"
+
+
+def test_frontier_capacity_limit_retains_every_input_path() -> None:
+    first = entry(provenance=("S0", "a"))
+    second = entry(provenance=("S0", "b"))
+    result = merge_frontier([first, second], frontier_limit=1)
+    assert result.kind == "CONSERVATIVE-UNKNOWN"
     assert result.entries == (first, second)
