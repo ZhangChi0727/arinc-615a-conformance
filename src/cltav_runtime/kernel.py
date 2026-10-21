@@ -12,6 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from fractions import Fraction
 from hashlib import sha256
+import json
 from types import MappingProxyType
 from typing import Any, Mapping, Sequence
 
@@ -22,6 +23,64 @@ class KernelDiagnostic:
 
     code: str
     message: str
+
+
+@dataclass(frozen=True)
+class ModelContext:
+    """Verified, immutable inputs for one finite-model projection.
+
+    A caller supplies the exact bytes it intends the runtime to consume.  The
+    expected blob digest is checked before its model declaration is frozen, so
+    a worktree edit cannot be silently substituted after verification.
+    """
+
+    contract_commit: str
+    contract_path: str
+    contract_blob_sha256: str
+    model_sha256: str
+    projection_clock: str
+    state_ids: frozenset[str]
+    clock_ids: frozenset[str]
+    typed_domains: Mapping[str, frozenset[Any]]
+    identity: str
+    provenance_store: "ProvenanceStore" = field(
+        default_factory=lambda: ProvenanceStore(), compare=False, repr=False,
+    )
+
+    @classmethod
+    def build(
+        cls, *, contract_bytes: bytes, contract_commit: str, contract_path: str,
+        contract_blob_sha256: str, model: Mapping[str, Any], projection_clock: str,
+    ) -> "ModelContext":
+        if (
+            not isinstance(contract_bytes, bytes)
+            or not _is_sha256(contract_blob_sha256)
+            or sha256(contract_bytes).hexdigest() != contract_blob_sha256
+        ):
+            raise ValueError("contract bytes do not match the declared blob identity")
+        if not isinstance(contract_commit, str) or len(contract_commit) != 40 or any(ch not in "0123456789abcdef" for ch in contract_commit):
+            raise ValueError("contract commit identity is invalid")
+        if not isinstance(contract_path, str) or not contract_path or contract_path.startswith(("/", "\\")) or ".." in contract_path.replace("\\", "/").split("/"):
+            raise ValueError("contract path is not a safe repository-relative path")
+        states, clocks, domains = model.get("stateIds"), model.get("clockIds"), model.get("typedDomains")
+        error = _validate_model_domain(states, clocks, domains)
+        if error is not None or not isinstance(projection_clock, str) or projection_clock not in clocks or len(clocks) != 1:
+            raise ValueError("finite model declaration is outside the supported projection")
+        frozen_domains = MappingProxyType({key: frozenset(value) for key, value in domains.items()})
+        model_bytes = json.dumps(_canonical_model(model), sort_keys=True, separators=(",", ":")).encode("utf-8")
+        model_sha = sha256(model_bytes).hexdigest()
+        identity = sha256((contract_commit + "\0" + contract_path + "\0" + contract_blob_sha256 + "\0" + model_sha + "\0" + projection_clock).encode("utf-8")).hexdigest()
+        return cls(
+            contract_commit=contract_commit,
+            contract_path=contract_path,
+            contract_blob_sha256=contract_blob_sha256,
+            model_sha256=model_sha,
+            projection_clock=projection_clock,
+            state_ids=frozenset(states),
+            clock_ids=frozenset(clocks),
+            typed_domains=frozen_domains,
+            identity=identity,
+        )
 
 
 @dataclass(frozen=True)
@@ -90,6 +149,7 @@ class FrontierEntry:
     path_length: int
     history_provenance: tuple[str, ...]
     status: str = "KNOWN"
+    model_identity: str = ""
 
     def __post_init__(self) -> None:
         """Take immutable snapshots so later caller mutation cannot rewrite history."""
@@ -98,15 +158,153 @@ class FrontierEntry:
         object.__setattr__(self, "history_provenance", tuple(self.history_provenance))
 
     def merge_key(self) -> tuple[Any, ...]:
-        return (
-            self.hypothesis_id,
-            self.control_state_id,
-            tuple(sorted((key, _interval_key(value)) for key, value in self.clocks.items())),
-            tuple(sorted((key, _typed_key(value)) for key, value in self.typed_store.items())),
-            self.history_provenance,
-            self.path_length,
-            self.status,
+        """Return the five authority fields used by production merging.
+
+        ``path_length`` and ``status`` are metadata checked separately so a
+        caller never mistakes this key for a complete entry snapshot.
+        """
+        return _authority_merge_key(self)
+
+
+@dataclass(frozen=True)
+class ProvenanceRecord:
+    """One compact, content-addressed root or finite transition record.
+
+    Records point only to their immediate parent.  A frontier retains the
+    reference chain for transparent merge identity, while the records share
+    the payloads instead of nesting a growing display trace at every step.
+    """
+
+    reference: str
+    kind: str
+    context_identity: str
+    parent_reference: str | None
+    root_id: str | None
+    transition_id: str | None
+    transition_identity: str | None
+    delta: Fraction | None
+    observations: tuple[tuple[str, Interval], ...]
+    result_identity: tuple[Any, ...]
+
+    def as_mapping(self) -> dict[str, Any]:
+        """Return a serialisable, inspectable source record."""
+        return {
+            "reference": self.reference,
+            "kind": self.kind,
+            "contextIdentity": self.context_identity,
+            "parentReference": self.parent_reference,
+            "rootId": self.root_id,
+            "transitionId": self.transition_id,
+            "transitionIdentity": self.transition_identity,
+            "delta": None if self.delta is None else _fraction_mapping(self.delta),
+            "observationConstraints": {
+                name: interval.as_mapping() for name, interval in self.observations
+            },
+            "resultIdentity": _result_identity_mapping(self.result_identity),
+        }
+
+
+class ProvenanceStore:
+    """Append-only, in-process storage for verifiable compact source records."""
+
+    def __init__(self) -> None:
+        self._records: dict[str, ProvenanceRecord] = {}
+
+    def records(self) -> Mapping[str, ProvenanceRecord]:
+        """Return an immutable snapshot; callers cannot rewrite history."""
+        return MappingProxyType(dict(self._records))
+
+    def resolve(self, reference: str) -> ProvenanceRecord | None:
+        return self._records.get(reference)
+
+    def register_root(self, context: ModelContext, root_id: str, entry: FrontierEntry) -> str:
+        if not isinstance(root_id, str) or not root_id:
+            raise ValueError("root ID must be a nonempty string")
+        candidate = ProvenanceRecord(
+            reference="", kind="ROOT", context_identity=context.identity,
+            parent_reference=None, root_id=root_id, transition_id=None,
+            transition_identity=None, delta=None, observations=(),
+            result_identity=_entry_result_identity(entry),
         )
+        reference = _record_reference(candidate)
+        record = ProvenanceRecord(reference=reference, **_record_fields(candidate))
+        self._insert(record)
+        return reference
+
+    def append_step(
+        self, context: ModelContext, parent: FrontierEntry,
+        transition: Mapping[str, Any], pre_update_clocks: Mapping[str, Interval],
+        delta: Fraction, observations: Mapping[str, Interval] | None,
+        successor: FrontierEntry,
+    ) -> ProvenanceRecord:
+        parent_reference = parent.history_provenance[-1]
+        candidate = ProvenanceRecord(
+            reference="", kind="STEP", context_identity=context.identity,
+            parent_reference=parent_reference, root_id=None,
+            transition_id=transition["id"],
+            transition_identity=sha256(repr(_canonical_transition(transition)).encode("utf-8")).hexdigest(),
+            delta=delta,
+            observations=tuple(sorted((observations or {}).items())),
+            result_identity=_entry_result_identity(successor),
+        )
+        reference = _record_reference(candidate)
+        record = ProvenanceRecord(reference=reference, **_record_fields(candidate))
+        self._insert(record)
+        return record
+
+    def verify_entry(self, context: ModelContext, entry: FrontierEntry) -> KernelDiagnostic | None:
+        refs = entry.history_provenance
+        if not refs:
+            return KernelDiagnostic("INVALID-PROVENANCE-CLOSURE", "frontier has no root source record")
+        if len(refs) != entry.path_length + 1:
+            return KernelDiagnostic("INVALID-PROVENANCE-CLOSURE", "path length and source-reference chain disagree")
+        previous: str | None = None
+        for index, reference in enumerate(refs):
+            record = self._records.get(reference)
+            if record is None:
+                return KernelDiagnostic("MISSING-PROVENANCE-RECORD", "frontier references a source record that is not available")
+            if record.reference != reference or _record_reference(record) != reference:
+                return KernelDiagnostic("TAMPERED-PROVENANCE-RECORD", "source record does not match its content address")
+            if record.context_identity != context.identity:
+                return KernelDiagnostic("PROVENANCE-CONTEXT-MISMATCH", "source record belongs to a different model context")
+            if index == 0:
+                if record.kind != "ROOT" or record.parent_reference is not None:
+                    return KernelDiagnostic("INVALID-PROVENANCE-CLOSURE", "first source record is not a root")
+            elif record.kind != "STEP" or record.parent_reference != previous:
+                return KernelDiagnostic("INVALID-PROVENANCE-CLOSURE", "step source record does not reference its immediate parent")
+            previous = reference
+        final = self._records[refs[-1]]
+        if final.result_identity != _entry_result_identity(entry):
+            return KernelDiagnostic("PROVENANCE-RESULT-MISMATCH", "source record does not describe the returned frontier entry")
+        return None
+
+    def _insert(self, record: ProvenanceRecord) -> None:
+        existing = self._records.get(record.reference)
+        if existing is not None and existing != record:
+            raise ValueError("content-address collision has incompatible payload")
+        self._records[record.reference] = record
+
+
+def initial_entry(
+    context: ModelContext, *, hypothesis_id: str, control_state_id: str,
+    clocks: Mapping[str, Interval], typed_store: Mapping[str, Any], root_id: str,
+    status: str = "KNOWN",
+) -> FrontierEntry:
+    """Create the only supported public initial path for a model context."""
+    if not isinstance(context, ModelContext):
+        raise ValueError("initial entry requires a verified model context")
+    provisional = FrontierEntry(
+        hypothesis_id, control_state_id, clocks, typed_store, 0, (root_id,), status,
+        context.identity,
+    )
+    diagnostics: list[KernelDiagnostic] = []
+    if not _valid_entry(provisional, set(context.state_ids), set(context.clock_ids), context.typed_domains, diagnostics):
+        raise ValueError("invalid initial frontier entry")
+    reference = context.provenance_store.register_root(context, root_id, provisional)
+    return FrontierEntry(
+        hypothesis_id, control_state_id, clocks, typed_store, 0, (reference,), status,
+        context.identity,
+    )
 
 
 @dataclass(frozen=True)
@@ -116,6 +314,7 @@ class KernelResult:
     kind: str
     entries: tuple[FrontierEntry, ...]
     diagnostics: tuple[KernelDiagnostic, ...] = field(default_factory=tuple)
+    source_records: tuple[ProvenanceRecord, ...] = field(default_factory=tuple)
 
     @property
     def feasible(self) -> bool:
@@ -129,6 +328,7 @@ def propagate_transition(
     state_ids: set[str],
     clock_ids: set[str],
     typed_domains: Mapping[str, set[Any]],
+    context: ModelContext | None = None,
     observation_intervals: Mapping[str, Interval] | None = None,
     delta: Fraction | None = None,
     path_limit: int,
@@ -143,7 +343,7 @@ def propagate_transition(
     try:
         return _propagate_transition(
             entry, transition, state_ids=state_ids, clock_ids=clock_ids,
-            typed_domains=typed_domains, observation_intervals=observation_intervals,
+            typed_domains=typed_domains, context=context, observation_intervals=observation_intervals,
             delta=delta, path_limit=path_limit, frontier_limit=frontier_limit,
         )
     except (AttributeError, KeyError, TypeError, ValueError) as exc:
@@ -161,6 +361,7 @@ def _propagate_transition(
     state_ids: set[str],
     clock_ids: set[str],
     typed_domains: Mapping[str, set[Any]],
+    context: ModelContext | None,
     observation_intervals: Mapping[str, Interval] | None,
     delta: Fraction | None,
     path_limit: int,
@@ -171,14 +372,27 @@ def _propagate_transition(
         return KernelResult("SPEC-ERROR", (), (KernelDiagnostic("MALFORMED-KERNEL-INPUT", "frontier entry is not a FrontierEntry"),))
     if not isinstance(transition, Mapping):
         return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("MALFORMED-KERNEL-INPUT", "transition is not an object"),))
-    if len(clock_ids) != 1:
-        return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("UNPROJECTED-MULTI-CLOCK", "this finite witness implementation accepts exactly one declared clock"),))
     model_error = _validate_model_domain(state_ids, clock_ids, typed_domains)
     if model_error is not None:
         return KernelResult("SPEC-ERROR", (entry,), (model_error,))
+    if not isinstance(context, ModelContext):
+        return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("UNBOUND-MODEL-CONTEXT", "finite propagation requires a verified model context"),))
+    if (
+        context.state_ids != frozenset(state_ids)
+        or context.clock_ids != frozenset(clock_ids)
+        or dict(context.typed_domains) != {key: frozenset(value) for key, value in typed_domains.items()}
+    ):
+        return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("MODEL-CONTEXT-MISMATCH", "consumed model inputs differ from the verified context"),))
+    if entry.model_identity != context.identity:
+        return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("MODEL-IDENTITY-MISMATCH", "frontier entry does not belong to this model context"),))
+    if len(clock_ids) != 1:
+        return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("UNPROJECTED-MULTI-CLOCK", "this finite witness implementation accepts exactly one declared clock"),))
     diagnostics: list[KernelDiagnostic] = []
     if not _valid_entry(entry, state_ids, clock_ids, typed_domains, diagnostics):
         return KernelResult("SPEC-ERROR", (entry,), tuple(diagnostics))
+    provenance_error = context.provenance_store.verify_entry(context, entry)
+    if provenance_error is not None:
+        return KernelResult("SPEC-ERROR", (entry,), (provenance_error,))
     if not _valid_limit(path_limit, minimum=0) or not _valid_limit(frontier_limit, minimum=1):
         return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("INVALID-LIMIT", "path and frontier limits must be finite nonnegative integers"),))
     delta_error, normalized_delta = _normalize_delta(delta)
@@ -221,22 +435,30 @@ def _propagate_transition(
                 return KernelResult("INFEASIBLE", ())
             guarded[clock] = intersection
 
-    successor, update_error = _apply_updates(entry, transition, guarded, state_ids, clock_ids, typed_domains, delta, observation_intervals)
+    successor, source_record, update_error = _apply_updates(
+        entry, transition, guarded, state_ids, clock_ids, typed_domains, delta,
+        observation_intervals, context,
+    )
     if update_error is not None:
         return KernelResult("SPEC-ERROR", (entry,), (update_error,))
-    if frontier_limit < 1:
-        return KernelResult("CONSERVATIVE-UNKNOWN", (entry,), (KernelDiagnostic("FRONTIER-LIMIT", "declared frontier bound reached; hypothesis retained"),))
-    return KernelResult("FEASIBLE", (successor,))
+    assert successor is not None and source_record is not None
+    return KernelResult("FEASIBLE", (successor,), source_records=(source_record,))
 
 
-def merge_frontier(entries: Sequence[FrontierEntry], *, frontier_limit: int) -> KernelResult:
+def merge_frontier(entries: Sequence[FrontierEntry], *, frontier_limit: int, context: ModelContext | None = None) -> KernelResult:
     """Merge only fully identical, whole-history frontiers."""
     try:
         retained = tuple(entries)
+        if not isinstance(context, ModelContext):
+            return KernelResult("SPEC-ERROR", retained, (KernelDiagnostic("UNBOUND-MODEL-CONTEXT", "finite merge requires a verified model context"),))
         if not _valid_limit(frontier_limit, minimum=1):
             return KernelResult("SPEC-ERROR", retained, (KernelDiagnostic("INVALID-LIMIT", "frontier limit must be a positive integer"),))
-        if any(not _valid_merge_entry(entry) for entry in retained):
-            return KernelResult("SPEC-ERROR", retained, (KernelDiagnostic("MALFORMED-FRONTIER", "frontier contains an invalid entry"),))
+        for entry in retained:
+            if not _valid_merge_entry(entry, context):
+                return KernelResult("SPEC-ERROR", retained, (KernelDiagnostic("MALFORMED-FRONTIER", "frontier contains an invalid entry"),))
+            provenance_error = context.provenance_store.verify_entry(context, entry)
+            if provenance_error is not None:
+                return KernelResult("SPEC-ERROR", retained, (provenance_error,))
         merged: dict[tuple[Any, ...], FrontierEntry] = {}
         for entry in retained:
             authority_key = _authority_merge_key(entry)
@@ -433,7 +655,8 @@ def _apply_updates(
     typed_domains: Mapping[str, set[Any]],
     delta: Fraction,
     observations: Mapping[str, Interval] | None,
-) -> tuple[FrontierEntry, KernelDiagnostic | None]:
+    context: ModelContext,
+) -> tuple[FrontierEntry | None, ProvenanceRecord | None, KernelDiagnostic | None]:
     updates = transition["simultaneousUpdates"]
     next_state = transition["target"]
     next_clocks = dict(clocks)
@@ -446,15 +669,32 @@ def _apply_updates(
             next_clocks[update["clock"]] = Interval(Fraction(0), Fraction(0), True, True)
         else:
             next_store[update["field"]] = update["value"]
-    return FrontierEntry(
+    provisional = FrontierEntry(
         hypothesis_id=entry.hypothesis_id,
         control_state_id=next_state,
         clocks=next_clocks,
         typed_store=next_store,
         path_length=entry.path_length + 1,
-        history_provenance=entry.history_provenance + (_step_provenance(entry, transition, clocks, delta, observations),),
+        history_provenance=entry.history_provenance,
         status=entry.status,
-    ), None
+        model_identity=entry.model_identity,
+    )
+    try:
+        record = context.provenance_store.append_step(
+            context, entry, transition, clocks, delta, observations, provisional,
+        )
+    except (AttributeError, KeyError, TypeError, ValueError) as exc:
+        return None, None, KernelDiagnostic("PROVENANCE-RECORD-ERROR", str(exc) or type(exc).__name__)
+    return FrontierEntry(
+        hypothesis_id=provisional.hypothesis_id,
+        control_state_id=provisional.control_state_id,
+        clocks=provisional.clocks,
+        typed_store=provisional.typed_store,
+        path_length=provisional.path_length,
+        history_provenance=entry.history_provenance + (record.reference,),
+        status=provisional.status,
+        model_identity=provisional.model_identity,
+    ), record, None
 
 
 def _valid_entry(
@@ -482,10 +722,12 @@ def _valid_entry(
         diagnostics.append(KernelDiagnostic("INVALID-ENTRY", "frontier typedStore must contain every declared field")); valid = False
     if not isinstance(entry.path_length, int) or isinstance(entry.path_length, bool) or entry.path_length < 0:
         diagnostics.append(KernelDiagnostic("INVALID-ENTRY", "pathLength must be a nonnegative integer")); valid = False
-    if not isinstance(entry.history_provenance, tuple) or any(not isinstance(item, str) for item in entry.history_provenance):
+    if not isinstance(entry.history_provenance, tuple) or not entry.history_provenance or any(not isinstance(item, str) for item in entry.history_provenance):
         diagnostics.append(KernelDiagnostic("INVALID-ENTRY", "history provenance must be immutable")); valid = False
     if entry.status not in {"KNOWN", "CONSERVATIVE-UNKNOWN"}:
         diagnostics.append(KernelDiagnostic("INVALID-ENTRY", "frontier status is not declared")); valid = False
+    if not isinstance(entry.model_identity, str) or len(entry.model_identity) != 64:
+        diagnostics.append(KernelDiagnostic("INVALID-ENTRY", "frontier model identity is not bound")); valid = False
     return valid
 
 
@@ -508,22 +750,16 @@ def _validate_model_domain(
     return None
 
 
-def _valid_merge_entry(value: object) -> bool:
+def _valid_merge_entry(value: object, context: ModelContext) -> bool:
     """Validate a public merge operand without assuming a prior propagation."""
     if not isinstance(value, FrontierEntry):
         return False
-    if not isinstance(value.hypothesis_id, str) or not value.hypothesis_id:
+    if value.model_identity != context.identity:
         return False
-    if not isinstance(value.control_state_id, str) or not value.control_state_id:
-        return False
-    if not isinstance(value.clocks, Mapping) or not value.clocks or any(not isinstance(key, str) or not _valid_interval(interval) for key, interval in value.clocks.items()):
-        return False
-    if not isinstance(value.typed_store, Mapping) or any(not isinstance(key, str) or not _scalar(value_) for key, value_ in value.typed_store.items()):
-        return False
-    return (
-        isinstance(value.path_length, int) and not isinstance(value.path_length, bool) and value.path_length >= 0
-        and isinstance(value.history_provenance, tuple) and all(isinstance(item, str) for item in value.history_provenance)
-        and value.status in {"KNOWN", "CONSERVATIVE-UNKNOWN"}
+    diagnostics: list[KernelDiagnostic] = []
+    return _valid_entry(
+        value, set(context.state_ids), set(context.clock_ids), context.typed_domains,
+        diagnostics,
     )
 
 
@@ -565,6 +801,101 @@ def _typed_key(value: object) -> tuple[str, object]:
     return (type(value).__qualname__, value)
 
 
+def _entry_result_identity(entry: FrontierEntry) -> tuple[Any, ...]:
+    """The result portion recorded at each root/step, excluding trace links."""
+    return (
+        entry.hypothesis_id,
+        entry.control_state_id,
+        tuple(sorted((key, _interval_key(value)) for key, value in entry.clocks.items())),
+        tuple(sorted((key, _typed_key(value)) for key, value in entry.typed_store.items())),
+        entry.path_length,
+        entry.status,
+        entry.model_identity,
+    )
+
+
+def _result_identity_mapping(identity: tuple[Any, ...]) -> dict[str, Any]:
+    """Expose the compact result identity without relying on Python repr()."""
+    (
+        hypothesis_id, control_state_id, clocks, typed_store, path_length,
+        status, model_identity,
+    ) = identity
+    return {
+        "hypothesisId": hypothesis_id,
+        "controlStateId": control_state_id,
+        "clockConstraints": {
+            name: {
+                "lower": _fraction_mapping(bounds[0]),
+                "upper": _fraction_mapping(bounds[1]),
+                "lowerClosed": bounds[2],
+                "upperClosed": bounds[3],
+            }
+            for name, bounds in clocks
+        },
+        "typedStore": {
+            name: _source_typed_value(value) for name, value in typed_store
+        },
+        "pathLength": path_length,
+        "status": status,
+        "modelIdentity": model_identity,
+    }
+
+
+def _source_typed_value(value: tuple[str, object]) -> dict[str, Any]:
+    """Encode a finite scalar with its runtime type preserved."""
+    type_name, scalar = value
+    if isinstance(scalar, Fraction):
+        encoded: object = _fraction_mapping(scalar)
+    else:
+        encoded = scalar
+    return {"type": type_name, "value": encoded}
+
+
+def _record_fields(record: ProvenanceRecord) -> dict[str, Any]:
+    """Return all record fields other than its content address."""
+    return {
+        "kind": record.kind,
+        "context_identity": record.context_identity,
+        "parent_reference": record.parent_reference,
+        "root_id": record.root_id,
+        "transition_id": record.transition_id,
+        "transition_identity": record.transition_identity,
+        "delta": record.delta,
+        "observations": record.observations,
+        "result_identity": record.result_identity,
+    }
+
+
+def _record_reference(record: ProvenanceRecord) -> str:
+    """Calculate the stable address for a compact provenance payload."""
+    payload = repr((
+        record.kind, record.context_identity, record.parent_reference,
+        record.root_id, record.transition_id, record.transition_identity,
+        record.delta,
+        tuple((name, _interval_key(interval)) for name, interval in record.observations),
+        record.result_identity,
+    )).encode("utf-8")
+    return f"{record.kind.lower()}:" + sha256(payload).hexdigest()
+
+
+def _is_sha256(value: object) -> bool:
+    return (
+        isinstance(value, str) and len(value) == 64
+        and all(character in "0123456789abcdef" for character in value)
+    )
+
+
+def _canonical_model(model: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "stateIds": sorted(model["stateIds"]),
+        "clockIds": sorted(model["clockIds"]),
+        "typedDomains": {
+            key: sorted((_typed_key(value) for value in domain), key=repr)
+            for key, domain in sorted(model["typedDomains"].items())
+        },
+    }
+
+
 def _valid_limit(value: object, *, minimum: int) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value >= minimum
 
@@ -601,31 +932,6 @@ def _valid_interval(value: object) -> bool:
         and isinstance(value.upper_closed, bool)
         and not (value.lower > value.upper or (value.lower == value.upper and not (value.lower_closed and value.upper_closed)))
     )
-
-
-def _step_provenance(
-    parent: FrontierEntry,
-    transition: Mapping[str, Any],
-    pre_update_clocks: Mapping[str, Interval],
-    delta: Fraction,
-    observations: Mapping[str, Interval] | None,
-) -> str:
-    """A stable identity for the actual path input, including time evidence.
-
-    It is intentionally not a display trace.  Its only purpose is preventing a
-    clock reset from erasing the distinct pre-reset time/observation history
-    that the finite merge contract requires us to retain.
-    """
-    clock_part = tuple(sorted((name, _interval_key(interval)) for name, interval in pre_update_clocks.items()))
-    observation_part = tuple(sorted((name, _interval_key(interval)) for name, interval in (observations or {}).items()))
-    parent_chain = sha256("\x1f".join(parent.history_provenance).encode("utf-8")).hexdigest()
-    payload = repr((
-        parent_chain, parent.hypothesis_id, parent.control_state_id,
-        tuple(sorted((name, _interval_key(interval)) for name, interval in parent.clocks.items())),
-        tuple(sorted((name, _typed_key(value)) for name, value in parent.typed_store.items())), parent.path_length, parent.status,
-        _canonical_transition(transition), delta, clock_part, observation_part,
-    )).encode("utf-8")
-    return "step:" + sha256(payload).hexdigest()
 
 
 def _canonical_transition(transition: Mapping[str, Any]) -> tuple[Any, ...]:

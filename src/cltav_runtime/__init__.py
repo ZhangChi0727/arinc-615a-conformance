@@ -10,6 +10,10 @@ from .kernel import (
     Interval,
     KernelDiagnostic,
     KernelResult,
+    ModelContext,
+    ProvenanceRecord,
+    initial_entry,
+    merge_frontier,
     propagate_transition,
 )
 
@@ -18,5 +22,9 @@ __all__ = [
     "Interval",
     "KernelDiagnostic",
     "KernelResult",
+    "ModelContext",
+    "ProvenanceRecord",
+    "initial_entry",
+    "merge_frontier",
     "propagate_transition",
 ]
