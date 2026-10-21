@@ -677,3 +677,35 @@ def test_rehashed_duplicate_root_identity_fields_are_not_silently_collapsed(iden
     assert result.kind == "SPEC-ERROR"
     assert result.entries == (forged,)
     assert result.diagnostics[0].code == "INVALID-PROVENANCE-SEMANTICS"
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"observations": None},
+        {"pre_update_clocks": (("x", {}),)},
+        {"kind": 7},
+    ],
+)
+def test_malformed_stored_provenance_is_a_controlled_no_write_failure(changes: dict[str, object]) -> None:
+    """Public replay, merge, and propagation retain all materialised inputs."""
+    context = context_for()
+    root = context_entry(context)
+    successor = invoke_context(context, root, transition({"tag": "TRUE"})).entries[0]
+    reference = successor.history_provenance[-1]
+    original = context.provenance_store.resolve(reference)
+    assert original is not None
+    context.provenance_store._records[reference] = replace(original, **changes)
+    before = context.provenance_store.records()
+    direct = context.provenance_store.verify_entry(context, successor)
+    merged = merge_frontier([root, successor], context=context, frontier_limit=3)
+    propagated = invoke_context(context, successor, {**transition({"tag": "TRUE"}), "source": "q1", "target": "q1"})
+    assert direct is not None
+    assert direct.code == "MALFORMED-PROVENANCE-RECORD"
+    assert merged.kind == "SPEC-ERROR"
+    assert merged.entries == (root, successor)
+    assert merged.diagnostics[0].code == "MALFORMED-PROVENANCE-RECORD"
+    assert propagated.kind == "SPEC-ERROR"
+    assert propagated.entries == (successor,)
+    assert propagated.diagnostics[0].code == "MALFORMED-PROVENANCE-RECORD"
+    assert context.provenance_store.records() == before

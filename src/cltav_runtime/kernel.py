@@ -394,6 +394,15 @@ class ProvenanceStore:
         return record
 
     def verify_entry(self, context: ModelContext, entry: FrontierEntry) -> KernelDiagnostic | None:
+        """Return a controlled provenance diagnostic for every malformed record."""
+        try:
+            return self._verify_entry(context, entry)
+        except (AttributeError, KeyError, OverflowError, TypeError, ValueError) as exc:
+            return KernelDiagnostic(
+                "MALFORMED-PROVENANCE-RECORD", str(exc) or type(exc).__name__,
+            )
+
+    def _verify_entry(self, context: ModelContext, entry: FrontierEntry) -> KernelDiagnostic | None:
         refs = entry.history_provenance
         if not refs:
             return KernelDiagnostic("INVALID-PROVENANCE-CLOSURE", "frontier has no root source record")
@@ -405,6 +414,9 @@ class ProvenanceStore:
             record = self._records.get(reference)
             if record is None:
                 return KernelDiagnostic("MISSING-PROVENANCE-RECORD", "frontier references a source record that is not available")
+            shape_error = _source_record_shape_error(record)
+            if shape_error is not None:
+                return shape_error
             if record.reference != reference or _record_reference(record) != reference:
                 return KernelDiagnostic("TAMPERED-PROVENANCE-RECORD", "source record does not match its content address")
             if record.context_identity != context.identity:
@@ -598,6 +610,7 @@ def _propagate_transition(
 
 def merge_frontier(entries: Sequence[FrontierEntry], *, frontier_limit: int, context: ModelContext | None = None) -> KernelResult:
     """Merge only fully identical, whole-history frontiers."""
+    retained: tuple[FrontierEntry, ...] = ()
     try:
         retained = tuple(entries)
         if not _verified_context(context):
@@ -622,7 +635,7 @@ def merge_frontier(entries: Sequence[FrontierEntry], *, frontier_limit: int, con
             return KernelResult("CONSERVATIVE-UNKNOWN", retained, (KernelDiagnostic("FRONTIER-LIMIT", "frontier state limit reached; no hypothesis removed"),))
         return KernelResult("FEASIBLE", values)
     except (AttributeError, TypeError, ValueError) as exc:
-        return KernelResult("SPEC-ERROR", (), (KernelDiagnostic("MALFORMED-FRONTIER", str(exc) or type(exc).__name__),))
+        return KernelResult("SPEC-ERROR", retained, (KernelDiagnostic("MALFORMED-FRONTIER", str(exc) or type(exc).__name__),))
 
 
 _MAX_GUARD_DEPTH = 64
@@ -1186,6 +1199,49 @@ def _record_fields(record: ProvenanceRecord) -> dict[str, Any]:
         "observations": record.observations,
         "result_identity": record.result_identity,
     }
+
+
+def _source_record_shape_error(record: object) -> KernelDiagnostic | None:
+    """Reject malformed stored payloads before canonical hashing or replay.
+
+    ProvenanceStore is intentionally inspectable for evidence export, so this
+    guard treats a damaged in-process record as untrusted input.  It checks
+    only the safely inspectable carrier shape here; root/step semantics and
+    model-domain membership remain the replay checks below.
+    """
+    if not isinstance(record, ProvenanceRecord):
+        return KernelDiagnostic("MALFORMED-PROVENANCE-RECORD", "stored source record has an invalid carrier type")
+    if not isinstance(record.reference, str) or record.kind not in {"ROOT", "STEP"}:
+        return KernelDiagnostic("MALFORMED-PROVENANCE-RECORD", "stored source record has an invalid identity or kind")
+    if not isinstance(record.context_identity, str):
+        return KernelDiagnostic("MALFORMED-PROVENANCE-RECORD", "stored source record has an invalid context identity")
+    if record.parent_reference is not None and not isinstance(record.parent_reference, str):
+        return KernelDiagnostic("MALFORMED-PROVENANCE-RECORD", "stored source record has an invalid parent reference")
+    if record.root_id is not None and not isinstance(record.root_id, str):
+        return KernelDiagnostic("MALFORMED-PROVENANCE-RECORD", "stored source record has an invalid root ID")
+    if record.transition_id is not None and not isinstance(record.transition_id, str):
+        return KernelDiagnostic("MALFORMED-PROVENANCE-RECORD", "stored source record has an invalid transition ID")
+    if record.transition_identity is not None and not isinstance(record.transition_identity, str):
+        return KernelDiagnostic("MALFORMED-PROVENANCE-RECORD", "stored source record has an invalid transition identity")
+    if record.transition is not None and not isinstance(record.transition, tuple):
+        return KernelDiagnostic("MALFORMED-PROVENANCE-RECORD", "stored source record has an invalid transition payload")
+    if record.delta is not None and not isinstance(record.delta, Fraction):
+        return KernelDiagnostic("MALFORMED-PROVENANCE-RECORD", "stored source record has an invalid time delta")
+    if not isinstance(record.result_identity, tuple):
+        return KernelDiagnostic("MALFORMED-PROVENANCE-RECORD", "stored source record has an invalid result payload")
+    for label, constraints in (
+        ("pre-update clocks", record.pre_update_clocks),
+        ("observations", record.observations),
+    ):
+        if not isinstance(constraints, tuple):
+            return KernelDiagnostic("MALFORMED-PROVENANCE-RECORD", f"stored source record has invalid {label}")
+        for item in constraints:
+            if (
+                not isinstance(item, tuple) or len(item) != 2
+                or not isinstance(item[0], str) or not _valid_interval(item[1])
+            ):
+                return KernelDiagnostic("MALFORMED-PROVENANCE-RECORD", f"stored source record has invalid {label}")
+    return None
 
 
 def _record_reference(record: ProvenanceRecord) -> str:
