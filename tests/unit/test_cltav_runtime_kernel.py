@@ -6,6 +6,7 @@ import subprocess
 
 import pytest
 
+from cltav_runtime import kernel
 from cltav_runtime.kernel import ContractSnapshot, FrontierEntry, Interval, ModelContext, initial_entry, merge_frontier, propagate_transition
 
 
@@ -565,3 +566,114 @@ def test_refreshed_content_address_cannot_make_a_semantically_forged_step_mergea
     assert negative_result.kind == "SPEC-ERROR"
     assert negative_result.diagnostics[0].code == "INVALID-PROVENANCE-SEMANTICS"
     assert not hasattr(context.provenance_store, "append_step")
+
+
+def _committed_contract_snapshot(tmp_path: Path, contract: dict[str, object]) -> ContractSnapshot:
+    """Commit a real controlled-contract object for compatibility tests."""
+    repository = tmp_path / "controlled-contract"
+    target = repository / CONTRACT_PATH
+    target.parent.mkdir(parents=True)
+    target.write_text(json.dumps(contract), encoding="utf-8")
+    for command in (
+        ["git", "init"], ["git", "add", CONTRACT_PATH],
+        ["git", "-c", "user.name=kernel-test", "-c", "user.email=kernel@example.invalid", "commit", "-m", "contract"],
+    ):
+        subprocess.run(command, cwd=repository, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=repository, check=True, text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    ).stdout.strip()
+    return ContractSnapshot.from_git_object(
+        repository=repository, contract_commit=commit, contract_path=CONTRACT_PATH,
+    )
+
+
+@pytest.mark.parametrize(
+    "label,mutate",
+    [
+        ("empty-result-mapping", lambda finite: finite.update(resultMapping={})),
+        ("incompatible-path-limit", lambda finite: finite["limitBehavior"].update(pathLength="INFEASIBLE")),
+        ("missing-clock-projection", lambda finite: finite["modelInstanceSchema"].pop("clockConstraint")),
+        ("wrong-history-return", lambda finite: finite["resultMapping"]["IF-HIST-UPDATE"].update(success=["Hprime"])),
+    ],
+)
+def test_verified_git_snapshot_must_match_the_runtime_compatibility_projection(
+    tmp_path: Path, label: str, mutate: object,
+) -> None:
+    """Contract identity alone cannot bless an unsupported finite boundary."""
+    contract = json.loads(subprocess.check_output(
+        ["git", "show", f"{CONTRACT_COMMIT}:{CONTRACT_PATH}"], cwd=ROOT,
+    ))
+    finite = next(item for item in contract["algorithmRefinements"] if item["id"] == "AR-FINITE")["finiteKernelContract"]
+    assert callable(mutate)
+    mutate(finite)
+    snapshot = _committed_contract_snapshot(tmp_path / label, contract)
+    with pytest.raises(ValueError, match="unsupported by this finite runtime"):
+        ModelContext.build(
+            snapshot=snapshot,
+            model={"stateIds": {"q0", "q1"}, "clockIds": {"x"}, "typedDomains": {"mode": {"normal"}}},
+            projection_clock="x",
+        )
+
+
+def _install_rehashed_record(context: ModelContext, record: object) -> str:
+    assert isinstance(record, kernel.ProvenanceRecord)
+    reference = kernel._record_reference(record)
+    context.provenance_store._records[reference] = replace(record, reference=reference)
+    return reference
+
+
+@pytest.mark.parametrize(
+    "invalid_root",
+    [
+        lambda root: replace(root, typed_store={"mode": "undeclared"}),
+        lambda root: replace(root, clocks={"x": Interval(Fraction(3), Fraction(2), True, True)}),
+        lambda root: replace(root, status="UNDECLARED"),
+    ],
+)
+def test_rehashed_invalid_root_cannot_be_overwritten_into_a_mergeable_successor(invalid_root: object) -> None:
+    """Every replayed ancestor is domain-validated before its update executes."""
+    context = context_for()
+    root = context_entry(context)
+    successor = invoke_context(
+        context, root,
+        transition({"tag": "TRUE"}, [{"tag": "TYPED-FIELD-ASSIGN", "field": "mode", "value": "normal"}]),
+    ).entries[0]
+    root_record = context.provenance_store.resolve(root.history_provenance[0])
+    step_record = context.provenance_store.resolve(successor.history_provenance[-1])
+    assert root_record is not None and step_record is not None and callable(invalid_root)
+    forged_root_entry = invalid_root(root)
+    forged_root_ref = _install_rehashed_record(
+        context, replace(root_record, reference="", result_identity=kernel._entry_result_identity(forged_root_entry)),
+    )
+    forged_step_ref = _install_rehashed_record(
+        context, replace(step_record, reference="", parent_reference=forged_root_ref),
+    )
+    forged = replace(successor, history_provenance=(forged_root_ref, forged_step_ref))
+    merged = merge_frontier([forged], context=context, frontier_limit=2)
+    continued = invoke_context(context, forged, {**transition({"tag": "TRUE"}), "source": "q1", "target": "q1"})
+    assert merged.kind == "SPEC-ERROR"
+    assert merged.entries == (forged,)
+    assert merged.diagnostics[0].code == "INVALID-PROVENANCE-SEMANTICS"
+    assert continued.kind == "SPEC-ERROR"
+    assert continued.entries == (forged,)
+    assert continued.diagnostics[0].code == "INVALID-PROVENANCE-SEMANTICS"
+
+
+@pytest.mark.parametrize("identity_slot", [2, 3])
+def test_rehashed_duplicate_root_identity_fields_are_not_silently_collapsed(identity_slot: int) -> None:
+    """Replayed tuple data must not turn duplicate names into a different mapping."""
+    context = context_for()
+    root = context_entry(context)
+    record = context.provenance_store.resolve(root.history_provenance[0])
+    assert record is not None
+    identity = list(record.result_identity)
+    identity[identity_slot] = tuple(identity[identity_slot]) + (identity[identity_slot][0],)
+    forged_ref = _install_rehashed_record(
+        context, replace(record, reference="", result_identity=tuple(identity)),
+    )
+    forged = replace(root, history_provenance=(forged_ref,))
+    result = merge_frontier([forged], context=context, frontier_limit=2)
+    assert result.kind == "SPEC-ERROR"
+    assert result.entries == (forged,)
+    assert result.diagnostics[0].code == "INVALID-PROVENANCE-SEMANTICS"

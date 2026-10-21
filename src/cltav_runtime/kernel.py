@@ -33,6 +33,44 @@ _AUTHORITY_MERGE_FIELDS = (
     "hypothesisId", "controlStateId", "clockConstraint", "typedStore",
     "historyProvenance",
 )
+_SUPPORTED_LIMIT_BEHAVIOR = {
+    "pathLength": "CONSERVATIVE-UNKNOWN",
+    "frontierStates": "CONSERVATIVE-UNKNOWN",
+    "hypotheses": "SPEC-ERROR",
+    "actions": "ADMIT-REFUSED",
+    "observationClasses": "PredictionGapError",
+}
+_SUPPORTED_INTERNAL_RESULTS = (
+    "FEASIBLE", "INFEASIBLE", "COMPUTATION-UNKNOWN", "UNSUPPORTED-SYNTAX",
+    "LIMIT-REACHED", "EMPTY-HISTORY",
+)
+# This is the bounded runtime's interface projection, not a claim to execute
+# every interface in the development contract.  It pins the return conventions
+# consumed at the finite-kernel boundary while allowing unrelated interfaces to
+# evolve in their own controlled release.
+_SUPPORTED_RESULT_MAPPING = {
+    "IF-HIST-UPDATE": {
+        "success": ("HistoryHandlePrime", "Hprime", "Stop-Empty"),
+        "failure": ("Stop-Empty", "RESOURCE-UNKNOWN", "CONSERVATIVE-UNKNOWN"),
+    },
+    "IF-EQUIV": {
+        "success": ("established", "notEstablished", "unknown"),
+        "failure": ("UNKNOWN", "RESOURCE-UNKNOWN"),
+    },
+    "IF-RESOURCE-STOP": {
+        "success": ("stopClass", "finalH", "trace"),
+        "failure": ("Stop-Budget", "Stop-Error", "Stop-645"),
+    },
+}
+_SUPPORTED_CLOCK_CONSTRAINT = {
+    "type": "canonical-difference-bounds",
+    "boundType": "rational",
+    "finiteWitnessProjection": "one declared clock ID plus its rational interval; W1/W2 have exact one-clock semantics",
+    "unsupportedProjection": "multi-clock or cross-clock relation without a named DBM projection is SPEC-ERROR, never a computed successor",
+    "timeAdvance": "one shared nonnegative rational delta",
+    "reset": "substitute exact zero before canonicalization",
+    "feasibility": ("FEASIBLE", "INFEASIBLE", "COMPUTATION-UNKNOWN"),
+}
 
 
 @dataclass(frozen=True)
@@ -105,9 +143,13 @@ class ContractSnapshot:
 class ModelContext:
     """Verified, immutable inputs for one finite-model projection.
 
-    A caller supplies the exact bytes it intends the runtime to consume.  The
-    expected blob digest is checked before its model declaration is frozen, so
-    a worktree edit cannot be silently substituted after verification.
+    The caller first obtains a :class:`ContractSnapshot` from an exact Git
+    ``commit:path`` object.  The factory validates the bounded runtime's
+    compatibility projection before freezing the model declaration, so a
+    mutable worktree edit or an incompatible controlled-contract revision
+    cannot be silently substituted.  Snapshot/factory failures raise
+    ``ValueError``; propagation and merge failures use ``KernelResult``
+    diagnostics and retain their public input paths.
     """
 
     contract_commit: str
@@ -358,6 +400,7 @@ class ProvenanceStore:
         if len(refs) != entry.path_length + 1:
             return KernelDiagnostic("INVALID-PROVENANCE-CLOSURE", "path length and source-reference chain disagree")
         previous: str | None = None
+        replayed_parent: FrontierEntry | None = None
         for index, reference in enumerate(refs):
             record = self._records.get(reference)
             if record is None:
@@ -369,17 +412,18 @@ class ProvenanceStore:
             if index == 0:
                 if record.kind != "ROOT" or record.parent_reference is not None:
                     return KernelDiagnostic("INVALID-PROVENANCE-CLOSURE", "first source record is not a root")
+                root_error, replayed_parent = _verify_root_record(context, record)
+                if root_error is not None:
+                    return root_error
             elif record.kind != "STEP" or record.parent_reference != previous:
                 return KernelDiagnostic("INVALID-PROVENANCE-CLOSURE", "step source record does not reference its immediate parent")
-            if index:
-                assert previous is not None
-                parent_record = self._records[previous]
-                semantic_error = _verify_step_record(context, parent_record, record)
+            else:
+                assert replayed_parent is not None
+                semantic_error, replayed_parent = _verify_step_record(context, replayed_parent, record)
                 if semantic_error is not None:
                     return semantic_error
             previous = reference
-        final = self._records[refs[-1]]
-        if final.result_identity != _entry_result_identity(entry):
+        if replayed_parent is None or _entry_result_identity(replayed_parent) != _entry_result_identity(entry):
             return KernelDiagnostic("PROVENANCE-RESULT-MISMATCH", "source record does not describe the returned frontier entry")
         return None
 
@@ -811,63 +855,96 @@ def _successor_after_updates(
     )
 
 
+def _verify_root_record(
+    context: ModelContext, record: ProvenanceRecord,
+) -> tuple[KernelDiagnostic | None, FrontierEntry | None]:
+    """Replay a root before a later update can hide an invalid initial state."""
+    if (
+        not isinstance(record.root_id, str) or not record.root_id
+        or record.transition_id is not None or record.transition_identity is not None
+        or record.transition is not None or record.delta is not None
+        or record.pre_update_clocks or record.observations
+    ):
+        return KernelDiagnostic(
+            "INVALID-PROVENANCE-SEMANTICS", "root record has non-root transition or time fields",
+        ), None
+    try:
+        root = _replay_entry_from_result_identity(record.result_identity, context, expected_path_length=0)
+    except (AttributeError, KeyError, TypeError, ValueError):
+        return KernelDiagnostic(
+            "INVALID-PROVENANCE-SEMANTICS", "root record is outside the verified model domain",
+        ), None
+    return None, root
+
+
 def _verify_step_record(
-    context: ModelContext, parent_record: ProvenanceRecord, record: ProvenanceRecord,
-) -> KernelDiagnostic | None:
+    context: ModelContext, parent: FrontierEntry, record: ProvenanceRecord,
+) -> tuple[KernelDiagnostic | None, FrontierEntry | None]:
     """Replay one compact record; a refreshed hash cannot bless false semantics."""
     if (
         record.transition is None or record.transition_id is None
         or record.transition_identity is None or record.delta is None
         or record.root_id is not None
     ):
-        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step record is missing transition or time evidence")
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step record is missing transition or time evidence"), None
     if record.transition_identity != sha256(repr(record.transition).encode("utf-8")).hexdigest():
-        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step transition identity does not match its definition")
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step transition identity does not match its definition"), None
     try:
         transition = _transition_from_canonical(record.transition)
-        parent = _entry_from_result_identity(parent_record.result_identity)
     except (TypeError, ValueError, KeyError):
-        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step record has an unreadable transition or parent result")
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step record has an unreadable transition"), None
     if transition["id"] != record.transition_id:
-        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step transition ID does not match its definition")
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step transition ID does not match its definition"), None
     transition_error = _validate_transition(
         transition, set(context.state_ids), set(context.clock_ids), context.typed_domains,
     )
     if transition_error is not None:
-        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step transition is outside the verified finite model")
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step transition is outside the verified finite model"), None
     delta_error, delta = _normalize_delta(record.delta)
     if delta_error is not None or delta is None:
-        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step time advance is invalid")
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step time advance is invalid"), None
     try:
         observations = dict(record.observations)
     except (TypeError, ValueError):
-        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step observation constraints are invalid")
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step observation constraints are invalid"), None
     if len(observations) != len(record.observations):
-        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step observation constraints duplicate a clock")
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step observation constraints duplicate a clock"), None
     observation_error = _validate_observation_constraints(observations, set(context.clock_ids))
     if observation_error is not None:
-        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step observation constraints are outside the verified model")
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step observation constraints are outside the verified model"), None
     if transition["source"] != parent.control_state_id:
-        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step source state does not match its parent")
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step source state does not match its parent"), None
     advanced = {name: interval.shifted(delta) for name, interval in parent.clocks.items()}
     guarded, guard_error = _apply_guard(
         parent.control_state_id, parent.typed_store, advanced, transition["guardAst"],
         set(context.clock_ids),
     )
     if guard_error is not None or guarded is None:
-        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step guard has no feasible verified successor")
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step guard has no feasible verified successor"), None
     guarded = dict(guarded)
     for clock, observation in observations.items():
         intersection = guarded[clock].intersect(observation)
         if intersection is None:
-            return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step observation has no feasible verified successor")
+            return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step observation has no feasible verified successor"), None
         guarded[clock] = intersection
     if tuple(sorted(guarded.items())) != record.pre_update_clocks:
-        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step pre-update clock constraints do not replay")
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step pre-update clock constraints do not replay"), None
     expected = _successor_after_updates(parent, transition, guarded)
     if _entry_result_identity(expected) != record.result_identity:
-        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step result does not follow from its verified parent and transition")
-    return None
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step result does not follow from its verified parent and transition"), None
+    try:
+        result = _replay_entry_from_result_identity(
+            record.result_identity, context, expected_path_length=parent.path_length + 1,
+        )
+    except (AttributeError, KeyError, TypeError, ValueError):
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step result is outside the verified model domain"), None
+    if (
+        result.hypothesis_id != parent.hypothesis_id
+        or result.status != parent.status
+        or result.model_identity != parent.model_identity
+    ):
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step changes protected frontier identity fields"), None
+    return None, result
 
 
 def _valid_entry(
@@ -1049,14 +1126,24 @@ def _entry_from_result_identity(identity: tuple[Any, ...]) -> FrontierEntry:
     for name, bounds in clocks:
         if not isinstance(name, str) or not isinstance(bounds, tuple) or len(bounds) != 4:
             raise ValueError("invalid result clock")
+        if name in clock_mapping:
+            raise ValueError("duplicate result clock")
         lower, upper, lower_closed, upper_closed = bounds
-        if not isinstance(lower, Fraction) or not isinstance(upper, Fraction):
+        if (
+            not isinstance(lower, Fraction) or not isinstance(upper, Fraction)
+            or not isinstance(lower_closed, bool) or not isinstance(upper_closed, bool)
+        ):
             raise ValueError("invalid result clock bounds")
-        clock_mapping[name] = Interval(lower, upper, lower_closed, upper_closed)
+        interval = Interval(lower, upper, lower_closed, upper_closed)
+        if not _valid_interval(interval):
+            raise ValueError("invalid result interval")
+        clock_mapping[name] = interval
     store_mapping: dict[str, Any] = {}
     for name, typed_value in typed_store:
         if not isinstance(name, str) or not isinstance(typed_value, tuple) or len(typed_value) != 2:
             raise ValueError("invalid result typed store")
+        if name in store_mapping:
+            raise ValueError("duplicate result typed field")
         type_name, scalar = typed_value
         if not isinstance(type_name, str) or type(scalar).__qualname__ != type_name:
             raise ValueError("invalid result typed scalar")
@@ -1065,6 +1152,23 @@ def _entry_from_result_identity(identity: tuple[Any, ...]) -> FrontierEntry:
         hypothesis_id, control_state_id, clock_mapping, store_mapping, path_length,
         ("replay",), status, model_identity,
     )
+
+
+def _replay_entry_from_result_identity(
+    identity: tuple[Any, ...], context: ModelContext, *, expected_path_length: int,
+) -> FrontierEntry:
+    """Decode a source record only after enforcing the bound model contract."""
+    entry = _entry_from_result_identity(identity)
+    diagnostics: list[KernelDiagnostic] = []
+    if not _valid_entry(
+        entry, set(context.state_ids), set(context.clock_ids), context.typed_domains, diagnostics,
+    ):
+        raise ValueError("replayed entry is outside the verified model domain")
+    if entry.model_identity != context.identity:
+        raise ValueError("replayed entry has a different model identity")
+    if entry.path_length != expected_path_length:
+        raise ValueError("replayed entry has an invalid path length")
+    return entry
 
 
 def _record_fields(record: ProvenanceRecord) -> dict[str, Any]:
@@ -1134,7 +1238,15 @@ def _verified_snapshot(value: object) -> bool:
 
 
 def _finite_contract_vocabulary(contract: Mapping[str, Any]) -> tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...]]:
-    """Interpret exactly the AR-FINITE vocabulary consumed by this runtime."""
+    """Validate the exact AR-FINITE compatibility projection this runtime consumes.
+
+    Git identity says which controlled object was read.  This function answers
+    the separate question of whether that object's finite-kernel boundary is
+    one this deliberately bounded implementation can execute.  It therefore
+    checks the declared AST/update/merge vocabulary *and* the result, limit and
+    one-clock projection contracts, without treating unrelated prose or other
+    interface mappings as executable runtime input.
+    """
     refinements = contract.get("algorithmRefinements")
     if not isinstance(refinements, list):
         raise ValueError("controlled contract is missing algorithmRefinements")
@@ -1147,14 +1259,48 @@ def _finite_contract_vocabulary(contract: Mapping[str, Any]) -> tuple[tuple[str,
     guard_tags, update_tags, merge_fields = (
         finite.get("guardSyntax"), finite.get("updateSyntax"), finite.get("mergeKey"),
     )
+    internal_results = finite.get("internalResults")
     if (
         not isinstance(guard_tags, list) or tuple(guard_tags) != _SUPPORTED_GUARD_TAGS
         or not isinstance(update_tags, list) or tuple(update_tags) != _SUPPORTED_UPDATE_TAGS
         or not isinstance(merge_fields, list) or tuple(merge_fields) != _AUTHORITY_MERGE_FIELDS
-        or not isinstance(finite.get("resultMapping"), Mapping)
+        or not isinstance(internal_results, list) or tuple(internal_results) != _SUPPORTED_INTERNAL_RESULTS
+        or finite.get("limitBehavior") != _SUPPORTED_LIMIT_BEHAVIOR
+        or not _supported_result_mapping(finite.get("resultMapping"))
+        or not _supported_clock_projection(finite.get("modelInstanceSchema"))
     ):
         raise ValueError("AR-FINITE vocabulary is unsupported by this finite runtime")
     return tuple(guard_tags), tuple(update_tags), tuple(merge_fields)
+
+
+def _supported_result_mapping(value: object) -> bool:
+    """Check only the finite kernel's declared interface-return projection."""
+    if not isinstance(value, Mapping):
+        return False
+    for interface_id, expected in _SUPPORTED_RESULT_MAPPING.items():
+        candidate = value.get(interface_id)
+        if not isinstance(candidate, Mapping) or set(candidate) != {"success", "failure"}:
+            return False
+        if (
+            not isinstance(candidate["success"], list) or not isinstance(candidate["failure"], list)
+            or tuple(candidate["success"]) != expected["success"]
+            or tuple(candidate["failure"]) != expected["failure"]
+        ):
+            return False
+    return True
+
+
+def _supported_clock_projection(value: object) -> bool:
+    """Check the single-clock rational projection that the runtime implements."""
+    if not isinstance(value, Mapping):
+        return False
+    clock = value.get("clockConstraint")
+    if not isinstance(clock, Mapping):
+        return False
+    normalized = dict(clock)
+    if isinstance(normalized.get("feasibility"), list):
+        normalized["feasibility"] = tuple(normalized["feasibility"])
+    return normalized == _SUPPORTED_CLOCK_CONSTRAINT
 
 
 def _model_context_identity(
