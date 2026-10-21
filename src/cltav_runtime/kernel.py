@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from fractions import Fraction
+from hashlib import sha256
 from types import MappingProxyType
 from typing import Any, Mapping, Sequence
 
@@ -101,7 +102,7 @@ class FrontierEntry:
             self.hypothesis_id,
             self.control_state_id,
             tuple(sorted((key, _interval_key(value)) for key, value in self.clocks.items())),
-            tuple(sorted(self.typed_store.items())),
+            tuple(sorted((key, _typed_key(value)) for key, value in self.typed_store.items())),
             self.history_provenance,
             self.path_length,
             self.status,
@@ -172,6 +173,9 @@ def _propagate_transition(
         return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("MALFORMED-KERNEL-INPUT", "transition is not an object"),))
     if len(clock_ids) != 1:
         return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("UNPROJECTED-MULTI-CLOCK", "this finite witness implementation accepts exactly one declared clock"),))
+    model_error = _validate_model_domain(state_ids, clock_ids, typed_domains)
+    if model_error is not None:
+        return KernelResult("SPEC-ERROR", (entry,), (model_error,))
     diagnostics: list[KernelDiagnostic] = []
     if not _valid_entry(entry, state_ids, clock_ids, typed_domains, diagnostics):
         return KernelResult("SPEC-ERROR", (entry,), tuple(diagnostics))
@@ -182,6 +186,8 @@ def _propagate_transition(
         return KernelResult("SPEC-ERROR", (entry,), (delta_error,))
     transition_error = _validate_transition(transition, state_ids, clock_ids, typed_domains)
     if transition_error is not None:
+        if transition_error.code in {"AST-DEPTH-LIMIT", "AST-NODE-LIMIT"}:
+            return KernelResult("CONSERVATIVE-UNKNOWN", (entry,), (transition_error,))
         return KernelResult("SPEC-ERROR", (entry,), (transition_error,))
     observation_error = _validate_observation_constraints(observation_intervals, clock_ids)
     if observation_error is not None:
@@ -279,6 +285,8 @@ def _validate_guard_ast(
             operands = node.get("operands")
             if set(node) != {"tag", "operands"} or not isinstance(operands, list) or not operands:
                 return KernelDiagnostic("INVALID-GUARD-AST", "AND requires exactly a nonempty operands list")
+            if len(operands) > _MAX_GUARD_NODES - count:
+                return KernelDiagnostic("AST-NODE-LIMIT", "guard exceeds the declared finite node limit")
             next_ancestors = ancestors | {identity}
             pending.extend((operand, depth + 1, next_ancestors) for operand in operands)
         elif tag == "STATE-EQUALS":
@@ -481,6 +489,25 @@ def _valid_entry(
     return valid
 
 
+def _validate_model_domain(
+    state_ids: object, clock_ids: object, typed_domains: object,
+) -> KernelDiagnostic | None:
+    if not isinstance(state_ids, set) or not state_ids or any(not isinstance(value, str) or not value for value in state_ids):
+        return KernelDiagnostic("INVALID-MODEL-DOMAIN", "state IDs must be a nonempty finite string set")
+    if not isinstance(clock_ids, set) or any(not isinstance(value, str) or not value for value in clock_ids):
+        return KernelDiagnostic("INVALID-MODEL-DOMAIN", "clock IDs must be a finite string set")
+    if not isinstance(typed_domains, Mapping) or not typed_domains:
+        return KernelDiagnostic("INVALID-MODEL-DOMAIN", "typed domains must be a nonempty mapping")
+    for field, domain in typed_domains.items():
+        if not isinstance(field, str) or not field or not isinstance(domain, (set, frozenset)) or not domain:
+            return KernelDiagnostic("INVALID-MODEL-DOMAIN", "each typed domain must be a nonempty finite set")
+        if any(not _scalar(value) for value in domain):
+            return KernelDiagnostic("INVALID-MODEL-DOMAIN", "typed domains support declared finite scalar values only")
+        if len({type(value) for value in domain}) != 1:
+            return KernelDiagnostic("INVALID-MODEL-DOMAIN", "a typed domain may not mix scalar runtime types")
+    return None
+
+
 def _valid_merge_entry(value: object) -> bool:
     """Validate a public merge operand without assuming a prior propagation."""
     if not isinstance(value, FrontierEntry):
@@ -506,7 +533,7 @@ def _authority_merge_key(entry: FrontierEntry) -> tuple[Any, ...]:
         entry.hypothesis_id,
         entry.control_state_id,
         tuple(sorted((key, _interval_key(value)) for key, value in entry.clocks.items())),
-        tuple(sorted(entry.typed_store.items())),
+        tuple(sorted((key, _typed_key(value)) for key, value in entry.typed_store.items())),
         entry.history_provenance,
     )
 
@@ -531,6 +558,11 @@ def _fraction_mapping(value: Fraction) -> dict[str, int]:
 
 def _interval_key(value: Interval) -> tuple[Any, ...]:
     return (value.lower, value.upper, value.lower_closed, value.upper_closed)
+
+
+def _typed_key(value: object) -> tuple[str, object]:
+    """A type-preserving scalar identity (``True`` is never integer ``1``)."""
+    return (type(value).__qualname__, value)
 
 
 def _valid_limit(value: object, *, minimum: int) -> bool:
@@ -586,10 +618,14 @@ def _step_provenance(
     """
     clock_part = tuple(sorted((name, _interval_key(interval)) for name, interval in pre_update_clocks.items()))
     observation_part = tuple(sorted((name, _interval_key(interval)) for name, interval in (observations or {}).items()))
-    return repr((
-        _authority_merge_key(parent), parent.path_length, parent.status,
+    parent_chain = sha256("\x1f".join(parent.history_provenance).encode("utf-8")).hexdigest()
+    payload = repr((
+        parent_chain, parent.hypothesis_id, parent.control_state_id,
+        tuple(sorted((name, _interval_key(interval)) for name, interval in parent.clocks.items())),
+        tuple(sorted((name, _typed_key(value)) for name, value in parent.typed_store.items())), parent.path_length, parent.status,
         _canonical_transition(transition), delta, clock_part, observation_part,
-    ))
+    )).encode("utf-8")
+    return "step:" + sha256(payload).hexdigest()
 
 
 def _canonical_transition(transition: Mapping[str, Any]) -> tuple[Any, ...]:

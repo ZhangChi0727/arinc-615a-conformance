@@ -51,7 +51,7 @@ def test_feasible_interval_guard_preserves_exact_endpoint_and_history() -> None:
     assert successor.control_state_id == "q1"
     assert successor.clocks["x"] == Interval(Fraction(0), Fraction(1), True, True)
     assert successor.history_provenance[0] == "S0"
-    assert "t01" in successor.history_provenance[1]
+    assert successor.history_provenance[1].startswith("step:")
 
 
 def test_open_endpoint_intersection_is_not_silently_closed() -> None:
@@ -249,7 +249,35 @@ def test_guard_depth_and_cycle_are_named_controlled_errors() -> None:
     cyclic["operands"].append(cyclic)  # type: ignore[index]
     depth_result = invoke(entry(), transition(deep))
     cycle_result = invoke(entry(), transition(cyclic))
-    assert depth_result.kind == "SPEC-ERROR"
+    assert depth_result.kind == "CONSERVATIVE-UNKNOWN"
     assert depth_result.diagnostics[0].code == "AST-DEPTH-LIMIT"
     assert cycle_result.kind == "SPEC-ERROR"
     assert cycle_result.diagnostics[0].code == "CYCLIC-GUARD-AST"
+
+
+def test_model_domains_are_finite_scalar_and_type_homogeneous() -> None:
+    for bad_domains in ({"mode": "normal"}, {"mode": {"normal", 1.5}}, {"mode": [[1]]}):
+        result = propagate_transition(
+            entry(), transition({"tag": "TRUE"}), state_ids=STATE_IDS,
+            clock_ids=CLOCK_IDS, typed_domains=bad_domains, path_limit=3, frontier_limit=4,
+        )
+        assert result.kind == "SPEC-ERROR"
+        assert result.diagnostics[0].code == "INVALID-MODEL-DOMAIN"
+
+
+def test_type_preserving_merge_key_does_not_equate_true_and_one() -> None:
+    truth = FrontierEntry("h0", "q0", entry().clocks, {"mode": True}, 0, ("S0",))
+    one = FrontierEntry("h0", "q0", entry().clocks, {"mode": 1}, 0, ("S0",))
+    result = merge_frontier([truth, one], frontier_limit=4)
+    assert result.kind == "FEASIBLE"
+    assert len(result.entries) == 2
+
+
+def test_history_provenance_is_a_bounded_hash_chain_over_many_steps() -> None:
+    current = entry()
+    loop = transition({"tag": "TRUE"})
+    loop["target"] = "q0"
+    for _ in range(30):
+        current = invoke(current, loop, path_limit=31).entries[0]
+    assert len(current.history_provenance) == 31
+    assert max(map(len, current.history_provenance[1:])) <= 69
