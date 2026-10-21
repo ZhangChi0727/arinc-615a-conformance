@@ -17,6 +17,9 @@ from types import MappingProxyType
 from typing import Any, Mapping, Sequence
 
 
+_MODEL_CONTEXT_TOKEN = object()
+
+
 @dataclass(frozen=True)
 class KernelDiagnostic:
     """A controlled diagnostic; never an IUT verdict."""
@@ -46,6 +49,8 @@ class ModelContext:
     provenance_store: "ProvenanceStore" = field(
         default_factory=lambda: ProvenanceStore(), compare=False, repr=False,
     )
+    _binding_sha256: str = field(default="", init=False, compare=False, repr=False)
+    _verification_token: object | None = field(default=None, init=False, compare=False, repr=False)
 
     @classmethod
     def build(
@@ -69,8 +74,11 @@ class ModelContext:
         frozen_domains = MappingProxyType({key: frozenset(value) for key, value in domains.items()})
         model_bytes = json.dumps(_canonical_model(model), sort_keys=True, separators=(",", ":")).encode("utf-8")
         model_sha = sha256(model_bytes).hexdigest()
-        identity = sha256((contract_commit + "\0" + contract_path + "\0" + contract_blob_sha256 + "\0" + model_sha + "\0" + projection_clock).encode("utf-8")).hexdigest()
-        return cls(
+        identity = _model_context_identity(
+            contract_commit, contract_path, contract_blob_sha256, model_sha,
+            projection_clock,
+        )
+        context = cls(
             contract_commit=contract_commit,
             contract_path=contract_path,
             contract_blob_sha256=contract_blob_sha256,
@@ -81,6 +89,9 @@ class ModelContext:
             typed_domains=frozen_domains,
             identity=identity,
         )
+        object.__setattr__(context, "_binding_sha256", _context_binding_digest(context))
+        object.__setattr__(context, "_verification_token", _MODEL_CONTEXT_TOKEN)
+        return context
 
 
 @dataclass(frozen=True)
@@ -291,7 +302,7 @@ def initial_entry(
     status: str = "KNOWN",
 ) -> FrontierEntry:
     """Create the only supported public initial path for a model context."""
-    if not isinstance(context, ModelContext):
+    if not _verified_context(context):
         raise ValueError("initial entry requires a verified model context")
     provisional = FrontierEntry(
         hypothesis_id, control_state_id, clocks, typed_store, 0, (root_id,), status,
@@ -375,8 +386,8 @@ def _propagate_transition(
     model_error = _validate_model_domain(state_ids, clock_ids, typed_domains)
     if model_error is not None:
         return KernelResult("SPEC-ERROR", (entry,), (model_error,))
-    if not isinstance(context, ModelContext):
-        return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("UNBOUND-MODEL-CONTEXT", "finite propagation requires a verified model context"),))
+    if not _verified_context(context):
+        return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("UNVERIFIED-MODEL-CONTEXT", "finite propagation requires a verified model context"),))
     if (
         context.state_ids != frozenset(state_ids)
         or context.clock_ids != frozenset(clock_ids)
@@ -449,8 +460,8 @@ def merge_frontier(entries: Sequence[FrontierEntry], *, frontier_limit: int, con
     """Merge only fully identical, whole-history frontiers."""
     try:
         retained = tuple(entries)
-        if not isinstance(context, ModelContext):
-            return KernelResult("SPEC-ERROR", retained, (KernelDiagnostic("UNBOUND-MODEL-CONTEXT", "finite merge requires a verified model context"),))
+        if not _verified_context(context):
+            return KernelResult("SPEC-ERROR", retained, (KernelDiagnostic("UNVERIFIED-MODEL-CONTEXT", "finite merge requires a verified model context"),))
         if not _valid_limit(frontier_limit, minimum=1):
             return KernelResult("SPEC-ERROR", retained, (KernelDiagnostic("INVALID-LIMIT", "frontier limit must be a positive integer"),))
         for entry in retained:
@@ -882,6 +893,70 @@ def _is_sha256(value: object) -> bool:
     return (
         isinstance(value, str) and len(value) == 64
         and all(character in "0123456789abcdef" for character in value)
+    )
+
+
+def _model_context_identity(
+    contract_commit: str, contract_path: str, contract_blob_sha256: str,
+    model_sha256: str, projection_clock: str,
+) -> str:
+    return sha256((
+        contract_commit + "\0" + contract_path + "\0" + contract_blob_sha256
+        + "\0" + model_sha256 + "\0" + projection_clock
+    ).encode("utf-8")).hexdigest()
+
+
+def _context_binding_digest(context: ModelContext) -> str:
+    """Bind every public context field to the factory-issued context token."""
+    payload = repr((
+        context.contract_commit, context.contract_path, context.contract_blob_sha256,
+        context.model_sha256, context.projection_clock,
+        tuple(sorted(context.state_ids)), tuple(sorted(context.clock_ids)),
+        tuple(
+            (name, tuple(sorted((_typed_key(value) for value in domain), key=repr)))
+            for name, domain in sorted(context.typed_domains.items())
+        ),
+        context.identity,
+    )).encode("utf-8")
+    return sha256(payload).hexdigest()
+
+
+def _verified_context(value: object) -> bool:
+    """Reject direct/fabricated contexts before they can seed a frontier."""
+    if not isinstance(value, ModelContext) or value._verification_token is not _MODEL_CONTEXT_TOKEN:
+        return False
+    if not (
+        _is_sha256(value.contract_blob_sha256)
+        and _is_sha256(value.model_sha256)
+        and _is_sha256(value.identity)
+        and _is_sha256(value._binding_sha256)
+        and isinstance(value.contract_commit, str)
+        and len(value.contract_commit) == 40
+        and all(character in "0123456789abcdef" for character in value.contract_commit)
+        and isinstance(value.contract_path, str)
+        and value.contract_path
+        and not value.contract_path.startswith(("/", "\\"))
+        and ".." not in value.contract_path.replace("\\", "/").split("/")
+        and isinstance(value.projection_clock, str)
+    ):
+        return False
+    try:
+        domain_error = _validate_model_domain(
+            set(value.state_ids), set(value.clock_ids),
+            {name: set(domain) for name, domain in value.typed_domains.items()},
+        )
+    except (AttributeError, TypeError, ValueError):
+        return False
+    expected_identity = _model_context_identity(
+        value.contract_commit, value.contract_path, value.contract_blob_sha256,
+        value.model_sha256, value.projection_clock,
+    )
+    return (
+        domain_error is None
+        and value.projection_clock in value.clock_ids
+        and len(value.clock_ids) == 1
+        and value.identity == expected_identity
+        and value._binding_sha256 == _context_binding_digest(value)
     )
 
 

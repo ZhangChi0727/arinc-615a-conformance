@@ -372,6 +372,26 @@ def test_cross_model_entries_and_unregistered_manual_entries_are_rejected() -> N
     assert fabricated_merge.kind == "SPEC-ERROR"
 
 
+def test_direct_or_copied_model_context_cannot_seed_or_consume_a_frontier() -> None:
+    context = context_for()
+    current = context_entry(context)
+    copied = replace(context)
+    with pytest.raises(ValueError, match="verified model context"):
+        initial_entry(
+            copied, hypothesis_id="h0", control_state_id="q0",
+            clocks=current.clocks, typed_store=current.typed_store, root_id="copied",
+        )
+    result = propagate_transition(
+        current, transition({"tag": "TRUE"}), state_ids=set(context.state_ids),
+        clock_ids=set(context.clock_ids),
+        typed_domains={name: set(domain) for name, domain in context.typed_domains.items()},
+        context=copied, path_limit=3, frontier_limit=4,
+    )
+    assert result.kind == "SPEC-ERROR"
+    assert result.entries == (current,)
+    assert result.diagnostics[0].code == "UNVERIFIED-MODEL-CONTEXT"
+
+
 def test_provenance_record_is_resolvable_and_binds_parent_transition_delta_and_observation() -> None:
     context = context_for()
     current = context_entry(context)
