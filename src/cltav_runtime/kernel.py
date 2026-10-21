@@ -34,6 +34,8 @@ class Interval:
 
     @classmethod
     def from_mapping(cls, value: Mapping[str, Any]) -> "Interval":
+        if set(value) != {"lower", "upper", "lowerClosed", "upperClosed"}:
+            raise ValueError("interval fields are not canonical")
         try:
             lower = _fraction(value["lower"])
             upper = _fraction(value["upper"])
@@ -175,6 +177,9 @@ def _propagate_transition(
         return KernelResult("SPEC-ERROR", (entry,), tuple(diagnostics))
     if not _valid_limit(path_limit, minimum=0) or not _valid_limit(frontier_limit, minimum=1):
         return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("INVALID-LIMIT", "path and frontier limits must be finite nonnegative integers"),))
+    delta_error, normalized_delta = _normalize_delta(delta)
+    if delta_error is not None:
+        return KernelResult("SPEC-ERROR", (entry,), (delta_error,))
     transition_error = _validate_transition(transition, state_ids, clock_ids, typed_domains)
     if transition_error is not None:
         return KernelResult("SPEC-ERROR", (entry,), (transition_error,))
@@ -189,14 +194,8 @@ def _propagate_transition(
         return KernelResult("INFEASIBLE", ())
     updates = transition.get("simultaneousUpdates")
     guard = transition.get("guardAst")
-    if delta is None:
-        delta = Fraction(0)
-    elif isinstance(delta, int) and not isinstance(delta, bool):
-        delta = Fraction(delta)
-    elif not isinstance(delta, Fraction):
-        return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("INVALID-DELTA", "time advance must be an exact integer or Fraction"),))
-    if delta < 0:
-        return KernelResult("SPEC-ERROR", (entry,), (KernelDiagnostic("INVALID-DELTA", "time advance must be nonnegative"),))
+    assert normalized_delta is not None
+    delta = normalized_delta
 
     advanced = {name: interval.shifted(delta) for name, interval in entry.clocks.items()}
     guarded, guard_error = _apply_guard(entry.control_state_id, entry.typed_store, advanced, guard, clock_ids)
@@ -230,11 +229,15 @@ def merge_frontier(entries: Sequence[FrontierEntry], *, frontier_limit: int) -> 
         retained = tuple(entries)
         if not _valid_limit(frontier_limit, minimum=1):
             return KernelResult("SPEC-ERROR", retained, (KernelDiagnostic("INVALID-LIMIT", "frontier limit must be a positive integer"),))
-        if any(not isinstance(entry, FrontierEntry) for entry in retained):
-            return KernelResult("SPEC-ERROR", (), (KernelDiagnostic("MALFORMED-FRONTIER", "frontier contains a non-entry value"),))
+        if any(not _valid_merge_entry(entry) for entry in retained):
+            return KernelResult("SPEC-ERROR", retained, (KernelDiagnostic("MALFORMED-FRONTIER", "frontier contains an invalid entry"),))
         merged: dict[tuple[Any, ...], FrontierEntry] = {}
         for entry in retained:
-            merged.setdefault(entry.merge_key(), entry)
+            authority_key = _authority_merge_key(entry)
+            existing = merged.get(authority_key)
+            if existing is not None and (existing.status != entry.status or existing.path_length != entry.path_length):
+                return KernelResult("CONSERVATIVE-UNKNOWN", retained, (KernelDiagnostic("MERGE-METADATA-CONFLICT", "same authority merge key has incompatible status or pathLength"),))
+            merged.setdefault(authority_key, entry)
         values = tuple(merged.values())
         if len(values) > frontier_limit:
             return KernelResult("CONSERVATIVE-UNKNOWN", retained, (KernelDiagnostic("FRONTIER-LIMIT", "frontier state limit reached; no hypothesis removed"),))
@@ -243,51 +246,59 @@ def merge_frontier(entries: Sequence[FrontierEntry], *, frontier_limit: int) -> 
         return KernelResult("SPEC-ERROR", (), (KernelDiagnostic("MALFORMED-FRONTIER", str(exc) or type(exc).__name__),))
 
 
+_MAX_GUARD_DEPTH = 64
+_MAX_GUARD_NODES = 256
+
+
 def _validate_guard_ast(
     ast: Mapping[str, Any],
     state_ids: set[str],
     clock_ids: set[str],
     typed_domains: Mapping[str, set[Any]],
 ) -> KernelDiagnostic | None:
-    """Validate every branch before evaluating any branch.
-
-    This is deliberately separate from guard evaluation.  A false first
-    operand cannot make an unsupported later operand disappear into an
-    ``INFEASIBLE`` result.
-    """
-    tag = ast.get("tag")
-    if tag == "TRUE":
-        return None
-    if tag == "AND":
-        operands = ast.get("operands")
-        if not isinstance(operands, list) or not operands:
-            return KernelDiagnostic("INVALID-GUARD-AST", "AND requires a nonempty operands list")
-        for operand in operands:
-            if not isinstance(operand, Mapping):
-                return KernelDiagnostic("INVALID-GUARD-AST", "AND operand is not a tagged guard")
-            diagnostic = _validate_guard_ast(operand, state_ids, clock_ids, typed_domains)
-            if diagnostic is not None:
-                return diagnostic
-        return None
-    if tag == "STATE-EQUALS":
-        state = ast.get("state")
-        if not isinstance(state, str) or state not in state_ids:
-            return KernelDiagnostic("INVALID-GUARD-AST", "state guard uses an undeclared control state")
-        return None
-    if tag == "TYPED-FIELD-EQUALS":
-        field = ast.get("field")
-        if not isinstance(field, str) or field not in typed_domains or ast.get("value") not in typed_domains[field]:
-            return KernelDiagnostic("INVALID-GUARD-AST", "typed field guard is outside the declared domain")
-        return None
-    if tag == "RATIONAL-INTERVAL-CONTAINS":
-        if not isinstance(ast.get("clock"), str) or ast["clock"] not in clock_ids:
-            return KernelDiagnostic("INVALID-GUARD-AST", "interval guard uses an undeclared clock")
-        try:
-            Interval.from_mapping(ast["interval"])
-        except (KeyError, TypeError, ValueError):
-            return KernelDiagnostic("INVALID-GUARD-AST", "interval guard requires a canonical rational interval")
-        return None
-    return KernelDiagnostic("UNSUPPORTED-GUARD-AST", f"unsupported guard AST tag: {tag!r}")
+    """Boundedly validate every node before recursive evaluation begins."""
+    pending: list[tuple[object, int, frozenset[int]]] = [(ast, 1, frozenset())]
+    count = 0
+    while pending:
+        node, depth, ancestors = pending.pop()
+        count += 1
+        if count > _MAX_GUARD_NODES:
+            return KernelDiagnostic("AST-NODE-LIMIT", "guard exceeds the declared finite node limit")
+        if depth > _MAX_GUARD_DEPTH:
+            return KernelDiagnostic("AST-DEPTH-LIMIT", "guard exceeds the declared finite depth limit")
+        if not isinstance(node, Mapping):
+            return KernelDiagnostic("INVALID-GUARD-AST", "guard node is not a tagged object")
+        identity = id(node)
+        if identity in ancestors:
+            return KernelDiagnostic("CYCLIC-GUARD-AST", "guard contains a cyclic reference")
+        tag = node.get("tag")
+        if tag == "TRUE":
+            if set(node) != {"tag"}:
+                return KernelDiagnostic("INVALID-GUARD-AST", "TRUE guard has unknown fields")
+        elif tag == "AND":
+            operands = node.get("operands")
+            if set(node) != {"tag", "operands"} or not isinstance(operands, list) or not operands:
+                return KernelDiagnostic("INVALID-GUARD-AST", "AND requires exactly a nonempty operands list")
+            next_ancestors = ancestors | {identity}
+            pending.extend((operand, depth + 1, next_ancestors) for operand in operands)
+        elif tag == "STATE-EQUALS":
+            state = node.get("state")
+            if set(node) != {"tag", "state"} or not isinstance(state, str) or state not in state_ids:
+                return KernelDiagnostic("INVALID-GUARD-AST", "state guard uses an undeclared control state")
+        elif tag == "TYPED-FIELD-EQUALS":
+            field = node.get("field")
+            if set(node) != {"tag", "field", "value"} or not isinstance(field, str) or field not in typed_domains or not _domain_contains(typed_domains[field], node.get("value")):
+                return KernelDiagnostic("INVALID-GUARD-AST", "typed field guard is outside the declared domain")
+        elif tag == "RATIONAL-INTERVAL-CONTAINS":
+            if set(node) != {"tag", "clock", "interval"} or not isinstance(node.get("clock"), str) or node["clock"] not in clock_ids:
+                return KernelDiagnostic("INVALID-GUARD-AST", "interval guard uses an undeclared clock")
+            try:
+                Interval.from_mapping(node["interval"])
+            except (KeyError, TypeError, ValueError):
+                return KernelDiagnostic("INVALID-GUARD-AST", "interval guard requires a canonical rational interval")
+        else:
+            return KernelDiagnostic("UNSUPPORTED-GUARD-AST", f"unsupported guard AST tag: {tag!r}")
+    return None
 
 
 def _validate_transition(
@@ -433,7 +444,7 @@ def _apply_updates(
         clocks=next_clocks,
         typed_store=next_store,
         path_length=entry.path_length + 1,
-        history_provenance=entry.history_provenance + (_step_provenance(transition["id"], clocks, delta, observations),),
+        history_provenance=entry.history_provenance + (_step_provenance(entry, transition, clocks, delta, observations),),
         status=entry.status,
     ), None
 
@@ -470,9 +481,41 @@ def _valid_entry(
     return valid
 
 
+def _valid_merge_entry(value: object) -> bool:
+    """Validate a public merge operand without assuming a prior propagation."""
+    if not isinstance(value, FrontierEntry):
+        return False
+    if not isinstance(value.hypothesis_id, str) or not value.hypothesis_id:
+        return False
+    if not isinstance(value.control_state_id, str) or not value.control_state_id:
+        return False
+    if not isinstance(value.clocks, Mapping) or not value.clocks or any(not isinstance(key, str) or not _valid_interval(interval) for key, interval in value.clocks.items()):
+        return False
+    if not isinstance(value.typed_store, Mapping) or any(not isinstance(key, str) or not _scalar(value_) for key, value_ in value.typed_store.items()):
+        return False
+    return (
+        isinstance(value.path_length, int) and not isinstance(value.path_length, bool) and value.path_length >= 0
+        and isinstance(value.history_provenance, tuple) and all(isinstance(item, str) for item in value.history_provenance)
+        and value.status in {"KNOWN", "CONSERVATIVE-UNKNOWN"}
+    )
+
+
+def _authority_merge_key(entry: FrontierEntry) -> tuple[Any, ...]:
+    """The five authority fields, separate from metadata-conflict policy."""
+    return (
+        entry.hypothesis_id,
+        entry.control_state_id,
+        tuple(sorted((key, _interval_key(value)) for key, value in entry.clocks.items())),
+        tuple(sorted(entry.typed_store.items())),
+        entry.history_provenance,
+    )
+
+
 def _fraction(value: Any) -> Fraction:
     if not isinstance(value, Mapping):
         raise ValueError("rational must be an object")
+    if set(value) != {"numerator", "positiveDenominator"}:
+        raise ValueError("rational fields are not canonical")
     numerator, denominator = value.get("numerator"), value.get("positiveDenominator")
     if not isinstance(numerator, int) or not isinstance(denominator, int) or isinstance(numerator, bool) or isinstance(denominator, bool) or denominator <= 0:
         raise ValueError("invalid rational fields")
@@ -496,9 +539,25 @@ def _valid_limit(value: object, *, minimum: int) -> bool:
 
 def _domain_contains(domain: set[Any], value: object) -> bool:
     try:
-        return value in domain
+        return any(type(value) is type(candidate) and value == candidate for candidate in domain)
     except TypeError:
         return False
+
+
+def _scalar(value: object) -> bool:
+    return isinstance(value, (str, int, Fraction, bool)) and not isinstance(value, float)
+
+
+def _normalize_delta(value: object) -> tuple[KernelDiagnostic | None, Fraction | None]:
+    if value is None:
+        return None, Fraction(0)
+    if isinstance(value, int) and not isinstance(value, bool):
+        value = Fraction(value)
+    if not isinstance(value, Fraction):
+        return KernelDiagnostic("INVALID-DELTA", "time advance must be an exact integer or Fraction"), None
+    if value < 0:
+        return KernelDiagnostic("INVALID-DELTA", "time advance must be nonnegative"), None
+    return None, value
 
 
 def _valid_interval(value: object) -> bool:
@@ -513,7 +572,8 @@ def _valid_interval(value: object) -> bool:
 
 
 def _step_provenance(
-    transition_id: str,
+    parent: FrontierEntry,
+    transition: Mapping[str, Any],
     pre_update_clocks: Mapping[str, Interval],
     delta: Fraction,
     observations: Mapping[str, Interval] | None,
@@ -526,4 +586,38 @@ def _step_provenance(
     """
     clock_part = tuple(sorted((name, _interval_key(interval)) for name, interval in pre_update_clocks.items()))
     observation_part = tuple(sorted((name, _interval_key(interval)) for name, interval in (observations or {}).items()))
-    return repr((transition_id, delta, clock_part, observation_part))
+    return repr((
+        _authority_merge_key(parent), parent.path_length, parent.status,
+        _canonical_transition(transition), delta, clock_part, observation_part,
+    ))
+
+
+def _canonical_transition(transition: Mapping[str, Any]) -> tuple[Any, ...]:
+    return (
+        transition["id"], transition["source"], transition["target"],
+        _canonical_guard(transition["guardAst"]),
+        tuple(sorted(_canonical_update(update) for update in transition["simultaneousUpdates"])),
+    )
+
+
+def _canonical_guard(ast: Mapping[str, Any]) -> tuple[Any, ...]:
+    tag = ast["tag"]
+    if tag == "TRUE":
+        return (tag,)
+    if tag == "AND":
+        return (tag, tuple(sorted(_canonical_guard(child) for child in ast["operands"])))
+    if tag == "STATE-EQUALS":
+        return (tag, ast["state"])
+    if tag == "TYPED-FIELD-EQUALS":
+        return (tag, ast["field"], ast["value"])
+    interval = Interval.from_mapping(ast["interval"])
+    return (tag, ast["clock"], _interval_key(interval))
+
+
+def _canonical_update(update: Mapping[str, Any]) -> tuple[Any, ...]:
+    tag = update["tag"]
+    if tag == "STATE-ASSIGN":
+        return (tag, update["state"])
+    if tag == "CLOCK-RESET-TO-ZERO":
+        return (tag, update["clock"])
+    return (tag, update["field"], update["value"])

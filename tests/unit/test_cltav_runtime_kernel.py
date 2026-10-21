@@ -198,3 +198,58 @@ def test_frontier_capacity_limit_retains_every_input_path() -> None:
     result = merge_frontier([first, second], frontier_limit=1)
     assert result.kind == "CONSERVATIVE-UNKNOWN"
     assert result.entries == (first, second)
+
+
+def test_all_input_validation_precedes_source_and_limit_shortcuts() -> None:
+    bad_guard = invoke(entry(), transition({"tag": "TRUE", "extra": "forbidden"}))
+    source_mismatch = transition({"tag": "TRUE"})
+    source_mismatch["source"] = "q2"
+    bad_delta = invoke(entry(), source_mismatch, delta="not-rational")
+    path_limited_bad_delta = invoke(entry(), transition({"tag": "TRUE"}), path_limit=0, delta="not-rational")
+    assert bad_guard.diagnostics[0].code == "INVALID-GUARD-AST"
+    assert bad_delta.diagnostics[0].code == "INVALID-DELTA"
+    assert path_limited_bad_delta.diagnostics[0].code == "INVALID-DELTA"
+
+
+def test_bool_is_not_an_integer_domain_member() -> None:
+    numeric_domains = {"count": {1}}
+    numeric_entry = FrontierEntry("h0", "q0", {"x": Interval(Fraction(0), Fraction(1), True, True)}, {"count": True}, 0, ("S0",))
+    result = propagate_transition(
+        numeric_entry, transition({"tag": "TRUE"}), state_ids=STATE_IDS,
+        clock_ids=CLOCK_IDS, typed_domains=numeric_domains, path_limit=3, frontier_limit=4,
+    )
+    assert result.kind == "SPEC-ERROR"
+    assert result.diagnostics[0].code == "INVALID-ENTRY"
+
+
+def test_merge_rejects_invalid_public_operands_without_losing_them() -> None:
+    invalid = FrontierEntry("h0", "q0", {"x": Interval(Fraction(3), Fraction(1), True, True)}, {"mode": "normal"}, True, ("S0",), "INVALID")
+    result = merge_frontier([entry(), invalid], frontier_limit=4)
+    assert result.kind == "SPEC-ERROR"
+    assert result.entries == (entry(), invalid)
+    assert result.diagnostics[0].code == "MALFORMED-FRONTIER"
+
+
+def test_provenance_keeps_distinct_parent_store_after_overwrite() -> None:
+    normal = entry()
+    recovery = FrontierEntry("h0", "q0", normal.clocks, {"mode": "recovery"}, 0, ("S0",))
+    spec = transition({"tag": "TRUE"}, [{"tag": "TYPED-FIELD-ASSIGN", "field": "mode", "value": "normal"}])
+    first = invoke(normal, spec).entries[0]
+    second = invoke(recovery, spec).entries[0]
+    result = merge_frontier([first, second], frontier_limit=4)
+    assert result.kind == "FEASIBLE"
+    assert len(result.entries) == 2
+
+
+def test_guard_depth_and_cycle_are_named_controlled_errors() -> None:
+    deep: dict[str, object] = {"tag": "TRUE"}
+    for _ in range(64):
+        deep = {"tag": "AND", "operands": [deep]}
+    cyclic: dict[str, object] = {"tag": "AND", "operands": []}
+    cyclic["operands"].append(cyclic)  # type: ignore[index]
+    depth_result = invoke(entry(), transition(deep))
+    cycle_result = invoke(entry(), transition(cyclic))
+    assert depth_result.kind == "SPEC-ERROR"
+    assert depth_result.diagnostics[0].code == "AST-DEPTH-LIMIT"
+    assert cycle_result.kind == "SPEC-ERROR"
+    assert cycle_result.diagnostics[0].code == "CYCLIC-GUARD-AST"
