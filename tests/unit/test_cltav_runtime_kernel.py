@@ -1,30 +1,36 @@
 from dataclasses import replace
 from fractions import Fraction
-from hashlib import sha256
 import json
+from pathlib import Path, PureWindowsPath
+import subprocess
 
 import pytest
 
-from cltav_runtime.kernel import FrontierEntry, Interval, ModelContext, initial_entry, merge_frontier, propagate_transition
+from cltav_runtime.kernel import ContractSnapshot, FrontierEntry, Interval, ModelContext, initial_entry, merge_frontier, propagate_transition
 
 
 STATE_IDS = {"q0", "q1", "q2"}
 CLOCK_IDS = {"x"}
 DOMAINS = {"mode": {"normal", "recovery"}}
+ROOT = Path(__file__).resolve().parents[2]
+CONTRACT_COMMIT = subprocess.run(
+    ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, text=True,
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+).stdout.strip()
+CONTRACT_PATH = "configs/engineering/cltav_development_contracts.json"
+SNAPSHOT = ContractSnapshot.from_git_object(
+    repository=ROOT, contract_commit=CONTRACT_COMMIT, contract_path=CONTRACT_PATH,
+)
 CONTEXT = ModelContext.build(
-    contract_bytes=b"unit-contract", contract_commit="0" * 40,
-    contract_path="configs/engineering/unit-contract.json",
-    contract_blob_sha256="657fd686383f17b2bb69dfa28fc03ef676183e6fac68748ed4a8697053945c6c",
+    snapshot=SNAPSHOT,
     model={"stateIds": STATE_IDS, "clockIds": CLOCK_IDS, "typedDomains": DOMAINS}, projection_clock="x",
 )
 
 
-def context_for(*, domains: dict[str, set[object]] | None = None, contract_bytes: bytes = b"unit-contract") -> ModelContext:
+def context_for(*, domains: dict[str, set[object]] | None = None, snapshot: ContractSnapshot = SNAPSHOT) -> ModelContext:
     active_domains = domains or DOMAINS
     return ModelContext.build(
-        contract_bytes=contract_bytes, contract_commit="0" * 40,
-        contract_path="configs/engineering/unit-contract.json",
-        contract_blob_sha256=sha256(contract_bytes).hexdigest(),
+        snapshot=snapshot,
         model={"stateIds": STATE_IDS, "clockIds": CLOCK_IDS, "typedDomains": active_domains},
         projection_clock="x",
     )
@@ -249,7 +255,7 @@ def test_all_input_validation_precedes_source_and_limit_shortcuts() -> None:
 
 def test_bool_is_not_an_integer_domain_member() -> None:
     numeric_domains = {"count": {1}}
-    numeric_context = ModelContext.build(contract_bytes=b"unit-contract", contract_commit="0" * 40, contract_path="configs/engineering/unit-contract.json", contract_blob_sha256="657fd686383f17b2bb69dfa28fc03ef676183e6fac68748ed4a8697053945c6c", model={"stateIds": STATE_IDS, "clockIds": CLOCK_IDS, "typedDomains": numeric_domains}, projection_clock="x")
+    numeric_context = ModelContext.build(snapshot=SNAPSHOT, model={"stateIds": STATE_IDS, "clockIds": CLOCK_IDS, "typedDomains": numeric_domains}, projection_clock="x")
     numeric_entry = FrontierEntry("h0", "q0", {"x": Interval(Fraction(0), Fraction(1), True, True)}, {"count": True}, 0, ("S0",), model_identity=numeric_context.identity)
     result = propagate_transition(
         numeric_entry, transition({"tag": "TRUE"}), state_ids=STATE_IDS,
@@ -322,10 +328,7 @@ def test_history_provenance_is_a_bounded_hash_chain_over_many_steps() -> None:
 def test_context_binds_consumed_contract_model_and_projection_not_just_names() -> None:
     model = {"stateIds": {"q0", "q1"}, "clockIds": {"x"}, "typedDomains": {"mode": {"normal"}}}
     context = ModelContext.build(
-        contract_bytes=b"immutable-contract", contract_commit="1" * 40,
-        contract_path="configs/engineering/finite.json",
-        contract_blob_sha256=sha256(b"immutable-contract").hexdigest(), model=model,
-        projection_clock="x",
+        snapshot=SNAPSHOT, model=model, projection_clock="x",
     )
     model["typedDomains"]["mode"].add("mutated")
     current = initial_entry(
@@ -343,18 +346,16 @@ def test_context_binds_consumed_contract_model_and_projection_not_just_names() -
     )
     assert success.kind == "FEASIBLE"
     assert drift.diagnostics[0].code == "MODEL-CONTEXT-MISMATCH"
-    with pytest.raises(ValueError, match="contract bytes"):
+    with pytest.raises(ValueError, match="exactly the declared model fields"):
         ModelContext.build(
-            contract_bytes=b"other", contract_commit="1" * 40,
-            contract_path="configs/engineering/finite.json",
-            contract_blob_sha256=sha256(b"immutable-contract").hexdigest(), model=model,
+            snapshot=SNAPSHOT, model={**model, "ignored": True},
             projection_clock="x",
         )
 
 
 def test_cross_model_entries_and_unregistered_manual_entries_are_rejected() -> None:
-    left_context = context_for(domains={"mode": {"normal"}}, contract_bytes=b"left")
-    right_context = context_for(domains={"mode": {"normal", "recovery"}}, contract_bytes=b"right")
+    left_context = context_for(domains={"mode": {"normal"}})
+    right_context = context_for(domains={"mode": {"normal", "recovery"}})
     left = context_entry(left_context, root_id="left")
     right = context_entry(right_context, root_id="right")
     left_successor = invoke_context(left_context, left, transition({"tag": "TRUE"})).entries[0]
@@ -446,3 +447,121 @@ def test_provenance_chain_is_linear_and_public_merge_key_has_five_authority_fiel
     assert len(current.merge_key()) == 5
     for previous, reference in zip(current.history_provenance, current.history_provenance[1:]):
         assert records[reference].parent_reference == previous
+
+
+def test_contract_snapshot_reads_a_real_git_object_not_a_mutable_worktree_file(tmp_path: Path) -> None:
+    repository = tmp_path / "controlled-input"
+    repository.mkdir()
+    contract_path = "contracts/development.json"
+    target = repository / contract_path
+    target.parent.mkdir()
+    content = subprocess.check_output(["git", "show", f"{CONTRACT_COMMIT}:{CONTRACT_PATH}"], cwd=ROOT)
+    target.write_bytes(content)
+    (repository / "plain.txt").write_text("not json", encoding="utf-8")
+    for command in (
+        ["git", "init"], ["git", "add", contract_path, "plain.txt"],
+        ["git", "-c", "user.name=kernel-test", "-c", "user.email=kernel@example.invalid", "commit", "-m", "contract"],
+    ):
+        subprocess.run(command, cwd=repository, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=repository, check=True, text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    ).stdout.strip()
+    snapshot = ContractSnapshot.from_git_object(
+        repository=repository, contract_commit=commit, contract_path=contract_path,
+    )
+    target.write_text("{}", encoding="utf-8")
+    context = ModelContext.build(
+        snapshot=snapshot,
+        model={"stateIds": {"q0", "q1"}, "clockIds": {"x"}, "typedDomains": {"mode": {"normal"}}},
+        projection_clock="x",
+    )
+    current = initial_entry(
+        context, hypothesis_id="h0", control_state_id="q0",
+        clocks={"x": Interval(Fraction(0), Fraction(0), True, True)},
+        typed_store={"mode": "normal"}, root_id="root",
+    )
+    assert invoke_context(context, current, transition({"tag": "TRUE"})).kind == "FEASIBLE"
+    with pytest.raises(ValueError, match="Git object"):
+        ContractSnapshot.from_git_object(repository=repository, contract_commit="0" * 40, contract_path=contract_path)
+    with pytest.raises(ValueError, match="safe repository-relative"):
+        ContractSnapshot.from_git_object(
+            repository=repository, contract_commit=commit,
+            contract_path=str(PureWindowsPath("C:") / "outside.json"),
+        )
+    with pytest.raises(ValueError, match="UTF-8 JSON"):
+        ContractSnapshot.from_git_object(repository=repository, contract_commit=commit, contract_path="plain.txt")
+    with pytest.raises(ValueError, match="verified controlled contract snapshot"):
+        ModelContext.build(
+            snapshot=replace(snapshot),
+            model={"stateIds": {"q0", "q1"}, "clockIds": {"x"}, "typedDomains": {"mode": {"normal"}}},
+            projection_clock="x",
+        )
+    target.write_text("{}", encoding="utf-8")
+    subprocess.run(["git", "add", contract_path], cwd=repository, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(
+        ["git", "-c", "user.name=kernel-test", "-c", "user.email=kernel@example.invalid", "commit", "-m", "invalid-contract"],
+        cwd=repository, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    )
+    invalid_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=repository, check=True, text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    ).stdout.strip()
+    invalid_snapshot = ContractSnapshot.from_git_object(
+        repository=repository, contract_commit=invalid_commit, contract_path=contract_path,
+    )
+    with pytest.raises(ValueError, match="algorithmRefinements"):
+        ModelContext.build(
+            snapshot=invalid_snapshot,
+            model={"stateIds": {"q0", "q1"}, "clockIds": {"x"}, "typedDomains": {"mode": {"normal"}}},
+            projection_clock="x",
+        )
+
+
+@pytest.mark.parametrize(
+    ("first", "second"),
+    [
+        ("normal", "recovery"),
+        (False, True),
+        (1, 2),
+        (Fraction(1, 2), Fraction(3, 2)),
+    ],
+)
+def test_supported_scalar_domains_round_trip_through_verified_context_and_source_records(first: object, second: object) -> None:
+    context = context_for(domains={"mode": {first, second}})
+    current = context_entry(context, mode=first)
+    result = invoke_context(
+        context, current,
+        transition({"tag": "TRUE"}, [{"tag": "TYPED-FIELD-ASSIGN", "field": "mode", "value": second}]),
+    )
+    assert result.kind == "FEASIBLE"
+    assert merge_frontier(result.entries, context=context, frontier_limit=2).kind == "FEASIBLE"
+    json.dumps(result.source_records[0].as_mapping(), sort_keys=True)
+
+
+def test_refreshed_content_address_cannot_make_a_semantically_forged_step_mergeable() -> None:
+    from cltav_runtime import kernel
+
+    context = context_for()
+    current = context_entry(context)
+    successor = invoke_context(context, current, transition({"tag": "TRUE"})).entries[0]
+    record = context.provenance_store.resolve(successor.history_provenance[-1])
+    assert record is not None
+    forged_entry = replace(successor, clocks={"x": Interval(Fraction(99), Fraction(99), True, True)})
+    candidate = replace(record, reference="", result_identity=kernel._entry_result_identity(forged_entry))
+    forged_reference = kernel._record_reference(candidate)
+    forged_record = replace(candidate, reference=forged_reference)
+    context.provenance_store._records[forged_reference] = forged_record
+    forged = replace(successor, clocks=forged_entry.clocks, history_provenance=current.history_provenance + (forged_reference,))
+    result = merge_frontier([forged], context=context, frontier_limit=2)
+    assert result.kind == "SPEC-ERROR"
+    assert result.entries == (forged,)
+    assert result.diagnostics[0].code == "INVALID-PROVENANCE-SEMANTICS"
+    negative_candidate = replace(record, reference="", delta=Fraction(-1))
+    negative_reference = kernel._record_reference(negative_candidate)
+    context.provenance_store._records[negative_reference] = replace(negative_candidate, reference=negative_reference)
+    negative = replace(successor, history_provenance=current.history_provenance + (negative_reference,))
+    negative_result = merge_frontier([negative], context=context, frontier_limit=2)
+    assert negative_result.kind == "SPEC-ERROR"
+    assert negative_result.diagnostics[0].code == "INVALID-PROVENANCE-SEMANTICS"
+    assert not hasattr(context.provenance_store, "append_step")

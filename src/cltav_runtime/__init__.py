@@ -6,6 +6,7 @@ verdict engine.
 """
 
 from .kernel import (
+    ContractSnapshot,
     FrontierEntry,
     Interval,
     KernelDiagnostic,
@@ -18,6 +19,7 @@ from .kernel import (
 )
 
 __all__ = [
+    "ContractSnapshot",
     "FrontierEntry",
     "Interval",
     "KernelDiagnostic",

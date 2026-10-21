@@ -56,7 +56,7 @@ silently redefine the Core.
 - CR-2026-017 / DD-041 delivered the separately owned, read-only offline capture-to-evidence increment merged as eddec443; its bounded evidence scope remains unchanged.
 - CR-2026-018 / DD-042 integrated accepted literature evidence into bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.
 - PR #23 was independently accepted at Head 04b7c56eb70e458cec46e54bd7b37aaa9185cc7f and squash-merged as 868ee3c3e99bee2bcb0a2aedb206fe15d2a4e0e9; main CI 38864201591 passed. CR-2026-019 / DD-043 remains a bounded design authority, not run admission.
-- CR-2026-020 / DD-044 now governs versioned editable model-figure candidates under Draft PR #24; the current nine are retained, automated checks are explicitly finite, and semantic review, final-size acceptance, downstream migration, and promotion remain pending human decisions.
+- PR #24 was merged as 4d3b013; CR-2026-020 / DD-044 governs its versioned editable model-figure candidates. The current nine remain DRAFT-REDRAW candidates; semantic review, final-size acceptance, downstream migration, and promotion remain separate pending human decisions.
 - Draft PR #25 adds only the finite explicit-path reference-kernel checkpoint: verified contract/model/projection context identity, one-clock exact-rational propagation, conservative limits and compact content-addressed source records. Its independent kernel review remains pending; upper session coordination and synthetic execution are not implemented.
 - No confirmatory result, Configuration, expanded capability, conformance, submission, baseline or tag is created.
 
@@ -64,7 +64,7 @@ State changes:
 
 - The bounded offline intake remains the accepted narrow engineering increment and closes no run-admission dependency.
 - The finite experiment design is accepted as a design attachment while all run-admission decisions remain OPEN.
-- The CR-2026-020 / DD-044 redraw workflow remains DRAFT-REDRAW and requires final-head independent review; reader-figure promotion remains blocked.
+- The CR-2026-020 / DD-044 redraw workflow remains DRAFT-REDRAW; reader-figure promotion remains blocked pending the separate semantic, size, migration and promotion gates.
 - PR #25 remains a single Draft finite-kernel checkpoint; it is not an approval, a runtime-integrity result, or authority to begin upper loop, synthetic execution or M3 work.
 - currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims.
 
@@ -82,7 +82,7 @@ Unchanged boundaries:
 
 ## Next development steps
 
-- Obtain independent review of PR #24's controlled candidate workflow and unchanged final Draft Head; do not promote reader figures or migrate downstream consumers until the separate human gates close.
+- Retain PR #24's controlled model-figure candidates as DRAFT-REDRAW; do not promote reader figures or migrate downstream consumers until the separate semantic, size, migration and promotion gates close.
 - Obtain independent review of PR #25's bounded finite-kernel checkpoint before any upper CL-TAV loop, synthetic environment, execution interface or runtime-integrity work begins.
 - Keep every experiment run-admission decision OPEN and establish runtime integrity and independent truth before capability or conformance claims; do not start M3 from the accepted design alone.
 - Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth.
@@ -114,7 +114,7 @@ Unchanged boundaries:
 - CR-2026-017／DD-041 交付了以 eddec443 合并的只读“捕获到证据”增量；其有界证据范围保持不变。
 - CR-2026-018／DD-042 在不改变算法、接口和实验臂的前提下，把已接受文献证据融入有界 C1／C2 措辞与评价记账。
 - PR #23 已在 Head 04b7c56eb70e458cec46e54bd7b37aaa9185cc7f 获独立接受，并压缩合并为 868ee3c3e99bee2bcb0a2aedb206fe15d2a4e0e9；main CI 38864201591 通过。CR-2026-019／DD-043 仍只是有界设计权威，不是运行准入。
-- CR-2026-020／DD-044 现用于管理 Draft PR #24 中版本化、可编辑的模型图候选；当前九图保持不变，自动检查边界被明确限定，语义评审、最终尺寸验收、下游迁移与晋级仍须人工决定。
+- PR #24 已合并为 4d3b013；CR-2026-020／DD-044 管理其中版本化、可编辑的模型图候选。当前九图仍为 DRAFT-REDRAW 候选；语义评审、最终尺寸验收、下游迁移与晋级仍是独立的待定人工决定。
 - Draft PR #25 仅增加有限显式路径参考内核检查点：经验证的合同／模型／投影上下文身份、单时钟精确有理数传播、保守限额及紧凑的内容寻址来源记录。其独立内核评审仍待完成；上层会话协调和合成执行尚未实现。
 - 本增量不产生确认性结果、Configuration、扩大能力、符合性、投稿、baseline 或 tag。
 
@@ -122,7 +122,7 @@ Unchanged boundaries:
 
 - 有界离线接入已经合并，但仍只代表已接受的狭窄工程增量；它不关闭真值、复位、主动执行或确认性运行依赖。
 - 有限实验设计已作为设计附件接受，但所有运行准入决定保持 OPEN。
-- CR-2026-020／DD-044 重绘工作流保持 DRAFT-REDRAW，并须在最终 Head 上独立复审；reader 图晋级仍被阻塞。
+- CR-2026-020／DD-044 重绘工作流保持 DRAFT-REDRAW；在独立的语义、尺寸、迁移和晋级门关闭前，reader 图晋级仍被阻塞。
 - PR #25 保持唯一 Draft 有限内核检查点；它不是批准、运行完整性结果，也不授权启动上层闭环、合成执行或 M3 工作。
 - 对 M3、主动执行和能力主张而言，currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。
 
@@ -140,7 +140,7 @@ Unchanged boundaries:
 
 ## 下一步开发计划
 
-- 完成 PR #24 的来源绑定、可见语义、导出身份和原尺寸布局收口，再在不变的最终 Draft Head 上取得独立复审；此前不得晋级 reader 图。
+- 将 PR #24 的受控模型图候选保持为 DRAFT-REDRAW；在独立的语义、尺寸、迁移和晋级门关闭前，不得晋级 reader 图或迁移下游使用者。
 - 在启动任何上层 CL-TAV 闭环、合成环境、执行接口或运行完整性工作之前，先完成 PR #25 有界有限内核检查点的独立复审。
 - 所有实验运行准入决定保持 OPEN；建立运行完整性与独立真值后方可提出能力或符合性主张，不得仅凭已接受设计启动 M3。
 - 保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。

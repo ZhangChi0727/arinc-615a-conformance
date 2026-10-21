@@ -13,11 +13,26 @@ from dataclasses import dataclass, field
 from fractions import Fraction
 from hashlib import sha256
 import json
+from pathlib import Path, PurePosixPath, PureWindowsPath
+import subprocess
 from types import MappingProxyType
 from typing import Any, Mapping, Sequence
 
 
 _MODEL_CONTEXT_TOKEN = object()
+_CONTRACT_SNAPSHOT_TOKEN = object()
+_PROVENANCE_WRITE_TOKEN = object()
+_SUPPORTED_GUARD_TAGS = (
+    "TRUE", "AND", "STATE-EQUALS", "RATIONAL-INTERVAL-CONTAINS",
+    "TYPED-FIELD-EQUALS",
+)
+_SUPPORTED_UPDATE_TAGS = (
+    "STATE-ASSIGN", "CLOCK-RESET-TO-ZERO", "TYPED-FIELD-ASSIGN",
+)
+_AUTHORITY_MERGE_FIELDS = (
+    "hypothesisId", "controlStateId", "clockConstraint", "typedStore",
+    "historyProvenance",
+)
 
 
 @dataclass(frozen=True)
@@ -26,6 +41,64 @@ class KernelDiagnostic:
 
     code: str
     message: str
+
+
+@dataclass(frozen=True)
+class ContractSnapshot:
+    """A Git-object snapshot of the controlled contract actually consumed.
+
+    The factory reads the requested ``commit:path`` object directly.  It never
+    falls back to a mutable worktree file, and callers cannot manufacture a
+    verified snapshot by supplying matching arbitrary bytes and a digest.
+    """
+
+    contract_commit: str
+    contract_path: str
+    contract_blob_sha256: str
+    _content: bytes = field(default=b"", init=False, compare=False, repr=False)
+    _verification_token: object | None = field(default=None, init=False, compare=False, repr=False)
+
+    @classmethod
+    def from_git_object(
+        cls, *, repository: Path | str, contract_commit: str, contract_path: str,
+    ) -> "ContractSnapshot":
+        path = _safe_contract_path(contract_path)
+        if not isinstance(contract_commit, str) or len(contract_commit) != 40 or any(character not in "0123456789abcdef" for character in contract_commit):
+            raise ValueError("contract commit identity is invalid")
+        repository_path = Path(repository).resolve()
+        if not repository_path.is_dir():
+            raise ValueError("contract repository is not an existing directory")
+        try:
+            resolved_commit = subprocess.run(
+                ["git", "-C", str(repository_path), "rev-parse", "--verify", f"{contract_commit}^{{commit}}"],
+                check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+            ).stdout.strip()
+            if resolved_commit != contract_commit:
+                raise ValueError("contract commit does not resolve to the declared identity")
+            content = subprocess.run(
+                ["git", "-C", str(repository_path), "show", f"{resolved_commit}:{path}"],
+                check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            ).stdout
+        except subprocess.CalledProcessError as exc:
+            raise ValueError("controlled contract Git object cannot be loaded") from exc
+        try:
+            parsed = json.loads(content.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise ValueError("controlled contract object must be UTF-8 JSON") from exc
+        if not isinstance(parsed, Mapping):
+            raise ValueError("controlled contract root must be an object")
+        snapshot = cls(resolved_commit, path, sha256(content).hexdigest())
+        object.__setattr__(snapshot, "_content", content)
+        object.__setattr__(snapshot, "_verification_token", _CONTRACT_SNAPSHOT_TOKEN)
+        return snapshot
+
+    def _parsed_contract(self) -> Mapping[str, Any]:
+        if not _verified_snapshot(self):
+            raise ValueError("contract snapshot is not verified")
+        parsed = json.loads(self._content.decode("utf-8"))
+        if not isinstance(parsed, Mapping):
+            raise ValueError("controlled contract root must be an object")
+        return parsed
 
 
 @dataclass(frozen=True)
@@ -45,6 +118,9 @@ class ModelContext:
     state_ids: frozenset[str]
     clock_ids: frozenset[str]
     typed_domains: Mapping[str, frozenset[Any]]
+    supported_guard_tags: tuple[str, ...]
+    supported_update_tags: tuple[str, ...]
+    authority_merge_fields: tuple[str, ...]
     identity: str
     provenance_store: "ProvenanceStore" = field(
         default_factory=lambda: ProvenanceStore(), compare=False, repr=False,
@@ -54,19 +130,13 @@ class ModelContext:
 
     @classmethod
     def build(
-        cls, *, contract_bytes: bytes, contract_commit: str, contract_path: str,
-        contract_blob_sha256: str, model: Mapping[str, Any], projection_clock: str,
+        cls, *, snapshot: ContractSnapshot, model: Mapping[str, Any], projection_clock: str,
     ) -> "ModelContext":
-        if (
-            not isinstance(contract_bytes, bytes)
-            or not _is_sha256(contract_blob_sha256)
-            or sha256(contract_bytes).hexdigest() != contract_blob_sha256
-        ):
-            raise ValueError("contract bytes do not match the declared blob identity")
-        if not isinstance(contract_commit, str) or len(contract_commit) != 40 or any(ch not in "0123456789abcdef" for ch in contract_commit):
-            raise ValueError("contract commit identity is invalid")
-        if not isinstance(contract_path, str) or not contract_path or contract_path.startswith(("/", "\\")) or ".." in contract_path.replace("\\", "/").split("/"):
-            raise ValueError("contract path is not a safe repository-relative path")
+        if not _verified_snapshot(snapshot):
+            raise ValueError("model context requires a verified controlled contract snapshot")
+        guard_tags, update_tags, merge_fields = _finite_contract_vocabulary(snapshot._parsed_contract())
+        if set(model) != {"stateIds", "clockIds", "typedDomains"}:
+            raise ValueError("finite runtime model must use exactly the declared model fields")
         states, clocks, domains = model.get("stateIds"), model.get("clockIds"), model.get("typedDomains")
         error = _validate_model_domain(states, clocks, domains)
         if error is not None or not isinstance(projection_clock, str) or projection_clock not in clocks or len(clocks) != 1:
@@ -75,18 +145,21 @@ class ModelContext:
         model_bytes = json.dumps(_canonical_model(model), sort_keys=True, separators=(",", ":")).encode("utf-8")
         model_sha = sha256(model_bytes).hexdigest()
         identity = _model_context_identity(
-            contract_commit, contract_path, contract_blob_sha256, model_sha,
+            snapshot.contract_commit, snapshot.contract_path, snapshot.contract_blob_sha256, model_sha,
             projection_clock,
         )
         context = cls(
-            contract_commit=contract_commit,
-            contract_path=contract_path,
-            contract_blob_sha256=contract_blob_sha256,
+            contract_commit=snapshot.contract_commit,
+            contract_path=snapshot.contract_path,
+            contract_blob_sha256=snapshot.contract_blob_sha256,
             model_sha256=model_sha,
             projection_clock=projection_clock,
             state_ids=frozenset(states),
             clock_ids=frozenset(clocks),
             typed_domains=frozen_domains,
+            supported_guard_tags=guard_tags,
+            supported_update_tags=update_tags,
+            authority_merge_fields=merge_fields,
             identity=identity,
         )
         object.__setattr__(context, "_binding_sha256", _context_binding_digest(context))
@@ -193,7 +266,9 @@ class ProvenanceRecord:
     root_id: str | None
     transition_id: str | None
     transition_identity: str | None
+    transition: tuple[Any, ...] | None
     delta: Fraction | None
+    pre_update_clocks: tuple[tuple[str, Interval], ...]
     observations: tuple[tuple[str, Interval], ...]
     result_identity: tuple[Any, ...]
 
@@ -207,7 +282,11 @@ class ProvenanceRecord:
             "rootId": self.root_id,
             "transitionId": self.transition_id,
             "transitionIdentity": self.transition_identity,
+            "transition": None if self.transition is None else _json_safe(_transition_from_canonical(self.transition)),
             "delta": None if self.delta is None else _fraction_mapping(self.delta),
+            "preUpdateClockConstraints": {
+                name: interval.as_mapping() for name, interval in self.pre_update_clocks
+            },
             "observationConstraints": {
                 name: interval.as_mapping() for name, interval in self.observations
             },
@@ -228,13 +307,18 @@ class ProvenanceStore:
     def resolve(self, reference: str) -> ProvenanceRecord | None:
         return self._records.get(reference)
 
-    def register_root(self, context: ModelContext, root_id: str, entry: FrontierEntry) -> str:
+    def _register_root(
+        self, context: ModelContext, root_id: str, entry: FrontierEntry, *, token: object,
+    ) -> str:
+        if token is not _PROVENANCE_WRITE_TOKEN:
+            raise ValueError("root records may be created only by the verified runtime")
         if not isinstance(root_id, str) or not root_id:
             raise ValueError("root ID must be a nonempty string")
         candidate = ProvenanceRecord(
             reference="", kind="ROOT", context_identity=context.identity,
             parent_reference=None, root_id=root_id, transition_id=None,
-            transition_identity=None, delta=None, observations=(),
+            transition_identity=None, transition=None, delta=None, pre_update_clocks=(),
+            observations=(),
             result_identity=_entry_result_identity(entry),
         )
         reference = _record_reference(candidate)
@@ -242,19 +326,23 @@ class ProvenanceStore:
         self._insert(record)
         return reference
 
-    def append_step(
+    def _append_step(
         self, context: ModelContext, parent: FrontierEntry,
         transition: Mapping[str, Any], pre_update_clocks: Mapping[str, Interval],
         delta: Fraction, observations: Mapping[str, Interval] | None,
-        successor: FrontierEntry,
+        successor: FrontierEntry, *, token: object,
     ) -> ProvenanceRecord:
+        if token is not _PROVENANCE_WRITE_TOKEN:
+            raise ValueError("step records may be created only by verified propagation")
         parent_reference = parent.history_provenance[-1]
         candidate = ProvenanceRecord(
             reference="", kind="STEP", context_identity=context.identity,
             parent_reference=parent_reference, root_id=None,
             transition_id=transition["id"],
             transition_identity=sha256(repr(_canonical_transition(transition)).encode("utf-8")).hexdigest(),
+            transition=_canonical_transition(transition),
             delta=delta,
+            pre_update_clocks=tuple(sorted(pre_update_clocks.items())),
             observations=tuple(sorted((observations or {}).items())),
             result_identity=_entry_result_identity(successor),
         )
@@ -283,6 +371,12 @@ class ProvenanceStore:
                     return KernelDiagnostic("INVALID-PROVENANCE-CLOSURE", "first source record is not a root")
             elif record.kind != "STEP" or record.parent_reference != previous:
                 return KernelDiagnostic("INVALID-PROVENANCE-CLOSURE", "step source record does not reference its immediate parent")
+            if index:
+                assert previous is not None
+                parent_record = self._records[previous]
+                semantic_error = _verify_step_record(context, parent_record, record)
+                if semantic_error is not None:
+                    return semantic_error
             previous = reference
         final = self._records[refs[-1]]
         if final.result_identity != _entry_result_identity(entry):
@@ -311,7 +405,9 @@ def initial_entry(
     diagnostics: list[KernelDiagnostic] = []
     if not _valid_entry(provisional, set(context.state_ids), set(context.clock_ids), context.typed_domains, diagnostics):
         raise ValueError("invalid initial frontier entry")
-    reference = context.provenance_store.register_root(context, root_id, provisional)
+    reference = context.provenance_store._register_root(
+        context, root_id, provisional, token=_PROVENANCE_WRITE_TOKEN,
+    )
     return FrontierEntry(
         hypothesis_id, control_state_id, clocks, typed_store, 0, (reference,), status,
         context.identity,
@@ -668,31 +764,11 @@ def _apply_updates(
     observations: Mapping[str, Interval] | None,
     context: ModelContext,
 ) -> tuple[FrontierEntry | None, ProvenanceRecord | None, KernelDiagnostic | None]:
-    updates = transition["simultaneousUpdates"]
-    next_state = transition["target"]
-    next_clocks = dict(clocks)
-    next_store = dict(entry.typed_store)
-    for update in updates:
-        tag = update["tag"]
-        if tag == "STATE-ASSIGN":
-            next_state = update["state"]
-        elif tag == "CLOCK-RESET-TO-ZERO":
-            next_clocks[update["clock"]] = Interval(Fraction(0), Fraction(0), True, True)
-        else:
-            next_store[update["field"]] = update["value"]
-    provisional = FrontierEntry(
-        hypothesis_id=entry.hypothesis_id,
-        control_state_id=next_state,
-        clocks=next_clocks,
-        typed_store=next_store,
-        path_length=entry.path_length + 1,
-        history_provenance=entry.history_provenance,
-        status=entry.status,
-        model_identity=entry.model_identity,
-    )
+    provisional = _successor_after_updates(entry, transition, clocks)
     try:
-        record = context.provenance_store.append_step(
+        record = context.provenance_store._append_step(
             context, entry, transition, clocks, delta, observations, provisional,
+            token=_PROVENANCE_WRITE_TOKEN,
         )
     except (AttributeError, KeyError, TypeError, ValueError) as exc:
         return None, None, KernelDiagnostic("PROVENANCE-RECORD-ERROR", str(exc) or type(exc).__name__)
@@ -706,6 +782,92 @@ def _apply_updates(
         status=provisional.status,
         model_identity=provisional.model_identity,
     ), record, None
+
+
+def _successor_after_updates(
+    entry: FrontierEntry, transition: Mapping[str, Any], clocks: Mapping[str, Interval],
+) -> FrontierEntry:
+    """Apply already-validated simultaneous updates without creating evidence."""
+    next_state = transition["target"]
+    next_clocks = dict(clocks)
+    next_store = dict(entry.typed_store)
+    for update in transition["simultaneousUpdates"]:
+        tag = update["tag"]
+        if tag == "STATE-ASSIGN":
+            next_state = update["state"]
+        elif tag == "CLOCK-RESET-TO-ZERO":
+            next_clocks[update["clock"]] = Interval(Fraction(0), Fraction(0), True, True)
+        else:
+            next_store[update["field"]] = update["value"]
+    return FrontierEntry(
+        hypothesis_id=entry.hypothesis_id,
+        control_state_id=next_state,
+        clocks=next_clocks,
+        typed_store=next_store,
+        path_length=entry.path_length + 1,
+        history_provenance=entry.history_provenance,
+        status=entry.status,
+        model_identity=entry.model_identity,
+    )
+
+
+def _verify_step_record(
+    context: ModelContext, parent_record: ProvenanceRecord, record: ProvenanceRecord,
+) -> KernelDiagnostic | None:
+    """Replay one compact record; a refreshed hash cannot bless false semantics."""
+    if (
+        record.transition is None or record.transition_id is None
+        or record.transition_identity is None or record.delta is None
+        or record.root_id is not None
+    ):
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step record is missing transition or time evidence")
+    if record.transition_identity != sha256(repr(record.transition).encode("utf-8")).hexdigest():
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step transition identity does not match its definition")
+    try:
+        transition = _transition_from_canonical(record.transition)
+        parent = _entry_from_result_identity(parent_record.result_identity)
+    except (TypeError, ValueError, KeyError):
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step record has an unreadable transition or parent result")
+    if transition["id"] != record.transition_id:
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step transition ID does not match its definition")
+    transition_error = _validate_transition(
+        transition, set(context.state_ids), set(context.clock_ids), context.typed_domains,
+    )
+    if transition_error is not None:
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step transition is outside the verified finite model")
+    delta_error, delta = _normalize_delta(record.delta)
+    if delta_error is not None or delta is None:
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step time advance is invalid")
+    try:
+        observations = dict(record.observations)
+    except (TypeError, ValueError):
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step observation constraints are invalid")
+    if len(observations) != len(record.observations):
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step observation constraints duplicate a clock")
+    observation_error = _validate_observation_constraints(observations, set(context.clock_ids))
+    if observation_error is not None:
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step observation constraints are outside the verified model")
+    if transition["source"] != parent.control_state_id:
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step source state does not match its parent")
+    advanced = {name: interval.shifted(delta) for name, interval in parent.clocks.items()}
+    guarded, guard_error = _apply_guard(
+        parent.control_state_id, parent.typed_store, advanced, transition["guardAst"],
+        set(context.clock_ids),
+    )
+    if guard_error is not None or guarded is None:
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step guard has no feasible verified successor")
+    guarded = dict(guarded)
+    for clock, observation in observations.items():
+        intersection = guarded[clock].intersect(observation)
+        if intersection is None:
+            return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step observation has no feasible verified successor")
+        guarded[clock] = intersection
+    if tuple(sorted(guarded.items())) != record.pre_update_clocks:
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step pre-update clock constraints do not replay")
+    expected = _successor_after_updates(parent, transition, guarded)
+    if _entry_result_identity(expected) != record.result_identity:
+        return KernelDiagnostic("INVALID-PROVENANCE-SEMANTICS", "step result does not follow from its verified parent and transition")
+    return None
 
 
 def _valid_entry(
@@ -862,6 +1024,49 @@ def _source_typed_value(value: tuple[str, object]) -> dict[str, Any]:
     return {"type": type_name, "value": encoded}
 
 
+def _json_safe(value: Any) -> Any:
+    """Encode internal exact scalars in the emitted source-record view."""
+    if isinstance(value, Fraction):
+        return {"type": "Fraction", "value": _fraction_mapping(value)}
+    if isinstance(value, Mapping):
+        return {str(key): _json_safe(item) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return [_json_safe(item) for item in value]
+    if isinstance(value, list):
+        return [_json_safe(item) for item in value]
+    if value is None or isinstance(value, (str, int, bool)):
+        return value
+    raise ValueError("source record contains a non-serialisable value")
+
+
+def _entry_from_result_identity(identity: tuple[Any, ...]) -> FrontierEntry:
+    if not isinstance(identity, tuple) or len(identity) != 7:
+        raise ValueError("invalid result identity")
+    hypothesis_id, control_state_id, clocks, typed_store, path_length, status, model_identity = identity
+    if not isinstance(clocks, tuple) or not isinstance(typed_store, tuple):
+        raise ValueError("invalid result identity fields")
+    clock_mapping: dict[str, Interval] = {}
+    for name, bounds in clocks:
+        if not isinstance(name, str) or not isinstance(bounds, tuple) or len(bounds) != 4:
+            raise ValueError("invalid result clock")
+        lower, upper, lower_closed, upper_closed = bounds
+        if not isinstance(lower, Fraction) or not isinstance(upper, Fraction):
+            raise ValueError("invalid result clock bounds")
+        clock_mapping[name] = Interval(lower, upper, lower_closed, upper_closed)
+    store_mapping: dict[str, Any] = {}
+    for name, typed_value in typed_store:
+        if not isinstance(name, str) or not isinstance(typed_value, tuple) or len(typed_value) != 2:
+            raise ValueError("invalid result typed store")
+        type_name, scalar = typed_value
+        if not isinstance(type_name, str) or type(scalar).__qualname__ != type_name:
+            raise ValueError("invalid result typed scalar")
+        store_mapping[name] = scalar
+    return FrontierEntry(
+        hypothesis_id, control_state_id, clock_mapping, store_mapping, path_length,
+        ("replay",), status, model_identity,
+    )
+
+
 def _record_fields(record: ProvenanceRecord) -> dict[str, Any]:
     """Return all record fields other than its content address."""
     return {
@@ -871,7 +1076,9 @@ def _record_fields(record: ProvenanceRecord) -> dict[str, Any]:
         "root_id": record.root_id,
         "transition_id": record.transition_id,
         "transition_identity": record.transition_identity,
+        "transition": record.transition,
         "delta": record.delta,
+        "pre_update_clocks": record.pre_update_clocks,
         "observations": record.observations,
         "result_identity": record.result_identity,
     }
@@ -882,7 +1089,8 @@ def _record_reference(record: ProvenanceRecord) -> str:
     payload = repr((
         record.kind, record.context_identity, record.parent_reference,
         record.root_id, record.transition_id, record.transition_identity,
-        record.delta,
+        record.transition, record.delta,
+        tuple((name, _interval_key(interval)) for name, interval in record.pre_update_clocks),
         tuple((name, _interval_key(interval)) for name, interval in record.observations),
         record.result_identity,
     )).encode("utf-8")
@@ -894,6 +1102,59 @@ def _is_sha256(value: object) -> bool:
         isinstance(value, str) and len(value) == 64
         and all(character in "0123456789abcdef" for character in value)
     )
+
+
+def _safe_contract_path(value: object) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError("contract path must be a nonempty repository-relative path")
+    normalized = value.replace("\\", "/")
+    posix = PurePosixPath(normalized)
+    windows = PureWindowsPath(value)
+    if posix.is_absolute() or windows.is_absolute() or windows.drive or ".." in posix.parts:
+        raise ValueError("contract path is not a safe repository-relative path")
+    return posix.as_posix()
+
+
+def _verified_snapshot(value: object) -> bool:
+    if not isinstance(value, ContractSnapshot) or value._verification_token is not _CONTRACT_SNAPSHOT_TOKEN:
+        return False
+    try:
+        path = _safe_contract_path(value.contract_path)
+    except ValueError:
+        return False
+    return (
+        path == value.contract_path
+        and isinstance(value.contract_commit, str)
+        and len(value.contract_commit) == 40
+        and all(character in "0123456789abcdef" for character in value.contract_commit)
+        and _is_sha256(value.contract_blob_sha256)
+        and isinstance(value._content, bytes)
+        and sha256(value._content).hexdigest() == value.contract_blob_sha256
+    )
+
+
+def _finite_contract_vocabulary(contract: Mapping[str, Any]) -> tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...]]:
+    """Interpret exactly the AR-FINITE vocabulary consumed by this runtime."""
+    refinements = contract.get("algorithmRefinements")
+    if not isinstance(refinements, list):
+        raise ValueError("controlled contract is missing algorithmRefinements")
+    matches = [item for item in refinements if isinstance(item, Mapping) and item.get("id") == "AR-FINITE"]
+    if len(matches) != 1:
+        raise ValueError("controlled contract must contain exactly one AR-FINITE refinement")
+    finite = matches[0].get("finiteKernelContract")
+    if not isinstance(finite, Mapping):
+        raise ValueError("AR-FINITE is missing finiteKernelContract")
+    guard_tags, update_tags, merge_fields = (
+        finite.get("guardSyntax"), finite.get("updateSyntax"), finite.get("mergeKey"),
+    )
+    if (
+        not isinstance(guard_tags, list) or tuple(guard_tags) != _SUPPORTED_GUARD_TAGS
+        or not isinstance(update_tags, list) or tuple(update_tags) != _SUPPORTED_UPDATE_TAGS
+        or not isinstance(merge_fields, list) or tuple(merge_fields) != _AUTHORITY_MERGE_FIELDS
+        or not isinstance(finite.get("resultMapping"), Mapping)
+    ):
+        raise ValueError("AR-FINITE vocabulary is unsupported by this finite runtime")
+    return tuple(guard_tags), tuple(update_tags), tuple(merge_fields)
 
 
 def _model_context_identity(
@@ -916,6 +1177,8 @@ def _context_binding_digest(context: ModelContext) -> str:
             (name, tuple(sorted((_typed_key(value) for value in domain), key=repr)))
             for name, domain in sorted(context.typed_domains.items())
         ),
+        context.supported_guard_tags, context.supported_update_tags,
+        context.authority_merge_fields,
         context.identity,
     )).encode("utf-8")
     return sha256(payload).hexdigest()
@@ -938,6 +1201,9 @@ def _verified_context(value: object) -> bool:
         and not value.contract_path.startswith(("/", "\\"))
         and ".." not in value.contract_path.replace("\\", "/").split("/")
         and isinstance(value.projection_clock, str)
+        and value.supported_guard_tags == _SUPPORTED_GUARD_TAGS
+        and value.supported_update_tags == _SUPPORTED_UPDATE_TAGS
+        and value.authority_merge_fields == _AUTHORITY_MERGE_FIELDS
     ):
         return False
     try:
@@ -965,10 +1231,21 @@ def _canonical_model(model: Mapping[str, Any]) -> dict[str, Any]:
         "stateIds": sorted(model["stateIds"]),
         "clockIds": sorted(model["clockIds"]),
         "typedDomains": {
-            key: sorted((_typed_key(value) for value in domain), key=repr)
+            key: sorted((_canonical_scalar(value) for value in domain), key=repr)
             for key, domain in sorted(model["typedDomains"].items())
         },
     }
+
+
+def _canonical_scalar(value: object) -> dict[str, Any]:
+    """Type-preserving, JSON-safe finite-domain scalar representation."""
+    if not _scalar(value):
+        raise ValueError("finite model domain contains an unsupported scalar")
+    if isinstance(value, Fraction):
+        encoded: object = _fraction_mapping(value)
+    else:
+        encoded = value
+    return {"type": type(value).__qualname__, "value": encoded}
 
 
 def _valid_limit(value: object, *, minimum: int) -> bool:
@@ -1017,6 +1294,21 @@ def _canonical_transition(transition: Mapping[str, Any]) -> tuple[Any, ...]:
     )
 
 
+def _transition_from_canonical(value: tuple[Any, ...]) -> dict[str, Any]:
+    if not isinstance(value, tuple) or len(value) != 5:
+        raise ValueError("invalid canonical transition")
+    identifier, source, target, guard, updates = value
+    if not all(isinstance(item, str) for item in (identifier, source, target)) or not isinstance(updates, tuple):
+        raise ValueError("invalid canonical transition header")
+    return {
+        "id": identifier,
+        "source": source,
+        "target": target,
+        "guardAst": _guard_from_canonical(guard),
+        "simultaneousUpdates": [_update_from_canonical(update) for update in updates],
+    }
+
+
 def _canonical_guard(ast: Mapping[str, Any]) -> tuple[Any, ...]:
     tag = ast["tag"]
     if tag == "TRUE":
@@ -1031,6 +1323,38 @@ def _canonical_guard(ast: Mapping[str, Any]) -> tuple[Any, ...]:
     return (tag, ast["clock"], _interval_key(interval))
 
 
+def _guard_from_canonical(value: Any) -> dict[str, Any]:
+    if not isinstance(value, tuple) or not value or not isinstance(value[0], str):
+        raise ValueError("invalid canonical guard")
+    tag = value[0]
+    if tag == "TRUE" and len(value) == 1:
+        return {"tag": tag}
+    if tag == "AND" and len(value) == 2 and isinstance(value[1], tuple):
+        return {"tag": tag, "operands": [_guard_from_canonical(child) for child in value[1]]}
+    if tag == "STATE-EQUALS" and len(value) == 2 and isinstance(value[1], str):
+        return {"tag": tag, "state": value[1]}
+    if tag == "TYPED-FIELD-EQUALS" and len(value) == 3 and isinstance(value[1], str):
+        return {"tag": tag, "field": value[1], "value": value[2]}
+    if tag == "RATIONAL-INTERVAL-CONTAINS" and len(value) == 3 and isinstance(value[1], str):
+        bounds = value[2]
+        if not isinstance(bounds, tuple) or len(bounds) != 4:
+            raise ValueError("invalid canonical interval guard")
+        lower, upper, lower_closed, upper_closed = bounds
+        if not isinstance(lower, Fraction) or not isinstance(upper, Fraction):
+            raise ValueError("invalid canonical interval bounds")
+        return {
+            "tag": tag,
+            "clock": value[1],
+            "interval": {
+                "lower": _fraction_mapping(lower),
+                "upper": _fraction_mapping(upper),
+                "lowerClosed": lower_closed,
+                "upperClosed": upper_closed,
+            },
+        }
+    raise ValueError("invalid canonical guard")
+
+
 def _canonical_update(update: Mapping[str, Any]) -> tuple[Any, ...]:
     tag = update["tag"]
     if tag == "STATE-ASSIGN":
@@ -1038,3 +1362,16 @@ def _canonical_update(update: Mapping[str, Any]) -> tuple[Any, ...]:
     if tag == "CLOCK-RESET-TO-ZERO":
         return (tag, update["clock"])
     return (tag, update["field"], update["value"])
+
+
+def _update_from_canonical(value: Any) -> dict[str, Any]:
+    if not isinstance(value, tuple) or not value or not isinstance(value[0], str):
+        raise ValueError("invalid canonical update")
+    tag = value[0]
+    if tag == "STATE-ASSIGN" and len(value) == 2 and isinstance(value[1], str):
+        return {"tag": tag, "state": value[1]}
+    if tag == "CLOCK-RESET-TO-ZERO" and len(value) == 2 and isinstance(value[1], str):
+        return {"tag": tag, "clock": value[1]}
+    if tag == "TYPED-FIELD-ASSIGN" and len(value) == 3 and isinstance(value[1], str):
+        return {"tag": tag, "field": value[1], "value": value[2]}
+    raise ValueError("invalid canonical update")
