@@ -12,8 +12,14 @@ import pytest
 from cltav_runtime.bindings import RuntimeAuthorityBinding
 from cltav_runtime.kernel import ContractSnapshot, ModelContext
 from cltav_runtime.model import FiniteSessionModel
-from cltav_runtime.session import ReferenceSession, ResourceState
-from cltav_runtime.synthetic import ExecutionRequest, SyntheticEnvironment
+from cltav_runtime.session import ReferenceSession, ResourceState, SessionState
+from cltav_runtime.synthetic import (
+    EnvironmentExecution,
+    ExecutionRequest,
+    SyntheticEnvironment,
+    VisibleExecutionRecord,
+)
+from cltav_runtime.types import HistoryHandle
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -132,11 +138,13 @@ def test_prediction_keeps_overlapping_classes_and_names_a_current_gap() -> None:
     overlap = model.predict(
         hypotheses=frozenset(model.initial_frontiers),
         frontiers=model.initial_frontiers,
+        status_by_hypothesis={},
         action_id="test-overlap",
     )
     gap = model.predict(
         hypotheses=frozenset(model.initial_frontiers),
         frontiers=model.initial_frontiers,
+        status_by_hypothesis={},
         action_id="test-gap",
     )
 
@@ -147,17 +155,49 @@ def test_prediction_keeps_overlapping_classes_and_names_a_current_gap() -> None:
 
 def test_unaffordable_best_test_and_no_information_test_do_not_displace_router() -> None:
     binding, model, fixture = _runtime_parts()
+    budget_model_data = copy.deepcopy(fixture["algorithmModel"])
+    for action in budget_model_data["actions"]:
+        if action["id"] in {"test-router", "test-expensive-optimal"}:
+            action["enabledSummaries"] = ["budget-q0"]
+    budget_model = FiniteSessionModel.from_mapping(context=model.context, value=budget_model_data)
     result = ReferenceSession(
         binding=binding,
-        model=model,
+        model=budget_model,
         session_id="session-affordability",
         run_id="run-affordability",
-        initial_summary="q0",
-        resources=ResourceState.rounds(2),
+        initial_summary="budget-q0",
+        resources=ResourceState.budget(2),
     ).run(SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]), maximum_rounds=1)
 
     assert result.state.evidence[0].snapshot.action_id == "test-router"
     assert result.state.evidence[0].snapshot.action_id != "test-no-information"
+
+
+def test_rounds_mode_consumes_one_issued_action_not_declared_action_cost() -> None:
+    binding, model, fixture = _runtime_parts()
+    rounds_model_data = copy.deepcopy(fixture["algorithmModel"])
+    for action in rounds_model_data["actions"]:
+        if action["id"] == "test-expensive-optimal":
+            action["enabledSummaries"] = ["q0"]
+    rounds_model = FiniteSessionModel.from_mapping(context=model.context, value=rounds_model_data)
+    environment = SyntheticEnvironment.from_mapping(
+        {
+            "initialPrivateState": "private-rounds",
+            "states": {
+                "private-rounds": {
+                    "test-expensive-optimal": {"effectClass": "NONE", "observable": "e0", "summaryConfirmed": True, "nextPrivateState": "private-rounds"}
+                }
+            },
+        },
+    )
+    result = ReferenceSession(
+        binding=binding, model=rounds_model, session_id="session-rounds", run_id="run-rounds",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+    ).run(environment, maximum_rounds=1)
+
+    assert result.state.evidence[0].snapshot.action_id == "test-expensive-optimal"
+    assert result.state.evidence[0].resource_before.remaining == 1
+    assert result.state.evidence[0].resource_after.remaining == 0
 
 
 def test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_entry() -> None:
@@ -235,3 +275,86 @@ def test_confirmed_not_sent_is_issued_and_charged_once_but_preserves_history() -
     assert evidence.history_before is evidence.history_after
     assert evidence.summary_after == "q0"
     assert evidence.committed is False
+
+
+def test_execution_tool_error_keeps_the_already_charged_execution_record() -> None:
+    class FailingEnvironment:
+        def execute(self, _request: ExecutionRequest) -> object:
+            raise ValueError("controlled executor failure")
+
+    binding, model, _fixture = _runtime_parts()
+    result = ReferenceSession(
+        binding=binding, model=model, session_id="session-tool-error", run_id="run-tool-error",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    ).run(FailingEnvironment(), maximum_rounds=1)  # type: ignore[arg-type]
+
+    assert result.stop_reason == "Stop-Error"
+    assert result.state.resources.remaining == 1
+    assert result.state.attempts == 1
+    assert result.state.evidence[0].execution.effect_class == "UNKNOWN-EFFECT"
+    assert result.state.evidence[0].charged_once is True
+    assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
+
+
+def test_invalid_execution_identity_does_not_restore_the_pre_charge_state() -> None:
+    class WrongIdentityEnvironment:
+        def __init__(self, successor: SyntheticEnvironment) -> None:
+            self.successor = successor
+
+        def execute(self, _request: ExecutionRequest) -> EnvironmentExecution:
+            return EnvironmentExecution(
+                VisibleExecutionRecord(
+                    execution_attempt_id="wrong-execution-id",
+                    action_id="test-router",
+                    effect_class="NONE",
+                    observable="branch-alpha",
+                    summary_confirmed=True,
+                    post_summary="branch-alpha",
+                    evidence_ref="synthetic:wrong-execution-id:bad",
+                ),
+                self.successor,
+            )
+
+    binding, model, fixture = _runtime_parts()
+    result = ReferenceSession(
+        binding=binding, model=model, session_id="session-identity-error", run_id="run-identity-error",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    ).run(
+        WrongIdentityEnvironment(SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"])),  # type: ignore[arg-type]
+        maximum_rounds=1,
+    )
+
+    assert result.stop_reason == "Stop-Error"
+    assert result.state.resources.remaining == 1
+    assert result.state.attempts == 1
+    assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
+    assert result.state.evidence[0].execution.execution_attempt_id == "run-identity-error:session-identity-error:execution:1"
+    assert result.diagnostics[-1].code == "EXECUTION-IDENTITY-ERROR"
+
+
+def test_conservative_hypothesis_is_retained_by_a_normal_visible_observation() -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-conservative", run_id="run-conservative",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    initial = session.initial_state
+    history = HistoryHandle.committed(
+        hypotheses=set(initial.frontiers),
+        compatible_state_by_hypothesis={
+            hypothesis: frontier.history_provenance[-1]
+            for hypothesis, frontier in initial.frontiers.items()
+        },
+        status_by_hypothesis={
+            hypothesis: "CONSERVATIVE-UNKNOWN" if hypothesis == "h3" else "KNOWN"
+            for hypothesis in initial.frontiers
+        },
+        version=1,
+    )
+    state = SessionState(
+        initial.context, history, initial.frontiers, initial.resources, 0, frozenset(), (),
+    )
+    result = session.step(state, SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]))
+
+    assert result.state.history.hypotheses == {"h0", "h1", "h3"}
+    assert result.state.history.status_by_hypothesis["h3"] == "CONSERVATIVE-UNKNOWN"

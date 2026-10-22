@@ -60,8 +60,8 @@ An engineering session always has a `runId`, `sessionId`, immutable
 optional `experimentAttemptId` is a foreign key to a later registered
 experiment unit; it is absent in the present engineering fixtures.  Retrying
 therefore creates a new execution identity without manufacturing a second
-experimental sample.  A repeated delivery of an existing execution identity
-is rejected before it can be charged or committed again.
+experimental sample.  A repeated or malformed returned execution identity is
+rejected without S9 commitment; it never becomes a second history update.
 
 `issuedToExecutor` means that S4's admitted immutable action was handed to the
 execution interface.  It does **not** mean that a network packet was sent or
@@ -72,6 +72,15 @@ separate four-component projection where preparation contains recovery exactly
 once.  The session selector sees only the causal resource mode, remaining
 resource and declared action cost; audit-only outcome/status fields never flow
 back into selection.
+
+`ROUNDS` consumes exactly one issued action, irrespective of the action's
+declared monetary/computational cost.  `BUDGET` consumes that declared cost.
+After S4, an execution-side exception, malformed execution result, invalid
+result identity, or observation outside the frozen snapshot does not restore
+the pre-issue state: it retains the one charge and expected attempt identity,
+records a controlled error, sets the session to `CONSERVATIVE-UNKNOWN`, and
+does not invoke S9.  `CONFIRMED-NOT-SENT` is distinct: it is charged once but
+preserves the prior history and known summary.
 
 Pairing and reset are deliberately not inferred from a Recover action.  A
 future experiment adapter must link paired units with `pairingId`, retain a
@@ -151,13 +160,19 @@ reviewed; they are not confirmation experiments or protocol conformance cases.
 工程会话始终具有 `runId`、`sessionId`、不可变 `snapshotId`、`actionId`，且每次派发
 均有一个 `executionAttemptId`。可选的 `experimentAttemptId` 是后续已登记实验单位的外键；
 当前工程 fixture 中该字段为空。因此，重试会产生新的执行身份，但不会伪造第二个实验样本。
-同一执行身份的重复投递会在再次计费或提交前被拒绝。
+重复或畸形的返回执行身份会在 S9 提交前被拒绝；它绝不会变成第二次历史更新。
 
 `issuedToExecutor` 表示 S4 已将准入后的不可变动作交给执行接口；**不**表示网络报文已发送
 或 IUT 已被刺激。每次 issued 执行记录其前后资源视图、五项声明的费用明细
 （`acquisition`、`computation`、`preparation`、`recovery`、`retry`）及独立的四维投影；
 投影中的 preparation 恰好折叠一次 recovery。会话选择器只读取因果资源模式、剩余资源和
 声明动作成本；仅审计的 outcome/status 字段绝不回流到选择。
+
+`ROUNDS` 每次 issued 恰好消耗一个动作，和动作声明的金钱／计算成本无关；`BUDGET` 才消耗该
+声明成本。S4 之后发生执行侧异常、畸形执行返回、返回身份无效，或观测不属于冻结 snapshot 时，
+均不得恢复到派发前状态：保留一次计费和期望的 attempt 身份，记录受控错误，将会话置为
+`CONSERVATIVE-UNKNOWN`，且不得调用 S9。`CONFIRMED-NOT-SENT` 与此不同：它恰好计费一次，
+但保留此前 history 和已知摘要。
 
 配对和复位绝不从 Recover 动作推断。后续实验适配器必须用 `pairingId` 链接配对单位，为每个
 臂保留独立、已确认的 `resetId` 与 `resetEvidenceRef`，并将该证据与会话内恢复分开。当前合成

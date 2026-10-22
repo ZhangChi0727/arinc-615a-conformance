@@ -67,6 +67,7 @@ class PredictionClass:
     observable: str
     hypotheses: frozenset[str]
     successors: Mapping[str, FrontierEntry]
+    conservative_hypotheses: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -173,7 +174,8 @@ class FiniteSessionModel:
         )
 
     def predict(
-        self, *, hypotheses: frozenset[str], frontiers: Mapping[str, FrontierEntry], action_id: str,
+        self, *, hypotheses: frozenset[str], frontiers: Mapping[str, FrontierEntry],
+        status_by_hypothesis: Mapping[str, str], action_id: str,
     ) -> ActionPrediction:
         """Compute current classes by propagating each current public path."""
 
@@ -187,8 +189,12 @@ class FiniteSessionModel:
                 action_id, (), (KernelDiagnostic("INVALID-HISTORY", "current hypotheses/frontiers are inconsistent"),),
             )
         grouped: dict[str, dict[str, FrontierEntry]] = {}
+        conservative: dict[str, FrontierEntry] = {}
         diagnostics: list[KernelDiagnostic] = []
         for hypothesis in sorted(hypotheses):
+            if status_by_hypothesis.get(hypothesis) == "CONSERVATIVE-UNKNOWN":
+                conservative[hypothesis] = frontiers[hypothesis]
+                continue
             result = propagate_transition(
                 frontiers[hypothesis],
                 action.transition,
@@ -205,8 +211,33 @@ class FiniteSessionModel:
                     grouped.setdefault(observable, {})[hypothesis] = result.entries[0]
             elif result.kind != "INFEASIBLE":
                 # A bounded/unsupported computation keeps its hypothesis in a
-                # named conservative class; it is never silently eliminated.
-                grouped.setdefault("__conservative_unknown__", {})[hypothesis] = frontiers[hypothesis]
+                # conservative continuation.  It is included in every normal
+                # class below, so a visible normal observation cannot exclude
+                # a hypothesis whose applicable computation was not completed.
+                conservative[hypothesis] = frontiers[hypothesis]
+        if conservative:
+            if grouped:
+                for successors in grouped.values():
+                    successors.update(conservative)
+            else:
+                # No completed calculation produced a visible class.  Keeping
+                # a synthetic ``unknown`` class here would make an incomplete
+                # calculation look like an admissible, distinguishing TEST
+                # outcome.  The coordinator must instead treat this as the
+                # named prediction gap and may consider an admitted PREP.
+                return ActionPrediction(
+                    action_id,
+                    (),
+                    tuple(
+                        diagnostics
+                        + [
+                            KernelDiagnostic(
+                                "CONSERVATIVE-PREDICTION-GAP",
+                                "no completed visible class exists; conservative hypotheses are retained",
+                            ),
+                        ]
+                    ),
+                )
         if len(grouped) > self.observation_class_limit:
             retained = {hypothesis: frontiers[hypothesis] for hypothesis in hypotheses}
             return ActionPrediction(
@@ -217,6 +248,7 @@ class FiniteSessionModel:
                         observable="__conservative_unknown__",
                         hypotheses=frozenset(retained),
                         successors=MappingProxyType(retained),
+                        conservative_hypotheses=frozenset(retained),
                     ),
                 ),
                 tuple(diagnostics + [KernelDiagnostic("OBSERVATION-CLASS-LIMIT", "declared observation-class bound reached; hypotheses retained")]),
@@ -227,6 +259,7 @@ class FiniteSessionModel:
                 observable=observable,
                 hypotheses=frozenset(successors),
                 successors=MappingProxyType(dict(successors)),
+                conservative_hypotheses=frozenset(conservative),
             )
             for observable, successors in sorted(grouped.items())
         )

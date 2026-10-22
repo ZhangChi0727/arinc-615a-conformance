@@ -9,7 +9,12 @@ from typing import Mapping
 from .bindings import RuntimeAuthorityBinding
 from .kernel import FrontierEntry, KernelDiagnostic
 from .model import ActionPrediction, FiniteSessionModel, PredictionClass, SyntheticAction
-from .synthetic import ExecutionRequest, SyntheticEnvironment, VisibleExecutionRecord
+from .synthetic import (
+    EnvironmentExecution,
+    ExecutionRequest,
+    SyntheticEnvironment,
+    VisibleExecutionRecord,
+)
 from .types import HistoryHandle, SessionContext
 
 
@@ -26,13 +31,20 @@ class ResourceState:
             raise ValueError("round resource remaining must be a nonnegative integer")
         return cls("ROUNDS", remaining)
 
+    @classmethod
+    def budget(cls, remaining: int) -> "ResourceState":
+        if isinstance(remaining, bool) or not isinstance(remaining, int) or remaining < 0:
+            raise ValueError("budget resource remaining must be a nonnegative integer")
+        return cls("BUDGET", remaining)
+
     def can_afford(self, action: SyntheticAction) -> bool:
-        return self.remaining >= action.cost
+        return self.remaining >= 1 if self.mode == "ROUNDS" else self.remaining >= action.cost
 
     def charge(self, action: SyntheticAction) -> "ResourceState":
         if not self.can_afford(action):
             raise ValueError("unaffordable action cannot be charged")
-        return ResourceState(self.mode, self.remaining - action.cost)
+        consumed = 1 if self.mode == "ROUNDS" else action.cost
+        return ResourceState(self.mode, self.remaining - consumed)
 
     def algorithm_view(self, action: SyntheticAction) -> "AlgorithmResourceView":
         """Expose only causal resource fields required for admission."""
@@ -194,6 +206,7 @@ class ReferenceSession:
             prediction = self.model.predict(
                 hypotheses=state.history.hypotheses,
                 frontiers=state.frontiers,
+                status_by_hypothesis=state.history.status_by_hypothesis,
                 action_id=action.action_id,
             )
             diagnostics.extend(prediction.diagnostics)
@@ -215,6 +228,7 @@ class ReferenceSession:
                 prediction = self.model.predict(
                     hypotheses=state.history.hypotheses,
                     frontiers=state.frontiers,
+                    status_by_hypothesis=state.history.status_by_hypothesis,
                     action_id=action.action_id,
                 )
                 diagnostics.extend(prediction.diagnostics)
@@ -258,21 +272,76 @@ class ReferenceSession:
         execution_attempt_id = (
             f"{state.context.run_id}:{state.context.session_id}:execution:{state.attempts + 1}"
         )
-        execution = environment.execute(
-            ExecutionRequest(
-                session_id=state.context.session_id,
-                execution_attempt_id=execution_attempt_id,
-                action_id=snapshot.action_id,
-                action_kind=snapshot.action_kind,
-            ),
+        request = ExecutionRequest(
+            session_id=state.context.session_id,
+            execution_attempt_id=execution_attempt_id,
+            action_id=snapshot.action_id,
+            action_kind=snapshot.action_kind,
         )
+        try:
+            execution = environment.execute(request)
+        except (AttributeError, KeyError, TypeError, ValueError) as exc:
+            return self._charged_execution_error(
+                state=state,
+                environment=environment,
+                snapshot=snapshot,
+                prediction=prediction,
+                action=action,
+                resource_before=resource_before,
+                resource_after=resource_after,
+                charged_resources=charged_resources,
+                execution_attempt_id=execution_attempt_id,
+                diagnostics=diagnostics,
+                code="EXECUTION-TOOL-ERROR",
+                message=str(exc) or type(exc).__name__,
+            )
+        if not isinstance(execution, EnvironmentExecution):
+            return self._charged_execution_error(
+                state=state,
+                environment=environment,
+                snapshot=snapshot,
+                prediction=prediction,
+                action=action,
+                resource_before=resource_before,
+                resource_after=resource_after,
+                charged_resources=charged_resources,
+                execution_attempt_id=execution_attempt_id,
+                diagnostics=diagnostics,
+                code="EXECUTION-RESULT-TYPE-ERROR",
+                message="environment did not return an EnvironmentExecution",
+            )
+        if not isinstance(execution.record, VisibleExecutionRecord) or not isinstance(execution.successor, SyntheticEnvironment):
+            return self._charged_execution_error(
+                state=state,
+                environment=environment,
+                snapshot=snapshot,
+                prediction=prediction,
+                action=action,
+                resource_before=resource_before,
+                resource_after=resource_after,
+                charged_resources=charged_resources,
+                execution_attempt_id=execution_attempt_id,
+                diagnostics=diagnostics,
+                code="EXECUTION-RESULT-TYPE-ERROR",
+                message="environment execution has an invalid record or successor",
+            )
         if (
             execution.record.execution_attempt_id != execution_attempt_id
             or execution_attempt_id in state.processed_execution_attempt_ids
         ):
-            return SessionResult(
-                state, execution.successor, "Stop-Error",
-                tuple(diagnostics + [KernelDiagnostic("EXECUTION-IDENTITY-ERROR", "execution result identity is invalid or already processed")]),
+            return self._charged_execution_error(
+                state=state,
+                environment=environment,
+                snapshot=snapshot,
+                prediction=prediction,
+                action=action,
+                resource_before=resource_before,
+                resource_after=resource_after,
+                charged_resources=charged_resources,
+                execution_attempt_id=execution_attempt_id,
+                diagnostics=diagnostics,
+                code="EXECUTION-IDENTITY-ERROR",
+                message="execution result identity is invalid or already processed",
             )
         if execution.record.effect_class == "CONFIRMED-NOT-SENT":
             evidence = RoundEvidence(
@@ -312,9 +381,20 @@ class ReferenceSession:
             )
         selected_class = _matching_class(snapshot, execution.record)
         if selected_class is None:
-            return SessionResult(
-                state, execution.successor, "Stop-Error",
-                tuple(diagnostics + [KernelDiagnostic("OBSERVATION-OUTSIDE-SNAPSHOT", "visible observation is not in the frozen selected prediction")]),
+            return self._charged_execution_error(
+                state=state,
+                environment=environment,
+                snapshot=snapshot,
+                prediction=prediction,
+                action=action,
+                resource_before=resource_before,
+                resource_after=resource_after,
+                charged_resources=charged_resources,
+                execution_attempt_id=execution_attempt_id,
+                diagnostics=diagnostics,
+                code="OBSERVATION-OUTSIDE-SNAPSHOT",
+                message="visible observation is not in the frozen selected prediction",
+                execution_record=execution.record,
             )
         next_history = HistoryHandle.committed(
             hypotheses=selected_class.hypotheses,
@@ -322,7 +402,10 @@ class ReferenceSession:
                 hypothesis: entry.history_provenance[-1]
                 for hypothesis, entry in selected_class.successors.items()
             },
-            status_by_hypothesis={hypothesis: "KNOWN" for hypothesis in selected_class.hypotheses},
+            status_by_hypothesis={
+                hypothesis: "CONSERVATIVE-UNKNOWN" if hypothesis in selected_class.conservative_hypotheses else "KNOWN"
+                for hypothesis in selected_class.hypotheses
+            },
             version=state.history.version + 1,
         )
         next_context = SessionContext.create(
@@ -351,6 +434,80 @@ class ReferenceSession:
             state.evidence + (evidence,),
         )
         return SessionResult(next_state, execution.successor, stop_reason, tuple(diagnostics))
+
+    def _charged_execution_error(
+        self,
+        *,
+        state: SessionState,
+        environment: SyntheticEnvironment,
+        snapshot: SelectSnapshot,
+        prediction: ActionPrediction,
+        action: SyntheticAction,
+        resource_before: AlgorithmResourceView,
+        resource_after: AlgorithmResourceView,
+        charged_resources: ResourceState,
+        execution_attempt_id: str,
+        diagnostics: list[KernelDiagnostic],
+        code: str,
+        message: str,
+        execution_record: VisibleExecutionRecord | None = None,
+    ) -> SessionResult:
+        """Record an error after S4 without returning the pre-charge state.
+
+        Once a request is issued, it owns an attempt identity and consumes the
+        declared resource unit.  A malformed execution result cannot undo that
+        fact; it instead transitions the session to a controlled, conservative
+        unknown state without invoking S9.
+        """
+
+        record = execution_record or VisibleExecutionRecord(
+            execution_attempt_id=execution_attempt_id,
+            action_id=snapshot.action_id,
+            effect_class="UNKNOWN-EFFECT",
+            observable=None,
+            summary_confirmed=False,
+            post_summary=None,
+            evidence_ref=f"synthetic:{execution_attempt_id}:tool-error",
+        )
+        unknown_context = SessionContext.create(
+            session_id=state.context.session_id,
+            run_id=state.context.run_id,
+            experiment_attempt_id=state.context.experiment_attempt_id,
+            model_identity=state.context.model_identity,
+            current_summary=None,
+            q_status="CONSERVATIVE-UNKNOWN",
+        )
+        evidence = RoundEvidence(
+            snapshot,
+            prediction,
+            record,
+            True,
+            True,
+            resource_before,
+            resource_after,
+            action.detail_charges,
+            action.projected_cost(),
+            state.history,
+            state.history,
+            None,
+            False,
+            "Stop-Error",
+        )
+        charged_state = SessionState(
+            unknown_context,
+            state.history,
+            state.frontiers,
+            charged_resources,
+            state.attempts + 1,
+            state.processed_execution_attempt_ids | {execution_attempt_id},
+            state.evidence + (evidence,),
+        )
+        return SessionResult(
+            charged_state,
+            environment,
+            "Stop-Error",
+            tuple(diagnostics + [KernelDiagnostic(code, message)]),
+        )
 
 
 def _has_distinguishing_value(prediction: ActionPrediction, hypotheses: frozenset[str]) -> bool:

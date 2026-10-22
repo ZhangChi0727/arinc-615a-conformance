@@ -37,7 +37,7 @@
         "kind": "TEST",
         "cost": 3,
         "detailCharges": {"acquisition": 0, "computation": 3, "preparation": 0, "recovery": 0, "retry": 0},
-        "enabledSummaries": ["q0"],
+        "enabledSummaries": ["budget-q0"],
         "transition": {"id": "tr-expensive", "source": "q0", "target": "q0", "guardAst": {"tag": "TRUE"}, "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}]},
         "observableByHypothesis": {"h0": "e0", "h1": "e1", "h2": "e2", "h3": "e3"}
       },
