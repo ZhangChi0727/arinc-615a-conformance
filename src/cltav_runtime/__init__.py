@@ -17,15 +17,21 @@ from .kernel import (
     merge_frontier,
     propagate_transition,
 )
+from .bindings import RuntimeAuthorityBinding, SourceSnapshot
+from .types import HistoryHandle, SessionContext
 
 __all__ = [
     "ContractSnapshot",
+    "HistoryHandle",
     "FrontierEntry",
     "Interval",
     "KernelDiagnostic",
     "KernelResult",
     "ModelContext",
     "ProvenanceRecord",
+    "RuntimeAuthorityBinding",
+    "SessionContext",
+    "SourceSnapshot",
     "initial_entry",
     "merge_frontier",
     "propagate_transition",
