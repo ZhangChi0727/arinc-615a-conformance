@@ -356,6 +356,14 @@ def test_confirmed_not_sent_is_issued_and_charged_once_but_preserves_history() -
     assert evidence.summary_after == "q0"
     assert evidence.committed is False
 
+    resumed = ReferenceSession(
+        binding=binding, model=model, session_id="session-not-sent", run_id="run-not-sent",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    ).step(result.state, result.environment)
+    assert resumed.stop_reason == "Stop-Error"
+    assert resumed.diagnostics[0].code == "TERMINAL-SESSION-STATE"
+    assert resumed.state.attempts == 1
+
 
 @pytest.mark.parametrize("error_type", [ValueError, RuntimeError, OSError])
 def test_execution_tool_error_keeps_the_already_charged_execution_record(error_type: type[Exception]) -> None:
@@ -480,10 +488,42 @@ def test_malformed_execution_record_keeps_a_typed_successor_environment() -> Non
     assert result.environment._state == "private-a1"
 
 
+def test_valid_visible_record_is_retained_when_the_returned_successor_is_invalid() -> None:
+    class InvalidSuccessorEnvironment:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            return EnvironmentExecution(
+                VisibleExecutionRecord(
+                    execution_attempt_id=request.execution_attempt_id,
+                    action_id=request.action_id,
+                    effect_class="NONE",
+                    observable="branch-alpha",
+                    summary_confirmed=True,
+                    post_summary="branch-alpha",
+                    measurement_tick=Fraction(0),
+                    uncertainty_identity="synthetic-u-1",
+                    evidence_ref="synthetic:invalid-successor:visible-record",
+                ),
+                object(),  # type: ignore[arg-type]
+            )
+
+    binding, model, _fixture = _runtime_parts()
+    result = ReferenceSession(
+        binding=binding, model=model, session_id="session-invalid-successor", run_id="run-invalid-successor",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    ).run(InvalidSuccessorEnvironment(), maximum_rounds=1)  # type: ignore[arg-type]
+
+    assert result.stop_reason == "Stop-Error"
+    assert result.diagnostics[-1].code == "EXECUTION-RESULT-TYPE-ERROR"
+    assert result.state.resources.remaining == 1
+    assert result.state.evidence[0].rejected_response is not None
+    assert result.state.evidence[0].rejected_response.evidence_ref == "synthetic:invalid-successor:visible-record"
+
+
 @pytest.mark.parametrize(
     "replacement",
     [
         {"effect_class": "IMPROVISED"},
+        {"effect_class": ["NONE"]},
         {"effect_class": "NONE", "summary_confirmed": False},
         {"effect_class": "NONE", "summary_confirmed": "false"},
         {"effect_class": "NONE", "summary_confirmed": 1},
@@ -532,6 +572,57 @@ def test_malformed_visible_record_combinations_are_controlled_post_dispatch_erro
     assert result.environment._state == "private-a1"
 
 
+@pytest.mark.parametrize(
+    ("effect_class", "observable", "summary_confirmed", "post_summary", "measurement_tick"),
+    [
+        ("NONE", "branch-alpha", True, "branch-alpha", Fraction(0)),
+        ("CONFIRMED-NOT-SENT", None, False, None, None),
+        ("UNKNOWN-EFFECT", None, False, None, None),
+    ],
+)
+def test_wrong_action_identity_cannot_use_any_effect_branch(
+    effect_class: str,
+    observable: str | None,
+    summary_confirmed: bool,
+    post_summary: str | None,
+    measurement_tick: Fraction | None,
+) -> None:
+    class WrongActionEnvironment:
+        def __init__(self, successor: SyntheticEnvironment) -> None:
+            self.successor = successor
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            return EnvironmentExecution(
+                VisibleExecutionRecord(
+                    execution_attempt_id=request.execution_attempt_id,
+                    action_id="foreign-action",
+                    effect_class=effect_class,
+                    observable=observable,
+                    summary_confirmed=summary_confirmed,
+                    post_summary=post_summary,
+                    measurement_tick=measurement_tick,
+                    uncertainty_identity="synthetic-u-1",
+                    evidence_ref=f"synthetic:foreign-action:{effect_class}",
+                ),
+                self.successor,
+            )
+
+    binding, model, fixture = _runtime_parts()
+    successor = SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]).execute(
+        ExecutionRequest("seed-session", "seed-execution", "test-router", "TEST"),
+    ).successor
+    result = ReferenceSession(
+        binding=binding, model=model, session_id="session-cns-action", run_id="run-cns-action",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    ).run(WrongActionEnvironment(successor), maximum_rounds=1)  # type: ignore[arg-type]
+
+    assert result.stop_reason == "Stop-Error"
+    assert result.diagnostics[-1].code == "EXECUTION-IDENTITY-ERROR"
+    assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
+    assert result.state.evidence[0].rejected_response is not None
+    assert result.state.evidence[0].rejected_response.action_id == "foreign-action"
+
+
 def test_observation_class_limit_is_a_prediction_gap_not_a_synthetic_visible_label() -> None:
     binding, model, fixture = _runtime_parts()
     limited_data = copy.deepcopy(fixture["algorithmModel"])
@@ -553,30 +644,20 @@ def test_observation_class_limit_is_a_prediction_gap_not_a_synthetic_visible_lab
 
 
 def test_conservative_hypothesis_is_retained_by_a_normal_visible_observation() -> None:
-    binding, model, fixture = _runtime_parts()
-    session = ReferenceSession(
-        binding=binding, model=model, session_id="session-conservative", run_id="run-conservative",
-        initial_summary="q0", resources=ResourceState.rounds(2),
-    )
-    initial = session.initial_state
-    history = HistoryHandle.initial(
-        hypotheses=set(initial.frontiers),
-        compatible_state_by_hypothesis={
-                hypothesis: tuple(frontier.history_provenance[-1] for frontier in bundle)
-                for hypothesis, bundle in initial.frontiers.items()
-        },
+    _binding, model, _fixture = _runtime_parts()
+    prediction = model.predict(
+        hypotheses=frozenset(model.initial_frontiers),
+        frontiers=model.initial_frontiers,
         status_by_hypothesis={
             hypothesis: "CONSERVATIVE-UNKNOWN" if hypothesis == "h3" else "KNOWN"
-            for hypothesis in initial.frontiers
+            for hypothesis in model.initial_frontiers
         },
+        action_id="test-router",
     )
-    state = SessionState(
-        initial.context, history, initial.frontiers, initial.resources, 0, frozenset(), (),
-    )
-    result = session.step(state, SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]))
+    alpha = next(item for item in prediction.classes if item.observable == "branch-alpha")
 
-    assert result.state.history.hypotheses == {"h0", "h1", "h3"}
-    assert result.state.history.status_by_hypothesis["h3"] == "CONSERVATIVE-UNKNOWN"
+    assert alpha.hypotheses == {"h0", "h1", "h3"}
+    assert alpha.conservative_hypotheses == {"h3"}
 
 
 @pytest.mark.parametrize(
@@ -591,7 +672,7 @@ def test_conservative_hypothesis_is_retained_by_a_normal_visible_observation() -
         ),
         (
             lambda state: replace(state, history=replace(state.history, version=99)),
-            "INVALID-INITIAL-HISTORY",
+            "INVALID-HISTORY-HANDLE",
         ),
     ],
 )
@@ -655,6 +736,83 @@ def test_resume_rejects_a_malformed_frontier_bundle_with_a_named_diagnostic() ->
     assert result.state.resources.remaining == 2
 
 
+def test_resume_replays_evidence_lineage_before_any_new_dispatch() -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-lineage", run_id="run-lineage",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    first = session.step(
+        session.initial_state,
+        SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]),
+    )
+    assert first.stop_reason is None
+    original_records = dict(model.context.provenance_store.records())
+    assert session._state_error(first.state) is None
+    assert dict(model.context.provenance_store.records()) == original_records
+    resumed = session.step(first.state, first.environment)
+    assert resumed.state.attempts == 2
+
+    replaced_roots = {
+        hypothesis: session.initial_state.frontiers[hypothesis]
+        for hypothesis in first.state.history.hypotheses
+    }
+    replaced_history = HistoryHandle.committed(
+        hypotheses=set(replaced_roots),
+        compatible_state_by_hypothesis={
+            hypothesis: tuple(entry.history_provenance[-1] for entry in bundle)
+            for hypothesis, bundle in replaced_roots.items()
+        },
+        status_by_hypothesis={hypothesis: "KNOWN" for hypothesis in replaced_roots},
+        version=first.state.history.version,
+    )
+    altered_states = {
+        "summary": replace(first.state, context=replace(first.state.context, current_summary="q0")),
+        "resource": replace(first.state, resources=ResourceState.rounds(100)),
+        "status": replace(first.state, history=replace(first.state.history, status_by_hypothesis={
+            hypothesis: "BOGUS" for hypothesis in first.state.history.hypotheses
+        })),
+        "frontier": replace(first.state, history=replaced_history, frontiers=replaced_roots),
+        "evidence": replace(first.state, evidence=(replace(
+            first.state.evidence[0], snapshot=replace(first.state.evidence[0].snapshot, action_id="test-overlap"),
+        ),)),
+    }
+    for name, altered in altered_states.items():
+        rejected = session.step(altered, first.environment)
+        assert rejected.stop_reason == "Stop-Error", name
+        assert rejected.state is altered
+        assert rejected.state.resources == altered.resources
+        assert rejected.environment is first.environment
+        assert rejected.diagnostics[0].code in {
+            "INVALID-HISTORY-HANDLE", "SESSION-LINEAGE-MISMATCH", "SNAPSHOT-IDENTITY-MISMATCH",
+            "EVIDENCE-ADMISSION-MISMATCH",
+        }, name
+
+
+def test_synthetic_environment_detaches_nested_measurement_configuration() -> None:
+    declaration = {
+        "initialPrivateState": "private-0",
+        "uncertaintyIdentity": "synthetic-u-1",
+        "states": {
+            "private-0": {
+                "test-router": {
+                    "effectClass": "NONE",
+                    "observable": "branch-alpha",
+                    "summaryConfirmed": True,
+                    "measurementTick": {"numerator": 0, "positiveDenominator": 1},
+                    "nextPrivateState": "private-0",
+                },
+            },
+        },
+    }
+    environment = SyntheticEnvironment.from_mapping(declaration)
+    declaration["states"]["private-0"]["test-router"]["measurementTick"]["numerator"] = 5
+
+    execution = environment.execute(ExecutionRequest("session-freeze", "execution-freeze", "test-router", "TEST"))
+
+    assert execution.record.measurement_tick == Fraction(0)
+
+
 def test_shared_uncertainty_changes_the_prediction_and_interpretation_boundary() -> None:
     binding, model, fixture = _runtime_parts()
     shifted_alpha = copy.deepcopy(fixture["environments"]["alpha"])
@@ -707,13 +865,8 @@ def test_interpretation_rejects_an_uncertainty_identity_not_frozen_at_selection(
 
 
 def test_one_infeasible_path_does_not_exclude_a_hypothesis_with_another_feasible_path() -> None:
-    binding, model, fixture = _runtime_parts()
-    session = ReferenceSession(
-        binding=binding, model=model, session_id="session-paths-feasible", run_id="run-paths-feasible",
-        initial_summary="q0", resources=ResourceState.rounds(1),
-    )
-    initial = session.initial_state
-    h0 = initial.frontiers["h0"][0]
+    _binding, model, _fixture = _runtime_parts()
+    h0 = model.initial_frontiers["h0"]
     alternate = initial_entry(
         model.context,
         hypothesis_id="h0",
@@ -722,33 +875,71 @@ def test_one_infeasible_path_does_not_exclude_a_hypothesis_with_another_feasible
         typed_store=h0.typed_store,
         root_id="root:h0:infeasible-router-path",
     )
-    bundles = dict(initial.frontiers)
+    bundles = {hypothesis: (frontier,) for hypothesis, frontier in model.initial_frontiers.items()}
     bundles["h0"] = (h0, alternate)
-    history = HistoryHandle.initial(
-        hypotheses=set(bundles),
-        compatible_state_by_hypothesis={
-            hypothesis: tuple(item.history_provenance[-1] for item in paths)
-            for hypothesis, paths in bundles.items()
-        },
+    prediction = model.predict(
+        hypotheses=frozenset(bundles), frontiers=bundles,
+        status_by_hypothesis={}, action_id="test-router",
     )
-    state = SessionState(
-        initial.context, history, bundles, initial.resources, 0, frozenset(), (),
+    alpha = next(item for item in prediction.classes if item.observable == "branch-alpha")
+
+    assert alpha.hypotheses == {"h0", "h1"}
+    assert len(alpha.successors["h0"]) == 1
+
+
+def test_declared_initial_multi_path_seed_is_bound_to_one_session() -> None:
+    binding, model, fixture = _runtime_parts()
+    initial = model.initial_frontiers["h0"]
+    alternate = initial_entry(
+        model.context,
+        hypothesis_id="h0",
+        control_state_id="q1",
+        clocks=initial.clocks,
+        typed_store=initial.typed_store,
+        root_id="root:h0:declared-alternate",
     )
-    result = session.step(state, SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]))
+    seed = {hypothesis: (frontier,) for hypothesis, frontier in model.initial_frontiers.items()}
+    seed["h0"] = (initial, alternate)
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-declared-seed", run_id="run-declared-seed",
+        initial_summary="q0", resources=ResourceState.rounds(1), initial_path_bundles=seed,
+    )
+
+    result = session.step(session.initial_state, SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]))
 
     assert result.stop_reason is None
     assert result.state.history.hypotheses == {"h0", "h1"}
     assert len(result.state.frontiers["h0"]) == 1
 
 
-def test_unknown_path_is_retained_with_a_feasible_path_and_not_upgraded_to_known() -> None:
-    binding, model, fixture = _runtime_parts()
-    session = ReferenceSession(
-        binding=binding, model=model, session_id="session-paths-unknown", run_id="run-paths-unknown",
-        initial_summary="q0", resources=ResourceState.rounds(1),
+def test_declared_initial_multi_path_seed_allows_verified_unequal_path_lengths() -> None:
+    binding, model, _fixture = _runtime_parts()
+    initial = model.initial_frontiers["h0"]
+    advanced = propagate_transition(
+        initial,
+        model.actions["test-router"].transition_for_kernel(),
+        state_ids=set(model.context.state_ids),
+        clock_ids=set(model.context.clock_ids),
+        typed_domains={key: set(value) for key, value in model.context.typed_domains.items()},
+        context=model.context,
+        path_limit=model.path_limit,
+        frontier_limit=model.frontier_limit,
     )
-    initial = session.initial_state
-    long_path = initial.frontiers["h0"][0]
+    assert advanced.kind == "FEASIBLE"
+    seed = {hypothesis: (frontier,) for hypothesis, frontier in model.initial_frontiers.items()}
+    seed["h0"] = (initial, advanced.entries[0])
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-unequal-seed", run_id="run-unequal-seed",
+        initial_summary="q0", resources=ResourceState.rounds(1), initial_path_bundles=seed,
+    )
+
+    assert [path.path_length for path in session.initial_state.frontiers["h0"]] == [0, 1]
+    assert session._state_error(session.initial_state) is None
+
+
+def test_unknown_path_is_retained_with_a_feasible_path_and_not_upgraded_to_known() -> None:
+    _binding, model, _fixture = _runtime_parts()
+    long_path = model.initial_frontiers["h0"]
     router_transition = model.actions["test-router"].transition_for_kernel()
     for _ in range(model.path_limit):
         propagated = propagate_transition(
@@ -763,21 +954,14 @@ def test_unknown_path_is_retained_with_a_feasible_path_and_not_upgraded_to_known
         )
         assert propagated.kind == "FEASIBLE"
         long_path = propagated.entries[0]
-    bundles = dict(initial.frontiers)
-    bundles["h0"] = (initial.frontiers["h0"][0], long_path)
-    history = HistoryHandle.initial(
-        hypotheses=set(bundles),
-        compatible_state_by_hypothesis={
-            hypothesis: tuple(item.history_provenance[-1] for item in paths)
-            for hypothesis, paths in bundles.items()
-        },
+    bundles = {hypothesis: (frontier,) for hypothesis, frontier in model.initial_frontiers.items()}
+    bundles["h0"] = (model.initial_frontiers["h0"], long_path)
+    prediction = model.predict(
+        hypotheses=frozenset(bundles), frontiers=bundles,
+        status_by_hypothesis={}, action_id="test-router",
     )
-    state = SessionState(
-        initial.context, history, bundles, initial.resources, 0, frozenset(), (),
-    )
-    result = session.step(state, SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]))
+    alpha = next(item for item in prediction.classes if item.observable == "branch-alpha")
 
-    assert result.stop_reason is None
-    assert result.state.history.hypotheses == {"h0", "h1"}
-    assert result.state.history.status_by_hypothesis["h0"] == "CONSERVATIVE-UNKNOWN"
-    assert len(result.state.frontiers["h0"]) == 2
+    assert alpha.hypotheses == {"h0", "h1"}
+    assert alpha.conservative_hypotheses == {"h0"}
+    assert len(alpha.successors["h0"]) == 2

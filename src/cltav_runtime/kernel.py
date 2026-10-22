@@ -208,6 +208,38 @@ class ModelContext:
         object.__setattr__(context, "_verification_token", _MODEL_CONTEXT_TOKEN)
         return context
 
+    def read_only_replay_context(self) -> "ModelContext":
+        """Return an equally verified context with an isolated evidence store.
+
+        Finite propagation appends content-addressed step records as it derives
+        successors. A caller that only replays an already retained public
+        ledger must therefore not use this context's shared store: replay is a
+        validation operation, not a new source of runtime provenance. The
+        immutable model authority and all existing records are retained, while
+        deterministic replay records are inserted only in the copy.
+        """
+
+        if not _verified_context(self):
+            raise ValueError("read-only replay requires a verified model context")
+        replay = ModelContext(
+            contract_commit=self.contract_commit,
+            contract_path=self.contract_path,
+            contract_blob_sha256=self.contract_blob_sha256,
+            model_sha256=self.model_sha256,
+            projection_clock=self.projection_clock,
+            state_ids=self.state_ids,
+            clock_ids=self.clock_ids,
+            typed_domains=self.typed_domains,
+            supported_guard_tags=self.supported_guard_tags,
+            supported_update_tags=self.supported_update_tags,
+            authority_merge_fields=self.authority_merge_fields,
+            identity=self.identity,
+            provenance_store=self.provenance_store.copy(),
+        )
+        object.__setattr__(replay, "_binding_sha256", self._binding_sha256)
+        object.__setattr__(replay, "_verification_token", _MODEL_CONTEXT_TOKEN)
+        return replay
+
 
 @dataclass(frozen=True)
 class Interval:
@@ -348,6 +380,13 @@ class ProvenanceStore:
 
     def resolve(self, reference: str) -> ProvenanceRecord | None:
         return self._records.get(reference)
+
+    def copy(self) -> "ProvenanceStore":
+        """Copy immutable records for deterministic, side-effect-free replay."""
+
+        copied = ProvenanceStore()
+        copied._records = dict(self._records)
+        return copied
 
     def _register_root(
         self, context: ModelContext, root_id: str, entry: FrontierEntry, *, token: object,

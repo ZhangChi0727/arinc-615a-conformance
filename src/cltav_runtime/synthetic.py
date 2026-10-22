@@ -92,7 +92,20 @@ class SyntheticEnvironment:
                     _exact_tick(measurement_tick)
                 if effect != "NONE" and (observable is not None or confirmed or measurement_tick is not None):
                     raise ValueError("non-normal synthetic outcome cannot manufacture an observation")
-                parsed_actions[action_id] = MappingProxyType(dict(outcome))
+                # Detach and normalize the actual consumer configuration.
+                # A shallow proxy still aliases an input rational mapping,
+                # allowing a post-construction caller mutation to change the
+                # visible execution record without constructing a new
+                # environment instance.
+                parsed_actions[action_id] = MappingProxyType(
+                    {
+                        "effectClass": effect,
+                        "observable": observable,
+                        "summaryConfirmed": confirmed,
+                        "measurementTick": _exact_tick(measurement_tick) if effect == "NONE" else None,
+                        "nextPrivateState": successor,
+                    },
+                )
             parsed[state_id] = MappingProxyType(parsed_actions)
         if initial not in parsed:
             raise ValueError("synthetic environment initial state is undeclared")
@@ -137,7 +150,7 @@ class SyntheticEnvironment:
             observable=observable,
             summary_confirmed=outcome["summaryConfirmed"],
             post_summary=observable if outcome["summaryConfirmed"] else None,
-            measurement_tick=_exact_tick(outcome["measurementTick"]) if outcome["effectClass"] == "NONE" else None,
+            measurement_tick=outcome["measurementTick"],
             uncertainty_identity=self._uncertainty_identity,
             evidence_ref=f"synthetic:{request.execution_attempt_id}:{outcome['effectClass'].lower()}",
         )

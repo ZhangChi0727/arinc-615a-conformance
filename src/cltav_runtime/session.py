@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from fractions import Fraction
 from types import MappingProxyType
 from typing import Mapping
@@ -155,6 +155,7 @@ class ReferenceSession:
         self, *, binding: RuntimeAuthorityBinding, model: FiniteSessionModel,
         session_id: str, run_id: str, initial_summary: str, resources: ResourceState,
         experiment_attempt_id: str | None = None,
+        initial_path_bundles: Mapping[str, tuple[FrontierEntry, ...]] | None = None,
     ) -> None:
         if binding.development.contract_commit != model.context.contract_commit:
             raise ValueError("runtime model and authority binding use different development snapshots")
@@ -166,11 +167,12 @@ class ReferenceSession:
             current_summary=initial_summary,
             q_status="KNOWN",
         )
+        seed_frontiers = _session_seed_frontiers(model, initial_path_bundles)
         history = HistoryHandle.initial(
-            hypotheses=set(model.initial_frontiers),
+            hypotheses=set(seed_frontiers),
             compatible_state_by_hypothesis={
-                hypothesis: (frontier.history_provenance[-1],)
-                for hypothesis, frontier in model.initial_frontiers.items()
+                hypothesis: tuple(frontier.history_provenance[-1] for frontier in bundle)
+                for hypothesis, bundle in seed_frontiers.items()
             },
         )
         self.binding = binding
@@ -178,10 +180,7 @@ class ReferenceSession:
         self.initial_state = SessionState(
             context=context,
             history=history,
-            frontiers=MappingProxyType({
-                hypothesis: (frontier,)
-                for hypothesis, frontier in model.initial_frontiers.items()
-            }),
+            frontiers=seed_frontiers,
             resources=resources,
             attempts=0,
             processed_execution_attempt_ids=frozenset(),
@@ -253,10 +252,13 @@ class ReferenceSession:
             not isinstance(value, str) or not value for value in state.processed_execution_attempt_ids
         ):
             return KernelDiagnostic("INVALID-EXECUTION-IDENTITIES", "processed execution identities are invalid")
-        if len(state.evidence) != state.attempts:
+        if not isinstance(state.evidence, tuple) or len(state.evidence) != state.attempts:
             return KernelDiagnostic("ATTEMPT-EVIDENCE-MISMATCH", "every issued attempt requires exactly one evidence record")
         if not isinstance(state.history, HistoryHandle) or not isinstance(state.frontiers, Mapping):
             return KernelDiagnostic("HISTORY-FRONTIER-MISMATCH", "history and frontier hypothesis sets differ")
+        history_error = _history_handle_error(state.history)
+        if history_error is not None:
+            return history_error
         try:
             frontier_bundles = {
                 hypothesis: _frontier_bundle(bundle)
@@ -276,11 +278,6 @@ class ReferenceSession:
             return KernelDiagnostic("HISTORY-PROVENANCE-MISMATCH", str(exc) or type(exc).__name__)
         if not history_matches_frontier:
             return KernelDiagnostic("HISTORY-PROVENANCE-MISMATCH", "history does not name each current frontier source")
-        if state.history.processed:
-            if set(state.history.status_by_hypothesis) != set(state.history.hypotheses):
-                return KernelDiagnostic("INCOMPLETE-PROCESSED-HISTORY", "processed history must status every current hypothesis")
-        elif state.history.version != 0:
-            return KernelDiagnostic("INVALID-INITIAL-HISTORY", "unprocessed history must be the S0 version")
         for paths in frontier_bundles.values():
             if len(paths) > self.model.frontier_limit:
                 return KernelDiagnostic("FRONTIER-BUNDLE-LIMIT", "frontier path bundle exceeds the declared bound")
@@ -290,24 +287,181 @@ class ReferenceSession:
                 provenance_error = self.model.context.provenance_store.verify_entry(self.model.context, frontier)
                 if provenance_error is not None:
                     return provenance_error
-        committed_count = sum(1 for item in state.evidence if item.committed)
-        if state.history.version != committed_count:
-            return KernelDiagnostic("HISTORY-VERSION-MISMATCH", "history version does not equal committed evidence count")
-        evidence_ids = frozenset(item.execution.execution_attempt_id for item in state.evidence)
-        if evidence_ids != state.processed_execution_attempt_ids or len(evidence_ids) != len(state.evidence):
-            return KernelDiagnostic("EXECUTION-EVIDENCE-MISMATCH", "execution identities do not close over the evidence ledger")
-        for item in state.evidence:
+        return self._evidence_lineage_error(state, frontier_bundles)
+
+    def _evidence_lineage_error(
+        self,
+        state: SessionState,
+        current_frontiers: Mapping[str, tuple[FrontierEntry, ...]],
+    ) -> KernelDiagnostic | None:
+        """Replay the public causal prefix before accepting a resumed state.
+
+        A current frontier that belongs to the model is insufficient: it must
+        be the successor of this session's retained evidence.  Replaying the
+        bounded, public evidence ledger binds summary, resources, snapshots,
+        actions, history and frontier provenance without pretending to create
+        a cryptographic tamper-proof store.
+        """
+
+        replay_model = _replay_model(self.model)
+        context = self.initial_state.context
+        history = self.initial_state.history
+        frontiers: Mapping[str, tuple[FrontierEntry, ...]] = self.initial_state.frontiers
+        resources = self.initial_state.resources
+        processed_ids: frozenset[str] = frozenset()
+        for index, item in enumerate(state.evidence, start=1):
+            if not isinstance(item, RoundEvidence):
+                return KernelDiagnostic("INVALID-EVIDENCE-RECORD", "evidence ledger contains a non-RoundEvidence value")
             if (
-                item.snapshot.session_id != context.session_id
-                or item.snapshot.model_identity != self.model.identity
-                or item.snapshot.uncertainty_identity != self.model.uncertainty_identity
-                or item.snapshot.uncertainty_digest != self.model.uncertainty_digest
-                or dict(item.snapshot.authority_identities) != dict(self.binding.identities())
+                not isinstance(item.snapshot, SelectSnapshot)
+                or not isinstance(item.prediction, ActionPrediction)
+                or not isinstance(item.execution, VisibleExecutionRecord)
+                or not isinstance(item.resource_before, AlgorithmResourceView)
+                or not isinstance(item.resource_after, AlgorithmResourceView)
+                or not isinstance(item.detail_charges, Mapping)
+                or not isinstance(item.projected_cost, Mapping)
+                or not isinstance(item.history_before, HistoryHandle)
+                or not isinstance(item.history_after, HistoryHandle)
+                or not isinstance(item.issued_to_executor, bool)
+                or not isinstance(item.charged_once, bool)
+                or not isinstance(item.committed, bool)
+                or not isinstance(item.stop_reason, (str, type(None)))
+                or not isinstance(item.summary_after, (str, type(None)))
+                or not isinstance(item.rejected_response, (VisibleExecutionRecord, type(None)))
             ):
-                return KernelDiagnostic("SNAPSHOT-IDENTITY-MISMATCH", "evidence snapshot identity is not owned by this session")
+                return KernelDiagnostic("INVALID-EVIDENCE-RECORD", "evidence ledger item has an invalid public field type")
+            action = replay_model.actions.get(item.snapshot.action_id)
+            if action is None or item.snapshot.action_kind != action.kind:
+                return KernelDiagnostic("EVIDENCE-ACTION-MISMATCH", "evidence snapshot does not name a current model action")
+            prefix = SessionState(context, history, frontiers, resources, index - 1, processed_ids, ())
+            admission = self._admit(prefix, model=replay_model)
+            if admission.action is None or admission.prediction is None or admission.action.action_id != action.action_id:
+                return KernelDiagnostic("EVIDENCE-ADMISSION-MISMATCH", "evidence action was not admitted by its causal prefix")
+            if item.prediction != admission.prediction:
+                return KernelDiagnostic("EVIDENCE-PREDICTION-MISMATCH", "evidence prediction does not match the admitted action calculation")
+            snapshot_error = _snapshot_error(
+                item.snapshot,
+                context=context,
+                history=history,
+                attempt=index,
+                action=action,
+                prediction=admission.prediction,
+                model=replay_model,
+                binding=self.binding,
+            )
+            if snapshot_error is not None:
+                return snapshot_error
+            if not item.issued_to_executor or not item.charged_once:
+                return KernelDiagnostic("EVIDENCE-ISSUE-MISMATCH", "every ledger item must represent one issued charged execution")
+            if item.resource_before != resources.algorithm_view(action):
+                return KernelDiagnostic("EVIDENCE-RESOURCE-MISMATCH", "evidence resource-before view does not match its causal prefix")
+            if not resources.can_afford(action):
+                return KernelDiagnostic("EVIDENCE-RESOURCE-MISMATCH", "evidence action was not affordable in its causal prefix")
+            charged_resources = resources.charge(action)
+            if item.resource_after != charged_resources.algorithm_view(action):
+                return KernelDiagnostic("EVIDENCE-RESOURCE-MISMATCH", "evidence resource-after view does not close over the charge")
+            if dict(item.detail_charges) != dict(action.detail_charges) or dict(item.projected_cost) != dict(action.projected_cost()):
+                return KernelDiagnostic("EVIDENCE-CHARGE-MISMATCH", "evidence charges do not match the admitted action")
+            if item.history_before != history:
+                return KernelDiagnostic("EVIDENCE-HISTORY-MISMATCH", "evidence history-before does not match its causal prefix")
+            expected_execution_id = f"{context.run_id}:{context.session_id}:execution:{index}"
+            if item.execution.execution_attempt_id != expected_execution_id or expected_execution_id in processed_ids:
+                return KernelDiagnostic("EXECUTION-EVIDENCE-MISMATCH", "evidence execution identity is not the expected causal attempt")
+
+            if _is_expected_error_record(item.execution, item.snapshot, expected_execution_id):
+                if item.committed or item.history_after != history or item.summary_after is not None or item.stop_reason != "Stop-Error":
+                    return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "rejected execution evidence must preserve history and stop with error")
+                if item.rejected_response is not None and not isinstance(item.rejected_response, VisibleExecutionRecord):
+                    return KernelDiagnostic("EVIDENCE-REJECTED-RESPONSE", "rejected response must be a visible execution record when retained")
+                context = _conservative_context(context)
+                resources = charged_resources
+                processed_ids = processed_ids | {expected_execution_id}
+                if index != len(state.evidence):
+                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "an error evidence item cannot have a later causal round")
+                continue
+
+            record_error = _incoming_record_error(item.execution)
+            if record_error is not None:
+                return KernelDiagnostic("EVIDENCE-RECORD-MISMATCH", record_error.message)
+            if item.execution.action_id != action.action_id:
+                return KernelDiagnostic("EVIDENCE-ACTION-MISMATCH", "visible execution action differs from the admitted action")
+            if item.rejected_response is not None:
+                return KernelDiagnostic("EVIDENCE-REJECTED-RESPONSE", "accepted execution evidence cannot also retain a rejected response")
+            if item.execution.effect_class == "CONFIRMED-NOT-SENT":
+                if item.committed or item.history_after != history or item.summary_after != context.current_summary or item.stop_reason != "Stop-Error":
+                    return KernelDiagnostic("EVIDENCE-NOT-SENT-MISMATCH", "confirmed-not-sent evidence must preserve the known history and summary")
+                resources = charged_resources
+                processed_ids = processed_ids | {expected_execution_id}
+                if index != len(state.evidence):
+                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "confirmed-not-sent evidence cannot have a later causal round")
+                continue
+            if item.execution.effect_class == "UNKNOWN-EFFECT":
+                if item.committed or item.history_after != history or item.summary_after is not None or item.stop_reason != "Stop-Error":
+                    return KernelDiagnostic("EVIDENCE-UNKNOWN-MISMATCH", "unknown effect evidence must preserve history and stop with error")
+                context = _conservative_context(context)
+                resources = charged_resources
+                processed_ids = processed_ids | {expected_execution_id}
+                if index != len(state.evidence):
+                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "unknown-effect evidence cannot have a later causal round")
+                continue
+
+            selected_class, interpretation_error = _matching_class(item.snapshot, item.execution)
+            if selected_class is None or interpretation_error is not None:
+                return KernelDiagnostic("EVIDENCE-INTERPRETATION-MISMATCH", "committed evidence is outside its frozen prediction")
+            next_history = HistoryHandle.committed(
+                hypotheses=selected_class.hypotheses,
+                compatible_state_by_hypothesis={
+                    hypothesis: tuple(entry.history_provenance[-1] for entry in entries)
+                    for hypothesis, entries in selected_class.successors.items()
+                },
+                status_by_hypothesis={
+                    hypothesis: "CONSERVATIVE-UNKNOWN" if hypothesis in selected_class.conservative_hypotheses else "KNOWN"
+                    for hypothesis in selected_class.hypotheses
+                },
+                version=history.version + 1,
+            )
+            next_context = SessionContext.create(
+                session_id=context.session_id,
+                run_id=context.run_id,
+                experiment_attempt_id=context.experiment_attempt_id,
+                model_identity=context.model_identity,
+                current_summary=item.execution.post_summary,
+                q_status="KNOWN",
+            )
+            expected_stop = "Stop-Empty" if not next_history.hypotheses else (
+                "Stop-Singleton" if len(next_history.hypotheses) == 1 else None
+            )
+            if (
+                not item.committed
+                or item.history_after != next_history
+                or item.summary_after != next_context.current_summary
+                or item.stop_reason != expected_stop
+            ):
+                return KernelDiagnostic("EVIDENCE-COMMIT-MISMATCH", "committed evidence does not match its derived history update")
+            context = next_context
+            history = next_history
+            frontiers = MappingProxyType(dict(selected_class.successors))
+            resources = charged_resources
+            processed_ids = processed_ids | {expected_execution_id}
+
+        if (
+            state.context != context
+            or state.history != history
+            or dict(current_frontiers) != dict(frontiers)
+            or state.resources != resources
+            or state.processed_execution_attempt_ids != processed_ids
+        ):
+            return KernelDiagnostic("SESSION-LINEAGE-MISMATCH", "resumed state is not the terminal state of its evidence lineage")
         return None
 
     def _step(self, state: SessionState, environment: SyntheticEnvironment) -> SessionResult:
+        if state.evidence and state.evidence[-1].stop_reason is not None:
+            return SessionResult(
+                state,
+                environment,
+                state.evidence[-1].stop_reason,
+                (KernelDiagnostic("TERMINAL-SESSION-STATE", "the retained evidence ledger already records a terminal stop"),),
+            )
         if state.context.q_status != "KNOWN" or state.context.current_summary is None:
             return SessionResult(
                 state, environment, "Stop-Error",
@@ -395,6 +549,11 @@ class ReferenceSession:
                 diagnostics=diagnostics,
                 code="EXECUTION-RESULT-TYPE-ERROR",
                 message="environment execution has an invalid record or successor",
+                execution_record=(
+                    execution.record
+                    if isinstance(execution.record, VisibleExecutionRecord)
+                    else None
+                ),
                 environment_after_execution=(
                     execution.successor if isinstance(execution.successor, SyntheticEnvironment) else None
                 ),
@@ -419,6 +578,7 @@ class ReferenceSession:
             )
         if (
             execution.record.execution_attempt_id != execution_attempt_id
+            or execution.record.action_id != snapshot.action_id
             or execution_attempt_id in state.processed_execution_attempt_ids
         ):
             return self._charged_execution_error(
@@ -433,7 +593,7 @@ class ReferenceSession:
                 execution_attempt_id=execution_attempt_id,
                 diagnostics=diagnostics,
                 code="EXECUTION-IDENTITY-ERROR",
-                message="execution result identity is invalid or already processed",
+                message="execution result attempt/action identity is invalid or already processed",
                 execution_record=execution.record,
                 environment_after_execution=execution.successor,
             )
@@ -548,19 +708,22 @@ class ReferenceSession:
         )
         return SessionResult(next_state, execution.successor, stop_reason, tuple(diagnostics))
 
-    def _admit(self, state: SessionState) -> AdmissionDecision:
+    def _admit(
+        self, state: SessionState, *, model: FiniteSessionModel | None = None,
+    ) -> AdmissionDecision:
         """Apply the B/C-1 TEST/GAP/PREP table without side effects."""
 
+        current_model = self.model if model is None else model
         diagnostics: list[KernelDiagnostic] = []
         test_candidates: list[tuple[SyntheticAction, ActionPrediction, int]] = []
         eligible_test_seen = False
         unaffordable_test_seen = False
         prediction_gap_seen = False
-        for action in self.model.actions.values():
+        for action in current_model.actions.values():
             if action.kind != "TEST" or state.context.current_summary not in action.enabled_summaries:
                 continue
             eligible_test_seen = True
-            prediction = self.model.predict(
+            prediction = current_model.predict(
                 hypotheses=state.history.hypotheses,
                 frontiers=state.frontiers,
                 status_by_hypothesis=state.history.status_by_hypothesis,
@@ -593,11 +756,11 @@ class ReferenceSession:
         prep_candidates: list[tuple[SyntheticAction, ActionPrediction]] = []
         eligible_prep_seen = False
         unaffordable_prep_seen = False
-        for action in self.model.actions.values():
+        for action in current_model.actions.values():
             if action.kind != "PREP" or state.context.current_summary not in action.enabled_summaries:
                 continue
             eligible_prep_seen = True
-            prediction = self.model.predict(
+            prediction = current_model.predict(
                 hypotheses=state.history.hypotheses,
                 frontiers=state.frontiers,
                 status_by_hypothesis=state.history.status_by_hypothesis,
@@ -711,6 +874,18 @@ def _has_distinguishing_value(prediction: ActionPrediction, hypotheses: frozense
     return any(0 < len(value.hypotheses) < len(hypotheses) for value in prediction.classes)
 
 
+def _replay_model(model: FiniteSessionModel) -> FiniteSessionModel:
+    """Freeze replay writes in a detached verified model context.
+
+    Prediction may append deterministic source records for new runtime paths.
+    Causal-ledger validation instead recreates an existing prefix; it needs
+    the same authority and record closure, but must not mutate the session's
+    shared provenance store.
+    """
+
+    return replace(model, context=model.context.read_only_replay_context())
+
+
 def _matching_class(
     snapshot: SelectSnapshot, execution: VisibleExecutionRecord,
 ) -> tuple[PredictionClass | None, KernelDiagnostic | None]:
@@ -761,7 +936,10 @@ def _incoming_record_error(record: VisibleExecutionRecord) -> KernelDiagnostic |
         for value in (record.execution_attempt_id, record.action_id, record.evidence_ref)
     ):
         return KernelDiagnostic("INVALID-EXECUTION-RECORD", "execution identity, action identity, and evidence reference must be nonempty strings")
-    if record.effect_class not in {"NONE", "CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"}:
+    if (
+        not isinstance(record.effect_class, str)
+        or record.effect_class not in {"NONE", "CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"}
+    ):
         return KernelDiagnostic("INVALID-EXECUTION-RECORD", "execution effect class is outside the controlled vocabulary")
     if not isinstance(record.summary_confirmed, bool):
         return KernelDiagnostic("INVALID-EXECUTION-RECORD", "summary confirmation must be Boolean")
@@ -790,6 +968,104 @@ def _incoming_record_error(record: VisibleExecutionRecord) -> KernelDiagnostic |
     return None
 
 
+def _history_handle_error(history: HistoryHandle) -> KernelDiagnostic | None:
+    """Validate a public HistoryHandle even when its factory was bypassed."""
+
+    if not isinstance(history.hypotheses, frozenset) or any(
+        not isinstance(item, str) or not item for item in history.hypotheses
+    ):
+        return KernelDiagnostic("INVALID-HISTORY-HANDLE", "history hypotheses must be a finite set of nonempty strings")
+    if (
+        isinstance(history.version, bool)
+        or not isinstance(history.version, int)
+        or history.version < 0
+        or not isinstance(history.processed, bool)
+        or not isinstance(history.compatible_state_by_hypothesis, Mapping)
+        or not isinstance(history.status_by_hypothesis, Mapping)
+    ):
+        return KernelDiagnostic("INVALID-HISTORY-HANDLE", "history version, processed flag, or mappings are invalid")
+    if set(history.compatible_state_by_hypothesis) != set(history.hypotheses):
+        return KernelDiagnostic("INVALID-HISTORY-HANDLE", "history frontier references must cover exactly the hypotheses")
+    for hypothesis, references in history.compatible_state_by_hypothesis.items():
+        if (
+            not isinstance(hypothesis, str)
+            or not isinstance(references, tuple)
+            or not references
+            or any(not isinstance(reference, str) or not reference for reference in references)
+            or len(references) != len(set(references))
+        ):
+            return KernelDiagnostic("INVALID-HISTORY-HANDLE", "history frontier references are invalid")
+    if not set(history.status_by_hypothesis) <= set(history.hypotheses) or any(
+        value not in {"KNOWN", "CONSERVATIVE-UNKNOWN"}
+        for value in history.status_by_hypothesis.values()
+    ):
+        return KernelDiagnostic("INVALID-HISTORY-HANDLE", "history status map is outside the controlled vocabulary")
+    if history.processed:
+        if history.version < 1 or set(history.status_by_hypothesis) != set(history.hypotheses):
+            return KernelDiagnostic("INVALID-HISTORY-HANDLE", "processed history must have positive version and complete statuses")
+    elif history.version != 0:
+        return KernelDiagnostic("INVALID-HISTORY-HANDLE", "unprocessed history must be the S0 version")
+    return None
+
+
+def _snapshot_error(
+    snapshot: object,
+    *,
+    context: SessionContext,
+    history: HistoryHandle,
+    attempt: int,
+    action: SyntheticAction,
+    prediction: ActionPrediction,
+    model: FiniteSessionModel,
+    binding: RuntimeAuthorityBinding,
+) -> KernelDiagnostic | None:
+    if not isinstance(snapshot, SelectSnapshot):
+        return KernelDiagnostic("SNAPSHOT-IDENTITY-MISMATCH", "evidence snapshot has an invalid type")
+    if (
+        snapshot.session_id != context.session_id
+        or snapshot.snapshot_id != f"{context.session_id}:snapshot:{history.version}:{attempt}"
+        or snapshot.action_id != action.action_id
+        or snapshot.action_kind != action.kind
+        or snapshot.q_used_at_select != context.current_summary
+        or snapshot.history_version != history.version
+        or snapshot.hypotheses != history.hypotheses
+        or snapshot.classes != prediction.classes
+        or snapshot.model_identity != model.identity
+        or snapshot.uncertainty_identity != model.uncertainty_identity
+        or snapshot.uncertainty_digest != model.uncertainty_digest
+        or dict(snapshot.authority_identities) != dict(binding.identities())
+    ):
+        return KernelDiagnostic("SNAPSHOT-IDENTITY-MISMATCH", "evidence snapshot is not the expected causal selection snapshot")
+    return None
+
+
+def _is_expected_error_record(
+    record: object, snapshot: SelectSnapshot, execution_attempt_id: str,
+) -> bool:
+    return record == VisibleExecutionRecord(
+        execution_attempt_id=execution_attempt_id,
+        action_id=snapshot.action_id,
+        effect_class="UNKNOWN-EFFECT",
+        observable=None,
+        summary_confirmed=False,
+        post_summary=None,
+        measurement_tick=None,
+        uncertainty_identity=None,
+        evidence_ref=f"synthetic:{execution_attempt_id}:tool-error",
+    )
+
+
+def _conservative_context(context: SessionContext) -> SessionContext:
+    return SessionContext.create(
+        session_id=context.session_id,
+        run_id=context.run_id,
+        experiment_attempt_id=context.experiment_attempt_id,
+        model_identity=context.model_identity,
+        current_summary=None,
+        q_status="CONSERVATIVE-UNKNOWN",
+    )
+
+
 def _interval_contains(interval: object, tick: object) -> bool:
     if not isinstance(interval, Interval) or not isinstance(tick, Fraction):
         return False
@@ -807,3 +1083,37 @@ def _frontier_bundle(value: object) -> tuple[FrontierEntry, ...]:
     ):
         raise ValueError("frontier bundle must be a nonempty tuple of FrontierEntry values")
     return value
+
+
+def _session_seed_frontiers(
+    model: FiniteSessionModel,
+    declared: Mapping[str, tuple[FrontierEntry, ...]] | None,
+) -> Mapping[str, tuple[FrontierEntry, ...]]:
+    """Accept an explicit finite S0 path seed and freeze it for one session."""
+
+    source: Mapping[str, object]
+    if declared is None:
+        source = {hypothesis: (frontier,) for hypothesis, frontier in model.initial_frontiers.items()}
+    else:
+        source = declared
+    if not isinstance(source, Mapping) or set(source) != set(model.initial_frontiers):
+        raise ValueError("session seed must cover exactly the declared model hypotheses")
+    normalized: dict[str, tuple[FrontierEntry, ...]] = {}
+    for hypothesis, raw_bundle in source.items():
+        try:
+            bundle = _frontier_bundle(raw_bundle)
+        except ValueError as exc:
+            raise ValueError(f"session seed for {hypothesis!r} is invalid: {exc}") from exc
+        if len(bundle) > model.frontier_limit:
+            raise ValueError("session seed exceeds the declared frontier bound")
+        for frontier in bundle:
+            if (
+                frontier.hypothesis_id != hypothesis
+                or frontier.model_identity != model.context.identity
+            ):
+                raise ValueError("session seed path is not a model-owned frontier for its hypothesis")
+            provenance_error = model.context.provenance_store.verify_entry(model.context, frontier)
+            if provenance_error is not None:
+                raise ValueError(f"session seed provenance is invalid: {provenance_error.code}")
+        normalized[hypothesis] = bundle
+    return MappingProxyType(normalized)
