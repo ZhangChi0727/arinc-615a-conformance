@@ -18,10 +18,23 @@ from .kernel import (
     propagate_transition,
 )
 from .bindings import RuntimeAuthorityBinding, SourceSnapshot
+from .model import ActionPrediction, FiniteSessionModel, PredictionClass, SyntheticAction
+from .session import (
+    AlgorithmResourceView,
+    ReferenceSession,
+    ResourceState,
+    RoundEvidence,
+    SelectSnapshot,
+    SessionResult,
+    SessionState,
+)
+from .synthetic import ExecutionRequest, SyntheticEnvironment, VisibleExecutionRecord
 from .types import HistoryHandle, SessionContext
 
 __all__ = [
     "ContractSnapshot",
+    "ExecutionRequest",
+    "FiniteSessionModel",
     "HistoryHandle",
     "FrontierEntry",
     "Interval",
@@ -29,9 +42,21 @@ __all__ = [
     "KernelResult",
     "ModelContext",
     "ProvenanceRecord",
+    "PredictionClass",
+    "ActionPrediction",
+    "AlgorithmResourceView",
+    "ReferenceSession",
+    "ResourceState",
+    "RoundEvidence",
     "RuntimeAuthorityBinding",
     "SessionContext",
+    "SessionResult",
+    "SessionState",
+    "SelectSnapshot",
     "SourceSnapshot",
+    "SyntheticAction",
+    "SyntheticEnvironment",
+    "VisibleExecutionRecord",
     "initial_entry",
     "merge_frontier",
     "propagate_transition",

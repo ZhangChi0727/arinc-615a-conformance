@@ -45,6 +45,74 @@ _REQUIRED_PARAMETER_IDS = frozenset(
         "RP-RESOURCE-MODE",
     }
 )
+_EXPECTED_INTERFACE_OUTPUTS = {
+    "IF-PRED-OBS": ("currentlyValidNonemptyClasses", "PredictionGapError"),
+    "IF-SELECT-ADMIT": ("kind", "tStar", "S", "admitA2A5"),
+    "IF-EXECUTE-RECORD": ("record", "effectClass", "correlationId"),
+    "IF-OBS-INTERPRET": (
+        "Iz", "effectClass", "summaryConfirmed", "postSummary", "ownershipResult", "measurementInterval",
+    ),
+    "IF-PREP-RECOVER": (
+        "targetConfirmed", "summaryConfirmed", "prepError", "ineligible", "declaredTarget", "evidence", "postSummary",
+    ),
+    "IF-HIST-UPDATE": ("HistoryHandlePrime", "Hprime", "Stop-Empty"),
+    "IF-EQUIV": ("established", "notEstablished", "unknown"),
+    "IF-RESOURCE-STOP": ("stopClass", "finalH", "trace"),
+}
+# This is intentionally a named, closed adapter map.  It records presentation
+# aliases without relying on either the registry's array position or a TeX
+# presentation order (notably ALG-05's ``k,S,t*,admit`` rendering).
+NAMED_INTERFACE_ADAPTERS: Mapping[str, Mapping[str, str]] = MappingProxyType(
+    {
+        "IF-PRED-OBS": MappingProxyType({
+            "currentlyValidNonemptyClasses": "prediction.classes",
+            "PredictionGapError": "prediction.gapDiagnostic",
+        }),
+        "IF-SELECT-ADMIT": MappingProxyType({
+            "kind": "selection.kind",
+            "tStar": "selection.actionId",
+            "S": "selection.classes",
+            "admitA2A5": "selection.admission",
+        }),
+        "IF-EXECUTE-RECORD": MappingProxyType({
+            "record": "execution.visibleRecord",
+            "effectClass": "execution.effectClass",
+            "correlationId": "execution.executionAttemptId",
+        }),
+        "IF-OBS-INTERPRET": MappingProxyType({
+            "Iz": "interpretation.observationClass",
+            "effectClass": "interpretation.effectClass",
+            "summaryConfirmed": "interpretation.summaryConfirmed",
+            "postSummary": "interpretation.postSummary",
+            "ownershipResult": "interpretation.ownershipResult",
+            "measurementInterval": "interpretation.measurementInterval",
+        }),
+        "IF-PREP-RECOVER": MappingProxyType({
+            "targetConfirmed": "recovery.targetConfirmed",
+            "summaryConfirmed": "recovery.summaryConfirmed",
+            "prepError": "recovery.prepError",
+            "ineligible": "recovery.ineligible",
+            "declaredTarget": "recovery.declaredTarget",
+            "evidence": "recovery.evidence",
+            "postSummary": "recovery.postSummary",
+        }),
+        "IF-HIST-UPDATE": MappingProxyType({
+            "HistoryHandlePrime": "history.after",
+            "Hprime": "history.after.hypotheses",
+            "Stop-Empty": "stop.empty",
+        }),
+        "IF-EQUIV": MappingProxyType({
+            "established": "equivalence.established",
+            "notEstablished": "equivalence.notEstablished",
+            "unknown": "equivalence.unknown",
+        }),
+        "IF-RESOURCE-STOP": MappingProxyType({
+            "stopClass": "stop.reason",
+            "finalH": "stop.finalHypotheses",
+            "trace": "stop.trace",
+        }),
+    },
+)
 
 
 def _safe_repository_path(value: str) -> str:
@@ -217,6 +285,12 @@ class RuntimeAuthorityBinding:
             raise ValueError("AR-FINITE does not bind the complete runtime interface set")
         if not _RUNTIME_INTERFACE_IDS <= registry_ids:
             raise ValueError("interface registry does not provide each runtime interface")
+        for interface in registry_interfaces:
+            if interface["id"] not in _RUNTIME_INTERFACE_IDS:
+                continue
+            outputs = interface.get("outputs")
+            if not isinstance(outputs, list) or tuple(outputs) != _EXPECTED_INTERFACE_OUTPUTS[interface["id"]]:
+                raise ValueError("interface registry output contract differs from named runtime binding")
         if not _REQUIRED_RECORD_IDS <= record_ids:
             raise ValueError("development record contracts do not provide runtime records")
         if not _REQUIRED_PARAMETER_IDS <= parameter_ids:
@@ -249,6 +323,13 @@ class RuntimeAuthorityBinding:
                 "interfaceRegistry": self.interfaces.identity(),
             },
         )
+
+    def named_interface_adapters(self) -> Mapping[str, Mapping[str, str]]:
+        """Return the closed source-to-runtime aliases for all eight interfaces."""
+
+        if self._verification_token is not _BINDING_TOKEN:
+            raise ValueError("runtime authority binding is not verified")
+        return NAMED_INTERFACE_ADAPTERS
 
 
 def _unique_string_ids(

@@ -77,6 +77,8 @@ class HistoryHandle:
         status_by_hypothesis: Mapping[str, str] | None = None,
     ) -> "HistoryHandle":
         members = _stable_string_set(hypotheses)
+        if not members:
+            raise ValueError("initial history must contain at least one hypothesis")
         states = _frontier_mapping(members, compatible_state_by_hypothesis, complete=False)
         statuses = _status_mapping(members, status_by_hypothesis or {}, complete=False)
         return cls(members, states, statuses, 0, False)
@@ -103,16 +105,25 @@ class SessionContext:
     """Read-only algorithm session state before action selection."""
 
     session_id: str
+    run_id: str
+    experiment_attempt_id: str | None
     model_identity: str
     current_summary: str | None
     q_status: str
 
     @classmethod
     def create(
-        cls, *, session_id: str, model_identity: str, current_summary: str | None, q_status: str,
+        cls, *, session_id: str, run_id: str, experiment_attempt_id: str | None,
+        model_identity: str, current_summary: str | None, q_status: str,
     ) -> "SessionContext":
         if not isinstance(session_id, str) or not session_id:
             raise ValueError("session identity must be a nonempty string")
+        if not isinstance(run_id, str) or not run_id:
+            raise ValueError("run identity must be a nonempty string")
+        if experiment_attempt_id is not None and (
+            not isinstance(experiment_attempt_id, str) or not experiment_attempt_id
+        ):
+            raise ValueError("experiment attempt identity must be absent or a nonempty string")
         if not isinstance(model_identity, str) or not model_identity:
             raise ValueError("model identity must be a nonempty string")
         if q_status not in _SESSION_STATUS:
@@ -123,4 +134,4 @@ class SessionContext:
             raise ValueError("KNOWN session status requires a current summary")
         if q_status != "KNOWN" and current_summary is not None:
             raise ValueError("non-KNOWN session status cannot retain a current summary")
-        return cls(session_id, model_identity, current_summary, q_status)
+        return cls(session_id, run_id, experiment_attempt_id, model_identity, current_summary, q_status)

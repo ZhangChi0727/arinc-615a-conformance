@@ -7,7 +7,7 @@ import subprocess
 
 import pytest
 
-from cltav_runtime.bindings import RuntimeAuthorityBinding, SourceSnapshot
+from cltav_runtime.bindings import NAMED_INTERFACE_ADAPTERS, RuntimeAuthorityBinding, SourceSnapshot
 from cltav_runtime.types import HistoryHandle, SessionContext
 
 
@@ -40,6 +40,9 @@ def test_runtime_binding_reads_exact_git_objects_not_the_worktree() -> None:
     assert binding.finite_refinement_id == "AR-FINITE"
     assert "IF-HIST-UPDATE" in binding.interface_ids
     assert "HISTORY-HANDLE" in binding.record_ids
+    assert set(binding.named_interface_adapters()) == binding.interface_ids
+    assert binding.named_interface_adapters()["IF-SELECT-ADMIT"]["tStar"] == "selection.actionId"
+    assert NAMED_INTERFACE_ADAPTERS["IF-HIST-UPDATE"]["Stop-Empty"] == "stop.empty"
     assert identities["development"]["commit"] == _head_commit()
     assert identities["interfaceRegistry"]["commit"] == _head_commit()
     assert len(identities["development"]["blobSha256"]) == 64
@@ -72,6 +75,8 @@ def test_initial_history_permits_unset_member_statuses() -> None:
     assert history.status_by_hypothesis == {}
     assert history.version == 0
     assert history.processed is False
+    with pytest.raises(ValueError, match="at least one"):
+        HistoryHandle.initial(hypotheses=set(), compatible_state_by_hypothesis={})
 
 
 def test_committed_history_requires_complete_controlled_statuses() -> None:
@@ -94,12 +99,16 @@ def test_committed_history_requires_complete_controlled_statuses() -> None:
 def test_session_context_distinguishes_known_and_conservative_unknown() -> None:
     known = SessionContext.create(
         session_id="session-syn-001",
+        run_id="run-syn-001",
+        experiment_attempt_id=None,
         model_identity="model-1",
         current_summary="q0",
         q_status="KNOWN",
     )
     unknown = SessionContext.create(
         session_id="session-syn-001",
+        run_id="run-syn-001",
+        experiment_attempt_id=None,
         model_identity="model-1",
         current_summary=None,
         q_status="CONSERVATIVE-UNKNOWN",
@@ -110,6 +119,8 @@ def test_session_context_distinguishes_known_and_conservative_unknown() -> None:
     with pytest.raises(ValueError, match="requires a current summary"):
         SessionContext.create(
             session_id="session-syn-001",
+            run_id="run-syn-001",
+            experiment_attempt_id=None,
             model_identity="model-1",
             current_summary=None,
             q_status="KNOWN",
