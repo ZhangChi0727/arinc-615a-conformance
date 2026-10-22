@@ -26,16 +26,27 @@ def _stable_string_set(values: frozenset[str] | set[str] | tuple[str, ...]) -> f
 
 
 def _frontier_mapping(
-    hypotheses: frozenset[str], values: Mapping[str, str], *, complete: bool,
-) -> Mapping[str, str]:
+    hypotheses: frozenset[str], values: Mapping[str, str | tuple[str, ...]], *, complete: bool,
+) -> Mapping[str, tuple[str, ...]]:
     if not isinstance(values, Mapping):
         raise ValueError("compatible-state map must be a mapping")
     copied = dict(values)
     if set(copied) != hypotheses:
         raise ValueError("compatible-state map keys must equal the hypothesis set")
-    if any(not isinstance(key, str) or not isinstance(value, str) or not value for key, value in copied.items()):
-        raise ValueError("compatible-state map values must be nonempty strings")
-    return MappingProxyType(copied)
+    normalized: dict[str, tuple[str, ...]] = {}
+    for key, value in copied.items():
+        if not isinstance(key, str):
+            raise ValueError("compatible-state map keys must be strings")
+        references = (value,) if isinstance(value, str) else value
+        if (
+            not isinstance(references, tuple)
+            or not references
+            or any(not isinstance(reference, str) or not reference for reference in references)
+            or len(references) != len(set(references))
+        ):
+            raise ValueError("compatible-state map values must be nonempty unique reference tuples")
+        normalized[key] = references
+    return MappingProxyType(normalized)
 
 
 def _status_mapping(
@@ -63,7 +74,7 @@ class HistoryHandle:
     """
 
     hypotheses: frozenset[str]
-    compatible_state_by_hypothesis: Mapping[str, str]
+    compatible_state_by_hypothesis: Mapping[str, tuple[str, ...]]
     status_by_hypothesis: Mapping[str, str]
     version: int
     processed: bool
@@ -73,7 +84,7 @@ class HistoryHandle:
         cls,
         *,
         hypotheses: frozenset[str] | set[str] | tuple[str, ...],
-        compatible_state_by_hypothesis: Mapping[str, str],
+        compatible_state_by_hypothesis: Mapping[str, str | tuple[str, ...]],
         status_by_hypothesis: Mapping[str, str] | None = None,
     ) -> "HistoryHandle":
         members = _stable_string_set(hypotheses)
@@ -88,7 +99,7 @@ class HistoryHandle:
         cls,
         *,
         hypotheses: frozenset[str] | set[str] | tuple[str, ...],
-        compatible_state_by_hypothesis: Mapping[str, str],
+        compatible_state_by_hypothesis: Mapping[str, str | tuple[str, ...]],
         status_by_hypothesis: Mapping[str, str],
         version: int,
     ) -> "HistoryHandle":

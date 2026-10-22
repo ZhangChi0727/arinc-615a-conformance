@@ -26,6 +26,12 @@ class ResourceState:
     mode: str
     remaining: int
 
+    def __post_init__(self) -> None:
+        if self.mode not in {"ROUNDS", "BUDGET"}:
+            raise ValueError("resource mode must be exactly ROUNDS or BUDGET")
+        if isinstance(self.remaining, bool) or not isinstance(self.remaining, int) or self.remaining < 0:
+            raise ValueError("resource remaining must be a nonnegative integer")
+
     @classmethod
     def rounds(cls, remaining: int) -> "ResourceState":
         if isinstance(remaining, bool) or not isinstance(remaining, int) or remaining < 0:
@@ -121,7 +127,7 @@ class RoundEvidence:
 class SessionState:
     context: SessionContext
     history: HistoryHandle
-    frontiers: Mapping[str, FrontierEntry]
+    frontiers: Mapping[str, tuple[FrontierEntry, ...]]
     resources: ResourceState
     attempts: int
     processed_execution_attempt_ids: frozenset[str]
@@ -162,7 +168,7 @@ class ReferenceSession:
         history = HistoryHandle.initial(
             hypotheses=set(model.initial_frontiers),
             compatible_state_by_hypothesis={
-                hypothesis: frontier.history_provenance[-1]
+                hypothesis: (frontier.history_provenance[-1],)
                 for hypothesis, frontier in model.initial_frontiers.items()
             },
         )
@@ -171,7 +177,10 @@ class ReferenceSession:
         self.initial_state = SessionState(
             context=context,
             history=history,
-            frontiers=MappingProxyType(dict(model.initial_frontiers)),
+            frontiers=MappingProxyType({
+                hypothesis: (frontier,)
+                for hypothesis, frontier in model.initial_frontiers.items()
+            }),
             resources=resources,
             attempts=0,
             processed_execution_attempt_ids=frozenset(),
@@ -204,7 +213,7 @@ class ReferenceSession:
             if state_error is not None:
                 return SessionResult(state, environment, "Stop-Error", (state_error,))
             return self._step(state, environment)
-        except (AttributeError, KeyError, TypeError, ValueError) as exc:
+        except (AttributeError, KeyError, RuntimeError, TypeError, ValueError) as exc:
             return SessionResult(
                 state, environment, "Stop-Error",
                 (KernelDiagnostic("SESSION-TOOL-ERROR", str(exc) or type(exc).__name__),),
@@ -245,25 +254,41 @@ class ReferenceSession:
             return KernelDiagnostic("INVALID-EXECUTION-IDENTITIES", "processed execution identities are invalid")
         if len(state.evidence) != state.attempts:
             return KernelDiagnostic("ATTEMPT-EVIDENCE-MISMATCH", "every issued attempt requires exactly one evidence record")
-        if not isinstance(state.history, HistoryHandle) or set(state.frontiers) != set(state.history.hypotheses):
+        if not isinstance(state.history, HistoryHandle) or not isinstance(state.frontiers, Mapping):
             return KernelDiagnostic("HISTORY-FRONTIER-MISMATCH", "history and frontier hypothesis sets differ")
-        if any(
-            state.history.compatible_state_by_hypothesis.get(hypothesis)
-            != frontier.history_provenance[-1]
-            for hypothesis, frontier in state.frontiers.items()
-        ):
+        try:
+            frontier_bundles = {
+                hypothesis: _frontier_bundle(bundle)
+                for hypothesis, bundle in state.frontiers.items()
+            }
+        except (AttributeError, TypeError, ValueError) as exc:
+            return KernelDiagnostic("INVALID-FRONTIER-BUNDLE", str(exc) or type(exc).__name__)
+        if set(frontier_bundles) != set(state.history.hypotheses):
+            return KernelDiagnostic("HISTORY-FRONTIER-MISMATCH", "history and frontier hypothesis sets differ")
+        try:
+            history_matches_frontier = all(
+                state.history.compatible_state_by_hypothesis.get(hypothesis)
+                == tuple(path.history_provenance[-1] for path in paths)
+                for hypothesis, paths in frontier_bundles.items()
+            )
+        except (AttributeError, IndexError, TypeError) as exc:
+            return KernelDiagnostic("HISTORY-PROVENANCE-MISMATCH", str(exc) or type(exc).__name__)
+        if not history_matches_frontier:
             return KernelDiagnostic("HISTORY-PROVENANCE-MISMATCH", "history does not name each current frontier source")
         if state.history.processed:
             if set(state.history.status_by_hypothesis) != set(state.history.hypotheses):
                 return KernelDiagnostic("INCOMPLETE-PROCESSED-HISTORY", "processed history must status every current hypothesis")
         elif state.history.version != 0:
             return KernelDiagnostic("INVALID-INITIAL-HISTORY", "unprocessed history must be the S0 version")
-        for frontier in state.frontiers.values():
-            if not isinstance(frontier, FrontierEntry) or frontier.model_identity != self.model.context.identity:
-                return KernelDiagnostic("FRONTIER-MODEL-MISMATCH", "frontier does not belong to this verified model")
-            provenance_error = self.model.context.provenance_store.verify_entry(self.model.context, frontier)
-            if provenance_error is not None:
-                return provenance_error
+        for paths in frontier_bundles.values():
+            if len(paths) > self.model.frontier_limit:
+                return KernelDiagnostic("FRONTIER-BUNDLE-LIMIT", "frontier path bundle exceeds the declared bound")
+            for frontier in paths:
+                if frontier.model_identity != self.model.context.identity:
+                    return KernelDiagnostic("FRONTIER-MODEL-MISMATCH", "frontier does not belong to this verified model")
+                provenance_error = self.model.context.provenance_store.verify_entry(self.model.context, frontier)
+                if provenance_error is not None:
+                    return provenance_error
         committed_count = sum(1 for item in state.evidence if item.committed)
         if state.history.version != committed_count:
             return KernelDiagnostic("HISTORY-VERSION-MISMATCH", "history version does not equal committed evidence count")
@@ -325,7 +350,7 @@ class ReferenceSession:
         )
         try:
             execution = environment.execute(request)
-        except (AttributeError, KeyError, TypeError, ValueError) as exc:
+        except (AttributeError, KeyError, RuntimeError, TypeError, ValueError) as exc:
             return self._charged_execution_error(
                 state=state,
                 environment=environment,
@@ -369,6 +394,9 @@ class ReferenceSession:
                 diagnostics=diagnostics,
                 code="EXECUTION-RESULT-TYPE-ERROR",
                 message="environment execution has an invalid record or successor",
+                environment_after_execution=(
+                    execution.successor if isinstance(execution.successor, SyntheticEnvironment) else None
+                ),
             )
         if (
             execution.record.execution_attempt_id != execution_attempt_id
@@ -387,6 +415,7 @@ class ReferenceSession:
                 diagnostics=diagnostics,
                 code="EXECUTION-IDENTITY-ERROR",
                 message="execution result identity is invalid or already processed",
+                environment_after_execution=execution.successor,
             )
         if execution.record.effect_class == "CONFIRMED-NOT-SENT":
             evidence = RoundEvidence(
@@ -424,6 +453,23 @@ class ReferenceSession:
                 next_state, execution.successor, "Stop-Error",
                 tuple(diagnostics + [KernelDiagnostic("UNKNOWN-EFFECT", "synthetic execution did not confirm a successor summary")]),
             )
+        if not isinstance(execution.record.post_summary, str) or not execution.record.post_summary:
+            return self._charged_execution_error(
+                state=state,
+                environment=environment,
+                snapshot=snapshot,
+                prediction=prediction,
+                action=action,
+                resource_before=resource_before,
+                resource_after=resource_after,
+                charged_resources=charged_resources,
+                execution_attempt_id=execution_attempt_id,
+                diagnostics=diagnostics,
+                code="SUMMARY-CONFIRMATION-ERROR",
+                message="confirmed normal execution did not return a nonempty successor summary",
+                execution_record=execution.record,
+                environment_after_execution=execution.successor,
+            )
         selected_class, interpretation_error = _matching_class(snapshot, execution.record)
         if selected_class is None:
             assert interpretation_error is not None
@@ -441,12 +487,13 @@ class ReferenceSession:
                 code=interpretation_error.code,
                 message=interpretation_error.message,
                 execution_record=execution.record,
+                environment_after_execution=execution.successor,
             )
         next_history = HistoryHandle.committed(
             hypotheses=selected_class.hypotheses,
             compatible_state_by_hypothesis={
-                hypothesis: entry.history_provenance[-1]
-                for hypothesis, entry in selected_class.successors.items()
+                hypothesis: tuple(entry.history_provenance[-1] for entry in entries)
+                for hypothesis, entries in selected_class.successors.items()
             },
             status_by_hypothesis={
                 hypothesis: "CONSERVATIVE-UNKNOWN" if hypothesis in selected_class.conservative_hypotheses else "KNOWN"
@@ -570,6 +617,7 @@ class ReferenceSession:
         code: str,
         message: str,
         execution_record: VisibleExecutionRecord | None = None,
+        environment_after_execution: SyntheticEnvironment | None = None,
     ) -> SessionResult:
         """Record an error after S4 without returning the pre-charge state.
 
@@ -625,7 +673,7 @@ class ReferenceSession:
         )
         return SessionResult(
             charged_state,
-            environment,
+            environment_after_execution or environment,
             "Stop-Error",
             tuple(diagnostics + [KernelDiagnostic(code, message)]),
         )
@@ -677,3 +725,13 @@ def _interval_contains(interval: object, tick: object) -> bool:
         (tick > interval.lower or (tick == interval.lower and interval.lower_closed))
         and (tick < interval.upper or (tick == interval.upper and interval.upper_closed))
     )
+
+
+def _frontier_bundle(value: object) -> tuple[FrontierEntry, ...]:
+    if (
+        not isinstance(value, tuple)
+        or not value
+        or any(not isinstance(path, FrontierEntry) for path in value)
+    ):
+        raise ValueError("frontier bundle must be a nonempty tuple of FrontierEntry values")
+    return value

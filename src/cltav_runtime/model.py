@@ -80,7 +80,7 @@ class PredictionClass:
     action_id: str
     observable: str
     hypotheses: frozenset[str]
-    successors: Mapping[str, FrontierEntry]
+    successors: Mapping[str, tuple[FrontierEntry, ...]]
     conservative_hypotheses: frozenset[str] = frozenset()
     measurement_windows: Mapping[str, Interval] = field(
         default_factory=lambda: MappingProxyType({}),
@@ -220,7 +220,7 @@ class FiniteSessionModel:
         )
 
     def predict(
-        self, *, hypotheses: frozenset[str], frontiers: Mapping[str, FrontierEntry],
+        self, *, hypotheses: frozenset[str], frontiers: Mapping[str, FrontierEntry | tuple[FrontierEntry, ...]],
         status_by_hypothesis: Mapping[str, str], action_id: str,
     ) -> ActionPrediction:
         """Compute current classes by propagating each current public path."""
@@ -234,41 +234,72 @@ class FiniteSessionModel:
             return ActionPrediction(
                 action_id, (), (KernelDiagnostic("INVALID-HISTORY", "current hypotheses/frontiers are inconsistent"),),
             )
-        grouped: dict[str, dict[str, FrontierEntry]] = {}
+        grouped: dict[str, dict[str, tuple[FrontierEntry, ...]]] = {}
         measurement_windows: dict[str, dict[str, Interval]] = {}
-        conservative: dict[str, FrontierEntry] = {}
+        conservative: dict[str, tuple[FrontierEntry, ...]] = {}
         diagnostics: list[KernelDiagnostic] = []
         for hypothesis in sorted(hypotheses):
+            try:
+                paths = _frontier_paths(frontiers[hypothesis])
+            except (KeyError, TypeError, ValueError) as exc:
+                return ActionPrediction(
+                    action_id,
+                    (),
+                    tuple(diagnostics + [KernelDiagnostic("INVALID-HISTORY", str(exc) or type(exc).__name__)]),
+                )
             if status_by_hypothesis.get(hypothesis) == "CONSERVATIVE-UNKNOWN":
-                conservative[hypothesis] = frontiers[hypothesis]
+                conservative[hypothesis] = paths
                 continue
-            result = propagate_transition(
-                frontiers[hypothesis],
-                action.transition_for_kernel(),
-                state_ids=set(self.context.state_ids),
-                clock_ids=set(self.context.clock_ids),
-                typed_domains={key: set(domain) for key, domain in self.context.typed_domains.items()},
-                context=self.context,
-                path_limit=self.path_limit,
-                frontier_limit=self.frontier_limit,
-            )
-            diagnostics.extend(result.diagnostics)
-            if result.kind == "FEASIBLE" and len(result.entries) == 1:
+            feasible: list[FrontierEntry] = []
+            uncertain: list[FrontierEntry] = []
+            for path in paths:
+                result = propagate_transition(
+                    path,
+                    action.transition_for_kernel(),
+                    state_ids=set(self.context.state_ids),
+                    clock_ids=set(self.context.clock_ids),
+                    typed_domains={key: set(domain) for key, domain in self.context.typed_domains.items()},
+                    context=self.context,
+                    path_limit=self.path_limit,
+                    frontier_limit=self.frontier_limit,
+                )
+                diagnostics.extend(result.diagnostics)
+                if result.kind == "FEASIBLE":
+                    feasible.extend(result.entries)
+                elif result.kind != "INFEASIBLE":
+                    # The incoming path, not a fabricated observation class,
+                    # remains the conservative witness for a calculation that
+                    # did not prove compatibility or incompatibility.
+                    uncertain.append(path)
+            if feasible:
+                try:
+                    successors = _bounded_paths(feasible + uncertain, self.frontier_limit)
+                except ValueError as exc:
+                    diagnostics.append(KernelDiagnostic("FRONTIER-BUNDLE-LIMIT", str(exc)))
+                    # A finite bound cannot erase paths merely because their
+                    # successor bundle would be too large to retain.  Keep
+                    # the source bundle as a conservative continuation and
+                    # withhold any unproved visible class for this member.
+                    conservative[hypothesis] = paths
+                    continue
                 for observable in action.observable_by_hypothesis[hypothesis]:
-                    grouped.setdefault(observable, {})[hypothesis] = result.entries[0]
+                    grouped.setdefault(observable, {})[hypothesis] = successors
                     measurement_windows.setdefault(observable, {})[hypothesis] = self.uncertainty.window(
                         action.measurement_ticks_by_hypothesis[hypothesis],
                     )
-            elif result.kind != "INFEASIBLE":
+            if uncertain:
                 # A bounded/unsupported computation keeps its hypothesis in a
                 # conservative continuation.  It is included in every normal
                 # class below, so a visible normal observation cannot exclude
                 # a hypothesis whose applicable computation was not completed.
-                conservative[hypothesis] = frontiers[hypothesis]
+                conservative[hypothesis] = _bounded_paths(uncertain, self.frontier_limit)
         if conservative:
             if grouped:
                 for successors in grouped.values():
-                    successors.update(conservative)
+                    for hypothesis, paths in conservative.items():
+                        successors[hypothesis] = _bounded_paths(
+                            list(successors.get(hypothesis, ())) + list(paths), self.frontier_limit,
+                        )
             else:
                 # No completed calculation produced a visible class.  Keeping
                 # a synthetic ``unknown`` class here would make an incomplete
@@ -289,20 +320,10 @@ class FiniteSessionModel:
                     ),
                 )
         if len(grouped) > self.observation_class_limit:
-            retained = {hypothesis: frontiers[hypothesis] for hypothesis in hypotheses}
             return ActionPrediction(
                 action_id,
-                (
-                    PredictionClass(
-                        action_id=action_id,
-                        observable="__conservative_unknown__",
-                        hypotheses=frozenset(retained),
-                        successors=MappingProxyType(retained),
-                        conservative_hypotheses=frozenset(retained),
-                        measurement_windows=MappingProxyType({}),
-                    ),
-                ),
-                tuple(diagnostics + [KernelDiagnostic("OBSERVATION-CLASS-LIMIT", "declared observation-class bound reached; hypotheses retained")]),
+                (),
+                tuple(diagnostics + [KernelDiagnostic("OBSERVATION-CLASS-LIMIT", "declared observation-class bound reached; TEST scoring is withheld")]),
             )
         classes = tuple(
             PredictionClass(
@@ -473,6 +494,42 @@ def _exact_tick(value: Any, label: str) -> Fraction:
         ):
             return Fraction(numerator, denominator)
     raise ValueError(f"{label} must be an exact integer or rational mapping")
+
+
+def _frontier_paths(value: FrontierEntry | tuple[FrontierEntry, ...]) -> tuple[FrontierEntry, ...]:
+    """Normalize one public hypothesis frontier into its finite path bundle."""
+
+    paths = (value,) if isinstance(value, FrontierEntry) else value
+    if (
+        not isinstance(paths, tuple)
+        or not paths
+        or any(not isinstance(path, FrontierEntry) for path in paths)
+    ):
+        raise ValueError("hypothesis frontier must be a nonempty finite path tuple")
+    return paths
+
+
+def _bounded_paths(paths: list[FrontierEntry], limit: int) -> tuple[FrontierEntry, ...]:
+    """Deduplicate exact paths while retaining a conservative finite bundle."""
+
+    unique: list[FrontierEntry] = []
+    identities: set[tuple[object, ...]] = set()
+    for path in paths:
+        identity = (
+            path.hypothesis_id, path.control_state_id, tuple(sorted(path.clocks.items())),
+            tuple(sorted(path.typed_store.items())), path.path_length,
+            path.history_provenance, path.status, path.model_identity,
+        )
+        if identity not in identities:
+            identities.add(identity)
+            unique.append(path)
+    if len(unique) > limit:
+        # This branch cannot claim that omitted paths are infeasible.  The
+        # caller receives the first finite bundle only when its declared bound
+        # was respected; otherwise construction is invalid rather than silently
+        # erasing a compatible path.
+        raise ValueError("finite hypothesis path bundle exceeds the declared frontier bound")
+    return tuple(unique)
 
 
 def _positive_int(value: Any, label: str) -> int:

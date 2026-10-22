@@ -56,6 +56,16 @@ surviving member.  Empty `H` is legal only as a processed Stop-Empty result.
 `SessionContext` separates `KNOWN` plus a confirmed summary from `UNKNOWN` or
 `CONSERVATIVE-UNKNOWN`, which carry no usable current summary.
 
+Each surviving `H` member carries a nonempty, bounded tuple of current frontier
+provenance references, rather than a single flattened representative.  The
+finite predictor propagates every path independently: an infeasible path removes
+only that path, while an unsupported or bounded calculation retains its source
+path as conservative.  A conservative member is retained in every completed
+normal observation class and is committed as `CONSERVATIVE-UNKNOWN`; it is never
+turned into a synthetic observable outcome.  If no completed visible class is
+available, or the declared observation-class bound is exceeded, the result is a
+named prediction gap and TEST selection is withheld.
+
 ## Execution and experiment-identity bridge
 
 An engineering session always has a `runId`, `sessionId`, immutable
@@ -82,7 +92,10 @@ After S4, an execution-side exception, malformed execution result, invalid
 result identity, or observation outside the frozen snapshot does not restore
 the pre-issue state: it retains the one charge and expected attempt identity,
 records a controlled error, sets the session to `CONSERVATIVE-UNKNOWN`, and
-does not invoke S9.  `CONFIRMED-NOT-SENT` is distinct: it is charged once but
+does not invoke S9.  If a returned result includes a typed successor environment,
+that actual successor is retained even when its record is rejected.  A normal
+record which claims summary confirmation but omits its post-summary is the same
+controlled post-dispatch error.  `CONFIRMED-NOT-SENT` is distinct: it is charged once but
 preserves the prior history and known summary.
 
 The finite model is JSON-detached at construction.  Its nested guard/update
@@ -172,6 +185,12 @@ Stop-Empty 的路径仍是显式 B/C-2 工作；本表不主张它们已经执�
 `H` 只可作为已处理的 Stop-Empty 结果。`SessionContext` 将带确认摘要的 `KNOWN` 与不
 携带可用当前摘要的 `UNKNOWN`／`CONSERVATIVE-UNKNOWN` 分开。
 
+每个存活的 `H` 成员均携带非空且有界的当前 frontier provenance 引用元组，而不是一个被
+扁平化的代表。有限预测器逐路径传播：不可行路径只会排除自身；不支持或受限的计算则将其
+源路径保留为保守路径。保守成员会保留在每个已完成的普通观测类中，并以
+`CONSERVATIVE-UNKNOWN` 提交；它绝不会被伪造为一个可观测结果。若没有已完成的可见类，或
+超过声明的观测类上限，则结果为具名 prediction gap，并抑制 TEST 选择。
+
 实现必须在序列化和会话边界返回受控诊断。Python 构造器的 `ValueError` 是内部输入
 边界，不是 IUT 判定；后续生产入口会将其映射为具名工具错误，且不发布无效证据包。
 
@@ -191,7 +210,9 @@ Stop-Empty 的路径仍是显式 B/C-2 工作；本表不主张它们已经执�
 `ROUNDS` 每次 issued 恰好消耗一个动作，和动作声明的金钱／计算成本无关；`BUDGET` 才消耗该
 声明成本。S4 之后发生执行侧异常、畸形执行返回、返回身份无效，或观测不属于冻结 snapshot 时，
 均不得恢复到派发前状态：保留一次计费和期望的 attempt 身份，记录受控错误，将会话置为
-`CONSERVATIVE-UNKNOWN`，且不得调用 S9。`CONFIRMED-NOT-SENT` 与此不同：它恰好计费一次，
+`CONSERVATIVE-UNKNOWN`，且不得调用 S9。若返回结果包含有类型的后继环境，即使其记录被拒绝，
+也保留该实际后继环境。声称已确认摘要却缺少后继摘要的普通记录，同样属于派发后的受控错误。
+`CONFIRMED-NOT-SENT` 与此不同：它恰好计费一次，
 但保留此前 history 和已知摘要。
 
 有限模型在构造时会与 JSON 源对象断开。嵌套 guard／update AST 只以规范化冻结形式保留，每次
