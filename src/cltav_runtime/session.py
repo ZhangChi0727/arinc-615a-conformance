@@ -121,6 +121,7 @@ class RoundEvidence:
     summary_after: str | None
     committed: bool
     stop_reason: str | None
+    rejected_response: VisibleExecutionRecord | None = None
 
 
 @dataclass(frozen=True)
@@ -213,7 +214,7 @@ class ReferenceSession:
             if state_error is not None:
                 return SessionResult(state, environment, "Stop-Error", (state_error,))
             return self._step(state, environment)
-        except (AttributeError, KeyError, RuntimeError, TypeError, ValueError) as exc:
+        except Exception as exc:
             return SessionResult(
                 state, environment, "Stop-Error",
                 (KernelDiagnostic("SESSION-TOOL-ERROR", str(exc) or type(exc).__name__),),
@@ -350,7 +351,7 @@ class ReferenceSession:
         )
         try:
             execution = environment.execute(request)
-        except (AttributeError, KeyError, RuntimeError, TypeError, ValueError) as exc:
+        except Exception as exc:
             return self._charged_execution_error(
                 state=state,
                 environment=environment,
@@ -398,6 +399,24 @@ class ReferenceSession:
                     execution.successor if isinstance(execution.successor, SyntheticEnvironment) else None
                 ),
             )
+        record_error = _incoming_record_error(execution.record)
+        if record_error is not None:
+            return self._charged_execution_error(
+                state=state,
+                environment=environment,
+                snapshot=snapshot,
+                prediction=prediction,
+                action=action,
+                resource_before=resource_before,
+                resource_after=resource_after,
+                charged_resources=charged_resources,
+                execution_attempt_id=execution_attempt_id,
+                diagnostics=diagnostics,
+                code=record_error.code,
+                message=record_error.message,
+                execution_record=execution.record,
+                environment_after_execution=execution.successor,
+            )
         if (
             execution.record.execution_attempt_id != execution_attempt_id
             or execution_attempt_id in state.processed_execution_attempt_ids
@@ -415,6 +434,7 @@ class ReferenceSession:
                 diagnostics=diagnostics,
                 code="EXECUTION-IDENTITY-ERROR",
                 message="execution result identity is invalid or already processed",
+                execution_record=execution.record,
                 environment_after_execution=execution.successor,
             )
         if execution.record.effect_class == "CONFIRMED-NOT-SENT":
@@ -563,6 +583,13 @@ class ReferenceSession:
             )
             return AdmissionDecision("TEST", action, prediction, "TEST-ADMITTED", tuple(diagnostics))
 
+        # A current GAP revokes the complete TEST scoring set, including an
+        # affordability conclusion derived from a TEST which is no longer a
+        # candidate.  Only a subsequently eligible PREP may establish A2.
+        if prediction_gap_seen:
+            test_candidates.clear()
+            unaffordable_test_seen = False
+
         prep_candidates: list[tuple[SyntheticAction, ActionPrediction]] = []
         eligible_prep_seen = False
         unaffordable_prep_seen = False
@@ -627,7 +654,7 @@ class ReferenceSession:
         unknown state without invoking S9.
         """
 
-        record = execution_record or VisibleExecutionRecord(
+        expected_record = VisibleExecutionRecord(
             execution_attempt_id=execution_attempt_id,
             action_id=snapshot.action_id,
             effect_class="UNKNOWN-EFFECT",
@@ -649,7 +676,7 @@ class ReferenceSession:
         evidence = RoundEvidence(
             snapshot,
             prediction,
-            record,
+            expected_record,
             True,
             True,
             resource_before,
@@ -661,6 +688,7 @@ class ReferenceSession:
             None,
             False,
             "Stop-Error",
+            execution_record,
         )
         charged_state = SessionState(
             unknown_context,
@@ -716,6 +744,50 @@ def _matching_class(
             "visible measurement tick is outside every selected uncertainty window",
         )
     return candidate, None
+
+
+def _incoming_record_error(record: VisibleExecutionRecord) -> KernelDiagnostic | None:
+    """Check the closed, visible execution-record combinations at S4/S8.
+
+    The synthetic environment validates its own declarative outcomes, but an
+    execution adapter is a public session boundary and may construct this
+    dataclass directly.  Validate the same field and effect combinations here
+    before any branch can treat a malformed record as a confirmed observation,
+    a confirmed non-send, or a conservative unknown.
+    """
+
+    if any(
+        not isinstance(value, str) or not value
+        for value in (record.execution_attempt_id, record.action_id, record.evidence_ref)
+    ):
+        return KernelDiagnostic("INVALID-EXECUTION-RECORD", "execution identity, action identity, and evidence reference must be nonempty strings")
+    if record.effect_class not in {"NONE", "CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"}:
+        return KernelDiagnostic("INVALID-EXECUTION-RECORD", "execution effect class is outside the controlled vocabulary")
+    if not isinstance(record.summary_confirmed, bool):
+        return KernelDiagnostic("INVALID-EXECUTION-RECORD", "summary confirmation must be Boolean")
+    if not isinstance(record.uncertainty_identity, str) or not record.uncertainty_identity:
+        return KernelDiagnostic("INVALID-EXECUTION-RECORD", "incoming execution record must name a nonempty uncertainty identity")
+    if record.effect_class == "NONE":
+        if not isinstance(record.observable, str) or not record.observable:
+            return KernelDiagnostic("INVALID-EXECUTION-RECORD", "normal execution requires a nonempty visible observation")
+        if not record.summary_confirmed:
+            return KernelDiagnostic("INVALID-EXECUTION-RECORD", "normal execution requires summary confirmation")
+        if not isinstance(record.post_summary, str) or not record.post_summary:
+            return KernelDiagnostic("SUMMARY-CONFIRMATION-ERROR", "confirmed normal execution did not return a nonempty successor summary")
+        if not isinstance(record.measurement_tick, Fraction):
+            return KernelDiagnostic("INVALID-EXECUTION-RECORD", "normal execution requires an exact measurement tick")
+        return None
+    if (
+        record.observable is not None
+        or record.summary_confirmed
+        or record.post_summary is not None
+        or record.measurement_tick is not None
+    ):
+        return KernelDiagnostic(
+            "INVALID-EXECUTION-RECORD",
+            "non-normal execution cannot manufacture an observation, confirmation, summary, or measurement",
+        )
+    return None
 
 
 def _interval_contains(interval: object, tick: object) -> bool:

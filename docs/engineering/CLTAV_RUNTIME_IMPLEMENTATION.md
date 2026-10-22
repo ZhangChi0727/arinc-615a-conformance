@@ -43,6 +43,10 @@ The current B/C-1 checkpoint implements the normal TEST and named
 prediction-gap/Prep routes through one read-only admission decision.  A
 current TEST prediction gap withholds TEST minimax even when another TEST has
 classes; eligible PREP is then evaluated by that same resource decision.
+The GAP revokes the whole current TEST scoring set, including any unaffordable
+TEST-derived A2 conclusion: with no eligible PREP, the exit remains the named
+prediction gap; only an eligible but unaffordable PREP may produce A2 on that
+fallback route.
 Recover, full S7/S8 coverage, ownership/T5 and
 all Stop-Empty-producing paths remain explicit B/C-2 work; this table does not
 claim their execution is complete.
@@ -97,6 +101,16 @@ that actual successor is retained even when its record is rejected.  A normal
 record which claims summary confirmation but omits its post-summary is the same
 controlled post-dispatch error.  `CONFIRMED-NOT-SENT` is distinct: it is charged once but
 preserves the prior history and known summary.
+
+Before any effect branch, the session validates the complete visible-record
+domain and its field combinations: identity/action/evidence references are
+nonempty strings; confirmation is Boolean; normal records carry a visible
+observation, a confirmed nonempty post-summary, an exact measurement tick and
+the frozen uncertainty identity; non-normal records cannot manufacture those
+fields.  A rejected response is retained separately from the expected issued
+record, so an incorrect returned attempt identity cannot overwrite the request
+identity in the charged evidence.  Ordinary adapter exceptions are controlled
+post-dispatch errors; this does not catch process-interrupt exceptions.
 
 The finite model is JSON-detached at construction.  Its nested guard/update
 AST is retained only in canonical frozen form and decoded afresh for each
@@ -178,6 +192,9 @@ confirmation experiments or protocol conformance cases.
 随后由同一资源决定检查合格 Prep。Recover、完整 S7／S8 覆盖、ownership／T5 和全部可产生
 Stop-Empty 的路径仍是显式 B/C-2 工作；本表不主张它们已经执行完成。
 
+GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出的 A2：没有合格 Prep 时出口仍为
+具名 prediction gap；只有合格但不可负担的 Prep 才能在该 fallback 路径产生 A2。
+
 ## 初始类型边界
 
 `HistoryHandle.initial` 表示 S0 输入；因处理前成员状态可以尚未设置，允许空状态表。
@@ -214,6 +231,12 @@ Stop-Empty 的路径仍是显式 B/C-2 工作；本表不主张它们已经执�
 也保留该实际后继环境。声称已确认摘要却缺少后继摘要的普通记录，同样属于派发后的受控错误。
 `CONFIRMED-NOT-SENT` 与此不同：它恰好计费一次，
 但保留此前 history 和已知摘要。
+
+进入任何 effect 分支前，会话校验完整的可见记录域及其字段组合：身份／动作／证据引用均为非空
+字符串，确认字段为 Boolean；普通记录携带可见观测、已确认的非空后继摘要、精确测量 tick 和
+冻结的 uncertainty identity；非普通记录不得伪造这些字段。被拒绝的返回记录与期望的 issued
+记录分开保存，错误返回的 attempt identity 不得覆盖已计费证据中的请求身份。普通适配器异常
+属于派发后的受控错误；这不捕获进程中断类异常。
 
 有限模型在构造时会与 JSON 源对象断开。嵌套 guard／update AST 只以规范化冻结形式保留，每次
 内核调用再重新解码；因此，构造后修改源对象不会在不改变 model identity 的情况下改变行为。

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 from dataclasses import FrozenInstanceError, replace
+from fractions import Fraction
 import json
 from pathlib import Path
 import subprocess
@@ -295,6 +296,36 @@ def test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_ent
     assert refused.diagnostics[-1].code == "ADMISSION-A2-UNAFFORDABLE"
 
 
+@pytest.mark.parametrize("reverse_actions", [False, True])
+def test_prediction_gap_revokes_an_unaffordable_test_score_before_a2(
+    reverse_actions: bool,
+) -> None:
+    binding, model, fixture = _runtime_parts()
+    model_data = copy.deepcopy(fixture["algorithmModel"])
+    model_data["actions"] = [
+        action for action in model_data["actions"]
+        if action["id"] in {"test-gap", "test-router"}
+    ]
+    for action in model_data["actions"]:
+        if action["id"] == "test-gap":
+            action["enabledSummaries"] = ["q0"]
+        if action["id"] == "test-router":
+            action["cost"] = 3
+    if reverse_actions:
+        model_data["actions"].reverse()
+    model_data["limits"]["actions"] = 2
+    gap_model = FiniteSessionModel.from_mapping(context=model.context, value=model_data)
+    result = ReferenceSession(
+        binding=binding, model=gap_model, session_id=f"session-gap-score-{reverse_actions}",
+        run_id=f"run-gap-score-{reverse_actions}", initial_summary="q0", resources=ResourceState.budget(1),
+    ).run(SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]), maximum_rounds=1)
+
+    assert result.stop_reason == "Stop-Prediction-Gap"
+    assert result.diagnostics[-1].code == "PREDICTION-GAP"
+    assert result.state.attempts == 0
+    assert result.state.resources.remaining == 1
+
+
 def test_environment_execution_request_has_no_hypothesis_or_truth_argument() -> None:
     with pytest.raises(TypeError):
         ExecutionRequest(
@@ -326,7 +357,7 @@ def test_confirmed_not_sent_is_issued_and_charged_once_but_preserves_history() -
     assert evidence.committed is False
 
 
-@pytest.mark.parametrize("error_type", [ValueError, RuntimeError])
+@pytest.mark.parametrize("error_type", [ValueError, RuntimeError, OSError])
 def test_execution_tool_error_keeps_the_already_charged_execution_record(error_type: type[Exception]) -> None:
     class FailingEnvironment:
         def execute(self, _request: ExecutionRequest) -> object:
@@ -360,7 +391,7 @@ def test_invalid_execution_identity_does_not_restore_the_pre_charge_state() -> N
                     observable="branch-alpha",
                     summary_confirmed=True,
                     post_summary="branch-alpha",
-                    measurement_tick=0,
+                    measurement_tick=Fraction(0),
                     uncertainty_identity="synthetic-u-1",
                     evidence_ref="synthetic:wrong-execution-id:bad",
                 ),
@@ -381,6 +412,8 @@ def test_invalid_execution_identity_does_not_restore_the_pre_charge_state() -> N
     assert result.state.attempts == 1
     assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
     assert result.state.evidence[0].execution.execution_attempt_id == "run-identity-error:session-identity-error:execution:1"
+    assert result.state.evidence[0].rejected_response is not None
+    assert result.state.evidence[0].rejected_response.execution_attempt_id == "wrong-execution-id"
     assert result.diagnostics[-1].code == "EXECUTION-IDENTITY-ERROR"
 
 
@@ -420,6 +453,8 @@ def test_confirmed_but_missing_post_summary_keeps_charge_and_real_environment_su
     assert result.state.attempts == 1
     assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
     assert result.environment._state == "private-a1"
+    assert result.state.evidence[0].rejected_response is not None
+    assert result.state.evidence[0].rejected_response.post_summary is None
 
 
 def test_malformed_execution_record_keeps_a_typed_successor_environment() -> None:
@@ -442,6 +477,58 @@ def test_malformed_execution_record_keeps_a_typed_successor_environment() -> Non
     assert result.stop_reason == "Stop-Error"
     assert result.diagnostics[-1].code == "EXECUTION-RESULT-TYPE-ERROR"
     assert result.state.resources.remaining == 1
+    assert result.environment._state == "private-a1"
+
+
+@pytest.mark.parametrize(
+    "replacement",
+    [
+        {"effect_class": "IMPROVISED"},
+        {"effect_class": "NONE", "summary_confirmed": False},
+        {"effect_class": "NONE", "summary_confirmed": "false"},
+        {"effect_class": "NONE", "summary_confirmed": 1},
+        {"effect_class": "UNKNOWN-EFFECT", "observable": "invented-visible-outcome"},
+        {"effect_class": "CONFIRMED-NOT-SENT", "measurement_tick": Fraction(0)},
+        {"effect_class": "NONE", "uncertainty_identity": None},
+        {"effect_class": "NONE", "evidence_ref": ""},
+    ],
+)
+def test_malformed_visible_record_combinations_are_controlled_post_dispatch_errors(
+    replacement: dict[str, object],
+) -> None:
+    class MalformedVisibleRecordEnvironment:
+        def __init__(self, successor: SyntheticEnvironment) -> None:
+            self.successor = successor
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            values: dict[str, object] = {
+                "execution_attempt_id": request.execution_attempt_id,
+                "action_id": request.action_id,
+                "effect_class": "NONE",
+                "observable": "branch-alpha",
+                "summary_confirmed": True,
+                "post_summary": "branch-alpha",
+                "measurement_tick": Fraction(0),
+                "uncertainty_identity": "synthetic-u-1",
+                "evidence_ref": "synthetic:malformed-visible-record",
+            }
+            values.update(replacement)
+            return EnvironmentExecution(VisibleExecutionRecord(**values), self.successor)  # type: ignore[arg-type]
+
+    binding, model, fixture = _runtime_parts()
+    successor = SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]).execute(
+        ExecutionRequest("seed-session", "seed-execution", "test-router", "TEST"),
+    ).successor
+    result = ReferenceSession(
+        binding=binding, model=model, session_id="session-visible-combination", run_id="run-visible-combination",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    ).run(MalformedVisibleRecordEnvironment(successor), maximum_rounds=1)  # type: ignore[arg-type]
+
+    assert result.stop_reason == "Stop-Error"
+    assert result.diagnostics[-1].code == "INVALID-EXECUTION-RECORD"
+    assert result.state.resources.remaining == 1
+    assert result.state.history.version == 0
+    assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
     assert result.environment._state == "private-a1"
 
 
