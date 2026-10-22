@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from fractions import Fraction
 from types import MappingProxyType
 from typing import Mapping
 
 from .bindings import RuntimeAuthorityBinding
-from .kernel import FrontierEntry, KernelDiagnostic
+from .kernel import FrontierEntry, Interval, KernelDiagnostic
 from .model import ActionPrediction, FiniteSessionModel, PredictionClass, SyntheticAction
 from .synthetic import (
     EnvironmentExecution,
@@ -62,6 +63,23 @@ class AlgorithmResourceView:
 
 
 @dataclass(frozen=True)
+class AdmissionDecision:
+    """One read-only A1–A3 decision before S3/S4 can mutate a session.
+
+    The finite B/C-1 slice implements TEST, the shared prediction-gap route,
+    and PREP fallback.  It deliberately represents refusal explicitly rather
+    than folding an incomplete TEST prediction or an unaffordable PREP into an
+    empty action list.
+    """
+
+    kind: str
+    action: SyntheticAction | None
+    prediction: ActionPrediction | None
+    reason: str
+    diagnostics: tuple[KernelDiagnostic, ...]
+
+
+@dataclass(frozen=True)
 class SelectSnapshot:
     """Frozen S3 selection inputs and final action identity."""
 
@@ -75,6 +93,7 @@ class SelectSnapshot:
     classes: tuple[PredictionClass, ...]
     model_identity: str
     uncertainty_identity: str
+    uncertainty_digest: str
     authority_identities: Mapping[str, Mapping[str, str]]
 
 
@@ -181,6 +200,9 @@ class ReferenceSession:
         """Run one S0–S10 reference iteration with controlled failures."""
 
         try:
+            state_error = self._state_error(state)
+            if state_error is not None:
+                return SessionResult(state, environment, "Stop-Error", (state_error,))
             return self._step(state, environment)
         except (AttributeError, KeyError, TypeError, ValueError) as exc:
             return SessionResult(
@@ -188,71 +210,93 @@ class ReferenceSession:
                 (KernelDiagnostic("SESSION-TOOL-ERROR", str(exc) or type(exc).__name__),),
             )
 
+    def _state_error(self, state: object) -> KernelDiagnostic | None:
+        """Validate a resumed public state before admission or charging.
+
+        ``SessionState`` is deliberately inspectable, so callers may attempt
+        to resume with a state from another model/session or with a rewritten
+        compatible-history map.  Validate the full provenance closure here;
+        matching only ``H`` or incrementing a supplied version is not enough.
+        """
+
+        if not isinstance(state, SessionState):
+            return KernelDiagnostic("INVALID-SESSION-STATE", "state is not a SessionState")
+        initial_context = self.initial_state.context
+        context = state.context
+        if not isinstance(context, SessionContext) or (
+            context.session_id != initial_context.session_id
+            or context.run_id != initial_context.run_id
+            or context.model_identity != self.model.identity
+        ):
+            return KernelDiagnostic("SESSION-IDENTITY-MISMATCH", "state does not belong to this session/run/model")
+        if context.experiment_attempt_id != initial_context.experiment_attempt_id:
+            return KernelDiagnostic("EXPERIMENT-IDENTITY-MISMATCH", "state changes the declared experiment identity")
+        if not isinstance(state.resources, ResourceState) or state.resources.mode not in {"ROUNDS", "BUDGET"} or (
+            isinstance(state.resources.remaining, bool)
+            or not isinstance(state.resources.remaining, int)
+            or state.resources.remaining < 0
+        ):
+            return KernelDiagnostic("INVALID-RESOURCE-STATE", "state resource mode or remainder is invalid")
+        if isinstance(state.attempts, bool) or not isinstance(state.attempts, int) or state.attempts < 0:
+            return KernelDiagnostic("INVALID-ATTEMPT-COUNT", "state attempt count is invalid")
+        if not isinstance(state.processed_execution_attempt_ids, frozenset) or any(
+            not isinstance(value, str) or not value for value in state.processed_execution_attempt_ids
+        ):
+            return KernelDiagnostic("INVALID-EXECUTION-IDENTITIES", "processed execution identities are invalid")
+        if len(state.evidence) != state.attempts:
+            return KernelDiagnostic("ATTEMPT-EVIDENCE-MISMATCH", "every issued attempt requires exactly one evidence record")
+        if not isinstance(state.history, HistoryHandle) or set(state.frontiers) != set(state.history.hypotheses):
+            return KernelDiagnostic("HISTORY-FRONTIER-MISMATCH", "history and frontier hypothesis sets differ")
+        if any(
+            state.history.compatible_state_by_hypothesis.get(hypothesis)
+            != frontier.history_provenance[-1]
+            for hypothesis, frontier in state.frontiers.items()
+        ):
+            return KernelDiagnostic("HISTORY-PROVENANCE-MISMATCH", "history does not name each current frontier source")
+        if state.history.processed:
+            if set(state.history.status_by_hypothesis) != set(state.history.hypotheses):
+                return KernelDiagnostic("INCOMPLETE-PROCESSED-HISTORY", "processed history must status every current hypothesis")
+        elif state.history.version != 0:
+            return KernelDiagnostic("INVALID-INITIAL-HISTORY", "unprocessed history must be the S0 version")
+        for frontier in state.frontiers.values():
+            if not isinstance(frontier, FrontierEntry) or frontier.model_identity != self.model.context.identity:
+                return KernelDiagnostic("FRONTIER-MODEL-MISMATCH", "frontier does not belong to this verified model")
+            provenance_error = self.model.context.provenance_store.verify_entry(self.model.context, frontier)
+            if provenance_error is not None:
+                return provenance_error
+        committed_count = sum(1 for item in state.evidence if item.committed)
+        if state.history.version != committed_count:
+            return KernelDiagnostic("HISTORY-VERSION-MISMATCH", "history version does not equal committed evidence count")
+        evidence_ids = frozenset(item.execution.execution_attempt_id for item in state.evidence)
+        if evidence_ids != state.processed_execution_attempt_ids or len(evidence_ids) != len(state.evidence):
+            return KernelDiagnostic("EXECUTION-EVIDENCE-MISMATCH", "execution identities do not close over the evidence ledger")
+        for item in state.evidence:
+            if (
+                item.snapshot.session_id != context.session_id
+                or item.snapshot.model_identity != self.model.identity
+                or item.snapshot.uncertainty_identity != self.model.uncertainty_identity
+                or item.snapshot.uncertainty_digest != self.model.uncertainty_digest
+                or dict(item.snapshot.authority_identities) != dict(self.binding.identities())
+            ):
+                return KernelDiagnostic("SNAPSHOT-IDENTITY-MISMATCH", "evidence snapshot identity is not owned by this session")
+        return None
+
     def _step(self, state: SessionState, environment: SyntheticEnvironment) -> SessionResult:
         if state.context.q_status != "KNOWN" or state.context.current_summary is None:
             return SessionResult(
                 state, environment, "Stop-Error",
                 (KernelDiagnostic("UNRESOLVED-SESSION-SUMMARY", "known summary is required for TEST selection"),),
             )
-        candidates: list[tuple[SyntheticAction, ActionPrediction, int]] = []
-        diagnostics: list[KernelDiagnostic] = []
-        eligible_test_seen = False
-        unaffordable_test_seen = False
-        prediction_gap_seen = False
-        for action in self.model.actions.values():
-            if action.kind != "TEST" or state.context.current_summary not in action.enabled_summaries:
-                continue
-            eligible_test_seen = True
-            prediction = self.model.predict(
-                hypotheses=state.history.hypotheses,
-                frontiers=state.frontiers,
-                status_by_hypothesis=state.history.status_by_hypothesis,
-                action_id=action.action_id,
-            )
-            diagnostics.extend(prediction.diagnostics)
-            if not prediction.classes:
-                prediction_gap_seen = True
-                continue
-            if not _has_distinguishing_value(prediction, state.history.hypotheses):
-                continue
-            worst_case = max(len(item.hypotheses) for item in prediction.classes)
-            if state.resources.can_afford(action):
-                candidates.append((action, prediction, worst_case))
-            else:
-                unaffordable_test_seen = True
-        if not candidates:
-            prep_candidates: list[tuple[SyntheticAction, ActionPrediction]] = []
-            for action in self.model.actions.values():
-                if action.kind != "PREP" or state.context.current_summary not in action.enabled_summaries:
-                    continue
-                prediction = self.model.predict(
-                    hypotheses=state.history.hypotheses,
-                    frontiers=state.frontiers,
-                    status_by_hypothesis=state.history.status_by_hypothesis,
-                    action_id=action.action_id,
-                )
-                diagnostics.extend(prediction.diagnostics)
-                if prediction.classes and state.resources.can_afford(action):
-                    prep_candidates.append((action, prediction))
-            if prep_candidates:
-                action, prediction = min(prep_candidates, key=lambda item: (item[0].cost, item[0].action_id))
-                candidates.append((action, prediction, 0))
-            elif prediction_gap_seen:
-                return SessionResult(
-                    state, environment, "Stop-Prediction-Gap",
-                    tuple(diagnostics + [KernelDiagnostic("PREDICTION-GAP", "no eligible fallback follows the current TEST prediction gap")]),
-                )
-            elif eligible_test_seen and unaffordable_test_seen:
-                return SessionResult(state, environment, "Stop-Budget", tuple(diagnostics))
-            else:
-                return SessionResult(state, environment, "Stop-No-Action", tuple(diagnostics))
-        if not candidates:
-            # Defensive totality for future action kinds; all current branches
-            # above either construct a candidate or return a named stop.
-            return SessionResult(state, environment, "Stop-Error", tuple(diagnostics))
-        action, prediction, _score = min(
-            candidates, key=lambda item: (item[2], item[0].cost, item[0].action_id),
-        )
+        admission = self._admit(state)
+        if admission.action is None or admission.prediction is None:
+            stop_reason = {
+                "PREDICTION-GAP": "Stop-Prediction-Gap",
+                "A2-UNAFFORDABLE": "Stop-Budget",
+                "NO-ADMITTED-ACTION": "Stop-No-Action",
+            }.get(admission.reason, "Stop-Error")
+            return SessionResult(state, environment, stop_reason, admission.diagnostics)
+        action, prediction = admission.action, admission.prediction
+        diagnostics = list(admission.diagnostics)
         snapshot = SelectSnapshot(
             session_id=state.context.session_id,
             snapshot_id=f"{state.context.session_id}:snapshot:{state.history.version}:{state.attempts + 1}",
@@ -264,6 +308,7 @@ class ReferenceSession:
             classes=prediction.classes,
             model_identity=self.model.identity,
             uncertainty_identity=self.model.uncertainty_identity,
+            uncertainty_digest=self.model.uncertainty_digest,
             authority_identities=self.binding.identities(),
         )
         resource_before = state.resources.algorithm_view(action)
@@ -379,8 +424,9 @@ class ReferenceSession:
                 next_state, execution.successor, "Stop-Error",
                 tuple(diagnostics + [KernelDiagnostic("UNKNOWN-EFFECT", "synthetic execution did not confirm a successor summary")]),
             )
-        selected_class = _matching_class(snapshot, execution.record)
+        selected_class, interpretation_error = _matching_class(snapshot, execution.record)
         if selected_class is None:
+            assert interpretation_error is not None
             return self._charged_execution_error(
                 state=state,
                 environment=environment,
@@ -392,8 +438,8 @@ class ReferenceSession:
                 charged_resources=charged_resources,
                 execution_attempt_id=execution_attempt_id,
                 diagnostics=diagnostics,
-                code="OBSERVATION-OUTSIDE-SNAPSHOT",
-                message="visible observation is not in the frozen selected prediction",
+                code=interpretation_error.code,
+                message=interpretation_error.message,
                 execution_record=execution.record,
             )
         next_history = HistoryHandle.committed(
@@ -435,6 +481,79 @@ class ReferenceSession:
         )
         return SessionResult(next_state, execution.successor, stop_reason, tuple(diagnostics))
 
+    def _admit(self, state: SessionState) -> AdmissionDecision:
+        """Apply the B/C-1 TEST/GAP/PREP table without side effects."""
+
+        diagnostics: list[KernelDiagnostic] = []
+        test_candidates: list[tuple[SyntheticAction, ActionPrediction, int]] = []
+        eligible_test_seen = False
+        unaffordable_test_seen = False
+        prediction_gap_seen = False
+        for action in self.model.actions.values():
+            if action.kind != "TEST" or state.context.current_summary not in action.enabled_summaries:
+                continue
+            eligible_test_seen = True
+            prediction = self.model.predict(
+                hypotheses=state.history.hypotheses,
+                frontiers=state.frontiers,
+                status_by_hypothesis=state.history.status_by_hypothesis,
+                action_id=action.action_id,
+            )
+            diagnostics.extend(prediction.diagnostics)
+            if not prediction.classes:
+                prediction_gap_seen = True
+                continue
+            if not _has_distinguishing_value(prediction, state.history.hypotheses):
+                continue
+            worst_case = max(len(item.hypotheses) for item in prediction.classes)
+            if state.resources.can_afford(action):
+                test_candidates.append((action, prediction, worst_case))
+            else:
+                unaffordable_test_seen = True
+        if not prediction_gap_seen and test_candidates:
+            action, prediction, _score = min(
+                test_candidates, key=lambda item: (item[2], item[0].cost, item[0].action_id),
+            )
+            return AdmissionDecision("TEST", action, prediction, "TEST-ADMITTED", tuple(diagnostics))
+
+        prep_candidates: list[tuple[SyntheticAction, ActionPrediction]] = []
+        eligible_prep_seen = False
+        unaffordable_prep_seen = False
+        for action in self.model.actions.values():
+            if action.kind != "PREP" or state.context.current_summary not in action.enabled_summaries:
+                continue
+            eligible_prep_seen = True
+            prediction = self.model.predict(
+                hypotheses=state.history.hypotheses,
+                frontiers=state.frontiers,
+                status_by_hypothesis=state.history.status_by_hypothesis,
+                action_id=action.action_id,
+            )
+            diagnostics.extend(prediction.diagnostics)
+            if not prediction.classes:
+                continue
+            if state.resources.can_afford(action):
+                prep_candidates.append((action, prediction))
+            else:
+                unaffordable_prep_seen = True
+        if prep_candidates:
+            action, prediction = min(prep_candidates, key=lambda item: (item[0].cost, item[0].action_id))
+            return AdmissionDecision("PREP", action, prediction, "PREP-ADMITTED", tuple(diagnostics))
+        if unaffordable_test_seen or unaffordable_prep_seen:
+            return AdmissionDecision(
+                "ADMIT", None, None, "A2-UNAFFORDABLE",
+                tuple(diagnostics + [KernelDiagnostic("ADMISSION-A2-UNAFFORDABLE", "eligible action is not affordable in the declared resource mode")]),
+            )
+        if prediction_gap_seen:
+            return AdmissionDecision(
+                "ADMIT", None, None, "PREDICTION-GAP",
+                tuple(diagnostics + [KernelDiagnostic("PREDICTION-GAP", "current TEST prediction is incomplete and no eligible PREP fallback was admitted")]),
+            )
+        reason = "NO-ADMITTED-ACTION"
+        if eligible_test_seen or eligible_prep_seen:
+            diagnostics.append(KernelDiagnostic("NO-ADMITTED-ACTION", "known session has no affordable distinguishing TEST or usable PREP"))
+        return AdmissionDecision("ADMIT", None, None, reason, tuple(diagnostics))
+
     def _charged_execution_error(
         self,
         *,
@@ -467,6 +586,8 @@ class ReferenceSession:
             observable=None,
             summary_confirmed=False,
             post_summary=None,
+            measurement_tick=None,
+            uncertainty_identity=None,
             evidence_ref=f"synthetic:{execution_attempt_id}:tool-error",
         )
         unknown_context = SessionContext.create(
@@ -514,10 +635,45 @@ def _has_distinguishing_value(prediction: ActionPrediction, hypotheses: frozense
     return any(0 < len(value.hypotheses) < len(hypotheses) for value in prediction.classes)
 
 
-def _matching_class(snapshot: SelectSnapshot, execution: VisibleExecutionRecord) -> PredictionClass | None:
+def _matching_class(
+    snapshot: SelectSnapshot, execution: VisibleExecutionRecord,
+) -> tuple[PredictionClass | None, KernelDiagnostic | None]:
     if execution.action_id != snapshot.action_id or execution.observable is None:
-        return None
+        return None, KernelDiagnostic(
+            "OBSERVATION-OUTSIDE-SNAPSHOT",
+            "visible action or observation is not in the frozen selected prediction",
+        )
+    if execution.uncertainty_identity != snapshot.uncertainty_identity:
+        return None, KernelDiagnostic(
+            "UNCERTAINTY-SNAPSHOT-MISMATCH",
+            "interpretation record does not name the uncertainty snapshot used at selection",
+        )
+    if execution.measurement_tick is None:
+        return None, KernelDiagnostic(
+            "OBSERVATION-MEASUREMENT-ERROR",
+            "normal visible observation has no exact measurement tick",
+        )
     matches = [
         value for value in snapshot.classes if value.observable == execution.observable
     ]
-    return matches[0] if len(matches) == 1 else None
+    if len(matches) != 1:
+        return None, KernelDiagnostic(
+            "OBSERVATION-OUTSIDE-SNAPSHOT",
+            "visible observation is not in the frozen selected prediction",
+        )
+    candidate = matches[0]
+    if not any(_interval_contains(window, execution.measurement_tick) for window in candidate.measurement_windows.values()):
+        return None, KernelDiagnostic(
+            "OBSERVATION-MEASUREMENT-OUTSIDE-UNCERTAINTY",
+            "visible measurement tick is outside every selected uncertainty window",
+        )
+    return candidate, None
+
+
+def _interval_contains(interval: object, tick: object) -> bool:
+    if not isinstance(interval, Interval) or not isinstance(tick, Fraction):
+        return False
+    return (
+        (tick > interval.lower or (tick == interval.lower and interval.lower_closed))
+        and (tick < interval.upper or (tick == interval.upper and interval.upper_closed))
+    )

@@ -40,7 +40,10 @@ conflicting name is a controlled binding error, not a default value.
 | `IF-RESOURCE-STOP` | stop reason, final hypotheses and trace |
 
 The current B/C-1 checkpoint implements the normal TEST and named
-prediction-gap/Prep routes.  Recover, full S7/S8 coverage, ownership/T5 and
+prediction-gap/Prep routes through one read-only admission decision.  A
+current TEST prediction gap withholds TEST minimax even when another TEST has
+classes; eligible PREP is then evaluated by that same resource decision.
+Recover, full S7/S8 coverage, ownership/T5 and
 all Stop-Empty-producing paths remain explicit B/C-2 work; this table does not
 claim their execution is complete.
 
@@ -82,6 +85,21 @@ records a controlled error, sets the session to `CONSERVATIVE-UNKNOWN`, and
 does not invoke S9.  `CONFIRMED-NOT-SENT` is distinct: it is charged once but
 preserves the prior history and known summary.
 
+The finite model is JSON-detached at construction.  Its nested guard/update
+AST is retained only in canonical frozen form and decoded afresh for each
+kernel call, so a post-construction source mutation cannot change behaviour
+without changing the model identity.  Before selection, a resumed state must
+belong to this run/session/model and close its `H`, frontier provenance,
+history version, evidence, and execution identities; validation failure occurs
+before charge or dispatch.
+
+`U` is a bounded, typed uncertainty snapshot (`clockId`, `timeUnit=ticks`,
+exact nonnegative maximum error and identity), not a label.  Prediction forms
+per-hypothesis measurement windows with that snapshot; interpretation checks
+the returned measurement tick and the same frozen uncertainty identity before
+S9.  This is only finite synthetic engineering behavior, not calibrated clock
+accuracy or a protocol timing verdict.
+
 Pairing and reset are deliberately not inferred from a Recover action.  A
 future experiment adapter must link paired units with `pairingId`, retain a
 separate confirmed `resetId` and `resetEvidenceRef` for each arm, and keep that
@@ -97,9 +115,10 @@ tool error without publishing an invalid evidence package.
 
 The binding/type layer does not yet execute an action, infer ownership,
 establish protocol timing, run an IUT or establish runtime integrity.  The
-Researcher review of experiment contracts and manuscript wording is pending.
-All later runs remain `SYNTHETIC-ENGINEERING-VALIDATION` until separately
-reviewed; they are not confirmation experiments or protocol conformance cases.
+Researcher startup contract review is recorded; independent review of the new
+fixed implementation head remains pending.  All later runs remain
+`SYNTHETIC-ENGINEERING-VALIDATION` until separately reviewed; they are not
+confirmation experiments or protocol conformance cases.
 
 # 中文版
 
@@ -141,9 +160,10 @@ reviewed; they are not confirmation experiments or protocol conformance cases.
 | `IF-EQUIV` | 显式 `established`、`notEstablished`、`unknown` 标签 |
 | `IF-RESOURCE-STOP` | 停止理由、最终假设和 trace |
 
-当前 B/C-1 检查点实现普通 TEST 以及具名 prediction-gap／Prep 路径。Recover、完整 S7／S8
-覆盖、ownership／T5 和全部可产生 Stop-Empty 的路径仍是显式 B/C-2 工作；本表不主张它们已经
-执行完成。
+当前 B/C-1 检查点通过同一个只读准入决定实现普通 TEST 以及具名 prediction-gap／Prep 路径。
+当前 TEST prediction gap 即使与另一具有 classes 的 TEST 同时存在，也会先抑制 TEST minimax；
+随后由同一资源决定检查合格 Prep。Recover、完整 S7／S8 覆盖、ownership／T5 和全部可产生
+Stop-Empty 的路径仍是显式 B/C-2 工作；本表不主张它们已经执行完成。
 
 ## 初始类型边界
 
@@ -174,6 +194,16 @@ reviewed; they are not confirmation experiments or protocol conformance cases.
 `CONSERVATIVE-UNKNOWN`，且不得调用 S9。`CONFIRMED-NOT-SENT` 与此不同：它恰好计费一次，
 但保留此前 history 和已知摘要。
 
+有限模型在构造时会与 JSON 源对象断开。嵌套 guard／update AST 只以规范化冻结形式保留，每次
+内核调用再重新解码；因此，构造后修改源对象不会在不改变 model identity 的情况下改变行为。
+选择前，恢复的 state 必须属于本 run／session／model，且其 `H`、frontier provenance、history
+version、evidence 与 execution identity 必须闭合；验证失败发生在计费或派发前。
+
+`U` 是有界且有类型的 uncertainty snapshot（`clockId`、`timeUnit=ticks`、精确的非负最大误差和
+身份），不是标签。预测用该 snapshot 为每个 hypothesis 形成测量窗口；解释在 S9 前核对返回的
+measurement tick 以及同一冻结的 uncertainty identity。这仅是有限合成工程行为，不是经校准的
+时钟准确度或协议时序判定。
+
 配对和复位绝不从 Recover 动作推断。后续实验适配器必须用 `pairingId` 链接配对单位，为每个
 臂保留独立、已确认的 `resetId` 与 `resetEvidenceRef`，并将该证据与会话内恢复分开。当前合成
 工程运行没有登记实验 attempt 或配对复位主张。
@@ -181,5 +211,5 @@ reviewed; they are not confirmation experiments or protocol conformance cases.
 ## 待完成工作和证据边界
 
 绑定／类型层尚不执行动作、不推断所有权、不建立协议时序、不运行 IUT，也不建立运行
-完整性。Researcher 对实验合同和论文措辞的核对仍为 pending。后续运行在独立复审前均
-保持 `SYNTHETIC-ENGINEERING-VALIDATION`，不是确认性实验或协议符合性用例。
+完整性。Researcher 启动合同核对已记录；对新的固定实现 Head 的独立复审仍 pending。后续运行
+在独立复审前均保持 `SYNTHETIC-ENGINEERING-VALIDATION`，不是确认性实验或协议符合性用例。

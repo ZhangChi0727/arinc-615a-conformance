@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+from dataclasses import FrozenInstanceError, replace
 import json
 from pathlib import Path
 import subprocess
@@ -153,6 +154,34 @@ def test_prediction_keeps_overlapping_classes_and_names_a_current_gap() -> None:
     assert gap.classes == ()
 
 
+def test_model_detaches_nested_ast_inputs_and_exposes_no_mutable_transition() -> None:
+    _binding, model, fixture = _runtime_parts()
+    source = copy.deepcopy(fixture["algorithmModel"])
+    frozen = FiniteSessionModel.from_mapping(context=model.context, value=source)
+    before = frozen.predict(
+        hypotheses=frozenset(frozen.initial_frontiers),
+        frontiers=frozen.initial_frontiers,
+        status_by_hypothesis={},
+        action_id="test-router",
+    )
+    source_router = next(item for item in source["actions"] if item["id"] == "test-router")
+    source_router["transition"]["guardAst"] = {"tag": "STATE-EQUALS", "state": "q1"}
+    detached = frozen.actions["test-router"].transition_for_kernel()
+    detached["guardAst"] = {"tag": "STATE-EQUALS", "state": "q1"}
+    after = frozen.predict(
+        hypotheses=frozenset(frozen.initial_frontiers),
+        frontiers=frozen.initial_frontiers,
+        status_by_hypothesis={},
+        action_id="test-router",
+    )
+
+    assert [(item.observable, item.hypotheses) for item in after.classes] == [
+        (item.observable, item.hypotheses) for item in before.classes
+    ]
+    with pytest.raises(FrozenInstanceError):
+        frozen.actions["test-router"].transition_json = "{}"  # type: ignore[misc]
+
+
 def test_unaffordable_best_test_and_no_information_test_do_not_displace_router() -> None:
     binding, model, fixture = _runtime_parts()
     budget_model_data = copy.deepcopy(fixture["algorithmModel"])
@@ -183,9 +212,10 @@ def test_rounds_mode_consumes_one_issued_action_not_declared_action_cost() -> No
     environment = SyntheticEnvironment.from_mapping(
         {
             "initialPrivateState": "private-rounds",
+            "uncertaintyIdentity": "synthetic-u-1",
             "states": {
                 "private-rounds": {
-                    "test-expensive-optimal": {"effectClass": "NONE", "observable": "e0", "summaryConfirmed": True, "nextPrivateState": "private-rounds"}
+                    "test-expensive-optimal": {"effectClass": "NONE", "observable": "e0", "summaryConfirmed": True, "measurementTick": 0, "nextPrivateState": "private-rounds"}
                 }
             },
         },
@@ -202,19 +232,23 @@ def test_rounds_mode_consumes_one_issued_action_not_declared_action_cost() -> No
 
 def test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_entry() -> None:
     binding, model, fixture = _runtime_parts()
-    gap_only = copy.deepcopy(fixture["algorithmModel"])
-    gap_only["actions"] = [
-        item for item in gap_only["actions"] if item["id"] == "test-gap"
+    gap_and_router = copy.deepcopy(fixture["algorithmModel"])
+    gap_and_router["actions"] = [
+        item for item in gap_and_router["actions"]
+        if item["id"] in {"test-gap", "test-router"}
     ]
-    gap_only["limits"]["actions"] = 1
-    gap_model = FiniteSessionModel.from_mapping(context=model.context, value=gap_only)
+    for action in gap_and_router["actions"]:
+        if action["id"] == "test-gap":
+            action["enabledSummaries"] = ["q0"]
+    gap_and_router["limits"]["actions"] = 2
+    gap_model = FiniteSessionModel.from_mapping(context=model.context, value=gap_and_router)
     gap_result = ReferenceSession(
         binding=binding, model=gap_model, session_id="session-gap", run_id="run-gap",
         initial_summary="q0", resources=ResourceState.rounds(1),
     ).run(SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]), maximum_rounds=1)
     assert gap_result.stop_reason == "Stop-Prediction-Gap"
 
-    with_prep = copy.deepcopy(gap_only)
+    with_prep = copy.deepcopy(gap_and_router)
     with_prep["actions"].append(
         {
             "id": "prep-after-gap",
@@ -224,16 +258,18 @@ def test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_ent
             "enabledSummaries": ["q0"],
             "transition": {"id": "tr-prep", "source": "q0", "target": "q0", "guardAst": {"tag": "TRUE"}, "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}]},
             "observableByHypothesis": {"h0": "prep-summary", "h1": "prep-summary", "h2": "prep-summary", "h3": "prep-summary"},
+            "measurementTicksByHypothesis": {"h0": 0, "h1": 0, "h2": 0, "h3": 0},
         },
     )
-    with_prep["limits"]["actions"] = 2
+    with_prep["limits"]["actions"] = 3
     prep_model = FiniteSessionModel.from_mapping(context=model.context, value=with_prep)
     prep_environment = SyntheticEnvironment.from_mapping(
         {
             "initialPrivateState": "private-prep",
+            "uncertaintyIdentity": "synthetic-u-1",
             "states": {
                 "private-prep": {
-                    "prep-after-gap": {"effectClass": "NONE", "observable": "prep-summary", "summaryConfirmed": True, "nextPrivateState": "private-prep"}
+                    "prep-after-gap": {"effectClass": "NONE", "observable": "prep-summary", "summaryConfirmed": True, "measurementTick": 0, "nextPrivateState": "private-prep"}
                 }
             },
         },
@@ -244,6 +280,14 @@ def test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_ent
     ).run(prep_environment, maximum_rounds=1)
     assert prep_result.state.evidence[0].snapshot.action_id == "prep-after-gap"
     assert prep_result.stop_reason == "Stop-Round-Limit"
+
+    refused = ReferenceSession(
+        binding=binding, model=prep_model, session_id="session-prep-refused", run_id="run-prep-refused",
+        initial_summary="q0", resources=ResourceState.rounds(0),
+    ).run(prep_environment, maximum_rounds=1)
+    assert refused.stop_reason == "Stop-Budget"
+    assert refused.state.evidence == ()
+    assert refused.diagnostics[-1].code == "ADMISSION-A2-UNAFFORDABLE"
 
 
 def test_environment_execution_request_has_no_hypothesis_or_truth_argument() -> None:
@@ -310,6 +354,8 @@ def test_invalid_execution_identity_does_not_restore_the_pre_charge_state() -> N
                     observable="branch-alpha",
                     summary_confirmed=True,
                     post_summary="branch-alpha",
+                    measurement_tick=0,
+                    uncertainty_identity="synthetic-u-1",
                     evidence_ref="synthetic:wrong-execution-id:bad",
                 ),
                 self.successor,
@@ -339,7 +385,7 @@ def test_conservative_hypothesis_is_retained_by_a_normal_visible_observation() -
         initial_summary="q0", resources=ResourceState.rounds(2),
     )
     initial = session.initial_state
-    history = HistoryHandle.committed(
+    history = HistoryHandle.initial(
         hypotheses=set(initial.frontiers),
         compatible_state_by_hypothesis={
             hypothesis: frontier.history_provenance[-1]
@@ -349,7 +395,6 @@ def test_conservative_hypothesis_is_retained_by_a_normal_visible_observation() -
             hypothesis: "CONSERVATIVE-UNKNOWN" if hypothesis == "h3" else "KNOWN"
             for hypothesis in initial.frontiers
         },
-        version=1,
     )
     state = SessionState(
         initial.context, history, initial.frontiers, initial.resources, 0, frozenset(), (),
@@ -358,3 +403,113 @@ def test_conservative_hypothesis_is_retained_by_a_normal_visible_observation() -
 
     assert result.state.history.hypotheses == {"h0", "h1", "h3"}
     assert result.state.history.status_by_hypothesis["h3"] == "CONSERVATIVE-UNKNOWN"
+
+
+@pytest.mark.parametrize(
+    ("altered_state", "expected_code"),
+    [
+        (
+            lambda state: replace(
+                state,
+                context=replace(state.context, model_identity="foreign-model"),
+            ),
+            "SESSION-IDENTITY-MISMATCH",
+        ),
+        (
+            lambda state: replace(state, history=replace(state.history, version=99)),
+            "INVALID-INITIAL-HISTORY",
+        ),
+    ],
+)
+def test_resume_rejects_foreign_model_or_jump_history_before_charge(
+    altered_state: object, expected_code: str,
+) -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-resume", run_id="run-resume",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    state = altered_state(session.initial_state)  # type: ignore[operator]
+    result = session.step(state, SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]))
+
+    assert result.stop_reason == "Stop-Error"
+    assert result.diagnostics[0].code == expected_code
+    assert result.state.resources.remaining == 2
+    assert result.state.evidence == ()
+
+
+def test_resume_rejects_history_reference_not_owned_by_the_current_frontier() -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-history", run_id="run-history",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    initial = session.initial_state
+    references = {
+        hypothesis: frontier.history_provenance[-1]
+        for hypothesis, frontier in initial.frontiers.items()
+    }
+    references["h0"] = "fabricated-provenance-reference"
+    altered = replace(
+        initial,
+        history=HistoryHandle.initial(
+            hypotheses=set(initial.frontiers),
+            compatible_state_by_hypothesis=references,
+        ),
+    )
+    result = session.step(altered, SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]))
+
+    assert result.stop_reason == "Stop-Error"
+    assert result.diagnostics[0].code == "HISTORY-PROVENANCE-MISMATCH"
+    assert result.state.evidence == ()
+
+
+def test_shared_uncertainty_changes_the_prediction_and_interpretation_boundary() -> None:
+    binding, model, fixture = _runtime_parts()
+    shifted_alpha = copy.deepcopy(fixture["environments"]["alpha"])
+    shifted_alpha["states"]["private-a0"]["test-router"]["measurementTick"] = 1
+
+    zero_result = ReferenceSession(
+        binding=binding, model=model, session_id="session-u-zero", run_id="run-u-zero",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+    ).run(SyntheticEnvironment.from_mapping(shifted_alpha), maximum_rounds=1)
+    assert zero_result.stop_reason == "Stop-Error"
+    assert zero_result.diagnostics[-1].code == "OBSERVATION-MEASUREMENT-OUTSIDE-UNCERTAINTY"
+    assert zero_result.state.evidence[0].committed is False
+
+    wide_data = copy.deepcopy(fixture["algorithmModel"])
+    wide_data["uncertainty"] = {
+        "id": "synthetic-u-wide", "clockId": "x", "timeUnit": "ticks", "maximumErrorTicks": 1,
+    }
+    wide_model = FiniteSessionModel.from_mapping(context=model.context, value=wide_data)
+    shifted_alpha["uncertaintyIdentity"] = "synthetic-u-wide"
+    wide_result = ReferenceSession(
+        binding=binding, model=wide_model, session_id="session-u-wide", run_id="run-u-wide",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+    ).run(SyntheticEnvironment.from_mapping(shifted_alpha), maximum_rounds=1)
+    predicted = wide_model.predict(
+        hypotheses=frozenset(wide_model.initial_frontiers), frontiers=wide_model.initial_frontiers,
+        status_by_hypothesis={}, action_id="test-router",
+    )
+    alpha_class = next(item for item in predicted.classes if item.observable == "branch-alpha")
+
+    assert alpha_class.measurement_windows["h0"].lower == -1
+    assert alpha_class.measurement_windows["h0"].upper == 1
+    assert wide_result.stop_reason == "Stop-Round-Limit"
+    assert wide_result.state.evidence[0].committed is True
+
+
+def test_interpretation_rejects_an_uncertainty_identity_not_frozen_at_selection() -> None:
+    binding, model, fixture = _runtime_parts()
+    wrong_identity = copy.deepcopy(fixture["environments"]["alpha"])
+    wrong_identity["uncertaintyIdentity"] = "replaced-at-interpretation"
+    result = ReferenceSession(
+        binding=binding, model=model, session_id="session-u-mismatch", run_id="run-u-mismatch",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+    ).run(SyntheticEnvironment.from_mapping(wrong_identity), maximum_rounds=1)
+
+    assert result.stop_reason == "Stop-Error"
+    assert result.diagnostics[-1].code == "UNCERTAINTY-SNAPSHOT-MISMATCH"
+    assert result.state.resources.remaining == 0
+    assert result.state.history.version == 0
+    assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"

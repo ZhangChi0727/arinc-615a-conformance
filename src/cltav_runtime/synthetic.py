@@ -8,6 +8,7 @@ selection score, evaluator truth or an expected outcome.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from fractions import Fraction
 from types import MappingProxyType
 from typing import Any, Mapping
 
@@ -32,6 +33,8 @@ class VisibleExecutionRecord:
     observable: str | None
     summary_confirmed: bool
     post_summary: str | None
+    measurement_tick: Fraction | None
+    uncertainty_identity: str | None
     evidence_ref: str
 
 
@@ -46,15 +49,21 @@ class SyntheticEnvironment:
     """A finite deterministic environment with private state transitions."""
 
     _state: str
+    _uncertainty_identity: str
     _states: Mapping[str, Mapping[str, Mapping[str, Any]]]
 
     @classmethod
     def from_mapping(cls, value: Mapping[str, Any]) -> "SyntheticEnvironment":
-        if not isinstance(value, Mapping) or set(value) != {"initialPrivateState", "states"}:
+        if not isinstance(value, Mapping) or set(value) != {"initialPrivateState", "uncertaintyIdentity", "states"}:
             raise ValueError("synthetic environment uses unknown or missing fields")
         initial = value.get("initialPrivateState")
+        uncertainty_identity = value.get("uncertaintyIdentity")
         states = value.get("states")
-        if not isinstance(initial, str) or not initial or not isinstance(states, Mapping) or not states:
+        if (
+            not isinstance(initial, str) or not initial
+            or not isinstance(uncertainty_identity, str) or not uncertainty_identity
+            or not isinstance(states, Mapping) or not states
+        ):
             raise ValueError("synthetic environment declaration is invalid")
         parsed: dict[str, Mapping[str, Mapping[str, Any]]] = {}
         for state_id, actions in states.items():
@@ -64,11 +73,12 @@ class SyntheticEnvironment:
             for action_id, outcome in actions.items():
                 if not isinstance(action_id, str) or not action_id or not isinstance(outcome, Mapping):
                     raise ValueError("synthetic environment action declaration is invalid")
-                if set(outcome) != {"effectClass", "observable", "summaryConfirmed", "nextPrivateState"}:
+                if set(outcome) != {"effectClass", "observable", "summaryConfirmed", "measurementTick", "nextPrivateState"}:
                     raise ValueError("synthetic environment outcome uses unknown or missing fields")
                 effect = outcome.get("effectClass")
                 observable = outcome.get("observable")
                 confirmed = outcome.get("summaryConfirmed")
+                measurement_tick = outcome.get("measurementTick")
                 successor = outcome.get("nextPrivateState")
                 if effect not in {"NONE", "CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"}:
                     raise ValueError("synthetic environment effect class is invalid")
@@ -78,7 +88,9 @@ class SyntheticEnvironment:
                     raise ValueError("synthetic environment outcome is invalid")
                 if effect == "NONE" and (observable is None or not confirmed):
                     raise ValueError("normal synthetic outcome requires visible confirmed evidence")
-                if effect != "NONE" and (observable is not None or confirmed):
+                if effect == "NONE":
+                    _exact_tick(measurement_tick)
+                if effect != "NONE" and (observable is not None or confirmed or measurement_tick is not None):
                     raise ValueError("non-normal synthetic outcome cannot manufacture an observation")
                 parsed_actions[action_id] = MappingProxyType(dict(outcome))
             parsed[state_id] = MappingProxyType(parsed_actions)
@@ -88,7 +100,7 @@ class SyntheticEnvironment:
             for outcome in actions.values():
                 if outcome["nextPrivateState"] not in parsed:
                     raise ValueError("synthetic environment successor state is undeclared")
-        return cls(initial, MappingProxyType(parsed))
+        return cls(initial, uncertainty_identity, MappingProxyType(parsed))
 
     def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
         """Execute an admitted request without access to algorithm internals."""
@@ -111,10 +123,12 @@ class SyntheticEnvironment:
                 observable=None,
                 summary_confirmed=False,
                 post_summary=None,
+                measurement_tick=None,
+                uncertainty_identity=self._uncertainty_identity,
                 evidence_ref=f"synthetic:{request.execution_attempt_id}:not-sent",
             )
             return EnvironmentExecution(record, self)
-        successor = SyntheticEnvironment(outcome["nextPrivateState"], self._states)
+        successor = SyntheticEnvironment(outcome["nextPrivateState"], self._uncertainty_identity, self._states)
         observable = outcome["observable"]
         record = VisibleExecutionRecord(
             execution_attempt_id=request.execution_attempt_id,
@@ -123,6 +137,23 @@ class SyntheticEnvironment:
             observable=observable,
             summary_confirmed=outcome["summaryConfirmed"],
             post_summary=observable if outcome["summaryConfirmed"] else None,
+            measurement_tick=_exact_tick(outcome["measurementTick"]) if outcome["effectClass"] == "NONE" else None,
+            uncertainty_identity=self._uncertainty_identity,
             evidence_ref=f"synthetic:{request.execution_attempt_id}:{outcome['effectClass'].lower()}",
         )
         return EnvironmentExecution(record, successor)
+
+
+def _exact_tick(value: object) -> Fraction:
+    if isinstance(value, int) and not isinstance(value, bool):
+        return Fraction(value)
+    if isinstance(value, Mapping) and set(value) == {"numerator", "positiveDenominator"}:
+        numerator = value.get("numerator")
+        denominator = value.get("positiveDenominator")
+        if (
+            isinstance(numerator, int) and not isinstance(numerator, bool)
+            and isinstance(denominator, int) and not isinstance(denominator, bool)
+            and denominator > 0
+        ):
+            return Fraction(numerator, denominator)
+    raise ValueError("synthetic measurement tick must be an exact integer or rational mapping")

@@ -39,7 +39,8 @@
         "detailCharges": {"acquisition": 0, "computation": 3, "preparation": 0, "recovery": 0, "retry": 0},
         "enabledSummaries": ["budget-q0"],
         "transition": {"id": "tr-expensive", "source": "q0", "target": "q0", "guardAst": {"tag": "TRUE"}, "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}]},
-        "observableByHypothesis": {"h0": "e0", "h1": "e1", "h2": "e2", "h3": "e3"}
+        "observableByHypothesis": {"h0": "e0", "h1": "e1", "h2": "e2", "h3": "e3"},
+        "measurementTicksByHypothesis": {"h0": 0, "h1": 1, "h2": 2, "h3": 3}
       },
       {
         "id": "test-overlap",
@@ -48,16 +49,18 @@
         "detailCharges": {"acquisition": 0, "computation": 2, "preparation": 0, "recovery": 0, "retry": 0},
         "enabledSummaries": ["q0"],
         "transition": {"id": "tr-overlap", "source": "q0", "target": "q0", "guardAst": {"tag": "TRUE"}, "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}]},
-        "observableByHypothesis": {"h0": ["overlap-alpha", "overlap-shared"], "h1": "overlap-alpha", "h2": ["overlap-beta", "overlap-shared"], "h3": "overlap-beta"}
+        "observableByHypothesis": {"h0": ["overlap-alpha", "overlap-shared"], "h1": "overlap-alpha", "h2": ["overlap-beta", "overlap-shared"], "h3": "overlap-beta"},
+        "measurementTicksByHypothesis": {"h0": 0, "h1": 0, "h2": 1, "h3": 1}
       },
       {
         "id": "test-gap",
         "kind": "TEST",
         "cost": 1,
         "detailCharges": {"acquisition": 0, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0},
-        "enabledSummaries": ["q0"],
+        "enabledSummaries": ["gap-q0"],
         "transition": {"id": "tr-gap", "source": "q1", "target": "q1", "guardAst": {"tag": "TRUE"}, "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}]},
-        "observableByHypothesis": {"h0": "gap-a", "h1": "gap-b", "h2": "gap-c", "h3": "gap-d"}
+        "observableByHypothesis": {"h0": "gap-a", "h1": "gap-b", "h2": "gap-c", "h3": "gap-d"},
+        "measurementTicksByHypothesis": {"h0": 0, "h1": 1, "h2": 2, "h3": 3}
       },
       {
         "id": "test-router",
@@ -66,7 +69,8 @@
         "detailCharges": {"acquisition": 0, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0},
         "enabledSummaries": ["q0"],
         "transition": {"id": "tr-router", "source": "q0", "target": "q0", "guardAst": {"tag": "TRUE"}, "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}]},
-        "observableByHypothesis": {"h0": "branch-alpha", "h1": "branch-alpha", "h2": "branch-beta", "h3": "branch-beta"}
+        "observableByHypothesis": {"h0": "branch-alpha", "h1": "branch-alpha", "h2": "branch-beta", "h3": "branch-beta"},
+        "measurementTicksByHypothesis": {"h0": 0, "h1": 0, "h2": 1, "h3": 1}
       },
       {
         "id": "test-left",
@@ -75,7 +79,8 @@
         "detailCharges": {"acquisition": 0, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0},
         "enabledSummaries": ["branch-alpha"],
         "transition": {"id": "tr-left", "source": "q0", "target": "q0", "guardAst": {"tag": "TRUE"}, "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}]},
-        "observableByHypothesis": {"h0": "left-zero", "h1": "left-one", "h2": "left-two", "h3": "left-three"}
+        "observableByHypothesis": {"h0": "left-zero", "h1": "left-one", "h2": "left-two", "h3": "left-three"},
+        "measurementTicksByHypothesis": {"h0": 0, "h1": 1, "h2": 2, "h3": 3}
       },
       {
         "id": "test-right",
@@ -84,7 +89,8 @@
         "detailCharges": {"acquisition": 0, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0},
         "enabledSummaries": ["branch-beta"],
         "transition": {"id": "tr-right", "source": "q0", "target": "q0", "guardAst": {"tag": "TRUE"}, "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}]},
-        "observableByHypothesis": {"h0": "right-zero", "h1": "right-one", "h2": "right-two", "h3": "right-three"}
+        "observableByHypothesis": {"h0": "right-zero", "h1": "right-one", "h2": "right-two", "h3": "right-three"},
+        "measurementTicksByHypothesis": {"h0": 0, "h1": 1, "h2": 2, "h3": 3}
       },
       {
         "id": "test-no-information",
@@ -93,49 +99,53 @@
         "detailCharges": {"acquisition": 0, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0},
         "enabledSummaries": ["q0"],
         "transition": {"id": "tr-no-information", "source": "q0", "target": "q0", "guardAst": {"tag": "TRUE"}, "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}]},
-        "observableByHypothesis": {"h0": "same", "h1": "same", "h2": "same", "h3": "same"}
+        "observableByHypothesis": {"h0": "same", "h1": "same", "h2": "same", "h3": "same"},
+        "measurementTicksByHypothesis": {"h0": 0, "h1": 0, "h2": 0, "h3": 0}
       }
     ],
     "limits": {"pathLength": 3, "frontierStates": 8, "hypotheses": 4, "actions": 7, "observationClasses": 8},
-    "uncertaintyIdentity": "synthetic-u-1"
+    "uncertainty": {"id": "synthetic-u-1", "clockId": "x", "timeUnit": "ticks", "maximumErrorTicks": 0}
   },
   "environments": {
     "alpha": {
       "initialPrivateState": "private-a0",
+      "uncertaintyIdentity": "synthetic-u-1",
       "states": {
         "private-a0": {
-          "test-router": {"effectClass": "NONE", "observable": "branch-alpha", "summaryConfirmed": true, "nextPrivateState": "private-a1"}
+          "test-router": {"effectClass": "NONE", "observable": "branch-alpha", "summaryConfirmed": true, "measurementTick": 0, "nextPrivateState": "private-a1"}
         },
         "private-a1": {
-          "test-left": {"effectClass": "NONE", "observable": "left-zero", "summaryConfirmed": true, "nextPrivateState": "private-a2"}
+          "test-left": {"effectClass": "NONE", "observable": "left-zero", "summaryConfirmed": true, "measurementTick": 0, "nextPrivateState": "private-a2"}
         },
         "private-a2": {
-          "test-left": {"effectClass": "NONE", "observable": "left-zero", "summaryConfirmed": true, "nextPrivateState": "private-a2"}
+          "test-left": {"effectClass": "NONE", "observable": "left-zero", "summaryConfirmed": true, "measurementTick": 0, "nextPrivateState": "private-a2"}
         }
       }
     },
     "beta": {
       "initialPrivateState": "private-b0",
+      "uncertaintyIdentity": "synthetic-u-1",
       "states": {
         "private-b0": {
-          "test-router": {"effectClass": "NONE", "observable": "branch-beta", "summaryConfirmed": true, "nextPrivateState": "private-b1"}
+          "test-router": {"effectClass": "NONE", "observable": "branch-beta", "summaryConfirmed": true, "measurementTick": 1, "nextPrivateState": "private-b1"}
         },
         "private-b1": {
-          "test-right": {"effectClass": "NONE", "observable": "right-two", "summaryConfirmed": true, "nextPrivateState": "private-b2"}
+          "test-right": {"effectClass": "NONE", "observable": "right-two", "summaryConfirmed": true, "measurementTick": 2, "nextPrivateState": "private-b2"}
         },
         "private-b2": {
-          "test-right": {"effectClass": "NONE", "observable": "right-two", "summaryConfirmed": true, "nextPrivateState": "private-b2"}
+          "test-right": {"effectClass": "NONE", "observable": "right-two", "summaryConfirmed": true, "measurementTick": 2, "nextPrivateState": "private-b2"}
         }
       }
     },
     "notSent": {
       "initialPrivateState": "private-n0",
+      "uncertaintyIdentity": "synthetic-u-1",
       "states": {
         "private-n0": {
-          "test-router": {"effectClass": "CONFIRMED-NOT-SENT", "observable": null, "summaryConfirmed": false, "nextPrivateState": "private-n1"}
+          "test-router": {"effectClass": "CONFIRMED-NOT-SENT", "observable": null, "summaryConfirmed": false, "measurementTick": null, "nextPrivateState": "private-n1"}
         },
         "private-n1": {
-          "test-router": {"effectClass": "CONFIRMED-NOT-SENT", "observable": null, "summaryConfirmed": false, "nextPrivateState": "private-n1"}
+          "test-router": {"effectClass": "CONFIRMED-NOT-SENT", "observable": null, "summaryConfirmed": false, "measurementTick": null, "nextPrivateState": "private-n1"}
         }
       }
     }

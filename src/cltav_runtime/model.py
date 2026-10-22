@@ -8,7 +8,7 @@ set or a predicted class.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from fractions import Fraction
 from hashlib import sha256
 import json
@@ -43,8 +43,22 @@ class SyntheticAction:
     cost: int
     detail_charges: Mapping[str, int]
     enabled_summaries: frozenset[str]
-    transition: Mapping[str, Any]
+    transition_json: str
     observable_by_hypothesis: Mapping[str, tuple[str, ...]]
+    measurement_ticks_by_hypothesis: Mapping[str, Fraction]
+
+    def transition_for_kernel(self) -> Mapping[str, Any]:
+        """Return a fresh mutable decoding of this action's frozen AST.
+
+        The finite kernel consumes ordinary mapping/list JSON values.  Keeping
+        only canonical JSON inside the action makes it impossible for a caller
+        to mutate the nested AST that was used to calculate ``identity``.
+        """
+
+        value = json.loads(self.transition_json)
+        if not isinstance(value, Mapping):  # defensive; construction verifies it
+            raise ValueError("frozen finite-session transition is invalid")
+        return value
 
     def projected_cost(self) -> Mapping[str, int]:
         """Return the declared four-component projection without recharging."""
@@ -68,6 +82,28 @@ class PredictionClass:
     hypotheses: frozenset[str]
     successors: Mapping[str, FrontierEntry]
     conservative_hypotheses: frozenset[str] = frozenset()
+    measurement_windows: Mapping[str, Interval] = field(
+        default_factory=lambda: MappingProxyType({}),
+    )
+
+
+@dataclass(frozen=True)
+class MeasurementUncertainty:
+    """Finite shared timing uncertainty used by prediction and interpretation."""
+
+    uncertainty_id: str
+    clock_id: str
+    time_unit: str
+    maximum_error: Fraction
+    identity: str
+
+    def window(self, tick: Fraction) -> Interval:
+        return Interval(
+            tick - self.maximum_error,
+            tick + self.maximum_error,
+            True,
+            True,
+        )
 
 
 @dataclass(frozen=True)
@@ -97,7 +133,15 @@ class FiniteSessionModel:
     action_limit: int
     observation_class_limit: int
     identity: str
-    uncertainty_identity: str
+    uncertainty: MeasurementUncertainty
+
+    @property
+    def uncertainty_identity(self) -> str:
+        return self.uncertainty.uncertainty_id
+
+    @property
+    def uncertainty_digest(self) -> str:
+        return self.uncertainty.identity
 
     @classmethod
     def from_mapping(
@@ -105,8 +149,12 @@ class FiniteSessionModel:
     ) -> "FiniteSessionModel":
         if not isinstance(value, Mapping):
             raise ValueError("finite session model must be an object")
+        # The fixture/model is a JSON contract.  Detach it before parsing so a
+        # caller cannot change a nested guard/update after this construction
+        # while retaining the original model identity.
+        value = _json_clone(value)
         required = {
-            "model", "hypotheses", "actions", "limits", "uncertaintyIdentity",
+            "model", "hypotheses", "actions", "limits", "uncertainty",
         }
         if set(value) != required:
             raise ValueError("finite session model uses unknown or missing fields")
@@ -125,7 +173,7 @@ class FiniteSessionModel:
         hypotheses = value["hypotheses"]
         actions = value["actions"]
         limits = value["limits"]
-        uncertainty_identity = value["uncertaintyIdentity"]
+        uncertainty = _parse_uncertainty(value["uncertainty"], context.projection_clock)
         if not isinstance(hypotheses, list) or not hypotheses:
             raise ValueError("finite session model needs at least one hypothesis")
         if not isinstance(actions, list) or not actions:
@@ -139,8 +187,6 @@ class FiniteSessionModel:
         hypothesis_limit = _positive_int(limits["hypotheses"], "hypothesis limit")
         action_limit = _positive_int(limits["actions"], "action limit")
         observation_class_limit = _positive_int(limits["observationClasses"], "observation-class limit")
-        if not isinstance(uncertainty_identity, str) or not uncertainty_identity:
-            raise ValueError("finite session model uncertainty identity is invalid")
         hypothesis_ids: list[str] = []
         frontiers: dict[str, FrontierEntry] = {}
         for item in hypotheses:
@@ -170,7 +216,7 @@ class FiniteSessionModel:
             action_limit=action_limit,
             observation_class_limit=observation_class_limit,
             identity=identity,
-            uncertainty_identity=uncertainty_identity,
+            uncertainty=uncertainty,
         )
 
     def predict(
@@ -189,6 +235,7 @@ class FiniteSessionModel:
                 action_id, (), (KernelDiagnostic("INVALID-HISTORY", "current hypotheses/frontiers are inconsistent"),),
             )
         grouped: dict[str, dict[str, FrontierEntry]] = {}
+        measurement_windows: dict[str, dict[str, Interval]] = {}
         conservative: dict[str, FrontierEntry] = {}
         diagnostics: list[KernelDiagnostic] = []
         for hypothesis in sorted(hypotheses):
@@ -197,7 +244,7 @@ class FiniteSessionModel:
                 continue
             result = propagate_transition(
                 frontiers[hypothesis],
-                action.transition,
+                action.transition_for_kernel(),
                 state_ids=set(self.context.state_ids),
                 clock_ids=set(self.context.clock_ids),
                 typed_domains={key: set(domain) for key, domain in self.context.typed_domains.items()},
@@ -209,6 +256,9 @@ class FiniteSessionModel:
             if result.kind == "FEASIBLE" and len(result.entries) == 1:
                 for observable in action.observable_by_hypothesis[hypothesis]:
                     grouped.setdefault(observable, {})[hypothesis] = result.entries[0]
+                    measurement_windows.setdefault(observable, {})[hypothesis] = self.uncertainty.window(
+                        action.measurement_ticks_by_hypothesis[hypothesis],
+                    )
             elif result.kind != "INFEASIBLE":
                 # A bounded/unsupported computation keeps its hypothesis in a
                 # conservative continuation.  It is included in every normal
@@ -249,6 +299,7 @@ class FiniteSessionModel:
                         hypotheses=frozenset(retained),
                         successors=MappingProxyType(retained),
                         conservative_hypotheses=frozenset(retained),
+                        measurement_windows=MappingProxyType({}),
                     ),
                 ),
                 tuple(diagnostics + [KernelDiagnostic("OBSERVATION-CLASS-LIMIT", "declared observation-class bound reached; hypotheses retained")]),
@@ -260,6 +311,7 @@ class FiniteSessionModel:
                 hypotheses=frozenset(successors),
                 successors=MappingProxyType(dict(successors)),
                 conservative_hypotheses=frozenset(conservative),
+                measurement_windows=MappingProxyType(dict(measurement_windows[observable])),
             )
             for observable, successors in sorted(grouped.items())
         )
@@ -313,7 +365,7 @@ def _parse_action(item: Any, hypothesis_ids: frozenset[str]) -> SyntheticAction:
     if not isinstance(item, Mapping):
         raise ValueError("finite session action is invalid")
     required = {
-        "id", "kind", "cost", "detailCharges", "enabledSummaries", "transition", "observableByHypothesis",
+        "id", "kind", "cost", "detailCharges", "enabledSummaries", "transition", "observableByHypothesis", "measurementTicksByHypothesis",
     }
     if set(item) != required:
         raise ValueError("finite session action uses unknown or missing fields")
@@ -324,6 +376,7 @@ def _parse_action(item: Any, hypothesis_ids: frozenset[str]) -> SyntheticAction:
     summaries = item.get("enabledSummaries")
     transition = item.get("transition")
     emissions = item.get("observableByHypothesis")
+    measurement_ticks = item.get("measurementTicksByHypothesis")
     if not isinstance(identifier, str) or not identifier or kind not in _ACTION_KINDS:
         raise ValueError("finite session action identity or kind is invalid")
     if isinstance(cost, bool) or not isinstance(cost, int) or cost < 1:
@@ -340,21 +393,86 @@ def _parse_action(item: Any, hypothesis_ids: frozenset[str]) -> SyntheticAction:
         raise ValueError("finite session action transition is invalid")
     if not isinstance(emissions, Mapping) or set(emissions) != hypothesis_ids:
         raise ValueError("finite session action emissions must cover exactly the declared hypotheses")
+    if not isinstance(measurement_ticks, Mapping) or set(measurement_ticks) != hypothesis_ids:
+        raise ValueError("finite session action measurement ticks must cover exactly the declared hypotheses")
     parsed_emissions: dict[str, tuple[str, ...]] = {}
+    parsed_ticks: dict[str, Fraction] = {}
     for hypothesis, emission in emissions.items():
         values = (emission,) if isinstance(emission, str) else tuple(emission) if isinstance(emission, list) else ()
         if not values or any(not isinstance(item, str) or not item for item in values) or len(values) != len(set(values)):
             raise ValueError("finite session action observable emission is invalid")
         parsed_emissions[hypothesis] = values
+        parsed_ticks[hypothesis] = _exact_tick(measurement_ticks[hypothesis], "finite session action measurement tick")
+    transition_json = json.dumps(transition, sort_keys=True, separators=(",", ":"))
     return SyntheticAction(
         identifier,
         kind,
         cost,
         MappingProxyType(dict(detail_charges)),
         frozenset(summaries),
-        MappingProxyType(dict(transition)),
+        transition_json,
         MappingProxyType(parsed_emissions),
+        MappingProxyType(parsed_ticks),
     )
+
+
+def _json_clone(value: Mapping[str, Any]) -> Mapping[str, Any]:
+    """Return a detached, JSON-only model contract or a named input error."""
+
+    try:
+        cloned = json.loads(json.dumps(value, sort_keys=True, separators=(",", ":")))
+    except (TypeError, ValueError) as exc:
+        raise ValueError("finite session model must contain only JSON contract values") from exc
+    if not isinstance(cloned, Mapping):
+        raise ValueError("finite session model must be an object")
+    return cloned
+
+
+def _parse_uncertainty(value: Any, projection_clock: str) -> MeasurementUncertainty:
+    if not isinstance(value, Mapping) or set(value) != {
+        "id", "clockId", "timeUnit", "maximumErrorTicks",
+    }:
+        raise ValueError("finite session uncertainty contract is invalid")
+    uncertainty_id = value.get("id")
+    clock_id = value.get("clockId")
+    time_unit = value.get("timeUnit")
+    if (
+        not isinstance(uncertainty_id, str) or not uncertainty_id
+        or clock_id != projection_clock
+        or time_unit != "ticks"
+    ):
+        raise ValueError("finite session uncertainty identity, clock, or unit is invalid")
+    maximum_error = _exact_tick(value.get("maximumErrorTicks"), "finite session maximum uncertainty")
+    if maximum_error < 0:
+        raise ValueError("finite session maximum uncertainty must be nonnegative")
+    canonical = {
+        "id": uncertainty_id,
+        "clockId": clock_id,
+        "timeUnit": time_unit,
+        "maximumErrorTicks": {
+            "numerator": maximum_error.numerator,
+            "positiveDenominator": maximum_error.denominator,
+        },
+    }
+    identity = sha256(
+        json.dumps(canonical, sort_keys=True, separators=(",", ":")).encode("utf-8"),
+    ).hexdigest()
+    return MeasurementUncertainty(uncertainty_id, clock_id, time_unit, maximum_error, identity)
+
+
+def _exact_tick(value: Any, label: str) -> Fraction:
+    if isinstance(value, int) and not isinstance(value, bool):
+        return Fraction(value)
+    if isinstance(value, Mapping) and set(value) == {"numerator", "positiveDenominator"}:
+        numerator = value.get("numerator")
+        denominator = value.get("positiveDenominator")
+        if (
+            isinstance(numerator, int) and not isinstance(numerator, bool)
+            and isinstance(denominator, int) and not isinstance(denominator, bool)
+            and denominator > 0
+        ):
+            return Fraction(numerator, denominator)
+    raise ValueError(f"{label} must be an exact integer or rational mapping")
 
 
 def _positive_int(value: Any, label: str) -> int:
