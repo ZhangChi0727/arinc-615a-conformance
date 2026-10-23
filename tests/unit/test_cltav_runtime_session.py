@@ -849,8 +849,24 @@ def test_resumed_s0_requires_the_exact_frozen_authority_and_seed_before_dispatch
     assert environment.calls == 0
     assert dict(model.context.provenance_store.records()) == records_before
 
-    seed_tamper = replace(target.initial_state, seed_identity="not-the-frozen-s0-seed")
-    rejected_seed = target.step(seed_tamper, environment)  # type: ignore[arg-type]
+    initial = model.initial_frontiers["h0"]
+    alternate = initial_entry(
+        model.context,
+        hypothesis_id="h0",
+        control_state_id="q1",
+        clocks=initial.clocks,
+        typed_store=initial.typed_store,
+        root_id="root:h0:authority-seed-alternate",
+    )
+    declared_seed = {hypothesis: (frontier,) for hypothesis, frontier in model.initial_frontiers.items()}
+    declared_seed["h0"] = (initial, alternate)
+    other_seed = ReferenceSession(
+        binding=binding, model=model, session_id="session-authority", run_id="run-authority",
+        initial_summary="q0", resources=ResourceState.rounds(2), initial_path_bundles=declared_seed,
+    )
+    declared_seed["h0"] = (alternate,)
+    assert other_seed.initial_state.frontiers["h0"] == (initial, alternate)
+    rejected_seed = target.step(other_seed.initial_state, environment)  # type: ignore[arg-type]
     assert rejected_seed.diagnostics[0].code == "SESSION-SEED-MISMATCH"
     assert environment.calls == 0
 
