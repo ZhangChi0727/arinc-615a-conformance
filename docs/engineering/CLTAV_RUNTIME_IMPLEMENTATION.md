@@ -93,18 +93,20 @@ back into selection.
 `ROUNDS` consumes exactly one issued action, irrespective of the action's
 declared monetary/computational cost.  `BUDGET` consumes that declared cost.
 After S4, an execution-side exception, malformed execution result, invalid
-result identity, or observation outside the frozen snapshot does not restore
-the pre-issue state: it retains the one charge and expected attempt identity,
-records a controlled error, sets the session to `CONSERVATIVE-UNKNOWN`, and
-does not invoke S9.  If a returned result includes a typed successor environment,
-that actual successor is retained even when its record is rejected.  A normal
-record which claims summary confirmation but omits its post-summary is the same
-controlled post-dispatch error.  `CONFIRMED-NOT-SENT` is distinct: it is charged once but
+result identity, or ordinary failure during returned-record validation,
+interpretation, or S9 preparation does not restore the pre-issue state: it
+retains the one charge and expected attempt identity, records a controlled
+error, sets the session to `CONSERVATIVE-UNKNOWN`, and does not invoke S9.  If
+a returned result includes a typed successor environment, that actual successor
+is retained even when its record is rejected.  A normal record which claims
+summary confirmation but omits its post-summary is the same controlled
+post-dispatch error.  `CONFIRMED-NOT-SENT` is distinct: it is charged once but
 preserves the prior history and known summary.
 
 Before any effect branch, the session validates the complete visible-record
 domain and its field combinations: identity/action/evidence references are
-nonempty strings; confirmation is Boolean; normal records carry a visible
+nonblank strings (their accepted value is not rewritten); confirmation is
+Boolean; normal records carry a visible
 observation, a confirmed nonempty post-summary, an exact measurement tick and
 the frozen uncertainty identity; non-normal records cannot manufacture those
 fields.  A rejected response is retained separately from the expected issued
@@ -116,9 +118,11 @@ The finite model is JSON-detached at construction.  Its nested guard/update
 AST is retained only in canonical frozen form and decoded afresh for each
 kernel call, so a post-construction source mutation cannot change behaviour
 without changing the model identity.  Before selection, a resumed state must
-belong to this run/session/model and close its `H`, frontier provenance,
-history version, evidence, and execution identities; validation failure occurs
-before charge or dispatch.  The public state is replayed read-only from this
+belong to this run/session/model, retain its exact development/interface
+authority binding and frozen S0 seed identity, and close its `H`, frontier
+provenance, history version, evidence, and execution identities; validation
+failure occurs before charge or dispatch.  A target session never re-signs a
+foreign S0 state with its own binding.  The public state is replayed read-only from this
 session's frozen S0 seed through each retained evidence item, so summary,
 resource, snapshot/action, authority, history and frontier values must be the
 causal terminal state of that ledger.  This replay neither calls the environment
@@ -245,23 +249,26 @@ GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出�
 声明动作成本；仅审计的 outcome/status 字段绝不回流到选择。
 
 `ROUNDS` 每次 issued 恰好消耗一个动作，和动作声明的金钱／计算成本无关；`BUDGET` 才消耗该
-声明成本。S4 之后发生执行侧异常、畸形执行返回、返回身份无效，或观测不属于冻结 snapshot 时，
-均不得恢复到派发前状态：保留一次计费和期望的 attempt 身份，记录受控错误，将会话置为
-`CONSERVATIVE-UNKNOWN`，且不得调用 S9。若返回结果包含有类型的后继环境，即使其记录被拒绝，
-也保留该实际后继环境。声称已确认摘要却缺少后继摘要的普通记录，同样属于派发后的受控错误。
+声明成本。S4 之后发生执行侧异常、畸形执行返回、返回身份无效，或已返回记录的校验、解释、S9
+提交准备出现普通错误时，均不得恢复到派发前状态：保留一次计费和期望的 attempt 身份，记录受控
+错误，将会话置为 `CONSERVATIVE-UNKNOWN`，且不得调用 S9。若返回结果包含有类型的后继环境，即使其
+记录被拒绝，也保留该实际后继环境。声称已确认摘要却缺少后继摘要的普通记录，同样属于派发后的
+受控错误。
 `CONFIRMED-NOT-SENT` 与此不同：它恰好计费一次，
 但保留此前 history 和已知摘要。
 
 进入任何 effect 分支前，会话校验完整的可见记录域及其字段组合：身份／动作／证据引用均为非空
-字符串，确认字段为 Boolean；普通记录携带可见观测、已确认的非空后继摘要、精确测量 tick 和
+非空白字符串（接受后的值不被改写），确认字段为 Boolean；普通记录携带可见观测、已确认的非空后继摘要、精确测量 tick 和
 冻结的 uncertainty identity；非普通记录不得伪造这些字段。被拒绝的返回记录与期望的 issued
 记录分开保存，错误返回的 attempt identity 不得覆盖已计费证据中的请求身份。普通适配器异常
 属于派发后的受控错误；这不捕获进程中断类异常。
 
 有限模型在构造时会与 JSON 源对象断开。嵌套 guard／update AST 只以规范化冻结形式保留，每次
 内核调用再重新解码；因此，构造后修改源对象不会在不改变 model identity 的情况下改变行为。
-选择前，恢复的 state 必须属于本 run／session／model，且其 `H`、frontier provenance、history
-version、evidence 与 execution identity 必须闭合；验证失败发生在计费或派发前。公共 state 会从
+选择前，恢复的 state 必须属于本 run／session／model，保留精确的 development/interface authority
+绑定和冻结的 S0 seed identity，且其 `H`、frontier provenance、history version、evidence 与 execution
+identity 必须闭合；验证失败发生在计费或派发前。目标会话绝不会以自身绑定重新签署外来的 S0 state。
+公共 state 会从
 本会话冻结的 S0 seed 逐条只读重放保留的 evidence，因此摘要、资源、snapshot／action、权威、
 history 与 frontier 必须是该账本的因果终态。该重放既不调用环境，也不再派发动作。有限多路径 S0
 seed 仅可在会话构造时声明、绑定到本 model/context 后冻结；手工拼装的替换 frontier 不是恢复权威。

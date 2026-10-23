@@ -531,6 +531,8 @@ def test_valid_visible_record_is_retained_when_the_returned_successor_is_invalid
         {"effect_class": "CONFIRMED-NOT-SENT", "measurement_tick": Fraction(0)},
         {"effect_class": "NONE", "uncertainty_identity": None},
         {"effect_class": "NONE", "evidence_ref": ""},
+        {"effect_class": "NONE", "evidence_ref": " \t "},
+        {"effect_class": "NONE", "evidence_ref": "\t\r\n"},
     ],
 )
 def test_malformed_visible_record_combinations_are_controlled_post_dispatch_errors(
@@ -570,6 +572,69 @@ def test_malformed_visible_record_combinations_are_controlled_post_dispatch_erro
     assert result.state.history.version == 0
     assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
     assert result.environment._state == "private-a1"
+    assert result.state.evidence[0].rejected_response is not None
+
+
+@pytest.mark.parametrize("failure_site", ["record-validation", "interpretation", "commit-preparation"])
+@pytest.mark.parametrize(
+    ("resources", "expected_remaining"),
+    [(ResourceState.rounds(2), 1), (ResourceState.budget(2), 1)],
+)
+def test_post_dispatch_faults_keep_the_issued_charge_and_successor(
+    monkeypatch: pytest.MonkeyPatch,
+    failure_site: str,
+    resources: ResourceState,
+    expected_remaining: int,
+) -> None:
+    def fail(*_args: object, **_kwargs: object) -> object:
+        raise RuntimeError(f"controlled {failure_site} fault")
+
+    if failure_site == "record-validation":
+        monkeypatch.setattr("cltav_runtime.session._incoming_record_error", fail)
+    elif failure_site == "interpretation":
+        monkeypatch.setattr("cltav_runtime.session._matching_class", fail)
+    else:
+        monkeypatch.setattr(HistoryHandle, "committed", fail)
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id=f"session-post-{failure_site}-{resources.mode}",
+        run_id=f"run-post-{failure_site}-{resources.mode}", initial_summary="q0", resources=resources,
+    )
+    result = session.step(
+        session.initial_state,
+        SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]),
+    )
+
+    assert result.stop_reason == "Stop-Error"
+    assert result.diagnostics[-1].code == "POST-DISPATCH-ERROR"
+    assert result.state.attempts == 1
+    assert result.state.resources == ResourceState(resources.mode, expected_remaining)
+    assert result.state.history == session.initial_state.history
+    assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
+    assert result.state.evidence[0].committed is False
+    assert result.state.evidence[0].execution.execution_attempt_id.endswith(":execution:1")
+    assert result.state.evidence[0].rejected_response is not None
+    assert result.environment._state == "private-a1"
+    resumed = session.step(result.state, result.environment)
+    assert resumed.stop_reason == "Stop-Error"
+    assert resumed.diagnostics[0].code == "TERMINAL-SESSION-STATE"
+    assert resumed.state.attempts == 1
+
+
+def test_nonblank_evidence_reference_is_preserved_in_a_normal_commit() -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-evidence-preserved", run_id="run-evidence-preserved",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+    )
+    result = session.step(
+        session.initial_state,
+        SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]),
+    )
+
+    assert result.state.evidence[0].committed is True
+    assert result.state.evidence[0].execution.evidence_ref == "synthetic:run-evidence-preserved:session-evidence-preserved:execution:1:none"
 
 
 @pytest.mark.parametrize(
@@ -734,6 +799,73 @@ def test_resume_rejects_a_malformed_frontier_bundle_with_a_named_diagnostic() ->
     assert result.stop_reason == "Stop-Error"
     assert result.diagnostics[0].code == "INVALID-FRONTIER-BUNDLE"
     assert result.state.resources.remaining == 2
+
+
+def test_resumed_s0_requires_the_exact_frozen_authority_and_seed_before_dispatch() -> None:
+    class NoDispatchEnvironment:
+        calls = 0
+
+        def execute(self, _request: ExecutionRequest) -> object:
+            self.calls += 1
+            raise AssertionError("foreign S0 must be rejected before dispatch")
+
+    binding, model, _fixture = _runtime_parts()
+    head = _head_commit()
+    previous = subprocess.run(
+        ["git", "-C", str(ROOT), "rev-parse", "HEAD^"],
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    ).stdout.strip()
+    foreign_binding = RuntimeAuthorityBinding.from_git_objects(
+        repository=ROOT,
+        development_commit=head,
+        development_path=DEVELOPMENT_PATH,
+        interface_commit=previous,
+        interface_path=INTERFACE_PATH,
+    )
+    target = ReferenceSession(
+        binding=binding, model=model, session_id="session-authority", run_id="run-authority",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    foreign = ReferenceSession(
+        binding=foreign_binding, model=model, session_id="session-authority", run_id="run-authority",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    assert binding.identities() != foreign_binding.identities()
+    assert target.initial_state.context == foreign.initial_state.context
+    assert target.initial_state.authority_identity != foreign.initial_state.authority_identity
+    records_before = dict(model.context.provenance_store.records())
+    environment = NoDispatchEnvironment()
+
+    rejected = target.step(foreign.initial_state, environment)  # type: ignore[arg-type]
+
+    assert rejected.stop_reason == "Stop-Error"
+    assert rejected.diagnostics[0].code == "SESSION-AUTHORITY-MISMATCH"
+    assert rejected.state is foreign.initial_state
+    assert rejected.state.attempts == 0
+    assert rejected.state.resources.remaining == 2
+    assert environment.calls == 0
+    assert dict(model.context.provenance_store.records()) == records_before
+
+    seed_tamper = replace(target.initial_state, seed_identity="not-the-frozen-s0-seed")
+    rejected_seed = target.step(seed_tamper, environment)  # type: ignore[arg-type]
+    assert rejected_seed.diagnostics[0].code == "SESSION-SEED-MISMATCH"
+    assert environment.calls == 0
+
+    equivalent = ReferenceSession(
+        binding=binding, model=model, session_id="session-authority", run_id="run-authority",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    ).initial_state
+    accepted = target.step(equivalent, SyntheticEnvironment.from_mapping(_fixture["environments"]["alpha"]))
+    assert accepted.state.attempts == 1
+    assert accepted.state.authority_identity == target.initial_state.authority_identity
+    assert accepted.state.seed_identity == target.initial_state.seed_identity
+    completed = target.step(accepted.state, accepted.environment)
+    assert completed.state.attempts == 2
+    assert completed.state.authority_identity == target.initial_state.authority_identity
+    assert completed.state.seed_identity == target.initial_state.seed_identity
 
 
 def test_resume_replays_evidence_lineage_before_any_new_dispatch() -> None:

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from fractions import Fraction
+from hashlib import sha256
 from types import MappingProxyType
 from typing import Mapping
 
@@ -133,6 +134,8 @@ class SessionState:
     attempts: int
     processed_execution_attempt_ids: frozenset[str]
     evidence: tuple[RoundEvidence, ...]
+    authority_identity: str
+    seed_identity: str
 
 
 @dataclass(frozen=True)
@@ -177,6 +180,14 @@ class ReferenceSession:
         )
         self.binding = binding
         self.model = model
+        self._authority_identity = _session_authority_identity(binding, model)
+        self._seed_identity = _session_seed_identity(
+            context=context,
+            history=history,
+            frontiers=seed_frontiers,
+            resources=resources,
+            authority_identity=self._authority_identity,
+        )
         self.initial_state = SessionState(
             context=context,
             history=history,
@@ -185,6 +196,8 @@ class ReferenceSession:
             attempts=0,
             processed_execution_attempt_ids=frozenset(),
             evidence=(),
+            authority_identity=self._authority_identity,
+            seed_identity=self._seed_identity,
         )
 
     def run(self, environment: SyntheticEnvironment, *, maximum_rounds: int) -> SessionResult:
@@ -240,6 +253,10 @@ class ReferenceSession:
             return KernelDiagnostic("SESSION-IDENTITY-MISMATCH", "state does not belong to this session/run/model")
         if context.experiment_attempt_id != initial_context.experiment_attempt_id:
             return KernelDiagnostic("EXPERIMENT-IDENTITY-MISMATCH", "state changes the declared experiment identity")
+        if not isinstance(state.authority_identity, str) or state.authority_identity != self._authority_identity:
+            return KernelDiagnostic("SESSION-AUTHORITY-MISMATCH", "state does not retain this session's exact authority binding")
+        if not isinstance(state.seed_identity, str) or state.seed_identity != self._seed_identity:
+            return KernelDiagnostic("SESSION-SEED-MISMATCH", "state does not retain this session's frozen S0 seed identity")
         if not isinstance(state.resources, ResourceState) or state.resources.mode not in {"ROUNDS", "BUDGET"} or (
             isinstance(state.resources.remaining, bool)
             or not isinstance(state.resources.remaining, int)
@@ -333,7 +350,10 @@ class ReferenceSession:
             action = replay_model.actions.get(item.snapshot.action_id)
             if action is None or item.snapshot.action_kind != action.kind:
                 return KernelDiagnostic("EVIDENCE-ACTION-MISMATCH", "evidence snapshot does not name a current model action")
-            prefix = SessionState(context, history, frontiers, resources, index - 1, processed_ids, ())
+            prefix = SessionState(
+                context, history, frontiers, resources, index - 1, processed_ids, (),
+                self._authority_identity, self._seed_identity,
+            )
             admission = self._admit(prefix, model=replay_model)
             if admission.action is None or admission.prediction is None or admission.action.action_id != action.action_id:
                 return KernelDiagnostic("EVIDENCE-ADMISSION-MISMATCH", "evidence action was not admitted by its causal prefix")
@@ -520,6 +540,85 @@ class ReferenceSession:
                 code="EXECUTION-TOOL-ERROR",
                 message=str(exc) or type(exc).__name__,
             )
+
+        return self._post_dispatch(
+            state=state,
+            environment=environment,
+            snapshot=snapshot,
+            prediction=prediction,
+            action=action,
+            resource_before=resource_before,
+            resource_after=resource_after,
+            charged_resources=charged_resources,
+            execution_attempt_id=execution_attempt_id,
+            diagnostics=diagnostics,
+            execution=execution,
+        )
+
+    def _post_dispatch(
+        self,
+        *,
+        state: SessionState,
+        environment: SyntheticEnvironment,
+        snapshot: SelectSnapshot,
+        prediction: ActionPrediction,
+        action: SyntheticAction,
+        resource_before: AlgorithmResourceView,
+        resource_after: AlgorithmResourceView,
+        charged_resources: ResourceState,
+        execution_attempt_id: str,
+        diagnostics: list[KernelDiagnostic],
+        execution: object,
+    ) -> SessionResult:
+        """Close every ordinary failure after S4 over the issued attempt."""
+
+        try:
+            return self._consume_execution(
+                state=state,
+                environment=environment,
+                snapshot=snapshot,
+                prediction=prediction,
+                action=action,
+                resource_before=resource_before,
+                resource_after=resource_after,
+                charged_resources=charged_resources,
+                execution_attempt_id=execution_attempt_id,
+                diagnostics=diagnostics,
+                execution=execution,
+            )
+        except Exception as exc:
+            return self._charged_execution_error(
+                state=state,
+                environment=environment,
+                snapshot=snapshot,
+                prediction=prediction,
+                action=action,
+                resource_before=resource_before,
+                resource_after=resource_after,
+                charged_resources=charged_resources,
+                execution_attempt_id=execution_attempt_id,
+                diagnostics=diagnostics,
+                code="POST-DISPATCH-ERROR",
+                message=str(exc) or type(exc).__name__,
+                execution_record=_visible_execution_record(execution),
+                environment_after_execution=_returned_environment(execution),
+            )
+
+    def _consume_execution(
+        self,
+        *,
+        state: SessionState,
+        environment: SyntheticEnvironment,
+        snapshot: SelectSnapshot,
+        prediction: ActionPrediction,
+        action: SyntheticAction,
+        resource_before: AlgorithmResourceView,
+        resource_after: AlgorithmResourceView,
+        charged_resources: ResourceState,
+        execution_attempt_id: str,
+        diagnostics: list[KernelDiagnostic],
+        execution: object,
+    ) -> SessionResult:
         if not isinstance(execution, EnvironmentExecution):
             return self._charged_execution_error(
                 state=state,
@@ -606,6 +705,7 @@ class ReferenceSession:
             next_state = SessionState(
                 state.context, state.history, state.frontiers, charged_resources,
                 state.attempts + 1, state.processed_execution_attempt_ids | {execution_attempt_id}, state.evidence + (evidence,),
+                self._authority_identity, self._seed_identity,
             )
             return SessionResult(
                 next_state, execution.successor, "Stop-Error",
@@ -628,6 +728,7 @@ class ReferenceSession:
             next_state = SessionState(
                 unknown_context, state.history, state.frontiers, charged_resources,
                 state.attempts + 1, state.processed_execution_attempt_ids | {execution_attempt_id}, state.evidence + (evidence,),
+                self._authority_identity, self._seed_identity,
             )
             return SessionResult(
                 next_state, execution.successor, "Stop-Error",
@@ -705,6 +806,8 @@ class ReferenceSession:
             state.attempts + 1,
             state.processed_execution_attempt_ids | {execution_attempt_id},
             state.evidence + (evidence,),
+            self._authority_identity,
+            self._seed_identity,
         )
         return SessionResult(next_state, execution.successor, stop_reason, tuple(diagnostics))
 
@@ -861,6 +964,8 @@ class ReferenceSession:
             state.attempts + 1,
             state.processed_execution_attempt_ids | {execution_attempt_id},
             state.evidence + (evidence,),
+            self._authority_identity,
+            self._seed_identity,
         )
         return SessionResult(
             charged_state,
@@ -884,6 +989,79 @@ def _replay_model(model: FiniteSessionModel) -> FiniteSessionModel:
     """
 
     return replace(model, context=model.context.read_only_replay_context())
+
+
+def _session_authority_identity(
+    binding: RuntimeAuthorityBinding, model: FiniteSessionModel,
+) -> str:
+    """Bind S0 to the exact controlled snapshots consumed by this session."""
+
+    identities = binding.identities()
+    payload = (
+        model.identity,
+        model.context.identity,
+        tuple(
+            (source, tuple(sorted(identity.items())))
+            for source, identity in sorted(identities.items())
+        ),
+    )
+    return sha256(repr(payload).encode("utf-8")).hexdigest()
+
+
+def _session_seed_identity(
+    *,
+    context: SessionContext,
+    history: HistoryHandle,
+    frontiers: Mapping[str, tuple[FrontierEntry, ...]],
+    resources: ResourceState,
+    authority_identity: str,
+) -> str:
+    """Freeze the declared public S0 seed without re-signing resumed state."""
+
+    def path_key(path: FrontierEntry) -> tuple[object, ...]:
+        return (
+            path.hypothesis_id,
+            path.control_state_id,
+            tuple(
+                (
+                    name,
+                    interval.lower.numerator,
+                    interval.lower.denominator,
+                    interval.upper.numerator,
+                    interval.upper.denominator,
+                    interval.lower_closed,
+                    interval.upper_closed,
+                )
+                for name, interval in sorted(path.clocks.items())
+            ),
+            tuple(sorted((name, repr(value)) for name, value in path.typed_store.items())),
+            path.path_length,
+            path.history_provenance,
+            path.status,
+            path.model_identity,
+        )
+
+    payload = (
+        authority_identity,
+        context.session_id,
+        context.run_id,
+        context.experiment_attempt_id,
+        context.model_identity,
+        context.current_summary,
+        context.q_status,
+        tuple(sorted(history.hypotheses)),
+        tuple(sorted(history.compatible_state_by_hypothesis.items())),
+        tuple(sorted(history.status_by_hypothesis.items())),
+        history.version,
+        history.processed,
+        tuple(
+            (hypothesis, tuple(path_key(path) for path in bundle))
+            for hypothesis, bundle in sorted(frontiers.items())
+        ),
+        resources.mode,
+        resources.remaining,
+    )
+    return sha256(repr(payload).encode("utf-8")).hexdigest()
 
 
 def _matching_class(
@@ -932,7 +1110,7 @@ def _incoming_record_error(record: VisibleExecutionRecord) -> KernelDiagnostic |
     """
 
     if any(
-        not isinstance(value, str) or not value
+        not isinstance(value, str) or not value.strip()
         for value in (record.execution_attempt_id, record.action_id, record.evidence_ref)
     ):
         return KernelDiagnostic("INVALID-EXECUTION-RECORD", "execution identity, action identity, and evidence reference must be nonempty strings")
@@ -943,7 +1121,7 @@ def _incoming_record_error(record: VisibleExecutionRecord) -> KernelDiagnostic |
         return KernelDiagnostic("INVALID-EXECUTION-RECORD", "execution effect class is outside the controlled vocabulary")
     if not isinstance(record.summary_confirmed, bool):
         return KernelDiagnostic("INVALID-EXECUTION-RECORD", "summary confirmation must be Boolean")
-    if not isinstance(record.uncertainty_identity, str) or not record.uncertainty_identity:
+    if not isinstance(record.uncertainty_identity, str) or not record.uncertainty_identity.strip():
         return KernelDiagnostic("INVALID-EXECUTION-RECORD", "incoming execution record must name a nonempty uncertainty identity")
     if record.effect_class == "NONE":
         if not isinstance(record.observable, str) or not record.observable:
@@ -965,6 +1143,22 @@ def _incoming_record_error(record: VisibleExecutionRecord) -> KernelDiagnostic |
             "INVALID-EXECUTION-RECORD",
             "non-normal execution cannot manufacture an observation, confirmation, summary, or measurement",
         )
+    return None
+
+
+def _visible_execution_record(value: object) -> VisibleExecutionRecord | None:
+    """Retain only a typed raw S4 record in a post-dispatch error ledger."""
+
+    if isinstance(value, EnvironmentExecution) and isinstance(value.record, VisibleExecutionRecord):
+        return value.record
+    return None
+
+
+def _returned_environment(value: object) -> SyntheticEnvironment | None:
+    """Retain an actually returned typed successor without fabricating one."""
+
+    if isinstance(value, EnvironmentExecution) and isinstance(value.successor, SyntheticEnvironment):
+        return value.successor
     return None
 
 
