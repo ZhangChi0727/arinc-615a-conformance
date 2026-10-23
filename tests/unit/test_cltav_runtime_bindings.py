@@ -96,7 +96,7 @@ def test_committed_history_requires_complete_controlled_statuses() -> None:
         )
 
 
-def test_session_context_distinguishes_known_and_conservative_unknown() -> None:
+def test_session_context_distinguishes_session_unknown_from_member_conservative_unknown() -> None:
     known = SessionContext.create(
         session_id="session-syn-001",
         run_id="run-syn-001",
@@ -111,11 +111,18 @@ def test_session_context_distinguishes_known_and_conservative_unknown() -> None:
         experiment_attempt_id=None,
         model_identity="model-1",
         current_summary=None,
-        q_status="CONSERVATIVE-UNKNOWN",
+        q_status="UNKNOWN",
     )
 
     assert known.current_summary == "q0"
     assert unknown.current_summary is None
+    member_unknown = HistoryHandle.committed(
+        hypotheses={"h0"},
+        compatible_state_by_hypothesis={"h0": "frontier-0"},
+        status_by_hypothesis={"h0": "CONSERVATIVE-UNKNOWN"},
+        version=1,
+    )
+    assert member_unknown.status_by_hypothesis == {"h0": "CONSERVATIVE-UNKNOWN"}
     with pytest.raises(ValueError, match="requires a current summary"):
         SessionContext.create(
             session_id="session-syn-001",

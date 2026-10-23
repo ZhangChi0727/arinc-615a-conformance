@@ -46,6 +46,8 @@ class SyntheticAction:
     transition_json: str
     observable_by_hypothesis: Mapping[str, tuple[str, ...]]
     measurement_ticks_by_hypothesis: Mapping[str, Fraction]
+    declared_target: str | None = None
+    recover_when_unknown: bool = False
 
     def transition_for_kernel(self) -> Mapping[str, Any]:
         """Return a fresh mutable decoding of this action's frozen AST.
@@ -388,7 +390,8 @@ def _parse_action(item: Any, hypothesis_ids: frozenset[str]) -> SyntheticAction:
     required = {
         "id", "kind", "cost", "detailCharges", "enabledSummaries", "transition", "observableByHypothesis", "measurementTicksByHypothesis",
     }
-    if set(item) != required:
+    allowed = required | {"declaredTarget", "recoverWhenUnknown"}
+    if not set(item) <= allowed or not required <= set(item):
         raise ValueError("finite session action uses unknown or missing fields")
     identifier = item.get("id")
     kind = item.get("kind")
@@ -398,8 +401,19 @@ def _parse_action(item: Any, hypothesis_ids: frozenset[str]) -> SyntheticAction:
     transition = item.get("transition")
     emissions = item.get("observableByHypothesis")
     measurement_ticks = item.get("measurementTicksByHypothesis")
+    declared_target = item.get("declaredTarget")
+    recover_when_unknown = item.get("recoverWhenUnknown", False)
     if not isinstance(identifier, str) or not identifier or kind not in _ACTION_KINDS:
         raise ValueError("finite session action identity or kind is invalid")
+    if kind in {"PREP", "RECOVER"}:
+        if not isinstance(declared_target, str) or not declared_target:
+            raise ValueError("Prep/Recover action requires a declared target")
+        if not isinstance(recover_when_unknown, bool):
+            raise ValueError("Prep/Recover unknown eligibility must be Boolean")
+        if kind == "PREP" and recover_when_unknown:
+            raise ValueError("Prep cannot be eligible from an UNKNOWN session")
+    elif "declaredTarget" in item or "recoverWhenUnknown" in item:
+        raise ValueError("TEST action cannot declare a recovery target or UNKNOWN eligibility")
     if isinstance(cost, bool) or not isinstance(cost, int) or cost < 1:
         raise ValueError("finite session action cost must be a positive integer")
     if not isinstance(detail_charges, Mapping) or set(detail_charges) != {
@@ -434,6 +448,8 @@ def _parse_action(item: Any, hypothesis_ids: frozenset[str]) -> SyntheticAction:
         transition_json,
         MappingProxyType(parsed_emissions),
         MappingProxyType(parsed_ticks),
+        declared_target,
+        recover_when_unknown,
     )
 
 

@@ -14,10 +14,22 @@ from .model import ActionPrediction, FiniteSessionModel, PredictionClass, Synthe
 from .synthetic import (
     EnvironmentExecution,
     ExecutionRequest,
+    PrepRecoverResult,
     SyntheticEnvironment,
     VisibleExecutionRecord,
 )
 from .types import HistoryHandle, SessionContext
+
+
+_CHARGED_ERROR_CODES = frozenset({
+    "EXECUTION-TOOL-ERROR",
+    "POST-DISPATCH-ERROR",
+    "EXECUTION-RESULT-TYPE-ERROR",
+    "EXECUTION-IDENTITY-ERROR",
+    "INVALID-EXECUTION-RECORD",
+    "SUMMARY-CONFIRMATION-ERROR",
+    "RECOVERY-TARGET-MISMATCH",
+})
 
 
 @dataclass(frozen=True)
@@ -73,10 +85,11 @@ class AlgorithmResourceView:
 class AdmissionDecision:
     """One read-only A1–A3 decision before S3/S4 can mutate a session.
 
-    The finite B/C-1 slice implements TEST, the shared prediction-gap route,
-    and PREP fallback.  It deliberately represents refusal explicitly rather
-    than folding an incomplete TEST prediction or an unaffordable PREP into an
-    empty action list.
+    The finite B/C-2A slice implements TEST, the shared prediction-gap/Prep
+    route, and the separate UNKNOWN-session Recover route.  It deliberately
+    represents refusal explicitly rather than folding an incomplete TEST
+    prediction, an unaffordable Prep, or an unavailable Recover into an empty
+    action list.
     """
 
     kind: str
@@ -94,7 +107,7 @@ class SelectSnapshot:
     snapshot_id: str
     action_id: str
     action_kind: str
-    q_used_at_select: str
+    q_used_at_select: str | None
     history_version: int
     hypotheses: frozenset[str]
     classes: tuple[PredictionClass, ...]
@@ -123,6 +136,10 @@ class RoundEvidence:
     committed: bool
     stop_reason: str | None
     rejected_response: VisibleExecutionRecord | None = None
+    # Name the controlled S7/S8/S9 branch which produced this record.  The
+    # causal ledger must replay the exact error branch rather than infer it
+    # from a shared ``UNKNOWN-EFFECT`` shape.
+    resolution_code: str | None = None
 
 
 @dataclass(frozen=True)
@@ -146,6 +163,15 @@ class SessionResult:
     diagnostics: tuple[KernelDiagnostic, ...]
 
 
+@dataclass(frozen=True)
+class _S8RecoveryAdoption:
+    """Internal S8 output, consumed by S9 before it becomes SessionContext."""
+
+    q_status: str
+    known_target: str
+    known_evidence: tuple[str, ...]
+
+
 class ReferenceSession:
     """Composes prediction, S3 snapshot, execution, interpretation and S9.
 
@@ -159,6 +185,7 @@ class ReferenceSession:
         session_id: str, run_id: str, initial_summary: str, resources: ResourceState,
         experiment_attempt_id: str | None = None,
         initial_path_bundles: Mapping[str, tuple[FrontierEntry, ...]] | None = None,
+        retry_cap: int = 1,
     ) -> None:
         if binding.development.contract_commit != model.context.contract_commit:
             raise ValueError("runtime model and authority binding use different development snapshots")
@@ -169,6 +196,9 @@ class ReferenceSession:
             model_identity=model.identity,
             current_summary=initial_summary,
             q_status="KNOWN",
+            resource_remainder=resources.remaining,
+            retry_count=0,
+            retry_cap=retry_cap,
         )
         seed_frontiers = _session_seed_frontiers(model, initial_path_bundles)
         history = HistoryHandle.initial(
@@ -226,6 +256,17 @@ class ReferenceSession:
             if state_error is not None:
                 return SessionResult(state, environment, "Stop-Error", (state_error,))
             assert isinstance(state, SessionState)
+            terminal = self._retained_terminal_result(state, environment)
+            if terminal is not None:
+                return terminal
+            # Receive transport deliveries before S3/S4.  A repeated record is
+            # therefore an idempotent receive event, not a reason to issue a
+            # new action and discover the duplication only after charging it.
+            if isinstance(environment, SyntheticEnvironment):
+                pending = environment.take_pending_delivery()
+                if pending is not None:
+                    record, environment_after_delivery = pending
+                    return self._consume_pending_delivery(state, environment_after_delivery, record)
             execution_model, execution_error = self._execution_model(state)
             if execution_error is not None:
                 return SessionResult(state, environment, "Stop-Error", (execution_error,))
@@ -236,6 +277,86 @@ class ReferenceSession:
                 state, environment, "Stop-Error",
                 (KernelDiagnostic("SESSION-TOOL-ERROR", str(exc) or type(exc).__name__),),
             )
+
+    @staticmethod
+    def _retained_terminal_result(
+        state: SessionState,
+        environment: SyntheticEnvironment,
+    ) -> SessionResult | None:
+        """Preserve a recorded terminal stop before accepting any delivery."""
+
+        if not state.evidence or state.evidence[-1].stop_reason is None:
+            return None
+        return SessionResult(
+            state,
+            environment,
+            state.evidence[-1].stop_reason,
+            (KernelDiagnostic(
+                "TERMINAL-SESSION-STATE",
+                "the retained evidence ledger already records a terminal stop",
+            ),),
+        )
+
+    @staticmethod
+    def _consume_pending_delivery(
+        state: SessionState,
+        environment_after_delivery: SyntheticEnvironment,
+        record: VisibleExecutionRecord,
+    ) -> SessionResult:
+        """Handle one inbound delivery without admitting or charging an action."""
+
+        execution_id = record.execution_attempt_id
+        if (
+            isinstance(execution_id, str)
+            and execution_id
+            and execution_id in state.processed_execution_attempt_ids
+        ):
+            canonical_records = tuple(
+                item.execution
+                for item in state.evidence
+                if item.execution.execution_attempt_id == execution_id
+            )
+            # State validation establishes a one-to-one ledger of processed
+            # identities to issued evidence.  Still fail closed here rather
+            # than silently accepting a malformed public checkpoint.
+            if len(canonical_records) != 1:
+                return SessionResult(
+                    state,
+                    environment_after_delivery,
+                    "Stop-Error",
+                    (KernelDiagnostic(
+                        "EXECUTION-DELIVERY-LEDGER-MISMATCH",
+                        "processed execution identity has no unique canonical evidence record",
+                    ),),
+                )
+            if record != canonical_records[0]:
+                return SessionResult(
+                    state,
+                    environment_after_delivery,
+                    "Stop-Error",
+                    (KernelDiagnostic(
+                        "CONFLICTING-EXECUTION-DELIVERY",
+                        "inbound execution identity conflicts with its canonical processed evidence",
+                    ),),
+                )
+            return SessionResult(
+                state,
+                environment_after_delivery,
+                None,
+                (KernelDiagnostic(
+                    "DUPLICATE-EXECUTION-EVIDENCE",
+                    "already processed execution delivery was discarded before admission",
+                ),),
+            )
+        return SessionResult(
+            state,
+            environment_after_delivery,
+            "Stop-Error",
+            (KernelDiagnostic(
+                "UNEXPECTED-EXECUTION-DELIVERY",
+                "inbound delivery does not match an already processed execution identity",
+            ),),
+        )
 
     def _state_error(self, state: object) -> KernelDiagnostic | None:
         """Validate a resumed public state before admission or charging.
@@ -268,6 +389,28 @@ class ReferenceSession:
             or state.resources.remaining < 0
         ):
             return KernelDiagnostic("INVALID-RESOURCE-STATE", "state resource mode or remainder is invalid")
+        try:
+            normalized_context = SessionContext.create(
+                session_id=context.session_id,
+                run_id=context.run_id,
+                experiment_attempt_id=context.experiment_attempt_id,
+                model_identity=context.model_identity,
+                current_summary=context.current_summary,
+                q_status=context.q_status,
+                resource_remainder=context.resource_remainder,
+                retry_count=context.retry_count,
+                retry_cap=context.retry_cap,
+                known_target=context.known_target,
+                known_evidence=context.known_evidence,
+                error_history=context.error_history,
+                unknown_history=context.unknown_history,
+            )
+        except (AttributeError, TypeError, ValueError) as exc:
+            return KernelDiagnostic("INVALID-SESSION-CONTEXT", str(exc) or type(exc).__name__)
+        if normalized_context != context:
+            return KernelDiagnostic("INVALID-SESSION-CONTEXT", "state context is not an immutable normalized session context")
+        if context.resource_remainder != state.resources.remaining:
+            return KernelDiagnostic("RESOURCE-CONTEXT-MISMATCH", "session context does not retain the charged resource remainder")
         if isinstance(state.attempts, bool) or not isinstance(state.attempts, int) or state.attempts < 0:
             return KernelDiagnostic("INVALID-ATTEMPT-COUNT", "state attempt count is invalid")
         if not isinstance(state.processed_execution_attempt_ids, frozenset) or any(
@@ -369,6 +512,22 @@ class ReferenceSession:
         frontiers: Mapping[str, tuple[FrontierEntry, ...]] = self.initial_state.frontiers
         resources = self.initial_state.resources
         processed_ids: frozenset[str] = frozenset()
+
+        def s7_expected(code: str, record: VisibleExecutionRecord) -> tuple[HistoryHandle, SessionContext, str | None]:
+            expected_history = self._conservative_history(history)
+            expected_context = self._context_after_retry(
+                context,
+                charged_resources,
+                error_entry=f"{code}:{record.evidence_ref}",
+                make_unknown=True,
+            )
+            expected_stop = (
+                "Stop-Error"
+                if expected_context.retry_count >= expected_context.retry_cap
+                else None
+            )
+            return expected_history, expected_context, expected_stop
+
         for index, item in enumerate(state.evidence, start=1):
             if not isinstance(item, RoundEvidence):
                 return KernelDiagnostic("INVALID-EVIDENCE-RECORD", "evidence ledger contains a non-RoundEvidence value")
@@ -388,6 +547,8 @@ class ReferenceSession:
                 or not isinstance(item.stop_reason, (str, type(None)))
                 or not isinstance(item.summary_after, (str, type(None)))
                 or not isinstance(item.rejected_response, (VisibleExecutionRecord, type(None)))
+                or not isinstance(item.resolution_code, str)
+                or not item.resolution_code
             ):
                 return KernelDiagnostic("INVALID-EVIDENCE-RECORD", "evidence ledger item has an invalid public field type")
             action = replay_model.actions.get(item.snapshot.action_id)
@@ -431,81 +592,173 @@ class ReferenceSession:
             if item.execution.execution_attempt_id != expected_execution_id or expected_execution_id in processed_ids:
                 return KernelDiagnostic("EXECUTION-EVIDENCE-MISMATCH", "evidence execution identity is not the expected causal attempt")
 
+            # An adapter/tool failure is represented by a deliberately narrow
+            # placeholder record.  It is still charged and must replay the
+            # exact named S7 branch, not the pre-B/C-2 terminal shortcut.
             if _is_expected_error_record(item.execution, item.snapshot, expected_execution_id):
-                if item.committed or item.history_after != history or item.summary_after is not None or item.stop_reason != "Stop-Error":
-                    return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "rejected execution evidence must preserve history and stop with error")
-                if item.rejected_response is not None and not isinstance(item.rejected_response, VisibleExecutionRecord):
-                    return KernelDiagnostic("EVIDENCE-REJECTED-RESPONSE", "rejected response must be a visible execution record when retained")
-                context = _conservative_context(context)
+                if item.resolution_code not in _CHARGED_ERROR_CODES:
+                    return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical charged error record uses an uncontrolled resolution code")
+                expected_history, expected_context, expected_stop = s7_expected(item.resolution_code, item.execution)
+                if (
+                    item.committed
+                    or item.history_after != expected_history
+                    or item.summary_after is not None
+                    or item.stop_reason != expected_stop
+                ):
+                    return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "rejected execution evidence does not close over its S7 retry transition")
+                context = expected_context
+                history = expected_history
                 resources = charged_resources
                 processed_ids = processed_ids | {expected_execution_id}
-                if index != len(state.evidence):
-                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "an error evidence item cannot have a later causal round")
+                if expected_stop is not None and index != len(state.evidence):
+                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap error evidence item cannot have a later causal round")
                 continue
 
-            record_error = _incoming_record_error(item.execution)
+            record_error = _incoming_record_error(item.execution, action=action)
             if record_error is not None:
                 return KernelDiagnostic("EVIDENCE-RECORD-MISMATCH", record_error.message)
             if item.execution.action_id != action.action_id:
                 return KernelDiagnostic("EVIDENCE-ACTION-MISMATCH", "visible execution action differs from the admitted action")
-            if item.rejected_response is not None:
-                return KernelDiagnostic("EVIDENCE-REJECTED-RESPONSE", "accepted execution evidence cannot also retain a rejected response")
+
             if item.execution.effect_class == "CONFIRMED-NOT-SENT":
-                if item.committed or item.history_after != history or item.summary_after != context.current_summary or item.stop_reason != "Stop-Error":
-                    return KernelDiagnostic("EVIDENCE-NOT-SENT-MISMATCH", "confirmed-not-sent evidence must preserve the known history and summary")
+                expected_context = self._context_after_retry(
+                    context,
+                    charged_resources,
+                    error_entry=f"CONFIRMED-NOT-SENT:{item.execution.evidence_ref}",
+                    make_unknown=False,
+                )
+                expected_stop = (
+                    "Stop-Error"
+                    if expected_context.retry_count >= expected_context.retry_cap
+                    else None
+                )
+                if (
+                    item.resolution_code != "CONFIRMED-NOT-SENT"
+                    or item.rejected_response is not None
+                    or item.committed
+                    or item.history_after != history
+                    or item.summary_after != expected_context.current_summary
+                    or item.stop_reason != expected_stop
+                ):
+                    return KernelDiagnostic("EVIDENCE-NOT-SENT-MISMATCH", "confirmed-not-sent evidence does not preserve its summary/history retry contract")
+                context = expected_context
                 resources = charged_resources
                 processed_ids = processed_ids | {expected_execution_id}
-                if index != len(state.evidence):
-                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "confirmed-not-sent evidence cannot have a later causal round")
-                continue
-            if item.execution.effect_class == "UNKNOWN-EFFECT":
-                if item.committed or item.history_after != history or item.summary_after is not None or item.stop_reason != "Stop-Error":
-                    return KernelDiagnostic("EVIDENCE-UNKNOWN-MISMATCH", "unknown effect evidence must preserve history and stop with error")
-                context = _conservative_context(context)
-                resources = charged_resources
-                processed_ids = processed_ids | {expected_execution_id}
-                if index != len(state.evidence):
-                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "unknown-effect evidence cannot have a later causal round")
+                if expected_stop is not None and index != len(state.evidence):
+                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap non-send evidence item cannot have a later causal round")
                 continue
 
-            selected_class, interpretation_error = _matching_class(item.snapshot, item.execution)
-            if selected_class is None or interpretation_error is not None:
-                return KernelDiagnostic("EVIDENCE-INTERPRETATION-MISMATCH", "committed evidence is outside its frozen prediction")
-            next_history = HistoryHandle.committed(
-                hypotheses=selected_class.hypotheses,
-                compatible_state_by_hypothesis={
-                    hypothesis: tuple(entry.history_provenance[-1] for entry in entries)
-                    for hypothesis, entries in selected_class.successors.items()
-                },
-                status_by_hypothesis={
-                    hypothesis: "CONSERVATIVE-UNKNOWN" if hypothesis in selected_class.conservative_hypotheses else "KNOWN"
-                    for hypothesis in selected_class.hypotheses
-                },
-                version=history.version + 1,
+            if item.execution.effect_class == "UNKNOWN-EFFECT":
+                expected_history, expected_context, expected_stop = s7_expected("UNKNOWN-EFFECT", item.execution)
+                if (
+                    item.resolution_code != "UNKNOWN-EFFECT"
+                    or item.rejected_response is not None
+                    or item.committed
+                    or item.history_after != expected_history
+                    or item.summary_after is not None
+                    or item.stop_reason != expected_stop
+                ):
+                    return KernelDiagnostic("EVIDENCE-UNKNOWN-MISMATCH", "unknown-effect evidence does not close over its S7 retry transition")
+                context = expected_context
+                history = expected_history
+                resources = charged_resources
+                processed_ids = processed_ids | {expected_execution_id}
+                if expected_stop is not None and index != len(state.evidence):
+                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap unknown-effect evidence item cannot have a later causal round")
+                continue
+
+            recovery = item.execution.prep_recover
+            recovery_error_code: str | None = None
+            if action.kind in {"PREP", "RECOVER"}:
+                assert isinstance(recovery, PrepRecoverResult)
+                if recovery.prep_error or recovery.ineligible:
+                    recovery_error_code = "PREP-RECOVER-ERROR"
+                elif action.kind == "PREP" and not recovery.summary_confirmed:
+                    recovery_error_code = "PREP-SUMMARY-UNCONFIRMED"
+                elif action.kind == "RECOVER" and (
+                    not recovery.target_confirmed or not recovery.summary_confirmed
+                ):
+                    recovery_error_code = "RECOVER-TARGET-UNCONFIRMED"
+            if recovery_error_code is not None:
+                expected_history, expected_context, expected_stop = s7_expected(recovery_error_code, item.execution)
+                if (
+                    item.resolution_code != recovery_error_code
+                    or item.rejected_response is not None
+                    or item.committed
+                    or item.history_after != expected_history
+                    or item.summary_after is not None
+                    or item.stop_reason != expected_stop
+                ):
+                    return KernelDiagnostic("EVIDENCE-RECOVERY-MISMATCH", "Prep/Recover evidence does not close over its S7 retry transition")
+                context = expected_context
+                history = expected_history
+                resources = charged_resources
+                processed_ids = processed_ids | {expected_execution_id}
+                if expected_stop is not None and index != len(state.evidence):
+                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap recovery evidence item cannot have a later causal round")
+                continue
+
+            if item.execution.observable is None:
+                next_history = self._summary_only_history(history)
+                next_frontiers = frontiers
+            else:
+                selected_class, interpretation_error = _matching_class(item.snapshot, item.execution)
+                if selected_class is None:
+                    assert interpretation_error is not None
+                    expected_history, expected_context, expected_stop = s7_expected(
+                        interpretation_error.code, item.execution,
+                    )
+                    if (
+                        item.resolution_code != interpretation_error.code
+                        or item.rejected_response != item.execution
+                        or item.committed
+                        or item.history_after != expected_history
+                        or item.summary_after is not None
+                        or item.stop_reason != expected_stop
+                    ):
+                        return KernelDiagnostic("EVIDENCE-INTERPRETATION-MISMATCH", "rejected observation does not close over its S7 retry transition")
+                    context = expected_context
+                    history = expected_history
+                    resources = charged_resources
+                    processed_ids = processed_ids | {expected_execution_id}
+                    if expected_stop is not None and index != len(state.evidence):
+                        return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap rejected-observation item cannot have a later causal round")
+                    continue
+                next_history = self._history_for_class(history, selected_class)
+                next_frontiers = MappingProxyType(dict(selected_class.successors))
+
+            if item.rejected_response is not None:
+                return KernelDiagnostic("EVIDENCE-REJECTED-RESPONSE", "accepted execution evidence cannot also retain a rejected response")
+            context_before_s9 = self._context_with_resource(context, charged_resources)
+            s8_adoption = (
+                self._s8_recover_known(recovery)
+                if action.kind == "RECOVER"
+                else None
             )
-            next_context = SessionContext.create(
-                session_id=context.session_id,
-                run_id=context.run_id,
-                experiment_attempt_id=context.experiment_attempt_id,
-                model_identity=context.model_identity,
-                current_summary=item.execution.post_summary,
-                q_status="KNOWN",
-            )
-            expected_stop = "Stop-Empty" if not next_history.hypotheses else (
-                "Stop-Singleton" if len(next_history.hypotheses) == 1 else None
-            )
+            try:
+                next_context = self._s9_commit_summary(
+                    context_before_s9,
+                    item.execution.post_summary,
+                    s8_adoption=s8_adoption,
+                )
+            except (TypeError, ValueError) as exc:
+                return KernelDiagnostic("EVIDENCE-COMMIT-MISMATCH", str(exc) or type(exc).__name__)
+            expected_stop = self._normal_stop_reason(next_history)
             if (
-                not item.committed
+                item.resolution_code != "COMMIT"
+                or not item.committed
                 or item.history_after != next_history
                 or item.summary_after != next_context.current_summary
                 or item.stop_reason != expected_stop
             ):
-                return KernelDiagnostic("EVIDENCE-COMMIT-MISMATCH", "committed evidence does not match its derived history update")
+                return KernelDiagnostic("EVIDENCE-COMMIT-MISMATCH", "committed evidence does not match its derived S8/S9 history update")
             context = next_context
             history = next_history
-            frontiers = MappingProxyType(dict(selected_class.successors))
+            frontiers = next_frontiers
             resources = charged_resources
             processed_ids = processed_ids | {expected_execution_id}
+            if expected_stop is not None and index != len(state.evidence):
+                return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a terminal committed evidence item cannot have a later causal round")
 
         if (
             state.context != context
@@ -535,14 +788,10 @@ class ReferenceSession:
         *,
         model: FiniteSessionModel,
     ) -> SessionResult:
-        if state.evidence and state.evidence[-1].stop_reason is not None:
-            return SessionResult(
-                state,
-                environment,
-                state.evidence[-1].stop_reason,
-                (KernelDiagnostic("TERMINAL-SESSION-STATE", "the retained evidence ledger already records a terminal stop"),),
-            )
-        if state.context.q_status != "KNOWN" or state.context.current_summary is None:
+        terminal = self._retained_terminal_result(state, environment)
+        if terminal is not None:
+            return terminal
+        if state.context.q_status == "KNOWN" and state.context.current_summary is None:
             return SessionResult(
                 state, environment, "Stop-Error",
                 (KernelDiagnostic("UNRESOLVED-SESSION-SUMMARY", "known summary is required for TEST selection"),),
@@ -552,6 +801,8 @@ class ReferenceSession:
             stop_reason = {
                 "PREDICTION-GAP": "Stop-Prediction-Gap",
                 "A2-UNAFFORDABLE": "Stop-Budget",
+                "A5-UNAFFORDABLE-RECOVER": "Stop-Budget",
+                "A4-NO-ELIGIBLE-RECOVER": "Stop-Error",
                 "NO-ADMITTED-ACTION": "Stop-No-Action",
             }.get(admission.reason, "Stop-Error")
             return SessionResult(state, environment, stop_reason, admission.diagnostics)
@@ -717,7 +968,7 @@ class ReferenceSession:
                     execution.successor if isinstance(execution.successor, SyntheticEnvironment) else None
                 ),
             )
-        record_error = _incoming_record_error(execution.record)
+        record_error = _incoming_record_error(execution.record, action=action)
         if record_error is not None:
             return self._charged_execution_error(
                 state=state,
@@ -738,7 +989,6 @@ class ReferenceSession:
         if (
             execution.record.execution_attempt_id != execution_attempt_id
             or execution.record.action_id != snapshot.action_id
-            or execution_attempt_id in state.processed_execution_attempt_ids
         ):
             return self._charged_execution_error(
                 state=state,
@@ -752,49 +1002,97 @@ class ReferenceSession:
                 execution_attempt_id=execution_attempt_id,
                 diagnostics=diagnostics,
                 code="EXECUTION-IDENTITY-ERROR",
-                message="execution result attempt/action identity is invalid or already processed",
+                message="execution result attempt/action identity is invalid",
                 execution_record=execution.record,
                 environment_after_execution=execution.successor,
             )
         if execution.record.effect_class == "CONFIRMED-NOT-SENT":
-            evidence = RoundEvidence(
-                snapshot, prediction, execution.record, True, True, resource_before, resource_after,
-                action.detail_charges, action.projected_cost(), state.history, state.history,
-                state.context.current_summary, False, "Stop-Error",
+            return self._retry_after_not_sent(
+                state=state,
+                environment_after_execution=execution.successor,
+                snapshot=snapshot,
+                prediction=prediction,
+                action=action,
+                resource_before=resource_before,
+                resource_after=resource_after,
+                charged_resources=charged_resources,
+                execution_attempt_id=execution_attempt_id,
+                diagnostics=diagnostics,
+                execution_record=execution.record,
             )
-            next_state = SessionState(
-                state.context, state.history, state.frontiers, charged_resources,
-                state.attempts + 1, state.processed_execution_attempt_ids | {execution_attempt_id}, state.evidence + (evidence,),
-                self._authority_identity, self._seed_identity,
+
+        if execution.record.effect_class == "UNKNOWN-EFFECT":
+            return self._s7_retry(
+                state=state,
+                environment_after_execution=execution.successor,
+                snapshot=snapshot,
+                prediction=prediction,
+                action=action,
+                resource_before=resource_before,
+                resource_after=resource_after,
+                charged_resources=charged_resources,
+                execution_attempt_id=execution_attempt_id,
+                diagnostics=diagnostics,
+                execution_record=execution.record,
+                code="UNKNOWN-EFFECT",
+                message="synthetic execution did not confirm a successor summary",
             )
-            return SessionResult(
-                next_state, execution.successor, "Stop-Error",
-                tuple(diagnostics + [KernelDiagnostic("CONFIRMED-NOT-SENT", "environment confirmed that no action was sent")]),
-            )
-        if execution.record.effect_class != "NONE" or not execution.record.summary_confirmed:
-            unknown_context = SessionContext.create(
-                session_id=state.context.session_id,
-                run_id=state.context.run_id,
-                experiment_attempt_id=state.context.experiment_attempt_id,
-                model_identity=state.context.model_identity,
-                current_summary=None,
-                q_status="CONSERVATIVE-UNKNOWN",
-            )
-            evidence = RoundEvidence(
-                snapshot, prediction, execution.record, True, True, resource_before, resource_after,
-                action.detail_charges, action.projected_cost(), state.history, state.history,
-                None, False, "Stop-Error",
-            )
-            next_state = SessionState(
-                unknown_context, state.history, state.frontiers, charged_resources,
-                state.attempts + 1, state.processed_execution_attempt_ids | {execution_attempt_id}, state.evidence + (evidence,),
-                self._authority_identity, self._seed_identity,
-            )
-            return SessionResult(
-                next_state, execution.successor, "Stop-Error",
-                tuple(diagnostics + [KernelDiagnostic("UNKNOWN-EFFECT", "synthetic execution did not confirm a successor summary")]),
-            )
-        if not isinstance(execution.record.post_summary, str) or not execution.record.post_summary:
+
+        if action.kind in {"PREP", "RECOVER"}:
+            recovery = execution.record.prep_recover
+            assert isinstance(recovery, PrepRecoverResult)
+            if recovery.prep_error or recovery.ineligible:
+                return self._s7_retry(
+                    state=state,
+                    environment_after_execution=execution.successor,
+                    snapshot=snapshot,
+                    prediction=prediction,
+                    action=action,
+                    resource_before=resource_before,
+                    resource_after=resource_after,
+                    charged_resources=charged_resources,
+                    execution_attempt_id=execution_attempt_id,
+                    diagnostics=diagnostics,
+                    execution_record=execution.record,
+                    code="PREP-RECOVER-ERROR",
+                    message="Prep/Recover returned a declared error or ineligible result",
+                )
+            if action.kind == "PREP" and not recovery.summary_confirmed:
+                return self._s7_retry(
+                    state=state,
+                    environment_after_execution=execution.successor,
+                    snapshot=snapshot,
+                    prediction=prediction,
+                    action=action,
+                    resource_before=resource_before,
+                    resource_after=resource_after,
+                    charged_resources=charged_resources,
+                    execution_attempt_id=execution_attempt_id,
+                    diagnostics=diagnostics,
+                    execution_record=execution.record,
+                    code="PREP-SUMMARY-UNCONFIRMED",
+                    message="Prep did not confirm its actual successor summary",
+                )
+            if action.kind == "RECOVER" and (
+                not recovery.target_confirmed or not recovery.summary_confirmed
+            ):
+                return self._s7_retry(
+                    state=state,
+                    environment_after_execution=execution.successor,
+                    snapshot=snapshot,
+                    prediction=prediction,
+                    action=action,
+                    resource_before=resource_before,
+                    resource_after=resource_after,
+                    charged_resources=charged_resources,
+                    execution_attempt_id=execution_attempt_id,
+                    diagnostics=diagnostics,
+                    execution_record=execution.record,
+                    code="RECOVER-TARGET-UNCONFIRMED",
+                    message="Recover did not confirm both its target and successor summary",
+                )
+
+        if not execution.record.summary_confirmed or not isinstance(execution.record.post_summary, str) or not execution.record.post_summary:
             return self._charged_execution_error(
                 state=state,
                 environment=environment,
@@ -807,30 +1105,197 @@ class ReferenceSession:
                 execution_attempt_id=execution_attempt_id,
                 diagnostics=diagnostics,
                 code="SUMMARY-CONFIRMATION-ERROR",
-                message="confirmed normal execution did not return a nonempty successor summary",
+                message="confirmed execution did not return a nonempty successor summary",
                 execution_record=execution.record,
                 environment_after_execution=execution.successor,
             )
-        selected_class, interpretation_error = _matching_class(snapshot, execution.record)
-        if selected_class is None:
-            assert interpretation_error is not None
-            return self._charged_execution_error(
-                state=state,
-                environment=environment,
-                snapshot=snapshot,
-                prediction=prediction,
-                action=action,
-                resource_before=resource_before,
-                resource_after=resource_after,
-                charged_resources=charged_resources,
-                execution_attempt_id=execution_attempt_id,
-                diagnostics=diagnostics,
-                code=interpretation_error.code,
-                message=interpretation_error.message,
-                execution_record=execution.record,
-                environment_after_execution=execution.successor,
-            )
-        next_history = HistoryHandle.committed(
+        return self._commit_confirmed_execution(
+            state=state,
+            environment_after_execution=execution.successor,
+            snapshot=snapshot,
+            prediction=prediction,
+            action=action,
+            resource_before=resource_before,
+            resource_after=resource_after,
+            charged_resources=charged_resources,
+            execution_attempt_id=execution_attempt_id,
+            diagnostics=diagnostics,
+            execution_record=execution.record,
+        )
+
+    def _retry_after_not_sent(
+        self,
+        *,
+        state: SessionState,
+        environment_after_execution: SyntheticEnvironment,
+        snapshot: SelectSnapshot,
+        prediction: ActionPrediction,
+        action: SyntheticAction,
+        resource_before: AlgorithmResourceView,
+        resource_after: AlgorithmResourceView,
+        charged_resources: ResourceState,
+        execution_attempt_id: str,
+        diagnostics: list[KernelDiagnostic],
+        execution_record: VisibleExecutionRecord,
+    ) -> SessionResult:
+        """Apply the narrow CONFIRMED-NOT-SENT branch without invoking recovery.
+
+        This is intentionally distinct from S7.  The returned record proves
+        that no action was sent, so it cannot turn an already known summary or
+        compatible history into an UNKNOWN result.  It nevertheless consumes
+        the issued attempt's one charge and retry allowance.
+        """
+
+        next_context = self._context_after_retry(
+            state.context,
+            charged_resources,
+            error_entry=f"CONFIRMED-NOT-SENT:{execution_record.evidence_ref}",
+            make_unknown=False,
+        )
+        stop_reason = "Stop-Error" if next_context.retry_count >= next_context.retry_cap else None
+        evidence = RoundEvidence(
+            snapshot, prediction, execution_record, True, True, resource_before, resource_after,
+            action.detail_charges, action.projected_cost(), state.history, state.history,
+            next_context.current_summary, False, stop_reason,
+            resolution_code="CONFIRMED-NOT-SENT",
+        )
+        next_state = SessionState(
+            next_context, state.history, state.frontiers, charged_resources,
+            state.attempts + 1, state.processed_execution_attempt_ids | {execution_attempt_id}, state.evidence + (evidence,),
+            self._authority_identity, self._seed_identity,
+        )
+        return SessionResult(
+            next_state,
+            environment_after_execution,
+            stop_reason,
+            tuple(diagnostics + [KernelDiagnostic(
+                "CONFIRMED-NOT-SENT", "environment confirmed that no action was sent",
+            )]),
+        )
+
+    def _s7_retry(
+        self,
+        *,
+        state: SessionState,
+        environment_after_execution: SyntheticEnvironment,
+        snapshot: SelectSnapshot,
+        prediction: ActionPrediction,
+        action: SyntheticAction,
+        resource_before: AlgorithmResourceView,
+        resource_after: AlgorithmResourceView,
+        charged_resources: ResourceState,
+        execution_attempt_id: str,
+        diagnostics: list[KernelDiagnostic],
+        execution_record: VisibleExecutionRecord,
+        code: str,
+        message: str,
+        rejected_response: VisibleExecutionRecord | None = None,
+    ) -> SessionResult:
+        """Apply the single S7 path after an issued but unresolved action."""
+
+        next_history = self._conservative_history(state.history)
+        next_context = self._context_after_retry(
+            state.context,
+            charged_resources,
+            error_entry=f"{code}:{execution_record.evidence_ref}",
+            make_unknown=True,
+        )
+        stop_reason = "Stop-Error" if next_context.retry_count >= next_context.retry_cap else None
+        evidence = RoundEvidence(
+            snapshot, prediction, execution_record, True, True, resource_before, resource_after,
+            action.detail_charges, action.projected_cost(), state.history, next_history,
+            None, False, stop_reason, rejected_response, code,
+        )
+        next_state = SessionState(
+            next_context, next_history, state.frontiers, charged_resources,
+            state.attempts + 1, state.processed_execution_attempt_ids | {execution_attempt_id}, state.evidence + (evidence,),
+            self._authority_identity, self._seed_identity,
+        )
+        return SessionResult(
+            next_state,
+            environment_after_execution,
+            stop_reason,
+            tuple(diagnostics + [KernelDiagnostic(code, message)]),
+        )
+
+    def _commit_confirmed_execution(
+        self,
+        *,
+        state: SessionState,
+        environment_after_execution: SyntheticEnvironment,
+        snapshot: SelectSnapshot,
+        prediction: ActionPrediction,
+        action: SyntheticAction,
+        resource_before: AlgorithmResourceView,
+        resource_after: AlgorithmResourceView,
+        charged_resources: ResourceState,
+        execution_attempt_id: str,
+        diagnostics: list[KernelDiagnostic],
+        execution_record: VisibleExecutionRecord,
+    ) -> SessionResult:
+        """Apply S8 (when needed) and S9 from a confirmed normalized outcome."""
+
+        if execution_record.observable is None:
+            next_history = self._summary_only_history(state.history)
+            next_frontiers = state.frontiers
+        else:
+            selected_class, interpretation_error = _matching_class(snapshot, execution_record)
+            if selected_class is None:
+                assert interpretation_error is not None
+                return self._s7_retry(
+                    state=state,
+                    environment_after_execution=environment_after_execution,
+                    snapshot=snapshot,
+                    prediction=prediction,
+                    action=action,
+                    resource_before=resource_before,
+                    resource_after=resource_after,
+                    charged_resources=charged_resources,
+                    execution_attempt_id=execution_attempt_id,
+                    diagnostics=diagnostics,
+                    execution_record=execution_record,
+                    code=interpretation_error.code,
+                    message=interpretation_error.message,
+                    rejected_response=execution_record,
+                )
+            next_history = self._history_for_class(state.history, selected_class)
+            next_frontiers = MappingProxyType(dict(selected_class.successors))
+
+        context_before_s9 = self._context_with_resource(state.context, charged_resources)
+        s8_adoption: _S8RecoveryAdoption | None = None
+        if action.kind == "RECOVER":
+            recovery = execution_record.prep_recover
+            assert isinstance(recovery, PrepRecoverResult)
+            # S8 is the only recovery branch permitted to restore KNOWN and
+            # consume the declared target/evidence.  It deliberately does not
+            # write current_summary; S9 below remains that sole writer.
+            s8_adoption = self._s8_recover_known(recovery)
+        next_context = self._s9_commit_summary(
+            context_before_s9, execution_record.post_summary, s8_adoption=s8_adoption,
+        )
+        stop_reason = self._normal_stop_reason(next_history)
+        evidence = RoundEvidence(
+            snapshot, prediction, execution_record, True, True, resource_before, resource_after,
+            action.detail_charges, action.projected_cost(), state.history, next_history,
+            next_context.current_summary, True, stop_reason,
+            resolution_code="COMMIT",
+        )
+        next_state = SessionState(
+            next_context, next_history, next_frontiers, charged_resources,
+            state.attempts + 1, state.processed_execution_attempt_ids | {execution_attempt_id}, state.evidence + (evidence,),
+            self._authority_identity, self._seed_identity,
+        )
+        return SessionResult(next_state, environment_after_execution, stop_reason, tuple(diagnostics))
+
+    @staticmethod
+    def _normal_stop_reason(history: HistoryHandle) -> str | None:
+        return "Stop-Empty" if not history.hypotheses else (
+            "Stop-Singleton" if len(history.hypotheses) == 1 else None
+        )
+
+    @staticmethod
+    def _history_for_class(history: HistoryHandle, selected_class: PredictionClass) -> HistoryHandle:
+        return HistoryHandle.committed(
             hypotheses=selected_class.hypotheses,
             compatible_state_by_hypothesis={
                 hypothesis: tuple(entry.history_provenance[-1] for entry in entries)
@@ -840,44 +1305,190 @@ class ReferenceSession:
                 hypothesis: "CONSERVATIVE-UNKNOWN" if hypothesis in selected_class.conservative_hypotheses else "KNOWN"
                 for hypothesis in selected_class.hypotheses
             },
-            version=state.history.version + 1,
+            version=history.version + 1,
         )
-        next_context = SessionContext.create(
-            session_id=state.context.session_id,
-            run_id=state.context.run_id,
-            experiment_attempt_id=state.context.experiment_attempt_id,
-            model_identity=state.context.model_identity,
-            current_summary=execution.record.post_summary,
+
+    @staticmethod
+    def _summary_only_history(history: HistoryHandle) -> HistoryHandle:
+        """Advance the operation history without treating a summary as ``I_z``."""
+
+        return HistoryHandle.committed(
+            hypotheses=history.hypotheses,
+            compatible_state_by_hypothesis=history.compatible_state_by_hypothesis,
+            status_by_hypothesis={
+                hypothesis: history.status_by_hypothesis.get(hypothesis, "KNOWN")
+                for hypothesis in history.hypotheses
+            },
+            version=history.version + 1,
+        )
+
+    @staticmethod
+    def _conservative_history(history: HistoryHandle) -> HistoryHandle:
+        """Preserve H/frontiers while marking every retained member uncertain."""
+
+        # S7 is the error-containment path.  It must remain available even if
+        # a later normal-commit helper fails while constructing a derived
+        # HistoryHandle (for example an adapter regression during S9
+        # preparation).  The input history was already validated at S0/S6;
+        # build the simple, lossless conservative successor directly instead
+        # of re-entering the fallible normal-commit factory.
+        return HistoryHandle(
+            hypotheses=history.hypotheses,
+            compatible_state_by_hypothesis=history.compatible_state_by_hypothesis,
+            status_by_hypothesis=MappingProxyType({
+                hypothesis: "CONSERVATIVE-UNKNOWN" for hypothesis in history.hypotheses
+            }),
+            version=history.version + 1,
+            processed=True,
+        )
+
+    @staticmethod
+    def _context_with_resource(context: SessionContext, resources: ResourceState) -> SessionContext:
+        return SessionContext.create(
+            session_id=context.session_id,
+            run_id=context.run_id,
+            experiment_attempt_id=context.experiment_attempt_id,
+            model_identity=context.model_identity,
+            current_summary=context.current_summary,
+            q_status=context.q_status,
+            resource_remainder=resources.remaining,
+            retry_count=context.retry_count,
+            retry_cap=context.retry_cap,
+            known_target=context.known_target,
+            known_evidence=context.known_evidence,
+            error_history=context.error_history,
+            unknown_history=context.unknown_history,
+        )
+
+    @staticmethod
+    def _context_after_retry(
+        context: SessionContext,
+        resources: ResourceState,
+        *,
+        error_entry: str,
+        make_unknown: bool,
+    ) -> SessionContext:
+        return SessionContext.create(
+            session_id=context.session_id,
+            run_id=context.run_id,
+            experiment_attempt_id=context.experiment_attempt_id,
+            model_identity=context.model_identity,
+            current_summary=None if make_unknown else context.current_summary,
+            q_status="UNKNOWN" if make_unknown else context.q_status,
+            resource_remainder=resources.remaining,
+            retry_count=context.retry_count + 1,
+            retry_cap=context.retry_cap,
+            known_target=None if make_unknown else context.known_target,
+            known_evidence=() if make_unknown else context.known_evidence,
+            error_history=context.error_history + (error_entry,),
+            unknown_history=(
+                context.unknown_history + (error_entry,)
+                if make_unknown else context.unknown_history
+            ),
+        )
+
+    @staticmethod
+    def _s8_recover_known(recovery: PrepRecoverResult) -> _S8RecoveryAdoption:
+        return _S8RecoveryAdoption(
             q_status="KNOWN",
+            known_target=recovery.declared_target,
+            known_evidence=(recovery.evidence,),
         )
-        stop_reason = "Stop-Empty" if not next_history.hypotheses else (
-            "Stop-Singleton" if len(next_history.hypotheses) == 1 else None
+
+    @staticmethod
+    def _s9_commit_summary(
+        context: SessionContext,
+        post_summary: str | None,
+        *,
+        s8_adoption: _S8RecoveryAdoption | None = None,
+    ) -> SessionContext:
+        q_status = context.q_status if s8_adoption is None else s8_adoption.q_status
+        known_target = context.known_target if s8_adoption is None else s8_adoption.known_target
+        known_evidence = context.known_evidence if s8_adoption is None else s8_adoption.known_evidence
+        if q_status != "KNOWN" or not isinstance(post_summary, str) or not post_summary:
+            raise ValueError("S9 requires a KNOWN context and a confirmed successor summary")
+        return SessionContext.create(
+            session_id=context.session_id,
+            run_id=context.run_id,
+            experiment_attempt_id=context.experiment_attempt_id,
+            model_identity=context.model_identity,
+            current_summary=post_summary,
+            q_status=q_status,
+            resource_remainder=context.resource_remainder,
+            retry_count=context.retry_count,
+            retry_cap=context.retry_cap,
+            known_target=known_target,
+            known_evidence=known_evidence,
+            error_history=context.error_history,
+            unknown_history=context.unknown_history,
         )
-        evidence = RoundEvidence(
-            snapshot, prediction, execution.record, True, True, resource_before, resource_after,
-            action.detail_charges, action.projected_cost(), state.history, next_history,
-            next_context.current_summary, True, stop_reason,
-        )
-        next_state = SessionState(
-            next_context,
-            next_history,
-            MappingProxyType(dict(selected_class.successors)),
-            charged_resources,
-            state.attempts + 1,
-            state.processed_execution_attempt_ids | {execution_attempt_id},
-            state.evidence + (evidence,),
-            self._authority_identity,
-            self._seed_identity,
-        )
-        return SessionResult(next_state, execution.successor, stop_reason, tuple(diagnostics))
 
     def _admit(
         self, state: SessionState, *, model: FiniteSessionModel | None = None,
     ) -> AdmissionDecision:
-        """Apply the B/C-1 TEST/GAP/PREP table without side effects."""
+        """Apply the shared A1--A5 table without mutating a session.
+
+        A known session can select a scored TEST or an unscored PREP fallback.
+        An unknown session deliberately takes the separate Recover branch: its
+        action is declared eligible, never inferred from a stale summary, and
+        it is not scored as an observation-minimax TEST.
+        """
 
         current_model = self.model if model is None else model
         diagnostics: list[KernelDiagnostic] = []
+
+        if state.context.q_status == "UNKNOWN":
+            recover_candidates: list[tuple[SyntheticAction, ActionPrediction]] = []
+            declared_recover_seen = False
+            eligible_recover_seen = False
+            unaffordable_recover_seen = False
+            for action in current_model.actions.values():
+                if action.kind != "RECOVER":
+                    continue
+                declared_recover_seen = True
+                if not action.recover_when_unknown:
+                    continue
+                eligible_recover_seen = True
+                prediction = current_model.predict(
+                    hypotheses=state.history.hypotheses,
+                    frontiers=state.frontiers,
+                    status_by_hypothesis=state.history.status_by_hypothesis,
+                    action_id=action.action_id,
+                )
+                diagnostics.extend(prediction.diagnostics)
+                if state.resources.can_afford(action):
+                    recover_candidates.append((action, prediction))
+                else:
+                    unaffordable_recover_seen = True
+            if recover_candidates:
+                action, prediction = min(
+                    recover_candidates, key=lambda item: (item[0].cost, item[0].action_id),
+                )
+                return AdmissionDecision("RECOVER", action, prediction, "RECOVER-ADMITTED", tuple(diagnostics))
+            if eligible_recover_seen and unaffordable_recover_seen:
+                return AdmissionDecision(
+                    "ADMIT", None, None, "A5-UNAFFORDABLE-RECOVER",
+                    tuple(diagnostics + [KernelDiagnostic(
+                        "ADMISSION-A5-UNAFFORDABLE-RECOVER",
+                        "an UNKNOWN session has an eligible but unaffordable Recover action",
+                    )]),
+                )
+            reason = "A4-NO-ELIGIBLE-RECOVER"
+            detail = (
+                "UNKNOWN session has only ineligible declared Recover actions"
+                if declared_recover_seen else "UNKNOWN session has no declared Recover action"
+            )
+            return AdmissionDecision(
+                "ADMIT", None, None, reason,
+                tuple(diagnostics + [KernelDiagnostic("ADMISSION-A4-NO-ELIGIBLE-RECOVER", detail)]),
+            )
+
+        if state.context.q_status != "KNOWN" or state.context.current_summary is None:
+            return AdmissionDecision(
+                "ADMIT", None, None, "INVALID-SESSION-STATUS",
+                tuple(diagnostics + [KernelDiagnostic("INVALID-SESSION-STATUS", "session is neither KNOWN nor UNKNOWN")]),
+            )
+
         test_candidates: list[tuple[SyntheticAction, ActionPrediction, int]] = []
         eligible_test_seen = False
         unaffordable_test_seen = False
@@ -991,47 +1602,21 @@ class ReferenceSession:
             uncertainty_identity=None,
             evidence_ref=f"synthetic:{execution_attempt_id}:tool-error",
         )
-        unknown_context = SessionContext.create(
-            session_id=state.context.session_id,
-            run_id=state.context.run_id,
-            experiment_attempt_id=state.context.experiment_attempt_id,
-            model_identity=state.context.model_identity,
-            current_summary=None,
-            q_status="CONSERVATIVE-UNKNOWN",
-        )
-        evidence = RoundEvidence(
-            snapshot,
-            prediction,
-            expected_record,
-            True,
-            True,
-            resource_before,
-            resource_after,
-            action.detail_charges,
-            action.projected_cost(),
-            state.history,
-            state.history,
-            None,
-            False,
-            "Stop-Error",
-            execution_record,
-        )
-        charged_state = SessionState(
-            unknown_context,
-            state.history,
-            state.frontiers,
-            charged_resources,
-            state.attempts + 1,
-            state.processed_execution_attempt_ids | {execution_attempt_id},
-            state.evidence + (evidence,),
-            self._authority_identity,
-            self._seed_identity,
-        )
-        return SessionResult(
-            charged_state,
-            environment_after_execution or environment,
-            "Stop-Error",
-            tuple(diagnostics + [KernelDiagnostic(code, message)]),
+        return self._s7_retry(
+            state=state,
+            environment_after_execution=environment_after_execution or environment,
+            snapshot=snapshot,
+            prediction=prediction,
+            action=action,
+            resource_before=resource_before,
+            resource_after=resource_after,
+            charged_resources=charged_resources,
+            execution_attempt_id=execution_attempt_id,
+            diagnostics=diagnostics,
+            execution_record=expected_record,
+            code=code,
+            message=message,
+            rejected_response=execution_record,
         )
 
 
@@ -1109,6 +1694,13 @@ def _session_seed_identity(
         context.model_identity,
         context.current_summary,
         context.q_status,
+        context.resource_remainder,
+        context.retry_count,
+        context.retry_cap,
+        context.known_target,
+        context.known_evidence,
+        context.error_history,
+        context.unknown_history,
         tuple(sorted(history.hypotheses)),
         tuple(sorted(history.compatible_state_by_hypothesis.items())),
         tuple(sorted(history.status_by_hypothesis.items())),
@@ -1159,7 +1751,9 @@ def _matching_class(
     return candidate, None
 
 
-def _incoming_record_error(record: VisibleExecutionRecord) -> KernelDiagnostic | None:
+def _incoming_record_error(
+    record: VisibleExecutionRecord, *, action: SyntheticAction,
+) -> KernelDiagnostic | None:
     """Check the closed, visible execution-record combinations at S4/S8.
 
     The synthetic environment validates its own declarative outcomes, but an
@@ -1181,27 +1775,79 @@ def _incoming_record_error(record: VisibleExecutionRecord) -> KernelDiagnostic |
         return KernelDiagnostic("INVALID-EXECUTION-RECORD", "execution effect class is outside the controlled vocabulary")
     if not isinstance(record.summary_confirmed, bool):
         return KernelDiagnostic("INVALID-EXECUTION-RECORD", "summary confirmation must be Boolean")
-    if not isinstance(record.uncertainty_identity, str) or not record.uncertainty_identity.strip():
-        return KernelDiagnostic("INVALID-EXECUTION-RECORD", "incoming execution record must name a nonempty uncertainty identity")
-    if record.effect_class == "NONE":
-        if not isinstance(record.observable, str) or not record.observable:
-            return KernelDiagnostic("INVALID-EXECUTION-RECORD", "normal execution requires a nonempty visible observation")
-        if not record.summary_confirmed:
-            return KernelDiagnostic("INVALID-EXECUTION-RECORD", "normal execution requires summary confirmation")
-        if not isinstance(record.post_summary, str) or not record.post_summary:
-            return KernelDiagnostic("SUMMARY-CONFIRMATION-ERROR", "confirmed normal execution did not return a nonempty successor summary")
-        if not isinstance(record.measurement_tick, Fraction):
-            return KernelDiagnostic("INVALID-EXECUTION-RECORD", "normal execution requires an exact measurement tick")
+    if record.effect_class != "NONE":
+        if (
+            record.observable is not None
+            or record.summary_confirmed
+            or record.post_summary is not None
+            or record.measurement_tick is not None
+            or record.uncertainty_identity is not None
+            or record.prep_recover is not None
+        ):
+            return KernelDiagnostic(
+                "INVALID-EXECUTION-RECORD",
+                "non-normal execution cannot manufacture an observation, confirmation, summary, measurement, uncertainty, or recovery result",
+            )
         return None
+
+    if action.kind == "TEST":
+        if record.prep_recover is not None:
+            return KernelDiagnostic("INVALID-EXECUTION-RECORD", "TEST cannot carry a Prep/Recover result")
+        if not isinstance(record.observable, str) or not record.observable:
+            return KernelDiagnostic("INVALID-EXECUTION-RECORD", "normal TEST execution requires a nonempty visible observation")
+        if not record.summary_confirmed:
+            return KernelDiagnostic("INVALID-EXECUTION-RECORD", "normal TEST execution requires summary confirmation")
+        if not isinstance(record.post_summary, str) or not record.post_summary:
+            return KernelDiagnostic("SUMMARY-CONFIRMATION-ERROR", "confirmed normal TEST execution did not return a nonempty successor summary")
+        if not isinstance(record.measurement_tick, Fraction):
+            return KernelDiagnostic("INVALID-EXECUTION-RECORD", "normal TEST execution requires an exact measurement tick")
+        if not isinstance(record.uncertainty_identity, str) or not record.uncertainty_identity.strip():
+            return KernelDiagnostic("INVALID-EXECUTION-RECORD", "observed TEST execution must name a nonempty uncertainty identity")
+        return None
+
+    if action.kind not in {"PREP", "RECOVER"}:
+        return KernelDiagnostic("INVALID-EXECUTION-RECORD", "execution action kind is outside the controlled vocabulary")
+    result = record.prep_recover
+    if not isinstance(result, PrepRecoverResult):
+        return KernelDiagnostic("INVALID-EXECUTION-RECORD", "normal Prep/Recover execution requires a typed recovery result")
     if (
-        record.observable is not None
-        or record.summary_confirmed
-        or record.post_summary is not None
-        or record.measurement_tick is not None
+        not isinstance(result.target_confirmed, bool)
+        or not isinstance(result.summary_confirmed, bool)
+        or not isinstance(result.prep_error, bool)
+        or not isinstance(result.ineligible, bool)
+        or not isinstance(result.declared_target, str)
+        or not result.declared_target
+        or not isinstance(result.evidence, str)
+        or not result.evidence.strip()
+    ):
+        return KernelDiagnostic("INVALID-EXECUTION-RECORD", "Prep/Recover result has an invalid confirmation, target, or evidence field")
+    if result.declared_target != action.declared_target:
+        return KernelDiagnostic("RECOVERY-TARGET-MISMATCH", "Prep/Recover result does not name the admitted action's declared target")
+    if record.summary_confirmed != result.summary_confirmed or record.post_summary != result.post_summary:
+        return KernelDiagnostic("INVALID-EXECUTION-RECORD", "visible and Prep/Recover summary fields disagree")
+    if result.summary_confirmed:
+        if not isinstance(result.post_summary, str) or not result.post_summary:
+            return KernelDiagnostic("SUMMARY-CONFIRMATION-ERROR", "confirmed Prep/Recover result did not return a nonempty successor summary")
+    elif result.post_summary is not None:
+        return KernelDiagnostic("INVALID-EXECUTION-RECORD", "unconfirmed Prep/Recover result cannot carry a successor summary")
+    if (result.prep_error or result.ineligible) and (result.target_confirmed or result.summary_confirmed):
+        return KernelDiagnostic("INVALID-EXECUTION-RECORD", "failed Prep/Recover result cannot claim a confirmation")
+    if record.observable is None:
+        if record.measurement_tick is not None or record.uncertainty_identity is not None:
+            return KernelDiagnostic(
+                "INVALID-EXECUTION-RECORD",
+                "summary-only Prep/Recover result cannot carry a measurement tick or uncertainty identity",
+            )
+    elif (
+        not isinstance(record.observable, str)
+        or not record.observable
+        or not isinstance(record.measurement_tick, Fraction)
+        or not isinstance(record.uncertainty_identity, str)
+        or not record.uncertainty_identity.strip()
     ):
         return KernelDiagnostic(
             "INVALID-EXECUTION-RECORD",
-            "non-normal execution cannot manufacture an observation, confirmation, summary, or measurement",
+            "Prep/Recover observation must pair a nonempty label, exact measurement tick, and uncertainty identity",
         )
     return None
 
@@ -1306,17 +1952,6 @@ def _is_expected_error_record(
         measurement_tick=None,
         uncertainty_identity=None,
         evidence_ref=f"synthetic:{execution_attempt_id}:tool-error",
-    )
-
-
-def _conservative_context(context: SessionContext) -> SessionContext:
-    return SessionContext.create(
-        session_id=context.session_id,
-        run_id=context.run_id,
-        experiment_attempt_id=context.experiment_attempt_id,
-        model_identity=context.model_identity,
-        current_summary=None,
-        q_status="CONSERVATIVE-UNKNOWN",
     )
 
 

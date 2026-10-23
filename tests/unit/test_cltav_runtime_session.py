@@ -216,7 +216,7 @@ def test_rounds_mode_consumes_one_issued_action_not_declared_action_cost() -> No
             "uncertaintyIdentity": "synthetic-u-1",
             "states": {
                 "private-rounds": {
-                    "test-expensive-optimal": {"effectClass": "NONE", "observable": "e0", "summaryConfirmed": True, "measurementTick": 0, "nextPrivateState": "private-rounds"}
+                    "test-expensive-optimal": {"effectClass": "NONE", "observable": "e0", "summaryConfirmed": True, "postSummary": "e0", "measurementTick": 0, "nextPrivateState": "private-rounds"}
                 }
             },
         },
@@ -259,6 +259,8 @@ def test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_ent
         {
             "id": "prep-after-gap",
             "kind": "PREP",
+            "declaredTarget": "prepared-q1",
+            "recoverWhenUnknown": False,
             "cost": 1,
             "detailCharges": {"acquisition": 0, "computation": 0, "preparation": 1, "recovery": 0, "retry": 0},
             "enabledSummaries": ["q0"],
@@ -275,7 +277,23 @@ def test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_ent
             "uncertaintyIdentity": "synthetic-u-1",
             "states": {
                 "private-prep": {
-                    "prep-after-gap": {"effectClass": "NONE", "observable": "prep-summary", "summaryConfirmed": True, "measurementTick": 0, "nextPrivateState": "private-prep"}
+                    "prep-after-gap": {
+                        "effectClass": "NONE",
+                        "observable": "prep-summary",
+                        "summaryConfirmed": True,
+                        "postSummary": "prep-summary",
+                        "measurementTick": 0,
+                        "nextPrivateState": "private-prep",
+                        "prepRecover": {
+                            "targetConfirmed": False,
+                            "summaryConfirmed": True,
+                            "prepError": False,
+                            "ineligible": False,
+                            "declaredTarget": "prepared-q1",
+                            "evidence": "synthetic:prep-after-gap:summary",
+                            "postSummary": "prep-summary",
+                        },
+                    }
                 }
             },
         },
@@ -343,11 +361,13 @@ def test_confirmed_not_sent_is_issued_and_charged_once_but_preserves_history() -
         run_id="run-not-sent",
         initial_summary="q0",
         resources=ResourceState.rounds(2),
+        retry_cap=1,
     ).run(SyntheticEnvironment.from_mapping(fixture["environments"]["notSent"]), maximum_rounds=1)
 
     assert result.stop_reason == "Stop-Error"
     evidence = result.state.evidence[0]
     assert evidence.execution.effect_class == "CONFIRMED-NOT-SENT"
+    assert evidence.execution.uncertainty_identity is None
     assert evidence.issued_to_executor is True
     assert evidence.charged_once is True
     assert evidence.resource_before.remaining == 2
@@ -355,6 +375,8 @@ def test_confirmed_not_sent_is_issued_and_charged_once_but_preserves_history() -
     assert evidence.history_before is evidence.history_after
     assert evidence.summary_after == "q0"
     assert evidence.committed is False
+    assert result.state.context.retry_count == 1
+    assert result.state.context.resource_remainder == 1
 
     resumed = ReferenceSession(
         binding=binding, model=model, session_id="session-not-sent", run_id="run-not-sent",
@@ -382,7 +404,7 @@ def test_execution_tool_error_keeps_the_already_charged_execution_record(error_t
     assert result.state.attempts == 1
     assert result.state.evidence[0].execution.effect_class == "UNKNOWN-EFFECT"
     assert result.state.evidence[0].charged_once is True
-    assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
+    assert result.state.context.q_status == "UNKNOWN"
 
 
 def test_invalid_execution_identity_does_not_restore_the_pre_charge_state() -> None:
@@ -400,7 +422,7 @@ def test_invalid_execution_identity_does_not_restore_the_pre_charge_state() -> N
                     summary_confirmed=True,
                     post_summary="branch-alpha",
                     measurement_tick=Fraction(0),
-                    uncertainty_identity="synthetic-u-1",
+                        uncertainty_identity="synthetic-u-1",
                     evidence_ref="synthetic:wrong-execution-id:bad",
                 ),
                 self.successor,
@@ -418,7 +440,7 @@ def test_invalid_execution_identity_does_not_restore_the_pre_charge_state() -> N
     assert result.stop_reason == "Stop-Error"
     assert result.state.resources.remaining == 1
     assert result.state.attempts == 1
-    assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
+    assert result.state.context.q_status == "UNKNOWN"
     assert result.state.evidence[0].execution.execution_attempt_id == "run-identity-error:session-identity-error:execution:1"
     assert result.state.evidence[0].rejected_response is not None
     assert result.state.evidence[0].rejected_response.execution_attempt_id == "wrong-execution-id"
@@ -459,7 +481,7 @@ def test_confirmed_but_missing_post_summary_keeps_charge_and_real_environment_su
     assert result.diagnostics[-1].code == "SUMMARY-CONFIRMATION-ERROR"
     assert result.state.resources.remaining == 1
     assert result.state.attempts == 1
-    assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
+    assert result.state.context.q_status == "UNKNOWN"
     assert result.environment._state == "private-a1"
     assert result.state.evidence[0].rejected_response is not None
     assert result.state.evidence[0].rejected_response.post_summary is None
@@ -569,8 +591,9 @@ def test_malformed_visible_record_combinations_are_controlled_post_dispatch_erro
     assert result.stop_reason == "Stop-Error"
     assert result.diagnostics[-1].code == "INVALID-EXECUTION-RECORD"
     assert result.state.resources.remaining == 1
-    assert result.state.history.version == 0
-    assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
+    assert result.state.history.version == 1
+    assert result.state.context.q_status == "UNKNOWN"
+    assert set(result.state.history.status_by_hypothesis.values()) == {"CONSERVATIVE-UNKNOWN"}
     assert result.environment._state == "private-a1"
     assert result.state.evidence[0].rejected_response is not None
 
@@ -610,8 +633,11 @@ def test_post_dispatch_faults_keep_the_issued_charge_and_successor(
     assert result.diagnostics[-1].code == "POST-DISPATCH-ERROR"
     assert result.state.attempts == 1
     assert result.state.resources == ResourceState(resources.mode, expected_remaining)
-    assert result.state.history == session.initial_state.history
-    assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
+    assert result.state.history.hypotheses == session.initial_state.history.hypotheses
+    assert result.state.history.compatible_state_by_hypothesis == session.initial_state.history.compatible_state_by_hypothesis
+    assert result.state.history.version == session.initial_state.history.version + 1
+    assert set(result.state.history.status_by_hypothesis.values()) == {"CONSERVATIVE-UNKNOWN"}
+    assert result.state.context.q_status == "UNKNOWN"
     assert result.state.evidence[0].committed is False
     assert result.state.evidence[0].execution.execution_attempt_id.endswith(":execution:1")
     assert result.state.evidence[0].rejected_response is not None
@@ -666,7 +692,7 @@ def test_wrong_action_identity_cannot_use_any_effect_branch(
                     summary_confirmed=summary_confirmed,
                     post_summary=post_summary,
                     measurement_tick=measurement_tick,
-                    uncertainty_identity="synthetic-u-1",
+                    uncertainty_identity=("synthetic-u-1" if effect_class == "NONE" else None),
                     evidence_ref=f"synthetic:foreign-action:{effect_class}",
                 ),
                 self.successor,
@@ -683,7 +709,7 @@ def test_wrong_action_identity_cannot_use_any_effect_branch(
 
     assert result.stop_reason == "Stop-Error"
     assert result.diagnostics[-1].code == "EXECUTION-IDENTITY-ERROR"
-    assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
+    assert result.state.context.q_status == "UNKNOWN"
     assert result.state.evidence[0].rejected_response is not None
     assert result.state.evidence[0].rejected_response.action_id == "foreign-action"
 
@@ -933,7 +959,7 @@ def test_resume_replays_evidence_lineage_before_any_new_dispatch() -> None:
         assert rejected.environment is first.environment
         assert rejected.diagnostics[0].code in {
             "INVALID-HISTORY-HANDLE", "SESSION-LINEAGE-MISMATCH", "SNAPSHOT-IDENTITY-MISMATCH",
-            "EVIDENCE-ADMISSION-MISMATCH",
+            "EVIDENCE-ADMISSION-MISMATCH", "RESOURCE-CONTEXT-MISMATCH",
         }, name
 
 
@@ -1039,6 +1065,82 @@ def test_fresh_context_rejects_truncated_or_forged_portable_checkpoint_before_di
     assert dict(target_model.context.provenance_store.records()) == target_records_before
 
 
+def test_duplicate_execution_evidence_is_rejected_before_another_charge_or_dispatch() -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-duplicate-evidence", run_id="run-duplicate-evidence",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    first = session.step(
+        session.initial_state,
+        SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]),
+    )
+    duplicate_delivery = first.environment.with_pending_delivery(first.state.evidence[0].execution)
+    discarded = session.step(first.state, duplicate_delivery)
+
+    # The receipt is handled before S3/S4: no new request, charge or ledger
+    # record exists.  The returned environment has consumed only the inbound
+    # duplicate, so a subsequent call can issue the genuine next action.
+    assert discarded.stop_reason is None
+    assert discarded.state is first.state
+    assert discarded.diagnostics[0].code == "DUPLICATE-EXECUTION-EVIDENCE"
+    assert discarded.state.resources == first.state.resources
+    assert discarded.state.history == first.state.history
+    assert discarded.state.evidence == first.state.evidence
+
+    continued = session.step(discarded.state, discarded.environment)
+    assert len(continued.state.evidence) == len(first.state.evidence) + 1
+    assert continued.state.resources.remaining == first.state.resources.remaining - 1
+
+
+def test_conflicting_pending_execution_delivery_is_rejected_without_admission_or_charge() -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-conflicting-delivery", run_id="run-conflicting-delivery",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    first = session.step(
+        session.initial_state,
+        SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]),
+    )
+    forged = replace(
+        first.state.evidence[0].execution,
+        observable="forged-observation",
+        post_summary="forged-summary",
+        evidence_ref="synthetic:forged-delivery",
+    )
+
+    rejected = session.step(first.state, first.environment.with_pending_delivery(forged))
+
+    assert rejected.stop_reason == "Stop-Error"
+    assert rejected.diagnostics[0].code == "CONFLICTING-EXECUTION-DELIVERY"
+    assert rejected.state is first.state
+    assert rejected.state.resources == first.state.resources
+    assert rejected.state.history == first.state.history
+    assert rejected.state.evidence == first.state.evidence
+
+
+def test_terminal_ledger_refuses_even_an_exact_pending_duplicate_delivery() -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-terminal-duplicate", run_id="run-terminal-duplicate",
+        initial_summary="q0", resources=ResourceState.rounds(2), retry_cap=1,
+    )
+    terminal = session.step(
+        session.initial_state,
+        SyntheticEnvironment.from_mapping(fixture["environments"]["notSent"]),
+    )
+    assert terminal.stop_reason == "Stop-Error"
+    pending_duplicate = terminal.environment.with_pending_delivery(terminal.state.evidence[0].execution)
+
+    replayed = session.step(terminal.state, pending_duplicate)
+
+    assert replayed.stop_reason == "Stop-Error"
+    assert replayed.diagnostics[0].code == "TERMINAL-SESSION-STATE"
+    assert replayed.state is terminal.state
+    assert replayed.environment is pending_duplicate
+
+
 def test_synthetic_environment_detaches_nested_measurement_configuration() -> None:
     declaration = {
         "initialPrivateState": "private-0",
@@ -1049,6 +1151,7 @@ def test_synthetic_environment_detaches_nested_measurement_configuration() -> No
                     "effectClass": "NONE",
                     "observable": "branch-alpha",
                     "summaryConfirmed": True,
+                    "postSummary": "branch-alpha",
                     "measurementTick": {"numerator": 0, "positiveDenominator": 1},
                     "nextPrivateState": "private-0",
                 },
@@ -1110,8 +1213,9 @@ def test_interpretation_rejects_an_uncertainty_identity_not_frozen_at_selection(
     assert result.stop_reason == "Stop-Error"
     assert result.diagnostics[-1].code == "UNCERTAINTY-SNAPSHOT-MISMATCH"
     assert result.state.resources.remaining == 0
-    assert result.state.history.version == 0
-    assert result.state.context.q_status == "CONSERVATIVE-UNKNOWN"
+    assert result.state.history.version == 1
+    assert result.state.context.q_status == "UNKNOWN"
+    assert set(result.state.history.status_by_hypothesis.values()) == {"CONSERVATIVE-UNKNOWN"}
 
 
 def test_one_infeasible_path_does_not_exclude_a_hypothesis_with_another_feasible_path() -> None:

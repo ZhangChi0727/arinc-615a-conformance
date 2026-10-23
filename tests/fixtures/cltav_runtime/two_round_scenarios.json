@@ -112,13 +112,13 @@
       "uncertaintyIdentity": "synthetic-u-1",
       "states": {
         "private-a0": {
-          "test-router": {"effectClass": "NONE", "observable": "branch-alpha", "summaryConfirmed": true, "measurementTick": 0, "nextPrivateState": "private-a1"}
+          "test-router": {"effectClass": "NONE", "observable": "branch-alpha", "summaryConfirmed": true, "postSummary": "branch-alpha", "measurementTick": 0, "nextPrivateState": "private-a1"}
         },
         "private-a1": {
-          "test-left": {"effectClass": "NONE", "observable": "left-zero", "summaryConfirmed": true, "measurementTick": 0, "nextPrivateState": "private-a2"}
+          "test-left": {"effectClass": "NONE", "observable": "left-zero", "summaryConfirmed": true, "postSummary": "left-zero", "measurementTick": 0, "nextPrivateState": "private-a2"}
         },
         "private-a2": {
-          "test-left": {"effectClass": "NONE", "observable": "left-zero", "summaryConfirmed": true, "measurementTick": 0, "nextPrivateState": "private-a2"}
+          "test-left": {"effectClass": "NONE", "observable": "left-zero", "summaryConfirmed": true, "postSummary": "left-zero", "measurementTick": 0, "nextPrivateState": "private-a2"}
         }
       }
     },
@@ -127,13 +127,13 @@
       "uncertaintyIdentity": "synthetic-u-1",
       "states": {
         "private-b0": {
-          "test-router": {"effectClass": "NONE", "observable": "branch-beta", "summaryConfirmed": true, "measurementTick": 1, "nextPrivateState": "private-b1"}
+          "test-router": {"effectClass": "NONE", "observable": "branch-beta", "summaryConfirmed": true, "postSummary": "branch-beta", "measurementTick": 1, "nextPrivateState": "private-b1"}
         },
         "private-b1": {
-          "test-right": {"effectClass": "NONE", "observable": "right-two", "summaryConfirmed": true, "measurementTick": 2, "nextPrivateState": "private-b2"}
+          "test-right": {"effectClass": "NONE", "observable": "right-two", "summaryConfirmed": true, "postSummary": "right-two", "measurementTick": 2, "nextPrivateState": "private-b2"}
         },
         "private-b2": {
-          "test-right": {"effectClass": "NONE", "observable": "right-two", "summaryConfirmed": true, "measurementTick": 2, "nextPrivateState": "private-b2"}
+          "test-right": {"effectClass": "NONE", "observable": "right-two", "summaryConfirmed": true, "postSummary": "right-two", "measurementTick": 2, "nextPrivateState": "private-b2"}
         }
       }
     },
@@ -142,10 +142,10 @@
       "uncertaintyIdentity": "synthetic-u-1",
       "states": {
         "private-n0": {
-          "test-router": {"effectClass": "CONFIRMED-NOT-SENT", "observable": null, "summaryConfirmed": false, "measurementTick": null, "nextPrivateState": "private-n1"}
+          "test-router": {"effectClass": "CONFIRMED-NOT-SENT", "observable": null, "summaryConfirmed": false, "postSummary": null, "measurementTick": null, "nextPrivateState": "private-n1"}
         },
         "private-n1": {
-          "test-router": {"effectClass": "CONFIRMED-NOT-SENT", "observable": null, "summaryConfirmed": false, "measurementTick": null, "nextPrivateState": "private-n1"}
+          "test-router": {"effectClass": "CONFIRMED-NOT-SENT", "observable": null, "summaryConfirmed": false, "postSummary": null, "measurementTick": null, "nextPrivateState": "private-n1"}
         }
       }
     }

@@ -24,6 +24,25 @@ class ExecutionRequest:
 
 
 @dataclass(frozen=True)
+class PrepRecoverResult:
+    """Visible, typed return from ``IF-PREP-RECOVER``.
+
+    The environment may report publicly observable confirmation and evidence,
+    but this value is deliberately only a return record.  It has no reference
+    to a session context, candidate hypotheses, score, or evaluator truth; the
+    session's S7/S8/S9 code remains the sole owner of state changes.
+    """
+
+    target_confirmed: bool
+    summary_confirmed: bool
+    prep_error: bool
+    ineligible: bool
+    declared_target: str
+    evidence: str
+    post_summary: str | None
+
+
+@dataclass(frozen=True)
 class VisibleExecutionRecord:
     """Visible execution evidence; it contains no evaluator truth."""
 
@@ -36,6 +55,7 @@ class VisibleExecutionRecord:
     measurement_tick: Fraction | None
     uncertainty_identity: str | None
     evidence_ref: str
+    prep_recover: PrepRecoverResult | None = None
 
 
 @dataclass(frozen=True)
@@ -51,6 +71,7 @@ class SyntheticEnvironment:
     _state: str
     _uncertainty_identity: str
     _states: Mapping[str, Mapping[str, Mapping[str, Any]]]
+    _pending_delivery: VisibleExecutionRecord | None = None
 
     @classmethod
     def from_mapping(cls, value: Mapping[str, Any]) -> "SyntheticEnvironment":
@@ -73,25 +94,55 @@ class SyntheticEnvironment:
             for action_id, outcome in actions.items():
                 if not isinstance(action_id, str) or not action_id or not isinstance(outcome, Mapping):
                     raise ValueError("synthetic environment action declaration is invalid")
-                if set(outcome) != {"effectClass", "observable", "summaryConfirmed", "measurementTick", "nextPrivateState"}:
+                allowed = {
+                    "effectClass", "observable", "summaryConfirmed", "postSummary", "measurementTick",
+                    "nextPrivateState", "prepRecover",
+                }
+                required = {
+                    "effectClass", "observable", "summaryConfirmed", "postSummary", "measurementTick", "nextPrivateState",
+                }
+                if not set(outcome) <= allowed:
+                    raise ValueError("synthetic environment outcome uses unknown or missing fields")
+                if not required <= set(outcome):
+                    if "postSummary" not in outcome:
+                        raise ValueError("synthetic environment outcome requires an explicit successor summary field")
                     raise ValueError("synthetic environment outcome uses unknown or missing fields")
                 effect = outcome.get("effectClass")
                 observable = outcome.get("observable")
                 confirmed = outcome.get("summaryConfirmed")
+                post_summary = outcome.get("postSummary")
                 measurement_tick = outcome.get("measurementTick")
                 successor = outcome.get("nextPrivateState")
+                prep_recover = _prep_recover_result(outcome.get("prepRecover")) if "prepRecover" in outcome else None
                 if effect not in {"NONE", "CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"}:
                     raise ValueError("synthetic environment effect class is invalid")
                 if observable is not None and (not isinstance(observable, str) or not observable):
                     raise ValueError("synthetic environment observable is invalid")
                 if not isinstance(confirmed, bool) or not isinstance(successor, str) or not successor:
                     raise ValueError("synthetic environment outcome is invalid")
-                if effect == "NONE" and (observable is None or not confirmed):
-                    raise ValueError("normal synthetic outcome requires visible confirmed evidence")
-                if effect == "NONE":
+                if effect != "NONE" and (
+                    observable is not None or confirmed or post_summary is not None
+                    or measurement_tick is not None or prep_recover is not None
+                ):
+                    raise ValueError("non-normal synthetic outcome cannot manufacture observation or successor fields")
+                if effect == "NONE" and prep_recover is None:
+                    if (
+                        observable is None or not confirmed
+                        or not isinstance(post_summary, str) or not post_summary
+                    ):
+                        raise ValueError("normal TEST outcome requires visible confirmed evidence and an explicit successor summary")
                     _exact_tick(measurement_tick)
-                if effect != "NONE" and (observable is not None or confirmed or measurement_tick is not None):
-                    raise ValueError("non-normal synthetic outcome cannot manufacture an observation")
+                if effect == "NONE" and prep_recover is not None:
+                    if (
+                        confirmed != prep_recover.summary_confirmed
+                        or post_summary != prep_recover.post_summary
+                    ):
+                        raise ValueError("Prep/Recover confirmation must agree with the visible outcome")
+                    if observable is None:
+                        if measurement_tick is not None:
+                            raise ValueError("summary-only Prep/Recover outcome cannot carry a measurement tick")
+                    else:
+                        _exact_tick(measurement_tick)
                 # Detach and normalize the actual consumer configuration.
                 # A shallow proxy still aliases an input rational mapping,
                 # allowing a post-construction caller mutation to change the
@@ -102,8 +153,10 @@ class SyntheticEnvironment:
                         "effectClass": effect,
                         "observable": observable,
                         "summaryConfirmed": confirmed,
-                        "measurementTick": _exact_tick(measurement_tick) if effect == "NONE" else None,
+                        "postSummary": post_summary,
+                        "measurementTick": _exact_tick(measurement_tick) if effect == "NONE" and measurement_tick is not None else None,
                         "nextPrivateState": successor,
+                        "prepRecover": prep_recover,
                     },
                 )
             parsed[state_id] = MappingProxyType(parsed_actions)
@@ -115,9 +168,37 @@ class SyntheticEnvironment:
                     raise ValueError("synthetic environment successor state is undeclared")
         return cls(initial, uncertainty_identity, MappingProxyType(parsed))
 
+    def with_pending_delivery(self, record: VisibleExecutionRecord) -> "SyntheticEnvironment":
+        """Return a bounded environment with one inbound, not-yet-consumed record.
+
+        A pending delivery models transport reception, not a fresh admitted
+        action.  ``ReferenceSession.step`` consumes it before S3/S4, so a
+        duplicate record can be discarded idempotently without creating a new
+        request, charge, or history record.  The one-record bound keeps this
+        synthetic engineering seam finite; an adapter with a real queue must
+        expose the same receive-before-issue ordering.
+        """
+
+        if not isinstance(record, VisibleExecutionRecord):
+            raise ValueError("synthetic pending delivery must be a visible execution record")
+        if self._pending_delivery is not None:
+            raise ValueError("synthetic environment already has an unconsumed pending delivery")
+        return SyntheticEnvironment(self._state, self._uncertainty_identity, self._states, record)
+
+    def take_pending_delivery(self) -> tuple[VisibleExecutionRecord, "SyntheticEnvironment"] | None:
+        """Consume the one inbound delivery before any new action is issued."""
+
+        if self._pending_delivery is None:
+            return None
+        return self._pending_delivery, SyntheticEnvironment(
+            self._state, self._uncertainty_identity, self._states,
+        )
+
     def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
         """Execute an admitted request without access to algorithm internals."""
 
+        if self._pending_delivery is not None:
+            raise ValueError("synthetic environment has an unconsumed pending delivery")
         if not isinstance(request, ExecutionRequest):
             raise ValueError("synthetic environment requires an execution request")
         if (
@@ -137,7 +218,7 @@ class SyntheticEnvironment:
                 summary_confirmed=False,
                 post_summary=None,
                 measurement_tick=None,
-                uncertainty_identity=self._uncertainty_identity,
+                uncertainty_identity=None,
                 evidence_ref=f"synthetic:{request.execution_attempt_id}:not-sent",
             )
             return EnvironmentExecution(record, self)
@@ -149,12 +230,59 @@ class SyntheticEnvironment:
             effect_class=outcome["effectClass"],
             observable=observable,
             summary_confirmed=outcome["summaryConfirmed"],
-            post_summary=observable if outcome["summaryConfirmed"] else None,
+            post_summary=outcome["postSummary"],
             measurement_tick=outcome["measurementTick"],
-            uncertainty_identity=self._uncertainty_identity,
+            uncertainty_identity=(
+                self._uncertainty_identity
+                if outcome["effectClass"] == "NONE" and observable is not None
+                else None
+            ),
             evidence_ref=f"synthetic:{request.execution_attempt_id}:{outcome['effectClass'].lower()}",
+            prep_recover=outcome["prepRecover"],
         )
         return EnvironmentExecution(record, successor)
+
+
+def _prep_recover_result(value: object) -> PrepRecoverResult:
+    """Decode a narrow public recovery return, never a session mutation."""
+
+    required = {
+        "targetConfirmed", "summaryConfirmed", "prepError", "ineligible",
+        "declaredTarget", "evidence", "postSummary",
+    }
+    if not isinstance(value, Mapping) or set(value) != required:
+        raise ValueError("synthetic Prep/Recover result uses unknown or missing fields")
+    target_confirmed = value.get("targetConfirmed")
+    summary_confirmed = value.get("summaryConfirmed")
+    prep_error = value.get("prepError")
+    ineligible = value.get("ineligible")
+    declared_target = value.get("declaredTarget")
+    evidence = value.get("evidence")
+    post_summary = value.get("postSummary")
+    if not all(isinstance(flag, bool) for flag in (
+        target_confirmed, summary_confirmed, prep_error, ineligible,
+    )):
+        raise ValueError("synthetic Prep/Recover confirmations must be Boolean")
+    if not isinstance(declared_target, str) or not declared_target:
+        raise ValueError("synthetic Prep/Recover target must be a nonempty string")
+    if not isinstance(evidence, str) or not evidence.strip():
+        raise ValueError("synthetic Prep/Recover evidence must be a nonblank string")
+    if summary_confirmed:
+        if not isinstance(post_summary, str) or not post_summary:
+            raise ValueError("confirmed Prep/Recover result requires a successor summary")
+    elif post_summary is not None:
+        raise ValueError("unconfirmed Prep/Recover result cannot carry a successor summary")
+    if (prep_error or ineligible) and (target_confirmed or summary_confirmed):
+        raise ValueError("failed Prep/Recover result cannot claim a confirmation")
+    return PrepRecoverResult(
+        target_confirmed=target_confirmed,
+        summary_confirmed=summary_confirmed,
+        prep_error=prep_error,
+        ineligible=ineligible,
+        declared_target=declared_target,
+        evidence=evidence,
+        post_summary=post_summary,
+    )
 
 
 def _exact_tick(value: object) -> Fraction:

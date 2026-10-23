@@ -39,17 +39,21 @@ conflicting name is a controlled binding error, not a default value.
 | `IF-EQUIV` | explicit `established`, `notEstablished`, `unknown` tags |
 | `IF-RESOURCE-STOP` | stop reason, final hypotheses and trace |
 
-The current B/C-1 checkpoint implements the normal TEST and named
-prediction-gap/Prep routes through one read-only admission decision.  A
+The current B/C-2A checkpoint implements normal TEST, named
+prediction-gap/Prep, and UNKNOWN-session Recover routes through controlled
+read-only admission decisions.  A
 current TEST prediction gap withholds TEST minimax even when another TEST has
 classes; eligible PREP is then evaluated by that same resource decision.
 The GAP revokes the whole current TEST scoring set, including any unaffordable
 TEST-derived A2 conclusion: with no eligible PREP, the exit remains the named
 prediction gap; only an eligible but unaffordable PREP may produce A2 on that
 fallback route.
-Recover, full S7/S8 coverage, ownership/T5 and
-all Stop-Empty-producing paths remain explicit B/C-2 work; this table does not
-claim their execution is complete.
+The implemented B/C-2A branch closes `CONFIRMED-NOT-SENT`, unknown effect and
+post-dispatch errors, Prep successor confirmation, eligible/unaffordable/no
+eligible Recover (A4/A5), S7 retry caps, Recover-only S8 adoption and S9's
+sole successor-summary commitment.  Ownership/T5, Stop-Empty/equivalence and
+the production evidence/CLI boundary remain explicit later B/C work; this
+table does not claim their execution is complete.
 
 ## Initial type boundary
 
@@ -57,8 +61,10 @@ claim their execution is complete.
 map because a status need not exist before processing.  `HistoryHandle.committed`
 represents an S9/processed result and requires one controlled status for every
 surviving member.  Empty `H` is legal only as a processed Stop-Empty result.
-`SessionContext` separates `KNOWN` plus a confirmed summary from `UNKNOWN` or
-`CONSERVATIVE-UNKNOWN`, which carry no usable current summary.
+`SessionContext` separates `KNOWN` plus a confirmed summary from session-level
+`UNKNOWN`, which carries no usable current summary.  `CONSERVATIVE-UNKNOWN` is
+instead a per-member `HistoryHandle` status; it preserves a candidate without
+pretending that its session summary remains usable.
 
 Each surviving `H` member carries a nonempty, bounded tuple of current frontier
 provenance references, rather than a single flattened representative.  The
@@ -95,24 +101,57 @@ declared monetary/computational cost.  `BUDGET` consumes that declared cost.
 After S4, an execution-side exception, malformed execution result, invalid
 result identity, or ordinary failure during returned-record validation,
 interpretation, or S9 preparation does not restore the pre-issue state: it
-retains the one charge and expected attempt identity, records a controlled
-error, sets the session to `CONSERVATIVE-UNKNOWN`, and does not invoke S9.  If
+retains the one charge and expected attempt identity, records a controlled S7
+error, sets the session to `UNKNOWN`, marks every retained history member
+`CONSERVATIVE-UNKNOWN`, and does not invoke S8/S9.  If
 a returned result includes a typed successor environment, that actual successor
 is retained even when its record is rejected.  A normal record which claims
 summary confirmation but omits its post-summary is the same controlled
-post-dispatch error.  `CONFIRMED-NOT-SENT` is distinct: it is charged once but
-preserves the prior history and known summary.
+post-dispatch error.  `CONFIRMED-NOT-SENT` is distinct: because no action was
+sent, it bypasses interpretation and Prep/Recover confirmation; it is charged
+once, increments the controlled retry state, but preserves the prior history
+and known summary.  Its evidence `resolution_code` identifies that causal
+branch during public-ledger replay.  A retry reaches `Stop-Error` only at its
+declared cap; it does not lose the charged resource fact or silently become a
+budget stop.
 
-Before any effect branch, the session validates the complete visible-record
-domain and its field combinations: identity/action/evidence references are
-nonblank strings (their accepted value is not rewritten); confirmation is
-Boolean; normal records carry a visible
-observation, a confirmed nonempty post-summary, an exact measurement tick and
-the frozen uncertainty identity; non-normal records cannot manufacture those
-fields.  A rejected response is retained separately from the expected issued
-record, so an incorrect returned attempt identity cannot overwrite the request
-identity in the charged evidence.  Ordinary adapter exceptions are controlled
-post-dispatch errors; this does not catch process-interrupt exceptions.
+The public `SessionContext` therefore carries the resource remainder, retry
+count/cap, confirmed Recover target/evidence, and error/unknown histories in
+addition to the current summary.  S8 alone may restore `KNOWN` and write the
+confirmed Recover target/evidence.  S9 is the sole post-effect committer of a
+confirmed successor `currentSummary` (S0 seeds it and S7 may clear it): a
+confirmed Prep summary may advance it even when the Prep target was not
+confirmed, while a Recover needs both target and summary confirmation.  A
+summary-only confirmation preserves `H`; only a valid observation class can
+derive the new compatible-history intersection.  Target and summary
+confirmation are independent typed return facts: target-only is a valid but
+insufficient result, so an unconfirmed Prep summary or a Recover missing either
+confirmation follows S7 rather than being misclassified as a malformed record.
+
+Before any effect branch for an adapter-supplied record, the session validates
+the complete visible-record domain and its field combinations:
+identity/action/evidence references are nonblank strings (their accepted value
+is not rewritten), and confirmation is Boolean.  A normal `TEST` record
+carries a visible observation, a confirmed nonempty post-summary, an exact
+measurement tick, and the frozen uncertainty identity.  A normal typed
+`PREP`/`RECOVER` result instead carries its explicit target/summary/error
+contract and may lawfully be summary-only, with no observation or measurement
+tick; that contract selects S7, S8, or S9.  Non-normal records cannot
+manufacture the fields that their branch forbids.  The narrowly synthesized
+placeholder used for an adapter exception is not an adapter-supplied visible
+record; it exists only to retain the issued identity and one charged S7
+transition in the evidence ledger.  A rejected response is retained separately
+from the expected issued record, so an incorrect returned attempt identity
+cannot overwrite the request identity in the charged evidence.  Ordinary
+adapter exceptions are controlled post-dispatch errors; this does not catch
+process-interrupt exceptions.  A record which repeats an already processed
+execution identity is an inbound stale delivery only when its full visible
+record exactly equals the canonical processed ledger record: it is consumed
+before S3/S4 and discarded idempotently without appending evidence or charging
+the retained public state again.  A same-identity but conflicting payload is a
+controlled ingress error.  Conversely, a mismatched record returned *after* a
+newly issued action is a post-dispatch error, not a duplicate: the actual typed
+successor and one charge are retained through S7.
 
 The finite model is JSON-detached at construction.  Its nested guard/update
 AST is retained only in canonical frozen form and decoded afresh for each
@@ -142,7 +181,9 @@ bundle does not require its paths to have equal history lengths.
 The synthetic environment likewise normalizes and detaches each nested outcome
 value that it actually consumes.  Modifying a caller's source rational mapping
 after construction cannot change a later visible measurement; a changed
-environment requires an explicit new declaration and instance.
+environment requires an explicit new declaration and instance.  It carries at
+most one explicit inbound delivery; a resumed session consumes that delivery
+before it may admit or issue another action.
 
 `U` is a bounded, typed uncertainty snapshot (`clockId`, `timeUnit=ticks`,
 exact nonnegative maximum error and identity), not a label.  Prediction forms
@@ -169,7 +210,8 @@ tool error without publishing an invalid evidence package.
 
 ## Open work and evidence boundary
 
-The binding/type layer does not yet execute an action, infer ownership,
+The binding/type layer now executes bounded synthetic TEST/Prep/Recover actions
+and replays their public causal ledgers, but it does not infer ownership,
 establish protocol timing, run an IUT or establish runtime integrity.  The
 Researcher startup contract review is recorded; independent review of the new
 fixed implementation head remains pending.  All later runs remain
@@ -216,10 +258,14 @@ confirmation experiments or protocol conformance cases.
 | `IF-EQUIV` | 显式 `established`、`notEstablished`、`unknown` 标签 |
 | `IF-RESOURCE-STOP` | 停止理由、最终假设和 trace |
 
-当前 B/C-1 检查点通过同一个只读准入决定实现普通 TEST 以及具名 prediction-gap／Prep 路径。
+当前 B/C-2A 检查点通过受控的只读准入决定实现普通 TEST、具名 prediction-gap／Prep 路径以及
+UNKNOWN 会话的 Recover 路径。
 当前 TEST prediction gap 即使与另一具有 classes 的 TEST 同时存在，也会先抑制 TEST minimax；
-随后由同一资源决定检查合格 Prep。Recover、完整 S7／S8 覆盖、ownership／T5 和全部可产生
-Stop-Empty 的路径仍是显式 B/C-2 工作；本表不主张它们已经执行完成。
+随后由同一资源决定检查合格 Prep。已实现的 B/C-2A 分支覆盖
+`CONFIRMED-NOT-SENT`、unknown effect 和派发后错误、Prep 后继确认、合格／付不起／无合格
+Recover（A4/A5）、S7 retry cap、仅 Recover 的 S8 采纳以及 S9 对后继摘要的唯一提交。
+ownership／T5、Stop-Empty／等价及生产 evidence／CLI 边界仍是后续 B/C 工作；本表不主张它们
+已经执行完成。
 
 GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出的 A2：没有合格 Prep 时出口仍为
 具名 prediction gap；只有合格但不可负担的 Prep 才能在该 fallback 路径产生 A2。
@@ -229,7 +275,8 @@ GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出�
 `HistoryHandle.initial` 表示 S0 输入；因处理前成员状态可以尚未设置，允许空状态表。
 `HistoryHandle.committed` 表示 S9／已处理结果，要求每个存活成员都有一个受控状态。空
 `H` 只可作为已处理的 Stop-Empty 结果。`SessionContext` 将带确认摘要的 `KNOWN` 与不
-携带可用当前摘要的 `UNKNOWN`／`CONSERVATIVE-UNKNOWN` 分开。
+携带可用当前摘要的会话级 `UNKNOWN` 分开。`CONSERVATIVE-UNKNOWN` 则是每个
+`HistoryHandle` 成员的状态：它保留候选，绝不声称会话摘要仍可使用。
 
 每个存活的 `H` 成员均携带非空且有界的当前 frontier provenance 引用元组，而不是一个被
 扁平化的代表。有限预测器逐路径传播：不可行路径只会排除自身；不支持或受限的计算则将其
@@ -255,18 +302,34 @@ GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出�
 
 `ROUNDS` 每次 issued 恰好消耗一个动作，和动作声明的金钱／计算成本无关；`BUDGET` 才消耗该
 声明成本。S4 之后发生执行侧异常、畸形执行返回、返回身份无效，或已返回记录的校验、解释、S9
-提交准备出现普通错误时，均不得恢复到派发前状态：保留一次计费和期望的 attempt 身份，记录受控
-错误，将会话置为 `CONSERVATIVE-UNKNOWN`，且不得调用 S9。若返回结果包含有类型的后继环境，即使其
+提交准备出现普通错误时，均不得恢复到派发前状态：保留一次计费和期望的 attempt 身份，记录受控 S7
+错误，将会话置为 `UNKNOWN`、把全部保留的 history 成员标为 `CONSERVATIVE-UNKNOWN`，且不得调用
+S8／S9。若返回结果包含有类型的后继环境，即使其
 记录被拒绝，也保留该实际后继环境。声称已确认摘要却缺少后继摘要的普通记录，同样属于派发后的
-受控错误。
-`CONFIRMED-NOT-SENT` 与此不同：它恰好计费一次，
-但保留此前 history 和已知摘要。
+受控错误。`CONFIRMED-NOT-SENT` 与此不同：因为动作根本没有发送，它绕过解释和 Prep/Recover
+确认；它恰好计费一次、增加受控 retry 状态，但保留此前 history 和已知摘要。其 evidence 的
+`resolution_code` 为公共账本重放标明该因果分支。只有达到声明的 retry cap 才进入 `Stop-Error`；它不会丢失已计费
+事实，也不会静默变成 budget stop。
 
-进入任何 effect 分支前，会话校验完整的可见记录域及其字段组合：身份／动作／证据引用均为非空
-非空白字符串（接受后的值不被改写），确认字段为 Boolean；普通记录携带可见观测、已确认的非空后继摘要、精确测量 tick 和
-冻结的 uncertainty identity；非普通记录不得伪造这些字段。被拒绝的返回记录与期望的 issued
-记录分开保存，错误返回的 attempt identity 不得覆盖已计费证据中的请求身份。普通适配器异常
-属于派发后的受控错误；这不捕获进程中断类异常。
+因此，公开的 `SessionContext` 除当前摘要外还保存 resource remainder、retry count/cap、已确认
+Recover 的 target/evidence 以及 error/unknown histories。只有 S8 可以恢复 `KNOWN` 并写入已确认的
+Recover 目标／证据；S9 是确认后继 `currentSummary` 的唯一派发后提交者（S0 负责初始值，S7 可以清空它）。Prep 目标未确认但后继摘要已确认时，S9
+仍可推进该摘要；Recover 必须同时确认目标和摘要。仅摘要确认保持 `H`；只有有效观测类才可导出
+新的相容 history 交集。目标确认和摘要确认是彼此独立的有类型返回事实：只确认目标是合法但
+不足的结果；未确认摘要的 Prep，或任一确认缺失的 Recover，均走 S7，而不是被误分为畸形记录。
+
+进入任何针对适配器返回记录的 effect 分支前，会话校验完整的可见记录域及其字段组合：身份／动作／
+证据引用均为非空白字符串（接受后的值不被改写），确认字段为 Boolean。普通 `TEST` 记录携带
+可见观测、已确认的非空后继摘要、精确 measurement tick 和冻结的 uncertainty identity。普通的有类型
+`PREP`／`RECOVER` 结果则携带其显式 target／summary／error 合同，并可合法地仅确认摘要、没有观测
+或 measurement tick；该合同决定走 S7、S8 还是 S9。非普通记录不得伪造其分支禁止的字段。为适配器
+异常合成的窄占位记录不是适配器返回的可见记录；它只用于在 evidence 账本中保留 issued identity 和一次已计费
+的 S7 转换。被拒绝的返回记录与期望的 issued 记录分开保存，错误返回的 attempt identity 不得覆盖已计费
+证据中的请求身份。普通适配器异常属于派发后的受控错误；这不捕获进程中断类异常。若返回记录重用
+已经处理过的 execution identity，且完整可见记录与规范的已处理账本记录完全相等时，它才是入站过期投递：
+在 S3／S4 前被消费并幂等丢弃，不追加 evidence，也不对已保留的公共 state 再次计费。同一 identity 但
+载荷冲突属于受控入口错误。相反，若在已经发出一个新动作后才返回不匹配的记录，它是派发后错误而不是重复：
+实际的有类型后继和一次计费均通过 S7 保留。
 
 有限模型在构造时会与 JSON 源对象断开。嵌套 guard／update AST 只以规范化冻结形式保留，每次
 内核调用再重新解码；因此，构造后修改源对象不会在不改变 model identity 的情况下改变行为。
@@ -284,7 +347,8 @@ context，而不会把缓存缺失当作 prediction gap，也不会回填目标�
 可变缓存；但有界 bundle 不要求各路径具有相同的历史长度。
 
 合成环境同样会规范化并断开它实际消费的每一项嵌套 outcome 值。构造后修改调用方的源有理数
-mapping 不会改变后续可见 measurement；改变环境必须显式创建新的声明和实例。
+mapping 不会改变后续可见 measurement；改变环境必须显式创建新的声明和实例。它至多携带一条显式
+入站投递；恢复的会话在准入或发出下一动作前先消费该投递。
 
 `U` 是有界且有类型的 uncertainty snapshot（`clockId`、`timeUnit=ticks`、精确的非负最大误差和
 身份），不是标签。预测用该 snapshot 为每个 hypothesis 形成测量窗口；解释在 S9 前核对返回的
@@ -300,6 +364,7 @@ measurement tick 以及同一冻结的 uncertainty identity。这仅是有限合
 
 ## 待完成工作和证据边界
 
-绑定／类型层尚不执行动作、不推断所有权、不建立协议时序、不运行 IUT，也不建立运行
-完整性。Researcher 启动合同核对已记录；对新的固定实现 Head 的独立复审仍 pending。后续运行
+绑定／类型层现已执行有界合成 TEST／Prep／Recover 动作并重放其公共因果账本，但尚不推断所有权、
+不建立协议时序、不运行 IUT，也不建立运行完整性。Researcher 启动合同核对已记录；对新的固定实现
+Head 的独立复审仍 pending。后续运行
 在独立复审前均保持 `SYNTHETIC-ENGINEERING-VALIDATION`，不是确认性实验或协议符合性用例。
