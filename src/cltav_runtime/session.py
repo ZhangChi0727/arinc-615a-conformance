@@ -225,7 +225,12 @@ class ReferenceSession:
             state_error = self._state_error(state)
             if state_error is not None:
                 return SessionResult(state, environment, "Stop-Error", (state_error,))
-            return self._step(state, environment)
+            assert isinstance(state, SessionState)
+            execution_model, execution_error = self._execution_model(state)
+            if execution_error is not None:
+                return SessionResult(state, environment, "Stop-Error", (execution_error,))
+            assert execution_model is not None
+            return self._step(state, environment, model=execution_model)
         except Exception as exc:
             return SessionResult(
                 state, environment, "Stop-Error",
@@ -301,15 +306,53 @@ class ReferenceSession:
             for frontier in paths:
                 if frontier.model_identity != self.model.context.identity:
                     return KernelDiagnostic("FRONTIER-MODEL-MISMATCH", "frontier does not belong to this verified model")
-                provenance_error = self.model.context.provenance_store.verify_entry(self.model.context, frontier)
-                if provenance_error is not None:
-                    return provenance_error
+        # The target context may deliberately be a fresh, equivalent verified
+        # model whose local provenance cache contains only S0.  A resumed
+        # public checkpoint must therefore be verified against the detached
+        # causal replay below, rather than requiring its derived source
+        # records to have been written to this target's mutable cache first.
         return self._evidence_lineage_error(state, frontier_bundles)
+
+    def _execution_model(
+        self, state: SessionState,
+    ) -> tuple[FiniteSessionModel | None, KernelDiagnostic | None]:
+        """Select the verified context used to propagate a public state.
+
+        A locally produced state retains its already verified source-record
+        closure in this session's model context.  A portable public checkpoint
+        may instead carry derived records that were causally verified in an
+        isolated replay but must never be copied into a fresh target's mutable
+        cache.  The latter continues with that detached verified context.
+        """
+
+        try:
+            frontier_bundles = {
+                hypothesis: _frontier_bundle(bundle)
+                for hypothesis, bundle in state.frontiers.items()
+            }
+        except (AttributeError, TypeError, ValueError) as exc:
+            return None, KernelDiagnostic("INVALID-FRONTIER-BUNDLE", str(exc) or type(exc).__name__)
+        local_closure = all(
+            self.model.context.provenance_store.verify_entry(self.model.context, frontier) is None
+            for paths in frontier_bundles.values()
+            for frontier in paths
+        )
+        if local_closure:
+            return self.model, None
+        replay_model = _replay_model(self.model)
+        replay_error = self._evidence_lineage_error(
+            state, frontier_bundles, replay_model=replay_model,
+        )
+        if replay_error is not None:
+            return None, replay_error
+        return replay_model, None
 
     def _evidence_lineage_error(
         self,
         state: SessionState,
         current_frontiers: Mapping[str, tuple[FrontierEntry, ...]],
+        *,
+        replay_model: FiniteSessionModel | None = None,
     ) -> KernelDiagnostic | None:
         """Replay the public causal prefix before accepting a resumed state.
 
@@ -320,7 +363,7 @@ class ReferenceSession:
         a cryptographic tamper-proof store.
         """
 
-        replay_model = _replay_model(self.model)
+        replay_model = _replay_model(self.model) if replay_model is None else replay_model
         context = self.initial_state.context
         history = self.initial_state.history
         frontiers: Mapping[str, tuple[FrontierEntry, ...]] = self.initial_state.frontiers
@@ -472,9 +515,26 @@ class ReferenceSession:
             or state.processed_execution_attempt_ids != processed_ids
         ):
             return KernelDiagnostic("SESSION-LINEAGE-MISMATCH", "resumed state is not the terminal state of its evidence lineage")
+        # Keep full provenance verification, but perform it over the
+        # canonical frontier records rebuilt in the detached replay context.
+        # This accepts a valid portable public checkpoint without mutating or
+        # depending on the target session's local cache.
+        for paths in frontiers.values():
+            for frontier in paths:
+                provenance_error = replay_model.context.provenance_store.verify_entry(
+                    replay_model.context, frontier,
+                )
+                if provenance_error is not None:
+                    return provenance_error
         return None
 
-    def _step(self, state: SessionState, environment: SyntheticEnvironment) -> SessionResult:
+    def _step(
+        self,
+        state: SessionState,
+        environment: SyntheticEnvironment,
+        *,
+        model: FiniteSessionModel,
+    ) -> SessionResult:
         if state.evidence and state.evidence[-1].stop_reason is not None:
             return SessionResult(
                 state,
@@ -487,7 +547,7 @@ class ReferenceSession:
                 state, environment, "Stop-Error",
                 (KernelDiagnostic("UNRESOLVED-SESSION-SUMMARY", "known summary is required for TEST selection"),),
             )
-        admission = self._admit(state)
+        admission = self._admit(state, model=model)
         if admission.action is None or admission.prediction is None:
             stop_reason = {
                 "PREDICTION-GAP": "Stop-Prediction-Gap",
@@ -506,9 +566,9 @@ class ReferenceSession:
             history_version=state.history.version,
             hypotheses=state.history.hypotheses,
             classes=prediction.classes,
-            model_identity=self.model.identity,
-            uncertainty_identity=self.model.uncertainty_identity,
-            uncertainty_digest=self.model.uncertainty_digest,
+            model_identity=model.identity,
+            uncertainty_identity=model.uncertainty_identity,
+            uncertainty_digest=model.uncertainty_digest,
             authority_identities=self.binding.identities(),
         )
         resource_before = state.resources.algorithm_view(action)

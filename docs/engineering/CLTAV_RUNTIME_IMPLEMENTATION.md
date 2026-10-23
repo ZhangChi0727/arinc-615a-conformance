@@ -126,12 +126,17 @@ foreign S0 state with its own binding.  The public state is replayed read-only f
 session's frozen S0 seed through each retained evidence item, so summary,
 resource, snapshot/action, authority, history and frontier values must be the
 causal terminal state of that ledger.  This replay neither calls the environment
-nor issues another action or writes the shared provenance store: successor
-calculation uses a detached copy of the already verified source records.  A
-finite multi-path S0 seed is permitted only when
+nor issues another action or writes the shared provenance store.  A
+complete checkpoint whose derived records are absent from a fresh target cache
+remains resumable when that detached replay closes; its next propagation uses
+the detached verified context rather than treating cache absence as a prediction
+gap or rehydrating the target cache.  An already locally verified source-record
+closure may instead be reused by its own session continuation.  A finite
+multi-path S0 seed is permitted only when
 declared at session construction, bound to this model/context, and then frozen;
 hand-assembled replacement frontiers are not an alternate resume authority.
-Each declared path must close over this model's provenance, but a bounded
+Each declared path must close over verified model provenance during replay,
+rather than merely a target's mutable cache, but a bounded
 bundle does not require its paths to have equal history lengths.
 
 The synthetic environment likewise normalizes and detaches each nested outcome
@@ -272,8 +277,11 @@ identity 必须闭合；验证失败发生在计费或派发前。目标会话�
 本会话冻结的 S0 seed 逐条只读重放保留的 evidence，因此摘要、资源、snapshot／action、权威、
 history 与 frontier 必须是该账本的因果终态。该重放既不调用环境，也不再派发动作。有限多路径 S0
 seed 仅可在会话构造时声明、绑定到本 model/context 后冻结；手工拼装的替换 frontier 不是恢复权威。
-每一条声明路径都必须闭合到该 model 的 provenance，但有界 bundle 不要求各路径具有相同的历史长度。
-重放也不写共享 provenance store：后继计算只使用已验证 source record 的分离副本。
+重放也不写共享 provenance store。若完整 checkpoint
+的派生记录尚不在一个新目标缓存中，但该分离重放能够闭合，它仍可恢复；其后继传播使用同一个分离的已验证
+context，而不会把缓存缺失当作 prediction gap，也不会回填目标缓存。已在本地验证的 source-record 闭包可以
+由其自身会话的后继计算复用。每一条声明路径必须在重放中闭合到已验证 model provenance，而不是仅闭合到目标的
+可变缓存；但有界 bundle 不要求各路径具有相同的历史长度。
 
 合成环境同样会规范化并断开它实际消费的每一项嵌套 outcome 值。构造后修改调用方的源有理数
 mapping 不会改变后续可见 measurement；改变环境必须显式创建新的声明和实例。

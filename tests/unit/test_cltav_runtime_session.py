@@ -937,6 +937,108 @@ def test_resume_replays_evidence_lineage_before_any_new_dispatch() -> None:
         }, name
 
 
+def test_equivalent_fresh_context_resumes_a_complete_public_checkpoint_without_cache_rehydration() -> None:
+    source_binding, source_model, fixture = _runtime_parts()
+    source = ReferenceSession(
+        binding=source_binding, model=source_model, session_id="session-portable", run_id="run-portable",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    first = source.step(
+        source.initial_state,
+        SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]),
+    )
+    assert first.stop_reason is None
+    assert first.state.attempts == 1
+    cached_resumed = source.step(first.state, first.environment)
+    assert cached_resumed.stop_reason == "Stop-Singleton"
+
+    # Build an equivalent authority/model context with a distinct local
+    # provenance cache.  It owns the same S0 records but has not executed the
+    # first round and therefore cannot contain the retained derived records.
+    target_binding, target_model, _target_fixture = _runtime_parts()
+    target = ReferenceSession(
+        binding=target_binding, model=target_model, session_id="session-portable", run_id="run-portable",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    assert target.initial_state.authority_identity == first.state.authority_identity
+    assert target.initial_state.seed_identity == first.state.seed_identity
+    target_records_before = dict(target_model.context.provenance_store.records())
+
+    # Causal replay accepts the public checkpoint without rehydrating the
+    # target's shared store.  Its actual successor calculation must use the
+    # detached verified replay context, rather than treating the cache miss as
+    # a prediction gap.
+    assert target._state_error(first.state) is None
+    assert dict(target_model.context.provenance_store.records()) == target_records_before
+    resumed = target.step(first.state, first.environment)
+
+    assert resumed.stop_reason == "Stop-Singleton"
+    assert resumed.state.attempts == 2
+    assert [item.snapshot.action_id for item in resumed.state.evidence] == ["test-router", "test-left"]
+    assert resumed.state == cached_resumed.state
+    assert target._state_error(resumed.state) is None
+    assert dict(target_model.context.provenance_store.records()) == target_records_before
+
+
+def test_fresh_context_rejects_truncated_or_forged_portable_checkpoint_before_dispatch() -> None:
+    class NoDispatchEnvironment:
+        calls = 0
+
+        def execute(self, _request: ExecutionRequest) -> object:
+            self.calls += 1
+            raise AssertionError("invalid public checkpoint must be rejected before dispatch")
+
+    source_binding, source_model, fixture = _runtime_parts()
+    source = ReferenceSession(
+        binding=source_binding, model=source_model, session_id="session-portable-negative", run_id="run-portable-negative",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    first = source.step(
+        source.initial_state,
+        SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]),
+    )
+    target_binding, target_model, _target_fixture = _runtime_parts()
+    target = ReferenceSession(
+        binding=target_binding, model=target_model, session_id="session-portable-negative", run_id="run-portable-negative",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    forged_bundles = dict(first.state.frontiers)
+    original = forged_bundles["h0"][0]
+    forged_bundles["h0"] = (replace(
+        original,
+        history_provenance=(original.history_provenance[0], "forged-portable-step-reference"),
+    ),)
+    forged_references = {
+        hypothesis: tuple(entry.history_provenance[-1] for entry in bundle)
+        for hypothesis, bundle in forged_bundles.items()
+    }
+    forged = replace(
+        first.state,
+        history=replace(first.state.history, compatible_state_by_hypothesis=forged_references),
+        frontiers=forged_bundles,
+    )
+    # Coherently remove the causal round bookkeeping while retaining its
+    # claimed post-round context/history/frontier state.  This reaches the
+    # replay closure comparison rather than only a shape check.
+    truncated = replace(
+        first.state,
+        attempts=0,
+        processed_execution_attempt_ids=frozenset(),
+        evidence=(),
+    )
+    target_records_before = dict(target_model.context.provenance_store.records())
+    environment = NoDispatchEnvironment()
+
+    for candidate in (truncated, forged):
+        rejected = target.step(candidate, environment)  # type: ignore[arg-type]
+        assert rejected.stop_reason == "Stop-Error"
+        assert rejected.state is candidate
+        assert rejected.diagnostics[0].code == "SESSION-LINEAGE-MISMATCH"
+
+    assert environment.calls == 0
+    assert dict(target_model.context.provenance_store.records()) == target_records_before
+
+
 def test_synthetic_environment_detaches_nested_measurement_configuration() -> None:
     declaration = {
         "initialPrivateState": "private-0",
