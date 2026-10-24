@@ -104,11 +104,18 @@ pretending that its session summary remains usable.
 
 Each surviving `H` member carries a nonempty, bounded tuple of current frontier
 provenance references, rather than a single flattened representative.  The
-finite predictor propagates every path independently: an infeasible path removes
-only that path, while an unsupported or bounded calculation retains its source
-path as conservative.  A conservative member is retained in every completed
-normal observation class and is committed as `CONSERVATIVE-UNKNOWN`; it is never
-turned into a synthetic observable outcome.  If no completed visible class is
+finite predictor propagates every path independently: an infeasible path in a
+known member removes only that known path, while an unsupported or bounded
+calculation retains its source path as conservative.  For an already
+conservative member, an otherwise infeasible source remains a conservative
+witness because its earlier unknown effect cannot establish an exclusion.
+Conservative membership prevents an unproved
+observation-based exclusion; it does not skip the admitted action transition.
+Consequently, a feasible conservative path still carries its computed state,
+clock/store update, path-length increment and terminal provenance into every
+completed normal observation class, while the member is committed as
+`CONSERVATIVE-UNKNOWN`.  It is never turned into a synthetic observable outcome.
+If no completed visible class is
 available, or the declared observation-class bound is exceeded, the result is a
 named prediction gap and TEST selection is withheld.
 
@@ -383,9 +390,12 @@ GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出�
 `HistoryHandle` 成员的状态：它保留候选，绝不声称会话摘要仍可使用。
 
 每个存活的 `H` 成员均携带非空且有界的当前 frontier provenance 引用元组，而不是一个被
-扁平化的代表。有限预测器逐路径传播：不可行路径只会排除自身；不支持或受限的计算则将其
-源路径保留为保守路径。保守成员会保留在每个已完成的普通观测类中，并以
-`CONSERVATIVE-UNKNOWN` 提交；它绝不会被伪造为一个可观测结果。若没有已完成的可见类，或
+扁平化的代表。有限预测器逐路径传播：已知成员中的不可行路径只会排除该已知路径；不支持或受限的计算
+则将其源路径保留为保守路径。对已属保守的成员，即使某源路径表面不可行，也仍须保留为保守见证，因为
+其先前未知效果不能证明该路径可被排除。保守成员只阻止未经证明的基于观测的排除，不得跳过已准入动作的
+transition。因此，可行的保守路径仍将其计算得到的状态、clock/store 更新、path-length 递增和末端
+provenance 带入每个已完成的普通观测类，同时成员以 `CONSERVATIVE-UNKNOWN` 提交；它绝不会被伪造为
+一个可观测结果。若没有已完成的可见类，或
 超过声明的观测类上限，则结果为具名 prediction gap，并抑制 TEST 选择。
 
 实现必须在序列化和会话边界返回受控诊断。Python 构造器的 `ValueError` 是内部输入

@@ -161,6 +161,28 @@ def _seed_with_conservative_h2(
     return seed
 
 
+def _advance_seed_path(
+    model: FiniteSessionModel,
+    path: FrontierEntry,
+    transition: dict[str, object],
+) -> FrontierEntry:
+    """Create one verified longer S0 path without bypassing kernel provenance."""
+
+    result = propagate_transition(
+        path,
+        transition,
+        state_ids=set(model.context.state_ids),
+        clock_ids=set(model.context.clock_ids),
+        typed_domains={key: set(domain) for key, domain in model.context.typed_domains.items()},
+        context=model.context,
+        path_limit=model.path_limit,
+        frontier_limit=model.frontier_limit,
+    )
+    assert result.kind == "FEASIBLE"
+    assert len(result.entries) == 1
+    return result.entries[0]
+
+
 def _model_with_declaration(model_data: dict[str, object]) -> FiniteSessionModel:
     """Build a detached verified context for a deliberately changed model declaration."""
 
@@ -486,6 +508,119 @@ def test_summary_only_prep_propagates_typed_store_and_clock_reset_for_next_guard
     assert second.state.evidence[-1].snapshot.action_id == "test-after-reset"
 
 
+def test_nonself_test_applies_declared_clock_and_store_updates_to_a_conservative_path() -> None:
+    """A C-U member consumes finite TEST updates; postSummary is never state."""
+
+    binding, _base, fixture = _runtime_parts()
+    model_data = copy.deepcopy(fixture["algorithmModel"])
+    assert isinstance(model_data, dict)
+    declaration = model_data["model"]
+    hypotheses = model_data["hypotheses"]
+    assert isinstance(declaration, dict) and isinstance(hypotheses, list)
+    declaration["typedDomains"] = {"mode": ["normal", "recovery"]}
+    exact_five = {
+        "lower": {"numerator": 5, "positiveDenominator": 1},
+        "upper": {"numerator": 5, "positiveDenominator": 1},
+        "lowerClosed": True,
+        "upperClosed": True,
+    }
+    for item in hypotheses:
+        assert isinstance(item, dict)
+        item["clockConstraint"] = {"x": copy.deepcopy(exact_five)}
+
+    prep = _action(
+        fixture, "test-router", action_id="prep-store", kind="PREP",
+        enabled_summaries=["before"], declared_target="target-q1",
+    )
+    prep_transition = prep["transition"]
+    assert isinstance(prep_transition, dict)
+    prep_transition.update({
+        "source": "q0",
+        "target": "q1",
+        "guardAst": {"tag": "STATE-EQUALS", "state": "q0"},
+        "simultaneousUpdates": [
+            {"tag": "STATE-ASSIGN", "state": "q1"},
+            {"tag": "TYPED-FIELD-ASSIGN", "field": "mode", "value": "recovery"},
+        ],
+    })
+    test = _action(
+        fixture, "test-router", action_id="test-reset-store", kind="TEST",
+        enabled_summaries=["opaque-post-summary"],
+    )
+    test_transition = test["transition"]
+    assert isinstance(test_transition, dict)
+    test_transition.update({
+        "source": "q1",
+        "target": "q0",
+        "guardAst": {
+            "tag": "AND",
+            "operands": [
+                {"tag": "STATE-EQUALS", "state": "q1"},
+                {"tag": "TYPED-FIELD-EQUALS", "field": "mode", "value": "recovery"},
+                {
+                    "tag": "RATIONAL-INTERVAL-CONTAINS",
+                    "clock": "x",
+                    "interval": copy.deepcopy(exact_five),
+                },
+            ],
+        },
+        "simultaneousUpdates": [
+            {"tag": "STATE-ASSIGN", "state": "q0"},
+            {"tag": "CLOCK-RESET-TO-ZERO", "clock": "x"},
+            {"tag": "TYPED-FIELD-ASSIGN", "field": "mode", "value": "normal"},
+        ],
+    })
+    model_data["actions"] = [prep, test]
+    limits = model_data["limits"]
+    assert isinstance(limits, dict)
+    limits["actions"] = 2
+    model = _model_with_declaration(model_data)
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-cu-reset-store",
+        run_id="run-cu-reset-store", initial_summary="before",
+        resources=ResourceState.rounds(2), retry_cap=2,
+        initial_path_bundles=_seed_with_conservative_h2(
+            model, root_id="root:h2:cu-reset-store",
+        ),
+    )
+    environment = _environment({
+        "private-0": {
+            "prep-store": _prep_recover(
+                target_confirmed=False, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="target-q1", evidence="synthetic:prep:cu-reset-store",
+                post_summary="opaque-post-summary", next_state="private-1",
+            ),
+        },
+        "private-1": {"test-reset-store": _normal("branch-alpha", "after-test", "private-2")},
+    })
+
+    after_prep = session.step(session.initial_state, environment)
+    assert after_prep.stop_reason is None
+    prep_h2 = after_prep.state.frontiers["h2"]
+    assert {
+        (path.control_state_id, path.clocks["x"], path.typed_store["mode"])
+        for path in prep_h2
+    } == {("q1", Interval(Fraction(5), Fraction(5), True, True), "recovery")}
+    assert after_prep.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+
+    after_test = session.step(after_prep.state, after_prep.environment)
+    assert after_test.stop_reason is None
+    assert after_test.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
+    assert after_test.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+    assert {
+        (path.control_state_id, path.clocks["x"], path.typed_store["mode"], path.path_length)
+        for path in after_test.state.frontiers["h2"]
+    } == {("q0", Interval(Fraction(0), Fraction(0), True, True), "normal", 2)}
+    assert {path.status for path in after_test.state.frontiers["h2"]} == {
+        "CONSERVATIVE-UNKNOWN",
+    }
+    records = model.context.provenance_store.records()
+    assert {
+        records[path.history_provenance[-1]].transition_id
+        for path in after_test.state.frontiers["h2"]
+    } == {"tr-test-reset-store"}
+
+
 def test_summary_only_prep_retains_every_declared_seed_path_without_observation_filtering() -> None:
     """No ``I_z`` class may discard a concurrent path merely because it is unobserved."""
 
@@ -748,8 +883,8 @@ def test_summary_only_prep_preserves_a_conservative_s0_frontier_without_a_status
     assert isinstance(follow_up_transition, dict)
     follow_up_transition.update({
         "source": "q1",
-        "target": "q1",
-        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+        "target": "q0",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}],
     })
     model = _model_with(base, fixture, [prep, follow_up])
     seed = _seed_with_conservative_h2(
@@ -775,6 +910,7 @@ def test_summary_only_prep_preserves_a_conservative_s0_frontier_without_a_status
 
     after_prep = session.step(session.initial_state, environment)
     assert after_prep.stop_reason is None
+    assert after_prep.state.history.hypotheses == frozenset({"h0", "h1", "h2", "h3"})
     assert after_prep.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
     assert {
         path.control_state_id for path in after_prep.state.frontiers["h2"]
@@ -794,6 +930,20 @@ def test_summary_only_prep_preserves_a_conservative_s0_frontier_without_a_status
     assert after_test.state.history.status_by_hypothesis == {
         "h0": "KNOWN", "h1": "KNOWN", "h2": "CONSERVATIVE-UNKNOWN",
     }
+    h2_successors = after_test.state.frontiers["h2"]
+    assert {path.control_state_id for path in h2_successors} == {"q0"}
+    assert {path.path_length for path in h2_successors} == {2}
+    assert {path.status for path in h2_successors} == {"CONSERVATIVE-UNKNOWN"}
+    assert all(
+        path.history_provenance[:2]
+        == after_prep.state.frontiers["h2"][0].history_provenance
+        and len(path.history_provenance) == 3
+        for path in h2_successors
+    )
+    records = model.context.provenance_store.records()
+    assert {
+        records[path.history_provenance[-1]].transition_id for path in h2_successors
+    } == {"tr-test-q1"}
 
 
 def test_summary_only_prep_aggregates_mixed_known_and_conservative_s0_paths() -> None:
@@ -818,8 +968,8 @@ def test_summary_only_prep_aggregates_mixed_known_and_conservative_s0_paths() ->
     assert isinstance(follow_up_transition, dict)
     follow_up_transition.update({
         "source": "q1",
-        "target": "q1",
-        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+        "target": "q0",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}],
     })
     model = _model_with(base, fixture, [prep, follow_up])
     seed = _seed_with_conservative_h2(
@@ -829,7 +979,7 @@ def test_summary_only_prep_aggregates_mixed_known_and_conservative_s0_paths() ->
     session = ReferenceSession(
         binding=binding, model=model, session_id="session-mixed-s0-summary",
         run_id="run-mixed-s0-summary", initial_summary="before",
-        resources=ResourceState.rounds(2), retry_cap=2, initial_path_bundles=seed,
+        resources=ResourceState.budget(2), retry_cap=2, initial_path_bundles=seed,
     )
     environment = _environment({
         "private-0": {
@@ -844,6 +994,8 @@ def test_summary_only_prep_aggregates_mixed_known_and_conservative_s0_paths() ->
 
     after_prep = session.step(session.initial_state, environment)
     assert after_prep.stop_reason is None
+    assert after_prep.state.history.hypotheses == frozenset({"h0", "h1", "h2", "h3"})
+    assert after_prep.state.resources.remaining == 1
     assert after_prep.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
     assert len(after_prep.state.frontiers["h2"]) == 2
     assert {path.control_state_id for path in after_prep.state.frontiers["h2"]} == {"q1"}
@@ -852,17 +1004,139 @@ def test_summary_only_prep_aggregates_mixed_known_and_conservative_s0_paths() ->
     }
     assert {path.history_provenance[0] for path in after_prep.state.frontiers["h2"]} == source_roots
     assert all(len(path.history_provenance) == 2 for path in after_prep.state.frontiers["h2"])
+    after_prep_by_root = {
+        path.history_provenance[0]: path for path in after_prep.state.frontiers["h2"]
+    }
 
     # branch-alpha remains allowed to shrink ordinary known candidates, but
     # cannot use the C-U sibling to erase h2 as a whole.
     after_test = session.step(after_prep.state, after_prep.environment)
     assert after_test.stop_reason is None
+    assert after_test.state.resources.remaining == 0
     assert after_test.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
     assert after_test.state.history.status_by_hypothesis == {
         "h0": "KNOWN", "h1": "KNOWN", "h2": "CONSERVATIVE-UNKNOWN",
     }
     assert len(after_test.state.frontiers["h2"]) == 2
-    assert {path.history_provenance[0] for path in after_test.state.frontiers["h2"]} == source_roots
+    after_test_by_root = {
+        path.history_provenance[0]: path for path in after_test.state.frontiers["h2"]
+    }
+    assert set(after_test_by_root) == source_roots
+    assert all(path.control_state_id == "q0" for path in after_test_by_root.values())
+    assert {path.status for path in after_test_by_root.values()} == {
+        "KNOWN", "CONSERVATIVE-UNKNOWN",
+    }
+    assert all(
+        path.path_length == after_prep_by_root[root].path_length + 1
+        and path.history_provenance[:-1]
+        == after_prep_by_root[root].history_provenance
+        for root, path in after_test_by_root.items()
+    )
+    records = model.context.provenance_store.records()
+    assert {
+        records[path.history_provenance[-1]].transition_id
+        for path in after_test_by_root.values()
+    } == {"tr-test-q1"}
+
+
+def test_nonself_test_advances_mixed_conservative_paths_of_different_lengths() -> None:
+    """Every retained mixed S0 path consumes an admitted non-self-loop TEST.
+
+    The two h2 roots intentionally have different legal prefix lengths.  This
+    prevents a representative-path implementation from hiding a stale sibling
+    behind equal aggregate membership or a self loop.
+    """
+
+    binding, base, fixture = _runtime_parts()
+    prep = _action(
+        fixture, "test-router", action_id="prep-q0-q1", kind="PREP",
+        enabled_summaries=["before"], declared_target="prepared-target",
+    )
+    prep_transition = prep["transition"]
+    assert isinstance(prep_transition, dict)
+    prep_transition.update({
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    test = _action(
+        fixture, "test-router", action_id="test-q1-q0", kind="TEST",
+        enabled_summaries=["after-prep"],
+    )
+    test_transition = test["transition"]
+    assert isinstance(test_transition, dict)
+    test_transition.update({
+        "source": "q1",
+        "target": "q0",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}],
+    })
+    model = _model_with(base, fixture, [prep, test])
+    seed = _seed_with_conservative_h2(
+        model, root_id="root:h2:mixed-different-length", retain_known_h2_path=True,
+    )
+    prefix = copy.deepcopy(prep_transition)
+    prefix.update({
+        "id": "tr-h2-prefix-q0-q0",
+        "source": "q0",
+        "target": "q0",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}],
+    })
+    seed["h2"] = (
+        seed["h2"][0],
+        _advance_seed_path(model, seed["h2"][1], prefix),
+    )
+    initial_by_root = {path.history_provenance[0]: path for path in seed["h2"]}
+    assert {path.path_length for path in initial_by_root.values()} == {0, 1}
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-mixed-different-length",
+        run_id="run-mixed-different-length", initial_summary="before",
+        resources=ResourceState.rounds(2), retry_cap=2, initial_path_bundles=seed,
+    )
+    environment = _environment({
+        "private-0": {
+            "prep-q0-q1": _prep_recover(
+                target_confirmed=False, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-target", evidence="synthetic:prep:mixed-different-length",
+                post_summary="after-prep", next_state="private-1",
+            ),
+        },
+        "private-1": {"test-q1-q0": _normal("branch-alpha", "after-test", "private-2")},
+    })
+
+    after_prep = session.step(session.initial_state, environment)
+    assert after_prep.stop_reason is None
+    prepared_by_root = {
+        path.history_provenance[0]: path for path in after_prep.state.frontiers["h2"]
+    }
+    assert set(prepared_by_root) == set(initial_by_root)
+    assert all(path.control_state_id == "q1" for path in prepared_by_root.values())
+    assert all(
+        path.path_length == initial_by_root[root].path_length + 1
+        and path.history_provenance[:-1] == initial_by_root[root].history_provenance
+        for root, path in prepared_by_root.items()
+    )
+
+    after_test = session.step(after_prep.state, after_prep.environment)
+    assert after_test.stop_reason is None
+    assert after_test.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
+    assert after_test.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+    successors_by_root = {
+        path.history_provenance[0]: path for path in after_test.state.frontiers["h2"]
+    }
+    assert set(successors_by_root) == set(initial_by_root)
+    assert all(path.control_state_id == "q0" for path in successors_by_root.values())
+    assert {path.status for path in successors_by_root.values()} == {
+        "KNOWN", "CONSERVATIVE-UNKNOWN",
+    }
+    assert all(
+        path.path_length == prepared_by_root[root].path_length + 1
+        and path.history_provenance[:-1] == prepared_by_root[root].history_provenance
+        for root, path in successors_by_root.items()
+    )
+    records = model.context.provenance_store.records()
+    assert {
+        records[path.history_provenance[-1]].transition_id
+        for path in successors_by_root.values()
+    } == {"tr-test-q1-q0"}
 
 
 def test_initial_conservative_s0_frontier_is_not_excluded_by_a_normal_observation() -> None:
@@ -892,6 +1166,264 @@ def test_initial_conservative_s0_frontier_is_not_excluded_by_a_normal_observatio
     assert result.state.history.status_by_hypothesis == {
         "h0": "KNOWN", "h1": "KNOWN", "h2": "CONSERVATIVE-UNKNOWN",
     }
+
+
+def test_all_conservative_members_produce_a_named_prediction_gap_without_dispatch() -> None:
+    """C-U continuations never fabricate the normal class needed to execute TEST."""
+
+    class NoDispatchEnvironment:
+        calls = 0
+
+        def execute(self, _request: ExecutionRequest) -> object:
+            self.calls += 1
+            raise AssertionError("all-conservative prediction gap must not dispatch")
+
+    binding, base, fixture = _runtime_parts()
+    test = _action(
+        fixture, "test-router", action_id="test-all-conservative", kind="TEST",
+        enabled_summaries=["q0"],
+    )
+    model = _model_with(base, fixture, [test])
+    seed = {
+        hypothesis: (
+            initial_entry(
+                model.context,
+                hypothesis_id=hypothesis,
+                control_state_id=frontier.control_state_id,
+                clocks=frontier.clocks,
+                typed_store=frontier.typed_store,
+                root_id=f"root:{hypothesis}:all-conservative",
+                status="CONSERVATIVE-UNKNOWN",
+            ),
+        )
+        for hypothesis, frontier in model.initial_frontiers.items()
+    }
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-all-conservative-gap",
+        run_id="run-all-conservative-gap", initial_summary="q0",
+        resources=ResourceState.rounds(0), retry_cap=2, initial_path_bundles=seed,
+    )
+    environment = NoDispatchEnvironment()
+
+    result = session.step(session.initial_state, environment)  # type: ignore[arg-type]
+
+    assert result.stop_reason == "Stop-Prediction-Gap"
+    assert result.state is session.initial_state
+    assert result.state.attempts == 0
+    assert result.state.resources.remaining == 0
+    assert result.state.evidence == ()
+    assert result.diagnostics[-1].code == "PREDICTION-GAP"
+    assert environment.calls == 0
+
+
+def test_confirmed_not_sent_does_not_commit_predicted_conservative_successors() -> None:
+    """A charged CNS delivery preserves the pre-dispatch C-U frontier exactly."""
+
+    binding, base, fixture = _runtime_parts()
+    test = _action(
+        fixture, "test-router", action_id="test-q0-q1", kind="TEST",
+        enabled_summaries=["q0"],
+    )
+    transition = test["transition"]
+    assert isinstance(transition, dict)
+    transition.update({
+        "source": "q0",
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    model = _model_with(base, fixture, [test])
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-cu-confirmed-not-sent",
+        run_id="run-cu-confirmed-not-sent", initial_summary="q0",
+        resources=ResourceState.rounds(1), retry_cap=2,
+        initial_path_bundles=_seed_with_conservative_h2(
+            model, root_id="root:h2:confirmed-not-sent",
+        ),
+    )
+    initial = session.initial_state
+    result = session.step(initial, _environment({
+        "private-0": {"test-q0-q1": _not_sent("private-1")},
+    }))
+
+    assert result.stop_reason is None
+    assert result.diagnostics[-1].code == "CONFIRMED-NOT-SENT"
+    assert result.state.evidence[-1].snapshot.action_id == "test-q0-q1"
+    assert result.state.history == initial.history
+    assert result.state.frontiers == initial.frontiers
+    assert result.state.attempts == 1
+    assert result.state.resources.remaining == 0
+
+
+def test_normal_class_advances_feasible_conservative_paths_and_retains_unresolved_witnesses() -> None:
+    """A normal class may drop known-incompatible h3 without dropping C-U h2."""
+
+    binding, base, fixture = _runtime_parts()
+    test = _action(
+        fixture, "test-router", action_id="test-q0-q1", kind="TEST",
+        enabled_summaries=["q0"],
+    )
+    transition = test["transition"]
+    assert isinstance(transition, dict)
+    transition.update({
+        "source": "q0",
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    model = _model_with(base, fixture, [test])
+    seed = _seed_with_conservative_h2(
+        model, root_id="root:h2:feasible-conservative",
+    )
+    source = seed["h2"][0]
+    seed["h2"] = (
+        source,
+        initial_entry(
+            model.context,
+            hypothesis_id="h2",
+            control_state_id="q1",
+            clocks=source.clocks,
+            typed_store=source.typed_store,
+            root_id="root:h2:unresolved-source-mismatch",
+            status="CONSERVATIVE-UNKNOWN",
+        ),
+    )
+    feasible_root = seed["h2"][0].history_provenance[0]
+    unresolved_root = seed["h2"][1].history_provenance[0]
+    prediction = model.predict(
+        hypotheses=frozenset(seed), frontiers=seed, status_by_hypothesis={},
+        action_id="test-q0-q1",
+    )
+    alpha = next(item for item in prediction.classes if item.observable == "branch-alpha")
+    assert alpha.hypotheses == frozenset({"h0", "h1", "h2"})
+    assert alpha.conservative_hypotheses == frozenset({"h2"})
+    h2_by_root = {path.history_provenance[0]: path for path in alpha.successors["h2"]}
+    assert set(h2_by_root) == {feasible_root, unresolved_root}
+    assert h2_by_root[feasible_root].control_state_id == "q1"
+    assert h2_by_root[feasible_root].path_length == 1
+    assert h2_by_root[unresolved_root].path_length == 0
+    assert any(item.code == "CONSERVATIVE-PATH" for item in prediction.diagnostics)
+
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-normal-with-cu-witness",
+        run_id="run-normal-with-cu-witness", initial_summary="q0",
+        resources=ResourceState.rounds(1), retry_cap=2, initial_path_bundles=seed,
+    )
+    result = session.step(session.initial_state, _environment({
+        "private-0": {"test-q0-q1": _normal("branch-alpha", "after-test", "private-1")},
+    }))
+
+    assert result.stop_reason is None
+    assert result.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
+    assert result.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+    assert {
+        path.path_length for path in result.state.frontiers["h2"]
+    } == {0, 1}
+
+
+def test_history_conservative_member_keeps_a_known_infeasible_source_as_a_named_witness() -> None:
+    """History-level C-U forbids treating one known source mismatch as proof."""
+
+    _binding, base, fixture = _runtime_parts()
+    test = _action(
+        fixture, "test-router", action_id="test-q0-q1", kind="TEST",
+        enabled_summaries=["q0"],
+    )
+    transition = test["transition"]
+    assert isinstance(transition, dict)
+    transition.update({
+        "source": "q0",
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    model = _model_with(base, fixture, [test])
+    seed = {
+        hypothesis: (frontier,) for hypothesis, frontier in model.initial_frontiers.items()
+    }
+    h2 = model.initial_frontiers["h2"]
+    seed["h2"] = (
+        initial_entry(
+            model.context,
+            hypothesis_id="h2",
+            control_state_id="q1",
+            clocks=h2.clocks,
+            typed_store=h2.typed_store,
+            root_id="root:h2:history-cu-known-infeasible",
+            status="KNOWN",
+        ),
+    )
+    prediction = model.predict(
+        hypotheses=frozenset(seed), frontiers=seed,
+        status_by_hypothesis={"h2": "CONSERVATIVE-UNKNOWN"}, action_id="test-q0-q1",
+    )
+    alpha = next(item for item in prediction.classes if item.observable == "branch-alpha")
+
+    assert alpha.hypotheses == frozenset({"h0", "h1", "h2"})
+    assert alpha.conservative_hypotheses == frozenset({"h2"})
+    assert alpha.successors["h2"][0].control_state_id == "q1"
+    assert alpha.successors["h2"][0].path_length == 0
+    assert any(item.code == "CONSERVATIVE-MEMBER-PATH" for item in prediction.diagnostics)
+
+
+def test_normal_class_retains_a_path_limited_conservative_witness_without_h3() -> None:
+    """A completed class keeps a limited C-U source but still drops known h3."""
+
+    binding, base, fixture = _runtime_parts()
+    model_data = copy.deepcopy(fixture["algorithmModel"])
+    assert isinstance(model_data, dict)
+    test = _action(
+        fixture, "test-router", action_id="test-q0-q1", kind="TEST",
+        enabled_summaries=["q0"],
+    )
+    transition = test["transition"]
+    assert isinstance(transition, dict)
+    transition.update({
+        "source": "q0",
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    model_data["actions"] = [test]
+    limits = model_data["limits"]
+    assert isinstance(limits, dict)
+    limits["actions"] = 1
+    limits["pathLength"] = 1
+    model = FiniteSessionModel.from_mapping(context=base.context, value=model_data)
+    seed = _seed_with_conservative_h2(
+        model, root_id="root:h2:path-limited-normal-class",
+    )
+    prefix = copy.deepcopy(transition)
+    prefix.update({
+        "id": "tr-h2-path-limit-prefix",
+        "source": "q0",
+        "target": "q0",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}],
+    })
+    seed["h2"] = (_advance_seed_path(model, seed["h2"][0], prefix),)
+    prediction = model.predict(
+        hypotheses=frozenset(seed), frontiers=seed, status_by_hypothesis={},
+        action_id="test-q0-q1",
+    )
+    alpha = next(item for item in prediction.classes if item.observable == "branch-alpha")
+    assert alpha.hypotheses == frozenset({"h0", "h1", "h2"})
+    assert alpha.conservative_hypotheses == frozenset({"h2"})
+    assert {
+        (path.control_state_id, path.path_length) for path in alpha.successors["h2"]
+    } == {("q0", 1)}
+    assert any(item.code == "PATH-LIMIT" for item in prediction.diagnostics)
+
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-path-limited-normal-class",
+        run_id="run-path-limited-normal-class", initial_summary="q0",
+        resources=ResourceState.rounds(1), retry_cap=2, initial_path_bundles=seed,
+    )
+    result = session.step(session.initial_state, _environment({
+        "private-0": {"test-q0-q1": _normal("branch-alpha", "after-test", "private-1")},
+    }))
+
+    assert result.stop_reason is None
+    assert result.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
+    assert result.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+    assert {
+        (path.control_state_id, path.path_length) for path in result.state.frontiers["h2"]
+    } == {("q0", 1)}
 
 
 @pytest.mark.parametrize("condition", ["path-limit", "unsupported-guard"])
@@ -1050,17 +1582,43 @@ def test_fresh_checkpoint_replays_a_conservative_s0_summary_path_without_cache_w
     assert isinstance(follow_up_transition, dict)
     follow_up_transition.update({
         "source": "q1",
-        "target": "q1",
-        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+        "target": "q0",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}],
     })
-    source_model = _model_with(source_base, fixture, [prep, follow_up])
+    third_prep = _action(
+        fixture, "test-router", action_id="prep-after-test", kind="PREP",
+        enabled_summaries=["after-test"], declared_target="third-target",
+    )
+    third_transition = third_prep["transition"]
+    assert isinstance(third_transition, dict)
+    third_transition.update({
+        "source": "q0",
+        "target": "q0",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}],
+    })
+    source_model = _model_with(source_base, fixture, [prep, follow_up, third_prep])
+    source_seed = _seed_with_conservative_h2(
+        source_model, root_id="root:h2:portable-s0-conservative",
+        retain_known_h2_path=True,
+    )
+    source_prefix = copy.deepcopy(prep_transition)
+    source_prefix.update({
+        "id": "tr-portable-s0-conservative-prefix",
+        "source": "q0",
+        "target": "q0",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}],
+    })
+    source_seed["h2"] = (
+        source_seed["h2"][0],
+        _advance_seed_path(source_model, source_seed["h2"][1], source_prefix),
+    )
+    source_roots = {path.history_provenance[0] for path in source_seed["h2"]}
+    assert {path.path_length for path in source_seed["h2"]} == {0, 1}
     source = ReferenceSession(
         binding=source_binding, model=source_model,
         session_id="session-portable-s0-conservative", run_id="run-portable-s0-conservative",
-        initial_summary="before", resources=ResourceState.rounds(2), retry_cap=2,
-        initial_path_bundles=_seed_with_conservative_h2(
-            source_model, root_id="root:h2:portable-s0-conservative",
-        ),
+        initial_summary="before", resources=ResourceState.rounds(3), retry_cap=2,
+        initial_path_bundles=source_seed,
     )
     environment = _environment({
         "private-0": {
@@ -1071,35 +1629,97 @@ def test_fresh_checkpoint_replays_a_conservative_s0_summary_path_without_cache_w
             ),
         },
         "private-1": {"test-q1": _normal("branch-alpha", "after-test", "private-2")},
+        "private-2": {
+            "prep-after-test": _prep_recover(
+                target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="third-target", evidence="synthetic:prep:after-nonself-test",
+                post_summary="after-third", next_state="private-3",
+            ),
+        },
     })
     first = source.step(source.initial_state, environment)
     assert first.stop_reason is None
     assert first.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
     expected = source.step(first.state, first.environment)
     assert expected.stop_reason is None
+    expected_third = source.step(expected.state, expected.environment)
+    assert expected_third.stop_reason is None
 
     target_binding, target_base, _target_fixture = _runtime_parts()
-    target_model = _model_with(target_base, fixture, [prep, follow_up])
+    target_model = _model_with(target_base, fixture, [prep, follow_up, third_prep])
+    target_seed = _seed_with_conservative_h2(
+        target_model, root_id="root:h2:portable-s0-conservative",
+        retain_known_h2_path=True,
+    )
+    target_prefix = copy.deepcopy(prep_transition)
+    target_prefix.update({
+        "id": "tr-portable-s0-conservative-prefix",
+        "source": "q0",
+        "target": "q0",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}],
+    })
+    target_seed["h2"] = (
+        target_seed["h2"][0],
+        _advance_seed_path(target_model, target_seed["h2"][1], target_prefix),
+    )
     target = ReferenceSession(
         binding=target_binding, model=target_model,
         session_id="session-portable-s0-conservative", run_id="run-portable-s0-conservative",
-        initial_summary="before", resources=ResourceState.rounds(2), retry_cap=2,
-        initial_path_bundles=_seed_with_conservative_h2(
-            target_model, root_id="root:h2:portable-s0-conservative",
-        ),
+        initial_summary="before", resources=ResourceState.rounds(3), retry_cap=2,
+        initial_path_bundles=target_seed,
     )
     records_before = dict(target_model.context.provenance_store.records())
     assert target._state_error(first.state) is None
 
     resumed = target.step(first.state, first.environment)
+    resumed_third = target.step(resumed.state, resumed.environment)
 
     assert resumed.stop_reason is None
     assert resumed.state == expected.state
     assert resumed.state.attempts == 2
     assert resumed.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
     assert "h2" in resumed.state.history.hypotheses
+    assert {path.control_state_id for path in resumed.state.frontiers["h2"]} == {"q0"}
+    assert {path.history_provenance[0] for path in resumed.state.frontiers["h2"]} == source_roots
+    assert {path.path_length for path in resumed.state.frontiers["h2"]} == {2, 3}
+    resumed_by_root = {
+        path.history_provenance[0]: path for path in resumed.state.frontiers["h2"]
+    }
+    assert resumed_third.stop_reason is None
+    assert resumed_third.state == expected_third.state
+    assert resumed_third.state.evidence[-1].snapshot.action_id == "prep-after-test"
+    assert {path.control_state_id for path in resumed_third.state.frontiers["h2"]} == {"q0"}
+    assert {path.history_provenance[0] for path in resumed_third.state.frontiers["h2"]} == source_roots
+    third_by_root = {
+        path.history_provenance[0]: path for path in resumed_third.state.frontiers["h2"]
+    }
+    initial_lengths = {
+        path.history_provenance[0]: path.path_length for path in source_seed["h2"]
+    }
+    assert {
+        root: path.path_length for root, path in third_by_root.items()
+    } == {
+        root: min(length + 3, source_model.path_limit)
+        for root, length in initial_lengths.items()
+    }
+    # The resumed state uses detached replay closure.  Inspect the source
+    # record that produced the portable reference, while separately proving
+    # below that the fresh target never writes its shared cache.
+    records = source_model.context.provenance_store.records()
+    for root, path in third_by_root.items():
+        before_third = resumed_by_root[root]
+        if before_third.path_length < source_model.path_limit:
+            assert path.path_length == before_third.path_length + 1
+            assert path.history_provenance[:-1] == before_third.history_provenance
+            assert records[path.history_provenance[-1]].transition_id == "tr-prep-after-test"
+        else:
+            assert path == before_third
+            assert records[path.history_provenance[-1]].transition_id == "tr-test-q1"
+    assert resumed_third.state.attempts == 3
+    assert resumed_third.state.resources.remaining == 0
     assert dict(target_model.context.provenance_store.records()) == records_before
     assert target._state_error(resumed.state) is None
+    assert target._state_error(resumed_third.state) is None
 
 
 def test_resumed_checkpoint_rejects_a_coordinated_conservative_status_promotion() -> None:
@@ -1166,6 +1786,86 @@ def test_resumed_checkpoint_rejects_a_coordinated_conservative_status_promotion(
     assert rejected.state is forged_state
     assert rejected.diagnostics[0].code == "EVIDENCE-COMMIT-MISMATCH"
     assert environment.calls == 0
+
+
+def test_resumed_checkpoint_rejects_a_nonself_test_frontier_rollback() -> None:
+    """A coordinated rollback cannot erase a TEST successor from a C-U path."""
+
+    class NoDispatchEnvironment:
+        calls = 0
+
+        def execute(self, _request: ExecutionRequest) -> object:
+            self.calls += 1
+            raise AssertionError("rolled-back checkpoint must be rejected before dispatch")
+
+    binding, base, fixture = _runtime_parts()
+    prep = _action(
+        fixture, "test-router", action_id="prep-q0-q1", kind="PREP",
+        enabled_summaries=["before"], declared_target="prepared-target",
+    )
+    prep_transition = prep["transition"]
+    assert isinstance(prep_transition, dict)
+    prep_transition.update({
+        "source": "q0",
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    test = _action(
+        fixture, "test-router", action_id="test-q1-q0", kind="TEST",
+        enabled_summaries=["after-prep"],
+    )
+    test_transition = test["transition"]
+    assert isinstance(test_transition, dict)
+    test_transition.update({
+        "source": "q1",
+        "target": "q0",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}],
+    })
+    model = _model_with(base, fixture, [prep, test])
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-reject-test-rollback",
+        run_id="run-reject-test-rollback", initial_summary="before",
+        resources=ResourceState.rounds(3), retry_cap=2,
+        initial_path_bundles=_seed_with_conservative_h2(
+            model, root_id="root:h2:reject-test-rollback",
+        ),
+    )
+    environment = _environment({
+        "private-0": {
+            "prep-q0-q1": _prep_recover(
+                target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-target", evidence="synthetic:prep:rollback",
+                post_summary="after-prep", next_state="private-1",
+            ),
+        },
+        "private-1": {"test-q1-q0": _normal("branch-alpha", "after-test", "private-2")},
+    })
+    after_prep = session.step(session.initial_state, environment)
+    after_test = session.step(after_prep.state, after_prep.environment)
+    assert after_prep.stop_reason is None
+    assert after_test.stop_reason is None
+    assert session._state_error(after_test.state) is None
+    assert {path.control_state_id for path in after_test.state.frontiers["h2"]} == {"q0"}
+
+    forged_last = replace(
+        after_test.state.evidence[-1], history_after=after_prep.state.history,
+    )
+    forged_state = replace(
+        after_test.state,
+        history=after_prep.state.history,
+        frontiers=after_prep.state.frontiers,
+        evidence=after_test.state.evidence[:-1] + (forged_last,),
+    )
+    no_dispatch = NoDispatchEnvironment()
+
+    rejected = session.step(forged_state, no_dispatch)  # type: ignore[arg-type]
+
+    assert rejected.stop_reason == "Stop-Error"
+    assert rejected.state is forged_state
+    assert rejected.diagnostics[0].code == "EVIDENCE-COMMIT-MISMATCH"
+    assert rejected.state.resources == forged_state.resources
+    assert rejected.state.attempts == forged_state.attempts
+    assert no_dispatch.calls == 0
 
 
 @pytest.mark.parametrize(

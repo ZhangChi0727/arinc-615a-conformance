@@ -270,16 +270,18 @@ class FiniteSessionModel:
             # The S0 member-status map may legitimately omit a member.  A
             # conservative status carried by any retained public frontier is
             # nevertheless authoritative for prediction: a normal observation
-            # cannot exclude that unresolved path merely because S0 did not
-            # duplicate its status in the optional map.
-            if (
+            # cannot exclude that unresolved member merely because S0 did not
+            # duplicate its status in the optional map.  This is a membership
+            # rule, *not* permission to skip its finite transition.  An
+            # admitted non-self-loop TEST still advances every retained path
+            # (including its state, clocks, store and provenance); only the
+            # resulting member remains in every completed visible class.
+            member_conservative = (
                 status_by_hypothesis.get(hypothesis) == "CONSERVATIVE-UNKNOWN"
                 or any(path.status == "CONSERVATIVE-UNKNOWN" for path in paths)
-            ):
-                conservative[hypothesis] = paths
-                continue
+            )
             feasible: list[FrontierEntry] = []
-            uncertain: list[FrontierEntry] = []
+            retained: list[FrontierEntry] = []
             for path in paths:
                 result = propagate_transition(
                     path,
@@ -294,14 +296,41 @@ class FiniteSessionModel:
                 diagnostics.extend(result.diagnostics)
                 if result.kind == "FEASIBLE":
                     feasible.extend(result.entries)
-                elif result.kind != "INFEASIBLE":
+                elif result.kind != "INFEASIBLE" or member_conservative:
                     # The incoming path, not a fabricated observation class,
                     # remains the conservative witness for a calculation that
-                    # did not prove compatibility or incompatibility.
-                    uncertain.append(path)
+                    # did not prove compatibility or incompatibility.  A
+                    # member that was already conservative also retains an
+                    # otherwise infeasible source path: its historic unknown
+                    # effect cannot be converted into a proved exclusion.
+                    if result.kind == "INFEASIBLE":
+                        diagnostics.append(KernelDiagnostic(
+                            "CONSERVATIVE-MEMBER-PATH",
+                            "an existing conservative member retains an infeasible source witness",
+                        ))
+                    retained.extend(result.entries or (path,))
+
+            if member_conservative:
+                try:
+                    conservative[hypothesis] = _bounded_paths(
+                        feasible + retained, self.frontier_limit,
+                    )
+                except ValueError as exc:
+                    diagnostics.append(KernelDiagnostic("FRONTIER-BUNDLE-LIMIT", str(exc)))
+                    # Do not erase a compatible conservative member merely
+                    # because all exact successors cannot fit the declared
+                    # finite bundle.  Withhold a visible class for this
+                    # member and retain its verified source witness.
+                    conservative[hypothesis] = paths
+                # A conservative member never supplies a completed normal
+                # observation class of its own.  If another completed member
+                # supplies one below, this calculated continuation is injected
+                # into it; if none does, the named prediction gap remains.
+                continue
+
             if feasible:
                 try:
-                    successors = _bounded_paths(feasible + uncertain, self.frontier_limit)
+                    successors = _bounded_paths(feasible + retained, self.frontier_limit)
                 except ValueError as exc:
                     diagnostics.append(KernelDiagnostic("FRONTIER-BUNDLE-LIMIT", str(exc)))
                     # A finite bound cannot erase paths merely because their
@@ -315,12 +344,12 @@ class FiniteSessionModel:
                     measurement_windows.setdefault(observable, {})[hypothesis] = self.uncertainty.window(
                         action.measurement_ticks_by_hypothesis[hypothesis],
                     )
-            if uncertain:
+            if retained:
                 # A bounded/unsupported computation keeps its hypothesis in a
                 # conservative continuation.  It is included in every normal
                 # class below, so a visible normal observation cannot exclude
                 # a hypothesis whose applicable computation was not completed.
-                conservative[hypothesis] = _bounded_paths(uncertain, self.frontier_limit)
+                conservative[hypothesis] = _bounded_paths(retained, self.frontier_limit)
         if conservative:
             if grouped:
                 for successors in grouped.values():
