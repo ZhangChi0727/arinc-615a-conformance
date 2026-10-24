@@ -790,8 +790,10 @@ def test_summary_only_prep_preserves_a_conservative_s0_frontier_without_a_status
 
     after_test = session.step(after_prep.state, after_prep.environment)
     assert after_test.stop_reason is None
-    assert "h2" in after_test.state.history.hypotheses
-    assert after_test.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+    assert after_test.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
+    assert after_test.state.history.status_by_hypothesis == {
+        "h0": "KNOWN", "h1": "KNOWN", "h2": "CONSERVATIVE-UNKNOWN",
+    }
 
 
 def test_summary_only_prep_aggregates_mixed_known_and_conservative_s0_paths() -> None:
@@ -855,8 +857,10 @@ def test_summary_only_prep_aggregates_mixed_known_and_conservative_s0_paths() ->
     # cannot use the C-U sibling to erase h2 as a whole.
     after_test = session.step(after_prep.state, after_prep.environment)
     assert after_test.stop_reason is None
-    assert "h2" in after_test.state.history.hypotheses
-    assert after_test.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+    assert after_test.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
+    assert after_test.state.history.status_by_hypothesis == {
+        "h0": "KNOWN", "h1": "KNOWN", "h2": "CONSERVATIVE-UNKNOWN",
+    }
     assert len(after_test.state.frontiers["h2"]) == 2
     assert {path.history_provenance[0] for path in after_test.state.frontiers["h2"]} == source_roots
 
@@ -884,13 +888,10 @@ def test_initial_conservative_s0_frontier_is_not_excluded_by_a_normal_observatio
     }))
 
     assert result.stop_reason is None
-    assert "h2" in result.state.history.hypotheses
-    assert result.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
-    assert all(
-        status == "KNOWN"
-        for hypothesis, status in result.state.history.status_by_hypothesis.items()
-        if hypothesis != "h2"
-    )
+    assert result.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
+    assert result.state.history.status_by_hypothesis == {
+        "h0": "KNOWN", "h1": "KNOWN", "h2": "CONSERVATIVE-UNKNOWN",
+    }
 
 
 @pytest.mark.parametrize("condition", ["path-limit", "unsupported-guard"])
