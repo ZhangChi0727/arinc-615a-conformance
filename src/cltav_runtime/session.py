@@ -297,8 +297,8 @@ class ReferenceSession:
             ),),
         )
 
-    @staticmethod
     def _consume_pending_delivery(
+        self,
         state: SessionState,
         environment_after_delivery: SyntheticEnvironment,
         record: VisibleExecutionRecord,
@@ -311,15 +311,15 @@ class ReferenceSession:
             and execution_id
             and execution_id in state.processed_execution_attempt_ids
         ):
-            canonical_records = tuple(
-                item.execution
+            canonical_evidence = tuple(
+                item
                 for item in state.evidence
                 if item.execution.execution_attempt_id == execution_id
             )
             # State validation establishes a one-to-one ledger of processed
             # identities to issued evidence.  Still fail closed here rather
             # than silently accepting a malformed public checkpoint.
-            if len(canonical_records) != 1:
+            if len(canonical_evidence) != 1:
                 return SessionResult(
                     state,
                     environment_after_delivery,
@@ -329,14 +329,30 @@ class ReferenceSession:
                         "processed execution identity has no unique canonical evidence record",
                     ),),
                 )
-            if record != canonical_records[0]:
+            canonical = canonical_evidence[0]
+            action = self.model.actions.get(canonical.snapshot.action_id)
+            if action is None:
+                return SessionResult(
+                    state,
+                    environment_after_delivery,
+                    "Stop-Error",
+                    (KernelDiagnostic(
+                        "EXECUTION-DELIVERY-LEDGER-MISMATCH",
+                        "canonical processed evidence does not name a current model action",
+                    ),),
+                )
+            ingress_error = _incoming_record_error(record, action=action)
+            if (
+                ingress_error is not None
+                or not _strict_visible_execution_record_equal(record, canonical.execution)
+            ):
                 return SessionResult(
                     state,
                     environment_after_delivery,
                     "Stop-Error",
                     (KernelDiagnostic(
                         "CONFLICTING-EXECUTION-DELIVERY",
-                        "inbound execution identity conflicts with its canonical processed evidence",
+                        "inbound execution delivery is not a type-exact canonical processed record",
                     ),),
                 )
             return SessionResult(
@@ -699,8 +715,20 @@ class ReferenceSession:
                 continue
 
             if item.execution.observable is None:
-                next_history = self._summary_only_history(history)
-                next_frontiers = frontiers
+                try:
+                    next_history, next_frontiers, _summary_diagnostics = self._summary_only_transition(
+                        model=replay_model,
+                        history=history,
+                        frontiers=frontiers,
+                        action=action,
+                        snapshot=item.snapshot,
+                        prediction=admission.prediction,
+                    )
+                except (TypeError, ValueError) as exc:
+                    return KernelDiagnostic(
+                        "EVIDENCE-SUMMARY-ONLY-MISMATCH",
+                        str(exc) or type(exc).__name__,
+                    )
             else:
                 selected_class, interpretation_error = _matching_class(item.snapshot, item.execution)
                 if selected_class is None:
@@ -855,6 +883,7 @@ class ReferenceSession:
         return self._post_dispatch(
             state=state,
             environment=environment,
+            model=model,
             snapshot=snapshot,
             prediction=prediction,
             action=action,
@@ -871,6 +900,7 @@ class ReferenceSession:
         *,
         state: SessionState,
         environment: SyntheticEnvironment,
+        model: FiniteSessionModel,
         snapshot: SelectSnapshot,
         prediction: ActionPrediction,
         action: SyntheticAction,
@@ -887,6 +917,7 @@ class ReferenceSession:
             return self._consume_execution(
                 state=state,
                 environment=environment,
+                model=model,
                 snapshot=snapshot,
                 prediction=prediction,
                 action=action,
@@ -920,6 +951,7 @@ class ReferenceSession:
         *,
         state: SessionState,
         environment: SyntheticEnvironment,
+        model: FiniteSessionModel,
         snapshot: SelectSnapshot,
         prediction: ActionPrediction,
         action: SyntheticAction,
@@ -1112,6 +1144,7 @@ class ReferenceSession:
         return self._commit_confirmed_execution(
             state=state,
             environment_after_execution=execution.successor,
+            model=model,
             snapshot=snapshot,
             prediction=prediction,
             action=action,
@@ -1223,6 +1256,7 @@ class ReferenceSession:
         *,
         state: SessionState,
         environment_after_execution: SyntheticEnvironment,
+        model: FiniteSessionModel,
         snapshot: SelectSnapshot,
         prediction: ActionPrediction,
         action: SyntheticAction,
@@ -1236,8 +1270,15 @@ class ReferenceSession:
         """Apply S8 (when needed) and S9 from a confirmed normalized outcome."""
 
         if execution_record.observable is None:
-            next_history = self._summary_only_history(state.history)
-            next_frontiers = state.frontiers
+            next_history, next_frontiers, summary_diagnostics = self._summary_only_transition(
+                model=model,
+                history=state.history,
+                frontiers=state.frontiers,
+                action=action,
+                snapshot=snapshot,
+                prediction=prediction,
+            )
+            diagnostics.extend(summary_diagnostics)
         else:
             selected_class, interpretation_error = _matching_class(snapshot, execution_record)
             if selected_class is None:
@@ -1309,18 +1350,68 @@ class ReferenceSession:
         )
 
     @staticmethod
-    def _summary_only_history(history: HistoryHandle) -> HistoryHandle:
-        """Advance the operation history without treating a summary as ``I_z``."""
+    def _summary_only_transition(
+        *,
+        model: FiniteSessionModel,
+        history: HistoryHandle,
+        frontiers: Mapping[str, tuple[FrontierEntry, ...]],
+        action: SyntheticAction,
+        snapshot: SelectSnapshot,
+        prediction: ActionPrediction,
+    ) -> tuple[
+        HistoryHandle,
+        Mapping[str, tuple[FrontierEntry, ...]],
+        tuple[KernelDiagnostic, ...],
+    ]:
+        """Commit an executed Prep/Recover transition without an ``I_z`` class.
 
-        return HistoryHandle.committed(
+        The summary belongs solely to S9.  This helper instead consumes the
+        selected action's frozen finite transition for every current path,
+        preserving ``H`` while making an unresolved member conservative.  It
+        is used by both the live S9 branch and public-ledger replay.
+        """
+
+        if (
+            action.kind not in {"PREP", "RECOVER"}
+            or snapshot.action_id != action.action_id
+            or snapshot.action_kind != action.kind
+            or prediction.action_id != action.action_id
+            or snapshot.classes != prediction.classes
+            or snapshot.hypotheses != history.hypotheses
+        ):
+            raise ValueError("summary-only transition does not match its frozen admitted action")
+        propagated = model.summary_only_successors(
             hypotheses=history.hypotheses,
-            compatible_state_by_hypothesis=history.compatible_state_by_hypothesis,
+            frontiers=frontiers,
+            status_by_hypothesis=history.status_by_hypothesis,
+            action_id=action.action_id,
+        )
+        if propagated.action_id != action.action_id or set(propagated.successors) != set(history.hypotheses):
+            raise ValueError("summary-only transition did not retain every current hypothesis")
+        if any(not paths for paths in propagated.successors.values()):
+            raise ValueError("summary-only transition produced an empty frontier bundle")
+
+        next_frontiers = MappingProxyType({
+            hypothesis: tuple(propagated.successors[hypothesis])
+            for hypothesis in sorted(history.hypotheses)
+        })
+        next_history = HistoryHandle.committed(
+            hypotheses=history.hypotheses,
+            compatible_state_by_hypothesis={
+                hypothesis: tuple(entry.history_provenance[-1] for entry in next_frontiers[hypothesis])
+                for hypothesis in history.hypotheses
+            },
             status_by_hypothesis={
-                hypothesis: history.status_by_hypothesis.get(hypothesis, "KNOWN")
+                hypothesis: (
+                    "CONSERVATIVE-UNKNOWN"
+                    if hypothesis in propagated.conservative_hypotheses
+                    else "KNOWN"
+                )
                 for hypothesis in history.hypotheses
             },
             version=history.version + 1,
         )
+        return next_history, next_frontiers, propagated.diagnostics
 
     @staticmethod
     def _conservative_history(history: HistoryHandle) -> HistoryHandle:
@@ -1816,7 +1907,7 @@ def _incoming_record_error(
         or not isinstance(result.prep_error, bool)
         or not isinstance(result.ineligible, bool)
         or not isinstance(result.declared_target, str)
-        or not result.declared_target
+        or not result.declared_target.strip()
         or not isinstance(result.evidence, str)
         or not result.evidence.strip()
     ):
@@ -1850,6 +1941,54 @@ def _incoming_record_error(
             "Prep/Recover observation must pair a nonempty label, exact measurement tick, and uncertainty identity",
         )
     return None
+
+
+def _strict_scalar_equal(actual: object, expected: object) -> bool:
+    """Compare a closed scalar only after requiring its exact runtime type.
+
+    Python deliberately equates ``True == 1`` and ``Fraction(0) == 0``.  That
+    is useful arithmetic behavior, but it is not a safe identity relation for
+    an already processed public execution record.
+    """
+
+    return type(actual) is type(expected) and actual == expected
+
+
+def _strict_prep_recover_result_equal(actual: object, expected: object) -> bool:
+    """Compare the nested recovery return without bool/int coercion."""
+
+    if type(actual) is not PrepRecoverResult or type(expected) is not PrepRecoverResult:
+        return False
+    return all((
+        _strict_scalar_equal(actual.target_confirmed, expected.target_confirmed),
+        _strict_scalar_equal(actual.summary_confirmed, expected.summary_confirmed),
+        _strict_scalar_equal(actual.prep_error, expected.prep_error),
+        _strict_scalar_equal(actual.ineligible, expected.ineligible),
+        _strict_scalar_equal(actual.declared_target, expected.declared_target),
+        _strict_scalar_equal(actual.evidence, expected.evidence),
+        _strict_scalar_equal(actual.post_summary, expected.post_summary),
+    ))
+
+
+def _strict_visible_execution_record_equal(actual: object, expected: object) -> bool:
+    """Return true only for a type-exact closed visible-record copy."""
+
+    if type(actual) is not VisibleExecutionRecord or type(expected) is not VisibleExecutionRecord:
+        return False
+    return all((
+        _strict_scalar_equal(actual.execution_attempt_id, expected.execution_attempt_id),
+        _strict_scalar_equal(actual.action_id, expected.action_id),
+        _strict_scalar_equal(actual.effect_class, expected.effect_class),
+        _strict_scalar_equal(actual.observable, expected.observable),
+        _strict_scalar_equal(actual.summary_confirmed, expected.summary_confirmed),
+        _strict_scalar_equal(actual.post_summary, expected.post_summary),
+        _strict_scalar_equal(actual.measurement_tick, expected.measurement_tick),
+        _strict_scalar_equal(actual.uncertainty_identity, expected.uncertainty_identity),
+        _strict_scalar_equal(actual.evidence_ref, expected.evidence_ref),
+        _strict_prep_recover_result_equal(actual.prep_recover, expected.prep_recover)
+        if actual.prep_recover is not None or expected.prep_recover is not None
+        else True,
+    ))
 
 
 def _visible_execution_record(value: object) -> VisibleExecutionRecord | None:
@@ -1942,7 +2081,7 @@ def _snapshot_error(
 def _is_expected_error_record(
     record: object, snapshot: SelectSnapshot, execution_attempt_id: str,
 ) -> bool:
-    return record == VisibleExecutionRecord(
+    return _strict_visible_execution_record_equal(record, VisibleExecutionRecord(
         execution_attempt_id=execution_attempt_id,
         action_id=snapshot.action_id,
         effect_class="UNKNOWN-EFFECT",
@@ -1952,7 +2091,7 @@ def _is_expected_error_record(
         measurement_tick=None,
         uncertainty_identity=None,
         evidence_ref=f"synthetic:{execution_attempt_id}:tool-error",
-    )
+    ))
 
 
 def _interval_contains(interval: object, tick: object) -> bool:

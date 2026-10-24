@@ -18,7 +18,7 @@ import subprocess
 import pytest
 
 from cltav_runtime.bindings import RuntimeAuthorityBinding
-from cltav_runtime.kernel import ContractSnapshot, ModelContext
+from cltav_runtime.kernel import ContractSnapshot, Interval, ModelContext, initial_entry
 from cltav_runtime.model import FiniteSessionModel
 from cltav_runtime.session import ReferenceSession, ResourceState
 from cltav_runtime.synthetic import (
@@ -126,6 +126,28 @@ def _model_with(
     assert isinstance(limits, dict)
     limits["actions"] = len(actions)
     return FiniteSessionModel.from_mapping(context=base.context, value=model_data)
+
+
+def _model_with_declaration(model_data: dict[str, object]) -> FiniteSessionModel:
+    """Build a detached verified context for a deliberately changed model declaration."""
+
+    snapshot = ContractSnapshot.from_git_object(
+        repository=ROOT, contract_commit=_head_commit(), contract_path=DEVELOPMENT_PATH,
+    )
+    declaration = model_data["model"]
+    assert isinstance(declaration, dict)
+    domains = declaration["typedDomains"]
+    assert isinstance(domains, dict)
+    context = ModelContext.build(
+        snapshot=snapshot,
+        model={
+            "stateIds": set(declaration["stateIds"]),
+            "clockIds": set(declaration["clockIds"]),
+            "typedDomains": {name: set(domain) for name, domain in domains.items()},
+        },
+        projection_clock="x",
+    )
+    return FiniteSessionModel.from_mapping(context=context, value=model_data)
 
 
 def _environment(
@@ -258,22 +280,47 @@ def _router_recover_model(
     return _model_with(base, fixture, [router, recover])
 
 
-def test_prep_target_miss_with_confirmed_summary_commits_s9_and_next_round_reads_it() -> None:
+@pytest.mark.parametrize("target_confirmed", [False, True])
+def test_confirmed_summary_only_prep_propagates_declared_model_successor(
+    target_confirmed: bool,
+) -> None:
+    """S9 commits q while IF-HIST-UPDATE advances every retained q0 path."""
+
     binding, base, fixture = _runtime_parts()
-    model = _gap_and_prep_model(binding, base, fixture)
+    prep = _action(
+        fixture, "test-router", action_id="prep-q0", kind="PREP",
+        enabled_summaries=["initial-summary"], declared_target="prepared-target",
+    )
+    prep_transition = prep["transition"]
+    assert isinstance(prep_transition, dict)
+    prep_transition["target"] = "q1"
+    prep_transition["simultaneousUpdates"] = [{"tag": "STATE-ASSIGN", "state": "q1"}]
+    follow_up = _action(
+        fixture, "test-router", action_id="test-q1", kind="TEST",
+        enabled_summaries=["confirmed-successor-summary"],
+    )
+    follow_up_transition = follow_up["transition"]
+    assert isinstance(follow_up_transition, dict)
+    follow_up_transition["source"] = "q1"
+    follow_up_transition["target"] = "q1"
+    follow_up_transition["simultaneousUpdates"] = [{"tag": "STATE-ASSIGN", "state": "q1"}]
+    model = _model_with(base, fixture, [prep, follow_up])
     session = ReferenceSession(
         binding=binding, model=model, session_id="session-prep-summary", run_id="run-prep-summary",
-        initial_summary="q0", resources=ResourceState.rounds(3), retry_cap=2,
+        initial_summary="initial-summary", resources=ResourceState.rounds(3), retry_cap=2,
     )
     environment = _environment({
         "private-0": {
             "prep-q0": _prep_recover(
-                target_confirmed=False, summary_confirmed=True, prep_error=False, ineligible=False,
-                declared_target="prepared-q1", evidence="synthetic:prep:q1", post_summary="q1",
+                target_confirmed=target_confirmed, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-target", evidence="synthetic:prep:q1",
+                post_summary="confirmed-successor-summary",
                 next_state="private-1",
             ),
         },
-        "private-1": {"test-q1": _normal("branch-alpha", "branch-alpha", "private-2")},
+        "private-1": {
+            "test-q1": _normal("branch-alpha", "confirmed-successor-summary", "private-2"),
+        },
     })
 
     first = session.step(session.initial_state, environment)
@@ -281,20 +328,648 @@ def test_prep_target_miss_with_confirmed_summary_commits_s9_and_next_round_reads
     assert first.state.evidence[0].snapshot.action_id == "prep-q0"
     assert first.state.evidence[0].resolution_code == "COMMIT"
     assert first.state.context.q_status == "KNOWN"
-    assert first.state.context.current_summary == "q1"
+    assert first.state.context.current_summary == "confirmed-successor-summary"
     assert first.state.context.known_target is None
     assert first.state.history.hypotheses == session.initial_state.history.hypotheses
     assert first.state.history.version == 1
-    # IF-HIST-UPDATE receives no Iz here: it advances the operation-history
-    # version but must not fabricate a model path/provenance transition.
-    assert first.state.history.compatible_state_by_hypothesis == session.initial_state.history.compatible_state_by_hypothesis
-    assert first.state.frontiers == session.initial_state.frontiers
+    assert set(first.state.history.status_by_hypothesis.values()) == {"KNOWN"}
+    assert {
+        path.control_state_id
+        for paths in first.state.frontiers.values()
+        for path in paths
+    } == {"q1"}
+    assert first.state.history.compatible_state_by_hypothesis != session.initial_state.history.compatible_state_by_hypothesis
+    assert all(
+        len(path.history_provenance) == len(session.initial_state.frontiers[hypothesis][0].history_provenance) + 1
+        for hypothesis, paths in first.state.frontiers.items()
+        for path in paths
+    )
 
-    # Public resumption must replay the ledger before the later selection; it
-    # cannot continue to score against q0.
+    # The distinct summary labels cannot be used to guess q1: continuation is
+    # possible only because the executed finite q0->q1 transition was retained.
     second = session.step(first.state, first.environment)
+    assert second.stop_reason is None
+    assert second.state.attempts == 2
     assert second.state.evidence[-1].snapshot.action_id == "test-q1"
-    assert second.state.evidence[-1].snapshot.q_used_at_select == "q1"
+    assert second.state.evidence[-1].snapshot.q_used_at_select == "confirmed-successor-summary"
+
+
+def test_summary_only_prep_propagates_typed_store_and_clock_reset_for_next_guard() -> None:
+    """A confirmed summary-only successor carries the full finite model result."""
+
+    binding, _base, fixture = _runtime_parts()
+    model_data = copy.deepcopy(fixture["algorithmModel"])
+    assert isinstance(model_data, dict)
+    declaration = model_data["model"]
+    hypotheses = model_data["hypotheses"]
+    assert isinstance(declaration, dict) and isinstance(hypotheses, list)
+    declaration["typedDomains"] = {"mode": ["normal", "recovery"]}
+    exact_five = {
+        "lower": {"numerator": 5, "positiveDenominator": 1},
+        "upper": {"numerator": 5, "positiveDenominator": 1},
+        "lowerClosed": True,
+        "upperClosed": True,
+    }
+    for item in hypotheses:
+        assert isinstance(item, dict)
+        item["clockConstraint"] = {"x": copy.deepcopy(exact_five)}
+
+    prep = _action(
+        fixture, "test-router", action_id="prep-reset", kind="PREP",
+        enabled_summaries=["initial-summary"], declared_target="prepared-target",
+    )
+    prep_transition = prep["transition"]
+    assert isinstance(prep_transition, dict)
+    prep_transition.update({
+        "source": "q0",
+        "target": "q1",
+        "guardAst": {"tag": "STATE-EQUALS", "state": "q0"},
+        "simultaneousUpdates": [
+            {"tag": "STATE-ASSIGN", "state": "q1"},
+            {"tag": "CLOCK-RESET-TO-ZERO", "clock": "x"},
+            {"tag": "TYPED-FIELD-ASSIGN", "field": "mode", "value": "recovery"},
+        ],
+    })
+    follow_up = _action(
+        fixture, "test-router", action_id="test-after-reset", kind="TEST",
+        enabled_summaries=["after-prep"],
+    )
+    follow_transition = follow_up["transition"]
+    assert isinstance(follow_transition, dict)
+    follow_transition.update({
+        "source": "q1",
+        "target": "q1",
+        "guardAst": {
+            "tag": "AND",
+            "operands": [
+                {"tag": "STATE-EQUALS", "state": "q1"},
+                {"tag": "TYPED-FIELD-EQUALS", "field": "mode", "value": "recovery"},
+                {
+                    "tag": "RATIONAL-INTERVAL-CONTAINS",
+                    "clock": "x",
+                    "interval": {
+                        "lower": {"numerator": 0, "positiveDenominator": 1},
+                        "upper": {"numerator": 0, "positiveDenominator": 1},
+                        "lowerClosed": True,
+                        "upperClosed": True,
+                    },
+                },
+            ],
+        },
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    model_data["actions"] = [prep, follow_up]
+    limits = model_data["limits"]
+    assert isinstance(limits, dict)
+    limits["actions"] = 2
+    model = _model_with_declaration(model_data)
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-prep-reset", run_id="run-prep-reset",
+        initial_summary="initial-summary", resources=ResourceState.rounds(2), retry_cap=2,
+    )
+    environment = _environment({
+        "private-0": {
+            "prep-reset": _prep_recover(
+                target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-target", evidence="synthetic:prep:reset",
+                post_summary="after-prep", next_state="private-1",
+            ),
+        },
+        "private-1": {
+            "test-after-reset": _normal("branch-alpha", "after-test", "private-2"),
+        },
+    })
+
+    first = session.step(session.initial_state, environment)
+    assert first.stop_reason is None
+    assert {
+        (path.control_state_id, path.clocks["x"], path.typed_store["mode"])
+        for paths in first.state.frontiers.values()
+        for path in paths
+    } == {("q1", Interval(Fraction(0), Fraction(0), True, True), "recovery")}
+
+    second = session.step(first.state, first.environment)
+    assert second.stop_reason is None
+    assert second.state.evidence[-1].snapshot.action_id == "test-after-reset"
+
+
+def test_summary_only_prep_retains_every_declared_seed_path_without_observation_filtering() -> None:
+    """No ``I_z`` class may discard a concurrent path merely because it is unobserved."""
+
+    binding, base, fixture = _runtime_parts()
+    prep = _action(
+        fixture, "test-router", action_id="prep-all-paths", kind="PREP",
+        enabled_summaries=["q0"], declared_target="prepared-target",
+    )
+    transition = prep["transition"]
+    assert isinstance(transition, dict)
+    transition["target"] = "q1"
+    transition["simultaneousUpdates"] = [{"tag": "STATE-ASSIGN", "state": "q1"}]
+    model = _model_with(base, fixture, [prep])
+    original = model.initial_frontiers["h0"]
+    alternate = initial_entry(
+        model.context,
+        hypothesis_id="h0",
+        control_state_id="q0",
+        clocks=original.clocks,
+        typed_store=original.typed_store,
+        root_id="root:h0:summary-only-alternate",
+    )
+    seed = {hypothesis: (frontier,) for hypothesis, frontier in model.initial_frontiers.items()}
+    seed["h0"] = (original, alternate)
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-prep-all-paths", run_id="run-prep-all-paths",
+        initial_summary="q0", resources=ResourceState.rounds(1), initial_path_bundles=seed,
+    )
+    result = session.step(session.initial_state, _environment({
+        "private-0": {
+            "prep-all-paths": _prep_recover(
+                target_confirmed=False, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-target", evidence="synthetic:prep:all-paths",
+                post_summary="after-prep", next_state="private-1",
+            ),
+        },
+    }))
+
+    assert result.stop_reason is None
+    assert result.state.history.hypotheses == frozenset(model.initial_frontiers)
+    assert len(result.state.frontiers["h0"]) == 2
+    assert {
+        path.control_state_id
+        for paths in result.state.frontiers.values()
+        for path in paths
+    } == {"q1"}
+
+
+def test_summary_only_prep_accepts_a_legal_finite_self_loop() -> None:
+    """The whole-history rule advances provenance even when state remains q0."""
+
+    binding, base, fixture = _runtime_parts()
+    model = _gap_and_prep_model(binding, base, fixture)
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-prep-self-loop", run_id="run-prep-self-loop",
+        initial_summary="q0", resources=ResourceState.rounds(1), retry_cap=2,
+    )
+    result = session.step(session.initial_state, _environment({
+        "private-0": {
+            "prep-q0": _prep_recover(
+                target_confirmed=False, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-q1", evidence="synthetic:prep:self-loop",
+                post_summary="q1", next_state="private-1",
+            ),
+        },
+    }))
+
+    assert result.stop_reason is None
+    assert result.state.history.hypotheses == session.initial_state.history.hypotheses
+    assert set(result.state.history.status_by_hypothesis.values()) == {"KNOWN"}
+    assert {
+        path.control_state_id
+        for paths in result.state.frontiers.values()
+        for path in paths
+    } == {"q0"}
+    assert all(
+        len(path.history_provenance) == len(session.initial_state.frontiers[hypothesis][0].history_provenance) + 1
+        for hypothesis, paths in result.state.frontiers.items()
+        for path in paths
+    )
+
+
+def test_summary_only_prep_never_revives_hypotheses_excluded_by_a_prior_observation() -> None:
+    """A later summary confirmation preserves the current H, not the S0 seed."""
+
+    binding, base, fixture = _runtime_parts()
+    test_q0 = _action(
+        fixture, "test-router", action_id="test-filter", kind="TEST", enabled_summaries=["q0"],
+    )
+    prep = _action(
+        fixture, "test-router", action_id="prep-after-filter", kind="PREP",
+        enabled_summaries=["branch-alpha"], declared_target="prepared-target",
+    )
+    transition = prep["transition"]
+    assert isinstance(transition, dict)
+    transition["target"] = "q1"
+    transition["simultaneousUpdates"] = [{"tag": "STATE-ASSIGN", "state": "q1"}]
+    model = _model_with(base, fixture, [test_q0, prep])
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-prep-no-revival", run_id="run-prep-no-revival",
+        initial_summary="q0", resources=ResourceState.rounds(2), retry_cap=2,
+    )
+    environment = _environment({
+        "private-0": {"test-filter": _normal("branch-alpha", "branch-alpha", "private-1")},
+        "private-1": {
+            "prep-after-filter": _prep_recover(
+                target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-target", evidence="synthetic:prep:no-revival",
+                post_summary="after-prep", next_state="private-2",
+            ),
+        },
+    })
+    filtered = session.step(session.initial_state, environment)
+    assert filtered.state.history.hypotheses == {"h0", "h1"}
+
+    result = session.step(filtered.state, filtered.environment)
+    assert result.stop_reason is None
+    assert result.state.history.hypotheses == {"h0", "h1"}
+    assert set(result.state.frontiers) == {"h0", "h1"}
+    assert all(path.control_state_id == "q1" for paths in result.state.frontiers.values() for path in paths)
+
+
+def test_summary_only_prep_keeps_unresolved_members_as_named_conservative_paths() -> None:
+    """A source mismatch is not a license to erase the current hypothesis."""
+
+    binding, base, fixture = _runtime_parts()
+    prep = _action(
+        fixture, "test-router", action_id="prep-q1-only", kind="PREP",
+        enabled_summaries=["q0"], declared_target="prepared-target",
+    )
+    transition = prep["transition"]
+    assert isinstance(transition, dict)
+    transition.update({
+        "source": "q1",
+        "target": "q1",
+        "guardAst": {"tag": "STATE-EQUALS", "state": "q1"},
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    model = _model_with(base, fixture, [prep])
+    h0 = model.initial_frontiers["h0"]
+    q1_h0 = initial_entry(
+        model.context,
+        hypothesis_id="h0",
+        control_state_id="q1",
+        clocks=h0.clocks,
+        typed_store=h0.typed_store,
+        root_id="root:h0:q1-summary-only",
+    )
+    seed = {hypothesis: (frontier,) for hypothesis, frontier in model.initial_frontiers.items()}
+    seed["h0"] = (q1_h0,)
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-prep-conservative", run_id="run-prep-conservative",
+        initial_summary="q0", resources=ResourceState.rounds(1), initial_path_bundles=seed,
+    )
+    result = session.step(session.initial_state, _environment({
+        "private-0": {
+            "prep-q1-only": _prep_recover(
+                target_confirmed=False, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-target", evidence="synthetic:prep:conservative",
+                post_summary="after-prep", next_state="private-1",
+            ),
+        },
+    }))
+
+    assert result.stop_reason is None
+    assert result.state.history.hypotheses == frozenset(model.initial_frontiers)
+    assert result.state.history.status_by_hypothesis["h0"] == "KNOWN"
+    assert {
+        hypothesis
+        for hypothesis, status in result.state.history.status_by_hypothesis.items()
+        if status == "CONSERVATIVE-UNKNOWN"
+    } == {"h1", "h2", "h3"}
+    assert any(item.code == "SUMMARY-ONLY-CONSERVATIVE-PATH" for item in result.diagnostics)
+
+
+def test_summary_only_recover_advances_existing_conservative_paths_without_promoting_them() -> None:
+    """S8 may restore session KNOWN without leaving a retained model path stale."""
+
+    binding, base, fixture = _runtime_parts()
+    test_q0 = _action(
+        fixture, "test-router", action_id="test-q0", kind="TEST", enabled_summaries=["q0"],
+    )
+    recover = _action(
+        fixture, "test-router", action_id="recover-q0-q1", kind="RECOVER",
+        enabled_summaries=["q0"], declared_target="recovered-target", recover_when_unknown=True,
+    )
+    transition = recover["transition"]
+    assert isinstance(transition, dict)
+    transition.update({
+        "source": "q0",
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    model = _model_with(base, fixture, [test_q0, recover])
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-recover-conservative", run_id="run-recover-conservative",
+        initial_summary="q0", resources=ResourceState.rounds(2), retry_cap=2,
+    )
+    environment = _environment({
+        "private-0": {"test-q0": _unknown("private-1")},
+        "private-1": {
+            "recover-q0-q1": _prep_recover(
+                target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="recovered-target", evidence="synthetic:recover:advance-conservative",
+                post_summary="q1", next_state="private-2",
+            ),
+        },
+    })
+    unknown = session.step(session.initial_state, environment)
+    assert set(unknown.state.history.status_by_hypothesis.values()) == {"CONSERVATIVE-UNKNOWN"}
+    assert {
+        path.control_state_id
+        for paths in unknown.state.frontiers.values()
+        for path in paths
+    } == {"q0"}
+
+    recovered = session.step(unknown.state, unknown.environment)
+
+    assert recovered.stop_reason is None
+    assert recovered.state.context.q_status == "KNOWN"
+    assert recovered.state.context.current_summary == "q1"
+    assert set(recovered.state.history.status_by_hypothesis.values()) == {"CONSERVATIVE-UNKNOWN"}
+    assert {
+        path.control_state_id
+        for paths in recovered.state.frontiers.values()
+        for path in paths
+    } == {"q1"}
+    assert all(
+        len(path.history_provenance) == len(unknown.state.frontiers[hypothesis][0].history_provenance) + 1
+        for hypothesis, paths in recovered.state.frontiers.items()
+        for path in paths
+    )
+
+
+def test_fresh_checkpoint_replays_and_executes_a_second_summary_only_prep_without_cache_writes() -> None:
+    """Portable summary-only evidence must use the detached replay model end-to-end."""
+
+    source_binding, source_base, fixture = _runtime_parts()
+    first_prep = _action(
+        fixture, "test-router", action_id="prep-q0-q1", kind="PREP",
+        enabled_summaries=["q0"], declared_target="target-q1",
+    )
+    first_transition = first_prep["transition"]
+    assert isinstance(first_transition, dict)
+    first_transition.update({
+        "source": "q0",
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    second_prep = _action(
+        fixture, "test-router", action_id="prep-q1-q0", kind="PREP",
+        enabled_summaries=["q1"], declared_target="target-q0",
+    )
+    second_transition = second_prep["transition"]
+    assert isinstance(second_transition, dict)
+    second_transition.update({
+        "source": "q1",
+        "target": "q0",
+        "guardAst": {"tag": "STATE-EQUALS", "state": "q1"},
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}],
+    })
+    source_model = _model_with(source_base, fixture, [first_prep, second_prep])
+    source = ReferenceSession(
+        binding=source_binding, model=source_model, session_id="session-portable-summary", run_id="run-portable-summary",
+        initial_summary="q0", resources=ResourceState.rounds(2), retry_cap=2,
+    )
+    environment = _environment({
+        "private-0": {
+            "prep-q0-q1": _prep_recover(
+                target_confirmed=False, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="target-q1", evidence="synthetic:prep:portable-one",
+                post_summary="q1", next_state="private-1",
+            ),
+        },
+        "private-1": {
+            "prep-q1-q0": _prep_recover(
+                target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="target-q0", evidence="synthetic:prep:portable-two",
+                post_summary="q0", next_state="private-2",
+            ),
+        },
+    })
+    first = source.step(source.initial_state, environment)
+    assert first.stop_reason is None
+    expected = source.step(first.state, first.environment)
+    assert expected.stop_reason is None
+
+    target_binding, target_base, _target_fixture = _runtime_parts()
+    target_model = _model_with(target_base, fixture, [first_prep, second_prep])
+    target = ReferenceSession(
+        binding=target_binding, model=target_model, session_id="session-portable-summary", run_id="run-portable-summary",
+        initial_summary="q0", resources=ResourceState.rounds(2), retry_cap=2,
+    )
+    records_before = dict(target_model.context.provenance_store.records())
+    assert target._state_error(first.state) is None
+
+    resumed = target.step(first.state, first.environment)
+
+    assert resumed.stop_reason is None
+    assert resumed.state == expected.state
+    assert resumed.state.evidence[-1].snapshot.action_id == "prep-q1-q0"
+    assert {
+        path.control_state_id
+        for paths in resumed.state.frontiers.values()
+        for path in paths
+    } == {"q0"}
+    assert dict(target_model.context.provenance_store.records()) == records_before
+    assert target._state_error(resumed.state) is None
+
+
+@pytest.mark.parametrize(
+    ("outcome", "label"),
+    [
+        (lambda: _not_sent("private-1"), "CONFIRMED-NOT-SENT"),
+        (lambda: _unknown("private-1"), "UNKNOWN-EFFECT"),
+    ],
+)
+def test_exact_cns_and_unknown_stale_deliveries_remain_idempotent(
+    outcome: object,
+    label: str,
+) -> None:
+    """Strict duplicate comparison must retain legitimate non-normal deliveries."""
+
+    binding, base, fixture = _runtime_parts()
+    model = _model_with(base, fixture, [
+        _action(fixture, "test-router", action_id="test-q0", kind="TEST", enabled_summaries=["q0"]),
+    ])
+    session = ReferenceSession(
+        binding=binding, model=model, session_id=f"session-duplicate-{label}", run_id=f"run-duplicate-{label}",
+        initial_summary="q0", resources=ResourceState.rounds(3), retry_cap=3,
+    )
+    assert callable(outcome)
+    first = session.step(session.initial_state, _environment({
+        "private-0": {"test-q0": outcome()},
+    }))
+    assert first.stop_reason is None
+    canonical = first.state.evidence[-1].execution
+    assert canonical.effect_class == label
+
+    replayed = session.step(first.state, first.environment.with_pending_delivery(replace(canonical)))
+
+    assert replayed.stop_reason is None
+    assert replayed.diagnostics[-1].code == "DUPLICATE-EXECUTION-EVIDENCE"
+    assert replayed.state is first.state
+    assert replayed.state.resources == first.state.resources
+    assert replayed.state.evidence == first.state.evidence
+
+
+def test_exact_prep_and_recover_stale_deliveries_remain_idempotent() -> None:
+    """Strict ingress must not turn valid typed recovery results into conflicts."""
+
+    binding, base, fixture = _runtime_parts()
+    prep_model = _gap_and_prep_model(binding, base, fixture)
+    prep_session = ReferenceSession(
+        binding=binding, model=prep_model, session_id="session-duplicate-prep", run_id="run-duplicate-prep",
+        initial_summary="q0", resources=ResourceState.rounds(3), retry_cap=2,
+    )
+    committed_prep = prep_session.step(prep_session.initial_state, _environment({
+        "private-0": {
+            "prep-q0": _prep_recover(
+                target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-q1", evidence="synthetic:prep:duplicate",
+                post_summary="q1", next_state="private-1",
+            ),
+        },
+    }))
+    prep_duplicate = replace(
+        committed_prep.state.evidence[-1].execution,
+        prep_recover=replace(committed_prep.state.evidence[-1].execution.prep_recover),
+    )
+    prep_replayed = prep_session.step(
+        committed_prep.state,
+        committed_prep.environment.with_pending_delivery(prep_duplicate),
+    )
+    assert prep_replayed.stop_reason is None
+    assert prep_replayed.diagnostics[-1].code == "DUPLICATE-EXECUTION-EVIDENCE"
+    assert prep_replayed.state is committed_prep.state
+
+    recover_model = _router_recover_model(base, fixture)
+    recover_session = ReferenceSession(
+        binding=binding, model=recover_model, session_id="session-duplicate-recover", run_id="run-duplicate-recover",
+        initial_summary="q0", resources=ResourceState.rounds(3), retry_cap=2,
+    )
+    unknown = recover_session.step(recover_session.initial_state, _environment({
+        "private-0": {"test-q0": _unknown("private-1")},
+        "private-1": {
+            "recover-q": _prep_recover(
+                target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="recovered-q1", evidence="synthetic:recover:duplicate",
+                post_summary="q1", next_state="private-2",
+            ),
+        },
+    }))
+    committed_recover = recover_session.step(unknown.state, unknown.environment)
+    recover_duplicate = replace(
+        committed_recover.state.evidence[-1].execution,
+        prep_recover=replace(committed_recover.state.evidence[-1].execution.prep_recover),
+    )
+    recover_replayed = recover_session.step(
+        committed_recover.state,
+        committed_recover.environment.with_pending_delivery(recover_duplicate),
+    )
+    assert recover_replayed.stop_reason is None
+    assert recover_replayed.diagnostics[-1].code == "DUPLICATE-EXECUTION-EVIDENCE"
+    assert recover_replayed.state is committed_recover.state
+
+
+def test_blank_recovery_target_is_rejected_at_synthetic_ingress_direct_return_and_resume() -> None:
+    """Blank-only declared targets cannot enter through any public boundary."""
+
+    binding, base, fixture = _runtime_parts()
+    model = _gap_and_prep_model(binding, base, fixture)
+    with pytest.raises(ValueError, match="nonblank"):
+        _environment({
+            "private-0": {
+                "prep-q0": _prep_recover(
+                    target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
+                    declared_target="  ", evidence="synthetic:prep:blank", post_summary="q1",
+                    next_state="private-1",
+                ),
+            },
+        })
+
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-blank-target", run_id="run-blank-target",
+        initial_summary="q0", resources=ResourceState.rounds(2), retry_cap=2,
+    )
+    safe_successor = _environment({"private-0": {"prep-q0": _not_sent("private-0")}})
+
+    class BlankReturnEnvironment:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            return EnvironmentExecution(
+                VisibleExecutionRecord(
+                    execution_attempt_id=request.execution_attempt_id,
+                    action_id=request.action_id,
+                    effect_class="NONE",
+                    observable=None,
+                    summary_confirmed=True,
+                    post_summary="q1",
+                    measurement_tick=None,
+                    uncertainty_identity=None,
+                    evidence_ref="synthetic:prep:blank-direct",
+                    prep_recover=PrepRecoverResult(
+                        target_confirmed=True,
+                        summary_confirmed=True,
+                        prep_error=False,
+                        ineligible=False,
+                        declared_target="  ",
+                        evidence="synthetic:prep:blank-direct",
+                        post_summary="q1",
+                    ),
+                ),
+                safe_successor,
+            )
+
+    rejected = session.step(session.initial_state, BlankReturnEnvironment())  # type: ignore[arg-type]
+    assert rejected.stop_reason is None
+    assert rejected.diagnostics[-1].code == "INVALID-EXECUTION-RECORD"
+    assert rejected.state.context.q_status == "UNKNOWN"
+    assert rejected.state.context.known_target is None
+
+    blank_resume = replace(
+        session.initial_state,
+        context=replace(session.initial_state.context, known_target="  "),
+    )
+    resumed = session.step(blank_resume, safe_successor)
+    assert resumed.stop_reason == "Stop-Error"
+    assert resumed.state is blank_resume
+    assert resumed.diagnostics[0].code == "INVALID-SESSION-CONTEXT"
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("target_confirmed", 1),
+        ("summary_confirmed", 1),
+        ("prep_error", 0),
+        ("ineligible", 0),
+    ],
+)
+def test_pending_prep_duplicate_requires_recursive_boolean_types(
+    field: str,
+    value: object,
+) -> None:
+    """Nested Prep/Recover booleans cannot exploit bool/int equality."""
+
+    binding, base, fixture = _runtime_parts()
+    model = _gap_and_prep_model(binding, base, fixture)
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-nested-duplicate", run_id="run-nested-duplicate",
+        initial_summary="q0", resources=ResourceState.rounds(3), retry_cap=2,
+    )
+    first = session.step(session.initial_state, _environment({
+        "private-0": {
+            "prep-q0": _prep_recover(
+                target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-q1", evidence="synthetic:prep:canonical", post_summary="q1",
+                next_state="private-1",
+            ),
+        },
+    }))
+    canonical = first.state.evidence[-1].execution
+    assert canonical.prep_recover is not None
+    forged = replace(
+        canonical,
+        prep_recover=replace(canonical.prep_recover, **{field: value}),
+    )
+    assert forged == canonical
+
+    rejected = session.step(first.state, first.environment.with_pending_delivery(forged))
+
+    assert rejected.stop_reason == "Stop-Error"
+    assert rejected.diagnostics[0].code == "CONFLICTING-EXECUTION-DELIVERY"
+    assert rejected.state is first.state
+    assert rejected.state.resources == first.state.resources
+    assert rejected.state.history == first.state.history
+    assert rejected.state.evidence == first.state.evidence
 
 
 def test_normal_test_commits_explicit_successor_summary_not_observation() -> None:
@@ -438,10 +1113,20 @@ def test_unknown_session_admits_confirmed_recover_and_only_s8_sets_target_eviden
     assert recovered.state.context.known_target == "recovered-q1"
     assert recovered.state.context.known_evidence == ("synthetic:recover:target",)
     # S8 restores session-level knownness only.  Without a valid Iz it must
-    # retain the S7-conservative HistoryHandle/frontier provenance.
-    assert recovered.state.history.compatible_state_by_hypothesis == unknown.state.history.compatible_state_by_hypothesis
+    # keep the S7-conservative member status, but the executed finite Recover
+    # transition still advances every retained frontier/provenance path.
+    assert recovered.state.history.hypotheses == unknown.state.history.hypotheses
     assert recovered.state.history.status_by_hypothesis == unknown.state.history.status_by_hypothesis
-    assert recovered.state.frontiers == unknown.state.frontiers
+    assert {
+        path.control_state_id
+        for paths in recovered.state.frontiers.values()
+        for path in paths
+    } == {"q0"}
+    assert all(
+        len(path.history_provenance) == len(unknown.state.frontiers[hypothesis][0].history_provenance) + 1
+        for hypothesis, paths in recovered.state.frontiers.items()
+        for path in paths
+    )
     # A public continuation first replays this S8/S9 state.  The model has no
     # q1 action, so a normal admission stop (rather than lineage rejection)
     # proves the recovery result is a resumable public checkpoint.
@@ -844,5 +1529,13 @@ def test_action_kind_cannot_smuggle_or_omit_recovery_contract_fields() -> None:
         declared_target="prepared-q1",
     )
     del missing_prep_target["declaredTarget"]
-    with pytest.raises(ValueError, match="requires a declared target"):
+    with pytest.raises(ValueError, match="requires a nonblank declared target"):
         _model_with(base, fixture, [missing_prep_target])
+
+    blank_prep_target = _action(
+        fixture, "test-router", action_id="prep-blank", kind="PREP", enabled_summaries=["q0"],
+        declared_target="prepared-q1",
+    )
+    blank_prep_target["declaredTarget"] = "   "
+    with pytest.raises(ValueError, match="requires a nonblank declared target"):
+        _model_with(base, fixture, [blank_prep_target])

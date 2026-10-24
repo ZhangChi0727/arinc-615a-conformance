@@ -123,6 +123,24 @@ class ActionPrediction:
 
 
 @dataclass(frozen=True)
+class SummaryOnlySuccessor:
+    """Whole-history successor of one confirmed result without ``I_z``.
+
+    A summary confirmation establishes a public successor summary, but it is
+    not an observation class.  The action has still been executed, so its
+    declared transition is applied independently to every retained model path.
+    A path which cannot be propagated is retained as a named conservative
+    continuation rather than silently deleting its hypothesis or pretending
+    that the predecessor state was a known successor.
+    """
+
+    action_id: str
+    successors: Mapping[str, tuple[FrontierEntry, ...]]
+    conservative_hypotheses: frozenset[str]
+    diagnostics: tuple[KernelDiagnostic, ...]
+
+
+@dataclass(frozen=True)
 class FiniteSessionModel:
     """Validated public model data for the bounded reference session."""
 
@@ -340,6 +358,124 @@ class FiniteSessionModel:
         )
         return ActionPrediction(action_id, classes, tuple(diagnostics))
 
+    def summary_only_successors(
+        self,
+        *,
+        hypotheses: frozenset[str],
+        frontiers: Mapping[str, FrontierEntry | tuple[FrontierEntry, ...]],
+        status_by_hypothesis: Mapping[str, str],
+        action_id: str,
+    ) -> SummaryOnlySuccessor:
+        """Propagate an executed action without intersecting an observation class.
+
+        ``predict`` is intentionally observation-class oriented: it groups
+        paths by visible emissions and may withhold normal TEST scoring.  A
+        confirmed summary-only Prep/Recover result is different.  It retains
+        the current ``H`` while applying the admitted action's finite
+        transition to every current path, preserving all applicable
+        successors.  A bounded, unsupported, or infeasible path stays as a
+        conservative source witness; this helper never manufactures a known
+        successor from ``postSummary`` and never erases a member merely because
+        no ``I_z`` was supplied.
+        """
+
+        action = self.actions.get(action_id)
+        if action is None:
+            return SummaryOnlySuccessor(
+                action_id,
+                MappingProxyType({}),
+                frozenset(),
+                (KernelDiagnostic("UNKNOWN-ACTION", "action is not in the declared finite model"),),
+            )
+        if not hypotheses or not hypotheses <= set(frontiers):
+            return SummaryOnlySuccessor(
+                action_id,
+                MappingProxyType({}),
+                frozenset(),
+                (KernelDiagnostic("INVALID-HISTORY", "current hypotheses/frontiers are inconsistent"),),
+            )
+
+        successors: dict[str, tuple[FrontierEntry, ...]] = {}
+        conservative: set[str] = set()
+        diagnostics: list[KernelDiagnostic] = []
+        for hypothesis in sorted(hypotheses):
+            try:
+                paths = _frontier_paths(frontiers[hypothesis])
+            except (KeyError, TypeError, ValueError) as exc:
+                return SummaryOnlySuccessor(
+                    action_id,
+                    MappingProxyType({}),
+                    frozenset(),
+                    tuple(diagnostics + [KernelDiagnostic("INVALID-HISTORY", str(exc) or type(exc).__name__)]),
+                )
+
+            # A previous S7 result is still a retained model path.  The
+            # subsequently admitted action must therefore advance it just as
+            # it advances a known member; otherwise a confirmed q0->q1
+            # action could leave a conservative q0 member stale forever.  Its
+            # status remains conservative, because this propagation does not
+            # retroactively prove the earlier uncertain effect.
+            already_conservative = (
+                status_by_hypothesis.get(hypothesis) == "CONSERVATIVE-UNKNOWN"
+            )
+            advanced: list[FrontierEntry] = []
+            retained: list[FrontierEntry] = []
+            unresolved = already_conservative
+            for path in paths:
+                result = propagate_transition(
+                    path,
+                    action.transition_for_kernel(),
+                    state_ids=set(self.context.state_ids),
+                    clock_ids=set(self.context.clock_ids),
+                    typed_domains={key: set(domain) for key, domain in self.context.typed_domains.items()},
+                    context=self.context,
+                    path_limit=self.path_limit,
+                    frontier_limit=self.frontier_limit,
+                )
+                diagnostics.extend(result.diagnostics)
+                if result.kind == "FEASIBLE":
+                    advanced.extend(result.entries)
+                    continue
+
+                # No summary-only observation may exclude a current member.
+                # Preserve the finite source/result witness and make the
+                # uncertainty explicit instead of retaining a stale KNOWN
+                # predecessor or inventing a successor from the summary name.
+                unresolved = True
+                retained.extend(result.entries or (path,))
+                diagnostics.append(KernelDiagnostic(
+                    "SUMMARY-ONLY-CONSERVATIVE-PATH",
+                    f"{result.kind} action propagation retained a conservative path for {hypothesis}",
+                ))
+
+            try:
+                successors[hypothesis] = _bounded_paths(
+                    advanced + retained,
+                    self.frontier_limit,
+                )
+            except ValueError as exc:
+                # The current source bundle has already passed the session
+                # bound.  Retaining it is the only conservative finite result
+                # when the attempted successor union would exceed that bound.
+                successors[hypothesis] = paths
+                unresolved = True
+                diagnostics.append(KernelDiagnostic("SUMMARY-ONLY-FRONTIER-LIMIT", str(exc)))
+
+            if unresolved:
+                conservative.add(hypothesis)
+                if already_conservative:
+                    diagnostics.append(KernelDiagnostic(
+                        "SUMMARY-ONLY-CONSERVATIVE-PATH",
+                        f"existing conservative history propagated without promotion for {hypothesis}",
+                    ))
+
+        return SummaryOnlySuccessor(
+            action_id,
+            MappingProxyType(dict(successors)),
+            frozenset(conservative),
+            tuple(diagnostics),
+        )
+
 
 def _canonical_model(value: Mapping[str, Any]) -> dict[str, Any]:
     if set(value) != {"stateIds", "clockIds", "typedDomains"}:
@@ -406,8 +542,8 @@ def _parse_action(item: Any, hypothesis_ids: frozenset[str]) -> SyntheticAction:
     if not isinstance(identifier, str) or not identifier or kind not in _ACTION_KINDS:
         raise ValueError("finite session action identity or kind is invalid")
     if kind in {"PREP", "RECOVER"}:
-        if not isinstance(declared_target, str) or not declared_target:
-            raise ValueError("Prep/Recover action requires a declared target")
+        if not isinstance(declared_target, str) or not declared_target.strip():
+            raise ValueError("Prep/Recover action requires a nonblank declared target")
         if not isinstance(recover_when_unknown, bool):
             raise ValueError("Prep/Recover unknown eligibility must be Boolean")
         if kind == "PREP" and recover_when_unknown:

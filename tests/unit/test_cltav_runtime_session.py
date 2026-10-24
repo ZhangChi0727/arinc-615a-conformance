@@ -1075,7 +1075,10 @@ def test_duplicate_execution_evidence_is_rejected_before_another_charge_or_dispa
         session.initial_state,
         SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]),
     )
-    duplicate_delivery = first.environment.with_pending_delivery(first.state.evidence[0].execution)
+    # A separately constructed but type-exact visible record is still the
+    # same completed transport delivery.  This must not depend on object
+    # identity or on whatever action would be admitted next.
+    duplicate_delivery = first.environment.with_pending_delivery(replace(first.state.evidence[0].execution))
     discarded = session.step(first.state, duplicate_delivery)
 
     # The receipt is handled before S3/S4: no new request, charge or ledger
@@ -1091,6 +1094,45 @@ def test_duplicate_execution_evidence_is_rejected_before_another_charge_or_dispa
     continued = session.step(discarded.state, discarded.environment)
     assert len(continued.state.evidence) == len(first.state.evidence) + 1
     assert continued.state.resources.remaining == first.state.resources.remaining - 1
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("measurement_tick", 0),
+        ("measurement_tick", 0.0),
+        ("measurement_tick", False),
+        ("summary_confirmed", 1),
+    ],
+)
+def test_pending_duplicate_requires_type_exact_closed_record(
+    field: str,
+    value: object,
+) -> None:
+    """Python numeric equality cannot turn malformed ingress into a duplicate."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-typed-duplicate", run_id="run-typed-duplicate",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    first = session.step(
+        session.initial_state,
+        SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]),
+    )
+    canonical = first.state.evidence[0].execution
+    forged = replace(canonical, **{field: value})
+    # This deliberately documents the old bypass precondition.
+    assert forged == canonical
+
+    rejected = session.step(first.state, first.environment.with_pending_delivery(forged))
+
+    assert rejected.stop_reason == "Stop-Error"
+    assert rejected.diagnostics[0].code == "CONFLICTING-EXECUTION-DELIVERY"
+    assert rejected.state is first.state
+    assert rejected.state.resources == first.state.resources
+    assert rejected.state.history == first.state.history
+    assert rejected.state.evidence == first.state.evidence
 
 
 def test_conflicting_pending_execution_delivery_is_rejected_without_admission_or_charge() -> None:

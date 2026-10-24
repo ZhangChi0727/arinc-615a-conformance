@@ -175,8 +175,8 @@ class SessionContext:
             raise ValueError("session retry cap must be a positive integer")
         if retry_count > retry_cap:
             raise ValueError("session retry count cannot exceed the retry cap")
-        if known_target is not None and (not isinstance(known_target, str) or not known_target):
-            raise ValueError("known recovery target must be absent or a nonempty string")
+        if known_target is not None and (not isinstance(known_target, str) or not known_target.strip()):
+            raise ValueError("known recovery target must be absent or a nonblank string")
 
         def _audit_values(value: tuple[str, ...] | list[str], *, label: str) -> tuple[str, ...]:
             if not isinstance(value, (tuple, list)) or any(

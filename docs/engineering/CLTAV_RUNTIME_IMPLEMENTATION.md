@@ -55,6 +55,42 @@ sole successor-summary commitment.  Ownership/T5, Stop-Empty/equivalence and
 the production evidence/CLI boundary remain explicit later B/C work; this
 table does not claim their execution is complete.
 
+## B/C-2A coverage status
+
+`VERIFIED` means the named public-entry regression demonstrates the stated
+sub-behaviour. `PARTIAL` means only the stated sub-behaviour is demonstrated;
+`PENDING` means this checkpoint makes no implementation-completeness claim.
+The fixed candidate Head, command and result belong in the subsequent limited
+review or gate record. The paths below are durable test locators, not a
+substitute for that evidence identity.
+
+| ID | Status | Durable public-entry evidence or retained boundary |
+|---|---|---|
+| BC-01 | PARTIAL | `session::test_two_round_feedback_consumes_committed_summary_and_changes_selection`; `recovery::test_confirmed_summary_only_prep_propagates_declared_model_successor`; fresh/tampered checkpoint combinations remain later work. |
+| BC-02 | PARTIAL | `session::test_two_round_feedback_consumes_committed_summary_and_changes_selection`; more visible-result/action combinations remain. |
+| BC-03 | VERIFIED | `session::test_prediction_keeps_overlapping_classes_and_names_a_current_gap`; `session::test_unaffordable_best_test_and_no_information_test_do_not_displace_router`; bounded model only. |
+| BC-04 | PARTIAL | `session::test_prediction_gap_revokes_an_unaffordable_test_score_before_a2`; full tie/cost/ID production matrix remains. |
+| BC-05 | VERIFIED | `session::test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_entry`; Recovery A4/A5 tests; ownership/T5 are outside this result. |
+| BC-06 | PARTIAL | summary-only Prep q0→q1 and unconfirmed-Prep recovery regressions; full Recover continuation remains. |
+| BC-07 | PARTIAL | confirmed, unconfirmed and target-only Recover public regressions; complete recovery-estimation boundary remains. |
+| BC-08 | VERIFIED | confirmed-not-sent and CNS/UNKNOWN stale-delivery regressions; finite synthetic boundary. |
+| BC-09 | PARTIAL | retry-cap, duplicate and post-dispatch error tests; all return contexts/final stop policy remain. |
+| BC-10 | VERIFIED | shared-uncertainty and frozen-identity interpretation regressions; no physical calibration claim. |
+| BC-11 | PARTIAL | full-history merge and resume/history regressions; complete same-round Stop-Empty policy remains. |
+| BC-12 | VERIFIED | infeasible/multi-path and conservative-path retention regressions; finite bounds only. |
+| BC-13 | PENDING | Ownership, FIFO/MOST-RECENT, cancellation and superseding are later B/C work. |
+| BC-14 | PENDING | T5 closed/open boundary and invalid-clock treatment are later B/C work. |
+| BC-15 | PENDING | No-response horizon and protocol-pending boundary are later B/C work. |
+| BC-16 | PENDING | Empty/Singleton/645/Equivalent/Budget priority remains later B/C work. |
+| BC-17 | PENDING | Equivalence proof and its bounded proof domain remain later B/C work. |
+| BC-18 | PARTIAL | public execution-request isolation regression; complete action/state environment matrix remains. |
+| BC-19 | VERIFIED | evaluator-truth exclusion and extra-truth-field rejection regressions; later evaluator work remains separate. |
+| BC-20 | PARTIAL | S0 unset-status and committed/retry regressions; reset/Recover/attempt reconstruction matrix remains. |
+| BC-21 | PARTIAL | public `ReferenceSession.step` malformed/identity regressions; independent CLI and reproducible-run boundary remains. |
+| BC-22 | PENDING | Publication transaction and rollback are outside this in-process checkpoint. |
+| BC-23 | PENDING | A non-editable repository-external wheel is outside this checkpoint. |
+| BC-24 | PARTIAL | kernel/session offline regressions; complete no-network entry evidence remains. |
+
 ## Initial type boundary
 
 `HistoryHandle.initial` represents S0 input.  It permits an empty member-status
@@ -110,8 +146,10 @@ summary confirmation but omits its post-summary is the same controlled
 post-dispatch error.  `CONFIRMED-NOT-SENT` is distinct: because no action was
 sent, it bypasses interpretation and Prep/Recover confirmation; it is charged
 once, increments the controlled retry state, but preserves the prior history
-and known summary.  Its evidence `resolution_code` identifies that causal
-branch during public-ledger replay.  A retry reaches `Stop-Error` only at its
+and known summary.  Its evidence `resolution_code` records the controlled branch
+selected during public-ledger replay; it is not yet an independently recomputed
+proof that a retained rejected response caused that branch.  A retry reaches
+`Stop-Error` only at its
 declared cap; it does not lose the charged resource fact or silently become a
 budget stop.
 
@@ -127,6 +165,15 @@ derive the new compatible-history intersection.  Target and summary
 confirmation are independent typed return facts: target-only is a valid but
 insufficient result, so an unconfirmed Prep summary or a Recover missing either
 confirmation follows S7 rather than being misclassified as a malformed record.
+A summary-only confirmed Prep (and a Recover that has satisfied its own S8/S9
+confirmation condition) preserves `H` and performs no observation-class
+intersection.  It nevertheless applies the admitted frozen finite transition to
+every retained frontier path and commits the successor frontier provenance and
+history version. An already `CONSERVATIVE-UNKNOWN` path is propagated but
+remains `CONSERVATIVE-UNKNOWN`; only a path whose propagation is unsupported,
+infeasible, or bound-limited retains its source path as conservative. No member
+is silently removed or promoted. `postSummary` commits only `currentSummary`;
+it is never decoded as a model control state.
 
 Before any effect branch for an adapter-supplied record, the session validates
 the complete visible-record domain and its field combinations:
@@ -145,13 +192,20 @@ from the expected issued record, so an incorrect returned attempt identity
 cannot overwrite the request identity in the charged evidence.  Ordinary
 adapter exceptions are controlled post-dispatch errors; this does not catch
 process-interrupt exceptions.  A record which repeats an already processed
-execution identity is an inbound stale delivery only when its full visible
-record exactly equals the canonical processed ledger record: it is consumed
-before S3/S4 and discarded idempotently without appending evidence or charging
-the retained public state again.  A same-identity but conflicting payload is a
-controlled ingress error.  Conversely, a mismatched record returned *after* a
-newly issued action is a post-dispatch error, not a duplicate: the actual typed
-successor and one charge are retained through S7.
+execution identity is an inbound stale delivery only if it first passes the
+complete closed visible-record validation for the canonical record's original
+action, and then matches that canonical record (already retained under its
+frozen snapshot) recursively with exact runtime types and values. Exact comparison includes nested
+`PrepRecoverResult`, Boolean confirmation fields, measurement scalar types,
+effect/field combinations, and nonblank identity/evidence fields; Python `==`
+is not an exact comparison.  The record is never validated under an action
+selected for a later round.  A genuinely exact old TEST, PREP, RECOVER,
+CONFIRMED-NOT-SENT, or UNKNOWN-EFFECT delivery remains idempotent even when the
+currently admissible action has another kind.  A same-identity record that
+fails either condition is a controlled ingress error.  Conversely, a
+mismatched record returned *after* a newly issued action is a post-dispatch
+error, not a duplicate: the actual typed successor and one charge are retained
+through S7.
 
 The finite model is JSON-detached at construction.  Its nested guard/update
 AST is retained only in canonical frozen form and decoded afresh for each
@@ -209,6 +263,16 @@ boundary, not an IUT verdict; later production entry points map it to a named
 tool error without publishing an invalid evidence package.
 
 ## Open work and evidence boundary
+
+**Deferred B/C-3 audit obligation (A01).** Public replay currently preserves a
+raw rejected response and its named `resolution_code`, but does not yet
+recompute and verify their causal relation. B/C-3 evidence/CLI work owns the
+closure: identity, target and visible-record errors must retain a present,
+domain-valid raw response whose minimum cause agrees with the code; a pure tool
+exception must not manufacture one. The closing gate is a public
+evidence-transaction/CLI negative-mutation test for modified and deleted raw
+responses. Until then this runtime claims controlled preservation, not exact
+branch-cause proof.
 
 The binding/type layer now executes bounded synthetic TEST/Prep/Recover actions
 and replays their public causal ledgers, but it does not infer ownership,
@@ -270,6 +334,39 @@ ownership／T5、Stop-Empty／等价及生产 evidence／CLI 边界仍是后续 
 GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出的 A2：没有合格 Prep 时出口仍为
 具名 prediction gap；只有合格但不可负担的 Prep 才能在该 fallback 路径产生 A2。
 
+## B/C-2A 覆盖状态
+
+`VERIFIED` 表示具名公共入口回归已展示所述子行为；`PARTIAL` 表示仅展示所述子行为；
+`PENDING` 表示本检查点不主张实现完整性。固定候选 Head、命令和结果必须由后续限定复审或
+门禁记录绑定。下列路径是持久化测试定位，不替代该证据身份。
+
+| ID | 状态 | 持久化公共入口证据或明确保留边界 |
+|---|---|---|
+| BC-01 | PARTIAL | 两轮反馈和仅摘要 Prep 的 q0→q1 回归；新鲜／篡改 checkpoint 的组合仍属后续工作。 |
+| BC-02 | PARTIAL | 两轮反馈改变后继选择的回归；更多可见结果／动作组合仍待覆盖。 |
+| BC-03 | VERIFIED | 重叠 classes、当前 GAP 和无信息 TEST 的回归；仅限有界模型。 |
+| BC-04 | PARTIAL | GAP 撤销不可负担 TEST 评分的 A2 回归；完整 tie／cost／ID 生产矩阵仍待完成。 |
+| BC-05 | VERIFIED | 当前 TEST GAP 与同一准入入口的合格 Prep 回归，以及 Recover A4/A5；ownership／T5 不在本结论内。 |
+| BC-06 | PARTIAL | 仅摘要 Prep q0→q1 和未确认 Prep 的候选保留回归；完整 Recover 后继仍待完成。 |
+| BC-07 | PARTIAL | 已确认、未确认和仅目标确认 Recover 的公共回归；完整恢复估计边界仍待完成。 |
+| BC-08 | VERIFIED | CONFIRMED-NOT-SENT 及 CNS／UNKNOWN 过期投递回归；仅限有限合成边界。 |
+| BC-09 | PARTIAL | retry-cap、重复投递和派发后错误回归；所有返回上下文／最终停止策略仍待完成。 |
+| BC-10 | VERIFIED | 共享 uncertainty 与冻结 identity 解释回归；不主张物理时钟校准。 |
+| BC-11 | PARTIAL | 完整 history 合并和 resume/history 回归；完整同轮 Stop-Empty 策略仍待完成。 |
+| BC-12 | VERIFIED | 不可行／多路径及保守路径保留回归；仅限有限边界。 |
+| BC-13 | PENDING | ownership、FIFO/MOST-RECENT、取消和替换属于后续 B/C 工作。 |
+| BC-14 | PENDING | T5 开闭边界及无效时钟处理属于后续 B/C 工作。 |
+| BC-15 | PENDING | 无响应 horizon 和协议待决边界属于后续 B/C 工作。 |
+| BC-16 | PENDING | Empty/Singleton/645/Equivalent/Budget 优先级属于后续 B/C 工作。 |
+| BC-17 | PENDING | 等价证明及其有界证明域属于后续 B/C 工作。 |
+| BC-18 | PARTIAL | 公共执行请求隔离回归；完整 action/state 环境矩阵仍待完成。 |
+| BC-19 | VERIFIED | evaluator truth 排除和额外 truth 字段拒绝回归；后续评价端工作保持分离。 |
+| BC-20 | PARTIAL | S0 未设置状态及 committed/retry 回归；reset／Recover／attempt 重建矩阵仍待完成。 |
+| BC-21 | PARTIAL | 公共 `ReferenceSession.step` 畸形／身份回归；独立 CLI 和可复现运行边界仍待完成。 |
+| BC-22 | PENDING | 发布事务和回滚不属于本进程内检查点。 |
+| BC-23 | PENDING | 仓库外不可编辑 wheel 不属于本检查点。 |
+| BC-24 | PARTIAL | kernel/session 离线回归；完整无网络入口证据仍待完成。 |
+
 ## 初始类型边界
 
 `HistoryHandle.initial` 表示 S0 输入；因处理前成员状态可以尚未设置，允许空状态表。
@@ -308,15 +405,20 @@ S8／S9。若返回结果包含有类型的后继环境，即使其
 记录被拒绝，也保留该实际后继环境。声称已确认摘要却缺少后继摘要的普通记录，同样属于派发后的
 受控错误。`CONFIRMED-NOT-SENT` 与此不同：因为动作根本没有发送，它绕过解释和 Prep/Recover
 确认；它恰好计费一次、增加受控 retry 状态，但保留此前 history 和已知摘要。其 evidence 的
-`resolution_code` 为公共账本重放标明该因果分支。只有达到声明的 retry cap 才进入 `Stop-Error`；它不会丢失已计费
+`resolution_code` 记录公共账本重放中选取的受控分支；它尚不是对保留的 rejected response
+确实导致该分支的独立重算证明。只有达到声明的 retry cap 才进入 `Stop-Error`；它不会丢失已计费
 事实，也不会静默变成 budget stop。
 
 因此，公开的 `SessionContext` 除当前摘要外还保存 resource remainder、retry count/cap、已确认
 Recover 的 target/evidence 以及 error/unknown histories。只有 S8 可以恢复 `KNOWN` 并写入已确认的
 Recover 目标／证据；S9 是确认后继 `currentSummary` 的唯一派发后提交者（S0 负责初始值，S7 可以清空它）。Prep 目标未确认但后继摘要已确认时，S9
-仍可推进该摘要；Recover 必须同时确认目标和摘要。仅摘要确认保持 `H`；只有有效观测类才可导出
-新的相容 history 交集。目标确认和摘要确认是彼此独立的有类型返回事实：只确认目标是合法但
-不足的结果；未确认摘要的 Prep，或任一确认缺失的 Recover，均走 S7，而不是被误分为畸形记录。
+仍可推进该摘要；Recover 必须同时确认目标和摘要。目标确认和摘要确认是彼此独立的有类型返回
+事实：只确认目标是合法但不足的结果；未确认摘要的 Prep，或任一确认缺失的 Recover，均走 S7，
+而不是被误分为畸形记录。仅摘要确认的 Prep（以及已满足其自身 S8/S9 确认条件的 Recover）保持
+`H`，且不做观测类交集。它仍对每条保留 frontier 路径应用已准入、冻结的有限 transition，并提交
+后继 frontier provenance 与 history version。已有 `CONSERVATIVE-UNKNOWN` 路径仍会传播但保持
+`CONSERVATIVE-UNKNOWN`；只有传播不支持、不可行、受限的路径才以保守方式保留源路径。不得静默
+删除或提升任何成员。`postSummary` 只提交 `currentSummary`，绝不得解码为模型控制状态。
 
 进入任何针对适配器返回记录的 effect 分支前，会话校验完整的可见记录域及其字段组合：身份／动作／
 证据引用均为非空白字符串（接受后的值不被改写），确认字段为 Boolean。普通 `TEST` 记录携带
@@ -326,10 +428,13 @@ Recover 目标／证据；S9 是确认后继 `currentSummary` 的唯一派发后
 异常合成的窄占位记录不是适配器返回的可见记录；它只用于在 evidence 账本中保留 issued identity 和一次已计费
 的 S7 转换。被拒绝的返回记录与期望的 issued 记录分开保存，错误返回的 attempt identity 不得覆盖已计费
 证据中的请求身份。普通适配器异常属于派发后的受控错误；这不捕获进程中断类异常。若返回记录重用
-已经处理过的 execution identity，且完整可见记录与规范的已处理账本记录完全相等时，它才是入站过期投递：
-在 S3／S4 前被消费并幂等丢弃，不追加 evidence，也不对已保留的公共 state 再次计费。同一 identity 但
-载荷冲突属于受控入口错误。相反，若在已经发出一个新动作后才返回不匹配的记录，它是派发后错误而不是重复：
-实际的有类型后继和一次计费均通过 S7 保留。
+已经处理过的 execution identity，只有先按该规范已处理记录的原 action 通过完整、封闭的可见记录校验，
+且随后以递归的运行时类型和值精确匹配该规范记录（其本身已绑定冻结 snapshot），它才是入站过期投递。精确比较覆盖嵌套
+`PrepRecoverResult`、Boolean 确认字段、测量标量类型、effect／字段组合以及非空白 identity／evidence
+字段；Python `==` 不是精确比较。不得按后续轮次当前选择的 action 校验该记录。即使当前可准入 action 的
+kind 不同，真正精确的旧 TEST、PREP、RECOVER、CONFIRMED-NOT-SENT 或 UNKNOWN-EFFECT 投递仍应幂等
+消费。相同 identity 但任一条件不满足的记录属于受控入口错误。相反，若在已经发出一个新动作后才返回不匹配的
+记录，它是派发后错误而不是重复：实际的有类型后继和一次计费均通过 S7 保留。
 
 有限模型在构造时会与 JSON 源对象断开。嵌套 guard／update AST 只以规范化冻结形式保留，每次
 内核调用再重新解码；因此，构造后修改源对象不会在不改变 model identity 的情况下改变行为。
@@ -363,6 +468,12 @@ measurement tick 以及同一冻结的 uncertainty identity。这仅是有限合
 工程运行没有登记实验 attempt 或配对复位主张。
 
 ## 待完成工作和证据边界
+
+**延期至 B/C-3 的审计义务（A01）。** 当前公共重放会保留原始 rejected response 及其具名
+`resolution_code`，但尚未重算并验证二者的因果关系。B/C-3 的 evidence／CLI 工作负责关闭：
+identity、target 和可见记录错误必须保留存在且域有效的原始返回，其最小原因必须与该 code 一致；
+纯工具异常不得凭空制造此类返回。关闭门为公共 evidence-transaction／CLI 对“修改或删除原始
+返回”的负变异测试。在此之前，本运行时只主张受控保留，不主张精确的分支因果证明。
 
 绑定／类型层现已执行有界合成 TEST／Prep／Recover 动作并重放其公共因果账本，但尚不推断所有权、
 不建立协议时序、不运行 IUT，也不建立运行完整性。Researcher 启动合同核对已记录；对新的固定实现

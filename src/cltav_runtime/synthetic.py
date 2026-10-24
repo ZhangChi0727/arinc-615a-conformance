@@ -263,8 +263,8 @@ def _prep_recover_result(value: object) -> PrepRecoverResult:
         target_confirmed, summary_confirmed, prep_error, ineligible,
     )):
         raise ValueError("synthetic Prep/Recover confirmations must be Boolean")
-    if not isinstance(declared_target, str) or not declared_target:
-        raise ValueError("synthetic Prep/Recover target must be a nonempty string")
+    if not isinstance(declared_target, str) or not declared_target.strip():
+        raise ValueError("synthetic Prep/Recover target must be a nonblank string")
     if not isinstance(evidence, str) or not evidence.strip():
         raise ValueError("synthetic Prep/Recover evidence must be a nonblank string")
     if summary_confirmed:
