@@ -18,7 +18,7 @@ import subprocess
 import pytest
 
 from cltav_runtime.bindings import RuntimeAuthorityBinding
-from cltav_runtime.kernel import ContractSnapshot, Interval, ModelContext, initial_entry
+from cltav_runtime.kernel import ContractSnapshot, FrontierEntry, Interval, ModelContext, initial_entry, propagate_transition
 from cltav_runtime.model import FiniteSessionModel
 from cltav_runtime.session import ReferenceSession, ResourceState
 from cltav_runtime.synthetic import (
@@ -28,6 +28,7 @@ from cltav_runtime.synthetic import (
     SyntheticEnvironment,
     VisibleExecutionRecord,
 )
+from cltav_runtime.types import HistoryHandle
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -126,6 +127,38 @@ def _model_with(
     assert isinstance(limits, dict)
     limits["actions"] = len(actions)
     return FiniteSessionModel.from_mapping(context=base.context, value=model_data)
+
+
+def _seed_with_conservative_h2(
+    model: FiniteSessionModel,
+    *,
+    root_id: str,
+    retain_known_h2_path: bool = False,
+) -> dict[str, tuple[FrontierEntry, ...]]:
+    """Build a legal S0 seed whose optional status map is deliberately empty.
+
+    `HistoryHandle.initial` permits the member-status map to be absent.  The
+    explicit frontier entry remains a public conservative witness, so tests
+    using this helper exercise the path-level status contract rather than a
+    synthetic rewrite of a committed history.
+    """
+
+    seed = {
+        hypothesis: (frontier,)
+        for hypothesis, frontier in model.initial_frontiers.items()
+    }
+    h2 = model.initial_frontiers["h2"]
+    conservative = initial_entry(
+        model.context,
+        hypothesis_id="h2",
+        control_state_id="q0",
+        clocks=h2.clocks,
+        typed_store=h2.typed_store,
+        root_id=root_id,
+        status="CONSERVATIVE-UNKNOWN",
+    )
+    seed["h2"] = (h2, conservative) if retain_known_h2_path else (conservative,)
+    return seed
 
 
 def _model_with_declaration(model_data: dict[str, object]) -> FiniteSessionModel:
@@ -687,6 +720,237 @@ def test_summary_only_recover_advances_existing_conservative_paths_without_promo
     )
 
 
+def test_summary_only_prep_preserves_a_conservative_s0_frontier_without_a_status_map_entry() -> None:
+    """An optional S0 status map cannot silently promote a C-U seed path.
+
+    The initial HistoryHandle deliberately has no member-status entry.  The
+    frontier entry itself is still a public conservative witness, so the
+    summary-only q0→q1 transition must retain both its status and membership
+    when the following q1 TEST emits a normal class.
+    """
+
+    binding, base, fixture = _runtime_parts()
+    prep = _action(
+        fixture, "test-router", action_id="prep-q0-q1", kind="PREP",
+        enabled_summaries=["before"], declared_target="prepared-target",
+    )
+    prep_transition = prep["transition"]
+    assert isinstance(prep_transition, dict)
+    prep_transition.update({
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    follow_up = _action(
+        fixture, "test-router", action_id="test-q1", kind="TEST",
+        enabled_summaries=["after"],
+    )
+    follow_up_transition = follow_up["transition"]
+    assert isinstance(follow_up_transition, dict)
+    follow_up_transition.update({
+        "source": "q1",
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    model = _model_with(base, fixture, [prep, follow_up])
+    seed = _seed_with_conservative_h2(
+        model, root_id="root:h2:conservative-s0-summary",
+    )
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-s0-conservative-summary",
+        run_id="run-s0-conservative-summary", initial_summary="before",
+        resources=ResourceState.rounds(2), retry_cap=2, initial_path_bundles=seed,
+    )
+    assert session.initial_state.history.status_by_hypothesis == {}
+    assert session.initial_state.frontiers["h2"][0].status == "CONSERVATIVE-UNKNOWN"
+    environment = _environment({
+        "private-0": {
+            "prep-q0-q1": _prep_recover(
+                target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-target", evidence="synthetic:prep:s0-conservative",
+                post_summary="after", next_state="private-1",
+            ),
+        },
+        "private-1": {"test-q1": _normal("branch-alpha", "after-test", "private-2")},
+    })
+
+    after_prep = session.step(session.initial_state, environment)
+    assert after_prep.stop_reason is None
+    assert after_prep.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+    assert {
+        path.control_state_id for path in after_prep.state.frontiers["h2"]
+    } == {"q1"}
+    assert {
+        path.status for path in after_prep.state.frontiers["h2"]
+    } == {"CONSERVATIVE-UNKNOWN"}
+    assert all(
+        status == "KNOWN"
+        for hypothesis, status in after_prep.state.history.status_by_hypothesis.items()
+        if hypothesis != "h2"
+    )
+
+    after_test = session.step(after_prep.state, after_prep.environment)
+    assert after_test.stop_reason is None
+    assert "h2" in after_test.state.history.hypotheses
+    assert after_test.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+
+
+def test_summary_only_prep_aggregates_mixed_known_and_conservative_s0_paths() -> None:
+    """A known sibling cannot overwrite a retained conservative source path."""
+
+    binding, base, fixture = _runtime_parts()
+    prep = _action(
+        fixture, "test-router", action_id="prep-q0-q1", kind="PREP",
+        enabled_summaries=["before"], declared_target="prepared-target",
+    )
+    prep_transition = prep["transition"]
+    assert isinstance(prep_transition, dict)
+    prep_transition.update({
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    follow_up = _action(
+        fixture, "test-router", action_id="test-q1", kind="TEST",
+        enabled_summaries=["after"],
+    )
+    follow_up_transition = follow_up["transition"]
+    assert isinstance(follow_up_transition, dict)
+    follow_up_transition.update({
+        "source": "q1",
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    model = _model_with(base, fixture, [prep, follow_up])
+    seed = _seed_with_conservative_h2(
+        model, root_id="root:h2:mixed-s0-summary", retain_known_h2_path=True,
+    )
+    source_roots = {path.history_provenance[0] for path in seed["h2"]}
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-mixed-s0-summary",
+        run_id="run-mixed-s0-summary", initial_summary="before",
+        resources=ResourceState.rounds(2), retry_cap=2, initial_path_bundles=seed,
+    )
+    environment = _environment({
+        "private-0": {
+            "prep-q0-q1": _prep_recover(
+                target_confirmed=False, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-target", evidence="synthetic:prep:mixed-s0",
+                post_summary="after", next_state="private-1",
+            ),
+        },
+        "private-1": {"test-q1": _normal("branch-alpha", "after-test", "private-2")},
+    })
+
+    after_prep = session.step(session.initial_state, environment)
+    assert after_prep.stop_reason is None
+    assert after_prep.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+    assert len(after_prep.state.frontiers["h2"]) == 2
+    assert {path.control_state_id for path in after_prep.state.frontiers["h2"]} == {"q1"}
+    assert {path.status for path in after_prep.state.frontiers["h2"]} == {
+        "KNOWN", "CONSERVATIVE-UNKNOWN",
+    }
+    assert {path.history_provenance[0] for path in after_prep.state.frontiers["h2"]} == source_roots
+    assert all(len(path.history_provenance) == 2 for path in after_prep.state.frontiers["h2"])
+
+    # branch-alpha remains allowed to shrink ordinary known candidates, but
+    # cannot use the C-U sibling to erase h2 as a whole.
+    after_test = session.step(after_prep.state, after_prep.environment)
+    assert after_test.stop_reason is None
+    assert "h2" in after_test.state.history.hypotheses
+    assert after_test.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+    assert len(after_test.state.frontiers["h2"]) == 2
+    assert {path.history_provenance[0] for path in after_test.state.frontiers["h2"]} == source_roots
+
+
+def test_initial_conservative_s0_frontier_is_not_excluded_by_a_normal_observation() -> None:
+    """The normal predictor consumes path-level C-U even before an S9 commit."""
+
+    binding, base, fixture = _runtime_parts()
+    test = _action(
+        fixture, "test-router", action_id="test-q0", kind="TEST", enabled_summaries=["q0"],
+    )
+    model = _model_with(base, fixture, [test])
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-direct-s0-conservative",
+        run_id="run-direct-s0-conservative", initial_summary="q0",
+        resources=ResourceState.rounds(1), retry_cap=2,
+        initial_path_bundles=_seed_with_conservative_h2(
+            model, root_id="root:h2:direct-s0-conservative",
+        ),
+    )
+    assert session.initial_state.history.status_by_hypothesis == {}
+
+    result = session.step(session.initial_state, _environment({
+        "private-0": {"test-q0": _normal("branch-alpha", "after-test", "private-1")},
+    }))
+
+    assert result.stop_reason is None
+    assert "h2" in result.state.history.hypotheses
+    assert result.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+    assert all(
+        status == "KNOWN"
+        for hypothesis, status in result.state.history.status_by_hypothesis.items()
+        if hypothesis != "h2"
+    )
+
+
+@pytest.mark.parametrize("condition", ["path-limit", "unsupported-guard"])
+def test_summary_only_model_marks_bounded_or_unsupported_propagation_conservative(
+    condition: str,
+) -> None:
+    """A completed summary never upgrades a member whose finite update is unresolved."""
+
+    _binding, base, fixture = _runtime_parts()
+    prep = _action(
+        fixture, "test-router", action_id="prep-q0-q1", kind="PREP",
+        enabled_summaries=["before"], declared_target="prepared-target",
+    )
+    transition = prep["transition"]
+    assert isinstance(transition, dict)
+    transition.update({
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    if condition == "unsupported-guard":
+        transition["guardAst"] = {"tag": "UNSUPPORTED-GUARD"}
+
+    model_data = copy.deepcopy(fixture["algorithmModel"])
+    assert isinstance(model_data, dict)
+    model_data["actions"] = [prep]
+    limits = model_data["limits"]
+    assert isinstance(limits, dict)
+    limits["actions"] = 1
+    if condition == "path-limit":
+        limits["pathLength"] = 1
+    model = FiniteSessionModel.from_mapping(context=base.context, value=model_data)
+
+    seed = {hypothesis: (frontier,) for hypothesis, frontier in model.initial_frontiers.items()}
+    if condition == "path-limit":
+        # Build a source path with a real, verified one-step provenance chain
+        # using a larger temporary calculation bound.  The model under test
+        # then correctly treats that same path as bound-limited.
+        advanced = propagate_transition(
+            model.initial_frontiers["h2"],
+            model.actions["prep-q0-q1"].transition_for_kernel(),
+            state_ids=set(model.context.state_ids),
+            clock_ids=set(model.context.clock_ids),
+            typed_domains={key: set(domain) for key, domain in model.context.typed_domains.items()},
+            context=model.context,
+            path_limit=2,
+            frontier_limit=model.frontier_limit,
+        )
+        assert advanced.kind == "FEASIBLE"
+        seed["h2"] = (advanced.entries[0],)
+
+    propagated = model.summary_only_successors(
+        hypotheses=frozenset(seed), frontiers=seed, status_by_hypothesis={},
+        action_id="prep-q0-q1",
+    )
+
+    assert "h2" in propagated.conservative_hypotheses
+    assert propagated.successors["h2"]
+    assert any(item.code.startswith("SUMMARY-ONLY-") for item in propagated.diagnostics)
+
+
 def test_fresh_checkpoint_replays_and_executes_a_second_summary_only_prep_without_cache_writes() -> None:
     """Portable summary-only evidence must use the detached replay model end-to-end."""
 
@@ -761,6 +1025,146 @@ def test_fresh_checkpoint_replays_and_executes_a_second_summary_only_prep_withou
     } == {"q0"}
     assert dict(target_model.context.provenance_store.records()) == records_before
     assert target._state_error(resumed.state) is None
+
+
+def test_fresh_checkpoint_replays_a_conservative_s0_summary_path_without_cache_writes() -> None:
+    """Fresh replay must preserve the same C-U aggregation as the live path."""
+
+    source_binding, source_base, fixture = _runtime_parts()
+    prep = _action(
+        fixture, "test-router", action_id="prep-q0-q1", kind="PREP",
+        enabled_summaries=["before"], declared_target="prepared-target",
+    )
+    prep_transition = prep["transition"]
+    assert isinstance(prep_transition, dict)
+    prep_transition.update({
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    follow_up = _action(
+        fixture, "test-router", action_id="test-q1", kind="TEST",
+        enabled_summaries=["after"],
+    )
+    follow_up_transition = follow_up["transition"]
+    assert isinstance(follow_up_transition, dict)
+    follow_up_transition.update({
+        "source": "q1",
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    source_model = _model_with(source_base, fixture, [prep, follow_up])
+    source = ReferenceSession(
+        binding=source_binding, model=source_model,
+        session_id="session-portable-s0-conservative", run_id="run-portable-s0-conservative",
+        initial_summary="before", resources=ResourceState.rounds(2), retry_cap=2,
+        initial_path_bundles=_seed_with_conservative_h2(
+            source_model, root_id="root:h2:portable-s0-conservative",
+        ),
+    )
+    environment = _environment({
+        "private-0": {
+            "prep-q0-q1": _prep_recover(
+                target_confirmed=False, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-target", evidence="synthetic:prep:portable-s0-cu",
+                post_summary="after", next_state="private-1",
+            ),
+        },
+        "private-1": {"test-q1": _normal("branch-alpha", "after-test", "private-2")},
+    })
+    first = source.step(source.initial_state, environment)
+    assert first.stop_reason is None
+    assert first.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+    expected = source.step(first.state, first.environment)
+    assert expected.stop_reason is None
+
+    target_binding, target_base, _target_fixture = _runtime_parts()
+    target_model = _model_with(target_base, fixture, [prep, follow_up])
+    target = ReferenceSession(
+        binding=target_binding, model=target_model,
+        session_id="session-portable-s0-conservative", run_id="run-portable-s0-conservative",
+        initial_summary="before", resources=ResourceState.rounds(2), retry_cap=2,
+        initial_path_bundles=_seed_with_conservative_h2(
+            target_model, root_id="root:h2:portable-s0-conservative",
+        ),
+    )
+    records_before = dict(target_model.context.provenance_store.records())
+    assert target._state_error(first.state) is None
+
+    resumed = target.step(first.state, first.environment)
+
+    assert resumed.stop_reason is None
+    assert resumed.state == expected.state
+    assert resumed.state.attempts == 2
+    assert resumed.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+    assert "h2" in resumed.state.history.hypotheses
+    assert dict(target_model.context.provenance_store.records()) == records_before
+    assert target._state_error(resumed.state) is None
+
+
+def test_resumed_checkpoint_rejects_a_coordinated_conservative_status_promotion() -> None:
+    """Changing both ledger and terminal history cannot promote a C-U member."""
+
+    class NoDispatchEnvironment:
+        calls = 0
+
+        def execute(self, _request: ExecutionRequest) -> object:
+            self.calls += 1
+            raise AssertionError("tampered checkpoint must be rejected before dispatch")
+
+    binding, base, fixture = _runtime_parts()
+    prep = _action(
+        fixture, "test-router", action_id="prep-q0-q1", kind="PREP",
+        enabled_summaries=["before"], declared_target="prepared-target",
+    )
+    transition = prep["transition"]
+    assert isinstance(transition, dict)
+    transition.update({
+        "target": "q1",
+        "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q1"}],
+    })
+    model = _model_with(base, fixture, [prep])
+    session = ReferenceSession(
+        binding=binding, model=model,
+        session_id="session-reject-conservative-promotion", run_id="run-reject-conservative-promotion",
+        initial_summary="before", resources=ResourceState.rounds(1), retry_cap=2,
+        initial_path_bundles=_seed_with_conservative_h2(
+            model, root_id="root:h2:reject-conservative-promotion",
+        ),
+    )
+    first = session.step(session.initial_state, _environment({
+        "private-0": {
+            "prep-q0-q1": _prep_recover(
+                target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="prepared-target", evidence="synthetic:prep:reject-promotion",
+                post_summary="after", next_state="private-1",
+            ),
+        },
+    }))
+    assert first.stop_reason is None
+    assert first.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
+
+    forged_status = dict(first.state.history.status_by_hypothesis)
+    forged_status["h2"] = "KNOWN"
+    forged_history = HistoryHandle.committed(
+        hypotheses=first.state.history.hypotheses,
+        compatible_state_by_hypothesis=first.state.history.compatible_state_by_hypothesis,
+        status_by_hypothesis=forged_status,
+        version=first.state.history.version,
+    )
+    forged_evidence = replace(first.state.evidence[0], history_after=forged_history)
+    forged_state = replace(
+        first.state,
+        history=forged_history,
+        evidence=(forged_evidence,),
+    )
+    environment = NoDispatchEnvironment()
+
+    rejected = session.step(forged_state, environment)  # type: ignore[arg-type]
+
+    assert rejected.stop_reason == "Stop-Error"
+    assert rejected.state is forged_state
+    assert rejected.diagnostics[0].code == "EVIDENCE-COMMIT-MISMATCH"
+    assert environment.calls == 0
 
 
 @pytest.mark.parametrize(

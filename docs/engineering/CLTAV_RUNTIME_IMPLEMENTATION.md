@@ -174,6 +174,13 @@ remains `CONSERVATIVE-UNKNOWN`; only a path whose propagation is unsupported,
 infeasible, or bound-limited retains its source path as conservative. No member
 is silently removed or promoted. `postSummary` commits only `currentSummary`;
 it is never decoded as a model control state.
+For an S0 history, an absent optional member-status entry is not a positive
+`KNOWN` assertion: a committed member is conservatively classified whenever
+its retained history says so, any source or result frontier path says so, or
+the propagation itself is unresolved.
+The same aggregate is consumed by the next normal prediction and committed
+observation class, so a known observation may still eliminate known-incompatible
+members without excluding a retained conservative path.
 
 Before any effect branch for an adapter-supplied record, the session validates
 the complete visible-record domain and its field combinations:
@@ -419,6 +426,10 @@ Recover 目标／证据；S9 是确认后继 `currentSummary` 的唯一派发后
 后继 frontier provenance 与 history version。已有 `CONSERVATIVE-UNKNOWN` 路径仍会传播但保持
 `CONSERVATIVE-UNKNOWN`；只有传播不支持、不可行、受限的路径才以保守方式保留源路径。不得静默
 删除或提升任何成员。`postSummary` 只提交 `currentSummary`，绝不得解码为模型控制状态。
+对于 S0 history，缺少可选成员状态项不是对 `KNOWN` 的正向断言：若保留 history、任一源或结果
+frontier 路径已表明保守，或传播本身未决，则提交后的成员必须按保守状态分类。
+下一次普通预测和已提交的观测类也消费同一汇总：已知观测仍可排除已知且不相容的成员，但不得
+排除保留的保守路径。
 
 进入任何针对适配器返回记录的 effect 分支前，会话校验完整的可见记录域及其字段组合：身份／动作／
 证据引用均为非空白字符串（接受后的值不被改写），确认字段为 Boolean。普通 `TEST` 记录携带

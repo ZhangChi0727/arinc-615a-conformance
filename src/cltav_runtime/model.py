@@ -267,7 +267,15 @@ class FiniteSessionModel:
                     (),
                     tuple(diagnostics + [KernelDiagnostic("INVALID-HISTORY", str(exc) or type(exc).__name__)]),
                 )
-            if status_by_hypothesis.get(hypothesis) == "CONSERVATIVE-UNKNOWN":
+            # The S0 member-status map may legitimately omit a member.  A
+            # conservative status carried by any retained public frontier is
+            # nevertheless authoritative for prediction: a normal observation
+            # cannot exclude that unresolved path merely because S0 did not
+            # duplicate its status in the optional map.
+            if (
+                status_by_hypothesis.get(hypothesis) == "CONSERVATIVE-UNKNOWN"
+                or any(path.status == "CONSERVATIVE-UNKNOWN" for path in paths)
+            ):
                 conservative[hypothesis] = paths
                 continue
             feasible: list[FrontierEntry] = []
@@ -415,9 +423,20 @@ class FiniteSessionModel:
             # action could leave a conservative q0 member stale forever.  Its
             # status remains conservative, because this propagation does not
             # retroactively prove the earlier uncertain effect.
-            already_conservative = (
+            # S0 is allowed to omit the member-status map.  That omission is
+            # not a positive KNOWN assertion: a retained frontier can itself
+            # carry the conservative status.  The committed result therefore
+            # derives member conservatism from both representations, and later
+            # also from the propagation result below.  Otherwise an S0 seed
+            # with a genuine C-U path could be silently promoted merely
+            # because its optional S0 status-map entry was absent.
+            history_conservative = (
                 status_by_hypothesis.get(hypothesis) == "CONSERVATIVE-UNKNOWN"
             )
+            source_conservative = any(
+                path.status == "CONSERVATIVE-UNKNOWN" for path in paths
+            )
+            already_conservative = history_conservative or source_conservative
             advanced: list[FrontierEntry] = []
             retained: list[FrontierEntry] = []
             unresolved = already_conservative
@@ -461,7 +480,11 @@ class FiniteSessionModel:
                 unresolved = True
                 diagnostics.append(KernelDiagnostic("SUMMARY-ONLY-FRONTIER-LIMIT", str(exc)))
 
-            if unresolved:
+            result_conservative = any(
+                path.status == "CONSERVATIVE-UNKNOWN"
+                for path in successors[hypothesis]
+            )
+            if unresolved or result_conservative:
                 conservative.add(hypothesis)
                 if already_conservative:
                     diagnostics.append(KernelDiagnostic(

@@ -1343,7 +1343,18 @@ class ReferenceSession:
                 for hypothesis, entries in selected_class.successors.items()
             },
             status_by_hypothesis={
-                hypothesis: "CONSERVATIVE-UNKNOWN" if hypothesis in selected_class.conservative_hypotheses else "KNOWN"
+                hypothesis: (
+                    "CONSERVATIVE-UNKNOWN"
+                    if (
+                        hypothesis in selected_class.conservative_hypotheses
+                        or history.status_by_hypothesis.get(hypothesis) == "CONSERVATIVE-UNKNOWN"
+                        or any(
+                            entry.status == "CONSERVATIVE-UNKNOWN"
+                            for entry in selected_class.successors[hypothesis]
+                        )
+                    )
+                    else "KNOWN"
+                )
                 for hypothesis in selected_class.hypotheses
             },
             version=history.version + 1,
