@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping as ABCMapping
 import copy
 from dataclasses import FrozenInstanceError, replace
 from fractions import Fraction
@@ -430,6 +431,451 @@ def test_session_rejects_reviewed_deadline_and_mismatched_uncertainty_contract()
         )
 
 
+def test_session_detaches_its_interpretation_contract_before_a_hostile_s4_adapter_runs() -> None:
+    """A construction-time METHOD-ONLY boundary cannot be promoted during S4."""
+
+    binding, model, fixture = _runtime_parts()
+    contract = _runtime_interpretation_contract(model)
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="contract-toctou", run_id="contract-toctou",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=contract,
+    )
+    environment = _environment_with_observation_material(
+        fixture,
+        _runtime_observation_material(response_id=None, earliest=99),
+        no_response=True,
+    )
+
+    class MutatingAdapter:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            object.__setattr__(contract, "deadline_authority", "REVIEWED")
+            object.__setattr__(contract, "deadline_identity", "forged:reviewed:deadline")
+            return environment.execute(request)
+
+    result = session.step(session.initial_state, MutatingAdapter())  # type: ignore[arg-type]
+    assessment = result.state.evidence[0].observation_assessment
+    assert session.interpretation_contract is not contract
+    assert session.interpretation_contract is not None
+    assert session.interpretation_contract.deadline_authority == "METHOD-ONLY"
+    assert assessment is not None
+    assert assessment.verdict == "INCONCLUSIVE"
+    assert assessment.score_disposition == "PENDING-DEADLINE"
+    assert assessment.answered is False
+
+
+def test_session_freezes_nested_contract_intervals_and_fraction_leaves_before_s4() -> None:
+    """A caller cannot rewrite a parsed timing boundary through its leaf objects."""
+
+    binding, model, fixture = _runtime_parts()
+    contract = _runtime_interpretation_contract(model)
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="nested-contract-toctou", run_id="nested-contract-toctou",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=contract,
+    )
+    environment = _environment_with_observation_material(
+        fixture, _runtime_observation_material(measurement=_interval_mapping(0, 0)),
+    )
+
+    class MutatingAdapter:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            # Both are exact Fraction leaves inside caller-owned frozen
+            # contract values.  A shallow outer copy would turn the normal
+            # [0,0] measurement into a false failure or a changed deadline.
+            object.__setattr__(contract.physical_domain.lower, "_numerator", 99)
+            object.__setattr__(contract.requirement_window.lower, "_numerator", 1)
+            object.__setattr__(contract.upper_bound, "_numerator", 99)
+            return environment.execute(request)
+
+    result = session.step(session.initial_state, MutatingAdapter())  # type: ignore[arg-type]
+    assessment = result.state.evidence[0].observation_assessment
+    assert result.state.evidence[0].committed is True
+    assert assessment is not None
+    assert assessment.verdict == "PASS"
+    assert assessment.physical_interval == Interval(Fraction(0), Fraction(0), True, True)
+    assert assessment.requirement_window == Interval(Fraction(0), Fraction(1), True, True)
+    target = ReferenceSession(
+        binding=binding, model=model, session_id="nested-contract-toctou", run_id="nested-contract-toctou",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    assert target._state_error(result.state) is None
+
+
+def test_session_private_seed_survives_a_mutated_public_s0_context() -> None:
+    """Same-session replay never treats the inspectable S0 object as its seed."""
+
+    binding, model, fixture = _runtime_parts()
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "public-s0-toctou",
+        "run_id": "public-s0-toctou",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "interpretation_contract": _runtime_interpretation_contract(model),
+    }
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(measurement=_interval_mapping(0, 0)),
+        _runtime_observation_material(
+            trigger_id="request-2", response_id="response-2",
+            events=[
+                {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ], measurement=_interval_mapping(0, 0),
+        ),
+    )
+    source = ReferenceSession(**kwargs)
+    public_s0 = source.initial_state
+    seed_clock_lower = Fraction(
+        source._initial_seed_state.frontiers["h0"][0].clocks["x"].lower.numerator,
+        source._initial_seed_state.frontiers["h0"][0].clocks["x"].lower.denominator,
+    )
+
+    class MutatingAdapter:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            object.__setattr__(public_s0.context, "current_summary", "poison-q")
+            object.__setattr__(public_s0.history, "version", 99)
+            object.__setattr__(public_s0.frontiers["h0"][0].clocks["x"].lower, "_numerator", 99)
+            return environment.execute(request)
+
+    first = source.step(public_s0, MutatingAdapter())  # type: ignore[arg-type]
+    advanced = source.step(first.state, first.environment)
+    assert source._initial_seed_state.context.current_summary == "q0"
+    assert source._initial_seed_state.history.version == 0
+    assert source._initial_seed_state.frontiers["h0"][0].clocks["x"].lower == seed_clock_lower
+    assert first.state.evidence[-1].committed is True
+    assert advanced.state.evidence[-1].committed is True
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(advanced.state) is None
+
+
+@pytest.mark.parametrize("resources", (ResourceState.rounds(2), ResourceState.budget(2)))
+def test_session_freezes_model_authority_before_a_hostile_s4_adapter_runs(
+    resources: ResourceState,
+) -> None:
+    """Caller-held action charges cannot diverge same and fresh replay."""
+
+    binding, model, fixture = _runtime_parts()
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": f"model-authority-toctou-{resources.mode.lower()}",
+        "run_id": f"model-authority-toctou-{resources.mode.lower()}",
+        "initial_summary": "q0",
+        "resources": resources,
+    }
+    source = ReferenceSession(**kwargs)
+    environment = SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"])
+    original_charge = model.actions["test-router"].detail_charges["computation"]
+
+    class MutatingAdapter:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            if request.action_id == "test-router":
+                forged_charges = dict(model.actions["test-router"].detail_charges)
+                forged_charges["computation"] = original_charge + 76
+                object.__setattr__(
+                    model.actions["test-router"], "detail_charges", MappingProxyType(forged_charges),
+                )
+                # This second action must still be selected from the frozen
+                # model, not from the caller object the adapter just mutated.
+                object.__setattr__(model.actions["test-left"], "enabled_summaries", frozenset())
+            return environment.execute(request)
+
+    result = source.run(MutatingAdapter(), maximum_rounds=2)  # type: ignore[arg-type]
+
+    assert [item.snapshot.action_id for item in result.state.evidence] == ["test-router", "test-left"]
+    assert result.state.evidence[0].detail_charges["computation"] == original_charge
+    assert result.state.resources.remaining == 0
+    assert source._state_error(result.state) is None
+    fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+    target = ReferenceSession(
+        binding=fresh_binding, model=fresh_model,
+        session_id=f"model-authority-toctou-{resources.mode.lower()}",
+        run_id=f"model-authority-toctou-{resources.mode.lower()}",
+        initial_summary="q0", resources=resources,
+    )
+    assert target._state_error(result.state) is None
+
+
+@pytest.mark.parametrize("mutate_before_s3", (True, False))
+def test_session_freezes_binding_identity_before_selection_and_s4(
+    mutate_before_s3: bool,
+) -> None:
+    """Authority evidence comes from the construction snapshot, not caller aliases."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model,
+        session_id=f"binding-authority-{mutate_before_s3}",
+        run_id=f"binding-authority-{mutate_before_s3}",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+    )
+    original_blob = session._authority_identities["interfaceRegistry"]["blobSha256"]
+    forged_blob = "f" * 64
+    environment = SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"])
+
+    def mutate_binding() -> None:
+        object.__setattr__(binding.interfaces, "blob_sha256", forged_blob)
+
+    if mutate_before_s3:
+        mutate_binding()
+
+        class Adapter:
+            def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+                return environment.execute(request)
+    else:
+        class Adapter:
+            def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+                mutate_binding()
+                return environment.execute(request)
+
+    result = session.step(session.initial_state, Adapter())  # type: ignore[arg-type]
+
+    assert result.state.evidence[0].committed is True
+    assert result.state.evidence[0].snapshot.authority_identities["interfaceRegistry"]["blobSha256"] == original_blob
+    assert original_blob != forged_blob
+    assert session._state_error(result.state) is None
+    fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+    target = ReferenceSession(
+        binding=fresh_binding, model=fresh_model,
+        session_id=f"binding-authority-{mutate_before_s3}",
+        run_id=f"binding-authority-{mutate_before_s3}",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+    )
+    assert target._state_error(result.state) is None
+
+
+@pytest.mark.parametrize(
+    ("snapshot_name", "field_name", "forged_value"),
+    (
+        ("interfaces", "blob_sha256", "0" * 64),
+        ("interfaces", "commit", "f" * 40),
+        ("interfaces", "path", "configs/research/forged_registry.json"),
+        ("development", "contract_blob_sha256", "0" * 64),
+        ("development", "contract_commit", "f" * 40),
+        ("development", "contract_path", "configs/engineering/forged_contract.json"),
+    ),
+)
+def test_session_revalidates_raw_binding_snapshots_before_freezing_authority(
+    snapshot_name: str,
+    field_name: str,
+    forged_value: str,
+) -> None:
+    """A token-bearing alias cannot mint an authority by rewriting its identity."""
+
+    binding, model, _fixture = _runtime_parts()
+    snapshot = getattr(binding, snapshot_name)
+    object.__setattr__(snapshot, field_name, forged_value)
+
+    with pytest.raises(ValueError, match="session runtime authority is invalid"):
+        ReferenceSession(
+            binding=binding,
+            model=model,
+            session_id=f"forged-binding-{snapshot_name}-{field_name}",
+            run_id=f"forged-binding-{snapshot_name}-{field_name}",
+            initial_summary="q0",
+            resources=ResourceState.rounds(1),
+        )
+
+
+def test_session_rejects_a_duck_typed_binding_before_reading_its_identity() -> None:
+    """Only a factory-issued RuntimeAuthorityBinding can cross the S0 boundary."""
+
+    binding, model, _fixture = _runtime_parts()
+
+    class DuckBinding:
+        development = binding.development
+
+        def identities(self):  # type: ignore[no-untyped-def]
+            return binding.identities()
+
+    with pytest.raises(ValueError, match="session runtime authority is invalid"):
+        ReferenceSession(
+            binding=DuckBinding(),  # type: ignore[arg-type]
+            model=model,
+            session_id="duck-binding",
+            run_id="duck-binding",
+            initial_summary="q0",
+            resources=ResourceState.rounds(1),
+        )
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    ("detail-charge", "enabled-summary", "transition", "uncertainty"),
+)
+def test_session_revalidates_model_semantics_before_freezing_authority(
+    mutation: str,
+) -> None:
+    """A stale model identity cannot authorize rewritten finite semantics at S0."""
+
+    binding, model, _fixture = _runtime_parts()
+    action = model.actions["test-router"]
+    if mutation == "detail-charge":
+        charges = dict(action.detail_charges)
+        charges["computation"] += 99
+        object.__setattr__(action, "detail_charges", MappingProxyType(charges))
+    elif mutation == "enabled-summary":
+        object.__setattr__(action, "enabled_summaries", frozenset({"forged-summary"}))
+    elif mutation == "transition":
+        object.__setattr__(action, "transition_json", '{"id":"forged","guardAst":{"kind":"TRUE"},"updateAst":[]}')
+    else:
+        object.__setattr__(model.uncertainty, "maximum_error", Fraction(99))
+
+    with pytest.raises(ValueError, match="session runtime authority is invalid"):
+        ReferenceSession(
+            binding=binding,
+            model=model,
+            session_id=f"forged-model-{mutation}",
+            run_id=f"forged-model-{mutation}",
+            initial_summary="q0",
+            resources=ResourceState.rounds(1),
+        )
+
+
+def test_session_rebuilds_its_private_model_without_a_postcheck_action_map_read() -> None:
+    """A changing public action map cannot race S0's model reconstruction."""
+
+    binding, model, fixture = _runtime_parts()
+    original_actions = dict(model.actions)
+    original_charge = original_actions["test-router"].detail_charges["computation"]
+
+    class SecondReadMutatesActions(ABCMapping[str, object]):
+        """Return valid actions once, then forge a charge on a later read."""
+
+        def __init__(self) -> None:
+            self.calls = 0
+            self.values = dict(original_actions)
+
+        def __getitem__(self, key: str) -> object:
+            return self.values[key]
+
+        def __iter__(self):  # type: ignore[no-untyped-def]
+            return iter(self.values)
+
+        def __len__(self) -> int:
+            return len(self.values)
+
+        def items(self):  # type: ignore[no-untyped-def]
+            self.calls += 1
+            if self.calls == 2:
+                forged = dict(original_actions["test-router"].detail_charges)
+                forged["computation"] = original_charge + 99
+                object.__setattr__(
+                    original_actions["test-router"], "detail_charges", MappingProxyType(forged),
+                )
+            return self.values.items()
+
+    racing_actions = SecondReadMutatesActions()
+    object.__setattr__(model, "actions", racing_actions)
+    session = ReferenceSession(
+        binding=binding, model=model,
+        session_id="model-source-race", run_id="model-source-race",
+        initial_summary="q0", resources=ResourceState.budget(4),
+    )
+    result = session.run(
+        SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]), maximum_rounds=1,
+    )
+
+    # S0 inspected the public map once for malformed pre-existing state but
+    # rebuilt the private runtime model from its canonical JSON.  The former
+    # validate-then-copy shape would need a second map traversal and would
+    # admit the forged charge into the private projection.
+    assert racing_actions.calls == 1
+    assert result.state.evidence[0].detail_charges["computation"] == original_charge
+    assert session._model.actions["test-router"].detail_charges["computation"] == original_charge
+
+
+def test_session_rejects_an_exact_looking_context_scalar_subclass() -> None:
+    """Context authority cannot rely on an equality-compatible string alias."""
+
+    binding, model, _fixture = _runtime_parts()
+
+    class ExactLookingString(str):
+        pass
+
+    # The normal string representation leaves the old digest text unchanged,
+    # so this specifically exercises the exact-carrier check rather than a
+    # simple digest mismatch.
+    object.__setattr__(model.context, "projection_clock", ExactLookingString("x"))
+
+    with pytest.raises(ValueError, match="session runtime authority is invalid"):
+        ReferenceSession(
+            binding=binding, model=model,
+            session_id="context-string-subclass", run_id="context-string-subclass",
+            initial_summary="q0", resources=ResourceState.rounds(1),
+        )
+
+
+def test_session_rejects_a_duck_typed_model_before_reading_model_context() -> None:
+    """A genuine binding cannot make an arbitrary model object authoritative."""
+
+    binding, model, _fixture = _runtime_parts()
+
+    class DuckModel:
+        context = model.context
+
+    with pytest.raises(ValueError, match="session runtime authority is invalid"):
+        ReferenceSession(
+            binding=binding,
+            model=DuckModel(),  # type: ignore[arg-type]
+            session_id="duck-model",
+            run_id="duck-model",
+            initial_summary="q0",
+            resources=ResourceState.rounds(1),
+        )
+
+
+@pytest.mark.parametrize("resources", (ResourceState.rounds(2), ResourceState.budget(2)))
+@pytest.mark.parametrize("outcome", ("CONFIRMED-NOT-SENT", "TOOL-ERROR"))
+def test_session_keeps_the_frozen_model_charge_on_noncommit_paths(
+    resources: ResourceState,
+    outcome: str,
+) -> None:
+    """S4 model aliases cannot rewrite a CNS/tool-error one-charge receipt."""
+
+    binding, model, fixture = _runtime_parts()
+    session_id = f"frozen-charge-{outcome.lower()}-{resources.mode.lower()}"
+    source = ReferenceSession(
+        binding=binding, model=model, session_id=session_id, run_id=session_id,
+        initial_summary="q0", resources=resources, retry_cap=1,
+    )
+    original_charge = model.actions["test-router"].detail_charges["computation"]
+    not_sent = SyntheticEnvironment.from_mapping(fixture["environments"]["notSent"])
+
+    class MutatingAdapter:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            forged_charges = dict(model.actions["test-router"].detail_charges)
+            forged_charges["computation"] = original_charge + 76
+            object.__setattr__(
+                model.actions["test-router"], "detail_charges", MappingProxyType(forged_charges),
+            )
+            if outcome == "TOOL-ERROR":
+                raise RuntimeError("controlled hostile adapter error")
+            return not_sent.execute(request)
+
+    result = source.step(source.initial_state, MutatingAdapter())  # type: ignore[arg-type]
+
+    evidence = result.state.evidence[0]
+    assert evidence.committed is False
+    assert evidence.issued_to_executor is True
+    assert evidence.charged_once is True
+    assert evidence.detail_charges["computation"] == original_charge
+    assert result.state.resources == ResourceState(resources.mode, resources.remaining - 1)
+    assert outcome == evidence.execution.effect_class or (
+        outcome == "TOOL-ERROR" and evidence.execution.effect_class == "UNKNOWN-EFFECT"
+    )
+    fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+    target = ReferenceSession(
+        binding=fresh_binding, model=fresh_model, session_id=session_id, run_id=session_id,
+        initial_summary="q0", resources=resources, retry_cap=1,
+    )
+    assert target._state_error(result.state) is None
+
+
 def test_session_rejects_conflicting_silence_shape_at_the_public_adapter_boundary() -> None:
     binding, model, fixture = _runtime_parts()
     session = ReferenceSession(
@@ -725,6 +1171,342 @@ def test_session_replays_every_fifo_trace_fact_and_preserves_the_one_active_requ
     assert resumed.state.active_trigger_event_ids == frozenset()
     assert set(resumed.state.event_identity_refs) == {"A", "B", "R1", "R2"}
     assert target._state_error(resumed.state) is None
+
+
+def test_session_uses_a_retained_fifo_active_request_for_an_incremental_next_observation() -> None:
+    """A delta response is still matched against a retained FIFO obligation."""
+
+    binding, model, fixture = _runtime_parts()
+    first_events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "R1", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    # B remains ACTIVE after R1.  The next observation is a legal
+    # *incremental* delta: terminal A/R1 and retained B need not be copied
+    # again, but the response must still be matched against B.
+    incremental_second_events = [
+        {"id": "R2", "sequence": 4, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A", response_id="R1", events=first_events, measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="B", response_id="R2", events=incremental_second_events, measurement=_interval_mapping(0, 0),
+        ),
+    )
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "incremental-fifo",
+        "run_id": "incremental-fifo",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "retry_cap": 2,
+        "interpretation_contract": _runtime_interpretation_contract(
+            model, policy="FIFO", concurrent_same_key=True,
+        ),
+    }
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    accepted = source.step(first.state, first.environment)
+
+    assert accepted.state.evidence[-1].committed is True
+    assert accepted.state.consumed_response_ids == {"R1", "R2"}
+    assert accepted.state.terminal_trigger_event_ids == {"A", "B"}
+    assert accepted.state.active_trigger_event_ids == frozenset()
+    assert set(accepted.state.event_identity_refs) == {"A", "B", "R1", "R2"}
+
+    # A portable checkpoint proves that B was a stateful ownership input,
+    # rather than a continuation-only in-memory shortcut.
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(accepted.state) is None
+
+
+def test_session_rejects_an_incremental_fifo_delta_when_it_selects_a_newer_request_over_retained_b() -> None:
+    """Omitting B from raw material cannot make C own the next FIFO response."""
+
+    binding, model, fixture = _runtime_parts()
+    first_events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "R1", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    # C is causally later than B, but FIFO still assigns R2 to retained B.
+    # Naming C as the selected trigger must therefore enter the normal S7
+    # interpretation-error path, not commit a singleton result for C.
+    second_events = [
+        {"id": "C", "sequence": 4, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "R2", "sequence": 5, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A", response_id="R1", events=first_events, measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C", response_id="R2", events=second_events, measurement=_interval_mapping(0, 0),
+        ),
+    )
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "retained-fifo-owner",
+        "run_id": "retained-fifo-owner",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "retry_cap": 2,
+        "interpretation_contract": _runtime_interpretation_contract(
+            model, policy="FIFO", concurrent_same_key=True,
+        ),
+    }
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    rejected = source.step(first.state, first.environment)
+
+    assert rejected.state.evidence[-1].committed is False
+    assert rejected.state.evidence[-1].resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+    assert rejected.state.history.hypotheses == first.state.history.hypotheses
+    assert rejected.state.terminal_trigger_event_ids == {"A", "B"}
+    assert rejected.state.active_trigger_event_ids == {"C"}
+    assert rejected.state.consumed_response_ids == {"R1", "R2"}
+
+
+def test_session_replays_a_delta_only_cancellation_against_its_retained_active_ledger() -> None:
+    """A portable active ledger makes B available to the next raw ownership delta."""
+
+    binding, model, fixture = _runtime_parts()
+    first_events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "R1", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    cancellation_delta = [
+        {"id": "T", "sequence": 4, "kind": "CANCEL", "key": "k", "eventType": "CANCEL", "timestamp": 1, "targetRequestId": "B"},
+    ]
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A", response_id="R1", events=first_events, measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="B", response_id=None, events=cancellation_delta, earliest=6,
+        ),
+        second_no_response=True,
+    )
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "incremental-timely-cancellation",
+        "run_id": "incremental-timely-cancellation",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "retry_cap": 2,
+        "interpretation_contract": _runtime_interpretation_contract(
+            model,
+            policy="FIFO",
+            concurrent_same_key=True,
+        ),
+    }
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    assert first.state.active_trigger_event_ids == {"B"}
+
+    cancelled = source.step(first.state, first.environment)
+    assessment = cancelled.state.evidence[-1].observation_assessment
+    assert cancelled.state.evidence[-1].resolution_code == "OBSERVATION-NO-RESPONSE"
+    assert assessment is not None
+    assert assessment.verdict == "INCONCLUSIVE"
+    assert assessment.score_disposition == "NOT-APPLICABLE"
+    assert assessment.diagnostics == ()
+    assert cancelled.state.terminal_trigger_event_ids == {"A", "B"}
+    assert cancelled.state.active_trigger_event_ids == frozenset()
+
+    # The delta-only cancellation must survive a fresh session checkpoint,
+    # proving that the retained trigger was part of the explicit state input.
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(cancelled.state) is None
+
+
+def test_session_quarantines_a_nonconcurrent_replacement_that_targets_a_stale_request() -> None:
+    """A stale supersession target cannot admit a third non-concurrent request."""
+
+    binding, model, fixture = _runtime_parts()
+    events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0, "targetRequestId": "A"},
+        # A is already superseded by B.  C must not use that stale target to
+        # bypass the non-concurrent obligation invariant.
+        {"id": "C", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0, "targetRequestId": "A"},
+        {"id": "R", "sequence": 4, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "stale-replacement-target",
+        "run_id": "stale-replacement-target",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(1),
+        "interpretation_contract": _runtime_interpretation_contract(model),
+    }
+    source = ReferenceSession(**kwargs)
+    result = source.step(
+        source.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(
+                trigger_id="C", response_id="R", events=events, measurement=_interval_mapping(0, 0),
+            ),
+        ),
+    )
+
+    evidence = result.state.evidence[-1]
+    assert evidence.committed is False
+    assert evidence.resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+    assert evidence.observation_assessment is not None
+    assert "INVALID-OWNERSHIP-TERMINATION" in {
+        diagnostic.code for diagnostic in evidence.observation_assessment.diagnostics
+    }
+    # S7 still emits a portable, self-validating ledger rather than a partial
+    # normal history commit.
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(result.state) is None
+
+
+@pytest.mark.parametrize(
+    ("termination_kind", "termination_type"),
+    (("CANCEL", "CANCEL"), ("SUPERSEDE", "SUPERSEDE")),
+)
+def test_session_ignores_a_complete_foreign_termination_transaction(
+    termination_kind: str,
+    termination_type: str,
+) -> None:
+    """A closed other-key transaction cannot pollute the selected contract."""
+
+    binding, model, fixture = _runtime_parts()
+    events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "X", "sequence": 2, "kind": "REQUEST", "key": "other", "eventType": "REQ", "timestamp": 0},
+        {"id": "T", "sequence": 3, "kind": termination_kind, "key": "other", "eventType": termination_type, "timestamp": 0, "targetRequestId": "X"},
+        {"id": "R", "sequence": 4, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": f"foreign-{termination_kind.lower()}",
+        "run_id": f"foreign-{termination_kind.lower()}",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(1),
+        "interpretation_contract": _runtime_interpretation_contract(model),
+    }
+    source = ReferenceSession(**kwargs)
+    result = source.step(
+        source.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(
+                trigger_id="A", response_id="R", events=events, measurement=_interval_mapping(0, 0),
+            ),
+        ),
+    )
+
+    evidence = result.state.evidence[-1]
+    assert evidence.committed is True
+    assert evidence.observation_assessment is not None
+    assert evidence.observation_assessment.verdict == "PASS"
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(result.state) is None
+
+
+@pytest.mark.parametrize(
+    ("termination_kind", "termination_type"),
+    (("CANCEL", "CANCEL"), ("SUPERSEDE", "SUPERSEDE")),
+)
+def test_session_rejects_a_foreign_key_termination_that_targets_the_current_request(
+    termination_kind: str,
+    termination_type: str,
+) -> None:
+    """Other-key syntax does not excuse an attempt to terminate contract A."""
+
+    binding, model, fixture = _runtime_parts()
+    events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "T", "sequence": 2, "kind": termination_kind, "key": "other", "eventType": termination_type, "timestamp": 0, "targetRequestId": "A"},
+        {"id": "R", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    session = ReferenceSession(
+        binding=binding, model=model,
+        session_id=f"foreign-target-{termination_kind.lower()}",
+        run_id=f"foreign-target-{termination_kind.lower()}",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    result = session.step(
+        session.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(
+                trigger_id="A", response_id="R", events=events, measurement=_interval_mapping(0, 0),
+            ),
+        ),
+    )
+
+    evidence = result.state.evidence[-1]
+    assert evidence.committed is False
+    assert evidence.resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+    assert evidence.observation_assessment is not None
+    assert "INVALID-OWNERSHIP-TERMINATION" in {
+        diagnostic.code for diagnostic in evidence.observation_assessment.diagnostics
+    }
+
+
+@pytest.mark.parametrize(
+    ("termination_kind", "termination_type"),
+    (("CANCEL", "CANCEL"), ("SUPERSEDE", "SUPERSEDE")),
+)
+def test_session_rejects_a_foreign_key_termination_that_precedes_its_controlled_target(
+    termination_kind: str,
+    termination_type: str,
+) -> None:
+    """A foreign event cannot evade validation by naming a future request."""
+
+    binding, model, fixture = _runtime_parts()
+    events = [
+        {"id": "T", "sequence": 1, "kind": termination_kind, "key": "other", "eventType": termination_type, "timestamp": 0, "targetRequestId": "A"},
+        {"id": "A", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "R", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": f"foreign-future-target-{termination_kind.lower()}",
+        "run_id": f"foreign-future-target-{termination_kind.lower()}",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(1),
+        "interpretation_contract": _runtime_interpretation_contract(model),
+    }
+    source = ReferenceSession(**kwargs)
+    result = source.step(
+        source.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(
+                trigger_id="A", response_id="R", events=events, measurement=_interval_mapping(0, 0),
+            ),
+        ),
+    )
+
+    evidence = result.state.evidence[-1]
+    assert evidence.committed is False
+    assert evidence.resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+    assert evidence.observation_assessment is not None
+    assert "INVALID-OWNERSHIP-TERMINATION" in {
+        diagnostic.code for diagnostic in evidence.observation_assessment.diagnostics
+    }
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(result.state) is None
 
 
 def test_session_quarantines_new_response_facts_from_an_identity_conflict_and_replays_checkpoint() -> None:
@@ -1063,6 +1845,105 @@ def test_session_detaches_event_values_from_a_hostile_s4_checkpoint_reference() 
     advanced = source.step(checkpoint, MutatingAdapter())  # type: ignore[arg-type]
     assert advanced.state.evidence[-1].committed is True
     assert advanced.state.event_identity_refs["request-1"].timestamp == Fraction(0)
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(advanced.state) is None
+
+
+def test_session_detaches_fraction_leaves_inside_retained_events_before_second_dispatch() -> None:
+    """A hostile adapter cannot alter an old typed timestamp in place."""
+
+    binding, model, fixture = _runtime_parts()
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "ledger-fraction-toctou",
+        "run_id": "ledger-fraction-toctou",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "interpretation_contract": _runtime_interpretation_contract(model),
+    }
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(measurement=_interval_mapping(0, 0)),
+        _runtime_observation_material(
+            trigger_id="request-2", response_id="response-2",
+            events=[
+                {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ], measurement=_interval_mapping(0, 0),
+        ),
+    )
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    checkpoint = first.state
+    retained_timestamp = checkpoint.event_identity_refs["request-1"].timestamp
+
+    class MutatingAdapter:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            object.__setattr__(retained_timestamp, "_numerator", 99)
+            return first.environment.execute(request)
+
+    advanced = source.step(checkpoint, MutatingAdapter())  # type: ignore[arg-type]
+    assert advanced.state.evidence[-1].committed is True
+    assert advanced.state.event_identity_refs["request-1"].timestamp == Fraction(0)
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(advanced.state) is None
+
+
+def test_session_detaches_general_mapping_values_inside_retained_evidence_before_s4() -> None:
+    """A read-only Mapping wrapper cannot retain a mutable evidence alias."""
+
+    binding, model, fixture = _runtime_parts()
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "mapping-toctou",
+        "run_id": "mapping-toctou",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "interpretation_contract": _runtime_interpretation_contract(model),
+    }
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(measurement=_interval_mapping(0, 0)),
+        _runtime_observation_material(
+            trigger_id="request-2", response_id="response-2",
+            events=[
+                {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ], measurement=_interval_mapping(0, 0),
+        ),
+    )
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    backing = dict(first.state.evidence[0].detail_charges)
+
+    class BackedMapping(ABCMapping[str, int]):
+        def __iter__(self):
+            return iter(backing)
+
+        def __len__(self) -> int:
+            return len(backing)
+
+        def __getitem__(self, key: str) -> int:
+            return backing[key]
+
+    original_key = next(iter(backing))
+    original_value = backing[original_key]
+    checkpoint = replace(
+        first.state,
+        evidence=(replace(first.state.evidence[0], detail_charges=BackedMapping()),),
+    )
+    assert source._state_error(checkpoint) is None
+
+    class MutatingAdapter:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            backing[original_key] = original_value + 98
+            return first.environment.execute(request)
+
+    advanced = source.step(checkpoint, MutatingAdapter())  # type: ignore[arg-type]
+    assert advanced.state.evidence[-1].committed is True
+    assert advanced.state.evidence[0].detail_charges[original_key] == original_value
     target = ReferenceSession(**kwargs)
     assert target._state_error(advanced.state) is None
 

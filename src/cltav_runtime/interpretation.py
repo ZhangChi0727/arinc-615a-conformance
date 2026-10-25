@@ -224,13 +224,25 @@ def bind_observation_input(
     )
 
 
-def replay_ownership(events: object, contract: object) -> OwnershipReplay:
+def replay_ownership(
+    events: object,
+    contract: object,
+    *,
+    prior_active_requests: Mapping[str, OwnershipEvent] | None = None,
+) -> OwnershipReplay:
     """Replay one finite public trace under one controlled contract.
 
     Each matching request event creates exactly one logical obligation instance;
     a fixture cannot register two IDs for one request or choose a different
     policy for the same response.  Ordering is both trace-order and monotonic
     virtual-clock order, so a cancellation cannot target a future request.
+
+    ``prior_active_requests`` is a session-derived finite context, not raw
+    trace material.  It permits a legal incremental next observation to omit
+    already retained terminal receipts while still making every new ownership
+    decision against the live obligations.  The returned ``event_refs`` stays
+    raw-delta-only; request dispositions include the seeded ACTIVE instances
+    so a session can advance its persistent ledger without inventing history.
     """
 
     parsed_events, event_errors = _parse_events(events)
@@ -238,39 +250,100 @@ def replay_ownership(events: object, contract: object) -> OwnershipReplay:
     diagnostics = list(event_errors) + list(contract_errors)
     event_refs = {event.event_id: event for event in parsed_events}
     contract_id = parsed_contract.contract_id if parsed_contract is not None else None
+    prior_active: dict[str, OwnershipEvent] = {}
+    if parsed_contract is not None:
+        prior_active, seed_errors = _parse_active_seed(prior_active_requests, parsed_contract)
+        diagnostics.extend(seed_errors)
+        for event in parsed_events:
+            retained = prior_active.get(event.event_id)
+            if retained is not None and (
+                event.kind != "REQUEST" or not _strict_event_equal(event, retained)
+            ):
+                diagnostics.append(KernelDiagnostic(
+                    "OWNERSHIP-SEED-EVENT-CONFLICT",
+                    "raw trace reuses a retained active request identity with a different public event",
+                ))
     if diagnostics or parsed_contract is None:
         return OwnershipReplay(contract_id, {}, {}, {}, event_refs, tuple(diagnostics))
 
-    active: set[str] = set()
-    dispositions: dict[str, str] = {}
+    active: set[str] = set(prior_active)
+    dispositions: dict[str, str] = {identifier: "ACTIVE" for identifier in prior_active}
     termination_refs: dict[str, str] = {}
     resolutions: dict[str, OwnershipResolution] = {}
-    known_requests: dict[str, OwnershipEvent] = {}
+    known_requests: dict[str, OwnershipEvent] = dict(prior_active)
+    # An other-key termination is normally irrelevant to this controlled
+    # request/response contract.  Decide that only after seeing the complete
+    # finite raw trace: otherwise a foreign cancellation placed *before* a
+    # later matching request with the same target ID could be silently
+    # discarded and the future controlled request would escape validation.
+    # This set deliberately contains only contract requests (plus the retained
+    # ACTIVE seed), so a fully unrelated transaction remains admissible.
+    controlled_request_ids = set(prior_active) | {
+        event.event_id
+        for event in parsed_events
+        if _request_matches_contract(event, parsed_contract)
+    }
+    seeded_identifiers = frozenset(prior_active)
+    latest_seed_sequence = max((event.sequence for event in prior_active.values()), default=-1)
+    latest_seed_timestamp = max((event.timestamp for event in prior_active.values()), default=Fraction(-1))
 
     for event in parsed_events:
         if event.kind == "REQUEST":
             if not _request_matches_contract(event, parsed_contract):
                 continue
-            if event.event_id in known_requests:
+            prior = known_requests.get(event.event_id)
+            if prior is not None:
+                if event.event_id in seeded_identifiers and _strict_event_equal(event, prior):
+                    # A complete cumulative trace may repeat a retained
+                    # ACTIVE request verbatim.  It is context confirmation,
+                    # not a second obligation instance.
+                    continue
                 diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-TRACE", "matching request identity is duplicated"))
                 continue
-            known_requests[event.event_id] = event
+            if prior_active and (
+                event.sequence <= latest_seed_sequence
+                or event.timestamp < latest_seed_timestamp
+            ):
+                diagnostics.append(KernelDiagnostic(
+                    "INSUFFICIENT-OWNERSHIP-CONTEXT",
+                    "a new request cannot be ordered after the retained active ownership context",
+                ))
+                continue
             if event.target_request_id is not None:
-                _terminate_request(
+                terminated = _terminate_request(
                     event.target_request_id, event, active, dispositions, termination_refs,
                     known_requests, parsed_contract, diagnostics, "SUPERSEDED",
+                    require_active=True,
                 )
-            elif not parsed_contract.concurrent_same_key and active:
+                # A replacement request may establish a non-concurrent
+                # successor only by actually terminating its declared live
+                # predecessor.  A stale/cancelled/discharged target is not a
+                # harmless no-op admission token.
+                if not terminated:
+                    continue
+            if not parsed_contract.concurrent_same_key and active:
                 diagnostics.append(KernelDiagnostic(
                     "IMPLICIT-OWNERSHIP-SUPERSESSION",
                     "a non-concurrent request requires an explicit supersession target",
                 ))
                 continue
+            known_requests[event.event_id] = event
             active.add(event.event_id)
             dispositions[event.event_id] = "ACTIVE"
             continue
 
         if event.kind in {"CANCEL", "SUPERSEDE"}:
+            # Events for another contract key may form a complete, valid
+            # transaction in the same raw capture.  They are outside this
+            # contract's ownership replay unless they claim to terminate one
+            # of its retained requests; in that case keep validating the
+            # cross-key attempt instead of silently ignoring it.  The target
+            # can occur later in this same trace, so use the complete
+            # controlled request set rather than only the requests replayed
+            # so far.
+            if event.key != parsed_contract.key:
+                if event.target_request_id not in controlled_request_ids:
+                    continue
             expected_type = (
                 parsed_contract.cancellation_event_type
                 if event.kind == "CANCEL" else parsed_contract.supersession_event_type
@@ -313,7 +386,12 @@ def replay_ownership(events: object, contract: object) -> OwnershipReplay:
     return OwnershipReplay(contract_id, dispositions, termination_refs, resolutions, event_refs, tuple(diagnostics))
 
 
-def assess_observation(value: object, contract: object) -> ObservationAssessment:
+def assess_observation(
+    value: object,
+    contract: object,
+    *,
+    prior_active_requests: Mapping[str, OwnershipEvent] | None = None,
+) -> ObservationAssessment:
     """Assess raw material against a controlled, immutable contract.
 
     This public entry never throws for malformed nested values: malformed
@@ -330,7 +408,18 @@ def assess_observation(value: object, contract: object) -> ObservationAssessment
     # validation fails.  Retaining that typed replay prevents a malformed
     # clock/unit/measurement field from reopening a response or request that
     # has already appeared in the public trace.
-    replay = replay_ownership(value.events, parsed_contract)
+    replay = replay_ownership(
+        value.events,
+        parsed_contract,
+        prior_active_requests=prior_active_requests,
+    )
+    # The same normalized finite seed is used only to resolve a retained
+    # active trigger and its timestamp.  It is deliberately not copied into
+    # ``replay.event_refs``: that mapping remains the raw evidence delta.
+    active_seed, _seed_errors = _parse_active_seed(
+        prior_active_requests,
+        parsed_contract,
+    )
     input_error = _input_error(value, parsed_contract)
     if input_error is not None:
         return _error_assessment(
@@ -345,6 +434,8 @@ def assess_observation(value: object, contract: object) -> ObservationAssessment
         )
     assert isinstance(value.trigger_event_id, str)
     trigger = replay.event_refs.get(value.trigger_event_id)
+    if trigger is None:
+        trigger = active_seed.get(value.trigger_event_id)
     if trigger is None or not _request_matches_contract(trigger, parsed_contract):
         return _error_assessment(
             "UNKNOWN-TRIGGER", "observation does not name a contract-matching request event",
@@ -368,7 +459,12 @@ def assess_observation(value: object, contract: object) -> ObservationAssessment
                 input_value=value,
                 replay=replay, evidence_refs=tuple(replay.event_refs),
             )
-        return _assess_no_response(value, replay, parsed_contract)
+        return _assess_no_response(
+            value,
+            replay,
+            parsed_contract,
+            prior_active_requests=active_seed,
+        )
     assert isinstance(value.response_id, str)
     resolution = replay.response_resolutions.get(value.response_id)
     if resolution is None:
@@ -383,7 +479,13 @@ def assess_observation(value: object, contract: object) -> ObservationAssessment
             contract=parsed_contract, input_value=value, ownership=resolution,
             replay=replay, evidence_refs=resolution.evidence_refs,
         )
-    return _assess_t5(value, parsed_contract, resolution, replay)
+    return _assess_t5(
+        value,
+        parsed_contract,
+        resolution,
+        replay,
+        prior_active_requests=active_seed,
+    )
 
 
 def _assess_t5(
@@ -391,6 +493,8 @@ def _assess_t5(
     contract: InterpretationContract,
     ownership: OwnershipResolution,
     replay: OwnershipReplay,
+    *,
+    prior_active_requests: Mapping[str, OwnershipEvent] | None = None,
 ) -> ObservationAssessment:
     if contract.clock_valid is not True:
         return _error_assessment("INVALID-CLOCK-CHAIN", "owned response has no valid controlled clock chain", contract=contract, input_value=value, ownership=ownership, replay=replay, evidence_refs=ownership.evidence_refs)
@@ -403,6 +507,8 @@ def _assess_t5(
     if not _interval_contains(measurement, value.measurement_tick):
         return _error_assessment("MEASUREMENT-TICK-MISMATCH", "record measurement tick is outside its public measurement interval", contract=contract, input_value=value, ownership=ownership, replay=replay, evidence_refs=ownership.evidence_refs)
     trigger = replay.event_refs.get(ownership.owner_request_id)
+    if trigger is None and prior_active_requests is not None:
+        trigger = prior_active_requests.get(ownership.owner_request_id)
     response = replay.event_refs.get(ownership.response_id)
     if type(trigger) is not OwnershipEvent or type(response) is not OwnershipEvent:
         return _error_assessment(
@@ -453,7 +559,13 @@ def _assess_t5(
     )
 
 
-def _assess_no_response(value: ObservationInput, replay: OwnershipReplay, contract: InterpretationContract) -> ObservationAssessment:
+def _assess_no_response(
+    value: ObservationInput,
+    replay: OwnershipReplay,
+    contract: InterpretationContract,
+    *,
+    prior_active_requests: Mapping[str, OwnershipEvent] | None = None,
+) -> ObservationAssessment:
     assert isinstance(value.trigger_event_id, str)
     disposition = replay.request_dispositions.get(value.trigger_event_id)
     refs = [value.trigger_event_id]
@@ -487,7 +599,14 @@ def _assess_no_response(value: ObservationInput, replay: OwnershipReplay, contra
         and contract.deadline_authority == "REVIEWED"
         and contract.upper_bound is not None
     ):
+        # An incremental no-response delta legitimately contains only the
+        # administrative terminal event.  The retained ACTIVE request is a
+        # verified input to this replay, so use it only to recover the
+        # controlled trigger timestamp; ``event_refs`` itself remains the raw
+        # evidence delta and must not be silently widened.
         trigger = replay.event_refs.get(value.trigger_event_id)
+        if trigger is None and prior_active_requests is not None:
+            trigger = prior_active_requests.get(value.trigger_event_id)
         terminating_event = replay.event_refs.get(termination) if termination is not None else None
         if trigger is None or terminating_event is None:
             return _error_assessment(
@@ -599,6 +718,72 @@ def _parse_events(value: object) -> tuple[tuple[OwnershipEvent, ...], tuple[Kern
     return tuple(parsed), tuple(diagnostics)
 
 
+def _parse_active_seed(
+    value: Mapping[str, OwnershipEvent] | None,
+    contract: InterpretationContract,
+) -> tuple[dict[str, OwnershipEvent], tuple[KernelDiagnostic, ...]]:
+    """Validate the finite ACTIVE context supplied by a session ledger.
+
+    This is deliberately narrower than a second raw trace parser: the seed is
+    already-established contract context, so it contains only currently ACTIVE
+    matching requests.  Its ordering still has to be explicit and typed; an
+    adapter cannot inject a locally-renumbered predecessor and make a later
+    response choose a different owner.
+    """
+
+    if value is None:
+        return {}, ()
+    if not isinstance(value, Mapping):
+        return {}, (KernelDiagnostic(
+            "INVALID-OWNERSHIP-SEED",
+            "retained active ownership context must be a mapping",
+        ),)
+    parsed: dict[str, OwnershipEvent] = {}
+    diagnostics: list[KernelDiagnostic] = []
+    for identifier, event in value.items():
+        if type(identifier) is not str or not identifier or type(event) is not OwnershipEvent:
+            diagnostics.append(KernelDiagnostic(
+                "INVALID-OWNERSHIP-SEED",
+                "retained active ownership context has an invalid identifier or event",
+            ))
+            continue
+        candidate, event_errors = _parse_events((event,))
+        if event_errors or len(candidate) != 1:
+            diagnostics.append(KernelDiagnostic(
+                "INVALID-OWNERSHIP-SEED",
+                "retained active ownership context has an invalid typed event",
+            ))
+            continue
+        normalized = candidate[0]
+        if normalized.event_id != identifier or not _request_matches_contract(normalized, contract):
+            diagnostics.append(KernelDiagnostic(
+                "INVALID-OWNERSHIP-SEED",
+                "retained active ownership context must contain matching request events",
+            ))
+            continue
+        parsed[identifier] = normalized
+    if diagnostics:
+        return {}, tuple(diagnostics)
+    previous_sequence: int | None = None
+    previous_timestamp: Fraction | None = None
+    for event in sorted(parsed.values(), key=lambda item: item.sequence):
+        if previous_sequence is not None and event.sequence <= previous_sequence:
+            diagnostics.append(KernelDiagnostic(
+                "INVALID-OWNERSHIP-SEED",
+                "retained active request sequences must be strictly ordered",
+            ))
+            break
+        if previous_timestamp is not None and event.timestamp < previous_timestamp:
+            diagnostics.append(KernelDiagnostic(
+                "INVALID-OWNERSHIP-SEED",
+                "retained active request timestamps must be nondecreasing",
+            ))
+            break
+        previous_sequence = event.sequence
+        previous_timestamp = event.timestamp
+    return ({} if diagnostics else parsed), tuple(diagnostics)
+
+
 def _parse_contract(value: object) -> tuple[InterpretationContract | None, tuple[KernelDiagnostic, ...]]:
     if type(value) is not InterpretationContract:
         return None, (KernelDiagnostic("INVALID-INTERPRETATION-CONTRACT", "contract is not a typed InterpretationContract"),)
@@ -680,21 +865,49 @@ def _input_error(value: ObservationInput, contract: InterpretationContract) -> K
     return None
 
 
-def _terminate_request(target: str, event: OwnershipEvent, active: set[str], dispositions: dict[str, str], termination_refs: dict[str, str], known_requests: Mapping[str, OwnershipEvent], contract: InterpretationContract, diagnostics: list[KernelDiagnostic], disposition: str) -> None:
+def _terminate_request(
+    target: str,
+    event: OwnershipEvent,
+    active: set[str],
+    dispositions: dict[str, str],
+    termination_refs: dict[str, str],
+    known_requests: Mapping[str, OwnershipEvent],
+    contract: InterpretationContract,
+    diagnostics: list[KernelDiagnostic],
+    disposition: str,
+    *,
+    require_active: bool = False,
+) -> bool:
+    """Terminate one current obligation and report whether it really closed.
+
+    Administrative cancellation/supersession keeps its idempotent treatment
+    for an already terminal target.  A *new REQUEST* that uses a replacement
+    target is different: it must demonstrate an actual current termination or
+    it could create a second non-concurrent obligation through a stale ID.
+    """
+
     target_event = known_requests.get(target)
     if target_event is None:
         diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-TERMINATION", "termination target does not name an already observed contract request"))
-        return
+        return False
     if target_event.key != event.key or target_event.event_type != contract.trigger_event_type:
         diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-TERMINATION", "termination target does not match the controlled request encoding"))
-        return
+        return False
     if event.sequence <= target_event.sequence or event.timestamp < target_event.timestamp:
         diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-TERMINATION", "termination does not occur after its target request"))
-        return
+        return False
     if target in active:
         active.remove(target)
         dispositions[target] = disposition
         termination_refs[target] = event.event_id
+        return True
+    if require_active:
+        diagnostics.append(KernelDiagnostic(
+            "INVALID-OWNERSHIP-TERMINATION",
+            "replacement request targets an obligation that is no longer active",
+        ))
+        return False
+    return True
 
 
 def _request_matches_contract(event: OwnershipEvent, contract: InterpretationContract) -> bool:

@@ -21,6 +21,7 @@ from typing import Any, Mapping, Sequence
 
 _MODEL_CONTEXT_TOKEN = object()
 _CONTRACT_SNAPSHOT_TOKEN = object()
+_MAPPING_PROXY_TYPE = type(MappingProxyType({}))
 _PROVENANCE_WRITE_TOKEN = object()
 _SUPPORTED_GUARD_TAGS = (
     "TRUE", "AND", "STATE-EQUALS", "RATIONAL-INTERVAL-CONTAINS",
@@ -94,6 +95,7 @@ class ContractSnapshot:
     contract_path: str
     contract_blob_sha256: str
     _content: bytes = field(default=b"", init=False, compare=False, repr=False)
+    _binding_sha256: str = field(default="", init=False, compare=False, repr=False)
     _verification_token: object | None = field(default=None, init=False, compare=False, repr=False)
 
     @classmethod
@@ -101,7 +103,7 @@ class ContractSnapshot:
         cls, *, repository: Path | str, contract_commit: str, contract_path: str,
     ) -> "ContractSnapshot":
         path = _safe_contract_path(contract_path)
-        if not isinstance(contract_commit, str) or len(contract_commit) != 40 or any(character not in "0123456789abcdef" for character in contract_commit):
+        if type(contract_commit) is not str or len(contract_commit) != 40 or any(character not in "0123456789abcdef" for character in contract_commit):
             raise ValueError("contract commit identity is invalid")
         repository_path = Path(repository).resolve()
         if not repository_path.is_dir():
@@ -127,6 +129,7 @@ class ContractSnapshot:
             raise ValueError("controlled contract root must be an object")
         snapshot = cls(resolved_commit, path, sha256(content).hexdigest())
         object.__setattr__(snapshot, "_content", content)
+        object.__setattr__(snapshot, "_binding_sha256", _contract_snapshot_binding_digest(snapshot))
         object.__setattr__(snapshot, "_verification_token", _CONTRACT_SNAPSHOT_TOKEN)
         return snapshot
 
@@ -1298,13 +1301,13 @@ def _record_reference(record: ProvenanceRecord) -> str:
 
 def _is_sha256(value: object) -> bool:
     return (
-        isinstance(value, str) and len(value) == 64
+        type(value) is str and len(value) == 64
         and all(character in "0123456789abcdef" for character in value)
     )
 
 
 def _safe_contract_path(value: object) -> str:
-    if not isinstance(value, str) or not value.strip():
+    if type(value) is not str or not value.strip():
         raise ValueError("contract path must be a nonempty repository-relative path")
     normalized = value.replace("\\", "/")
     posix = PurePosixPath(normalized)
@@ -1315,7 +1318,7 @@ def _safe_contract_path(value: object) -> str:
 
 
 def _verified_snapshot(value: object) -> bool:
-    if not isinstance(value, ContractSnapshot) or value._verification_token is not _CONTRACT_SNAPSHOT_TOKEN:
+    if type(value) is not ContractSnapshot or value._verification_token is not _CONTRACT_SNAPSHOT_TOKEN:
         return False
     try:
         path = _safe_contract_path(value.contract_path)
@@ -1323,13 +1326,30 @@ def _verified_snapshot(value: object) -> bool:
         return False
     return (
         path == value.contract_path
-        and isinstance(value.contract_commit, str)
+        and type(value.contract_commit) is str
         and len(value.contract_commit) == 40
         and all(character in "0123456789abcdef" for character in value.contract_commit)
         and _is_sha256(value.contract_blob_sha256)
-        and isinstance(value._content, bytes)
+        and type(value._content) is bytes
         and sha256(value._content).hexdigest() == value.contract_blob_sha256
+        and type(value._binding_sha256) is str
+        and value._binding_sha256 == _contract_snapshot_binding_digest(value)
     )
+
+
+def _contract_snapshot_binding_digest(value: ContractSnapshot) -> str:
+    """Bind a factory-issued snapshot identity to its verification token.
+
+    The raw-byte hash detects a content rewrite, while this digest detects an
+    object-level rewrite of the declared commit or repository-relative path
+    that would otherwise leave the same bytes and hash intact.
+    """
+
+    return sha256(repr((
+        value.contract_commit,
+        value.contract_path,
+        value.contract_blob_sha256,
+    )).encode("utf-8")).hexdigest()
 
 
 def _finite_contract_vocabulary(contract: Mapping[str, Any]) -> tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...]]:
@@ -1427,23 +1447,44 @@ def _context_binding_digest(context: ModelContext) -> str:
 
 def _verified_context(value: object) -> bool:
     """Reject direct/fabricated contexts before they can seed a frontier."""
-    if not isinstance(value, ModelContext) or value._verification_token is not _MODEL_CONTEXT_TOKEN:
+    if type(value) is not ModelContext or value._verification_token is not _MODEL_CONTEXT_TOKEN:
         return False
     if not (
         _is_sha256(value.contract_blob_sha256)
         and _is_sha256(value.model_sha256)
         and _is_sha256(value.identity)
         and _is_sha256(value._binding_sha256)
-        and isinstance(value.contract_commit, str)
+        and type(value.contract_commit) is str
         and len(value.contract_commit) == 40
         and all(character in "0123456789abcdef" for character in value.contract_commit)
-        and isinstance(value.contract_path, str)
+        and type(value.contract_path) is str
         and value.contract_path
         and not value.contract_path.startswith(("/", "\\"))
         and ".." not in value.contract_path.replace("\\", "/").split("/")
-        and isinstance(value.projection_clock, str)
+        and type(value.projection_clock) is str
+        and type(value.state_ids) is frozenset
+        and all(type(item) is str for item in value.state_ids)
+        and type(value.clock_ids) is frozenset
+        and all(type(item) is str for item in value.clock_ids)
+        # The factory freezes this mapping.  A caller-supplied Mapping can
+        # change its values between a context digest check and the replay
+        # context copied for S0, so only the issued immutable carrier is a
+        # valid context authority here.
+        and type(value.typed_domains) is _MAPPING_PROXY_TYPE
+        and all(
+            type(name) is str
+            and type(domain) is frozenset
+            and all(type(item) in {str, int, bool, Fraction} for item in domain)
+            for name, domain in value.typed_domains.items()
+        )
+        and type(value.supported_guard_tags) is tuple
+        and all(type(item) is str for item in value.supported_guard_tags)
         and value.supported_guard_tags == _SUPPORTED_GUARD_TAGS
+        and type(value.supported_update_tags) is tuple
+        and all(type(item) is str for item in value.supported_update_tags)
         and value.supported_update_tags == _SUPPORTED_UPDATE_TAGS
+        and type(value.authority_merge_fields) is tuple
+        and all(type(item) is str for item in value.authority_merge_fields)
         and value.authority_merge_fields == _AUTHORITY_MERGE_FIELDS
     ):
         return False

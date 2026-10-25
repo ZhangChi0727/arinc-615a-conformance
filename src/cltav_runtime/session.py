@@ -19,10 +19,18 @@ from .interpretation import (
     OwnershipResolution,
     assess_observation,
     interpretation_contract_identity,
+    _parse_contract,
     strict_observation_assessment_equal,
     strict_observation_input_equal,
 )
-from .model import ActionPrediction, FiniteSessionModel, PredictionClass, SyntheticAction
+from .model import (
+    ActionPrediction,
+    FiniteSessionModel,
+    PredictionClass,
+    SyntheticAction,
+    rebuild_verified_finite_session_model,
+    verified_finite_session_model,
+)
 from .synthetic import (
     EnvironmentExecution,
     ExecutionRequest,
@@ -280,16 +288,22 @@ def _detached_dispatch_value(value: object) -> object:
     the runtime's declared data model.
     """
 
-    if type(value) is _MAPPING_PROXY_TYPE:
-        return MappingProxyType({
-            key: _detached_dispatch_value(item)
+    # ``Fraction`` is normally immutable at the language level, but it is a
+    # finite public value and a hostile adapter can still rewrite its private
+    # numerator/denominator with ``object.__setattr__``.  Rebuild it just as
+    # we rebuild the frozen dataclasses that contain it; retaining the same
+    # scalar instance would leave a mutable alias inside an otherwise detached
+    # Interval, ownership event, or checkpoint seed.
+    if type(value) is Fraction:
+        return Fraction(value.numerator, value.denominator)
+    if isinstance(value, Mapping):
+        return {
+            _detached_dispatch_value(key): _detached_dispatch_value(item)
+            for key, item in value.items()
+        } if type(value) is dict else MappingProxyType({
+            _detached_dispatch_value(key): _detached_dispatch_value(item)
             for key, item in value.items()
         })
-    if type(value) is dict:
-        return {
-            key: _detached_dispatch_value(item)
-            for key, item in value.items()
-        }
     if type(value) is tuple:
         return tuple(_detached_dispatch_value(item) for item in value)
     if type(value) is frozenset:
@@ -330,20 +344,38 @@ class ReferenceSession:
         retry_cap: int = 1,
         interpretation_contract: InterpretationContract | None = None,
     ) -> None:
-        if binding.development.contract_commit != model.context.contract_commit:
+        try:
+            # Selection, charging, evidence and causal replay must all consume
+            # one private finite authority projection.  A caller may retain
+            # the model/binding objects it supplied, and an S4 adapter may
+            # likewise retain those references; neither may rewrite the
+            # action cost, finite AST, uncertainty or authority identities
+            # after the S0/S3 checks have completed.
+            if type(binding) is not RuntimeAuthorityBinding:
+                raise TypeError("runtime authority binding is not exact")
+            private_model = _frozen_model_snapshot(model)
+            private_authority_identities = _frozen_authority_identities(binding.identities())
+        except (AttributeError, TypeError, ValueError) as exc:
+            raise ValueError("session runtime authority is invalid") from exc
+        model_development_identity = {
+            "commit": private_model.context.contract_commit,
+            "path": private_model.context.contract_path,
+            "blobSha256": private_model.context.contract_blob_sha256,
+        }
+        if private_authority_identities["development"] != model_development_identity:
             raise ValueError("runtime model and authority binding use different development snapshots")
         context = SessionContext.create(
             session_id=session_id,
             run_id=run_id,
             experiment_attempt_id=experiment_attempt_id,
-            model_identity=model.identity,
+            model_identity=private_model.identity,
             current_summary=initial_summary,
             q_status="KNOWN",
             resource_remainder=resources.remaining,
             retry_count=0,
             retry_cap=retry_cap,
         )
-        seed_frontiers = _session_seed_frontiers(model, initial_path_bundles)
+        seed_frontiers = _session_seed_frontiers(private_model, initial_path_bundles)
         history = HistoryHandle.initial(
             hypotheses=set(seed_frontiers),
             compatible_state_by_hypothesis={
@@ -351,31 +383,58 @@ class ReferenceSession:
                 for hypothesis, bundle in seed_frontiers.items()
             },
         )
+        # Keep legacy inspection of the caller's binding non-authoritative.
+        # No S3/S4/S9 operation below reads it after the frozen identity
+        # projection is created above.
         self.binding = binding
-        self.model = model
+        self._authority_identities = private_authority_identities
+        self._model = private_model
         if interpretation_contract is not None:
             try:
-                contract_identity = interpretation_contract_identity(interpretation_contract)
+                detached_contract = _detached_dispatch_value(interpretation_contract)
+                if type(detached_contract) is not InterpretationContract:
+                    raise TypeError("interpretation contract reconstruction changed its public type")
+                # Identity validation normalizes the typed contract, but the
+                # session must consume that same normalized value rather than
+                # the caller-shaped preimage.  This removes string subclasses
+                # and other parser-normalized aliases before the private S4
+                # authority snapshot is retained.
+                normalized_contract, contract_errors = _parse_contract(detached_contract)
+                if normalized_contract is None or contract_errors:
+                    raise ValueError("interpretation contract is invalid")
+                detached_contract = _detached_dispatch_value(normalized_contract)
+                if type(detached_contract) is not InterpretationContract:
+                    raise TypeError("canonical interpretation contract reconstruction changed its public type")
+                contract_identity = interpretation_contract_identity(detached_contract)
             except (TypeError, ValueError) as exc:
                 raise ValueError("session interpretation contract is invalid") from exc
-            if interpretation_contract.deadline_authority == "REVIEWED":
+            if detached_contract.deadline_authority == "REVIEWED":
                 raise ValueError("bounded runtime has no controlled reviewed-deadline registry")
             # The session, rather than a fixture, owns the timing basis.  Bind
             # every identity that selects the model uncertainty snapshot so a
             # raw material declaration cannot silently choose a different
             # clock/unit/error budget from the frozen S3 model.
             if (
-                interpretation_contract.clock_identity != model.uncertainty.clock_id
-                or interpretation_contract.unit != model.uncertainty.time_unit
-                or interpretation_contract.uncertainty_identity != model.uncertainty.uncertainty_id
-                or interpretation_contract.error_budget_identity != model.uncertainty.identity
+                detached_contract.clock_identity != self._model.uncertainty.clock_id
+                or detached_contract.unit != self._model.uncertainty.time_unit
+                or detached_contract.uncertainty_identity != self._model.uncertainty.uncertainty_id
+                or detached_contract.error_budget_identity != self._model.uncertainty.identity
             ):
                 raise ValueError("session interpretation contract does not bind the frozen model uncertainty snapshot")
         else:
+            detached_contract = None
             contract_identity = None
-        self.interpretation_contract = interpretation_contract
+        # Keep the object actually consumed by S4--S9 private.  The public
+        # compatibility accessor below returns a fresh finite reconstruction,
+        # so a caller cannot mutate the same contract object that this session
+        # uses after its construction-time identity check.
+        self._interpretation_contract = detached_contract
         self._interpretation_contract_identity = contract_identity
-        self._authority_identity = _session_authority_identity(binding, model, contract_identity)
+        self._authority_identity = _session_authority_identity(
+            self._authority_identities,
+            self._model,
+            contract_identity,
+        )
         self._seed_identity = _session_seed_identity(
             context=context,
             history=history,
@@ -383,7 +442,7 @@ class ReferenceSession:
             resources=resources,
             authority_identity=self._authority_identity,
         )
-        self.initial_state = SessionState(
+        seed_state = SessionState(
             context=context,
             history=history,
             frontiers=seed_frontiers,
@@ -398,6 +457,30 @@ class ReferenceSession:
             event_identity_refs=MappingProxyType({}),
             active_trigger_event_ids=frozenset(),
         )
+        # The externally inspectable S0 checkpoint and the internal causal
+        # replay seed intentionally do not share any finite nested object.
+        # A hostile S4 adapter may retain the caller-visible state and use
+        # object-level mutation; later same-session lineage checks must still
+        # start from the frozen private seed, just as a fresh coordinator does.
+        self._initial_seed_state = _detached_dispatch_checkpoint(seed_state)
+        self.initial_state = _detached_dispatch_checkpoint(seed_state)
+
+    @property
+    def interpretation_contract(self) -> InterpretationContract | None:
+        """Return a detached inspection copy, never the consumed authority."""
+
+        if self._interpretation_contract is None:
+            return None
+        detached = _detached_dispatch_value(self._interpretation_contract)
+        if type(detached) is not InterpretationContract:  # pragma: no cover - defensive invariant
+            raise TypeError("interpretation contract reconstruction changed its public type")
+        return detached
+
+    @property
+    def model(self) -> FiniteSessionModel:
+        """Return an inspection copy, never the model consumed by a session."""
+
+        return _frozen_model_snapshot(self._model)
 
     def run(self, environment: SyntheticEnvironment, *, maximum_rounds: int) -> SessionResult:
         if isinstance(maximum_rounds, bool) or not isinstance(maximum_rounds, int) or maximum_rounds < 1:
@@ -405,7 +488,7 @@ class ReferenceSession:
                 self.initial_state, environment, "Stop-Error",
                 (KernelDiagnostic("INVALID-ROUND-LIMIT", "maximum rounds must be a positive integer"),),
             )
-        state = self.initial_state
+        state = _detached_dispatch_checkpoint(self._initial_seed_state)
         current_environment = environment
         for _ in range(maximum_rounds):
             step = self.step(state, current_environment)
@@ -499,7 +582,7 @@ class ReferenceSession:
                     ),),
                 )
             canonical = canonical_evidence[0]
-            action = self.model.actions.get(canonical.snapshot.action_id)
+            action = self._model.actions.get(canonical.snapshot.action_id)
             if action is None:
                 return SessionResult(
                     state,
@@ -511,7 +594,7 @@ class ReferenceSession:
                     ),),
                 )
             ingress_error = _incoming_record_error(
-                record, action=action, interpretation_contract=self.interpretation_contract,
+                record, action=action, interpretation_contract=self._interpretation_contract,
             )
             if (
                 ingress_error is not None
@@ -556,12 +639,12 @@ class ReferenceSession:
 
         if not isinstance(state, SessionState):
             return KernelDiagnostic("INVALID-SESSION-STATE", "state is not a SessionState")
-        initial_context = self.initial_state.context
+        initial_context = self._initial_seed_state.context
         context = state.context
         if not isinstance(context, SessionContext) or (
             context.session_id != initial_context.session_id
             or context.run_id != initial_context.run_id
-            or context.model_identity != self.model.identity
+            or context.model_identity != self._model.identity
         ):
             return KernelDiagnostic("SESSION-IDENTITY-MISMATCH", "state does not belong to this session/run/model")
         if context.experiment_attempt_id != initial_context.experiment_attempt_id:
@@ -647,10 +730,10 @@ class ReferenceSession:
         if not history_matches_frontier:
             return KernelDiagnostic("HISTORY-PROVENANCE-MISMATCH", "history does not name each current frontier source")
         for paths in frontier_bundles.values():
-            if len(paths) > self.model.frontier_limit:
+            if len(paths) > self._model.frontier_limit:
                 return KernelDiagnostic("FRONTIER-BUNDLE-LIMIT", "frontier path bundle exceeds the declared bound")
             for frontier in paths:
-                if frontier.model_identity != self.model.context.identity:
+                if frontier.model_identity != self._model.context.identity:
                     return KernelDiagnostic("FRONTIER-MODEL-MISMATCH", "frontier does not belong to this verified model")
         # The target context may deliberately be a fresh, equivalent verified
         # model whose local provenance cache contains only S0.  A resumed
@@ -679,13 +762,13 @@ class ReferenceSession:
         except (AttributeError, TypeError, ValueError) as exc:
             return None, KernelDiagnostic("INVALID-FRONTIER-BUNDLE", str(exc) or type(exc).__name__)
         local_closure = all(
-            self.model.context.provenance_store.verify_entry(self.model.context, frontier) is None
+            self._model.context.provenance_store.verify_entry(self._model.context, frontier) is None
             for paths in frontier_bundles.values()
             for frontier in paths
         )
         if local_closure:
-            return self.model, None
-        replay_model = _replay_model(self.model)
+            return self._model, None
+        replay_model = _replay_model(self._model)
         replay_error = self._evidence_lineage_error(
             state, frontier_bundles, replay_model=replay_model,
         )
@@ -709,11 +792,11 @@ class ReferenceSession:
         a cryptographic tamper-proof store.
         """
 
-        replay_model = _replay_model(self.model) if replay_model is None else replay_model
-        context = self.initial_state.context
-        history = self.initial_state.history
-        frontiers: Mapping[str, tuple[FrontierEntry, ...]] = self.initial_state.frontiers
-        resources = self.initial_state.resources
+        replay_model = _replay_model(self._model) if replay_model is None else replay_model
+        context = self._initial_seed_state.context
+        history = self._initial_seed_state.history
+        frontiers: Mapping[str, tuple[FrontierEntry, ...]] = self._initial_seed_state.frontiers
+        resources = self._initial_seed_state.resources
         processed_ids: frozenset[str] = frozenset()
         consumed_response_ids: frozenset[str] = frozenset()
         terminal_trigger_event_ids: frozenset[str] = frozenset()
@@ -815,7 +898,7 @@ class ReferenceSession:
                 action=action,
                 prediction=admission.prediction,
                 model=replay_model,
-                binding=self.binding,
+                authority_identities=self._authority_identities,
                 interpretation_contract_identity=self._interpretation_contract_identity,
             )
             if snapshot_error is not None:
@@ -849,9 +932,13 @@ class ReferenceSession:
                     expected_assessment = _bound_rejected_observation_assessment(
                         item.rejected_response,
                         action=action,
-                        interpretation_contract=self.interpretation_contract,
+                        interpretation_contract=self._interpretation_contract,
                         model=replay_model,
                         execution_attempt_id=expected_execution_id,
+                        prior_active_requests=_active_ownership_seed(
+                            seen_ownership_events,
+                            active_trigger_event_ids,
+                        ),
                     )
                     if (
                         expected_assessment is None
@@ -861,7 +948,7 @@ class ReferenceSession:
                     rejected_record_error = _incoming_record_error(
                         item.rejected_response,
                         action=action,
-                        interpretation_contract=self.interpretation_contract,
+                        interpretation_contract=self._interpretation_contract,
                     )
                     if rejected_record_error is None:
                         return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical error retains a normal observation record")
@@ -903,20 +990,27 @@ class ReferenceSession:
                 continue
 
             record_error = _incoming_record_error(
-                item.execution, action=action, interpretation_contract=self.interpretation_contract,
+                item.execution, action=action, interpretation_contract=self._interpretation_contract,
             )
             if record_error is not None:
                 return KernelDiagnostic("EVIDENCE-RECORD-MISMATCH", record_error.message)
             if item.execution.action_id != action.action_id:
                 return KernelDiagnostic("EVIDENCE-ACTION-MISMATCH", "visible execution action differs from the admitted action")
             binding_error: KernelDiagnostic | None = None
-            if self.interpretation_contract is None:
+            if self._interpretation_contract is None:
                 if item.execution.observation_input is not None or item.observation_assessment is not None:
                     return KernelDiagnostic("EVIDENCE-INTERPRETATION-MISMATCH", "unbound session cannot retain ownership/timing evidence")
                 assessment: ObservationAssessment | None = None
             elif item.execution.effect_class == "NONE" and action.kind == "TEST":
                 assert isinstance(item.execution.observation_input, ObservationInput)
-                assessment = assess_observation(item.execution.observation_input, self.interpretation_contract)
+                assessment = assess_observation(
+                    item.execution.observation_input,
+                    self._interpretation_contract,
+                    prior_active_requests=_active_ownership_seed(
+                        seen_ownership_events,
+                        active_trigger_event_ids,
+                    ),
+                )
                 binding_error = _observation_record_binding_error(item.execution, replay_model)
                 assessment = _assessment_with_binding_error(assessment, binding_error)
                 if not _strict_observation_assessment_equal(item.observation_assessment, assessment):
@@ -1260,7 +1354,7 @@ class ReferenceSession:
             model_identity=model.identity,
             uncertainty_identity=model.uncertainty_identity,
             uncertainty_digest=model.uncertainty_digest,
-            authority_identities=self.binding.identities(),
+            authority_identities=_detached_dispatch_value(self._authority_identities),
             interpretation_contract_identity=self._interpretation_contract_identity,
         )
         resource_before = state.resources.algorithm_view(action)
@@ -1422,7 +1516,7 @@ class ReferenceSession:
                 ),
             )
         record_error = _incoming_record_error(
-            execution.record, action=action, interpretation_contract=self.interpretation_contract,
+            execution.record, action=action, interpretation_contract=self._interpretation_contract,
         )
         if record_error is not None:
             # A malformed visible S4 record is still not entitled to erase a
@@ -1433,9 +1527,13 @@ class ReferenceSession:
             rejected_assessment = _bound_rejected_observation_assessment(
                 execution.record,
                 action=action,
-                interpretation_contract=self.interpretation_contract,
+                interpretation_contract=self._interpretation_contract,
                 model=model,
                 execution_attempt_id=execution_attempt_id,
+                prior_active_requests=_active_ownership_seed(
+                    state.event_identity_refs,
+                    state.active_trigger_event_ids,
+                ),
             )
             rejected_code = record_error.code
             rejected_replay_conflict = False
@@ -1582,7 +1680,7 @@ class ReferenceSession:
         # it can preserve history through the named S7 no-response branch.
         if (
             action.kind == "TEST"
-            and self.interpretation_contract is not None
+            and self._interpretation_contract is not None
             and type(execution.record.observation_input) is ObservationInput
             and execution.record.observation_input.response_id is None
         ):
@@ -1799,9 +1897,16 @@ class ReferenceSession:
         """Apply S8 (when needed) and S9 from a confirmed normalized outcome."""
 
         assessment: ObservationAssessment | None = None
-        if self.interpretation_contract is not None and action.kind == "TEST":
+        if self._interpretation_contract is not None and action.kind == "TEST":
             assert isinstance(execution_record.observation_input, ObservationInput)
-            assessment = assess_observation(execution_record.observation_input, self.interpretation_contract)
+            assessment = assess_observation(
+                execution_record.observation_input,
+                self._interpretation_contract,
+                prior_active_requests=_active_ownership_seed(
+                    state.event_identity_refs,
+                    state.active_trigger_event_ids,
+                ),
+            )
             binding_error = _observation_record_binding_error(execution_record, model)
             assessment = _assessment_with_binding_error(assessment, binding_error)
             replay_conflict = _observation_replay_conflict(
@@ -2166,7 +2271,7 @@ class ReferenceSession:
         it is not scored as an observation-minimax TEST.
         """
 
-        current_model = self.model if model is None else model
+        current_model = self._model if model is None else model
         diagnostics: list[KernelDiagnostic] = []
 
         if state.context.q_status == "UNKNOWN":
@@ -2360,6 +2465,67 @@ def _has_distinguishing_value(prediction: ActionPrediction, hypotheses: frozense
     return any(0 < len(value.hypotheses) < len(hypotheses) for value in prediction.classes)
 
 
+def _frozen_model_snapshot(model: FiniteSessionModel) -> FiniteSessionModel:
+    """Return one private finite-model authority projection for a session.
+
+    The model's ordinary public dataclasses are intentionally inspectable, but
+    Python's frozen dataclasses do not prevent a hostile S4 adapter from using
+    ``object.__setattr__`` on an alias retained by the caller.  S3 admission,
+    resource charging, evidence replay and later propagation must therefore
+    use a distinct finite model.  The verified ``ModelContext`` is copied via
+    its dedicated replay constructor: it preserves the authoritative Git
+    token, context identity and existing provenance roots.  Its field
+    authority is private; the normal append-only live provenance publication
+    store remains shared for compatibility, while causal replay copies that
+    store before validating a retained ledger.
+    """
+
+    # Rebuild from the factory-held canonical JSON rather than copying the
+    # caller's public mappings after validation.  This closes a construction
+    # TOCTOU in which an action map could change between a digest check and a
+    # subsequent deep copy.
+    private = rebuild_verified_finite_session_model(model)
+    # A normal pre-S0 rewrite is still a malformed caller authority and is
+    # rejected.  If a side-effecting mapping changes only while this check is
+    # traversing it, the already rebuilt private projection remains the
+    # factory-source semantics rather than the changed caller value.
+    if not verified_finite_session_model(model):
+        raise ValueError("runtime model is not a typed finite model")
+    # Keep the established live-session provenance publication behaviour: new
+    # deterministic records remain visible through the caller's declared model
+    # context.  The private context's authority fields and all finite model
+    # semantics above are rebuilt from the verified source; only this
+    # append-only publication channel remains shared.  Causal validation calls
+    # ``_replay_model`` and receives a copied store, so replay never writes it.
+    object.__setattr__(private.context, "provenance_store", model.context.provenance_store)
+    if not verified_finite_session_model(private):  # pragma: no cover - defensive closure check
+        raise ValueError("runtime model private authority projection is invalid")
+    return private
+
+
+def _frozen_authority_identities(value: object) -> Mapping[str, Mapping[str, str]]:
+    """Detach and validate the only binding fields consumed after S0.
+
+    The runtime needs stable raw-Git identities, not a live caller-held
+    ``RuntimeAuthorityBinding`` object.  Snapshot the two identity triples at
+    construction so a later object-level mutation cannot change S3 evidence
+    or make same-session and fresh coordinator replay disagree.
+    """
+
+    if not isinstance(value, Mapping) or set(value) != {"development", "interfaceRegistry"}:
+        raise ValueError("runtime authority identities are incomplete")
+    detached: dict[str, Mapping[str, str]] = {}
+    for source in ("development", "interfaceRegistry"):
+        identity = value.get(source)
+        if not isinstance(identity, Mapping) or set(identity) != {"commit", "path", "blobSha256"}:
+            raise ValueError("runtime authority identity is malformed")
+        fields = {name: identity.get(name) for name in ("commit", "path", "blobSha256")}
+        if any(type(item) is not str or not item for item in fields.values()):
+            raise ValueError("runtime authority identity must use nonblank exact strings")
+        detached[source] = MappingProxyType({name: fields[name] for name in ("commit", "path", "blobSha256")})
+    return MappingProxyType(detached)
+
+
 def _replay_model(model: FiniteSessionModel) -> FiniteSessionModel:
     """Freeze replay writes in a detached verified model context.
 
@@ -2373,13 +2539,12 @@ def _replay_model(model: FiniteSessionModel) -> FiniteSessionModel:
 
 
 def _session_authority_identity(
-    binding: RuntimeAuthorityBinding,
+    identities: Mapping[str, Mapping[str, str]],
     model: FiniteSessionModel,
     interpretation_contract_identity: str | None = None,
 ) -> str:
     """Bind S0 to the exact controlled snapshots consumed by this session."""
 
-    identities = binding.identities()
     payload = (
         model.identity,
         model.context.identity,
@@ -2673,6 +2838,7 @@ def _bound_rejected_observation_assessment(
     interpretation_contract: InterpretationContract | None,
     model: FiniteSessionModel,
     execution_attempt_id: str,
+    prior_active_requests: Mapping[str, OwnershipEvent] | None = None,
 ) -> ObservationAssessment | None:
     """Preserve only a safely bound raw TEST observation rejected at S4.
 
@@ -2694,7 +2860,11 @@ def _bound_rejected_observation_assessment(
         return None
     if _observation_record_provenance_error(record) is not None:
         return None
-    assessment = assess_observation(record.observation_input, interpretation_contract)
+    assessment = assess_observation(
+        record.observation_input,
+        interpretation_contract,
+        prior_active_requests=prior_active_requests,
+    )
     return _assessment_with_binding_error(
         assessment,
         _observation_record_binding_error(record, model),
@@ -2887,6 +3057,26 @@ def _observation_ledger_delta(assessment: ObservationAssessment | None) -> _Obse
         frozenset(response_ids), frozenset(terminal_trigger_ids), frozenset(replayed_request_ids),
         MappingProxyType(dict(event_refs)), frozenset(active_trigger_ids),
     )
+
+
+def _active_ownership_seed(
+    event_identity_refs: Mapping[str, OwnershipEvent],
+    active_trigger_event_ids: frozenset[str],
+) -> Mapping[str, OwnershipEvent]:
+    """Project only validated retained ACTIVE requests into one new replay.
+
+    Terminal responses/requests are immutable receipts, not a required raw
+    prefix for the next incremental observation.  The selected ownership
+    policy nevertheless needs every still-ACTIVE request and its original
+    global order.  This helper is used symmetrically by live execution and
+    causal-ledger replay; it never receives adapter-owned raw material.
+    """
+
+    return MappingProxyType({
+        identifier: event_identity_refs[identifier]
+        for identifier in active_trigger_event_ids
+        if identifier in event_identity_refs
+    })
 
 
 def _strict_ownership_event_equal(actual: object, expected: object) -> bool:
@@ -3256,7 +3446,7 @@ def _snapshot_error(
     action: SyntheticAction,
     prediction: ActionPrediction,
     model: FiniteSessionModel,
-    binding: RuntimeAuthorityBinding,
+    authority_identities: Mapping[str, Mapping[str, str]],
     interpretation_contract_identity: str | None,
 ) -> KernelDiagnostic | None:
     if not isinstance(snapshot, SelectSnapshot):
@@ -3273,11 +3463,29 @@ def _snapshot_error(
         or snapshot.model_identity != model.identity
         or snapshot.uncertainty_identity != model.uncertainty_identity
         or snapshot.uncertainty_digest != model.uncertainty_digest
-        or dict(snapshot.authority_identities) != dict(binding.identities())
+        or not _strict_authority_identities_equal(snapshot.authority_identities, authority_identities)
         or snapshot.interpretation_contract_identity != interpretation_contract_identity
     ):
         return KernelDiagnostic("SNAPSHOT-IDENTITY-MISMATCH", "evidence snapshot is not the expected causal selection snapshot")
     return None
+
+
+def _strict_authority_identities_equal(
+    actual: object,
+    expected: Mapping[str, Mapping[str, str]],
+) -> bool:
+    """Compare the finite identity projection without Mapping equality tricks."""
+
+    if not isinstance(actual, Mapping) or set(actual) != set(expected):
+        return False
+    for source, expected_identity in expected.items():
+        received = actual.get(source)
+        if not isinstance(received, Mapping) or set(received) != set(expected_identity):
+            return False
+        for field, expected_value in expected_identity.items():
+            if type(received.get(field)) is not str or received.get(field) != expected_value:
+                return False
+    return True
 
 
 def _is_expected_error_record(

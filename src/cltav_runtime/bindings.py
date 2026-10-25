@@ -118,7 +118,7 @@ NAMED_INTERFACE_ADAPTERS: Mapping[str, Mapping[str, str]] = MappingProxyType(
 def _safe_repository_path(value: str) -> str:
     """Return a portable repository-relative path or reject it."""
 
-    if not isinstance(value, str) or not value or "\\" in value:
+    if type(value) is not str or not value or "\\" in value:
         raise ValueError("controlled source path must be a nonempty POSIX path")
     if PureWindowsPath(value).is_absolute() or PurePosixPath(value).is_absolute():
         raise ValueError("controlled source path must be repository-relative")
@@ -130,7 +130,7 @@ def _safe_repository_path(value: str) -> str:
 
 def _validate_commit(value: str) -> str:
     if (
-        not isinstance(value, str)
+        type(value) is not str
         or len(value) != 40
         or any(character not in "0123456789abcdef" for character in value)
     ):
@@ -146,6 +146,7 @@ class SourceSnapshot:
     path: str
     blob_sha256: str
     _content: bytes = field(default=b"", init=False, compare=False, repr=False)
+    _binding_sha256: str = field(default="", init=False, compare=False, repr=False)
     _verification_token: object | None = field(
         default=None, init=False, compare=False, repr=False,
     )
@@ -179,11 +180,12 @@ class SourceSnapshot:
             raise ValueError("controlled source Git object cannot be loaded") from exc
         snapshot = cls(commit=resolved, path=path, blob_sha256=sha256(content).hexdigest())
         object.__setattr__(snapshot, "_content", content)
+        object.__setattr__(snapshot, "_binding_sha256", _source_snapshot_binding_digest(snapshot))
         object.__setattr__(snapshot, "_verification_token", _SOURCE_SNAPSHOT_TOKEN)
         return snapshot
 
     def json_object(self) -> Mapping[str, Any]:
-        if self._verification_token is not _SOURCE_SNAPSHOT_TOKEN:
+        if not _verified_source_snapshot(self):
             raise ValueError("controlled source snapshot is not verified")
         try:
             value = json.loads(self._content.decode("utf-8"))
@@ -194,7 +196,7 @@ class SourceSnapshot:
         return value
 
     def identity(self) -> Mapping[str, str]:
-        if self._verification_token is not _SOURCE_SNAPSHOT_TOKEN:
+        if not _verified_source_snapshot(self):
             raise ValueError("controlled source snapshot is not verified")
         return MappingProxyType(
             {"commit": self.commit, "path": self.path, "blobSha256": self.blob_sha256},
@@ -309,8 +311,20 @@ class RuntimeAuthorityBinding:
         return result
 
     def identities(self) -> Mapping[str, Mapping[str, str]]:
-        if self._verification_token is not _BINDING_TOKEN:
-            raise ValueError("runtime authority binding is not verified")
+        """Return raw-Git identities only after revalidating their snapshots.
+
+        ``RuntimeAuthorityBinding`` is a frozen dataclass, but an adapter can
+        still retain an alias and use ``object.__setattr__``.  A binding token
+        alone therefore cannot establish the S0 authority boundary: the
+        development and registry snapshots, plus the finite projection derived
+        from them, are checked again immediately before their identity leaves
+        this module.
+        """
+
+        self._require_verified_projection()
+        return self._raw_identities()
+
+    def _raw_identities(self) -> Mapping[str, Mapping[str, str]]:
         return MappingProxyType(
             {
                 "development": MappingProxyType(
@@ -324,12 +338,90 @@ class RuntimeAuthorityBinding:
             },
         )
 
+    def _require_verified_projection(self) -> None:
+        """Reject fabricated or caller-mutated runtime authority bindings."""
+
+        if type(self) is not RuntimeAuthorityBinding or self._verification_token is not _BINDING_TOKEN:
+            raise ValueError("runtime authority binding is not verified")
+        # The raw-byte/token checks deliberately happen before the finite
+        # projection is reconstructed.  That prevents a token-bearing object
+        # whose public identity fields were altered after factory construction
+        # from being treated as a new authority.
+        if type(self.development) is not ContractSnapshot:
+            raise ValueError("runtime authority development snapshot is not verified")
+        try:
+            self.development._parsed_contract()
+        except (AttributeError, TypeError, ValueError) as exc:
+            raise ValueError("runtime authority development snapshot is not verified") from exc
+        if not _verified_source_snapshot(self.interfaces):
+            raise ValueError("runtime authority interface snapshot is not verified")
+        try:
+            expected = RuntimeAuthorityBinding._from_verified_snapshots(
+                development=self.development,
+                interfaces=self.interfaces,
+            )
+        except (AttributeError, TypeError, ValueError) as exc:
+            raise ValueError("runtime authority projection is not verified") from exc
+        if not _same_projection(self, expected):
+            raise ValueError("runtime authority projection differs from its verified snapshots")
+
     def named_interface_adapters(self) -> Mapping[str, Mapping[str, str]]:
         """Return the closed source-to-runtime aliases for all eight interfaces."""
 
-        if self._verification_token is not _BINDING_TOKEN:
-            raise ValueError("runtime authority binding is not verified")
+        self._require_verified_projection()
         return NAMED_INTERFACE_ADAPTERS
+
+
+def _verified_source_snapshot(value: object) -> bool:
+    """Return whether a source snapshot still names its verified raw bytes."""
+
+    if type(value) is not SourceSnapshot or value._verification_token is not _SOURCE_SNAPSHOT_TOKEN:
+        return False
+    try:
+        path = _safe_repository_path(value.path)
+        commit = _validate_commit(value.commit)
+    except (AttributeError, TypeError, ValueError):
+        return False
+    return (
+        path == value.path
+        and commit == value.commit
+        and type(value.blob_sha256) is str
+        and type(value._content) is bytes
+        and sha256(value._content).hexdigest() == value.blob_sha256
+        and type(value._binding_sha256) is str
+        and value._binding_sha256 == _source_snapshot_binding_digest(value)
+    )
+
+
+def _source_snapshot_binding_digest(value: SourceSnapshot) -> str:
+    """Bind a source identity to the raw Git bytes issued by the factory."""
+
+    return sha256(repr((value.commit, value.path, value.blob_sha256)).encode("utf-8")).hexdigest()
+
+
+def _same_projection(
+    actual: RuntimeAuthorityBinding,
+    expected: RuntimeAuthorityBinding,
+) -> bool:
+    """Compare the finite binding fields against a fresh verified projection."""
+
+    return (
+        type(actual.development_artifact_id) is str
+        and type(actual.development_version) is str
+        and type(actual.finite_refinement_id) is str
+        and type(actual.interface_ids) is frozenset
+        and type(actual.record_ids) is frozenset
+        and type(actual.runtime_parameter_ids) is frozenset
+        and all(type(item) is str for item in actual.interface_ids)
+        and all(type(item) is str for item in actual.record_ids)
+        and all(type(item) is str for item in actual.runtime_parameter_ids)
+        and actual.development_artifact_id == expected.development_artifact_id
+        and actual.development_version == expected.development_version
+        and actual.finite_refinement_id == expected.finite_refinement_id
+        and actual.interface_ids == expected.interface_ids
+        and actual.record_ids == expected.record_ids
+        and actual.runtime_parameter_ids == expected.runtime_parameter_ids
+    )
 
 
 def _unique_string_ids(

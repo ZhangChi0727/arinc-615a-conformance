@@ -279,6 +279,127 @@ def test_fifo_and_most_recent_assign_each_response_once(
     assert replay.request_dispositions == {"A": "DISCHARGED", "B": "DISCHARGED"}
 
 
+@pytest.mark.parametrize(
+    ("policy", "expected_status", "expected_owner"),
+    (
+        ("FIFO", "UNIQUE", "B"),
+        ("MOST-RECENT", "UNIQUE", "C"),
+        ("UNIQUE-KEY", "AMBIGUOUS", None),
+    ),
+)
+def test_incremental_replay_seeds_every_retained_active_request_for_ownership(
+    policy: str,
+    expected_status: str,
+    expected_owner: str | None,
+) -> None:
+    """An incremental delta cannot select an owner by omitting B's receipt."""
+
+    retained_b = _event("B", 2, "REQUEST", "k", "REQ", 0)
+    delta = (
+        _event("C", 4, "REQUEST", "k", "REQ", 0),
+        _event("R2", 5, "RESPONSE", "k", "RESP", 0),
+    )
+    replay = replay_ownership(
+        delta,
+        _contract(policy=policy, concurrent=True, authority="METHOD-ONLY"),
+        prior_active_requests={"B": retained_b},
+    )
+    resolution = replay.response_resolutions["R2"]
+    assert replay.diagnostics == ()
+    assert set(replay.event_refs) == {"C", "R2"}
+    assert resolution.status == expected_status
+    assert resolution.owner_request_id == expected_owner
+    assert resolution.candidate_request_ids == ("B", "C")
+
+
+def test_incremental_replay_accepts_an_exact_retained_request_reappearance_and_seed_cancellation() -> None:
+    retained_b = _event("B", 2, "REQUEST", "k", "REQ", 0)
+    contract = _contract(policy="FIFO", concurrent=True, authority="METHOD-ONLY")
+    cumulative = replay_ownership(
+        (
+            _event("B", 2, "REQUEST", "k", "REQ", 0),
+            _event("R2", 3, "RESPONSE", "k", "RESP", 0),
+        ),
+        contract,
+        prior_active_requests={"B": retained_b},
+    )
+    assert cumulative.diagnostics == ()
+    assert cumulative.response_resolutions["R2"].owner_request_id == "B"
+
+    cancelled = replay_ownership(
+        (_event("T", 3, "CANCEL", "k", "CANCEL", 0, "B"),),
+        contract,
+        prior_active_requests={"B": retained_b},
+    )
+    assert cancelled.diagnostics == ()
+    assert cancelled.request_dispositions == {"B": "CANCELLED"}
+
+
+def test_incremental_replay_rejects_changed_seed_identity_and_unordered_new_request() -> None:
+    retained_b = _event("B", 2, "REQUEST", "k", "REQ", 0)
+    contract = _contract(policy="FIFO", concurrent=True, authority="METHOD-ONLY")
+    changed = replay_ownership(
+        (_event("B", 2, "REQUEST", "k", "REQ", 1),),
+        contract,
+        prior_active_requests={"B": retained_b},
+    )
+    assert any(item.code == "OWNERSHIP-SEED-EVENT-CONFLICT" for item in changed.diagnostics)
+
+    unordered = replay_ownership(
+        (
+            _event("C", 1, "REQUEST", "k", "REQ", 0),
+            _event("R2", 3, "RESPONSE", "k", "RESP", 0),
+        ),
+        contract,
+        prior_active_requests={"B": retained_b},
+    )
+    assert any(item.code == "INSUFFICIENT-OWNERSHIP-CONTEXT" for item in unordered.diagnostics)
+
+
+def test_assessment_uses_a_retained_incremental_trigger_for_the_measurement_delta() -> None:
+    retained_b = _event("B", 2, "REQUEST", "k", "REQ", 0)
+    result = assess_observation(
+        _input(
+            (_event("R2", 3, "RESPONSE", "k", "RESP", 2),),
+            trigger="B", response="R2", measurement=_interval(2, 2), tick=2,
+        ),
+        _contract(policy="FIFO", concurrent=True, authority="METHOD-ONLY"),
+        prior_active_requests={"B": retained_b},
+    )
+    assert result.verdict == "PASS"
+    assert result.ownership is not None
+    assert result.ownership.owner_request_id == "B"
+
+
+@pytest.mark.parametrize(
+    ("termination_kind", "termination_type"),
+    (("CANCEL", "CANCEL"), ("SUPERSEDE", "SUPERSEDE")),
+)
+def test_incremental_no_response_uses_the_retained_trigger_for_a_timely_termination(
+    termination_kind: str,
+    termination_type: str,
+) -> None:
+    """A delta-only administrative event can close a retained reviewed obligation."""
+
+    retained_b = _event("B", 2, "REQUEST", "k", "REQ", 0)
+    result = assess_observation(
+        _input(
+            (_event("T", 3, termination_kind, "k", termination_type, 1, "B"),),
+            trigger="B",
+            response=None,
+            earliest=6,
+        ),
+        _contract(policy="FIFO", concurrent=True, authority="REVIEWED"),
+        prior_active_requests={"B": retained_b},
+    )
+
+    assert result.verdict == "INCONCLUSIVE"
+    assert result.score_disposition == "NOT-APPLICABLE"
+    assert result.answered is False
+    assert result.diagnostics == ()
+    assert result.evidence_refs == ("B", "T")
+
+
 def test_unique_key_ambiguity_is_an_error_not_an_arbitrary_owner() -> None:
     events = (
         _event("A", 1, "REQUEST", "k", "REQ", 0),
@@ -310,6 +431,132 @@ def test_nonconcurrent_same_key_requires_an_explicit_supersession_target() -> No
     result = assess_observation(_input(events), contract)
     assert result.verdict == "ERROR"
     assert "IMPLICIT-OWNERSHIP-SUPERSESSION" in _error_codes(result)
+
+
+def test_nonconcurrent_replacement_must_target_a_currently_active_request() -> None:
+    """A stale target cannot admit a second non-concurrent obligation."""
+
+    stale = (
+        _event("A", 1, "REQUEST", "k", "REQ", 0),
+        _event("B", 2, "REQUEST", "k", "REQ", 1, "A"),
+        _event("C", 3, "REQUEST", "k", "REQ", 2, "A"),
+        _event("R", 4, "RESPONSE", "k", "RESP", 3),
+    )
+    contract = _contract(concurrent=False, authority="METHOD-ONLY")
+    replay = replay_ownership(stale, contract)
+    assert any(item.code == "INVALID-OWNERSHIP-TERMINATION" for item in replay.diagnostics)
+    assert replay.request_dispositions == {"A": "SUPERSEDED", "B": "DISCHARGED"}
+    assert "C" not in replay.request_dispositions
+
+    rejected = assess_observation(
+        _input(stale, trigger="B", measurement=_interval(2, 2), tick=2),
+        contract,
+    )
+    assert rejected.verdict == "ERROR"
+    assert "INVALID-OWNERSHIP-TERMINATION" in _error_codes(rejected)
+
+    valid = (
+        _event("A", 1, "REQUEST", "k", "REQ", 0),
+        _event("B", 2, "REQUEST", "k", "REQ", 1, "A"),
+        _event("C", 3, "REQUEST", "k", "REQ", 2, "B"),
+        _event("R", 4, "RESPONSE", "k", "RESP", 3),
+    )
+    accepted = assess_observation(
+        _input(valid, trigger="C", measurement=_interval(1, 1), tick=1),
+        contract,
+    )
+    assert accepted.verdict == "PASS"
+    assert accepted.ownership is not None
+    assert accepted.ownership.owner_request_id == "C"
+
+
+@pytest.mark.parametrize(
+    ("termination_kind", "termination_type"),
+    (("CANCEL", "CANCEL"), ("SUPERSEDE", "SUPERSEDE")),
+)
+def test_complete_foreign_key_termination_does_not_pollute_the_selected_contract(
+    termination_kind: str,
+    termination_type: str,
+) -> None:
+    """An unrelated complete transaction is not a malformed local one."""
+
+    clean = (
+        _event("A", 1, "REQUEST", "k", "REQ", 0),
+        _event("R", 4, "RESPONSE", "k", "RESP", 2),
+    )
+    foreign = (
+        _event("A", 1, "REQUEST", "k", "REQ", 0),
+        _event("X", 2, "REQUEST", "other", "REQ", 1),
+        _event("T", 3, termination_kind, "other", termination_type, 1, "X"),
+        _event("R", 4, "RESPONSE", "k", "RESP", 2),
+    )
+    contract = _contract(authority="METHOD-ONLY")
+    baseline = assess_observation(_input(clean, measurement=_interval(2, 2), tick=2), contract)
+    result = assess_observation(_input(foreign, measurement=_interval(2, 2), tick=2), contract)
+
+    assert baseline.verdict == result.verdict == "PASS"
+    assert baseline.ownership is not None and result.ownership is not None
+    assert result.ownership.owner_request_id == baseline.ownership.owner_request_id == "A"
+    assert result.replay is not None
+    assert result.replay.request_dispositions == {"A": "DISCHARGED"}
+    assert result.replay.diagnostics == ()
+
+
+@pytest.mark.parametrize(
+    "events",
+    (
+        (
+            _event("A", 1, "REQUEST", "k", "REQ", 0),
+            _event("T", 2, "CANCEL", "other", "CANCEL", 1, "A"),
+            _event("R", 3, "RESPONSE", "k", "RESP", 2),
+        ),
+        (
+            _event("A", 1, "REQUEST", "k", "REQ", 0),
+            _event("X", 2, "REQUEST", "other", "REQ", 1),
+            _event("T", 3, "CANCEL", "k", "CANCEL", 2, "X"),
+            _event("R", 4, "RESPONSE", "k", "RESP", 3),
+        ),
+        (
+            _event("A", 1, "REQUEST", "k", "REQ", 0),
+            _event("T", 2, "SUPERSEDE", "k", "WRONG", 1, "A"),
+            _event("R", 3, "RESPONSE", "k", "RESP", 2),
+        ),
+    ),
+)
+def test_wrong_or_current_key_termination_still_rejects_the_contract_trace(
+    events: tuple[OwnershipEvent, ...],
+) -> None:
+    result = assess_observation(
+        _input(events, measurement=_interval(2, 2), tick=2),
+        _contract(authority="METHOD-ONLY"),
+    )
+    assert result.verdict == "ERROR"
+    assert "INVALID-OWNERSHIP-TERMINATION" in _error_codes(result)
+
+
+@pytest.mark.parametrize(
+    ("termination_kind", "termination_type"),
+    (("CANCEL", "CANCEL"), ("SUPERSEDE", "SUPERSEDE")),
+)
+def test_foreign_key_termination_cannot_precede_its_future_controlled_target(
+    termination_kind: str,
+    termination_type: str,
+) -> None:
+    """A target is controlled even when its request appears later in the trace."""
+
+    events = (
+        _event("T", 1, termination_kind, "other", termination_type, 0, "A"),
+        _event("A", 2, "REQUEST", "k", "REQ", 0),
+        _event("R", 3, "RESPONSE", "k", "RESP", 0),
+    )
+    result = assess_observation(
+        _input(events, measurement=_interval(0, 0), tick=0),
+        _contract(authority="METHOD-ONLY"),
+    )
+
+    assert result.verdict == "ERROR"
+    assert result.answered is False
+    assert "INVALID-OWNERSHIP-TERMINATION" in _error_codes(result)
 
 
 @pytest.mark.parametrize(

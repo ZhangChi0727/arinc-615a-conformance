@@ -26,6 +26,7 @@ from .kernel import (
 
 
 _ACTION_KINDS = frozenset({"TEST", "PREP", "RECOVER"})
+_FINITE_SESSION_MODEL_TOKEN = object()
 
 
 def _canonical_digest(value: Mapping[str, Any]) -> str:
@@ -154,6 +155,9 @@ class FiniteSessionModel:
     observation_class_limit: int
     identity: str
     uncertainty: MeasurementUncertainty
+    _source_json: bytes = field(default=b"", init=False, compare=False, repr=False)
+    _binding_sha256: str = field(default="", init=False, compare=False, repr=False)
+    _verification_token: object | None = field(default=None, init=False, compare=False, repr=False)
 
     @property
     def uncertainty_identity(self) -> str:
@@ -226,7 +230,7 @@ class FiniteSessionModel:
         if len(frontiers) > hypothesis_limit:
             raise ValueError("finite session hypothesis count exceeds its declared bound")
         identity = _canonical_digest(value)
-        return cls(
+        result = cls(
             context=context,
             actions=MappingProxyType(parsed_actions),
             initial_frontiers=MappingProxyType(frontiers),
@@ -238,6 +242,16 @@ class FiniteSessionModel:
             identity=identity,
             uncertainty=uncertainty,
         )
+        # Keep the exact canonical JSON that produced ``identity`` and bind
+        # every finite value actually consumed by S3--S9.  Frozen dataclasses
+        # can still be rewritten through ``object.__setattr__`` by an adapter
+        # retaining a caller alias, so a digest of the original JSON alone is
+        # not enough to establish a construction-time authority boundary.
+        source_json = json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        object.__setattr__(result, "_source_json", source_json)
+        object.__setattr__(result, "_binding_sha256", _finite_model_binding_digest(result))
+        object.__setattr__(result, "_verification_token", _FINITE_SESSION_MODEL_TOKEN)
+        return result
 
     def predict(
         self, *, hypotheses: frozenset[str], frontiers: Mapping[str, FrontierEntry | tuple[FrontierEntry, ...]],
@@ -527,6 +541,216 @@ class FiniteSessionModel:
             frozenset(conservative),
             tuple(diagnostics),
         )
+
+
+def verified_finite_session_model(value: object) -> bool:
+    """Return whether a factory-issued finite model still matches its source.
+
+    ``FiniteSessionModel`` is intentionally inspectable.  This check is the
+    narrower authority boundary needed by the coordinator: it rejects a model
+    whose action costs, AST, frontier, uncertainty, or limits were rewritten
+    after ``from_mapping`` while its old public ``identity`` was retained.
+    It is not a general object sandbox.
+    """
+
+    if not _verified_finite_model_source(value):
+        return False
+    assert isinstance(value, FiniteSessionModel)
+    try:
+        return (
+            type(value._binding_sha256) is str
+            and value._binding_sha256 == _finite_model_binding_digest(value)
+        )
+    except (AttributeError, KeyError, TypeError, ValueError, OverflowError):
+        return False
+
+
+def rebuild_verified_finite_session_model(value: object) -> FiniteSessionModel:
+    """Rebuild an S0 model only from its factory-held canonical source JSON.
+
+    This deliberately does *not* copy public ``actions`` or ``frontiers`` from
+    the caller object after checking it.  A side-effecting mapping could change
+    between such a check and a later copy.  The retained canonical JSON and a
+    verified replay context instead provide one atomic finite authority source
+    for the private session projection.
+    """
+
+    if not _verified_finite_model_source(value):
+        raise ValueError("finite model source is not verified")
+    assert isinstance(value, FiniteSessionModel)
+    try:
+        source = json.loads(value._source_json.decode("utf-8"))
+        if not isinstance(source, Mapping):
+            raise ValueError("finite model source root is invalid")
+        context = value.context.read_only_replay_context()
+        rebuilt = FiniteSessionModel.from_mapping(context=context, value=source)
+    except (AttributeError, TypeError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+        raise ValueError("finite model source is not verified") from exc
+    if rebuilt.identity != value.identity:
+        raise ValueError("finite model source identity is inconsistent")
+    return rebuilt
+
+
+def _verified_finite_model_source(value: object) -> bool:
+    """Check the immutable factory source without rereading mutable fields."""
+
+    if type(value) is not FiniteSessionModel or value._verification_token is not _FINITE_SESSION_MODEL_TOKEN:
+        return False
+    try:
+        return (
+            type(value._source_json) is bytes
+            and type(value.identity) is str
+            and sha256(value._source_json).hexdigest() == value.identity
+            and type(value.context) is ModelContext
+            and value.context.read_only_replay_context() is not None
+        )
+    except (AttributeError, TypeError, ValueError):
+        return False
+
+
+def _finite_model_binding_digest(value: FiniteSessionModel) -> str:
+    """Content-address every finite model value consumed by the coordinator."""
+
+    def fraction_key(item: object) -> tuple[int, int]:
+        if type(item) is not Fraction:
+            raise TypeError("finite model rational leaf is not exact")
+        return item.numerator, item.denominator
+
+    def interval_key(item: object) -> tuple[object, ...]:
+        if type(item) is not Interval:
+            raise TypeError("finite model interval is not typed")
+        return (*fraction_key(item.lower), *fraction_key(item.upper), item.lower_closed, item.upper_closed)
+
+    def mapping_key(item: object) -> tuple[tuple[str, object], ...]:
+        if not isinstance(item, Mapping):
+            raise TypeError("finite model mapping is invalid")
+        # JSON round-tripping rejects hostile non-contract leaves while giving
+        # the exact normalised value used when the factory parsed the model.
+        rendered = json.dumps(dict(item), sort_keys=True, separators=(",", ":"))
+        decoded = json.loads(rendered)
+        if not isinstance(decoded, dict) or any(type(key) is not str for key in decoded):
+            raise TypeError("finite model mapping is not a JSON object")
+        return tuple(sorted(decoded.items()))
+
+    def action_key(identifier: object, action: object) -> tuple[object, ...]:
+        if type(identifier) is not str or type(action) is not SyntheticAction:
+            raise TypeError("finite model action is invalid")
+        if (
+            type(action.action_id) is not str
+            or type(action.kind) is not str
+            or type(action.cost) is not int
+            or type(action.transition_json) is not str
+            or type(action.recover_when_unknown) is not bool
+            or (action.declared_target is not None and type(action.declared_target) is not str)
+        ):
+            raise TypeError("finite model action scalar is invalid")
+        if not isinstance(action.detail_charges, Mapping):
+            raise TypeError("finite model action charges are invalid")
+        charges = tuple(sorted(action.detail_charges.items()))
+        if any(type(name) is not str or type(amount) is not int for name, amount in charges):
+            raise TypeError("finite model action charge leaf is invalid")
+        if type(action.enabled_summaries) is not frozenset or any(type(item) is not str for item in action.enabled_summaries):
+            raise TypeError("finite model action summary is invalid")
+        emissions: list[tuple[str, tuple[str, ...]]] = []
+        if not isinstance(action.observable_by_hypothesis, Mapping):
+            raise TypeError("finite model action emissions are invalid")
+        for hypothesis, values in sorted(action.observable_by_hypothesis.items()):
+            if type(hypothesis) is not str or type(values) is not tuple or any(type(item) is not str for item in values):
+                raise TypeError("finite model action emission leaf is invalid")
+            emissions.append((hypothesis, values))
+        ticks: list[tuple[str, tuple[int, int]]] = []
+        if not isinstance(action.measurement_ticks_by_hypothesis, Mapping):
+            raise TypeError("finite model action ticks are invalid")
+        for hypothesis, tick in sorted(action.measurement_ticks_by_hypothesis.items()):
+            if type(hypothesis) is not str:
+                raise TypeError("finite model action tick key is invalid")
+            ticks.append((hypothesis, fraction_key(tick)))
+        return (
+            identifier,
+            action.action_id,
+            action.kind,
+            action.cost,
+            charges,
+            tuple(sorted(action.enabled_summaries)),
+            action.transition_json,
+            tuple(emissions),
+            tuple(ticks),
+            action.declared_target,
+            action.recover_when_unknown,
+        )
+
+    def frontier_key(identifier: object, frontier: object) -> tuple[object, ...]:
+        if type(identifier) is not str or type(frontier) is not FrontierEntry:
+            raise TypeError("finite model initial frontier is invalid")
+        if (
+            type(frontier.hypothesis_id) is not str
+            or type(frontier.control_state_id) is not str
+            or type(frontier.path_length) is not int
+            or type(frontier.history_provenance) is not tuple
+            or any(type(reference) is not str for reference in frontier.history_provenance)
+            or type(frontier.status) is not str
+            or type(frontier.model_identity) is not str
+        ):
+            raise TypeError("finite model initial frontier scalar is invalid")
+        if not isinstance(frontier.clocks, Mapping) or not isinstance(frontier.typed_store, Mapping):
+            raise TypeError("finite model initial frontier fields are invalid")
+        clocks = tuple(
+            (name, interval_key(interval))
+            for name, interval in sorted(frontier.clocks.items())
+            if type(name) is str
+        )
+        if len(clocks) != len(frontier.clocks):
+            raise TypeError("finite model initial frontier clock key is invalid")
+        return (
+            identifier,
+            frontier.hypothesis_id,
+            frontier.control_state_id,
+            clocks,
+            mapping_key(frontier.typed_store),
+            frontier.path_length,
+            frontier.history_provenance,
+            frontier.status,
+            frontier.model_identity,
+        )
+
+    if not isinstance(value.actions, Mapping) or not isinstance(value.initial_frontiers, Mapping):
+        raise TypeError("finite model collections are invalid")
+    if type(value.uncertainty) is not MeasurementUncertainty:
+        raise TypeError("finite model uncertainty is invalid")
+    if (
+        any(type(limit) is not int for limit in (
+            value.path_limit,
+            value.frontier_limit,
+            value.hypothesis_limit,
+            value.action_limit,
+            value.observation_class_limit,
+        ))
+        or type(value.identity) is not str
+        or type(value.uncertainty.uncertainty_id) is not str
+        or type(value.uncertainty.clock_id) is not str
+        or type(value.uncertainty.time_unit) is not str
+        or type(value.uncertainty.identity) is not str
+    ):
+        raise TypeError("finite model scalar is invalid")
+    payload = (
+        value.context.identity,
+        tuple(action_key(identifier, action) for identifier, action in sorted(value.actions.items())),
+        tuple(frontier_key(identifier, frontier) for identifier, frontier in sorted(value.initial_frontiers.items())),
+        value.path_limit,
+        value.frontier_limit,
+        value.hypothesis_limit,
+        value.action_limit,
+        value.observation_class_limit,
+        value.identity,
+        (
+            value.uncertainty.uncertainty_id,
+            value.uncertainty.clock_id,
+            value.uncertainty.time_unit,
+            fraction_key(value.uncertainty.maximum_error),
+            value.uncertainty.identity,
+        ),
+    )
+    return sha256(repr(payload).encode("utf-8")).hexdigest()
 
 
 def _canonical_model(value: Mapping[str, Any]) -> dict[str, Any]:

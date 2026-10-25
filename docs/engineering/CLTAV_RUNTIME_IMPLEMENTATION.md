@@ -91,7 +91,7 @@ substitute for that evidence identity.
 | BC-10 | VERIFIED | shared-uncertainty and frozen-identity interpretation regressions; no physical calibration claim. |
 | BC-11 | PARTIAL | full-history merge and resume/history regressions; complete same-round Stop-Empty policy remains. |
 | BC-12 | VERIFIED | infeasible/multi-path and conservative-path retention regressions; finite bounds only. |
-| BC-13 | PARTIAL | Raw material cannot inject policy/deadline/verdict. FIFO/MOST-RECENT, explicit cancellation/supersession, full-trace request/response identity, exact reappearance of one ACTIVE request, terminal-request/response exclusion, and conflict quarantine are covered by `interpretation` and `session` regressions. A conflict may seal an uncontested new response but cannot reclassify an existing request identity; every emitted ledger state must remain replayable as a portable checkpoint. Bounded synthetic traces only. |
+| BC-13 | PARTIAL | Raw material cannot inject policy/deadline/verdict. FIFO/MOST-RECENT, explicit cancellation/supersession, session-seeded ACTIVE ownership context for incremental deltas or exact cumulative reappearance, terminal request/response exclusion, and conflict quarantine are covered by `interpretation` and `session` regressions. A conflict may seal an uncontested new response but cannot reclassify an existing request identity; every emitted ledger state must remain replayable as a portable checkpoint. Bounded synthetic traces only. |
 | BC-14 | PARTIAL | Frozen-contract interval containment/separation/boundary tests, plus empty physical domain and invalid clock/unit/error basis. Contract/material/clock/unit/uncertainty checks occur before deadline authority branching; no physical calibration claim. |
 | BC-15 | PARTIAL | No-response uses cancellation/supersession, qualified horizon and deadline-authority regressions. METHOD-ONLY/UNRESOLVED never becomes a scored deadline. In pure reviewed semantics, closed upper bound uses `earliest > U` and open upper bound uses `earliest >= U`; this runtime rejects REVIEWED authority without a controlled registry. |
 | BC-16 | PENDING | Empty/Singleton/645/Equivalent/Budget priority remains later B/C work. |
@@ -241,8 +241,22 @@ through S7.
 
 The finite model is JSON-detached at construction.  Its nested guard/update
 AST is retained only in canonical frozen form and decoded afresh for each
-kernel call, so a post-construction source mutation cannot change behaviour
-without changing the model identity.  Before selection, a resumed state must
+kernel call.  Before S0 accepts it, the factory-issued model token verifies
+the exact source JSON identity and a digest over every finite value consumed
+by the coordinator (actions/costs, ASTs, frontiers, limits and uncertainty).
+Likewise, the binding revalidates both raw Git snapshots and its reconstructed
+finite projection; the development commit/path/blob triple must equal the
+verified model context triple.  `ReferenceSession` then reconstructs private
+model and binding projections, so a caller-held alias cannot rewrite accepted
+authority before or after S0.  The declared append-only live provenance
+publication store remains compatible with the supplied model; causal replay
+uses an isolated copy before it validates retained evidence.  S3 selection,
+admission, charging, evidence, causal replay and later propagation consume
+only those private projections; they never reread a caller-held model or
+binding as authority after S0.  This is a finite authority-closure rule, not
+a general Python sandbox: it protects the declared model/actions/uncertainty/
+provenance roots and the actual binding identity fields consumed by this
+runtime.  Before selection, a resumed state must
 belong to this run/session/model, retain its exact development/interface
 authority binding and frozen S0 seed identity, and close its `H`, frontier
 provenance, history version, evidence, and execution identities; validation
@@ -299,17 +313,31 @@ For an owned response, the public `measurementTick` must also equal the exact
 timestamp difference between that response and the request selected by the
 controlled ownership policy; a merely interval-contained tick is not enough.
 The session retains the complete typed ownership replay rather than only the
-selected `responseId`: every response token is consumed, every non-active
-request disposition is terminal, and only an exact recurrence of an ACTIVE
-request is permitted in a cumulative later trace. A changed field/kind,
-cross-role reuse, duplicate response, or duplicate terminal request takes S7.
-Those cross-round replay conflicts quarantine newly observed, uncontested
-response facts but never change a retained request into a response (or vice versa), so
+selected `responseId`: every response token is consumed and every non-active
+request disposition is terminal.  Before each later ownership decision it
+seeds the replay with the verified ledger's still-ACTIVE request identities,
+global sequence/timestamp order, and request encoding.  Therefore a legal
+incremental raw delta may omit terminal receipts and retained ACTIVE requests;
+an exact cumulative reappearance is permitted only as confirmation, never as a
+second obligation.  A changed field/kind, cross-role reuse, duplicate response
+or duplicate terminal request takes S7.  A newly introduced request must be
+ordered after the seeded context; otherwise the runtime reports insufficient
+ownership context rather than guessing a local numbering epoch.  A replacement
+request must actually terminate its named current ACTIVE predecessor before it
+can satisfy a non-concurrent admission rule: a stale target is not an admission
+token.  A complete CANCEL/SUPERSEDE transaction for another key is ignored only
+when it names neither a retained ACTIVE controlled request nor any matching request in
+the complete raw trace; a foreign-key event that targets a current *or future*
+controlled request is still validated and rejected when incompatible.  Those
+cross-round replay conflicts quarantine newly observed, uncontested response
+facts but never change a retained request into a response (or vice versa), so
 the state it emits remains self-validating and replayable in a fresh equivalent
 coordinator. For no response, clock/error-basis validation occurs before a
 cancellation/supersession can yield NOT-APPLICABLE; an invalid basis is ERROR,
 not an administrative escape. A timely termination needs no elapsed-horizon
-reading. For an ACTIVE obligation, an unqualified observation horizon remains
+reading; when a legal incremental delta carries only the terminating event,
+the verified retained ACTIVE trigger supplies the timestamp needed to assess
+that termination. For an ACTIVE obligation, an unqualified observation horizon remains
 PENDING-HORIZON even when no elapsed reading exists; only a qualified reviewed
 deadline determination requires a nonnegative earliest admissible elapsed
 horizon. A supplied invalid elapsed reading remains ERROR.
@@ -427,7 +455,7 @@ GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出�
 | BC-10 | VERIFIED | 共享 uncertainty 与冻结 identity 解释回归；不主张物理时钟校准。 |
 | BC-11 | PARTIAL | 完整 history 合并和 resume/history 回归；完整同轮 Stop-Empty 策略仍待完成。 |
 | BC-12 | VERIFIED | 不可行／多路径及保守路径保留回归；仅限有限边界。 |
-| BC-13 | PARTIAL | 原始材料不得注入 policy／deadline／判定。FIFO/MOST-RECENT、显式取消／替代、完整事件迹的 request/response 身份、一个 ACTIVE request 的精确再次出现、终态 request／response 排除及冲突隔离均由 `interpretation` 和 `session` 回归覆盖。冲突可封存无争议的新 response，但不得重分类既有 request 身份；每个发出的账本 state 都必须能作为可移植 checkpoint 重放。仅为有界 synthetic 事件迹。 |
+| BC-13 | PARTIAL | 原始材料不得注入 policy／deadline／判定。FIFO/MOST-RECENT、显式取消／替代、由 session 注入的 ACTIVE ownership 上下文（支持增量 delta 或精确的累计再次出现）、终态 request／response 排除及冲突隔离均由 `interpretation` 和 `session` 回归覆盖。冲突可封存无争议的新 response，但不得重分类既有 request 身份；每个发出的账本 state 都必须能作为可移植 checkpoint 重放。仅为有界 synthetic 事件迹。 |
 | BC-14 | PARTIAL | 冻结合同的区间包含／分离／边界测试，以及空物理域、无效时钟／单位／误差依据。contract/material/clock/unit/uncertainty 必须先于 deadline authority 分支校验；不主张物理校准。 |
 | BC-15 | PARTIAL | 无响应使用取消／替代、合格 horizon 和 deadline authority 回归。METHOD-ONLY／UNRESOLVED 永远不得成为可计分 deadline。纯 reviewed 语义中，闭上界使用 `earliest > U`，开上界使用 `earliest >= U`；本 runtime 没有受控 registry 时拒绝 REVIEWED authority。 |
 | BC-16 | PENDING | Empty/Singleton/645/Equivalent/Budget 优先级属于后续 B/C 工作。 |
@@ -520,8 +548,15 @@ kind 不同，真正精确的旧 TEST、PREP、RECOVER、CONFIRMED-NOT-SENT 或 
 记录，它是派发后错误而不是重复：实际的有类型后继和一次计费均通过 S7 保留。
 
 有限模型在构造时会与 JSON 源对象断开。嵌套 guard／update AST 只以规范化冻结形式保留，每次
-内核调用再重新解码；因此，构造后修改源对象不会在不改变 model identity 的情况下改变行为。
-选择前，恢复的 state 必须属于本 run／session／model，保留精确的 development/interface authority
+内核调用再重新解码。S0 接纳前，工厂签发的 model token 会核验精确的源 JSON identity，以及协调器
+实际消费的全部有限值（action／cost、AST、frontier、limit 和 uncertainty）的摘要。binding 同样会重新
+核验两份 raw-Git snapshot 及其重建出的有限投影；development 的 commit／path／blob 三元组必须与已验证
+model context 的三元组完全相同。随后 `ReferenceSession` 重建私有 model 与 binding 投影，因此调用方
+持有的 alias 无法在 S0 前或之后重写已接纳的 authority。已声明的 append-only live provenance
+publication store 仍与提供的 model 保持兼容；因果重放在核验保留 evidence 前使用它的隔离副本。S3 的选择、
+准入、计费、evidence、因果重放和后续传播只消费这些私有投影；S0 之后绝不重新把调用方持有的 model 或
+binding 当作 authority。这是一条有限 authority-closure 规则，而非通用 Python sandbox：它保护本运行时实际消费的
+已声明 model／action／uncertainty／provenance root 和 binding identity 字段。选择前，恢复的 state 必须属于本 run／session／model，保留精确的 development/interface authority
 绑定和冻结的 S0 seed identity，且其 `H`、frontier provenance、history version、evidence 与 execution
 identity 必须闭合；验证失败发生在计费或派发前。目标会话绝不会以自身绑定重新签署外来的 S0 state。
 S4 前，已验证的顶层 frontier 与 event-identity map 会复制为私有的不可变 proxy，因此即使适配器持有
@@ -554,12 +589,18 @@ hypothesis 的协议时序、物理时钟校准、已审定 deadline authority �
 对已归属的 response，公开的 `measurementTick` 还必须精确等于该 response 与由受控 ownership
 policy 选中的 request 之间的 timestamp 差；仅落在区间内的 tick 不足以通过。会话保留完整的类型化
 ownership replay，而不是只保留选中的 `responseId`：每个 response token 都会被消费，每个非 ACTIVE
-request disposition 都成为终态；累计的后续事件迹中，只允许一个 ACTIVE request 精确再次出现。字段／
-kind 改变、跨角色重用、重复 response 或重复的终态 request 均进入 S7。这些跨轮重放冲突会隔离新观察到且无争议的
-response 事实，但绝不把已保留的
-request 变为 response（或反过来），所以其发出的 state 始终可自校验并在一个等价的新协调器中重放。
+request disposition 都成为终态。每次后续 ownership 判定前，session 都将已验证账本中仍为 ACTIVE 的 request
+identity、全局 sequence／timestamp 顺序和 request 编码作为 seed 注入 replay。因此，合法的增量原始 delta
+可以省略终态 receipt 和保留的 ACTIVE request；若提供累计迹中的再次出现，它只能与既有 event 精确相同，
+不能建立第二个 obligation。字段／kind 改变、跨角色重用、重复 response 或重复的终态 request 均进入 S7。
+新引入的 request 必须可排序在 seed 之后；不能排序时必须报告 ownership context 不足，而不得猜测本地重编号的
+epoch。替代 request 必须实际终止其具名的当前 ACTIVE 前驱，才可以满足非并发准入条件；已终态的旧 target 不是
+准入令牌。其他 key 的完整 CANCEL/SUPERSEDE 事务仅在其既不指向已保留的 ACTIVE 受控 request、也不指向完整原始事件迹中
+任何匹配 request 时才被忽略；若外键事件指向当前或未来的受控 request，仍必须核验并在不相容时拒绝。这些跨轮重放冲突会隔离新观察到且无争议的 response 事实，
+但绝不把已保留的 request 变为 response（或反过来），所以其发出的 state 始终可自校验并在一个等价的新协调器中重放。
 对于无 response，clock／error-basis 必须先于取消／替代产生 NOT-APPLICABLE 前校验；依据无效时为
-ERROR，不得用管理性事件规避。及时的终止不需要 elapsed-horizon 读数。对于 ACTIVE obligation，即使
+ERROR，不得用管理性事件规避。及时的终止不需要 elapsed-horizon 读数；若合法的增量 delta 只携带终止
+事件，则用已经验证的、保留的 ACTIVE trigger 提供计算该终止所需的 timestamp。对于 ACTIVE obligation，即使
 尚未得到 elapsed 读数，只要 observation horizon 尚未合格，仍为 PENDING-HORIZON；只有合格的
 reviewed deadline 判定才要求非负的 earliest admissible elapsed horizon。已经给出的非法 elapsed
 读数仍为 ERROR。
