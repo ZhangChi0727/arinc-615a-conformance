@@ -328,8 +328,14 @@ no earlier than the retained high-water timestamp. Otherwise the runtime
 reports `INSUFFICIENT-OWNERSHIP-CONTEXT`, preserves the prior ownership ledger,
 and does not recompute or reassign a retained response. Equal timestamps remain
 legal; equal sequences do not. A changed field/kind, cross-role reuse, duplicate
-response or duplicate terminal request takes S7. A replacement request must
-actually terminate its named current ACTIVE predecessor before it can satisfy a
+response or duplicate terminal request takes S7. An admission refusal is
+derived from the replayed raw material rather than its displayed primary
+diagnostic: a concurrent clock, unit, measurement, visible-record, or parse
+error cannot obscure a failed boundary check. A partially parsed delta can
+retain a parsed event only after that event itself passes the same boundary
+check; a failed or unchecked event remains audit material rather than a new
+ledger fact. A replacement request must actually terminate its named current
+ACTIVE predecessor before it can satisfy a
 non-concurrent admission rule: a stale target is not an admission token. A
 complete CANCEL/SUPERSEDE transaction for another key is ignored only when it
 names neither a retained ACTIVE controlled request nor any matching request in
@@ -603,7 +609,10 @@ response）导出的不可变全局高水位前沿。前者决定候选者，后
 保留高水位 sequence，且 timestamp 不早于保留高水位 timestamp；否则 runtime 返回
 `INSUFFICIENT-OWNERSHIP-CONTEXT`、保留原 ownership ledger，且不得重新计算或改派已保留 response。相同
 timestamp 仍可合法，sequence 相同则不可以。字段／kind 改变、跨角色重用、重复 response 或重复的终态
-request 均进入 S7。替代 request 必须实际终止其具名的当前 ACTIVE 前驱，才可以满足非并发准入条件；已终态的
+request 均进入 S7。准入拒绝由重放的原始材料决定，而非展示出的首要 diagnostic：并存的 clock、unit、
+measurement、visible-record 或 parse 错误不得遮蔽已经失败的前沿核验。部分解析的 delta 只有在其中每个
+已解析 event 都实际通过同一前沿核验后，才可保留为 ledger 事实；失败或未经核验的 event 仅保留为审计材料。
+替代 request 必须实际终止其具名的当前 ACTIVE 前驱，才可以满足非并发准入条件；已终态的
 旧 target 不是准入令牌。其他 key 的完整 CANCEL/SUPERSEDE 事务仅在其既不指向已保留的 ACTIVE 受控 request、
 也不指向完整原始事件迹中任何匹配 request 时才被忽略；若外键事件指向当前或未来的受控 request，仍必须核验并
 在不相容时拒绝。这些跨轮重放冲突会隔离新观察到且无争议的 response 事实，但绝不把已保留的 request 变为

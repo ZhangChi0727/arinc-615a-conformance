@@ -403,6 +403,40 @@ def test_incremental_replay_rejects_a_new_request_backfilled_before_the_processe
     assert replay.response_resolutions == {}
 
 
+@pytest.mark.parametrize(
+    ("tail_sequence", "tail_kind", "tail_event_type"),
+    (
+        (12, "NOT-A-KIND", "INVALID"),
+        (11, "REQUEST", "REQ"),
+    ),
+    ids=("invalid-kind", "duplicate-sequence"),
+)
+def test_incremental_replay_checks_a_valid_prefix_before_rejecting_a_malformed_tail(
+    tail_sequence: int,
+    tail_kind: str,
+    tail_event_type: str,
+) -> None:
+    """A malformed later item cannot mask an earlier controlled backfill."""
+
+    replay = replay_ownership(
+        (
+            _event("C", 3, "REQUEST", "k", "REQ", 0),
+            _event("R2", 11, "RESPONSE", "k", "RESP", 0),
+            _event("invalid-tail", tail_sequence, tail_kind, "k", tail_event_type, 0),
+        ),
+        _contract(policy="MOST-RECENT", concurrent=True, authority="METHOD-ONLY"),
+        prior_order_boundary=OwnershipOrderBoundary(10, Fraction(0), frozenset({"A", "R1"})),
+    )
+
+    assert {item.code for item in replay.diagnostics} == {
+        "INVALID-OWNERSHIP-EVENT",
+        "INSUFFICIENT-OWNERSHIP-CONTEXT",
+    }
+    assert set(replay.event_refs) == {"C", "R2"}
+    assert replay.request_dispositions == {}
+    assert replay.response_resolutions == {}
+
+
 def test_incremental_replay_enforces_global_sequence_timestamp_and_exact_active_rules() -> None:
     """The retained prefix has strict sequence but nondecreasing time order."""
 

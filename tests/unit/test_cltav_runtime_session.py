@@ -17,6 +17,7 @@ from cltav_runtime.bindings import RuntimeAuthorityBinding
 from cltav_runtime.kernel import ContractSnapshot, Interval, ModelContext, initial_entry, propagate_transition
 from cltav_runtime.interpretation import (
     InterpretationContract,
+    OwnershipEvent,
     assess_observation,
     bind_observation_input,
     observation_input_from_mapping,
@@ -1484,7 +1485,10 @@ def test_session_gives_a_backfilled_order_error_precedence_over_a_terminal_recei
     assert session._state_error(rejected.state) is None
 
 
-def test_session_does_not_admit_an_order_invalid_raw_delta_from_a_rejected_s4_record() -> None:
+@pytest.mark.parametrize("masked_unit", (False, True), ids=("order-only", "wrong-unit"))
+def test_session_does_not_admit_an_order_invalid_raw_delta_from_a_rejected_s4_record(
+    masked_unit: bool,
+) -> None:
     """The malformed-record path uses the same boundary and NONE ledger mode."""
 
     binding, model, fixture = _runtime_parts()
@@ -1529,8 +1533,16 @@ def test_session_does_not_admit_an_order_invalid_raw_delta_from_a_rejected_s4_re
 
         def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
             returned = self.delegate.execute(request)
+            material = returned.record.observation_input
+            assert material is not None
             return EnvironmentExecution(
-                replace(returned.record, effect_class="CONFIRMED-NOT-SENT"),
+                replace(
+                    returned.record,
+                    effect_class="CONFIRMED-NOT-SENT",
+                    observation_input=(
+                        replace(material, unit="wrong-unit") if masked_unit else material
+                    ),
+                ),
                 returned.successor,
             )
 
@@ -1541,9 +1553,10 @@ def test_session_does_not_admit_an_order_invalid_raw_delta_from_a_rejected_s4_re
     assert evidence.committed is False
     assert evidence.resolution_code == "INVALID-EXECUTION-RECORD"
     assert evidence.observation_assessment is not None
-    assert {diagnostic.code for diagnostic in evidence.observation_assessment.diagnostics} >= {
-        "INSUFFICIENT-OWNERSHIP-CONTEXT",
-    }
+    expected_codes = {"INSUFFICIENT-OWNERSHIP-CONTEXT"}
+    if masked_unit:
+        expected_codes.add("OBSERVATION-CLOCK-UNIT-MISMATCH")
+    assert {diagnostic.code for diagnostic in evidence.observation_assessment.diagnostics} >= expected_codes
     assert rejected.state.history.hypotheses == first.state.history.hypotheses
     assert rejected.state.event_identity_refs == first.state.event_identity_refs
     assert rejected.state.consumed_response_ids == first.state.consumed_response_ids
@@ -1565,6 +1578,313 @@ def test_session_does_not_admit_an_order_invalid_raw_delta_from_a_rejected_s4_re
         ),
     )
     assert fresh._state_error(rejected.state) is None
+
+
+@pytest.mark.parametrize(
+    ("field", "invalid_value", "expected_code", "expected_resolution"),
+    (
+        ("clock_identity", "wrong-clock", "OBSERVATION-CLOCK-UNIT-MISMATCH", "OBSERVATION-INTERPRETATION-ERROR"),
+        ("unit", "wrong-unit", "OBSERVATION-CLOCK-UNIT-MISMATCH", "OBSERVATION-INTERPRETATION-ERROR"),
+        ("measurement_interval", None, "INVALID-MEASUREMENT-INTERVAL", "OBSERVATION-UNCERTAINTY-WINDOW-MISMATCH"),
+    ),
+)
+@pytest.mark.parametrize("retain_active", (True, False), ids=("active-seed", "empty-active-seed"))
+@pytest.mark.parametrize("resource_mode", ("ROUNDS", "BUDGET"))
+@pytest.mark.parametrize("resume_fresh", (False, True), ids=("same", "fresh"))
+def test_session_does_not_admit_an_order_invalid_delta_when_an_input_error_masks_it(
+    field: str,
+    invalid_value: object,
+    expected_code: str,
+    expected_resolution: str,
+    retain_active: bool,
+    resource_mode: str,
+    resume_fresh: bool,
+) -> None:
+    """An outer input error cannot turn a rejected backfill into a ledger fact."""
+
+    binding, model, fixture = _runtime_parts()
+    first_events: list[dict[str, object]] = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+    ]
+    if retain_active:
+        first_events.append(
+            {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        )
+    first_events.append(
+        {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    )
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="B" if retain_active else "A",
+            response_id="R1",
+            events=first_events,
+            measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C",
+            response_id="R2",
+            events=[
+                {"id": "C", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R2", "sequence": 11, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    resources = ResourceState.rounds(4) if resource_mode == "ROUNDS" else ResourceState.budget(12)
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": f"global-order-masked-{field}-{retain_active}-{resource_mode}-{resume_fresh}",
+        "run_id": f"global-order-masked-{field}-{retain_active}-{resource_mode}-{resume_fresh}",
+        "initial_summary": "q0",
+        "resources": resources,
+        "retry_cap": 3,
+        "interpretation_contract": _runtime_interpretation_contract(
+            model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    }
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    assert first.state.active_trigger_event_ids == ({"A"} if retain_active else frozenset())
+
+    if resume_fresh:
+        fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+        target = ReferenceSession(
+            binding=fresh_binding,
+            model=fresh_model,
+            session_id=kwargs["session_id"],
+            run_id=kwargs["run_id"],
+            initial_summary="q0",
+            resources=ResourceState.rounds(4) if resource_mode == "ROUNDS" else ResourceState.budget(12),
+            retry_cap=3,
+            interpretation_contract=_runtime_interpretation_contract(
+                fresh_model, policy="MOST-RECENT", concurrent_same_key=True,
+            ),
+        )
+    else:
+        target = source
+
+    class MaskedInputEnvironment:
+        def __init__(self, delegate: SyntheticEnvironment) -> None:
+            self.delegate = delegate
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = self.delegate.execute(request)
+            material = returned.record.observation_input
+            assert material is not None
+            return EnvironmentExecution(
+                replace(returned.record, observation_input=replace(material, **{field: invalid_value})),
+                returned.successor,
+            )
+
+    rejected = target.step(first.state, MaskedInputEnvironment(first.environment))
+    evidence = rejected.state.evidence[-1]
+
+    assert evidence.committed is False
+    assert evidence.resolution_code == expected_resolution
+    assert evidence.observation_assessment is not None
+    assert {diagnostic.code for diagnostic in evidence.observation_assessment.diagnostics} >= {
+        expected_code,
+        "INSUFFICIENT-OWNERSHIP-CONTEXT",
+    }
+    assert rejected.state.history.hypotheses == first.state.history.hypotheses
+    assert rejected.state.event_identity_refs == first.state.event_identity_refs
+    assert rejected.state.consumed_response_ids == first.state.consumed_response_ids
+    assert rejected.state.terminal_trigger_event_ids == first.state.terminal_trigger_event_ids
+    assert rejected.state.active_trigger_event_ids == first.state.active_trigger_event_ids
+    charged = target._model.actions[evidence.snapshot.action_id].cost
+    assert rejected.state.resources.remaining == first.state.resources.remaining - (
+        1 if resource_mode == "ROUNDS" else charged
+    )
+    assert rejected.state.attempts == first.state.attempts + 1
+    assert rejected.environment._state == "private-a2"
+    fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+    fresh = ReferenceSession(
+        binding=fresh_binding,
+        model=fresh_model,
+        session_id=kwargs["session_id"],
+        run_id=kwargs["run_id"],
+        initial_summary="q0",
+        resources=ResourceState.rounds(4) if resource_mode == "ROUNDS" else ResourceState.budget(12),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            fresh_model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    assert fresh._state_error(rejected.state) is None
+
+
+@pytest.mark.parametrize(
+    ("tail_sequence", "tail_kind", "tail_event_type"),
+    (
+        (12, "NOT-A-KIND", "INVALID"),
+        (11, "REQUEST", "REQ"),
+    ),
+    ids=("invalid-kind", "duplicate-sequence"),
+)
+def test_session_does_not_admit_an_order_invalid_prefix_when_a_malformed_tail_follows(
+    tail_sequence: int,
+    tail_kind: str,
+    tail_event_type: str,
+) -> None:
+    """The parsed valid prefix is still subject to the global order frontier."""
+
+    binding, model, fixture = _runtime_parts()
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C",
+            response_id="R2",
+            events=[
+                {"id": "C", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R2", "sequence": 11, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="global-order-malformed-tail",
+        run_id="global-order-malformed-tail",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    first = session.step(session.initial_state, environment)
+
+    class MalformedTailEnvironment:
+        def __init__(self, delegate: SyntheticEnvironment) -> None:
+            self.delegate = delegate
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = self.delegate.execute(request)
+            material = returned.record.observation_input
+            assert material is not None
+            malformed_tail = OwnershipEvent(
+                "invalid-tail", tail_sequence, tail_kind, "k", tail_event_type, Fraction(0),
+            )
+            return EnvironmentExecution(
+                replace(returned.record, observation_input=replace(
+                    material, events=material.events + (malformed_tail,),
+                )),
+                returned.successor,
+            )
+
+    rejected = session.step(first.state, MalformedTailEnvironment(first.environment))
+    evidence = rejected.state.evidence[-1]
+
+    assert evidence.committed is False
+    assert evidence.resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+    assert evidence.observation_assessment is not None
+    assert {diagnostic.code for diagnostic in evidence.observation_assessment.diagnostics} >= {
+        "INVALID-OWNERSHIP-EVENT",
+        "INSUFFICIENT-OWNERSHIP-CONTEXT",
+    }
+    assert rejected.state.history.hypotheses == first.state.history.hypotheses
+    assert rejected.state.event_identity_refs == first.state.event_identity_refs
+    assert rejected.state.consumed_response_ids == first.state.consumed_response_ids
+    assert rejected.state.terminal_trigger_event_ids == first.state.terminal_trigger_event_ids
+    assert rejected.state.active_trigger_event_ids == first.state.active_trigger_event_ids
+    assert rejected.state.resources.remaining == first.state.resources.remaining - 1
+    assert rejected.state.attempts == first.state.attempts + 1
+    fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+    fresh = ReferenceSession(
+        binding=fresh_binding,
+        model=fresh_model,
+        session_id="global-order-malformed-tail",
+        run_id="global-order-malformed-tail",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            fresh_model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    assert fresh._state_error(rejected.state) is None
+
+
+def test_session_retains_a_order_forward_bound_delta_despite_a_clock_error() -> None:
+    """An input ERROR is not by itself a reason to discard verified raw facts."""
+
+    binding, model, fixture = _runtime_parts()
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C",
+            response_id="R2",
+            events=[
+                {"id": "C", "sequence": 11, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R2", "sequence": 12, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="global-order-forward-clock-error",
+        run_id="global-order-forward-clock-error",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    first = session.step(session.initial_state, environment)
+
+    class ForwardClockErrorEnvironment:
+        def __init__(self, delegate: SyntheticEnvironment) -> None:
+            self.delegate = delegate
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = self.delegate.execute(request)
+            material = returned.record.observation_input
+            assert material is not None
+            return EnvironmentExecution(
+                replace(returned.record, observation_input=replace(material, clock_identity="wrong-clock")),
+                returned.successor,
+            )
+
+    rejected = session.step(first.state, ForwardClockErrorEnvironment(first.environment))
+    assessment = rejected.state.evidence[-1].observation_assessment
+
+    assert assessment is not None
+    assert {diagnostic.code for diagnostic in assessment.diagnostics} >= {
+        "OBSERVATION-CLOCK-UNIT-MISMATCH",
+    }
+    assert "INSUFFICIENT-OWNERSHIP-CONTEXT" not in {
+        diagnostic.code for diagnostic in assessment.replay.diagnostics
+    }
+    assert set(rejected.state.event_identity_refs) == {"A", "C", "R1", "R2"}
+    assert rejected.state.consumed_response_ids == {"R1", "R2"}
+    assert rejected.state.terminal_trigger_event_ids == {"A", "C"}
+    assert rejected.state.active_trigger_event_ids == frozenset()
+    assert rejected.state.history.hypotheses == first.state.history.hypotheses
+    assert session._state_error(rejected.state) is None
 
 
 @pytest.mark.parametrize(
@@ -2566,7 +2886,9 @@ def test_session_quarantine_does_not_reclassify_a_new_request_named_as_the_selec
         # This altered B starts the conflict; X is a separate new request
         # incorrectly named as responseId by malformed material.
         {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 1},
-        {"id": "X", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 1},
+        # X is a genuinely later new fact.  It may remain quarantined when B
+        # conflicts, but must not itself be a forbidden backfill.
+        {"id": "X", "sequence": 4, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 1},
     ]
     environment = _two_round_observation_environment(
         fixture,

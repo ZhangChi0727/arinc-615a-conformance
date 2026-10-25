@@ -275,6 +275,8 @@ def replay_ownership(
     contract_id = parsed_contract.contract_id if parsed_contract is not None else None
     prior_active: dict[str, OwnershipEvent] = {}
     order_boundary: OwnershipOrderBoundary | None = None
+    controlled_request_ids: set[str] = set()
+    seeded_identifiers = frozenset()
     if parsed_contract is not None:
         prior_active, seed_errors = _parse_active_seed(prior_active_requests, parsed_contract)
         diagnostics.extend(seed_errors)
@@ -292,6 +294,52 @@ def replay_ownership(
                     "OWNERSHIP-SEED-EVENT-CONFLICT",
                     "raw trace reuses a retained active request identity with a different public event",
                 ))
+        # Even when one raw item is malformed, every successfully parsed
+        # event remains a proposed public fact.  Check those values against
+        # the retained high-water boundary before returning the parse error;
+        # otherwise an invalid item could mask an earlier backfill and let the
+        # session retain it through its ordinary S7 ledger path.
+        controlled_request_ids = set(prior_active) | {
+            event.event_id
+            for event in parsed_events
+            if _request_matches_contract(event, parsed_contract)
+        }
+        seeded_identifiers = frozenset(prior_active)
+        if not seed_errors and not boundary_errors:
+            for event in parsed_events:
+                retained = prior_active.get(event.event_id)
+                exact_active_confirmation = (
+                    retained is not None
+                    and event.kind == "REQUEST"
+                    and _strict_event_equal(event, retained)
+                )
+                if (
+                    order_boundary is not None
+                    and event.event_id in order_boundary.retained_event_ids
+                    and not exact_active_confirmation
+                ):
+                    diagnostics.append(KernelDiagnostic(
+                        "RETAINED-OWNERSHIP-EVENT-REPLAY",
+                        "a retained terminal ownership event cannot be introduced again in a later delta",
+                    ))
+                    continue
+                if (
+                    order_boundary is not None
+                    and not exact_active_confirmation
+                    and _is_order_controlled_event(
+                        event,
+                        parsed_contract,
+                        controlled_request_ids,
+                    )
+                    and (
+                        event.sequence <= order_boundary.sequence
+                        or event.timestamp < order_boundary.timestamp
+                    )
+                ):
+                    diagnostics.append(KernelDiagnostic(
+                        "INSUFFICIENT-OWNERSHIP-CONTEXT",
+                        "a newly introduced controlled event precedes the retained global ownership order frontier",
+                    ))
     if diagnostics or parsed_contract is None:
         return OwnershipReplay(contract_id, {}, {}, {}, event_refs, tuple(diagnostics))
 
@@ -305,50 +353,11 @@ def replay_ownership(
     # finite raw trace: otherwise a foreign cancellation placed *before* a
     # later matching request with the same target ID could be silently
     # discarded and the future controlled request would escape validation.
-    # This set deliberately contains only contract requests (plus the retained
-    # ACTIVE seed), so a fully unrelated transaction remains admissible.
-    controlled_request_ids = set(prior_active) | {
-        event.event_id
-        for event in parsed_events
-        if _request_matches_contract(event, parsed_contract)
-    }
-    seeded_identifiers = frozenset(prior_active)
-    for event in parsed_events:
-        retained = prior_active.get(event.event_id)
-        exact_active_confirmation = (
-            retained is not None
-            and event.kind == "REQUEST"
-            and _strict_event_equal(event, retained)
-        )
-        if (
-            order_boundary is not None
-            and event.event_id in order_boundary.retained_event_ids
-            and not exact_active_confirmation
-        ):
-            diagnostics.append(KernelDiagnostic(
-                "RETAINED-OWNERSHIP-EVENT-REPLAY",
-                "a retained terminal ownership event cannot be introduced again in a later delta",
-            ))
-            continue
-        if (
-            order_boundary is not None
-            and not exact_active_confirmation
-            and _is_order_controlled_event(
-                event,
-                parsed_contract,
-                controlled_request_ids,
-            )
-            and (
-                event.sequence <= order_boundary.sequence
-                or event.timestamp < order_boundary.timestamp
-            )
-        ):
-            diagnostics.append(KernelDiagnostic(
-                "INSUFFICIENT-OWNERSHIP-CONTEXT",
-                "a newly introduced controlled event precedes the retained global ownership order frontier",
-            ))
-    if diagnostics:
-        return OwnershipReplay(contract_id, {}, {}, {}, event_refs, tuple(diagnostics))
+    # ``controlled_request_ids`` was derived before the early-return gate so
+    # the same complete parsed trace supplies the order preflight above and
+    # the semantic replay below.  It deliberately contains only contract
+    # requests (plus the retained ACTIVE seed), so a fully unrelated
+    # transaction remains admissible.
 
     for event in parsed_events:
         if event.kind == "REQUEST":
@@ -480,7 +489,7 @@ def assess_observation(
     if input_error is not None:
         return _error_assessment(
             input_error.code, input_error.message, contract=parsed_contract,
-            input_value=value, replay=replay,
+            input_value=value, replay=replay, diagnostics=replay.diagnostics,
         )
     if replay.diagnostics:
         return _error_assessment(
@@ -871,7 +880,7 @@ def _parse_order_boundary(
     ):
         return None, (KernelDiagnostic(
             "INVALID-OWNERSHIP-ORDER-BOUNDARY",
-            "retained ownership order boundary must contain exact nonnegative sequence/timestamp and retained event identities",
+            "retained ownership order boundary must contain a nonnegative sequence, exact rational timestamp, and retained event identities",
         ),)
     if any(
         event.sequence > value.sequence or event.timestamp > value.timestamp

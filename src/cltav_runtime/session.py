@@ -2976,14 +2976,24 @@ def _observation_ledger_mode(
     quarantine path; all other checked replays keep the existing FULL path.
     """
 
-    if (
-        type(assessment) is ObservationAssessment
-        and any(
+    if type(assessment) is ObservationAssessment:
+        # The assessment's displayed/primary error may be an independent
+        # record, clock, unit, or measurement failure.  Ledger authority is
+        # instead derived from the ownership replay produced from the raw
+        # material: if that replay rejected the global boundary, no parsed
+        # event from this delta may become a retained public fact.  Retaining
+        # the outer scan keeps older constructed assessments conservative;
+        # the replay scan closes early-return/masked-error paths without
+        # trusting presentation order.
+        diagnostic_sets = (assessment.diagnostics,)
+        if type(assessment.replay) is OwnershipReplay:
+            diagnostic_sets = diagnostic_sets + (assessment.replay.diagnostics,)
+        if any(
             diagnostic.code in _OBSERVATION_ORDER_REJECTION_CODES
-            for diagnostic in assessment.diagnostics
-        )
-    ):
-        return "NONE"
+            for diagnostics in diagnostic_sets
+            for diagnostic in diagnostics
+        ):
+            return "NONE"
     if conflict_code in _OBSERVATION_QUARANTINE_CODES:
         return "QUARANTINE"
     return "FULL"
