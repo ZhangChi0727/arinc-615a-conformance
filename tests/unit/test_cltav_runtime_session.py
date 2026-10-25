@@ -2188,6 +2188,513 @@ def test_session_rejected_s4_record_does_not_consume_an_explicitly_rejected_resp
     assert session._state_error(rejected.state) is None
 
 
+@pytest.mark.parametrize("resource_mode", ("ROUNDS", "BUDGET"))
+@pytest.mark.parametrize("response_sequence", (3, 12), ids=("order-invalid", "order-valid"))
+@pytest.mark.parametrize("carrier_kind", ("list", "empty-tuple", "tuple-subclass"))
+@pytest.mark.parametrize(
+    "returned_effect",
+    ("NONE", "CONFIRMED-NOT-SENT"),
+    ids=("ordinary-record", "malformed-non-send-record"),
+)
+def test_session_rejects_unparseable_event_carrier_without_creating_a_sparse_receipt(
+    resource_mode: str,
+    response_sequence: int,
+    carrier_kind: str,
+    returned_effect: str,
+) -> None:
+    """Only a nonempty exact tuple can establish that selected R2 was absent."""
+
+    binding, model, fixture = _runtime_parts()
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C",
+            response_id="R2",
+            events=[
+                {"id": "C", "sequence": 11, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R2", "sequence": 12, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    initial_resources = (
+        ResourceState.rounds(4) if resource_mode == "ROUNDS" else ResourceState.budget(12)
+    )
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id=(
+            f"carrier-{carrier_kind}-{resource_mode}-{response_sequence}-{returned_effect}"
+        ),
+        run_id=(
+            f"carrier-{carrier_kind}-{resource_mode}-{response_sequence}-{returned_effect}"
+        ),
+        initial_summary="q0",
+        resources=initial_resources,
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    first = session.step(session.initial_state, environment)
+
+    class UnsupportedCarrierEnvironment:
+        def __init__(self, delegate: SyntheticEnvironment) -> None:
+            self.delegate = delegate
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = self.delegate.execute(request)
+            material = returned.record.observation_input
+            assert material is not None and len(material.events) == 2
+            if carrier_kind == "list":
+                events: object = [
+                    material.events[0],
+                    replace(material.events[1], sequence=response_sequence),
+                ]
+            elif carrier_kind == "empty-tuple":
+                events = ()
+            else:
+                class TupleSubclass(tuple):
+                    pass
+
+                events = TupleSubclass((
+                    material.events[0],
+                    replace(material.events[1], sequence=response_sequence),
+                ))
+            malformed_material = replace(
+                material,
+                events=events,
+            )
+            return EnvironmentExecution(
+                replace(
+                    returned.record,
+                    effect_class=returned_effect,
+                    observation_input=malformed_material,
+                ),
+                returned.successor,
+            )
+
+    rejected = session.step(first.state, UnsupportedCarrierEnvironment(first.environment))
+    evidence = rejected.state.evidence[-1]
+
+    assert evidence.committed is False
+    assert evidence.resolution_code == "INVALID-OBSERVATION-EVENT-CARRIER"
+    assert evidence.execution.effect_class == "UNKNOWN-EFFECT"
+    assert evidence.observation_assessment is None
+    # An unparseable outer carrier is normalized away after its issued charge.
+    # It is not retained as a replayable trace/audit object which could later
+    # be substituted for another malformed payload.
+    assert evidence.rejected_response is None
+    assert set(rejected.state.event_identity_refs) == {"A", "R1"}
+    assert rejected.state.consumed_response_ids == {"R1"}
+    assert rejected.state.terminal_trigger_event_ids == {"A"}
+    assert rejected.state.active_trigger_event_ids == frozenset()
+    assert rejected.state.history.hypotheses == first.state.history.hypotheses
+    assert rejected.state.history.compatible_state_by_hypothesis == first.state.history.compatible_state_by_hypothesis
+    assert set(rejected.state.history.status_by_hypothesis.values()) == {"CONSERVATIVE-UNKNOWN"}
+    assert rejected.state.context.q_status == "UNKNOWN"
+    assert rejected.state.context.current_summary is None
+    charge = session._model.actions[evidence.snapshot.action_id].cost
+    assert rejected.state.resources.remaining == first.state.resources.remaining - (
+        1 if resource_mode == "ROUNDS" else charge
+    )
+    assert rejected.state.attempts == first.state.attempts + 1
+    assert rejected.environment._state == "private-a2"
+    assert session._state_error(rejected.state) is None
+
+    fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+    fresh = ReferenceSession(
+        binding=fresh_binding,
+        model=fresh_model,
+        session_id=session.initial_state.context.session_id,
+        run_id=session.initial_state.context.run_id,
+        initial_summary="q0",
+        resources=initial_resources,
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            fresh_model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    assert fresh._state_error(rejected.state) is None
+
+    # A non-null interpretation result, or any newly inserted raw record,
+    # would recreate the old unsafe evidence path.  An independently replaying
+    # coordinator must refuse it before a third dispatch or charge.
+    forged_assessment = assess_observation(
+        first.state.evidence[-1].execution.observation_input,
+        fresh._interpretation_contract,
+    )
+    forged_assessment_state = replace(
+        rejected.state,
+        evidence=rejected.state.evidence[:-1] + (
+            replace(evidence, observation_assessment=forged_assessment),
+        ),
+    )
+    assert fresh._state_error(forged_assessment_state).code == "EVIDENCE-ERROR-MISMATCH"
+
+    forged_record_state = replace(
+        rejected.state,
+        evidence=rejected.state.evidence[:-1] + (
+            replace(evidence, rejected_response=first.state.evidence[-1].execution),
+        ),
+    )
+    assert fresh._state_error(forged_record_state).code == "EVIDENCE-ERROR-MISMATCH"
+
+    class NoDispatch:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:  # pragma: no cover - must not run
+            raise AssertionError(f"forged list-carrier evidence reached dispatch: {request}")
+
+    blocked = fresh.step(forged_assessment_state, NoDispatch())  # type: ignore[arg-type]
+    assert blocked.stop_reason == "Stop-Error"
+    assert blocked.state is forged_assessment_state
+    assert blocked.state.resources == forged_assessment_state.resources
+    assert blocked.diagnostics[0].code == "EVIDENCE-ERROR-MISMATCH"
+
+    # The genuine checkpoint itself can still be admitted by a fresh session.
+    resumed = fresh.step(rejected.state, rejected.environment)
+    assert not any(diagnostic.code.startswith("EVIDENCE-") for diagnostic in resumed.diagnostics)
+    assert resumed.state.resources == rejected.state.resources
+    assert resumed.state.evidence == rejected.state.evidence
+
+
+def test_session_rejects_list_carrier_before_quarantine_can_admit_any_delta() -> None:
+    """An illegal outer carrier cannot use the tuple QUARANTINE exception."""
+
+    binding, model, fixture = _runtime_parts()
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C",
+            response_id="R2",
+            events=[
+                {"id": "C", "sequence": 11, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R2", "sequence": 12, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="list-carrier-before-quarantine",
+        run_id="list-carrier-before-quarantine",
+        initial_summary="q0",
+        resources=ResourceState.rounds(3),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    first = session.step(session.initial_state, environment)
+
+    class ListConflictEnvironment:
+        def __init__(self, delegate: SyntheticEnvironment) -> None:
+            self.delegate = delegate
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = self.delegate.execute(request)
+            material = returned.record.observation_input
+            assert material is not None
+            return EnvironmentExecution(
+                replace(
+                    returned.record,
+                    observation_input=replace(
+                        material,
+                        events=[
+                            OwnershipEvent("R1", 11, "REQUEST", "k", "REQ", Fraction(0)),
+                            OwnershipEvent("C", 12, "REQUEST", "k", "REQ", Fraction(0)),
+                            OwnershipEvent("R2", 3, "RESPONSE", "k", "RESP", Fraction(0)),
+                        ],
+                    ),
+                ),
+                returned.successor,
+            )
+
+    rejected = session.step(first.state, ListConflictEnvironment(first.environment))
+    evidence = rejected.state.evidence[-1]
+
+    assert evidence.resolution_code == "INVALID-OBSERVATION-EVENT-CARRIER"
+    assert evidence.observation_assessment is None
+    assert set(rejected.state.event_identity_refs) == {"A", "R1"}
+    assert rejected.state.consumed_response_ids == {"R1"}
+    assert rejected.state.terminal_trigger_event_ids == {"A"}
+    assert rejected.state.active_trigger_event_ids == frozenset()
+    assert session._state_error(rejected.state) is None
+
+
+def test_session_replays_an_unparseable_carrier_without_granting_raw_provenance_authority() -> None:
+    """A raw/visible mismatch stays audit-only when the outer carrier is invalid."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="list-carrier-provenance-unavailable",
+        run_id="list-carrier-provenance-unavailable",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    environment = _environment_with_observation_material(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+
+    class ProvenanceUnavailableListCarrier:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = environment.execute(request)
+            material = returned.record.observation_input
+            assert material is not None
+            # Deliberately preserve raw evidence_ref while changing the
+            # visible reference.  This cannot form a provenance-backed
+            # ownership fact, and the invalid outer list carrier prevents it
+            # from being interpreted as one.
+            return EnvironmentExecution(
+                replace(
+                    returned.record,
+                    evidence_ref="visible-provenance-mismatch",
+                    observation_input=replace(material, events=list(material.events)),
+                ),
+                returned.successor,
+            )
+
+    rejected = session.step(session.initial_state, ProvenanceUnavailableListCarrier())
+    evidence = rejected.state.evidence[-1]
+
+    assert evidence.resolution_code == "INVALID-OBSERVATION-EVENT-CARRIER"
+    assert evidence.observation_assessment is None
+    assert evidence.rejected_response is None
+    assert rejected.state.event_identity_refs == {}
+    assert rejected.state.consumed_response_ids == frozenset()
+    assert session._state_error(rejected.state) is None
+
+    fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+    fresh = ReferenceSession(
+        binding=fresh_binding,
+        model=fresh_model,
+        session_id="list-carrier-provenance-unavailable",
+        run_id="list-carrier-provenance-unavailable",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(fresh_model),
+    )
+    assert fresh._state_error(rejected.state) is None
+
+
+def test_session_normalizes_a_cyclic_unparseable_event_carrier_without_recursing() -> None:
+    """An adversarial cyclic list must take the same finite canonical S4 path."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="cyclic-list-carrier",
+        run_id="cyclic-list-carrier",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    environment = _environment_with_observation_material(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+
+    class CyclicListCarrier:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = environment.execute(request)
+            material = returned.record.observation_input
+            assert material is not None
+            cyclic_events: list[object] = []
+            cyclic_events.append(cyclic_events)
+            return EnvironmentExecution(
+                replace(
+                    returned.record,
+                    observation_input=replace(material, events=cyclic_events),
+                ),
+                returned.successor,
+            )
+
+    rejected = session.step(session.initial_state, CyclicListCarrier())
+    evidence = rejected.state.evidence[-1]
+
+    assert evidence.resolution_code == "INVALID-OBSERVATION-EVENT-CARRIER"
+    assert evidence.rejected_response is None
+    assert evidence.observation_assessment is None
+    assert rejected.state.event_identity_refs == {}
+    assert rejected.state.consumed_response_ids == frozenset()
+    assert rejected.environment._state == "private-a1"
+    assert session._state_error(rejected.state) is None
+
+    fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+    fresh = ReferenceSession(
+        binding=fresh_binding,
+        model=fresh_model,
+        session_id="cyclic-list-carrier",
+        run_id="cyclic-list-carrier",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(fresh_model),
+    )
+    assert fresh._state_error(rejected.state) is None
+
+
+def test_session_prioritizes_an_unparseable_carrier_over_compound_header_errors() -> None:
+    """No adjacent S4 header fault may retain an invalid carrier as raw evidence."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="compound-list-carrier",
+        run_id="compound-list-carrier",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    environment = _environment_with_observation_material(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+
+    class CompoundInvalidCarrier:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = environment.execute(request)
+            material = returned.record.observation_input
+            assert material is not None
+            return EnvironmentExecution(
+                replace(
+                    returned.record,
+                    evidence_ref="",
+                    observation_input=replace(material, events=list(material.events)),
+                ),
+                returned.successor,
+            )
+
+    rejected = session.step(session.initial_state, CompoundInvalidCarrier())
+    evidence = rejected.state.evidence[-1]
+
+    assert evidence.resolution_code == "INVALID-OBSERVATION-EVENT-CARRIER"
+    assert evidence.rejected_response is None
+    assert evidence.observation_assessment is None
+    assert rejected.state.event_identity_refs == {}
+    assert rejected.state.resources.remaining == 1
+    assert session._state_error(rejected.state) is None
+
+
+def test_session_canonicalizes_a_foreign_unparseable_carrier_without_retaining_it() -> None:
+    """Carrier rejection wins before a foreign raw record can enter evidence."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="foreign-list-carrier",
+        run_id="foreign-list-carrier",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    environment = _environment_with_observation_material(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+
+    class ForeignListCarrierEnvironment:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = environment.execute(request)
+            material = returned.record.observation_input
+            assert material is not None
+            return EnvironmentExecution(
+                replace(
+                    returned.record,
+                    execution_attempt_id="foreign-execution",
+                    action_id="foreign-action",
+                    evidence_ref="foreign-evidence",
+                    observation_input=replace(material, events=list(material.events)),
+                ),
+                returned.successor,
+            )
+
+    rejected = session.step(session.initial_state, ForeignListCarrierEnvironment())
+    evidence = rejected.state.evidence[-1]
+
+    assert evidence.resolution_code == "INVALID-OBSERVATION-EVENT-CARRIER"
+    assert evidence.observation_assessment is None
+    assert evidence.rejected_response is None
+    assert set(rejected.state.event_identity_refs) == set()
+    assert rejected.state.consumed_response_ids == frozenset()
+    assert session._state_error(rejected.state) is None
+
+    fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+    fresh = ReferenceSession(
+        binding=fresh_binding,
+        model=fresh_model,
+        session_id="foreign-list-carrier",
+        run_id="foreign-list-carrier",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(fresh_model),
+    )
+    assert fresh._state_error(rejected.state) is None
+
+
 def test_session_keeps_a_genuine_sparse_response_when_an_unrelated_raw_event_is_rejected() -> None:
     """Parser provenance fences its own ID, not every sparse receipt."""
 

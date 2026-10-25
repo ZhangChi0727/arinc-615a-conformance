@@ -48,6 +48,7 @@ _CHARGED_ERROR_CODES = frozenset({
     "POST-DISPATCH-ERROR",
     "EXECUTION-RESULT-TYPE-ERROR",
     "EXECUTION-IDENTITY-ERROR",
+    "INVALID-OBSERVATION-EVENT-CARRIER",
     "INVALID-EXECUTION-RECORD",
     "SUMMARY-CONFIRMATION-ERROR",
     "RECOVERY-TARGET-MISMATCH",
@@ -975,6 +976,30 @@ class ReferenceSession:
                         assessment,
                     )
                     expected_code = conflict.code if conflict is not None else rejected_record_error.code
+                elif expected_code == "INVALID-OBSERVATION-EVENT-CARRIER":
+                    # An unsupported outer carrier has no parseable, typed
+                    # evidence content.  Live S4 therefore normalizes it to
+                    # the canonical charged error record rather than storing
+                    # untrusted raw material in a replayable checkpoint.
+                    # The code is still explicit, but a raw list, subclass,
+                    # or cyclic object cannot be edited into a later ledger
+                    # fact or a coordinated evidence witness.
+                    if item.rejected_response is not None:
+                        return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "invalid observation carrier must not retain replayable raw material")
+                elif expected_code == "EXECUTION-IDENTITY-ERROR":
+                    # This branch is the reciprocal of the live S4 identity
+                    # check.  A canonical identity error must retain a visible
+                    # record which actually differs from the issued attempt
+                    # or action; otherwise a stale/foreign return could be
+                    # rewritten into an ordinary record after its charge.
+                    if (
+                        type(item.rejected_response) is not VisibleExecutionRecord
+                        or (
+                            item.rejected_response.execution_attempt_id == expected_execution_id
+                            and item.rejected_response.action_id == action.action_id
+                        )
+                    ):
+                        return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "identity error does not retain a foreign execution record")
                 if (
                     expected_code not in _CHARGED_ERROR_CODES
                     or item.resolution_code != expected_code
@@ -1598,7 +1623,17 @@ class ReferenceSession:
                 diagnostics=diagnostics,
                 code=rejected_code,
                 message=record_error.message,
-                execution_record=execution.record,
+                # The unsupported outer carrier is neither typed trace
+                # evidence nor a safe replay witness.  Retain its named S4
+                # failure through the canonical charged error record only;
+                # never place the arbitrary raw container in checkpoint
+                # evidence where a later coordinator could mistake it for
+                # parsed material.
+                execution_record=(
+                    None
+                    if rejected_code == "INVALID-OBSERVATION-EVENT-CARRIER"
+                    else execution.record
+                ),
                 environment_after_execution=execution.successor,
                 observation_assessment=rejected_assessment,
                 observation_ledger_mode=_observation_ledger_mode(
@@ -2712,6 +2747,22 @@ def _incoming_record_error(
     a confirmed non-send, or a conservative unknown.
     """
 
+    # A mapping boundary normalizes a public event array into this exact,
+    # nonempty tuple carrier.  A directly fabricated ObservationInput may
+    # evade that normalizer, but an unparseable container cannot establish
+    # that a selected response is truly sparse.  Reject it at S4 before an
+    # ERROR path can retain a ledger fact that its own strict replay cannot
+    # reproduce.
+    if (
+        interpretation_contract is not None
+        and action.kind == "TEST"
+        and type(record.observation_input) is ObservationInput
+        and not _has_parseable_observation_event_carrier(record.observation_input)
+    ):
+        return KernelDiagnostic(
+            "INVALID-OBSERVATION-EVENT-CARRIER",
+            "bound TEST observation events must use one nonempty exact tuple carrier",
+        )
     if any(
         not isinstance(value, str) or not value.strip()
         for value in (record.execution_attempt_id, record.action_id, record.evidence_ref)
@@ -2822,6 +2873,23 @@ def _incoming_record_error(
     return None
 
 
+def _has_parseable_observation_event_carrier(value: object) -> bool:
+    """Whether S4 can make finite, typed claims about the raw event carrier.
+
+    This deliberately validates only the carrier here.  Individual typed
+    events still flow to the ownership parser, which may retain a checked
+    prefix and record exact rejected IDs.  An unsupported outer carrier is
+    different: it provides no basis for declaring that a same-ID event was
+    absent, so it has no assessment or ledger authority.
+    """
+
+    return (
+        type(value) is ObservationInput
+        and type(value.events) is tuple
+        and bool(value.events)
+    )
+
+
 def _observation_record_binding_error(
     record: VisibleExecutionRecord,
     model: FiniteSessionModel,
@@ -2901,6 +2969,7 @@ def _bound_rejected_observation_assessment(
         or type(record.observation_input) is not ObservationInput
         or record.execution_attempt_id != execution_attempt_id
         or record.action_id != action.action_id
+        or not _has_parseable_observation_event_carrier(record.observation_input)
     ):
         return None
     if _observation_record_provenance_error(record) is not None:
