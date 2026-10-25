@@ -132,6 +132,11 @@ class OwnershipReplay:
     response_resolutions: Mapping[str, OwnershipResolution]
     event_refs: Mapping[str, OwnershipEvent]
     diagnostics: tuple[KernelDiagnostic, ...] = ()
+    # Exact nonblank IDs named by raw OwnershipEvent objects which were
+    # explicitly present but failed the typed parser.  This is distinct from
+    # a truly sparse selected response: a scalar response ID may stand alone
+    # only when the raw trace did not provide an event object under that ID.
+    rejected_event_ids: frozenset[str] = frozenset()
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "request_dispositions", MappingProxyType(dict(self.request_dispositions)))
@@ -139,6 +144,7 @@ class OwnershipReplay:
         object.__setattr__(self, "response_resolutions", MappingProxyType(dict(self.response_resolutions)))
         object.__setattr__(self, "event_refs", MappingProxyType(dict(self.event_refs)))
         object.__setattr__(self, "diagnostics", tuple(self.diagnostics))
+        object.__setattr__(self, "rejected_event_ids", frozenset(self.rejected_event_ids))
 
 
 @dataclass(frozen=True)
@@ -268,7 +274,7 @@ def replay_ownership(
     inventing history.
     """
 
-    parsed_events, event_errors = _parse_events(events)
+    parsed_events, event_errors, rejected_event_ids = _parse_events(events)
     parsed_contract, contract_errors = _parse_contract(contract)
     diagnostics = list(event_errors) + list(contract_errors)
     event_refs = {event.event_id: event for event in parsed_events}
@@ -341,7 +347,10 @@ def replay_ownership(
                         "a newly introduced controlled event precedes the retained global ownership order frontier",
                     ))
     if diagnostics or parsed_contract is None:
-        return OwnershipReplay(contract_id, {}, {}, {}, event_refs, tuple(diagnostics))
+        return OwnershipReplay(
+            contract_id, {}, {}, {}, event_refs, tuple(diagnostics),
+            rejected_event_ids,
+        )
 
     active: set[str] = set(prior_active)
     dispositions: dict[str, str] = {identifier: "ACTIVE" for identifier in prior_active}
@@ -446,7 +455,10 @@ def replay_ownership(
         termination_refs[owner] = event.event_id
         active.remove(owner)
 
-    return OwnershipReplay(contract_id, dispositions, termination_refs, resolutions, event_refs, tuple(diagnostics))
+    return OwnershipReplay(
+        contract_id, dispositions, termination_refs, resolutions, event_refs,
+        tuple(diagnostics), rejected_event_ids,
+    )
 
 
 def assess_observation(
@@ -732,26 +744,38 @@ def _assess_no_response(
     )
 
 
-def _parse_events(value: object) -> tuple[tuple[OwnershipEvent, ...], tuple[KernelDiagnostic, ...]]:
+def _parse_events(
+    value: object,
+) -> tuple[tuple[OwnershipEvent, ...], tuple[KernelDiagnostic, ...], frozenset[str]]:
     if type(value) is not tuple or not value:
-        return (), (KernelDiagnostic("INVALID-OWNERSHIP-TRACE", "events must be a nonempty tuple"),)
+        return (), (KernelDiagnostic("INVALID-OWNERSHIP-TRACE", "events must be a nonempty tuple"),), frozenset()
     parsed: list[OwnershipEvent] = []
     diagnostics: list[KernelDiagnostic] = []
+    rejected_event_ids: set[str] = set()
     seen_ids: set[str] = set()
     previous_sequence: int | None = None
     previous_timestamp: Fraction | None = None
+
+    def reject(item: OwnershipEvent, message: str) -> None:
+        diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-EVENT", message))
+        # Preserve the identity only when the raw item gave us an exact,
+        # usable public ID.  A non-event or an invalid ID has no identity to
+        # fence; it must not fabricate a response identity on its own.
+        if _nonblank(item.event_id):
+            rejected_event_ids.add(item.event_id)
+
     for item in value:
         if type(item) is not OwnershipEvent:
             diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-EVENT", "trace contains a non-OwnershipEvent value"))
             continue
         if not _nonblank(item.event_id) or item.event_id in seen_ids:
-            diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-EVENT", "event identifiers must be unique nonblank strings"))
+            reject(item, "event identifiers must be unique nonblank strings")
             continue
         if type(item.sequence) is not int or item.sequence < 0:
-            diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-EVENT", "event sequence must be a nonnegative integer"))
+            reject(item, "event sequence must be a nonnegative integer")
             continue
         if previous_sequence is not None and item.sequence <= previous_sequence:
-            diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-EVENT", "event sequence must be strictly increasing"))
+            reject(item, "event sequence must be strictly increasing")
             continue
         if (
             type(item.kind) is not str
@@ -759,28 +783,28 @@ def _parse_events(value: object) -> tuple[tuple[OwnershipEvent, ...], tuple[Kern
             or not _nonblank(item.key)
             or not _nonblank(item.event_type)
         ):
-            diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-EVENT", "event kind, key, or event type is invalid"))
+            reject(item, "event kind, key, or event type is invalid")
             continue
         timestamp = _fraction_or_none(item.timestamp)
         if timestamp is None:
-            diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-EVENT", "event timestamp must be an exact rational value"))
+            reject(item, "event timestamp must be an exact rational value")
             continue
         if previous_timestamp is not None and timestamp < previous_timestamp:
-            diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-EVENT", "event timestamps must be nondecreasing in trace order"))
+            reject(item, "event timestamps must be nondecreasing in trace order")
             continue
         target_required = item.kind in {"CANCEL", "SUPERSEDE"}
         if target_required and not _nonblank(item.target_request_id):
-            diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-EVENT", "cancellation or supersession requires a target request identity"))
+            reject(item, "cancellation or supersession requires a target request identity")
             continue
         if not target_required and item.target_request_id is not None:
             if item.kind != "REQUEST" or not _nonblank(item.target_request_id):
-                diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-EVENT", "only a request may carry a nonblank supersession target"))
+                reject(item, "only a request may carry a nonblank supersession target")
                 continue
         parsed.append(OwnershipEvent(str(item.event_id), item.sequence, str(item.kind), str(item.key), str(item.event_type), timestamp, None if item.target_request_id is None else str(item.target_request_id)))
         seen_ids.add(str(item.event_id))
         previous_sequence = item.sequence
         previous_timestamp = timestamp
-    return tuple(parsed), tuple(diagnostics)
+    return tuple(parsed), tuple(diagnostics), frozenset(rejected_event_ids)
 
 
 def _parse_active_seed(
@@ -812,7 +836,7 @@ def _parse_active_seed(
                 "retained active ownership context has an invalid identifier or event",
             ))
             continue
-        candidate, event_errors = _parse_events((event,))
+        candidate, event_errors, _rejected_event_ids = _parse_events((event,))
         if event_errors or len(candidate) != 1:
             diagnostics.append(KernelDiagnostic(
                 "INVALID-OWNERSHIP-SEED",
@@ -1219,6 +1243,10 @@ def _strict_replay_equal(actual: object, expected: object) -> bool:
             _strict_event_equal,
         ),
         _strict_diagnostics_equal(actual.diagnostics, expected.diagnostics),
+        _strict_nonblank_string_frozenset_equal(
+            actual.rejected_event_ids,
+            expected.rejected_event_ids,
+        ),
     ))
 
 
@@ -1241,6 +1269,18 @@ def _strict_string_key_mapping_equal(actual: object, expected: object, value_equ
     if set(actual) != set(expected) or not callable(value_equal):
         return False
     return all(bool(value_equal(actual[key], expected[key])) for key in actual)
+
+
+def _strict_nonblank_string_frozenset_equal(actual: object, expected: object) -> bool:
+    """Compare a closed identity set without str-subclass coercion."""
+
+    return (
+        type(actual) is frozenset
+        and type(expected) is frozenset
+        and all(type(value) is str and value for value in actual)
+        and all(type(value) is str and value for value in expected)
+        and actual == expected
+    )
 
 
 def _strict_event_equal(actual: object, expected: object) -> bool:

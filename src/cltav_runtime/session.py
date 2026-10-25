@@ -3078,6 +3078,36 @@ def _terminal_trigger_ids(assessment: ObservationAssessment | None) -> frozenset
     return _observation_ledger_delta(assessment).terminal_trigger_ids
 
 
+def _selected_response_is_admissible_sparse_receipt(
+    assessment: ObservationAssessment,
+    event_refs: Mapping[str, OwnershipEvent],
+) -> bool:
+    """Whether a selected response may be retained without a typed event.
+
+    A raw scalar ``responseId`` remains a controlled sparse receipt only when
+    the raw trace supplied no event object with that same public identity.  An
+    explicit event that the typed parser rejected is audit material, not a
+    fallback scalar response: otherwise malformed material could enter the
+    consumed-response ledger through the sparse compatibility path.
+    """
+
+    response_id = assessment.response_id
+    if type(response_id) is not str or not response_id:
+        return False
+    selected_event = event_refs.get(response_id)
+    if selected_event is not None:
+        return selected_event.kind == "RESPONSE"
+    replay = assessment.replay
+    if type(replay) is not OwnershipReplay:
+        return True
+    rejected_ids = replay.rejected_event_ids
+    return (
+        type(rejected_ids) is frozenset
+        and all(type(identifier) is str and identifier for identifier in rejected_ids)
+        and response_id not in rejected_ids
+    )
+
+
 def _observation_ledger_delta(assessment: ObservationAssessment | None) -> _ObservationLedgerDelta:
     """Derive the session's terminal facts from one typed ownership replay.
 
@@ -3114,15 +3144,12 @@ def _observation_ledger_delta(assessment: ObservationAssessment | None) -> _Obse
                 terminal_trigger_ids.add(identifier)
             elif disposition == "ACTIVE":
                 active_trigger_ids.add(identifier)
-    # A syntactically typed selected response with no event object is itself a
-    # sparse public terminal token.  If that identifier names a typed event in
-    # this replay, the event controls its role: a request/cancellation ID must
-    # not be reclassified as a consumed response merely because malformed
-    # material placed it in ``responseId``.
-    if type(assessment.response_id) is str and assessment.response_id:
-        selected_event = event_refs.get(assessment.response_id)
-        if selected_event is None or selected_event.kind == "RESPONSE":
-            response_ids.add(assessment.response_id)
+    # A selected scalar response may be a genuine sparse public receipt.  It
+    # is not a fallback for a same-ID raw event that failed parsing: that
+    # material was explicitly supplied, but has no verified response role.
+    if _selected_response_is_admissible_sparse_receipt(assessment, event_refs):
+        assert isinstance(assessment.response_id, str)
+        response_ids.add(assessment.response_id)
     if type(assessment.ownership) is OwnershipResolution:
         ownership = assessment.ownership
         if ownership.status == "UNIQUE" and type(ownership.owner_request_id) is str and ownership.owner_request_id:
@@ -3403,11 +3430,13 @@ def _quarantine_conflicted_observation_ledger(
         merged[identifier] = event
         if event.kind == "RESPONSE":
             response_ids.add(identifier)
-    if type(assessment) is ObservationAssessment and type(assessment.response_id) is str and assessment.response_id:
-        selected_event = delta.event_refs.get(assessment.response_id)
+    if type(assessment) is ObservationAssessment and _selected_response_is_admissible_sparse_receipt(
+        assessment,
+        delta.event_refs,
+    ):
+        assert isinstance(assessment.response_id, str)
         if (
-            (selected_event is None or selected_event.kind == "RESPONSE")
-            and assessment.response_id not in event_identity_refs
+            assessment.response_id not in event_identity_refs
             and assessment.response_id not in consumed_response_ids
             and assessment.response_id not in terminal_trigger_event_ids
             and assessment.response_id not in active_trigger_event_ids

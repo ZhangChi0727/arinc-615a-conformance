@@ -437,6 +437,34 @@ def test_incremental_replay_checks_a_valid_prefix_before_rejecting_a_malformed_t
     assert replay.response_resolutions == {}
 
 
+@pytest.mark.parametrize(
+    ("sequence", "kind", "event_type"),
+    (
+        (3, "RESPONSE", "RESP"),
+        (12, "NOT-A-KIND", "INVALID"),
+    ),
+    ids=("nonincreasing-sequence", "invalid-kind"),
+)
+def test_replay_preserves_the_identity_of_an_explicitly_rejected_raw_event(
+    sequence: object,
+    kind: object,
+    event_type: object,
+) -> None:
+    """A rejected raw ID cannot masquerade as an absent sparse receipt."""
+
+    replay = replay_ownership(
+        (
+            _event("C", 11, "REQUEST", "k", "REQ", 0),
+            OwnershipEvent("R2", sequence, kind, "k", event_type, Fraction(0)),
+        ),
+        _contract(policy="MOST-RECENT", concurrent=True, authority="METHOD-ONLY"),
+    )
+
+    assert {item.code for item in replay.diagnostics} == {"INVALID-OWNERSHIP-EVENT"}
+    assert set(replay.event_refs) == {"C"}
+    assert replay.rejected_event_ids == frozenset({"R2"})
+
+
 def test_incremental_replay_enforces_global_sequence_timestamp_and_exact_active_rules() -> None:
     """The retained prefix has strict sequence but nondecreasing time order."""
 

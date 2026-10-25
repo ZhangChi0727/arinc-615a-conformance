@@ -1887,6 +1887,345 @@ def test_session_retains_a_order_forward_bound_delta_despite_a_clock_error() -> 
     assert session._state_error(rejected.state) is None
 
 
+@pytest.mark.parametrize("wrong_clock", (False, True), ids=("ordinary-error", "clock-error"))
+@pytest.mark.parametrize("retain_active", (False, True), ids=("empty-active-seed", "active-seed"))
+@pytest.mark.parametrize("resource_mode", ("ROUNDS", "BUDGET"))
+@pytest.mark.parametrize(
+    ("bad_sequence", "bad_kind", "bad_event_type"),
+    (
+        (3, "RESPONSE", "RESP"),
+        (12, "NOT-A-KIND", "INVALID"),
+    ),
+    ids=("nonincreasing-sequence", "invalid-kind"),
+)
+def test_session_does_not_consume_a_selected_response_explicitly_rejected_by_parser(
+    wrong_clock: bool,
+    retain_active: bool,
+    resource_mode: str,
+    bad_sequence: object,
+    bad_kind: object,
+    bad_event_type: object,
+) -> None:
+    """FULL S7 keeps a verified prefix but never seals its rejected R2."""
+
+    binding, model, fixture = _runtime_parts()
+    first_events: list[dict[str, object]] = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+    ]
+    if retain_active:
+        first_events.append(
+            {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        )
+    first_events.append(
+        {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    )
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="B" if retain_active else "A",
+            response_id="R1",
+            events=first_events,
+            measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C",
+            response_id="R2",
+            events=[
+                {"id": "C", "sequence": 11, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R2", "sequence": 12, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id=(
+            f"explicit-rejected-response-{bad_sequence}-{bad_kind}-"
+            f"{resource_mode}-{retain_active}-{wrong_clock}"
+        ),
+        run_id=(
+            f"explicit-rejected-response-{bad_sequence}-{bad_kind}-"
+            f"{resource_mode}-{retain_active}-{wrong_clock}"
+        ),
+        initial_summary="q0",
+        resources=(ResourceState.rounds(4) if resource_mode == "ROUNDS" else ResourceState.budget(12)),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    first = session.step(session.initial_state, environment)
+
+    class ExplicitRejectedResponseEnvironment:
+        def __init__(self, delegate: SyntheticEnvironment) -> None:
+            self.delegate = delegate
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = self.delegate.execute(request)
+            material = returned.record.observation_input
+            assert material is not None
+            assert len(material.events) == 2
+            return EnvironmentExecution(
+                replace(
+                    returned.record,
+                    observation_input=replace(
+                        material,
+                        events=(
+                            material.events[0],
+                            OwnershipEvent(
+                                "R2", bad_sequence, bad_kind, "k", bad_event_type, Fraction(0),
+                            ),
+                        ),
+                        clock_identity="wrong-clock" if wrong_clock else material.clock_identity,
+                    ),
+                ),
+                returned.successor,
+            )
+
+    rejected = session.step(first.state, ExplicitRejectedResponseEnvironment(first.environment))
+    evidence = rejected.state.evidence[-1]
+    assessment = evidence.observation_assessment
+
+    assert evidence.committed is False
+    assert evidence.resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+    assert assessment is not None and assessment.replay is not None
+    assert assessment.replay.rejected_event_ids == {"R2"}
+    assert {diagnostic.code for diagnostic in assessment.diagnostics} >= {"INVALID-OWNERSHIP-EVENT"}
+    if wrong_clock:
+        assert "OBSERVATION-CLOCK-UNIT-MISMATCH" in {
+            diagnostic.code for diagnostic in assessment.diagnostics
+        }
+    assert set(rejected.state.event_identity_refs) == (
+        {"A", "C", "R1"} if not retain_active else {"A", "B", "C", "R1"}
+    )
+    assert rejected.state.consumed_response_ids == {"R1"}
+    assert rejected.state.terminal_trigger_event_ids == ({"A"} if not retain_active else {"B"})
+    assert rejected.state.active_trigger_event_ids == ({"A"} if retain_active else frozenset())
+    assert rejected.state.history.hypotheses == first.state.history.hypotheses
+    charged = session._model.actions[evidence.snapshot.action_id].cost
+    assert rejected.state.resources.remaining == first.state.resources.remaining - (
+        1 if resource_mode == "ROUNDS" else charged
+    )
+    assert rejected.state.attempts == first.state.attempts + 1
+    assert rejected.environment._state == "private-a2"
+    assert session._state_error(rejected.state) is None
+    fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+    fresh = ReferenceSession(
+        binding=fresh_binding,
+        model=fresh_model,
+        session_id=session.initial_state.context.session_id,
+        run_id=session.initial_state.context.run_id,
+        initial_summary="q0",
+        resources=(ResourceState.rounds(4) if resource_mode == "ROUNDS" else ResourceState.budget(12)),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            fresh_model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    assert fresh._state_error(rejected.state) is None
+
+
+def test_session_quarantine_does_not_consume_an_explicitly_rejected_selected_response() -> None:
+    """QUARANTINE retains C but not an explicitly rejected selected R2."""
+
+    binding, model, fixture = _runtime_parts()
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C",
+            response_id="R2",
+            events=[
+                {"id": "R1", "sequence": 11, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "C", "sequence": 12, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R2", "sequence": 13, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="quarantine-explicit-rejected-response",
+        run_id="quarantine-explicit-rejected-response",
+        initial_summary="q0",
+        resources=ResourceState.rounds(3),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    first = session.step(session.initial_state, environment)
+    assert first.state.consumed_response_ids == {"R1"}
+    assert first.state.terminal_trigger_event_ids == {"A"}
+
+    class ConflictingAndRejectedResponseEnvironment:
+        def __init__(self, delegate: SyntheticEnvironment) -> None:
+            self.delegate = delegate
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = self.delegate.execute(request)
+            material = returned.record.observation_input
+            assert material is not None
+            return EnvironmentExecution(
+                replace(
+                    returned.record,
+                    observation_input=replace(
+                        material,
+                        events=(
+                            OwnershipEvent("R1", 11, "REQUEST", "k", "REQ", Fraction(0)),
+                            OwnershipEvent("C", 12, "REQUEST", "k", "REQ", Fraction(0)),
+                            OwnershipEvent("R2", 3, "RESPONSE", "k", "RESP", Fraction(0)),
+                        ),
+                    ),
+                ),
+                returned.successor,
+            )
+
+    rejected = session.step(first.state, ConflictingAndRejectedResponseEnvironment(first.environment))
+    evidence = rejected.state.evidence[-1]
+    assessment = evidence.observation_assessment
+
+    assert evidence.committed is False
+    assert evidence.resolution_code == "OBSERVATION-EVENT-IDENTITY-CONFLICT"
+    assert assessment is not None and assessment.replay is not None
+    assert assessment.replay.rejected_event_ids == {"R2"}
+    assert "INVALID-OWNERSHIP-EVENT" in {diagnostic.code for diagnostic in assessment.diagnostics}
+    # R1 keeps its old response role, C is a distinct forward fact the
+    # quarantine retains, and rejected R2 stays out of every formal ledger
+    # role.  C's retention proves this is QUARANTINE rather than NONE.
+    assert set(rejected.state.event_identity_refs) == {"A", "C", "R1"}
+    assert rejected.state.consumed_response_ids == {"R1"}
+    assert rejected.state.terminal_trigger_event_ids == {"A"}
+    assert rejected.state.active_trigger_event_ids == frozenset()
+    assert session._state_error(rejected.state) is None
+
+
+def test_session_rejected_s4_record_does_not_consume_an_explicitly_rejected_response() -> None:
+    """The safely bound malformed-record path uses the same sparse gate."""
+
+    binding, model, fixture = _runtime_parts()
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C",
+            response_id="R2",
+            events=[
+                {"id": "C", "sequence": 11, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R2", "sequence": 12, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="s4-explicit-rejected-response",
+        run_id="s4-explicit-rejected-response",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    first = session.step(session.initial_state, environment)
+
+    class RejectedRecordWithRejectedResponseEnvironment:
+        def __init__(self, delegate: SyntheticEnvironment) -> None:
+            self.delegate = delegate
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = self.delegate.execute(request)
+            material = returned.record.observation_input
+            assert material is not None
+            return EnvironmentExecution(
+                replace(
+                    returned.record,
+                    effect_class="CONFIRMED-NOT-SENT",
+                    observation_input=replace(
+                        material,
+                        events=(
+                            material.events[0],
+                            OwnershipEvent("R2", 3, "RESPONSE", "k", "RESP", Fraction(0)),
+                        ),
+                    ),
+                ),
+                returned.successor,
+            )
+
+    rejected = session.step(
+        first.state,
+        RejectedRecordWithRejectedResponseEnvironment(first.environment),
+    )
+    assessment = rejected.state.evidence[-1].observation_assessment
+
+    assert rejected.state.evidence[-1].resolution_code == "INVALID-EXECUTION-RECORD"
+    assert assessment is not None and assessment.replay is not None
+    assert assessment.replay.rejected_event_ids == {"R2"}
+    assert set(rejected.state.event_identity_refs) == {"A", "C", "R1"}
+    assert rejected.state.consumed_response_ids == {"R1"}
+    assert rejected.state.terminal_trigger_event_ids == {"A"}
+    assert rejected.state.active_trigger_event_ids == frozenset()
+    assert session._state_error(rejected.state) is None
+
+
+def test_session_keeps_a_genuine_sparse_response_when_an_unrelated_raw_event_is_rejected() -> None:
+    """Parser provenance fences its own ID, not every sparse receipt."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="sparse-response-unrelated-rejection",
+        run_id="sparse-response-unrelated-rejection",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    result = session.step(
+        session.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(
+                trigger_id="A",
+                response_id="X",
+                events=[
+                    {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                    {"id": "Z", "sequence": 2, "kind": "NOT-A-KIND", "key": "k", "eventType": "RESP", "timestamp": 0},
+                ],
+                measurement=_interval_mapping(0, 0),
+            ),
+        ),
+    )
+    assessment = result.state.evidence[0].observation_assessment
+
+    assert assessment is not None and assessment.replay is not None
+    assert assessment.replay.rejected_event_ids == {"Z"}
+    assert result.state.consumed_response_ids == {"X"}
+    assert set(result.state.event_identity_refs) == {"A"}
+    assert "Z" not in result.state.event_identity_refs
+    assert session._state_error(result.state) is None
+
+
 @pytest.mark.parametrize(
     ("policy", "expected_status", "expected_owner"),
     (("FIFO", "UNIQUE", "A"), ("MOST-RECENT", "UNIQUE", "C"), ("UNIQUE-KEY", "AMBIGUOUS", None)),
@@ -2954,6 +3293,8 @@ def test_quarantine_keeps_fresh_response_but_skips_event_reusing_a_sparse_consum
     assert consumed == {"X"}
     assert set(refs) == {"A"}
     assert active == {"A"}
+    assert first.replay is not None
+    assert first.replay.rejected_event_ids == frozenset()
 
     second = assess_observation(
         observation_input_from_mapping(
@@ -3173,6 +3514,58 @@ def test_session_lineage_rejects_str_subclass_keys_in_every_replay_mapping(repla
     class NoDispatch:
         def execute(self, _request: ExecutionRequest) -> EnvironmentExecution:  # pragma: no cover - must not run
             raise AssertionError("forged replay must be rejected before dispatch")
+
+    rejected = session.step(forged_state, NoDispatch())  # type: ignore[arg-type]
+    assert rejected.stop_reason == "Stop-Error"
+    assert rejected.state is forged_state
+    assert rejected.diagnostics[0].code == "EVIDENCE-INTERPRETATION-MISMATCH"
+
+
+def test_session_lineage_rejects_a_forged_rejected_raw_event_identity_set() -> None:
+    """Parse-rejection provenance is a closed causal-evidence field."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="forged-rejected-event-ids",
+        run_id="forged-rejected-event-ids",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    first = session.step(
+        session.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(
+                trigger_id="A",
+                response_id="R2",
+                events=[
+                    {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                    {"id": "R2", "sequence": 0, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+                ],
+                measurement=_interval_mapping(0, 0),
+            ),
+        ),
+    )
+    assessment = first.state.evidence[0].observation_assessment
+    assert assessment is not None and assessment.replay is not None
+    assert assessment.replay.rejected_event_ids == {"R2"}
+    assert session._state_error(first.state) is None
+
+    forged_assessment = replace(
+        assessment,
+        replay=replace(assessment.replay, rejected_event_ids=frozenset()),
+    )
+    forged_state = replace(
+        first.state,
+        evidence=(replace(first.state.evidence[0], observation_assessment=forged_assessment),),
+    )
+
+    class NoDispatch:
+        def execute(self, _request: ExecutionRequest) -> EnvironmentExecution:  # pragma: no cover - must not run
+            raise AssertionError("forged parser provenance must be rejected before dispatch")
 
     rejected = session.step(forged_state, NoDispatch())  # type: ignore[arg-type]
     assert rejected.stop_reason == "Stop-Error"
