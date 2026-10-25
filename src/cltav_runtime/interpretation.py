@@ -36,6 +36,23 @@ class OwnershipEvent:
 
 
 @dataclass(frozen=True)
+class OwnershipOrderBoundary:
+    """Immutable high-water mark for an already processed ownership prefix.
+
+    The scalar high-water values fence new controlled events; the retained
+    identity set preserves the distinct handling of an old terminal receipt.
+    It is not a substitute for the retained ACTIVE-request seed: the seed
+    determines who may own a new response, whereas this boundary prevents a
+    newly disclosed controlled event from being inserted before an already
+    processed response or termination.
+    """
+
+    sequence: object
+    timestamp: object
+    retained_event_ids: object = frozenset()
+
+
+@dataclass(frozen=True)
 class InterpretationContract:
     """Controlled method contract consumed by one bounded session.
 
@@ -229,6 +246,7 @@ def replay_ownership(
     contract: object,
     *,
     prior_active_requests: Mapping[str, OwnershipEvent] | None = None,
+    prior_order_boundary: OwnershipOrderBoundary | None = None,
 ) -> OwnershipReplay:
     """Replay one finite public trace under one controlled contract.
 
@@ -240,9 +258,14 @@ def replay_ownership(
     ``prior_active_requests`` is a session-derived finite context, not raw
     trace material.  It permits a legal incremental next observation to omit
     already retained terminal receipts while still making every new ownership
-    decision against the live obligations.  The returned ``event_refs`` stays
-    raw-delta-only; request dispositions include the seeded ACTIVE instances
-    so a session can advance its persistent ledger without inventing history.
+    decision against the live obligations.  ``prior_order_boundary`` is a
+    separately derived high-water mark from the verified retained ledger:
+    exact reappearance of a seeded ACTIVE request is confirmation only, but
+    every newly introduced controlled request, response, or termination must
+    be globally later than that processed prefix.  The returned ``event_refs``
+    stays raw-delta-only; request dispositions include the seeded ACTIVE
+    instances so a session can advance its persistent ledger without
+    inventing history.
     """
 
     parsed_events, event_errors = _parse_events(events)
@@ -251,9 +274,15 @@ def replay_ownership(
     event_refs = {event.event_id: event for event in parsed_events}
     contract_id = parsed_contract.contract_id if parsed_contract is not None else None
     prior_active: dict[str, OwnershipEvent] = {}
+    order_boundary: OwnershipOrderBoundary | None = None
     if parsed_contract is not None:
         prior_active, seed_errors = _parse_active_seed(prior_active_requests, parsed_contract)
         diagnostics.extend(seed_errors)
+        order_boundary, boundary_errors = _parse_order_boundary(
+            prior_order_boundary,
+            prior_active,
+        )
+        diagnostics.extend(boundary_errors)
         for event in parsed_events:
             retained = prior_active.get(event.event_id)
             if retained is not None and (
@@ -284,8 +313,42 @@ def replay_ownership(
         if _request_matches_contract(event, parsed_contract)
     }
     seeded_identifiers = frozenset(prior_active)
-    latest_seed_sequence = max((event.sequence for event in prior_active.values()), default=-1)
-    latest_seed_timestamp = max((event.timestamp for event in prior_active.values()), default=Fraction(-1))
+    for event in parsed_events:
+        retained = prior_active.get(event.event_id)
+        exact_active_confirmation = (
+            retained is not None
+            and event.kind == "REQUEST"
+            and _strict_event_equal(event, retained)
+        )
+        if (
+            order_boundary is not None
+            and event.event_id in order_boundary.retained_event_ids
+            and not exact_active_confirmation
+        ):
+            diagnostics.append(KernelDiagnostic(
+                "RETAINED-OWNERSHIP-EVENT-REPLAY",
+                "a retained terminal ownership event cannot be introduced again in a later delta",
+            ))
+            continue
+        if (
+            order_boundary is not None
+            and not exact_active_confirmation
+            and _is_order_controlled_event(
+                event,
+                parsed_contract,
+                controlled_request_ids,
+            )
+            and (
+                event.sequence <= order_boundary.sequence
+                or event.timestamp < order_boundary.timestamp
+            )
+        ):
+            diagnostics.append(KernelDiagnostic(
+                "INSUFFICIENT-OWNERSHIP-CONTEXT",
+                "a newly introduced controlled event precedes the retained global ownership order frontier",
+            ))
+    if diagnostics:
+        return OwnershipReplay(contract_id, {}, {}, {}, event_refs, tuple(diagnostics))
 
     for event in parsed_events:
         if event.kind == "REQUEST":
@@ -299,15 +362,6 @@ def replay_ownership(
                     # not a second obligation instance.
                     continue
                 diagnostics.append(KernelDiagnostic("INVALID-OWNERSHIP-TRACE", "matching request identity is duplicated"))
-                continue
-            if prior_active and (
-                event.sequence <= latest_seed_sequence
-                or event.timestamp < latest_seed_timestamp
-            ):
-                diagnostics.append(KernelDiagnostic(
-                    "INSUFFICIENT-OWNERSHIP-CONTEXT",
-                    "a new request cannot be ordered after the retained active ownership context",
-                ))
                 continue
             if event.target_request_id is not None:
                 terminated = _terminate_request(
@@ -391,6 +445,7 @@ def assess_observation(
     contract: object,
     *,
     prior_active_requests: Mapping[str, OwnershipEvent] | None = None,
+    prior_order_boundary: OwnershipOrderBoundary | None = None,
 ) -> ObservationAssessment:
     """Assess raw material against a controlled, immutable contract.
 
@@ -412,6 +467,7 @@ def assess_observation(
         value.events,
         parsed_contract,
         prior_active_requests=prior_active_requests,
+        prior_order_boundary=prior_order_boundary,
     )
     # The same normalized finite seed is used only to resolve a retained
     # active trigger and its timestamp.  It is deliberately not copied into
@@ -782,6 +838,117 @@ def _parse_active_seed(
         previous_sequence = event.sequence
         previous_timestamp = event.timestamp
     return ({} if diagnostics else parsed), tuple(diagnostics)
+
+
+def _parse_order_boundary(
+    value: OwnershipOrderBoundary | None,
+    prior_active: Mapping[str, OwnershipEvent],
+) -> tuple[OwnershipOrderBoundary | None, tuple[KernelDiagnostic, ...]]:
+    """Validate one retained-ledger high-water boundary.
+
+    Direct callers that supply only ``prior_active`` retain the historical
+    finite-seed behaviour: the active requests provide the minimum known
+    prefix.  A :class:`ReferenceSession` always supplies the stronger ledger
+    boundary reconstructed from its checked evidence, including terminal
+    requests and consumed responses.
+    """
+
+    if value is None:
+        if not prior_active:
+            return None, ()
+        return OwnershipOrderBoundary(
+            max(event.sequence for event in prior_active.values()),
+            max(event.timestamp for event in prior_active.values()),
+            frozenset(prior_active),
+        ), ()
+    if (
+        type(value) is not OwnershipOrderBoundary
+        or type(value.sequence) is not int
+        or value.sequence < 0
+        or type(value.timestamp) is not Fraction
+        or type(value.retained_event_ids) is not frozenset
+        or any(type(identifier) is not str or not identifier for identifier in value.retained_event_ids)
+    ):
+        return None, (KernelDiagnostic(
+            "INVALID-OWNERSHIP-ORDER-BOUNDARY",
+            "retained ownership order boundary must contain exact nonnegative sequence/timestamp and retained event identities",
+        ),)
+    if any(
+        event.sequence > value.sequence or event.timestamp > value.timestamp
+        for event in prior_active.values()
+    ):
+        return None, (KernelDiagnostic(
+            "INVALID-OWNERSHIP-ORDER-BOUNDARY",
+            "retained ownership order boundary cannot precede a seeded active request",
+        ),)
+    return OwnershipOrderBoundary(
+        value.sequence,
+        value.timestamp,
+        frozenset(value.retained_event_ids),
+    ), ()
+
+
+def _is_order_controlled_event(
+    event: OwnershipEvent,
+    contract: InterpretationContract,
+    controlled_request_ids: set[str],
+) -> bool:
+    """Whether an event can affect this contract's retained ownership facts."""
+
+    if _request_matches_contract(event, contract):
+        return True
+    if (
+        event.kind == "RESPONSE"
+        and event.key == contract.key
+        and event.event_type == contract.response_event_type
+    ):
+        return True
+    return (
+        event.kind in {"CANCEL", "SUPERSEDE"}
+        and (
+            event.key == contract.key
+            or (
+                type(event.target_request_id) is str
+                and event.target_request_id in controlled_request_ids
+            )
+        )
+    )
+
+
+def _retained_ownership_order_boundary(
+    event_refs: Mapping[str, OwnershipEvent],
+    contract: InterpretationContract,
+) -> OwnershipOrderBoundary | None:
+    """Derive the controlled global high-water mark from a checked ledger.
+
+    A session ledger also retains unrelated other-key facts so it can detect
+    identity reuse.  Those facts deliberately do not advance this contract's
+    ownership frontier *or* enter this contract's retained-receipt identity
+    set unless a termination targets one of this contract's requests.  The
+    function is private because callers must obtain the ledger from verified
+    session evidence rather than fabricate an authority value.
+    """
+
+    controlled_request_ids = {
+        identifier
+        for identifier, event in event_refs.items()
+        if type(identifier) is str
+        and type(event) is OwnershipEvent
+        and _request_matches_contract(event, contract)
+    }
+    relevant = tuple(
+        event
+        for event in event_refs.values()
+        if type(event) is OwnershipEvent
+        and _is_order_controlled_event(event, contract, controlled_request_ids)
+    )
+    if not relevant:
+        return None
+    return OwnershipOrderBoundary(
+        max(event.sequence for event in relevant),
+        max(event.timestamp for event in relevant),
+        frozenset(event.event_id for event in relevant),
+    )
 
 
 def _parse_contract(value: object) -> tuple[InterpretationContract | None, tuple[KernelDiagnostic, ...]]:

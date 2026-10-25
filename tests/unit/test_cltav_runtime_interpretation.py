@@ -17,6 +17,7 @@ from cltav_runtime.interpretation import (
     InterpretationContract,
     ObservationInput,
     OwnershipEvent,
+    OwnershipOrderBoundary,
     assess_observation,
     bind_observation_input,
     observation_input_from_mapping,
@@ -354,6 +355,164 @@ def test_incremental_replay_rejects_changed_seed_identity_and_unordered_new_requ
         prior_active_requests={"B": retained_b},
     )
     assert any(item.code == "INSUFFICIENT-OWNERSHIP-CONTEXT" for item in unordered.diagnostics)
+
+
+@pytest.mark.parametrize(
+    ("prior", "active"),
+    (
+        (
+            (
+                _event("A", 1, "REQUEST", "k", "REQ", 0),
+                _event("B", 2, "REQUEST", "k", "REQ", 0),
+                _event("R1", 10, "RESPONSE", "k", "RESP", 0),
+            ),
+            {"A": _event("A", 1, "REQUEST", "k", "REQ", 0)},
+        ),
+        (
+            (
+                _event("A", 1, "REQUEST", "k", "REQ", 0),
+                _event("R1", 10, "RESPONSE", "k", "RESP", 0),
+            ),
+            {},
+        ),
+    ),
+    ids=("retained-active", "no-retained-active"),
+)
+def test_incremental_replay_rejects_a_new_request_backfilled_before_the_processed_frontier(
+    prior: tuple[OwnershipEvent, ...],
+    active: dict[str, OwnershipEvent],
+) -> None:
+    """A later delta cannot revise an already processed response owner."""
+
+    replay = replay_ownership(
+        (
+            _event("C", 3, "REQUEST", "k", "REQ", 0),
+            _event("R2", 11, "RESPONSE", "k", "RESP", 0),
+        ),
+        _contract(policy="MOST-RECENT", concurrent=True, authority="METHOD-ONLY"),
+        prior_active_requests=active,
+        prior_order_boundary=OwnershipOrderBoundary(
+            10,
+            Fraction(0),
+            frozenset(event.event_id for event in prior),
+        ),
+    )
+
+    assert {item.code for item in replay.diagnostics} == {"INSUFFICIENT-OWNERSHIP-CONTEXT"}
+    assert replay.request_dispositions == {}
+    assert replay.response_resolutions == {}
+
+
+def test_incremental_replay_enforces_global_sequence_timestamp_and_exact_active_rules() -> None:
+    """The retained prefix has strict sequence but nondecreasing time order."""
+
+    active_a = _event("A", 1, "REQUEST", "k", "REQ", 10)
+    boundary = OwnershipOrderBoundary(10, Fraction(10), frozenset({"A", "R1"}))
+    contract = _contract(policy="MOST-RECENT", concurrent=True, authority="METHOD-ONLY")
+
+    equal_sequence = replay_ownership(
+        (
+            _event("C", 10, "REQUEST", "k", "REQ", 10),
+            _event("R2", 11, "RESPONSE", "k", "RESP", 10),
+        ),
+        contract,
+        prior_active_requests={"A": active_a},
+        prior_order_boundary=boundary,
+    )
+    timestamp_backfill = replay_ownership(
+        (
+            _event("C", 11, "REQUEST", "k", "REQ", 9),
+            _event("R2", 12, "RESPONSE", "k", "RESP", 9),
+        ),
+        contract,
+        prior_active_requests={"A": active_a},
+        prior_order_boundary=boundary,
+    )
+    legal_equal_timestamp = replay_ownership(
+        (
+            _event("C", 11, "REQUEST", "k", "REQ", 10),
+            _event("R2", 12, "RESPONSE", "k", "RESP", 10),
+        ),
+        contract,
+        prior_active_requests={"A": active_a},
+        prior_order_boundary=boundary,
+    )
+    exact_active = replay_ownership(
+        (
+            _event("A", 1, "REQUEST", "k", "REQ", 10),
+            _event("R3", 11, "RESPONSE", "k", "RESP", 10),
+        ),
+        contract,
+        prior_active_requests={"A": active_a},
+        prior_order_boundary=boundary,
+    )
+
+    assert all(
+        {item.code for item in replay.diagnostics} == {"INSUFFICIENT-OWNERSHIP-CONTEXT"}
+        for replay in (equal_sequence, timestamp_backfill)
+    )
+    assert legal_equal_timestamp.diagnostics == ()
+    assert legal_equal_timestamp.response_resolutions["R2"].owner_request_id == "C"
+    assert exact_active.diagnostics == ()
+    assert exact_active.response_resolutions["R3"].owner_request_id == "A"
+
+
+@pytest.mark.parametrize(
+    ("kind", "event_type"),
+    (("RESPONSE", "RESP"), ("CANCEL", "CANCEL"), ("SUPERSEDE", "SUPERSEDE")),
+)
+def test_incremental_replay_cannot_bypass_the_frontier_with_response_or_termination_kind(
+    kind: str,
+    event_type: str,
+) -> None:
+    active_a = _event("A", 1, "REQUEST", "k", "REQ", 0)
+    boundary = OwnershipOrderBoundary(10, Fraction(0), frozenset({"A", "R1"}))
+    target = None if kind == "RESPONSE" else "A"
+    replay = replay_ownership(
+        (_event("late", 9, kind, "k", event_type, 0, target),),
+        _contract(policy="FIFO", concurrent=True, authority="METHOD-ONLY"),
+        prior_active_requests={"A": active_a},
+        prior_order_boundary=boundary,
+    )
+
+    assert {item.code for item in replay.diagnostics} == {"INSUFFICIENT-OWNERSHIP-CONTEXT"}
+
+
+def test_incremental_replay_keeps_terminal_replay_distinct_from_an_active_confirmation() -> None:
+    active_a = _event("A", 1, "REQUEST", "k", "REQ", 0)
+    replay = replay_ownership(
+        (_event("R1", 10, "RESPONSE", "k", "RESP", 0),),
+        _contract(policy="FIFO", concurrent=True, authority="METHOD-ONLY"),
+        prior_active_requests={"A": active_a},
+        prior_order_boundary=OwnershipOrderBoundary(10, Fraction(0), frozenset({"A", "R1"})),
+    )
+
+    assert {item.code for item in replay.diagnostics} == {"RETAINED-OWNERSHIP-EVENT-REPLAY"}
+
+
+@pytest.mark.parametrize(
+    "boundary",
+    (
+        OwnershipOrderBoundary(0, Fraction(0), frozenset({"A"})),
+        OwnershipOrderBoundary(1, Fraction(0), frozenset({""})),
+    ),
+    ids=("precedes-active-seed", "empty-retained-identity"),
+)
+def test_incremental_replay_rejects_an_invalid_order_boundary_without_throwing(
+    boundary: OwnershipOrderBoundary,
+) -> None:
+    """Caller-supplied summaries cannot lower or fabricate the checked frontier."""
+
+    replay = replay_ownership(
+        (_event("R2", 2, "RESPONSE", "k", "RESP", 0),),
+        _contract(policy="FIFO", concurrent=True, authority="METHOD-ONLY"),
+        prior_active_requests={"A": _event("A", 1, "REQUEST", "k", "REQ", 0)},
+        prior_order_boundary=boundary,
+    )
+
+    assert {item.code for item in replay.diagnostics} == {"INVALID-OWNERSHIP-ORDER-BOUNDARY"}
+    assert replay.request_dispositions == {}
+    assert replay.response_resolutions == {}
 
 
 def test_assessment_uses_a_retained_incremental_trigger_for_the_measurement_delta() -> None:

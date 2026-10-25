@@ -91,7 +91,7 @@ substitute for that evidence identity.
 | BC-10 | VERIFIED | shared-uncertainty and frozen-identity interpretation regressions; no physical calibration claim. |
 | BC-11 | PARTIAL | full-history merge and resume/history regressions; complete same-round Stop-Empty policy remains. |
 | BC-12 | VERIFIED | infeasible/multi-path and conservative-path retention regressions; finite bounds only. |
-| BC-13 | PARTIAL | Raw material cannot inject policy/deadline/verdict. FIFO/MOST-RECENT, explicit cancellation/supersession, session-seeded ACTIVE ownership context for incremental deltas or exact cumulative reappearance, terminal request/response exclusion, and conflict quarantine are covered by `interpretation` and `session` regressions. A conflict may seal an uncontested new response but cannot reclassify an existing request identity; every emitted ledger state must remain replayable as a portable checkpoint. Bounded synthetic traces only. |
+| BC-13 | PARTIAL | Raw material cannot inject policy/deadline/verdict. FIFO/MOST-RECENT, explicit cancellation/supersession, session-seeded ACTIVE ownership context plus the retained-ledger global event-order frontier for incremental deltas or exact cumulative reappearance, terminal request/response exclusion, and conflict quarantine are covered by `interpretation` and `session` regressions. A conflict may seal an uncontested new response but cannot reclassify an existing request identity; every emitted ledger state must remain replayable as a portable checkpoint. Bounded synthetic traces only. |
 | BC-14 | PARTIAL | Frozen-contract interval containment/separation/boundary tests, plus empty physical domain and invalid clock/unit/error basis. Contract/material/clock/unit/uncertainty checks occur before deadline authority branching; no physical calibration claim. |
 | BC-15 | PARTIAL | No-response uses cancellation/supersession, qualified horizon and deadline-authority regressions. METHOD-ONLY/UNRESOLVED never becomes a scored deadline. In pure reviewed semantics, closed upper bound uses `earliest > U` and open upper bound uses `earliest >= U`; this runtime rejects REVIEWED authority without a controlled registry. |
 | BC-16 | PENDING | Empty/Singleton/645/Equivalent/Budget priority remains later B/C work. |
@@ -314,21 +314,27 @@ timestamp difference between that response and the request selected by the
 controlled ownership policy; a merely interval-contained tick is not enough.
 The session retains the complete typed ownership replay rather than only the
 selected `responseId`: every response token is consumed and every non-active
-request disposition is terminal.  Before each later ownership decision it
-seeds the replay with the verified ledger's still-ACTIVE request identities,
-global sequence/timestamp order, and request encoding.  Therefore a legal
-incremental raw delta may omit terminal receipts and retained ACTIVE requests;
-an exact cumulative reappearance is permitted only as confirmation, never as a
-second obligation.  A changed field/kind, cross-role reuse, duplicate response
-or duplicate terminal request takes S7.  A newly introduced request must be
-ordered after the seeded context; otherwise the runtime reports insufficient
-ownership context rather than guessing a local numbering epoch.  A replacement
-request must actually terminate its named current ACTIVE predecessor before it
-can satisfy a non-concurrent admission rule: a stale target is not an admission
-token.  A complete CANCEL/SUPERSEDE transaction for another key is ignored only
-when it names neither a retained ACTIVE controlled request nor any matching request in
+request disposition is terminal. Before each later ownership decision it
+seeds the replay separately with (a) the verified ledger's still-ACTIVE request
+identities and (b) an immutable global high-water boundary derived from every
+retained controlled ownership event, including terminal requests and consumed
+responses. The seed determines candidates; the boundary prevents an incremental
+delta from retroactively changing an already recorded pairing. A legal raw delta
+may omit terminal receipts and retained ACTIVE requests. An exact reappearance
+of a retained ACTIVE request is confirmation only, never a second obligation.
+Every newly introduced controlled request, response, or termination must have
+sequence strictly greater than the retained high-water sequence and timestamp
+no earlier than the retained high-water timestamp. Otherwise the runtime
+reports `INSUFFICIENT-OWNERSHIP-CONTEXT`, preserves the prior ownership ledger,
+and does not recompute or reassign a retained response. Equal timestamps remain
+legal; equal sequences do not. A changed field/kind, cross-role reuse, duplicate
+response or duplicate terminal request takes S7. A replacement request must
+actually terminate its named current ACTIVE predecessor before it can satisfy a
+non-concurrent admission rule: a stale target is not an admission token. A
+complete CANCEL/SUPERSEDE transaction for another key is ignored only when it
+names neither a retained ACTIVE controlled request nor any matching request in
 the complete raw trace; a foreign-key event that targets a current *or future*
-controlled request is still validated and rejected when incompatible.  Those
+controlled request is still validated and rejected when incompatible. Those
 cross-round replay conflicts quarantine newly observed, uncontested response
 facts but never change a retained request into a response (or vice versa), so
 the state it emits remains self-validating and replayable in a fresh equivalent
@@ -455,7 +461,7 @@ GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出�
 | BC-10 | VERIFIED | 共享 uncertainty 与冻结 identity 解释回归；不主张物理时钟校准。 |
 | BC-11 | PARTIAL | 完整 history 合并和 resume/history 回归；完整同轮 Stop-Empty 策略仍待完成。 |
 | BC-12 | VERIFIED | 不可行／多路径及保守路径保留回归；仅限有限边界。 |
-| BC-13 | PARTIAL | 原始材料不得注入 policy／deadline／判定。FIFO/MOST-RECENT、显式取消／替代、由 session 注入的 ACTIVE ownership 上下文（支持增量 delta 或精确的累计再次出现）、终态 request／response 排除及冲突隔离均由 `interpretation` 和 `session` 回归覆盖。冲突可封存无争议的新 response，但不得重分类既有 request 身份；每个发出的账本 state 都必须能作为可移植 checkpoint 重放。仅为有界 synthetic 事件迹。 |
+| BC-13 | PARTIAL | 原始材料不得注入 policy／deadline／判定。FIFO/MOST-RECENT、显式取消／替代、由 session 注入的 ACTIVE ownership 上下文及保留账本的全局 event-order 前沿（支持增量 delta 或精确的累计再次出现）、终态 request／response 排除及冲突隔离均由 `interpretation` 和 `session` 回归覆盖。冲突可封存无争议的新 response，但不得重分类既有 request 身份；每个发出的账本 state 都必须能作为可移植 checkpoint 重放。仅为有界 synthetic 事件迹。 |
 | BC-14 | PARTIAL | 冻结合同的区间包含／分离／边界测试，以及空物理域、无效时钟／单位／误差依据。contract/material/clock/unit/uncertainty 必须先于 deadline authority 分支校验；不主张物理校准。 |
 | BC-15 | PARTIAL | 无响应使用取消／替代、合格 horizon 和 deadline authority 回归。METHOD-ONLY／UNRESOLVED 永远不得成为可计分 deadline。纯 reviewed 语义中，闭上界使用 `earliest > U`，开上界使用 `earliest >= U`；本 runtime 没有受控 registry 时拒绝 REVIEWED authority。 |
 | BC-16 | PENDING | Empty/Singleton/645/Equivalent/Budget 优先级属于后续 B/C 工作。 |
@@ -589,15 +595,19 @@ hypothesis 的协议时序、物理时钟校准、已审定 deadline authority �
 对已归属的 response，公开的 `measurementTick` 还必须精确等于该 response 与由受控 ownership
 policy 选中的 request 之间的 timestamp 差；仅落在区间内的 tick 不足以通过。会话保留完整的类型化
 ownership replay，而不是只保留选中的 `responseId`：每个 response token 都会被消费，每个非 ACTIVE
-request disposition 都成为终态。每次后续 ownership 判定前，session 都将已验证账本中仍为 ACTIVE 的 request
-identity、全局 sequence／timestamp 顺序和 request 编码作为 seed 注入 replay。因此，合法的增量原始 delta
-可以省略终态 receipt 和保留的 ACTIVE request；若提供累计迹中的再次出现，它只能与既有 event 精确相同，
-不能建立第二个 obligation。字段／kind 改变、跨角色重用、重复 response 或重复的终态 request 均进入 S7。
-新引入的 request 必须可排序在 seed 之后；不能排序时必须报告 ownership context 不足，而不得猜测本地重编号的
-epoch。替代 request 必须实际终止其具名的当前 ACTIVE 前驱，才可以满足非并发准入条件；已终态的旧 target 不是
-准入令牌。其他 key 的完整 CANCEL/SUPERSEDE 事务仅在其既不指向已保留的 ACTIVE 受控 request、也不指向完整原始事件迹中
-任何匹配 request 时才被忽略；若外键事件指向当前或未来的受控 request，仍必须核验并在不相容时拒绝。这些跨轮重放冲突会隔离新观察到且无争议的 response 事实，
-但绝不把已保留的 request 变为 response（或反过来），所以其发出的 state 始终可自校验并在一个等价的新协调器中重放。
+request disposition 都成为终态。每次后续 ownership 判定前，session 分别注入：(a) 已验证账本中仍为
+ACTIVE 的 request identity；以及 (b) 从所有已保留、受控的 ownership event（包括终态 request 与已消费
+response）导出的不可变全局高水位前沿。前者决定候选者，后者阻止增量 delta 追溯改变已经记录的配对。
+合法原始 delta 可以省略终态 receipt 和保留的 ACTIVE request。保留 ACTIVE request 的精确再次出现只作确认，
+绝不建立第二个 obligation。每个新引入的受控 request、response 或 termination 都必须满足 sequence 严格大于
+保留高水位 sequence，且 timestamp 不早于保留高水位 timestamp；否则 runtime 返回
+`INSUFFICIENT-OWNERSHIP-CONTEXT`、保留原 ownership ledger，且不得重新计算或改派已保留 response。相同
+timestamp 仍可合法，sequence 相同则不可以。字段／kind 改变、跨角色重用、重复 response 或重复的终态
+request 均进入 S7。替代 request 必须实际终止其具名的当前 ACTIVE 前驱，才可以满足非并发准入条件；已终态的
+旧 target 不是准入令牌。其他 key 的完整 CANCEL/SUPERSEDE 事务仅在其既不指向已保留的 ACTIVE 受控 request、
+也不指向完整原始事件迹中任何匹配 request 时才被忽略；若外键事件指向当前或未来的受控 request，仍必须核验并
+在不相容时拒绝。这些跨轮重放冲突会隔离新观察到且无争议的 response 事实，但绝不把已保留的 request 变为
+response（或反过来），所以其发出的 state 始终可自校验并在一个等价的新协调器中重放。
 对于无 response，clock／error-basis 必须先于取消／替代产生 NOT-APPLICABLE 前校验；依据无效时为
 ERROR，不得用管理性事件规避。及时的终止不需要 elapsed-horizon 读数；若合法的增量 delta 只携带终止
 事件，则用已经验证的、保留的 ACTIVE trigger 提供计算该终止所需的 timestamp。对于 ACTIVE obligation，即使

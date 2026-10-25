@@ -15,11 +15,13 @@ from .interpretation import (
     ObservationAssessment,
     ObservationInput,
     OwnershipEvent,
+    OwnershipOrderBoundary,
     OwnershipReplay,
     OwnershipResolution,
     assess_observation,
     interpretation_contract_identity,
     _parse_contract,
+    _retained_ownership_order_boundary,
     strict_observation_assessment_equal,
     strict_observation_input_equal,
 )
@@ -60,6 +62,10 @@ _OBSERVATION_QUARANTINE_CODES = frozenset({
     "DUPLICATE-OBSERVATION-RESPONSE",
     "DUPLICATE-OBSERVATION-TRIGGER",
     "OBSERVATION-EVENT-IDENTITY-CONFLICT",
+})
+_OBSERVATION_ORDER_REJECTION_CODES = frozenset({
+    "INSUFFICIENT-OWNERSHIP-CONTEXT",
+    "INVALID-OWNERSHIP-ORDER-BOUNDARY",
 })
 _MAPPING_PROXY_TYPE = type(MappingProxyType({}))
 
@@ -835,6 +841,11 @@ class ReferenceSession:
                     active_trigger_event_ids,
                     assessment,
                 )
+            elif mode == "NONE":
+                # An order-invalid delta is not admitted as a newly observed
+                # public fact.  The retained ledger stays the sole source of
+                # the next global high-water boundary.
+                return
             else:
                 raise ValueError("observation ledger mode is outside the controlled vocabulary")
 
@@ -939,6 +950,10 @@ class ReferenceSession:
                             seen_ownership_events,
                             active_trigger_event_ids,
                         ),
+                        prior_order_boundary=_ownership_order_boundary(
+                            seen_ownership_events,
+                            self._interpretation_contract,
+                        ),
                     )
                     if (
                         expected_assessment is None
@@ -979,10 +994,13 @@ class ReferenceSession:
                 processed_ids = processed_ids | {expected_execution_id}
                 apply_observation_ledger(
                     assessment,
-                    mode=(
-                        "QUARANTINE"
-                        if item.resolution_code in _OBSERVATION_QUARANTINE_CODES
-                        else "FULL"
+                    mode=_observation_ledger_mode(
+                        assessment,
+                        conflict_code=(
+                            item.resolution_code
+                            if item.resolution_code in _OBSERVATION_QUARANTINE_CODES
+                            else None
+                        ),
                     ),
                 )
                 if expected_stop is not None and index != len(state.evidence):
@@ -1009,6 +1027,10 @@ class ReferenceSession:
                     prior_active_requests=_active_ownership_seed(
                         seen_ownership_events,
                         active_trigger_event_ids,
+                    ),
+                    prior_order_boundary=_ownership_order_boundary(
+                        seen_ownership_events,
+                        self._interpretation_contract,
                     ),
                 )
                 binding_error = _observation_record_binding_error(item.execution, replay_model)
@@ -1054,10 +1076,9 @@ class ReferenceSession:
                 processed_ids = processed_ids | {expected_execution_id}
                 apply_observation_ledger(
                     assessment,
-                    mode=(
-                        "QUARANTINE"
-                        if conflict_code in _OBSERVATION_QUARANTINE_CODES
-                        else "FULL"
+                    mode=_observation_ledger_mode(
+                        assessment,
+                        conflict_code=conflict_code,
                     ),
                 )
                 if expected_stop is not None and index != len(state.evidence):
@@ -1160,7 +1181,10 @@ class ReferenceSession:
                 history = expected_history
                 resources = charged_resources
                 processed_ids = processed_ids | {expected_execution_id}
-                apply_observation_ledger(assessment)
+                apply_observation_ledger(
+                    assessment,
+                    mode=_observation_ledger_mode(assessment),
+                )
                 if expected_stop is not None and index != len(state.evidence):
                     return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap binding error cannot have a later causal round")
                 continue
@@ -1182,7 +1206,10 @@ class ReferenceSession:
                 history = expected_history
                 resources = charged_resources
                 processed_ids = processed_ids | {expected_execution_id}
-                apply_observation_ledger(assessment)
+                apply_observation_ledger(
+                    assessment,
+                    mode=_observation_ledger_mode(assessment),
+                )
                 if expected_stop is not None and index != len(state.evidence):
                     return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap interpretation error cannot have a later causal round")
                 continue
@@ -1207,7 +1234,10 @@ class ReferenceSession:
                 history = expected_history
                 resources = charged_resources
                 processed_ids = processed_ids | {expected_execution_id}
-                apply_observation_ledger(assessment)
+                apply_observation_ledger(
+                    assessment,
+                    mode=_observation_ledger_mode(assessment),
+                )
                 if expected_stop is not None and index != len(state.evidence):
                     return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap no-response item cannot have a later causal round")
                 continue
@@ -1247,7 +1277,10 @@ class ReferenceSession:
                     history = expected_history
                     resources = charged_resources
                     processed_ids = processed_ids | {expected_execution_id}
-                    apply_observation_ledger(assessment)
+                    apply_observation_ledger(
+                        assessment,
+                        mode=_observation_ledger_mode(assessment),
+                    )
                     if expected_stop is not None and index != len(state.evidence):
                         return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap rejected-observation item cannot have a later causal round")
                     continue
@@ -1534,6 +1567,10 @@ class ReferenceSession:
                     state.event_identity_refs,
                     state.active_trigger_event_ids,
                 ),
+                prior_order_boundary=_ownership_order_boundary(
+                    state.event_identity_refs,
+                    self._interpretation_contract,
+                ),
             )
             rejected_code = record_error.code
             rejected_replay_conflict = False
@@ -1564,8 +1601,9 @@ class ReferenceSession:
                 execution_record=execution.record,
                 environment_after_execution=execution.successor,
                 observation_assessment=rejected_assessment,
-                observation_ledger_mode=(
-                    "QUARANTINE" if rejected_replay_conflict else "FULL"
+                observation_ledger_mode=_observation_ledger_mode(
+                    rejected_assessment,
+                    conflict_code=(rejected_code if rejected_replay_conflict else None),
                 ),
             )
         if (
@@ -1906,6 +1944,10 @@ class ReferenceSession:
                     state.event_identity_refs,
                     state.active_trigger_event_ids,
                 ),
+                prior_order_boundary=_ownership_order_boundary(
+                    state.event_identity_refs,
+                    self._interpretation_contract,
+                ),
             )
             binding_error = _observation_record_binding_error(execution_record, model)
             assessment = _assessment_with_binding_error(assessment, binding_error)
@@ -1933,10 +1975,9 @@ class ReferenceSession:
                     message=replay_conflict.message,
                     rejected_response=execution_record,
                     observation_assessment=assessment,
-                    observation_ledger_mode=(
-                        "QUARANTINE"
-                        if replay_conflict.code in _OBSERVATION_QUARANTINE_CODES
-                        else "FULL"
+                    observation_ledger_mode=_observation_ledger_mode(
+                        assessment,
+                        conflict_code=replay_conflict.code,
                     ),
                 )
             if binding_error is not None:
@@ -1956,6 +1997,7 @@ class ReferenceSession:
                     message=binding_error.message,
                     rejected_response=execution_record,
                     observation_assessment=assessment,
+                    observation_ledger_mode=_observation_ledger_mode(assessment),
                 )
             if assessment.verdict == "ERROR":
                 return self._s7_retry(
@@ -1974,6 +2016,7 @@ class ReferenceSession:
                     message=assessment.reason,
                     rejected_response=execution_record,
                     observation_assessment=assessment,
+                    observation_ledger_mode=_observation_ledger_mode(assessment),
                 )
             if assessment.kind == "NO-RESPONSE":
                 # The record proves an issued execution with no normal public
@@ -1995,6 +2038,7 @@ class ReferenceSession:
                     code="OBSERVATION-NO-RESPONSE",
                     message=assessment.reason,
                     observation_assessment=assessment,
+                    observation_ledger_mode=_observation_ledger_mode(assessment),
                 )
         if execution_record.observable is None:
             next_history, next_frontiers, summary_diagnostics = self._summary_only_transition(
@@ -2839,6 +2883,7 @@ def _bound_rejected_observation_assessment(
     model: FiniteSessionModel,
     execution_attempt_id: str,
     prior_active_requests: Mapping[str, OwnershipEvent] | None = None,
+    prior_order_boundary: OwnershipOrderBoundary | None = None,
 ) -> ObservationAssessment | None:
     """Preserve only a safely bound raw TEST observation rejected at S4.
 
@@ -2864,6 +2909,7 @@ def _bound_rejected_observation_assessment(
         record.observation_input,
         interpretation_contract,
         prior_active_requests=prior_active_requests,
+        prior_order_boundary=prior_order_boundary,
     )
     return _assessment_with_binding_error(
         assessment,
@@ -2913,6 +2959,34 @@ def _binding_resolution_code(binding_error: KernelDiagnostic) -> str:
         if binding_error.code == "OBSERVATION-UNCERTAINTY-WINDOW-MISMATCH"
         else "OBSERVATION-INTERPRETATION-ERROR"
     )
+
+
+def _observation_ledger_mode(
+    assessment: ObservationAssessment | None,
+    *,
+    conflict_code: str | None = None,
+) -> str:
+    """Choose the only ledger effect permitted for a rejected observation.
+
+    An event that falls before the retained global order frontier is not a
+    newly observed public fact for this session.  Retaining it through the
+    ordinary FULL/error path would advance the next frontier with material we
+    explicitly rejected and could make a later valid delta unrecoverable.
+    Identity conflicts retain uncontested facts through their established
+    quarantine path; all other checked replays keep the existing FULL path.
+    """
+
+    if (
+        type(assessment) is ObservationAssessment
+        and any(
+            diagnostic.code in _OBSERVATION_ORDER_REJECTION_CODES
+            for diagnostic in assessment.diagnostics
+        )
+    ):
+        return "NONE"
+    if conflict_code in _OBSERVATION_QUARANTINE_CODES:
+        return "QUARANTINE"
+    return "FULL"
 
 
 def _strict_interval_equal(actual: object, expected: object) -> bool:
@@ -3077,6 +3151,29 @@ def _active_ownership_seed(
         for identifier in active_trigger_event_ids
         if identifier in event_identity_refs
     })
+
+
+def _ownership_order_boundary(
+    event_identity_refs: Mapping[str, OwnershipEvent],
+    interpretation_contract: InterpretationContract | None,
+) -> OwnershipOrderBoundary | None:
+    """Project the checked ledger's controlled global order high-water mark.
+
+    ACTIVE requests are a narrow ownership seed: they decide the candidates
+    for a newly observed response.  The full verified ledger separately
+    establishes the global sequence/timestamp prefix, including terminal
+    requests and consumed responses.  Never derive this boundary from raw
+    S4 material or a caller-supplied summary; live execution and causal
+    replay both call this helper over their independently reconstructed
+    ledger.
+    """
+
+    if interpretation_contract is None:
+        return None
+    return _retained_ownership_order_boundary(
+        event_identity_refs,
+        interpretation_contract,
+    )
 
 
 def _strict_ownership_event_equal(actual: object, expected: object) -> bool:

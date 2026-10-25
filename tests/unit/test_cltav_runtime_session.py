@@ -522,8 +522,8 @@ def test_session_private_seed_survives_a_mutated_public_s0_context() -> None:
         _runtime_observation_material(
             trigger_id="request-2", response_id="response-2",
             events=[
-                {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
-                {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+                {"id": "request-2", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "response-2", "sequence": 4, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
             ], measurement=_interval_mapping(0, 0),
         ),
     )
@@ -933,7 +933,8 @@ def test_session_consumes_a_response_identity_only_once_across_attempts() -> Non
         response_id="response-1",
         measurement=_interval_mapping(0, 0),
         events=[
-            {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+            # The exact historical receipt is not a new delta fact.  It must
+            # remain a duplicate response rather than obtain a new pairing.
             {"id": "response-1", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
         ],
     )
@@ -975,7 +976,7 @@ def test_session_rejects_a_new_response_for_an_already_terminal_trigger_instance
         measurement=_interval_mapping(0, 0),
         events=[
             {"id": "request-1", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
-            {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            {"id": "response-2", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
         ],
     )
     session = ReferenceSession(
@@ -1125,11 +1126,11 @@ def test_session_replays_every_fifo_trace_fact_and_preserves_the_one_active_requ
     first_events = [
         {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
         {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
-        {"id": "R1", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+        {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
     ]
     second_events = [
         {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
-        {"id": "R2", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+        {"id": "R2", "sequence": 11, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
     ]
     environment = _two_round_observation_environment(
         fixture,
@@ -1180,13 +1181,13 @@ def test_session_uses_a_retained_fifo_active_request_for_an_incremental_next_obs
     first_events = [
         {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
         {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
-        {"id": "R1", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+        {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
     ]
     # B remains ACTIVE after R1.  The next observation is a legal
     # *incremental* delta: terminal A/R1 and retained B need not be copied
     # again, but the response must still be matched against B.
     incremental_second_events = [
-        {"id": "R2", "sequence": 4, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+        {"id": "R2", "sequence": 11, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
     ]
     environment = _two_round_observation_environment(
         fixture,
@@ -1223,6 +1224,475 @@ def test_session_uses_a_retained_fifo_active_request_for_an_incremental_next_obs
     # rather than a continuation-only in-memory shortcut.
     target = ReferenceSession(**kwargs)
     assert target._state_error(accepted.state) is None
+
+
+@pytest.mark.parametrize("retain_active", (True, False), ids=("active-seed", "empty-active-seed"))
+@pytest.mark.parametrize("resource_mode", ("ROUNDS", "BUDGET"))
+@pytest.mark.parametrize("resume_fresh", (False, True), ids=("same", "fresh"))
+def test_session_rejects_a_backfilled_ownership_request_without_rewriting_the_checkpoint(
+    retain_active: bool,
+    resource_mode: str,
+    resume_fresh: bool,
+) -> None:
+    """A next delta cannot insert C before a retained terminal response."""
+
+    binding, model, fixture = _runtime_parts()
+    first_events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+    ]
+    if retain_active:
+        first_events.append(
+            {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        )
+    first_events.append(
+        {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    )
+    second_events = [
+        {"id": "C", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "R2", "sequence": 11, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="B" if retain_active else "A",
+            response_id="R1",
+            events=first_events,
+            measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C", response_id="R2", events=second_events, measurement=_interval_mapping(0, 0),
+        ),
+    )
+    resources = ResourceState.rounds(4) if resource_mode == "ROUNDS" else ResourceState.budget(12)
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": f"global-order-{retain_active}-{resource_mode}-{resume_fresh}",
+        "run_id": f"global-order-{retain_active}-{resource_mode}-{resume_fresh}",
+        "initial_summary": "q0",
+        "resources": resources,
+        "retry_cap": 3,
+        "interpretation_contract": _runtime_interpretation_contract(
+            model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    }
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    assert first.state.evidence[-1].committed is True
+    assert first.state.active_trigger_event_ids == ({"A"} if retain_active else frozenset())
+
+    if resume_fresh:
+        fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+        target = ReferenceSession(
+            binding=fresh_binding,
+            model=fresh_model,
+            session_id=kwargs["session_id"],
+            run_id=kwargs["run_id"],
+            initial_summary="q0",
+            resources=ResourceState.rounds(4) if resource_mode == "ROUNDS" else ResourceState.budget(12),
+            retry_cap=3,
+            interpretation_contract=_runtime_interpretation_contract(
+                fresh_model, policy="MOST-RECENT", concurrent_same_key=True,
+            ),
+        )
+    else:
+        target = source
+    rejected = target.step(first.state, first.environment)
+    evidence = rejected.state.evidence[-1]
+
+    assert evidence.committed is False
+    assert evidence.resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+    assert evidence.observation_assessment is not None
+    assert "INSUFFICIENT-OWNERSHIP-CONTEXT" in {
+        diagnostic.code for diagnostic in evidence.observation_assessment.diagnostics
+    }
+    assert rejected.state.history.hypotheses == first.state.history.hypotheses
+    assert rejected.state.event_identity_refs == first.state.event_identity_refs
+    assert rejected.state.consumed_response_ids == first.state.consumed_response_ids
+    assert rejected.state.terminal_trigger_event_ids == first.state.terminal_trigger_event_ids
+    assert rejected.state.active_trigger_event_ids == first.state.active_trigger_event_ids
+    assert rejected.state.attempts == first.state.attempts + 1
+    assert rejected.state.context.q_status == "UNKNOWN"
+    assert rejected.state.context.current_summary is None
+    assert evidence.rejected_response == evidence.execution
+    assert rejected.environment._state == "private-a2"
+    charged = target._model.actions[evidence.snapshot.action_id].cost
+    assert rejected.state.resources.remaining == first.state.resources.remaining - (
+        1 if resource_mode == "ROUNDS" else charged
+    )
+    assert len(rejected.state.evidence) == 2
+
+    independent_binding, independent_model, _independent_fixture = _runtime_parts()
+    independent = ReferenceSession(
+        binding=independent_binding,
+        model=independent_model,
+        session_id=kwargs["session_id"],
+        run_id=kwargs["run_id"],
+        initial_summary="q0",
+        resources=ResourceState.rounds(4) if resource_mode == "ROUNDS" else ResourceState.budget(12),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            independent_model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    assert independent._state_error(rejected.state) is None
+
+
+@pytest.mark.parametrize(
+    ("kind", "event_type", "response_id", "target_request_id"),
+    (
+        ("RESPONSE", "RESP", "late-response", None),
+        ("CANCEL", "CANCEL", None, "A"),
+        ("SUPERSEDE", "SUPERSEDE", None, "A"),
+    ),
+)
+def test_session_rejects_a_backfilled_response_or_termination_without_poisoning_the_ledger(
+    kind: str,
+    event_type: str,
+    response_id: str | None,
+    target_request_id: str | None,
+) -> None:
+    """Response and termination kinds cannot bypass the retained global frontier."""
+
+    binding, model, fixture = _runtime_parts()
+    second_event: dict[str, object] = {
+        "id": "late-event",
+        "sequence": 9,
+        "kind": kind,
+        "key": "k",
+        "eventType": event_type,
+        "timestamp": 0,
+    }
+    if target_request_id is not None:
+        second_event["targetRequestId"] = target_request_id
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id=response_id,
+            events=[second_event],
+            measurement=None if response_id is None else _interval_mapping(0, 0),
+        ),
+        second_no_response=response_id is None,
+    )
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": f"global-order-{kind.lower()}-backfill",
+        "run_id": f"global-order-{kind.lower()}-backfill",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "retry_cap": 3,
+        "interpretation_contract": _runtime_interpretation_contract(
+            model, policy="FIFO", concurrent_same_key=True,
+        ),
+    }
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    rejected = source.step(first.state, first.environment)
+    evidence = rejected.state.evidence[-1]
+
+    assert first.state.evidence[-1].committed is True
+    assert evidence.committed is False
+    assert evidence.resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+    assert evidence.observation_assessment is not None
+    assert {diagnostic.code for diagnostic in evidence.observation_assessment.diagnostics} >= {
+        "INSUFFICIENT-OWNERSHIP-CONTEXT",
+    }
+    assert rejected.state.event_identity_refs == first.state.event_identity_refs
+    assert rejected.state.consumed_response_ids == first.state.consumed_response_ids
+    assert rejected.state.terminal_trigger_event_ids == first.state.terminal_trigger_event_ids
+    assert rejected.state.active_trigger_event_ids == first.state.active_trigger_event_ids
+    assert rejected.state.history.hypotheses == first.state.history.hypotheses
+    assert rejected.state.attempts == first.state.attempts + 1
+    assert rejected.state.resources.remaining == first.state.resources.remaining - 1
+    fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+    fresh = ReferenceSession(
+        binding=fresh_binding,
+        model=fresh_model,
+        session_id=kwargs["session_id"],
+        run_id=kwargs["run_id"],
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            fresh_model, policy="FIFO", concurrent_same_key=True,
+        ),
+    )
+    assert fresh._state_error(rejected.state) is None
+
+
+def test_session_gives_a_backfilled_order_error_precedence_over_a_terminal_receipt_replay() -> None:
+    """A mixed duplicate/backfill delta must not quarantine its new late facts."""
+
+    binding, model, fixture = _runtime_parts()
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C",
+            response_id="R2",
+            events=[
+                {"id": "C", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+                {"id": "R2", "sequence": 11, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="global-order-mixed-replay",
+        run_id="global-order-mixed-replay",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    first = session.step(session.initial_state, environment)
+    rejected = session.step(first.state, first.environment)
+    assessment = rejected.state.evidence[-1].observation_assessment
+
+    assert assessment is not None
+    assert {diagnostic.code for diagnostic in assessment.diagnostics} >= {
+        "RETAINED-OWNERSHIP-EVENT-REPLAY",
+        "INSUFFICIENT-OWNERSHIP-CONTEXT",
+    }
+    assert rejected.state.event_identity_refs == first.state.event_identity_refs
+    assert "C" not in rejected.state.event_identity_refs
+    assert "R2" not in rejected.state.event_identity_refs
+    assert session._state_error(rejected.state) is None
+
+
+def test_session_does_not_admit_an_order_invalid_raw_delta_from_a_rejected_s4_record() -> None:
+    """The malformed-record path uses the same boundary and NONE ledger mode."""
+
+    binding, model, fixture = _runtime_parts()
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C",
+            response_id="R2",
+            events=[
+                {"id": "C", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R2", "sequence": 11, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="global-order-bound-s4",
+        run_id="global-order-bound-s4",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    first = session.step(session.initial_state, environment)
+
+    class MalformedRecordEnvironment:
+        def __init__(self, delegate: SyntheticEnvironment) -> None:
+            self.delegate = delegate
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = self.delegate.execute(request)
+            return EnvironmentExecution(
+                replace(returned.record, effect_class="CONFIRMED-NOT-SENT"),
+                returned.successor,
+            )
+
+    rejected = session.step(first.state, MalformedRecordEnvironment(first.environment))
+    evidence = rejected.state.evidence[-1]
+
+    assert first.state.evidence[-1].committed is True
+    assert evidence.committed is False
+    assert evidence.resolution_code == "INVALID-EXECUTION-RECORD"
+    assert evidence.observation_assessment is not None
+    assert {diagnostic.code for diagnostic in evidence.observation_assessment.diagnostics} >= {
+        "INSUFFICIENT-OWNERSHIP-CONTEXT",
+    }
+    assert rejected.state.history.hypotheses == first.state.history.hypotheses
+    assert rejected.state.event_identity_refs == first.state.event_identity_refs
+    assert rejected.state.consumed_response_ids == first.state.consumed_response_ids
+    assert rejected.state.terminal_trigger_event_ids == first.state.terminal_trigger_event_ids
+    assert rejected.state.active_trigger_event_ids == first.state.active_trigger_event_ids
+    assert rejected.state.resources.remaining == first.state.resources.remaining - 1
+    assert rejected.state.attempts == first.state.attempts + 1
+    fresh_binding, fresh_model, _fresh_fixture = _runtime_parts()
+    fresh = ReferenceSession(
+        binding=fresh_binding,
+        model=fresh_model,
+        session_id="global-order-bound-s4",
+        run_id="global-order-bound-s4",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            fresh_model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    assert fresh._state_error(rejected.state) is None
+
+
+@pytest.mark.parametrize(
+    ("policy", "expected_status", "expected_owner"),
+    (("FIFO", "UNIQUE", "A"), ("MOST-RECENT", "UNIQUE", "C"), ("UNIQUE-KEY", "AMBIGUOUS", None)),
+)
+def test_incremental_global_forward_request_preserves_the_declared_ownership_policy(
+    policy: str,
+    expected_status: str,
+    expected_owner: str | None,
+) -> None:
+    """A high-water boundary changes no legal FIFO/MR/UNIQUE decision."""
+
+    from cltav_runtime.interpretation import OwnershipEvent, OwnershipOrderBoundary, replay_ownership
+
+    active_a = OwnershipEvent("A", 1, "REQUEST", "k", "REQ", Fraction(0))
+    replay = replay_ownership(
+        (
+            OwnershipEvent("C", 11, "REQUEST", "k", "REQ", Fraction(0)),
+            OwnershipEvent("R2", 12, "RESPONSE", "k", "RESP", Fraction(0)),
+        ),
+        _runtime_interpretation_contract(
+            _runtime_parts()[1], policy=policy, concurrent_same_key=True,
+        ),
+        prior_active_requests={"A": active_a},
+        prior_order_boundary=OwnershipOrderBoundary(10, Fraction(0), frozenset({"A", "R1"})),
+    )
+
+    resolution = replay.response_resolutions["R2"]
+    assert replay.diagnostics == ()
+    assert resolution.status == expected_status
+    assert resolution.owner_request_id == expected_owner
+
+
+def test_session_rebuilds_the_order_frontier_from_evidence_not_a_mutable_ledger() -> None:
+    """Removing retained event refs cannot re-open a processed ownership prefix."""
+
+    binding, model, fixture = _runtime_parts()
+    first_material = _runtime_observation_material(
+        trigger_id="A",
+        response_id="R1",
+        events=[
+            {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+            {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+        ],
+        measurement=_interval_mapping(0, 0),
+    )
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="global-order-ledger-tamper",
+        run_id="global-order-ledger-tamper",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    first = session.step(
+        session.initial_state,
+        _two_round_observation_environment(fixture, first_material, first_material),
+    )
+    assert first.state.evidence[-1].committed is True
+    forged = replace(first.state, event_identity_refs=MappingProxyType({}))
+    state_error = session._state_error(forged)
+    assert state_error is not None
+    assert state_error.code == "INVALID-OBSERVATION-EVENT-LEDGER"
+
+    class NoDispatch:
+        def execute(self, _request: ExecutionRequest) -> EnvironmentExecution:  # pragma: no cover - must not run
+            raise AssertionError("a forged ownership frontier must be rejected before dispatch")
+
+    rejected = session.step(forged, NoDispatch())  # type: ignore[arg-type]
+    assert rejected.stop_reason == "Stop-Error"
+    assert rejected.state is forged
+    assert rejected.diagnostics[0].code == "INVALID-OBSERVATION-EVENT-LEDGER"
+
+
+def test_session_does_not_let_an_unrelated_key_advance_the_ownership_frontier() -> None:
+    """Other-key transactions stay in the identity ledger but do not fence this contract."""
+
+    binding, model, fixture = _runtime_parts()
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+                {"id": "other-request", "sequence": 100, "kind": "REQUEST", "key": "other", "eventType": "OTHER", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C",
+            response_id="R2",
+            events=[
+                {"id": "C", "sequence": 11, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R2", "sequence": 12, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="global-order-foreign-key",
+        run_id="global-order-foreign-key",
+        initial_summary="q0",
+        resources=ResourceState.rounds(3),
+        retry_cap=3,
+        interpretation_contract=_runtime_interpretation_contract(
+            model, policy="MOST-RECENT", concurrent_same_key=True,
+        ),
+    )
+    first = session.step(session.initial_state, environment)
+    second = session.step(first.state, first.environment)
+
+    assert first.state.evidence[-1].committed is True
+    assert second.state.evidence[-1].committed is True
+    assessment = second.state.evidence[-1].observation_assessment
+    assert assessment is not None
+    assert assessment.response_id == "R2"
+    assert assessment.ownership is not None
+    assert assessment.ownership.owner_request_id == "C"
+    assert session._state_error(second.state) is None
 
 
 def test_session_rejects_an_incremental_fifo_delta_when_it_selects_a_newer_request_over_retained_b() -> None:
@@ -1281,10 +1751,10 @@ def test_session_replays_a_delta_only_cancellation_against_its_retained_active_l
     first_events = [
         {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
         {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
-        {"id": "R1", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+        {"id": "R1", "sequence": 10, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
     ]
     cancellation_delta = [
-        {"id": "T", "sequence": 4, "kind": "CANCEL", "key": "k", "eventType": "CANCEL", "timestamp": 1, "targetRequestId": "B"},
+        {"id": "T", "sequence": 11, "kind": "CANCEL", "key": "k", "eventType": "CANCEL", "timestamp": 1, "targetRequestId": "B"},
     ]
     environment = _two_round_observation_environment(
         fixture,
@@ -1523,7 +1993,7 @@ def test_session_quarantines_new_response_facts_from_an_identity_conflict_and_re
     # response fact in that same trace and must be quarantined/consumed.
     conflicting_events = [
         {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 1},
-        {"id": "R2", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 1},
+        {"id": "R2", "sequence": 4, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 1},
     ]
     environment = _two_round_observation_environment(
         fixture,
@@ -1776,8 +2246,8 @@ def test_session_detaches_event_ledger_from_a_checkpoint_backing_map_before_disp
             trigger_id="request-2",
             response_id="response-2",
             events=[
-                {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
-                {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+                {"id": "request-2", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "response-2", "sequence": 4, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
             ],
             measurement=_interval_mapping(0, 0),
         ),
@@ -1823,8 +2293,8 @@ def test_session_detaches_event_values_from_a_hostile_s4_checkpoint_reference() 
             trigger_id="request-2",
             response_id="response-2",
             events=[
-                {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
-                {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+                {"id": "request-2", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "response-2", "sequence": 4, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
             ],
             measurement=_interval_mapping(0, 0),
         ),
@@ -1868,8 +2338,8 @@ def test_session_detaches_fraction_leaves_inside_retained_events_before_second_d
         _runtime_observation_material(
             trigger_id="request-2", response_id="response-2",
             events=[
-                {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
-                {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+                {"id": "request-2", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "response-2", "sequence": 4, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
             ], measurement=_interval_mapping(0, 0),
         ),
     )
@@ -1909,8 +2379,8 @@ def test_session_detaches_general_mapping_values_inside_retained_evidence_before
         _runtime_observation_material(
             trigger_id="request-2", response_id="response-2",
             events=[
-                {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
-                {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+                {"id": "request-2", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "response-2", "sequence": 4, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
             ], measurement=_interval_mapping(0, 0),
         ),
     )
@@ -1968,8 +2438,8 @@ def test_session_detaches_retained_observation_assessment_from_a_hostile_s4_refe
             trigger_id="request-2",
             response_id="response-2",
             events=[
-                {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
-                {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+                {"id": "request-2", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "response-2", "sequence": 4, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
             ],
             measurement=_interval_mapping(0, 0),
         ),
