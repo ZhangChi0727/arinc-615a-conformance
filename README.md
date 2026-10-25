@@ -51,13 +51,13 @@ silently redefine the Core.
 
 ## Current increment
 
-**Draft finite-kernel checkpoint and controlled model-figure workflow**
+**Draft finite reference-runtime candidate and controlled model-figure workflow**
 
 - CR-2026-017 / DD-041 delivered the separately owned, read-only offline capture-to-evidence increment merged as eddec443; its bounded evidence scope remains unchanged.
 - CR-2026-018 / DD-042 integrated accepted literature evidence into bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.
 - PR #23 was independently accepted at Head 04b7c56eb70e458cec46e54bd7b37aaa9185cc7f and squash-merged as 868ee3c3e99bee2bcb0a2aedb206fe15d2a4e0e9; main CI 38864201591 passed. CR-2026-019 / DD-043 remains a bounded design authority, not run admission.
 - PR #24 was merged as 4d3b013; CR-2026-020 / DD-044 governs its versioned editable model-figure candidates. The current nine remain DRAFT-REDRAW candidates; semantic review, final-size acceptance, downstream migration, and promotion remain separate pending human decisions.
-- Draft PR #25 adds only the finite explicit-path reference-kernel checkpoint: verified contract/model/projection context identity, one-clock exact-rational propagation, conservative limits and compact content-addressed source records. Its independent kernel review remains pending; upper session coordination and synthetic execution are not implemented.
+- Draft PR #25 contains a bounded finite CL-TAV reference-runtime candidate: verified contract/model/projection identities, one-clock exact-rational propagation, conservative limits, compact content-addressed source records, contract-bound in-process session coordination, and raw observation ownership/timing assessment. It remains a Draft engineering candidate awaiting independent review; it establishes neither runtime integrity, IUT execution, conformance, nor M3 admission.
 - No confirmatory result, Configuration, expanded capability, conformance, submission, baseline or tag is created.
 
 State changes:
@@ -65,7 +65,7 @@ State changes:
 - The bounded offline intake remains the accepted narrow engineering increment and closes no run-admission dependency.
 - The finite experiment design is accepted as a design attachment while all run-admission decisions remain OPEN.
 - The CR-2026-020 / DD-044 redraw workflow remains DRAFT-REDRAW; reader-figure promotion remains blocked pending the separate semantic, size, migration and promotion gates.
-- PR #25 remains a single Draft finite-kernel checkpoint; it is not an approval, a runtime-integrity result, or authority to begin upper loop, synthetic execution or M3 work.
+- PR #25 remains a single Draft finite reference-runtime candidate, including bounded in-process session coordination and synthetic engineering witnesses; it is not an approval, a runtime-integrity result, or authority for M3, active execution, or capability claims.
 - currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims.
 
 Unchanged boundaries:
@@ -74,16 +74,16 @@ Unchanged boundaries:
 - The 18 source mapping rows, 7 instance-only rows and Q-01 through Q-09 remain unchanged.
 - Project Configuration is NOT YET ESTABLISHED; instance evaluation is NOT-EXERCISED; RQ8 remains OPEN.
 - Protocol conformance, certification readiness and authority acceptance remain false; no baseline or tag is created.
-- This increment creates only a bounded in-process finite-path reference kernel; it creates no active codec/service engine, general solver, verification verdict, controlled execution evidence or Project Configuration.
+- This increment creates only a bounded in-process finite-path reference runtime and synthetic engineering witness; it creates no active codec/service engine, general solver, verification verdict, controlled IUT execution evidence or Project Configuration.
 
 ## Current stop
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3, active protocol execution and capability claims. RR-CLTAV-2026-097 accepted the first-slice offline UPLOAD/INFORMATION development specification at PR #19 Head c9ca381, squash-merged as 324d832; PR #20 rebounded the M2 input to c5296aed. CR-2026-017 / DD-041 separately authorize only a bounded, read-only offline intake implementation with evidence output. Draft PR #25 additionally implements a bounded finite-path reference-kernel checkpoint pending independent review; it is not a runtime-integrity result, confirmatory experiment, Project Configuration, expanded-CRS approval or M3 activation. M1-CANDIDATE-25 and its open source dependencies retain their controlled dispositions.
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3, active protocol execution, runtime-integrity claims and capability claims. RR-CLTAV-2026-097 accepted the first-slice offline UPLOAD/INFORMATION development specification at PR #19 Head c9ca381, squash-merged as 324d832; PR #20 rebounded the M2 input to c5296aed. CR-2026-017 / DD-041 separately authorize only a bounded, read-only offline intake implementation with evidence output. Draft PR #25 additionally contains a bounded finite reference-runtime candidate: a contract-bound in-process session/synthetic witness and raw observation ownership/timing assessment pending independent review. It is not a runtime-integrity result, confirmatory experiment, real protocol-service ownership, physical clock calibration, Project Configuration, expanded-CRS approval or M3 activation. M1-CANDIDATE-25 and its open source dependencies retain their controlled dispositions.
 
 ## Next development steps
 
 - Retain PR #24's controlled model-figure candidates as DRAFT-REDRAW; do not promote reader figures or migrate downstream consumers until the separate semantic, size, migration and promotion gates close.
-- Obtain independent review of PR #25's bounded finite-kernel checkpoint before any upper CL-TAV loop, synthetic environment, execution interface or runtime-integrity work begins.
+- Obtain independent review of PR #25's bounded finite reference-runtime candidate before B/C-3 evidence/CLI closure, M3, controlled IUT execution or runtime-integrity work begins.
 - Keep every experiment run-admission decision OPEN and establish runtime integrity and independent truth before capability or conformance claims; do not start M3 from the accepted design alone.
 - Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth.
 
@@ -109,13 +109,13 @@ Unchanged boundaries:
 
 ## 本次集成增量
 
-**Draft 有限内核检查点与受控模型图工作流**
+**Draft 有限参考运行时候选与受控模型图工作流**
 
 - CR-2026-017／DD-041 交付了以 eddec443 合并的只读“捕获到证据”增量；其有界证据范围保持不变。
 - CR-2026-018／DD-042 在不改变算法、接口和实验臂的前提下，把已接受文献证据融入有界 C1／C2 措辞与评价记账。
 - PR #23 已在 Head 04b7c56eb70e458cec46e54bd7b37aaa9185cc7f 获独立接受，并压缩合并为 868ee3c3e99bee2bcb0a2aedb206fe15d2a4e0e9；main CI 38864201591 通过。CR-2026-019／DD-043 仍只是有界设计权威，不是运行准入。
 - PR #24 已合并为 4d3b013；CR-2026-020／DD-044 管理其中版本化、可编辑的模型图候选。当前九图仍为 DRAFT-REDRAW 候选；语义评审、最终尺寸验收、下游迁移与晋级仍是独立的待定人工决定。
-- Draft PR #25 仅增加有限显式路径参考内核检查点：经验证的合同／模型／投影上下文身份、单时钟精确有理数传播、保守限额及紧凑的内容寻址来源记录。其独立内核评审仍待完成；上层会话协调和合成执行尚未实现。
+- Draft PR #25 包含一个有界有限的 CL-TAV 参考运行时候选：经验证的合同／模型／投影身份、单时钟精确有理数传播、保守限额、紧凑的内容寻址来源记录、受合同约束的进程内会话协调，以及原始观测所有权／时序评估。它仍是等待独立评审的 Draft 工程候选；它既不建立运行完整性、IUT 执行、符合性，也不构成 M3 准入。
 - 本增量不产生确认性结果、Configuration、扩大能力、符合性、投稿、baseline 或 tag。
 
 状态变化：
@@ -123,7 +123,7 @@ Unchanged boundaries:
 - 有界离线接入已经合并，但仍只代表已接受的狭窄工程增量；它不关闭真值、复位、主动执行或确认性运行依赖。
 - 有限实验设计已作为设计附件接受，但所有运行准入决定保持 OPEN。
 - CR-2026-020／DD-044 重绘工作流保持 DRAFT-REDRAW；在独立的语义、尺寸、迁移和晋级门关闭前，reader 图晋级仍被阻塞。
-- PR #25 保持唯一 Draft 有限内核检查点；它不是批准、运行完整性结果，也不授权启动上层闭环、合成执行或 M3 工作。
+- PR #25 保持唯一的 Draft 有限参考运行时候选，其中包括有界的进程内会话协调和合成工程见证；它不是批准、运行完整性结果，也不授权 M3、主动执行或能力主张。
 - 对 M3、主动执行和能力主张而言，currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。
 
 保持不变的边界：
@@ -132,16 +132,16 @@ Unchanged boundaries:
 - 18 个来源映射行、7 个实例专用行及 Q-01～Q-09 保持不变。
 - Project Configuration 保持 NOT YET ESTABLISHED；实例评价保持 NOT-EXERCISED；RQ8 保持 OPEN。
 - 协议符合性、认证准备度和权威接受保持 false；不创建 baseline 或 tag。
-- 本增量仅创建有界的进程内有限路径参考内核；它不创建主动 codec／服务引擎、通用求解器、验证判定、受控执行证据或 Project Configuration。
+- 本增量仅创建有界的进程内有限路径参考运行时和合成工程见证；它不创建主动 codec／服务引擎、通用求解器、验证判定、受控 IUT 执行证据或 Project Configuration。
 
 ## 当前停点
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3、主动协议执行和能力主张。RR-CLTAV-2026-097 接受了 PR #19 Head c9ca381 的首轮离线 UPLOAD／INFORMATION 开发规格，随后以 324d832 压缩合并；PR #20 将 M2 输入重钉至 c5296aed。CR-2026-017／DD-041 仅单独授权一个输出证据的有界、只读离线接入实现。Draft PR #25 另行实现了待独立评审的有界有限路径参考内核检查点；它不等于运行完整性结果、确认性实验、Project Configuration、扩大 CRS 批准或 M3 激活。M1-CANDIDATE-25 及其开放来源依赖保持受控处置。
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3、主动协议执行、运行完整性主张和能力主张。RR-CLTAV-2026-097 接受了 PR #19 Head c9ca381 的首轮离线 UPLOAD／INFORMATION 开发规格，随后以 324d832 压缩合并；PR #20 将 M2 输入重钉至 c5296aed。CR-2026-017／DD-041 仅单独授权一个输出证据的有界、只读离线接入实现。Draft PR #25 另行包含一个待独立评审的有界有限参考运行时候选：受合同约束的进程内会话／合成见证及原始观测所有权／时序评估。它不等于运行完整性结果、确认性实验、真实协议服务所有权、物理时钟校准、Project Configuration、扩大 CRS 批准或 M3 激活。M1-CANDIDATE-25 及其开放来源依赖保持受控处置。
 
 ## 下一步开发计划
 
 - 将 PR #24 的受控模型图候选保持为 DRAFT-REDRAW；在独立的语义、尺寸、迁移和晋级门关闭前，不得晋级 reader 图或迁移下游使用者。
-- 在启动任何上层 CL-TAV 闭环、合成环境、执行接口或运行完整性工作之前，先完成 PR #25 有界有限内核检查点的独立复审。
+- 在启动 B/C-3 证据／CLI 闭合、M3、受控 IUT 执行或运行完整性工作之前，先完成 PR #25 有界有限参考运行时候选的独立复审。
 - 所有实验运行准入决定保持 OPEN；建立运行完整性与独立真值后方可提出能力或符合性主张，不得仅凭已接受设计启动 M3。
 - 保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。
 <!-- project-status:end -->

@@ -29,6 +29,19 @@ from .session import (
     SessionState,
 )
 from .synthetic import ExecutionRequest, SyntheticEnvironment, VisibleExecutionRecord
+from .interpretation import (
+    InterpretationContract,
+    ObservationAssessment,
+    ObservationInput,
+    OwnershipEvent,
+    OwnershipReplay,
+    OwnershipResolution,
+    assess_observation,
+    bind_observation_input,
+    interpretation_contract_identity,
+    observation_input_from_mapping,
+    replay_ownership,
+)
 from .types import HistoryHandle, SessionContext
 
 __all__ = [
@@ -38,9 +51,15 @@ __all__ = [
     "HistoryHandle",
     "FrontierEntry",
     "Interval",
+    "InterpretationContract",
     "KernelDiagnostic",
     "KernelResult",
     "ModelContext",
+    "ObservationAssessment",
+    "ObservationInput",
+    "OwnershipEvent",
+    "OwnershipReplay",
+    "OwnershipResolution",
     "ProvenanceRecord",
     "PredictionClass",
     "ActionPrediction",
@@ -58,6 +77,11 @@ __all__ = [
     "SyntheticEnvironment",
     "VisibleExecutionRecord",
     "initial_entry",
+    "assess_observation",
+    "bind_observation_input",
+    "interpretation_contract_identity",
     "merge_frontier",
     "propagate_transition",
+    "observation_input_from_mapping",
+    "replay_ownership",
 ]

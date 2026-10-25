@@ -8,13 +8,28 @@ from fractions import Fraction
 import json
 from pathlib import Path
 import subprocess
+from types import MappingProxyType
 
 import pytest
 
 from cltav_runtime.bindings import RuntimeAuthorityBinding
-from cltav_runtime.kernel import ContractSnapshot, ModelContext, initial_entry, propagate_transition
+from cltav_runtime.kernel import ContractSnapshot, Interval, ModelContext, initial_entry, propagate_transition
+from cltav_runtime.interpretation import (
+    InterpretationContract,
+    assess_observation,
+    bind_observation_input,
+    observation_input_from_mapping,
+)
 from cltav_runtime.model import FiniteSessionModel
-from cltav_runtime.session import ReferenceSession, ResourceState, SessionState
+from cltav_runtime.session import (
+    ReferenceSession,
+    ResourceState,
+    SessionState,
+    _advance_observation_ledger,
+    _event_identity_ledger_error,
+    _observation_replay_conflict,
+    _quarantine_conflicted_observation_ledger,
+)
 from cltav_runtime.synthetic import (
     EnvironmentExecution,
     ExecutionRequest,
@@ -68,6 +83,124 @@ def _runtime_parts() -> tuple[RuntimeAuthorityBinding, FiniteSessionModel, dict[
     return binding, FiniteSessionModel.from_mapping(context=context, value=fixture["algorithmModel"]), fixture
 
 
+def _interval_mapping(
+    lower: int, upper: int, *, lower_closed: bool = True, upper_closed: bool = True,
+) -> dict[str, object]:
+    return {"lower": lower, "upper": upper, "lowerClosed": lower_closed, "upperClosed": upper_closed}
+
+
+def _runtime_interpretation_contract(
+    model: FiniteSessionModel,
+    *,
+    requirement: Interval | None = None,
+    physical: Interval | None = None,
+    clock_valid: bool = True,
+    error_budget_valid: bool = True,
+    deadline_authority: str = "METHOD-ONLY",
+    policy: str = "UNIQUE-KEY",
+    concurrent_same_key: bool = False,
+) -> InterpretationContract:
+    """Controlled session contract; environment declarations cannot set it."""
+
+    uncertainty = model.uncertainty
+    effective_requirement = requirement or Interval(Fraction(0), Fraction(1), True, True)
+    return InterpretationContract(
+        "synthetic:bc2b:v1", "REQ", "RESP", "k", policy, concurrent_same_key,
+        "CANCEL", "SUPERSEDE",
+        physical or Interval(Fraction(-1), Fraction(1), True, True),
+        effective_requirement,
+        uncertainty.clock_id, uncertainty.uncertainty_id, uncertainty.identity,
+        uncertainty.time_unit, clock_valid, error_budget_valid,
+        deadline_authority,
+        "method:synthetic:upper" if deadline_authority != "UNRESOLVED" else None,
+        effective_requirement.upper if deadline_authority != "UNRESOLVED" else None,
+        effective_requirement.upper_closed,
+    )
+
+
+def _runtime_observation_material(
+    *,
+    trigger_id: str = "request-1",
+    response_id: str | None = "response-1",
+    events: list[dict[str, object]] | None = None,
+    measurement: dict[str, object] | None = None,
+    horizon: bool = True,
+    earliest: int | None = 6,
+) -> dict[str, object]:
+    """Only raw ordered material; no policy/deadline/verdict is accepted."""
+
+    if events is None:
+        events = [{
+            "id": trigger_id, "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0,
+        }]
+        if response_id is not None:
+            events.append({
+                "id": response_id, "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0,
+            })
+    return {
+        "events": events,
+        "triggerEventId": trigger_id,
+        "responseId": response_id,
+        "measurementInterval": measurement if response_id is not None else None,
+        "observationEndQualified": horizon,
+        "earliestElapsed": earliest,
+        "clockIdentity": "x",
+        "unit": "ticks",
+    }
+
+
+def _environment_with_observation_material(
+    fixture: dict[str, object], observation_material: dict[str, object], *,
+    state_id: str = "private-a0", action_id: str = "test-router",
+    no_response: bool = False,
+) -> SyntheticEnvironment:
+    source = copy.deepcopy(fixture["environments"]["alpha"])
+    assert isinstance(source, dict)
+    states = source["states"]
+    assert isinstance(states, dict)
+    state = states[state_id]
+    assert isinstance(state, dict)
+    outcome = state[action_id]
+    assert isinstance(outcome, dict)
+    outcome["observationMaterial"] = observation_material
+    if no_response:
+        outcome.update({
+            "observable": None,
+            "summaryConfirmed": False,
+            "postSummary": None,
+            "measurementTick": None,
+        })
+    return SyntheticEnvironment.from_mapping(source)
+
+
+def _two_round_observation_environment(
+    fixture: dict[str, object],
+    first_material: dict[str, object],
+    second_material: dict[str, object],
+    *,
+    second_no_response: bool = False,
+) -> SyntheticEnvironment:
+    """Attach raw material to alpha's two public TEST rounds."""
+
+    source = copy.deepcopy(fixture["environments"]["alpha"])
+    assert isinstance(source, dict)
+    states = source["states"]
+    assert isinstance(states, dict)
+    first = states["private-a0"]["test-router"]
+    second = states["private-a1"]["test-left"]
+    assert isinstance(first, dict) and isinstance(second, dict)
+    first["observationMaterial"] = first_material
+    second["observationMaterial"] = second_material
+    if second_no_response:
+        second.update({
+            "observable": None,
+            "summaryConfirmed": False,
+            "postSummary": None,
+            "measurementTick": None,
+        })
+    return SyntheticEnvironment.from_mapping(source)
+
+
 @pytest.mark.parametrize(
     ("environment_name", "second_action", "remaining_hypothesis"),
     [("alpha", "test-left", "h0"), ("beta", "test-right", "h2")],
@@ -104,6 +237,1315 @@ def test_two_round_feedback_consumes_committed_summary_and_changes_selection(
     assert result.state.evidence[0].projected_cost == {
         "acquisition": 0, "computation": 1, "preparation": 0, "retry": 0,
     }
+
+
+@pytest.mark.parametrize(
+    ("requirement", "clock_valid", "expected_verdict"),
+    (
+        (Interval(Fraction(0), Fraction(1), True, True), True, "PASS"),
+        (Interval(Fraction(2), Fraction(3), True, True), True, "FAIL"),
+        (Interval(Fraction(0), Fraction(1), True, True), False, "ERROR"),
+    ),
+)
+def test_session_replays_bound_raw_ownership_timing_material_before_history_commit(
+    requirement: Interval, clock_valid: bool, expected_verdict: str,
+) -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id=f"session-observation-{expected_verdict}",
+        run_id=f"run-observation-{expected_verdict}", initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(
+            model, requirement=requirement, clock_valid=clock_valid,
+        ),
+    )
+    result = session.run(
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(measurement=_interval_mapping(0, 0)),
+        ),
+        maximum_rounds=1,
+    )
+    evidence = result.state.evidence[0]
+    assert evidence.observation_assessment is not None
+    assert evidence.observation_assessment.verdict == expected_verdict
+    if expected_verdict == "ERROR":
+        assert result.stop_reason == "Stop-Error"
+        assert evidence.committed is False
+        assert evidence.rejected_response == evidence.execution
+        assert evidence.resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+        assert result.state.history.hypotheses == session.initial_state.history.hypotheses
+        assert set(result.state.history.status_by_hypothesis.values()) == {"CONSERVATIVE-UNKNOWN"}
+        assert result.state.context.q_status == "UNKNOWN"
+        assert result.state.context.current_summary is None
+        assert result.state.resources.remaining == 0
+        assert result.state.context.retry_count == 1
+        assert result.state.attempts == 1
+    else:
+        # PASS and FAIL are both interpretation evidence.  The compatible
+        # history is determined by the selected observable class, not by a
+        # timing verdict pretending to be a global candidate deletion.
+        assert evidence.committed is True
+        assert evidence.resolution_code == "COMMIT"
+        assert evidence.observation_assessment.score_disposition == "ENGINEERING-WITNESS"
+        assert evidence.observation_assessment.answered is False
+        assert result.state.consumed_response_ids == {"response-1"}
+        assert result.state.history.hypotheses == {"h0", "h1"}
+        assert result.state.context.current_summary == "branch-alpha"
+        resumed = session.step(result.state, result.environment)
+        assert not any(diagnostic.code.startswith("EVIDENCE-") for diagnostic in resumed.diagnostics)
+
+
+def test_session_rejects_forged_assessment_before_dispatch_or_second_charge() -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-observation-forgery",
+        run_id="run-observation-forgery", initial_summary="q0", resources=ResourceState.rounds(2),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    first = session.step(
+        session.initial_state,
+        _environment_with_observation_material(
+            fixture, _runtime_observation_material(measurement=_interval_mapping(0, 0)),
+        ),
+    )
+    assert first.state.evidence[0].observation_assessment is not None
+    forged_assessment = replace(first.state.evidence[0].observation_assessment, verdict="FAIL")
+    forged_evidence = replace(first.state.evidence[0], observation_assessment=forged_assessment)
+    forged_state = replace(first.state, evidence=(forged_evidence,))
+
+    class NoDispatchEnvironment:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:  # pragma: no cover - must not run
+            raise AssertionError(f"forged evidence must be rejected before dispatch: {request}")
+
+    rejected = session.step(forged_state, NoDispatchEnvironment())  # type: ignore[arg-type]
+    assert rejected.stop_reason == "Stop-Error"
+    assert rejected.state is forged_state
+    assert rejected.diagnostics[0].code == "EVIDENCE-INTERPRETATION-MISMATCH"
+
+
+def test_session_records_no_response_without_turning_method_only_deadline_into_scored_protocol_fail() -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-method-only-silence",
+        run_id="run-method-only-silence", initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    result = session.run(
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(response_id=None, earliest=99),
+            no_response=True,
+        ),
+        maximum_rounds=1,
+    )
+    evidence = result.state.evidence[0]
+    assert evidence.observation_assessment is not None
+    assert evidence.observation_assessment.verdict == "INCONCLUSIVE"
+    assert evidence.observation_assessment.score_disposition == "PENDING-DEADLINE"
+    assert evidence.observation_assessment.answered is False
+    assert evidence.committed is False
+    assert evidence.resolution_code == "OBSERVATION-NO-RESPONSE"
+    assert evidence.rejected_response is None
+    assert result.state.history.hypotheses == session.initial_state.history.hypotheses
+    assert result.state.context.current_summary is None
+    assert result.state.consumed_response_ids == frozenset()
+    assert result.state.terminal_trigger_event_ids == frozenset()
+    resumed = session.step(result.state, result.environment)
+    assert not any(diagnostic.code in {"SESSION-LINEAGE-MISMATCH", "EVIDENCE-NO-RESPONSE-MISMATCH"} for diagnostic in resumed.diagnostics)
+
+
+def test_session_retains_unqualified_silence_without_an_elapsed_reading_as_a_portable_checkpoint() -> None:
+    """An unfinished observation window is pending, not an S7 input error."""
+
+    binding, model, fixture = _runtime_parts()
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "session-pending-silence",
+        "run_id": "run-pending-silence",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(1),
+        "interpretation_contract": _runtime_interpretation_contract(model),
+    }
+    source = ReferenceSession(**kwargs)
+    result = source.step(
+        source.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(response_id=None, horizon=False, earliest=None),
+            no_response=True,
+        ),
+    )
+    evidence = result.state.evidence[0]
+    assert evidence.resolution_code == "OBSERVATION-NO-RESPONSE"
+    assert evidence.observation_assessment is not None
+    assert evidence.observation_assessment.verdict == "INCONCLUSIVE"
+    assert evidence.observation_assessment.score_disposition == "PENDING-HORIZON"
+    assert evidence.committed is False
+    assert result.state.active_trigger_event_ids == {"request-1"}
+
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(result.state) is None
+
+
+def test_synthetic_declaration_rejects_conflicting_silence_and_normal_response_fields() -> None:
+    _binding, _model, fixture = _runtime_parts()
+    # A raw no-response material declaration cannot coexist with a normal
+    # observable/summary, so it never reaches a session S9 path.
+    source = copy.deepcopy(fixture["environments"]["alpha"])
+    assert isinstance(source, dict)
+    outcome = source["states"]["private-a0"]["test-router"]
+    assert isinstance(outcome, dict)
+    outcome["observationMaterial"] = _runtime_observation_material(response_id=None)
+    with pytest.raises(ValueError, match="response-free TEST"):
+        SyntheticEnvironment.from_mapping(source)
+
+
+def test_session_rejects_reviewed_deadline_and_mismatched_uncertainty_contract() -> None:
+    binding, model, _fixture = _runtime_parts()
+    with pytest.raises(ValueError, match="reviewed-deadline"):
+        ReferenceSession(
+            binding=binding, model=model, session_id="reviewed", run_id="reviewed", initial_summary="q0",
+            resources=ResourceState.rounds(1),
+            interpretation_contract=_runtime_interpretation_contract(model, deadline_authority="REVIEWED"),
+        )
+    contract = _runtime_interpretation_contract(model)
+    with pytest.raises(ValueError, match="uncertainty"):
+        ReferenceSession(
+            binding=binding, model=model, session_id="mismatch", run_id="mismatch", initial_summary="q0",
+            resources=ResourceState.rounds(1),
+            interpretation_contract=replace(contract, unit="milliseconds"),
+        )
+
+    class StringSubclass(str):
+        pass
+
+    # Contract identity is a closed public input: ordinary Python string
+    # equality must not let a subclass alter the canonical deadline identity.
+    with pytest.raises(ValueError, match="invalid"):
+        ReferenceSession(
+            binding=binding, model=model, session_id="deadline-subclass", run_id="deadline-subclass",
+            initial_summary="q0", resources=ResourceState.rounds(1),
+            interpretation_contract=replace(contract, deadline_identity=StringSubclass("method:synthetic:upper")),
+        )
+
+
+def test_session_rejects_conflicting_silence_shape_at_the_public_adapter_boundary() -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="adapter-silence", run_id="adapter-silence",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    raw = observation_input_from_mapping(_runtime_observation_material(response_id=None))
+    bound = bind_observation_input(
+        raw,
+        execution_attempt_id="adapter-silence:adapter-silence:execution:1",
+        action_id="test-router",
+        evidence_ref="adapter:silence:1",
+        measurement_tick=None,
+        uncertainty_identity=None,
+    )
+    record = VisibleExecutionRecord(
+        execution_attempt_id="adapter-silence:adapter-silence:execution:1",
+        action_id="test-router",
+        effect_class="NONE",
+        observable="branch-alpha",
+        summary_confirmed=True,
+        post_summary="branch-alpha",
+        measurement_tick=Fraction(0),
+        uncertainty_identity=model.uncertainty_identity,
+        evidence_ref="adapter:silence:1",
+        response_id=None,
+        observation_input=bound,
+    )
+    successor = SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"])
+
+    class Adapter:
+        def execute(self, _request: ExecutionRequest) -> EnvironmentExecution:
+            return EnvironmentExecution(record, successor)
+
+    result = session.step(session.initial_state, Adapter())  # type: ignore[arg-type]
+    evidence = result.state.evidence[0]
+    assert evidence.committed is False
+    assert evidence.resolution_code == "INVALID-EXECUTION-RECORD"
+    assert evidence.summary_after is None
+
+
+def test_session_consumes_a_response_identity_only_once_across_attempts() -> None:
+    binding, model, fixture = _runtime_parts()
+    source = copy.deepcopy(fixture["environments"]["alpha"])
+    assert isinstance(source, dict)
+    states = source["states"]
+    assert isinstance(states, dict)
+    first = states["private-a0"]["test-router"]
+    second = states["private-a1"]["test-left"]
+    assert isinstance(first, dict) and isinstance(second, dict)
+    first["observationMaterial"] = _runtime_observation_material(measurement=_interval_mapping(0, 0))
+    second["observationMaterial"] = _runtime_observation_material(
+        trigger_id="request-2",
+        response_id="response-1",
+        measurement=_interval_mapping(0, 0),
+        events=[
+            {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+            {"id": "response-1", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+        ],
+    )
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="reused-response", run_id="reused-response",
+        initial_summary="q0", resources=ResourceState.rounds(2), retry_cap=2,
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    first_result = session.step(session.initial_state, SyntheticEnvironment.from_mapping(source))
+    assert first_result.state.evidence[0].committed is True
+    second_result = session.step(first_result.state, first_result.environment)
+    evidence = second_result.state.evidence[-1]
+    assert evidence.observation_assessment is not None
+    assert evidence.observation_assessment.response_id == "response-1"
+    assert evidence.committed is False
+    assert evidence.resolution_code == "DUPLICATE-OBSERVATION-RESPONSE"
+    assert evidence.rejected_response == evidence.execution
+    assert second_result.state.consumed_response_ids == {"response-1"}
+    # A duplicate response is a cross-round replay conflict, not a fresh
+    # response that may discharge the newly named request in this trace.
+    assert second_result.state.terminal_trigger_event_ids == {"request-1"}
+    assert "request-2" not in second_result.state.active_trigger_event_ids
+    assert session._state_error(second_result.state) is None
+
+
+def test_session_rejects_a_new_response_for_an_already_terminal_trigger_instance() -> None:
+    binding, model, fixture = _runtime_parts()
+    source = copy.deepcopy(fixture["environments"]["alpha"])
+    assert isinstance(source, dict)
+    states = source["states"]
+    assert isinstance(states, dict)
+    first = states["private-a0"]["test-router"]
+    second = states["private-a1"]["test-left"]
+    assert isinstance(first, dict) and isinstance(second, dict)
+    first["observationMaterial"] = _runtime_observation_material(measurement=_interval_mapping(0, 0))
+    second["observationMaterial"] = _runtime_observation_material(
+        trigger_id="request-1",
+        response_id="response-2",
+        measurement=_interval_mapping(0, 0),
+        events=[
+            {"id": "request-1", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+            {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+        ],
+    )
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="reused-trigger", run_id="reused-trigger",
+        initial_summary="q0", resources=ResourceState.rounds(2), retry_cap=2,
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    first_result = session.step(session.initial_state, SyntheticEnvironment.from_mapping(source))
+    second_result = session.step(first_result.state, first_result.environment)
+    evidence = second_result.state.evidence[-1]
+    assert first_result.state.terminal_trigger_event_ids == {"request-1"}
+    assert evidence.committed is False
+    assert evidence.resolution_code == "DUPLICATE-OBSERVATION-TRIGGER"
+    assert second_result.state.consumed_response_ids == {"response-1", "response-2"}
+    assert second_result.state.terminal_trigger_event_ids == {"request-1"}
+    resumed = session.step(second_result.state, second_result.environment)
+    assert not any(diagnostic.code in {"SESSION-LINEAGE-MISMATCH", "EVIDENCE-DUPLICATE-TRIGGER-MISMATCH"} for diagnostic in resumed.diagnostics)
+
+
+def test_session_terminally_records_an_ambiguous_response_token() -> None:
+    binding, model, fixture = _runtime_parts()
+    events = [
+        {"id": "request-a", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "request-b", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "ambiguous-response", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="ambiguous-response", run_id="ambiguous-response",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model, concurrent_same_key=True),
+    )
+    result = session.step(
+        session.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(
+                trigger_id="request-a", response_id="ambiguous-response",
+                events=events, measurement=_interval_mapping(0, 0),
+            ),
+        ),
+    )
+    evidence = result.state.evidence[0]
+    assert evidence.committed is False
+    assert evidence.resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+    assert result.state.consumed_response_ids == {"ambiguous-response"}
+    assert result.state.terminal_trigger_event_ids == {"request-a", "request-b"}
+    resumed = session.step(result.state, result.environment)
+    assert not any(diagnostic.code in {"SESSION-LINEAGE-MISMATCH", "EVIDENCE-INTERPRETATION-MISMATCH"} for diagnostic in resumed.diagnostics)
+
+
+def test_session_terminalises_an_owned_trigger_when_clock_validation_rejects_its_response() -> None:
+    """An owned response cannot be rebound after a T5 clock-chain error."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="clock-terminal", run_id="clock-terminal",
+        initial_summary="q0", resources=ResourceState.rounds(2), retry_cap=2,
+        interpretation_contract=_runtime_interpretation_contract(model, clock_valid=False),
+    )
+    result = session.step(
+        session.initial_state,
+        _environment_with_observation_material(
+            fixture, _runtime_observation_material(measurement=_interval_mapping(0, 0)),
+        ),
+    )
+    evidence = result.state.evidence[0]
+    assert evidence.resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+    assert evidence.observation_assessment is not None
+    assert evidence.observation_assessment.diagnostics[0].code == "INVALID-CLOCK-CHAIN"
+    assert result.state.consumed_response_ids == {"response-1"}
+    assert result.state.terminal_trigger_event_ids == {"request-1"}
+
+    # A resumed session must replay the same terminal ledger before it issues
+    # any subsequent action; it must not re-open request-1 merely because the
+    # response was rejected after ownership had been determined.
+    resumed = session.step(result.state, result.environment)
+    assert not any(
+        diagnostic.code in {"SESSION-LINEAGE-MISMATCH", "EVIDENCE-INTERPRETATION-MISMATCH"}
+        for diagnostic in resumed.diagnostics
+    )
+
+
+def test_session_lineage_rejects_type_coerced_observation_material_before_dispatch() -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="strict-material", run_id="strict-material",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    first = session.step(
+        session.initial_state,
+        _environment_with_observation_material(
+            fixture, _runtime_observation_material(measurement=_interval_mapping(0, 0)),
+        ),
+    )
+    original = first.state.evidence[0]
+    assert original.execution.observation_input is not None
+    coerced_material = replace(original.execution.observation_input, observation_end_qualified=1)
+    coerced_record = replace(original.execution, observation_input=coerced_material)
+    coerced_evidence = replace(original, execution=coerced_record)
+    coerced_state = replace(first.state, evidence=(coerced_evidence,))
+
+    class NoDispatch:
+        def execute(self, _request: ExecutionRequest) -> EnvironmentExecution:  # pragma: no cover - must not run
+            raise AssertionError("invalid evidence must be rejected before dispatch")
+
+    rejected = session.step(coerced_state, NoDispatch())  # type: ignore[arg-type]
+    assert rejected.stop_reason == "Stop-Error"
+    assert rejected.state is coerced_state
+    assert rejected.diagnostics[0].code == "EVIDENCE-INTERPRETATION-MISMATCH"
+
+
+def test_session_rejects_measurement_material_that_is_not_its_frozen_uncertainty_window() -> None:
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="wrong-window", run_id="wrong-window",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    result = session.step(
+        session.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(measurement=_interval_mapping(0, 1)),
+        ),
+    )
+    evidence = result.state.evidence[0]
+    assert evidence.committed is False
+    assert evidence.resolution_code == "OBSERVATION-UNCERTAINTY-WINDOW-MISMATCH"
+    assert evidence.observation_assessment is not None
+    assert evidence.observation_assessment.verdict == "ERROR"
+    assert evidence.observation_assessment.diagnostics[-1].code == "OBSERVATION-UNCERTAINTY-WINDOW-MISMATCH"
+    assert result.state.consumed_response_ids == {"response-1"}
+    assert result.state.terminal_trigger_event_ids == {"request-1"}
+    assert result.state.context.current_summary is None
+    resumed = session.step(result.state, result.environment)
+    assert not any(
+        diagnostic.code in {"SESSION-LINEAGE-MISMATCH", "EVIDENCE-INTERPRETATION-MISMATCH"}
+        for diagnostic in resumed.diagnostics
+    )
+
+
+def test_session_replays_every_fifo_trace_fact_and_preserves_the_one_active_request_at_checkpoint() -> None:
+    """A selected response is not the extent of a FIFO observation trace."""
+
+    binding, model, fixture = _runtime_parts()
+    first_events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "R1", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    second_events = [
+        {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "R2", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A", response_id="R1", events=first_events, measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="B", response_id="R2", events=second_events, measurement=_interval_mapping(0, 0),
+        ),
+    )
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "fifo-full-replay",
+        "run_id": "fifo-full-replay",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "interpretation_contract": _runtime_interpretation_contract(
+            model, policy="FIFO", concurrent_same_key=True,
+        ),
+    }
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+
+    assert first.state.evidence[0].committed is True
+    assert first.state.consumed_response_ids == {"R1"}
+    assert first.state.terminal_trigger_event_ids == {"A"}
+    assert first.state.active_trigger_event_ids == {"B"}
+    assert set(first.state.event_identity_refs) == {"A", "B", "R1"}
+
+    # A fresh equivalent coordinator proves that the retained active request
+    # is a checkpoint fact, not an in-memory continuation shortcut.
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(first.state) is None
+    resumed = target.step(first.state, first.environment)
+    assert resumed.state.evidence[-1].committed is True
+    assert resumed.state.consumed_response_ids == {"R1", "R2"}
+    assert resumed.state.terminal_trigger_event_ids == {"A", "B"}
+    assert resumed.state.active_trigger_event_ids == frozenset()
+    assert set(resumed.state.event_identity_refs) == {"A", "B", "R1", "R2"}
+    assert target._state_error(resumed.state) is None
+
+
+def test_session_quarantines_new_response_facts_from_an_identity_conflict_and_replays_checkpoint() -> None:
+    """A changed active request cannot make its fresh response reusable later."""
+
+    binding, model, fixture = _runtime_parts()
+    first_events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "R1", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    # B is the one exact ACTIVE request that may recur.  Reusing its identity
+    # with a changed timestamp is nevertheless a conflict; R2 is a new public
+    # response fact in that same trace and must be quarantined/consumed.
+    conflicting_events = [
+        {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 1},
+        {"id": "R2", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 1},
+    ]
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A", response_id="R1", events=first_events, measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="B", response_id="R2", events=conflicting_events, measurement=_interval_mapping(0, 0),
+        ),
+    )
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "identity-quarantine",
+        "run_id": "identity-quarantine",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "retry_cap": 2,
+        "interpretation_contract": _runtime_interpretation_contract(
+            model, policy="FIFO", concurrent_same_key=True,
+        ),
+    }
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    rejected = source.step(first.state, first.environment)
+
+    assert rejected.state.evidence[-1].resolution_code == "OBSERVATION-EVENT-IDENTITY-CONFLICT"
+    assert rejected.state.consumed_response_ids == {"R1", "R2"}
+    assert rejected.state.terminal_trigger_event_ids == {"A"}
+    assert rejected.state.active_trigger_event_ids == {"B"}
+    assert rejected.state.event_identity_refs["B"].timestamp == 0
+    assert rejected.state.event_identity_refs["R2"].kind == "RESPONSE"
+
+    # The public S7 state remains a valid portable checkpoint.  With no
+    # remaining round the fresh coordinator only validates it, rather than
+    # issuing a synthetic recovery action.
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(rejected.state) is None
+    checkpoint = target.step(rejected.state, rejected.environment)
+    assert not any(
+        diagnostic.code.startswith(("SESSION-LINEAGE", "EVIDENCE-"))
+        for diagnostic in checkpoint.diagnostics
+    )
+
+
+def test_session_preserves_bound_trace_facts_when_record_shape_and_frozen_window_both_fail() -> None:
+    """S4 rejection cannot erase a response whose raw public facts are bound."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="structural-window", run_id="structural-window",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    raw = observation_input_from_mapping(
+        _runtime_observation_material(measurement=_interval_mapping(0, 1)),
+    )
+    bound = bind_observation_input(
+        raw,
+        execution_attempt_id="structural-window:structural-window:execution:1",
+        action_id="test-router",
+        evidence_ref="structural-window:1",
+        measurement_tick=Fraction(0),
+        uncertainty_identity=model.uncertainty_identity,
+    )
+    malformed = VisibleExecutionRecord(
+        execution_attempt_id="structural-window:structural-window:execution:1",
+        action_id="test-router",
+        effect_class="NONE",
+        # A normal response record cannot omit its observable/S9 fields.
+        observable=None,
+        summary_confirmed=False,
+        post_summary=None,
+        measurement_tick=Fraction(0),
+        uncertainty_identity=model.uncertainty_identity,
+        evidence_ref="structural-window:1",
+        response_id="response-1",
+        observation_input=bound,
+    )
+    successor = SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"])
+
+    class Adapter:
+        def execute(self, _request: ExecutionRequest) -> EnvironmentExecution:
+            return EnvironmentExecution(malformed, successor)
+
+    rejected = session.step(session.initial_state, Adapter())  # type: ignore[arg-type]
+    evidence = rejected.state.evidence[0]
+    assert evidence.resolution_code == "INVALID-EXECUTION-RECORD"
+    assert evidence.observation_assessment is not None
+    assert evidence.observation_assessment.verdict == "ERROR"
+    assert "OBSERVATION-UNCERTAINTY-WINDOW-MISMATCH" in {
+        diagnostic.code for diagnostic in evidence.observation_assessment.diagnostics
+    }
+    assert rejected.state.consumed_response_ids == {"response-1"}
+    assert rejected.state.terminal_trigger_event_ids == {"request-1"}
+    target = ReferenceSession(
+        binding=binding, model=model, session_id="structural-window", run_id="structural-window",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    assert target._state_error(rejected.state) is None
+    checkpoint = target.step(rejected.state, rejected.environment)
+    assert not any(
+        diagnostic.code.startswith(("SESSION-LINEAGE", "EVIDENCE-"))
+        for diagnostic in checkpoint.diagnostics
+    )
+
+
+def test_session_retains_declared_silence_response_facts_before_error_retry() -> None:
+    """A response hidden behind a silence declaration stays consumed/terminal."""
+
+    binding, model, fixture = _runtime_parts()
+    events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "R", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="declared-silence", run_id="declared-silence",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    result = session.step(
+        session.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(
+                trigger_id="A", response_id=None, events=events, earliest=9,
+            ),
+            no_response=True,
+        ),
+    )
+    evidence = result.state.evidence[0]
+    assert evidence.resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+    assert evidence.observation_assessment is not None
+    assert evidence.observation_assessment.diagnostics[0].code == "RESPONSE-PRESENT-DECLARED-SILENCE"
+    assert result.state.consumed_response_ids == {"R"}
+    assert result.state.terminal_trigger_event_ids == {"A"}
+    assert session._state_error(result.state) is None
+
+
+def test_session_event_ledger_rejects_cross_kind_reuse_of_a_consumed_or_terminal_identifier() -> None:
+    """A persisted set cannot silently change an orphan ID's public kind."""
+
+    binding, model, _fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="ledger-kind", run_id="ledger-kind",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    # Construct only a public checkpoint boundary here: the invariant must
+    # reject a state whose scalar receipt set contradicts its typed event map
+    # before any adapter can see it.
+    request = observation_input_from_mapping(_runtime_observation_material()).events[0]
+    invalid = replace(
+        session.initial_state,
+        consumed_response_ids=frozenset({"request-1"}),
+        event_identity_refs=type(session.initial_state.event_identity_refs)({"request-1": request}),
+    )
+
+    class NoDispatch:
+        def execute(self, _request: ExecutionRequest) -> EnvironmentExecution:  # pragma: no cover - must not run
+            raise AssertionError("invalid event ledger must be rejected before dispatch")
+
+    rejected = session.step(invalid, NoDispatch())  # type: ignore[arg-type]
+    assert rejected.stop_reason == "Stop-Error"
+    assert rejected.state is invalid
+    assert rejected.diagnostics[0].code == "INVALID-OBSERVATION-EVENT-LEDGER"
+
+
+def test_session_rejects_subclass_identity_receipts_before_dispatch() -> None:
+    """Portable ledgers retain exact receipt types, not merely equal strings."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="ledger-subclass", run_id="ledger-subclass",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    accepted = session.step(
+        session.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(measurement=_interval_mapping(0, 0)),
+        ),
+    )
+    assert accepted.state.consumed_response_ids == {"response-1"}
+    assert accepted.state.terminal_trigger_event_ids == {"request-1"}
+
+    class StringSubclass(str):
+        pass
+
+    class FrozenSetSubclass(frozenset[str]):
+        pass
+
+    candidates = (
+        (
+            replace(
+                accepted.state,
+                consumed_response_ids=frozenset({StringSubclass("response-1")}),
+            ),
+            "INVALID-RESPONSE-IDENTITIES",
+        ),
+        (
+            replace(
+                accepted.state,
+                terminal_trigger_event_ids=frozenset({StringSubclass("request-1")}),
+            ),
+            "INVALID-TRIGGER-IDENTITIES",
+        ),
+        (
+            replace(
+                accepted.state,
+                consumed_response_ids=FrozenSetSubclass({"response-1"}),
+            ),
+            "INVALID-RESPONSE-IDENTITIES",
+        ),
+    )
+
+    class NoDispatch:
+        def execute(self, _request: ExecutionRequest) -> EnvironmentExecution:  # pragma: no cover - must not run
+            raise AssertionError("subclassed checkpoint receipt must be rejected before dispatch")
+
+    for forged, expected_code in candidates:
+        state_error = session._state_error(forged)
+        assert state_error is not None
+        assert state_error.code == expected_code
+        rejected = session.step(forged, NoDispatch())  # type: ignore[arg-type]
+        assert rejected.stop_reason == "Stop-Error"
+        assert rejected.state is forged
+        assert rejected.diagnostics[0].code == expected_code
+
+
+def test_session_detaches_event_ledger_from_a_checkpoint_backing_map_before_dispatch() -> None:
+    """A hostile adapter cannot rewrite a validated S0 ledger during S4."""
+
+    binding, model, fixture = _runtime_parts()
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "ledger-toctou",
+        "run_id": "ledger-toctou",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "interpretation_contract": _runtime_interpretation_contract(model),
+    }
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(measurement=_interval_mapping(0, 0)),
+        _runtime_observation_material(
+            trigger_id="request-2",
+            response_id="response-2",
+            events=[
+                {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    assert first.state.evidence[-1].committed is True
+    backing = dict(first.state.event_identity_refs)
+    checkpoint = replace(first.state, event_identity_refs=MappingProxyType(backing))
+    assert source._state_error(checkpoint) is None
+
+    class MutatingAdapter:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            # This changes the caller-owned backing dictionary after the
+            # session has validated its checkpoint but before S4 returns.
+            backing["request-1"] = replace(backing["request-1"], timestamp=Fraction(99))
+            return first.environment.execute(request)
+
+    advanced = source.step(checkpoint, MutatingAdapter())  # type: ignore[arg-type]
+    assert advanced.state.evidence[-1].committed is True
+    assert advanced.state.event_identity_refs["request-1"].timestamp == Fraction(0)
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(advanced.state) is None
+
+
+def test_session_detaches_event_values_from_a_hostile_s4_checkpoint_reference() -> None:
+    """A frozen event retained by an adapter cannot rewrite the S4 snapshot."""
+
+    binding, model, fixture = _runtime_parts()
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "ledger-event-toctou",
+        "run_id": "ledger-event-toctou",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "interpretation_contract": _runtime_interpretation_contract(model),
+    }
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(measurement=_interval_mapping(0, 0)),
+        _runtime_observation_material(
+            trigger_id="request-2",
+            response_id="response-2",
+            events=[
+                {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    assert first.state.evidence[-1].committed is True
+    checkpoint = first.state
+    assert source._state_error(checkpoint) is None
+
+    class MutatingAdapter:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            # ``frozen=True`` does not defend against an adapter deliberately
+            # using the object-level escape hatch on a retained public event.
+            object.__setattr__(checkpoint.event_identity_refs["request-1"], "timestamp", Fraction(99))
+            return first.environment.execute(request)
+
+    advanced = source.step(checkpoint, MutatingAdapter())  # type: ignore[arg-type]
+    assert advanced.state.evidence[-1].committed is True
+    assert advanced.state.event_identity_refs["request-1"].timestamp == Fraction(0)
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(advanced.state) is None
+
+
+def test_session_detaches_retained_observation_assessment_from_a_hostile_s4_reference() -> None:
+    """An adapter cannot mutate historical assessment evidence during S4."""
+
+    binding, model, fixture = _runtime_parts()
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "assessment-toctou",
+        "run_id": "assessment-toctou",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "interpretation_contract": _runtime_interpretation_contract(model),
+    }
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(measurement=_interval_mapping(0, 0)),
+        _runtime_observation_material(
+            trigger_id="request-2",
+            response_id="response-2",
+            events=[
+                {"id": "request-2", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "response-2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        ),
+    )
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    assessment = first.state.evidence[0].observation_assessment
+    assert assessment is not None
+    assert assessment.verdict == "PASS"
+
+    class MutatingAdapter:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            object.__setattr__(assessment, "verdict", "FAIL")
+            return first.environment.execute(request)
+
+    advanced = source.step(first.state, MutatingAdapter())  # type: ignore[arg-type]
+    assert advanced.state.evidence[-1].committed is True
+    retained = advanced.state.evidence[0].observation_assessment
+    assert retained is not None
+    assert retained.verdict == "PASS"
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(advanced.state) is None
+
+
+def test_session_does_not_reclassify_a_same_trace_request_as_a_consumed_response() -> None:
+    """Malformed ``responseId=A`` cannot make the emitted S7 checkpoint invalid."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="same-trace-role", run_id="same-trace-role",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    result = session.step(
+        session.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(
+                trigger_id="A",
+                response_id="A",
+                events=[
+                    {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                ],
+                measurement=_interval_mapping(0, 0),
+            ),
+        ),
+    )
+    assert result.state.evidence[0].resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+    assert result.state.consumed_response_ids == frozenset()
+    assert result.state.active_trigger_event_ids == {"A"}
+    assert result.state.event_identity_refs["A"].kind == "REQUEST"
+
+    target = ReferenceSession(
+        binding=binding, model=model, session_id="same-trace-role", run_id="same-trace-role",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    assert target._state_error(result.state) is None
+    checkpoint = target.step(result.state, result.environment)
+    assert not any(diagnostic.code == "INVALID-OBSERVATION-EVENT-LEDGER" for diagnostic in checkpoint.diagnostics)
+
+
+def test_session_rejects_sparse_response_id_reusing_an_earlier_active_request_before_ledger_write() -> None:
+    """A later raw ``responseId`` cannot borrow an ACTIVE request identity."""
+
+    binding, model, fixture = _runtime_parts()
+    first_events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "R1", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    second_events = [
+        {"id": "C", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+    ]
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A", response_id="R1", events=first_events, measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="C", response_id="B", events=second_events, measurement=_interval_mapping(0, 0),
+        ),
+    )
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "sparse-response-role",
+        "run_id": "sparse-response-role",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "retry_cap": 2,
+        "interpretation_contract": _runtime_interpretation_contract(
+            model, policy="FIFO", concurrent_same_key=True,
+        ),
+    }
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    rejected = source.step(first.state, first.environment)
+
+    assert rejected.state.evidence[-1].resolution_code == "OBSERVATION-EVENT-IDENTITY-CONFLICT"
+    assert rejected.state.consumed_response_ids == {"R1"}
+    assert rejected.state.active_trigger_event_ids == {"B"}
+    assert rejected.state.terminal_trigger_event_ids == {"A"}
+    assert rejected.state.event_identity_refs["B"].kind == "REQUEST"
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(rejected.state) is None
+    checkpoint = target.step(rejected.state, rejected.environment)
+    assert not any(
+        diagnostic.code in {"INVALID-OBSERVATION-EVENT-LEDGER", "SESSION-LINEAGE-MISMATCH"}
+        for diagnostic in checkpoint.diagnostics
+    )
+
+
+def test_session_quarantine_does_not_reclassify_a_new_request_named_as_the_selected_response() -> None:
+    """An identity-conflicted trace can retain X:REQUEST without consuming X."""
+
+    binding, model, fixture = _runtime_parts()
+    first_events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "R1", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    conflicted = [
+        # This altered B starts the conflict; X is a separate new request
+        # incorrectly named as responseId by malformed material.
+        {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 1},
+        {"id": "X", "sequence": 3, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 1},
+    ]
+    environment = _two_round_observation_environment(
+        fixture,
+        _runtime_observation_material(
+            trigger_id="A", response_id="R1", events=first_events, measurement=_interval_mapping(0, 0),
+        ),
+        _runtime_observation_material(
+            trigger_id="X", response_id="X", events=conflicted, measurement=_interval_mapping(0, 0),
+        ),
+    )
+    kwargs = {
+        "binding": binding,
+        "model": model,
+        "session_id": "quarantine-role",
+        "run_id": "quarantine-role",
+        "initial_summary": "q0",
+        "resources": ResourceState.rounds(2),
+        "retry_cap": 2,
+        "interpretation_contract": _runtime_interpretation_contract(
+            model, policy="FIFO", concurrent_same_key=True,
+        ),
+    }
+    source = ReferenceSession(**kwargs)
+    first = source.step(source.initial_state, environment)
+    rejected = source.step(first.state, first.environment)
+
+    assert rejected.state.evidence[-1].resolution_code == "OBSERVATION-EVENT-IDENTITY-CONFLICT"
+    assert rejected.state.event_identity_refs["X"].kind == "REQUEST"
+    assert "X" not in rejected.state.consumed_response_ids
+    assert "X" not in rejected.state.active_trigger_event_ids
+    target = ReferenceSession(**kwargs)
+    assert target._state_error(rejected.state) is None
+    checkpoint = target.step(rejected.state, rejected.environment)
+    assert not any(
+        diagnostic.code in {"INVALID-OBSERVATION-EVENT-LEDGER", "SESSION-LINEAGE-MISMATCH"}
+        for diagnostic in checkpoint.diagnostics
+    )
+
+
+def test_quarantine_keeps_fresh_response_but_skips_event_reusing_a_sparse_consumed_response_id() -> None:
+    """One conflicted trace cannot turn an orphan response receipt into X:REQUEST."""
+
+    _binding, model, _fixture = _runtime_parts()
+    contract = _runtime_interpretation_contract(model)
+    first = assess_observation(
+        observation_input_from_mapping(
+            _runtime_observation_material(
+                trigger_id="A",
+                response_id="X",
+                events=[
+                    {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                ],
+                measurement=_interval_mapping(0, 0),
+            ),
+        ),
+        contract,
+    )
+    consumed, terminal, refs, active = _advance_observation_ledger(
+        frozenset(), frozenset(), frozenset(), {}, first,
+    )
+    # ``X`` is an orphan response receipt: the malformed first trace has no
+    # X event to store, but the scalar receipt is still an immutable fact.
+    assert consumed == {"X"}
+    assert set(refs) == {"A"}
+    assert active == {"A"}
+
+    second = assess_observation(
+        observation_input_from_mapping(
+            _runtime_observation_material(
+                trigger_id="X",
+                response_id="Y",
+                events=[
+                    {"id": "X", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                    {"id": "Y", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+                ],
+                measurement=_interval_mapping(0, 0),
+            ),
+        ),
+        contract,
+    )
+    conflict = _observation_replay_conflict(refs, active, terminal, consumed, second)
+    assert conflict is not None
+    assert conflict.code == "OBSERVATION-EVENT-IDENTITY-CONFLICT"
+    next_consumed, next_terminal, next_refs, next_active = _quarantine_conflicted_observation_ledger(
+        consumed, terminal, refs, active, second,
+    )
+    # X keeps its original scalar response role; Y is an uncontested fresh
+    # response and therefore remains sealed even though the trace is rejected.
+    assert next_consumed == {"X", "Y"}
+    assert "X" not in next_refs
+    assert next_refs["Y"].kind == "RESPONSE"
+    assert next_active == {"A"}
+    assert _event_identity_ledger_error(next_refs, next_active, next_terminal, next_consumed) is None
+
+
+def test_identity_conflict_precedes_same_trace_duplicate_response_and_quarantines_only_fresh_facts() -> None:
+    """A duplicate must not mask a changed CANCEL/SUPERSEDE event identity."""
+
+    _binding, model, _fixture = _runtime_parts()
+    contract = _runtime_interpretation_contract(model)
+    first = assess_observation(
+        observation_input_from_mapping(
+            _runtime_observation_material(
+                trigger_id="A",
+                response_id=None,
+                events=[
+                    {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                    {"id": "X", "sequence": 2, "kind": "CANCEL", "key": "k", "eventType": "CANCEL", "timestamp": 0, "targetRequestId": "A"},
+                    {"id": "R1", "sequence": 3, "kind": "RESPONSE", "key": "other", "eventType": "RESP", "timestamp": 2},
+                ],
+                earliest=9,
+            ),
+        ),
+        contract,
+    )
+    consumed, terminal, refs, active = _advance_observation_ledger(
+        frozenset(), frozenset(), frozenset(), {}, first,
+    )
+    assert consumed == {"R1"}
+    assert terminal == {"A"}
+    assert refs["X"].kind == "CANCEL"
+
+    second = assess_observation(
+        observation_input_from_mapping(
+            _runtime_observation_material(
+                trigger_id="X",
+                response_id="R2",
+                events=[
+                    # X changes from CANCEL to REQUEST while R1 is also a
+                    # duplicate; the identity conflict must take precedence.
+                    {"id": "X", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                    {"id": "R2", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 2},
+                    {"id": "R1", "sequence": 3, "kind": "RESPONSE", "key": "other", "eventType": "RESP", "timestamp": 2},
+                ],
+                measurement=_interval_mapping(2, 2),
+            ),
+        ),
+        contract,
+    )
+    conflict = _observation_replay_conflict(refs, active, terminal, consumed, second)
+    assert conflict is not None
+    assert conflict.code == "OBSERVATION-EVENT-IDENTITY-CONFLICT"
+    next_consumed, next_terminal, next_refs, next_active = _quarantine_conflicted_observation_ledger(
+        consumed, terminal, refs, active, second,
+    )
+    assert next_refs["X"].kind == "CANCEL"
+    assert next_refs["R2"].kind == "RESPONSE"
+    assert next_consumed == {"R1", "R2"}
+    assert next_terminal == {"A"}
+    assert next_active == frozenset()
+    assert _event_identity_ledger_error(next_refs, next_active, next_terminal, next_consumed) is None
+
+
+def test_quarantined_response_cannot_later_discharge_the_retained_active_request() -> None:
+    """A response sealed during S7 cannot be repaired by a friendlier replay."""
+
+    _binding, model, _fixture = _runtime_parts()
+    contract = _runtime_interpretation_contract(
+        model, policy="FIFO", concurrent_same_key=True,
+    )
+    first = assess_observation(
+        observation_input_from_mapping(
+            _runtime_observation_material(
+                trigger_id="A",
+                response_id="R1",
+                events=[
+                    {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                    {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                    {"id": "R1", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+                ],
+                measurement=_interval_mapping(0, 0),
+            ),
+        ),
+        contract,
+    )
+    consumed, terminal, refs, active = _advance_observation_ledger(
+        frozenset(), frozenset(), frozenset(), {}, first,
+    )
+    assert terminal == {"A"}
+    assert active == {"B"}
+
+    conflicted = assess_observation(
+        observation_input_from_mapping(
+            _runtime_observation_material(
+                trigger_id="B",
+                response_id="R2",
+                events=[
+                    # B's changed timestamp makes this cross-round trace
+                    # invalid, although R2 is a fresh public response fact.
+                    {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 1},
+                    {"id": "R2", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 1},
+                ],
+                measurement=_interval_mapping(0, 0),
+            ),
+        ),
+        contract,
+    )
+    conflict = _observation_replay_conflict(refs, active, terminal, consumed, conflicted)
+    assert conflict is not None
+    assert conflict.code == "OBSERVATION-EVENT-IDENTITY-CONFLICT"
+    consumed, terminal, refs, active = _quarantine_conflicted_observation_ledger(
+        consumed, terminal, refs, active, conflicted,
+    )
+    assert consumed == {"R1", "R2"}
+    assert terminal == {"A"}
+    assert active == {"B"}
+
+    repaired = assess_observation(
+        observation_input_from_mapping(
+            _runtime_observation_material(
+                trigger_id="B",
+                response_id="R2",
+                events=[
+                    # B is now byte-for-byte identical to its original
+                    # active event, but R2 was already sealed by S7.
+                    {"id": "B", "sequence": 2, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                    {"id": "R2", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 1},
+                ],
+                measurement=_interval_mapping(1, 1),
+            ),
+        ),
+        contract,
+    )
+    duplicate = _observation_replay_conflict(refs, active, terminal, consumed, repaired)
+    assert duplicate is not None
+    assert duplicate.code == "DUPLICATE-OBSERVATION-RESPONSE"
+    consumed, terminal, refs, active = _quarantine_conflicted_observation_ledger(
+        consumed, terminal, refs, active, repaired,
+    )
+    assert consumed == {"R1", "R2"}
+    assert terminal == {"A"}
+    assert active == {"B"}
+    assert _event_identity_ledger_error(refs, active, terminal, consumed) is None
+
+
+@pytest.mark.parametrize(
+    "replay_field",
+    ("request_dispositions", "termination_refs", "response_resolutions", "event_refs"),
+)
+def test_session_lineage_rejects_str_subclass_keys_in_every_replay_mapping(replay_field: str) -> None:
+    """Checkpoint replay never treats a string subclass as a canonical ID."""
+
+    binding, model, fixture = _runtime_parts()
+    events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+        {"id": "C", "sequence": 2, "kind": "CANCEL", "key": "k", "eventType": "CANCEL", "timestamp": 0, "targetRequestId": "A"},
+        {"id": "R", "sequence": 3, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+    ]
+    session = ReferenceSession(
+        binding=binding, model=model, session_id=f"subclass-{replay_field}",
+        run_id=f"subclass-{replay_field}", initial_summary="q0", resources=ResourceState.rounds(2),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    first = session.step(
+        session.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(
+                trigger_id="A", response_id="R", events=events, measurement=_interval_mapping(0, 0),
+            ),
+        ),
+    )
+    assessment = first.state.evidence[0].observation_assessment
+    assert assessment is not None and assessment.replay is not None
+    entries = dict(getattr(assessment.replay, replay_field))
+    assert entries
+    original_key = next(iter(entries))
+
+    class StringSubclass(str):
+        pass
+
+    entries[StringSubclass(original_key)] = entries.pop(original_key)
+    forged_assessment = replace(
+        assessment,
+        replay=replace(assessment.replay, **{replay_field: entries}),
+    )
+    forged_state = replace(
+        first.state,
+        evidence=(replace(first.state.evidence[0], observation_assessment=forged_assessment),),
+    )
+
+    class NoDispatch:
+        def execute(self, _request: ExecutionRequest) -> EnvironmentExecution:  # pragma: no cover - must not run
+            raise AssertionError("forged replay must be rejected before dispatch")
+
+    rejected = session.step(forged_state, NoDispatch())  # type: ignore[arg-type]
+    assert rejected.stop_reason == "Stop-Error"
+    assert rejected.state is forged_state
+    assert rejected.diagnostics[0].code == "EVIDENCE-INTERPRETATION-MISMATCH"
+
+
+def test_session_turns_a_timestamp_delta_mismatch_into_a_replayable_s7_ledger_record() -> None:
+    """T5 timing closure survives live rejection and a fresh checkpoint audit."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="delta-s7", run_id="delta-s7",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    events = [
+        {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 7},
+        {"id": "R", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 8},
+    ]
+    result = session.step(
+        session.initial_state,
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(
+                trigger_id="A", response_id="R", events=events, measurement=_interval_mapping(0, 0),
+            ),
+        ),
+    )
+    evidence = result.state.evidence[0]
+    assert evidence.resolution_code == "OBSERVATION-INTERPRETATION-ERROR"
+    assert evidence.observation_assessment is not None
+    assert evidence.observation_assessment.diagnostics[0].code == "MEASUREMENT-EVENT-DELTA-MISMATCH"
+    assert result.state.consumed_response_ids == {"R"}
+    assert result.state.terminal_trigger_event_ids == {"A"}
+    target = ReferenceSession(
+        binding=binding, model=model, session_id="delta-s7", run_id="delta-s7",
+        initial_summary="q0", resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    assert target._state_error(result.state) is None
+    checkpoint = target.step(result.state, result.environment)
+    assert not any(
+        diagnostic.code.startswith(("SESSION-LINEAGE", "EVIDENCE-"))
+        for diagnostic in checkpoint.diagnostics
+    )
 
 
 def test_evaluator_truth_is_not_an_algorithm_input() -> None:

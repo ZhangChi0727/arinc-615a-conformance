@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, fields, is_dataclass, replace
 from fractions import Fraction
 from hashlib import sha256
 from types import MappingProxyType
@@ -10,6 +10,18 @@ from typing import Mapping
 
 from .bindings import RuntimeAuthorityBinding
 from .kernel import FrontierEntry, Interval, KernelDiagnostic
+from .interpretation import (
+    InterpretationContract,
+    ObservationAssessment,
+    ObservationInput,
+    OwnershipEvent,
+    OwnershipReplay,
+    OwnershipResolution,
+    assess_observation,
+    interpretation_contract_identity,
+    strict_observation_assessment_equal,
+    strict_observation_input_equal,
+)
 from .model import ActionPrediction, FiniteSessionModel, PredictionClass, SyntheticAction
 from .synthetic import (
     EnvironmentExecution,
@@ -29,7 +41,19 @@ _CHARGED_ERROR_CODES = frozenset({
     "INVALID-EXECUTION-RECORD",
     "SUMMARY-CONFIRMATION-ERROR",
     "RECOVERY-TARGET-MISMATCH",
+    "OBSERVATION-INTERPRETATION-ERROR",
+    "OBSERVATION-UNCERTAINTY-WINDOW-MISMATCH",
+    "OBSERVATION-NO-RESPONSE",
+    "DUPLICATE-OBSERVATION-RESPONSE",
+    "DUPLICATE-OBSERVATION-TRIGGER",
+    "OBSERVATION-EVENT-IDENTITY-CONFLICT",
 })
+_OBSERVATION_QUARANTINE_CODES = frozenset({
+    "DUPLICATE-OBSERVATION-RESPONSE",
+    "DUPLICATE-OBSERVATION-TRIGGER",
+    "OBSERVATION-EVENT-IDENTITY-CONFLICT",
+})
+_MAPPING_PROXY_TYPE = type(MappingProxyType({}))
 
 
 @dataclass(frozen=True)
@@ -115,6 +139,7 @@ class SelectSnapshot:
     uncertainty_identity: str
     uncertainty_digest: str
     authority_identities: Mapping[str, Mapping[str, str]]
+    interpretation_contract_identity: str | None = None
 
 
 @dataclass(frozen=True)
@@ -140,6 +165,11 @@ class RoundEvidence:
     # causal ledger must replay the exact error branch rather than infer it
     # from a shared ``UNKNOWN-EFFECT`` shape.
     resolution_code: str | None = None
+    # The session, not the environment, derives this immutable assessment from
+    # ``execution.observation_input``.  It stays separate from the model's
+    # observable class so T5 FAIL/INCONCLUSIVE never becomes an implicit
+    # all-candidate history mutation.
+    observation_assessment: ObservationAssessment | None = None
 
 
 @dataclass(frozen=True)
@@ -153,6 +183,68 @@ class SessionState:
     evidence: tuple[RoundEvidence, ...]
     authority_identity: str
     seed_identity: str
+    # A response identity is consumed at most once for this session.  This is
+    # separate from execution-attempt idempotence because one received record
+    # must not be replayed under a later attempt or a different policy.
+    consumed_response_ids: frozenset[str] = frozenset()
+    # A request instance becomes terminal as soon as checked ownership says it
+    # is uniquely claimed or ambiguous.  This is distinct from a seen response
+    # token: a later trace cannot repair, reallocate, or re-score an already
+    # observed request/response relation by narrowing its candidate set.
+    terminal_trigger_event_ids: frozenset[str] = frozenset()
+    # The public event ledger is separate from response/request outcome sets:
+    # exact active requests may legitimately recur in a later cumulative
+    # trace, while every other seen event identity is immutable and terminal.
+    event_identity_refs: Mapping[str, OwnershipEvent] = field(
+        default_factory=lambda: MappingProxyType({}),
+    )
+    active_trigger_event_ids: frozenset[str] = frozenset()
+
+    def __post_init__(self) -> None:
+        """Detach public top-level ledgers from caller-owned backing maps.
+
+        ``MappingProxyType`` prevents writes *through the proxy* but does not
+        freeze a dictionary held by its creator. A state may cross a public
+        checkpoint/adapter boundary between S0 and S4, so retaining such a
+        proxy directly would let an adapter rewrite a ledger after the
+        pre-dispatch validation. Preserve invalid non-mapping values for the
+        named state validator; valid mapping inputs are copied into fresh
+        private proxies before the state can be dispatched.
+        """
+
+        if isinstance(self.frontiers, Mapping):
+            object.__setattr__(self, "frontiers", MappingProxyType(dict(self.frontiers)))
+        if type(self.event_identity_refs) is _MAPPING_PROXY_TYPE:
+            object.__setattr__(
+                self,
+                "event_identity_refs",
+                MappingProxyType({
+                    identifier: (
+                        OwnershipEvent(
+                            event.event_id,
+                            event.sequence,
+                            event.kind,
+                            event.key,
+                            event.event_type,
+                            event.timestamp,
+                            event.target_request_id,
+                        )
+                        if type(event) is OwnershipEvent else event
+                    )
+                    for identifier, event in self.event_identity_refs.items()
+                }),
+            )
+
+
+@dataclass(frozen=True)
+class _ObservationLedgerDelta:
+    """Terminal facts obtained from one complete checked ownership replay."""
+
+    response_ids: frozenset[str]
+    terminal_trigger_ids: frozenset[str]
+    replayed_request_ids: frozenset[str]
+    event_refs: Mapping[str, OwnershipEvent]
+    active_trigger_ids: frozenset[str]
 
 
 @dataclass(frozen=True)
@@ -172,6 +264,56 @@ class _S8RecoveryAdoption:
     known_evidence: tuple[str, ...]
 
 
+def _detached_dispatch_value(value: object) -> object:
+    """Recursively rebuild the finite public checkpoint held across S4.
+
+    Public checkpoint values are frozen dataclasses and immutable proxies in
+    ordinary use.  That prevents accidental mutation but not a deliberately
+    hostile adapter which retained an object reference and invokes
+    ``object.__setattr__`` while ``execute`` is active.  The S4 boundary is
+    finite and has only dataclass/mapping/sequence public values, so rebuild
+    that closure rather than trusting aliases retained by the caller.
+
+    Unknown scalar objects are intentionally returned as-is: normal S0
+    validation has already closed the public checkpoint domain before this
+    function is reached, while copying arbitrary adapter objects would extend
+    the runtime's declared data model.
+    """
+
+    if type(value) is _MAPPING_PROXY_TYPE:
+        return MappingProxyType({
+            key: _detached_dispatch_value(item)
+            for key, item in value.items()
+        })
+    if type(value) is dict:
+        return {
+            key: _detached_dispatch_value(item)
+            for key, item in value.items()
+        }
+    if type(value) is tuple:
+        return tuple(_detached_dispatch_value(item) for item in value)
+    if type(value) is frozenset:
+        return frozenset(_detached_dispatch_value(item) for item in value)
+    if type(value) is set:
+        return {_detached_dispatch_value(item) for item in value}
+    if is_dataclass(value) and not isinstance(value, type):
+        return type(value)(**{
+            item.name: _detached_dispatch_value(getattr(value, item.name))
+            for item in fields(value)
+            if item.init
+        })
+    return value
+
+
+def _detached_dispatch_checkpoint(state: SessionState) -> SessionState:
+    """Return an S4-private reconstruction of one already validated state."""
+
+    detached = _detached_dispatch_value(state)
+    if type(detached) is not SessionState:  # defensive; `state` was validated at S0
+        raise TypeError("dispatch checkpoint reconstruction did not return SessionState")
+    return detached
+
+
 class ReferenceSession:
     """Composes prediction, S3 snapshot, execution, interpretation and S9.
 
@@ -186,6 +328,7 @@ class ReferenceSession:
         experiment_attempt_id: str | None = None,
         initial_path_bundles: Mapping[str, tuple[FrontierEntry, ...]] | None = None,
         retry_cap: int = 1,
+        interpretation_contract: InterpretationContract | None = None,
     ) -> None:
         if binding.development.contract_commit != model.context.contract_commit:
             raise ValueError("runtime model and authority binding use different development snapshots")
@@ -210,7 +353,29 @@ class ReferenceSession:
         )
         self.binding = binding
         self.model = model
-        self._authority_identity = _session_authority_identity(binding, model)
+        if interpretation_contract is not None:
+            try:
+                contract_identity = interpretation_contract_identity(interpretation_contract)
+            except (TypeError, ValueError) as exc:
+                raise ValueError("session interpretation contract is invalid") from exc
+            if interpretation_contract.deadline_authority == "REVIEWED":
+                raise ValueError("bounded runtime has no controlled reviewed-deadline registry")
+            # The session, rather than a fixture, owns the timing basis.  Bind
+            # every identity that selects the model uncertainty snapshot so a
+            # raw material declaration cannot silently choose a different
+            # clock/unit/error budget from the frozen S3 model.
+            if (
+                interpretation_contract.clock_identity != model.uncertainty.clock_id
+                or interpretation_contract.unit != model.uncertainty.time_unit
+                or interpretation_contract.uncertainty_identity != model.uncertainty.uncertainty_id
+                or interpretation_contract.error_budget_identity != model.uncertainty.identity
+            ):
+                raise ValueError("session interpretation contract does not bind the frozen model uncertainty snapshot")
+        else:
+            contract_identity = None
+        self.interpretation_contract = interpretation_contract
+        self._interpretation_contract_identity = contract_identity
+        self._authority_identity = _session_authority_identity(binding, model, contract_identity)
         self._seed_identity = _session_seed_identity(
             context=context,
             history=history,
@@ -228,6 +393,10 @@ class ReferenceSession:
             evidence=(),
             authority_identity=self._authority_identity,
             seed_identity=self._seed_identity,
+            consumed_response_ids=frozenset(),
+            terminal_trigger_event_ids=frozenset(),
+            event_identity_refs=MappingProxyType({}),
+            active_trigger_event_ids=frozenset(),
         )
 
     def run(self, environment: SyntheticEnvironment, *, maximum_rounds: int) -> SessionResult:
@@ -341,7 +510,9 @@ class ReferenceSession:
                         "canonical processed evidence does not name a current model action",
                     ),),
                 )
-            ingress_error = _incoming_record_error(record, action=action)
+            ingress_error = _incoming_record_error(
+                record, action=action, interpretation_contract=self.interpretation_contract,
+            )
             if (
                 ingress_error is not None
                 or not _strict_visible_execution_record_equal(record, canonical.execution)
@@ -429,10 +600,26 @@ class ReferenceSession:
             return KernelDiagnostic("RESOURCE-CONTEXT-MISMATCH", "session context does not retain the charged resource remainder")
         if isinstance(state.attempts, bool) or not isinstance(state.attempts, int) or state.attempts < 0:
             return KernelDiagnostic("INVALID-ATTEMPT-COUNT", "state attempt count is invalid")
-        if not isinstance(state.processed_execution_attempt_ids, frozenset) or any(
-            not isinstance(value, str) or not value for value in state.processed_execution_attempt_ids
+        if type(state.processed_execution_attempt_ids) is not frozenset or any(
+            type(value) is not str or not value for value in state.processed_execution_attempt_ids
         ):
             return KernelDiagnostic("INVALID-EXECUTION-IDENTITIES", "processed execution identities are invalid")
+        if type(state.consumed_response_ids) is not frozenset or any(
+            type(value) is not str or not value for value in state.consumed_response_ids
+        ):
+            return KernelDiagnostic("INVALID-RESPONSE-IDENTITIES", "consumed response identities are invalid")
+        if type(state.terminal_trigger_event_ids) is not frozenset or any(
+            type(value) is not str or not value for value in state.terminal_trigger_event_ids
+        ):
+            return KernelDiagnostic("INVALID-TRIGGER-IDENTITIES", "discharged trigger identities are invalid")
+        event_ledger_error = _event_identity_ledger_error(
+            state.event_identity_refs,
+            state.active_trigger_event_ids,
+            state.terminal_trigger_event_ids,
+            state.consumed_response_ids,
+        )
+        if event_ledger_error is not None:
+            return event_ledger_error
         if not isinstance(state.evidence, tuple) or len(state.evidence) != state.attempts:
             return KernelDiagnostic("ATTEMPT-EVIDENCE-MISMATCH", "every issued attempt requires exactly one evidence record")
         if not isinstance(state.history, HistoryHandle) or not isinstance(state.frontiers, Mapping):
@@ -528,6 +715,45 @@ class ReferenceSession:
         frontiers: Mapping[str, tuple[FrontierEntry, ...]] = self.initial_state.frontiers
         resources = self.initial_state.resources
         processed_ids: frozenset[str] = frozenset()
+        consumed_response_ids: frozenset[str] = frozenset()
+        terminal_trigger_event_ids: frozenset[str] = frozenset()
+        seen_ownership_events: Mapping[str, OwnershipEvent] = MappingProxyType({})
+        active_trigger_event_ids: frozenset[str] = frozenset()
+
+        def apply_observation_ledger(
+            assessment: ObservationAssessment | None, *, mode: str = "FULL",
+        ) -> None:
+            """Mirror one live accepted/rejected replay in this causal audit."""
+
+            nonlocal consumed_response_ids, terminal_trigger_event_ids, active_trigger_event_ids, seen_ownership_events
+            if mode == "FULL":
+                (
+                    consumed_response_ids,
+                    terminal_trigger_event_ids,
+                    seen_ownership_events,
+                    active_trigger_event_ids,
+                ) = _advance_observation_ledger(
+                    consumed_response_ids,
+                    terminal_trigger_event_ids,
+                    active_trigger_event_ids,
+                    seen_ownership_events,
+                    assessment,
+                )
+            elif mode == "QUARANTINE":
+                (
+                    consumed_response_ids,
+                    terminal_trigger_event_ids,
+                    seen_ownership_events,
+                    active_trigger_event_ids,
+                ) = _quarantine_conflicted_observation_ledger(
+                    consumed_response_ids,
+                    terminal_trigger_event_ids,
+                    seen_ownership_events,
+                    active_trigger_event_ids,
+                    assessment,
+                )
+            else:
+                raise ValueError("observation ledger mode is outside the controlled vocabulary")
 
         def s7_expected(code: str, record: VisibleExecutionRecord) -> tuple[HistoryHandle, SessionContext, str | None]:
             expected_history = self._conservative_history(history)
@@ -563,6 +789,7 @@ class ReferenceSession:
                 or not isinstance(item.stop_reason, (str, type(None)))
                 or not isinstance(item.summary_after, (str, type(None)))
                 or not isinstance(item.rejected_response, (VisibleExecutionRecord, type(None)))
+                or not isinstance(item.observation_assessment, (ObservationAssessment, type(None)))
                 or not isinstance(item.resolution_code, str)
                 or not item.resolution_code
             ):
@@ -572,7 +799,8 @@ class ReferenceSession:
                 return KernelDiagnostic("EVIDENCE-ACTION-MISMATCH", "evidence snapshot does not name a current model action")
             prefix = SessionState(
                 context, history, frontiers, resources, index - 1, processed_ids, (),
-                self._authority_identity, self._seed_identity,
+                self._authority_identity, self._seed_identity, consumed_response_ids,
+                terminal_trigger_event_ids, seen_ownership_events, active_trigger_event_ids,
             )
             admission = self._admit(prefix, model=replay_model)
             if admission.action is None or admission.prediction is None or admission.action.action_id != action.action_id:
@@ -588,6 +816,7 @@ class ReferenceSession:
                 prediction=admission.prediction,
                 model=replay_model,
                 binding=self.binding,
+                interpretation_contract_identity=self._interpretation_contract_identity,
             )
             if snapshot_error is not None:
                 return snapshot_error
@@ -612,7 +841,42 @@ class ReferenceSession:
             # placeholder record.  It is still charged and must replay the
             # exact named S7 branch, not the pre-B/C-2 terminal shortcut.
             if _is_expected_error_record(item.execution, item.snapshot, expected_execution_id):
-                if item.resolution_code not in _CHARGED_ERROR_CODES:
+                assessment = item.observation_assessment
+                expected_code = item.resolution_code
+                if assessment is not None:
+                    if type(item.rejected_response) is not VisibleExecutionRecord:
+                        return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "observation-bearing canonical error has no retained visible record")
+                    expected_assessment = _bound_rejected_observation_assessment(
+                        item.rejected_response,
+                        action=action,
+                        interpretation_contract=self.interpretation_contract,
+                        model=replay_model,
+                        execution_attempt_id=expected_execution_id,
+                    )
+                    if (
+                        expected_assessment is None
+                        or not _strict_observation_assessment_equal(assessment, expected_assessment)
+                    ):
+                        return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical error assessment is not the bound rejected TEST material")
+                    rejected_record_error = _incoming_record_error(
+                        item.rejected_response,
+                        action=action,
+                        interpretation_contract=self.interpretation_contract,
+                    )
+                    if rejected_record_error is None:
+                        return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical error retains a normal observation record")
+                    conflict = _observation_replay_conflict(
+                        seen_ownership_events,
+                        active_trigger_event_ids,
+                        terminal_trigger_event_ids,
+                        consumed_response_ids,
+                        assessment,
+                    )
+                    expected_code = conflict.code if conflict is not None else rejected_record_error.code
+                if (
+                    expected_code not in _CHARGED_ERROR_CODES
+                    or item.resolution_code != expected_code
+                ):
                     return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical charged error record uses an uncontrolled resolution code")
                 expected_history, expected_context, expected_stop = s7_expected(item.resolution_code, item.execution)
                 if (
@@ -626,15 +890,85 @@ class ReferenceSession:
                 history = expected_history
                 resources = charged_resources
                 processed_ids = processed_ids | {expected_execution_id}
+                apply_observation_ledger(
+                    assessment,
+                    mode=(
+                        "QUARANTINE"
+                        if item.resolution_code in _OBSERVATION_QUARANTINE_CODES
+                        else "FULL"
+                    ),
+                )
                 if expected_stop is not None and index != len(state.evidence):
                     return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap error evidence item cannot have a later causal round")
                 continue
 
-            record_error = _incoming_record_error(item.execution, action=action)
+            record_error = _incoming_record_error(
+                item.execution, action=action, interpretation_contract=self.interpretation_contract,
+            )
             if record_error is not None:
                 return KernelDiagnostic("EVIDENCE-RECORD-MISMATCH", record_error.message)
             if item.execution.action_id != action.action_id:
                 return KernelDiagnostic("EVIDENCE-ACTION-MISMATCH", "visible execution action differs from the admitted action")
+            binding_error: KernelDiagnostic | None = None
+            if self.interpretation_contract is None:
+                if item.execution.observation_input is not None or item.observation_assessment is not None:
+                    return KernelDiagnostic("EVIDENCE-INTERPRETATION-MISMATCH", "unbound session cannot retain ownership/timing evidence")
+                assessment: ObservationAssessment | None = None
+            elif item.execution.effect_class == "NONE" and action.kind == "TEST":
+                assert isinstance(item.execution.observation_input, ObservationInput)
+                assessment = assess_observation(item.execution.observation_input, self.interpretation_contract)
+                binding_error = _observation_record_binding_error(item.execution, replay_model)
+                assessment = _assessment_with_binding_error(assessment, binding_error)
+                if not _strict_observation_assessment_equal(item.observation_assessment, assessment):
+                    return KernelDiagnostic("EVIDENCE-INTERPRETATION-MISMATCH", "evidence assessment does not match its raw ownership/timing replay")
+                # Interpret the complete typed material before comparing its
+                # execution binding.  A binding failure still retains the
+                # causal ownership result: an owned or ambiguous response
+                # token cannot be replayed later under a friendlier record.
+            else:
+                if item.execution.observation_input is not None or item.observation_assessment is not None:
+                    return KernelDiagnostic("EVIDENCE-INTERPRETATION-MISMATCH", "non-TEST or non-observation effect cannot retain ownership/timing evidence")
+                assessment = None
+                binding_error = None
+            # Event IDs name immutable public facts across rounds.  Apply the
+            # same complete identity/terminality conflict decision as live
+            # execution before binding, timing, or silence classification.
+            replay_conflict = _observation_replay_conflict(
+                seen_ownership_events,
+                active_trigger_event_ids,
+                terminal_trigger_event_ids,
+                consumed_response_ids,
+                assessment,
+            )
+            if replay_conflict is not None:
+                conflict_code = replay_conflict.code
+                expected_history, expected_context, expected_stop = s7_expected(
+                    conflict_code, item.execution,
+                )
+                if (
+                    item.resolution_code != conflict_code
+                    or not _strict_visible_execution_record_equal(item.rejected_response, item.execution)
+                    or item.committed
+                    or item.history_after != expected_history
+                    or item.summary_after is not None
+                    or item.stop_reason != expected_stop
+                ):
+                    return KernelDiagnostic("EVIDENCE-EVENT-IDENTITY-MISMATCH", "event-identity conflict does not close over the conservative S7 transition")
+                context = expected_context
+                history = expected_history
+                resources = charged_resources
+                processed_ids = processed_ids | {expected_execution_id}
+                apply_observation_ledger(
+                    assessment,
+                    mode=(
+                        "QUARANTINE"
+                        if conflict_code in _OBSERVATION_QUARANTINE_CODES
+                        else "FULL"
+                    ),
+                )
+                if expected_stop is not None and index != len(state.evidence):
+                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap ownership replay conflict cannot have a later causal round")
+                continue
 
             if item.execution.effect_class == "CONFIRMED-NOT-SENT":
                 expected_context = self._context_after_retry(
@@ -714,6 +1048,76 @@ class ReferenceSession:
                     return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap recovery evidence item cannot have a later causal round")
                 continue
 
+            if binding_error is not None:
+                binding_code = _binding_resolution_code(binding_error)
+                expected_history, expected_context, expected_stop = s7_expected(
+                    binding_code, item.execution,
+                )
+                if (
+                    item.resolution_code != binding_code
+                    or not _strict_visible_execution_record_equal(item.rejected_response, item.execution)
+                    or item.committed
+                    or item.history_after != expected_history
+                    or item.summary_after is not None
+                    or item.stop_reason != expected_stop
+                ):
+                    return KernelDiagnostic("EVIDENCE-INTERPRETATION-MISMATCH", "binding-invalid observation does not close over the S7 retry transition")
+                context = expected_context
+                history = expected_history
+                resources = charged_resources
+                processed_ids = processed_ids | {expected_execution_id}
+                apply_observation_ledger(assessment)
+                if expected_stop is not None and index != len(state.evidence):
+                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap binding error cannot have a later causal round")
+                continue
+
+            if assessment is not None and assessment.verdict == "ERROR":
+                expected_history, expected_context, expected_stop = s7_expected(
+                    "OBSERVATION-INTERPRETATION-ERROR", item.execution,
+                )
+                if (
+                    item.resolution_code != "OBSERVATION-INTERPRETATION-ERROR"
+                    or not _strict_visible_execution_record_equal(item.rejected_response, item.execution)
+                    or item.committed
+                    or item.history_after != expected_history
+                    or item.summary_after is not None
+                    or item.stop_reason != expected_stop
+                ):
+                    return KernelDiagnostic("EVIDENCE-INTERPRETATION-MISMATCH", "invalid ownership/timing evidence does not close over the S7 retry transition")
+                context = expected_context
+                history = expected_history
+                resources = charged_resources
+                processed_ids = processed_ids | {expected_execution_id}
+                apply_observation_ledger(assessment)
+                if expected_stop is not None and index != len(state.evidence):
+                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap interpretation error cannot have a later causal round")
+                continue
+
+            if assessment is not None and assessment.kind == "NO-RESPONSE":
+                expected_history, expected_context, expected_stop = s7_expected(
+                    "OBSERVATION-NO-RESPONSE", item.execution,
+                )
+                if (
+                    item.resolution_code != "OBSERVATION-NO-RESPONSE"
+                    or item.rejected_response is not None
+                    or item.committed
+                    or item.history_after != expected_history
+                    or item.summary_after is not None
+                    or item.stop_reason != expected_stop
+                ):
+                    return KernelDiagnostic(
+                        "EVIDENCE-NO-RESPONSE-MISMATCH",
+                        "no-response evidence does not close over the conservative S7 transition",
+                    )
+                context = expected_context
+                history = expected_history
+                resources = charged_resources
+                processed_ids = processed_ids | {expected_execution_id}
+                apply_observation_ledger(assessment)
+                if expected_stop is not None and index != len(state.evidence):
+                    return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap no-response item cannot have a later causal round")
+                continue
+
             if item.execution.observable is None:
                 try:
                     next_history, next_frontiers, _summary_diagnostics = self._summary_only_transition(
@@ -738,7 +1142,7 @@ class ReferenceSession:
                     )
                     if (
                         item.resolution_code != interpretation_error.code
-                        or item.rejected_response != item.execution
+                        or not _strict_visible_execution_record_equal(item.rejected_response, item.execution)
                         or item.committed
                         or item.history_after != expected_history
                         or item.summary_after is not None
@@ -749,6 +1153,7 @@ class ReferenceSession:
                     history = expected_history
                     resources = charged_resources
                     processed_ids = processed_ids | {expected_execution_id}
+                    apply_observation_ledger(assessment)
                     if expected_stop is not None and index != len(state.evidence):
                         return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap rejected-observation item cannot have a later causal round")
                     continue
@@ -785,6 +1190,7 @@ class ReferenceSession:
             frontiers = next_frontiers
             resources = charged_resources
             processed_ids = processed_ids | {expected_execution_id}
+            apply_observation_ledger(assessment)
             if expected_stop is not None and index != len(state.evidence):
                 return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a terminal committed evidence item cannot have a later causal round")
 
@@ -794,6 +1200,12 @@ class ReferenceSession:
             or dict(current_frontiers) != dict(frontiers)
             or state.resources != resources
             or state.processed_execution_attempt_ids != processed_ids
+            or state.consumed_response_ids != consumed_response_ids
+            or state.terminal_trigger_event_ids != terminal_trigger_event_ids
+            or state.active_trigger_event_ids != active_trigger_event_ids
+            or not _strict_ownership_event_mapping_equal(
+                state.event_identity_refs, seen_ownership_events,
+            )
         ):
             return KernelDiagnostic("SESSION-LINEAGE-MISMATCH", "resumed state is not the terminal state of its evidence lineage")
         # Keep full provenance verification, but perform it over the
@@ -849,6 +1261,7 @@ class ReferenceSession:
             uncertainty_identity=model.uncertainty_identity,
             uncertainty_digest=model.uncertainty_digest,
             authority_identities=self.binding.identities(),
+            interpretation_contract_identity=self._interpretation_contract_identity,
         )
         resource_before = state.resources.algorithm_view(action)
         charged_resources = state.resources.charge(action)
@@ -862,11 +1275,19 @@ class ReferenceSession:
             action_id=snapshot.action_id,
             action_kind=snapshot.action_kind,
         )
+        # S4 is the only point at which an environment adapter runs.  It
+        # receives no state argument, but a hostile adapter can still retain a
+        # reference to the caller-owned checkpoint.  Take a recursively
+        # detached state boundary snapshot before dispatch, including retained
+        # evidence and its ownership replay.  A frozen dataclass alone cannot
+        # stop an adapter from using ``object.__setattr__`` on an old nested
+        # value; no S7/S8/S9 operation may consume that mutable alias.
+        dispatch_state = _detached_dispatch_checkpoint(state)
         try:
             execution = environment.execute(request)
         except Exception as exc:
             return self._charged_execution_error(
-                state=state,
+                state=dispatch_state,
                 environment=environment,
                 snapshot=snapshot,
                 prediction=prediction,
@@ -881,7 +1302,7 @@ class ReferenceSession:
             )
 
         return self._post_dispatch(
-            state=state,
+            state=dispatch_state,
             environment=environment,
             model=model,
             snapshot=snapshot,
@@ -1000,8 +1421,35 @@ class ReferenceSession:
                     execution.successor if isinstance(execution.successor, SyntheticEnvironment) else None
                 ),
             )
-        record_error = _incoming_record_error(execution.record, action=action)
+        record_error = _incoming_record_error(
+            execution.record, action=action, interpretation_contract=self.interpretation_contract,
+        )
         if record_error is not None:
+            # A malformed visible S4 record is still not entitled to erase a
+            # correctly bound raw ownership/timing observation.  Preserve the
+            # assessment only when the raw material names this *issued*
+            # execution and passes the bidirectional binding check; arbitrary
+            # malformed adapter objects never acquire ledger authority here.
+            rejected_assessment = _bound_rejected_observation_assessment(
+                execution.record,
+                action=action,
+                interpretation_contract=self.interpretation_contract,
+                model=model,
+                execution_attempt_id=execution_attempt_id,
+            )
+            rejected_code = record_error.code
+            rejected_replay_conflict = False
+            if rejected_assessment is not None:
+                rejected_conflict = _observation_replay_conflict(
+                    state.event_identity_refs,
+                    state.active_trigger_event_ids,
+                    state.terminal_trigger_event_ids,
+                    state.consumed_response_ids,
+                    rejected_assessment,
+                )
+                if rejected_conflict is not None:
+                    rejected_code = rejected_conflict.code
+                    rejected_replay_conflict = rejected_code in _OBSERVATION_QUARANTINE_CODES
             return self._charged_execution_error(
                 state=state,
                 environment=environment,
@@ -1013,10 +1461,14 @@ class ReferenceSession:
                 charged_resources=charged_resources,
                 execution_attempt_id=execution_attempt_id,
                 diagnostics=diagnostics,
-                code=record_error.code,
+                code=rejected_code,
                 message=record_error.message,
                 execution_record=execution.record,
                 environment_after_execution=execution.successor,
+                observation_assessment=rejected_assessment,
+                observation_ledger_mode=(
+                    "QUARANTINE" if rejected_replay_conflict else "FULL"
+                ),
             )
         if (
             execution.record.execution_attempt_id != execution_attempt_id
@@ -1124,6 +1576,31 @@ class ReferenceSession:
                     message="Recover did not confirm both its target and successor summary",
                 )
 
+        # A contract-bound TEST may formally record the exclusive
+        # no-response material shape.  It has no S9 summary by design; route
+        # it to the interpreter before the ordinary confirmed-summary guard so
+        # it can preserve history through the named S7 no-response branch.
+        if (
+            action.kind == "TEST"
+            and self.interpretation_contract is not None
+            and type(execution.record.observation_input) is ObservationInput
+            and execution.record.observation_input.response_id is None
+        ):
+            return self._commit_confirmed_execution(
+                state=state,
+                environment_after_execution=execution.successor,
+                model=model,
+                snapshot=snapshot,
+                prediction=prediction,
+                action=action,
+                resource_before=resource_before,
+                resource_after=resource_after,
+                charged_resources=charged_resources,
+                execution_attempt_id=execution_attempt_id,
+                diagnostics=diagnostics,
+                execution_record=execution.record,
+            )
+
         if not execution.record.summary_confirmed or not isinstance(execution.record.post_summary, str) or not execution.record.post_summary:
             return self._charged_execution_error(
                 state=state,
@@ -1195,7 +1672,9 @@ class ReferenceSession:
         next_state = SessionState(
             next_context, state.history, state.frontiers, charged_resources,
             state.attempts + 1, state.processed_execution_attempt_ids | {execution_attempt_id}, state.evidence + (evidence,),
-            self._authority_identity, self._seed_identity,
+            self._authority_identity, self._seed_identity, state.consumed_response_ids,
+            state.terminal_trigger_event_ids, state.event_identity_refs,
+            state.active_trigger_event_ids,
         )
         return SessionResult(
             next_state,
@@ -1223,6 +1702,8 @@ class ReferenceSession:
         code: str,
         message: str,
         rejected_response: VisibleExecutionRecord | None = None,
+        observation_assessment: ObservationAssessment | None = None,
+        observation_ledger_mode: str = "FULL",
     ) -> SessionResult:
         """Apply the single S7 path after an issued but unresolved action."""
 
@@ -1237,12 +1718,60 @@ class ReferenceSession:
         evidence = RoundEvidence(
             snapshot, prediction, execution_record, True, True, resource_before, resource_after,
             action.detail_charges, action.projected_cost(), state.history, next_history,
-            None, False, stop_reason, rejected_response, code,
+            None, False, stop_reason, rejected_response, code, observation_assessment,
         )
+        # Ordinary rejected S7 routes apply the same complete typed replay
+        # delta as a normal S9 commit. A cross-round identity/duplicate
+        # conflict instead quarantines immutable receipt facts: a later trace
+        # cannot repair a seen response or terminal request by changing its
+        # pairing material, nor can it use that rejected trace to advance a
+        # request disposition.
+        if observation_ledger_mode == "FULL":
+            (
+                next_consumed_response_ids,
+                next_terminal_trigger_event_ids,
+                next_event_identity_refs,
+                next_active_trigger_event_ids,
+            ) = _advance_observation_ledger(
+                state.consumed_response_ids,
+                state.terminal_trigger_event_ids,
+                state.active_trigger_event_ids,
+                state.event_identity_refs,
+                observation_assessment,
+            )
+        elif observation_ledger_mode == "QUARANTINE":
+            (
+                next_consumed_response_ids,
+                next_terminal_trigger_event_ids,
+                next_event_identity_refs,
+                next_active_trigger_event_ids,
+            ) = _quarantine_conflicted_observation_ledger(
+                state.consumed_response_ids,
+                state.terminal_trigger_event_ids,
+                state.event_identity_refs,
+                state.active_trigger_event_ids,
+                observation_assessment,
+            )
+        elif observation_ledger_mode == "NONE":
+            (
+                next_consumed_response_ids,
+                next_terminal_trigger_event_ids,
+                next_event_identity_refs,
+                next_active_trigger_event_ids,
+            ) = (
+                state.consumed_response_ids,
+                state.terminal_trigger_event_ids,
+                state.event_identity_refs,
+                state.active_trigger_event_ids,
+            )
+        else:
+            raise ValueError("observation ledger mode is outside the controlled vocabulary")
         next_state = SessionState(
             next_context, next_history, state.frontiers, charged_resources,
             state.attempts + 1, state.processed_execution_attempt_ids | {execution_attempt_id}, state.evidence + (evidence,),
-            self._authority_identity, self._seed_identity,
+            self._authority_identity, self._seed_identity, next_consumed_response_ids,
+            next_terminal_trigger_event_ids, next_event_identity_refs,
+            next_active_trigger_event_ids,
         )
         return SessionResult(
             next_state,
@@ -1269,6 +1798,99 @@ class ReferenceSession:
     ) -> SessionResult:
         """Apply S8 (when needed) and S9 from a confirmed normalized outcome."""
 
+        assessment: ObservationAssessment | None = None
+        if self.interpretation_contract is not None and action.kind == "TEST":
+            assert isinstance(execution_record.observation_input, ObservationInput)
+            assessment = assess_observation(execution_record.observation_input, self.interpretation_contract)
+            binding_error = _observation_record_binding_error(execution_record, model)
+            assessment = _assessment_with_binding_error(assessment, binding_error)
+            replay_conflict = _observation_replay_conflict(
+                state.event_identity_refs,
+                state.active_trigger_event_ids,
+                state.terminal_trigger_event_ids,
+                state.consumed_response_ids,
+                assessment,
+            )
+            if replay_conflict is not None:
+                return self._s7_retry(
+                    state=state,
+                    environment_after_execution=environment_after_execution,
+                    snapshot=snapshot,
+                    prediction=prediction,
+                    action=action,
+                    resource_before=resource_before,
+                    resource_after=resource_after,
+                    charged_resources=charged_resources,
+                    execution_attempt_id=execution_attempt_id,
+                    diagnostics=diagnostics,
+                    execution_record=execution_record,
+                    code=replay_conflict.code,
+                    message=replay_conflict.message,
+                    rejected_response=execution_record,
+                    observation_assessment=assessment,
+                    observation_ledger_mode=(
+                        "QUARANTINE"
+                        if replay_conflict.code in _OBSERVATION_QUARANTINE_CODES
+                        else "FULL"
+                    ),
+                )
+            if binding_error is not None:
+                return self._s7_retry(
+                    state=state,
+                    environment_after_execution=environment_after_execution,
+                    snapshot=snapshot,
+                    prediction=prediction,
+                    action=action,
+                    resource_before=resource_before,
+                    resource_after=resource_after,
+                    charged_resources=charged_resources,
+                    execution_attempt_id=execution_attempt_id,
+                    diagnostics=diagnostics,
+                    execution_record=execution_record,
+                    code=_binding_resolution_code(binding_error),
+                    message=binding_error.message,
+                    rejected_response=execution_record,
+                    observation_assessment=assessment,
+                )
+            if assessment.verdict == "ERROR":
+                return self._s7_retry(
+                    state=state,
+                    environment_after_execution=environment_after_execution,
+                    snapshot=snapshot,
+                    prediction=prediction,
+                    action=action,
+                    resource_before=resource_before,
+                    resource_after=resource_after,
+                    charged_resources=charged_resources,
+                    execution_attempt_id=execution_attempt_id,
+                    diagnostics=diagnostics,
+                    execution_record=execution_record,
+                    code="OBSERVATION-INTERPRETATION-ERROR",
+                    message=assessment.reason,
+                    rejected_response=execution_record,
+                    observation_assessment=assessment,
+                )
+            if assessment.kind == "NO-RESPONSE":
+                # The record proves an issued execution with no normal public
+                # response.  It is neither CONFIRMED-NOT-SENT nor a normal
+                # class commit: retain the assessment, preserve H through the
+                # conservative S7 route, and never smuggle it into S9.
+                return self._s7_retry(
+                    state=state,
+                    environment_after_execution=environment_after_execution,
+                    snapshot=snapshot,
+                    prediction=prediction,
+                    action=action,
+                    resource_before=resource_before,
+                    resource_after=resource_after,
+                    charged_resources=charged_resources,
+                    execution_attempt_id=execution_attempt_id,
+                    diagnostics=diagnostics,
+                    execution_record=execution_record,
+                    code="OBSERVATION-NO-RESPONSE",
+                    message=assessment.reason,
+                    observation_assessment=assessment,
+                )
         if execution_record.observable is None:
             next_history, next_frontiers, summary_diagnostics = self._summary_only_transition(
                 model=model,
@@ -1298,6 +1920,7 @@ class ReferenceSession:
                     code=interpretation_error.code,
                     message=interpretation_error.message,
                     rejected_response=execution_record,
+                    observation_assessment=assessment,
                 )
             next_history = self._history_for_class(state.history, selected_class)
             next_frontiers = MappingProxyType(dict(selected_class.successors))
@@ -1319,12 +1942,19 @@ class ReferenceSession:
             snapshot, prediction, execution_record, True, True, resource_before, resource_after,
             action.detail_charges, action.projected_cost(), state.history, next_history,
             next_context.current_summary, True, stop_reason,
-            resolution_code="COMMIT",
+            resolution_code="COMMIT", observation_assessment=assessment,
         )
         next_state = SessionState(
             next_context, next_history, next_frontiers, charged_resources,
             state.attempts + 1, state.processed_execution_attempt_ids | {execution_attempt_id}, state.evidence + (evidence,),
             self._authority_identity, self._seed_identity,
+            *_advance_observation_ledger(
+                state.consumed_response_ids,
+                state.terminal_trigger_event_ids,
+                state.active_trigger_event_ids,
+                state.event_identity_refs,
+                assessment,
+            ),
         )
         return SessionResult(next_state, environment_after_execution, stop_reason, tuple(diagnostics))
 
@@ -1684,6 +2314,8 @@ class ReferenceSession:
         message: str,
         execution_record: VisibleExecutionRecord | None = None,
         environment_after_execution: SyntheticEnvironment | None = None,
+        observation_assessment: ObservationAssessment | None = None,
+        observation_ledger_mode: str = "FULL",
     ) -> SessionResult:
         """Record an error after S4 without returning the pre-charge state.
 
@@ -1719,6 +2351,8 @@ class ReferenceSession:
             code=code,
             message=message,
             rejected_response=execution_record,
+            observation_assessment=observation_assessment,
+            observation_ledger_mode=observation_ledger_mode,
         )
 
 
@@ -1739,7 +2373,9 @@ def _replay_model(model: FiniteSessionModel) -> FiniteSessionModel:
 
 
 def _session_authority_identity(
-    binding: RuntimeAuthorityBinding, model: FiniteSessionModel,
+    binding: RuntimeAuthorityBinding,
+    model: FiniteSessionModel,
+    interpretation_contract_identity: str | None = None,
 ) -> str:
     """Bind S0 to the exact controlled snapshots consumed by this session."""
 
@@ -1747,6 +2383,7 @@ def _session_authority_identity(
     payload = (
         model.identity,
         model.context.identity,
+        interpretation_contract_identity,
         tuple(
             (source, tuple(sorted(identity.items())))
             for source, identity in sorted(identities.items())
@@ -1855,6 +2492,7 @@ def _matching_class(
 
 def _incoming_record_error(
     record: VisibleExecutionRecord, *, action: SyntheticAction,
+    interpretation_contract: InterpretationContract | None = None,
 ) -> KernelDiagnostic | None:
     """Check the closed, visible execution-record combinations at S4/S8.
 
@@ -1885,6 +2523,8 @@ def _incoming_record_error(
             or record.measurement_tick is not None
             or record.uncertainty_identity is not None
             or record.prep_recover is not None
+            or record.observation_input is not None
+            or record.response_id is not None
         ):
             return KernelDiagnostic(
                 "INVALID-EXECUTION-RECORD",
@@ -1895,6 +2535,18 @@ def _incoming_record_error(
     if action.kind == "TEST":
         if record.prep_recover is not None:
             return KernelDiagnostic("INVALID-EXECUTION-RECORD", "TEST cannot carry a Prep/Recover result")
+        if (
+            interpretation_contract is not None
+            and type(record.observation_input) is ObservationInput
+            and record.observation_input.response_id is None
+        ):
+            if (
+                record.observable is not None or record.summary_confirmed or record.post_summary is not None
+                or record.measurement_tick is not None or record.uncertainty_identity is not None
+                or record.response_id is not None
+            ):
+                return KernelDiagnostic("INVALID-EXECUTION-RECORD", "response-free TEST material cannot coexist with a normal response or S9 summary")
+            return None
         if not isinstance(record.observable, str) or not record.observable:
             return KernelDiagnostic("INVALID-EXECUTION-RECORD", "normal TEST execution requires a nonempty visible observation")
         if not record.summary_confirmed:
@@ -1905,11 +2557,18 @@ def _incoming_record_error(
             return KernelDiagnostic("INVALID-EXECUTION-RECORD", "normal TEST execution requires an exact measurement tick")
         if not isinstance(record.uncertainty_identity, str) or not record.uncertainty_identity.strip():
             return KernelDiagnostic("INVALID-EXECUTION-RECORD", "observed TEST execution must name a nonempty uncertainty identity")
+        if interpretation_contract is None:
+            if record.observation_input is not None or record.response_id is not None:
+                return KernelDiagnostic("INVALID-EXECUTION-RECORD", "unbound TEST cannot carry ownership/timing material")
+        elif type(record.observation_input) is not ObservationInput or not isinstance(record.response_id, str) or not record.response_id:
+            return KernelDiagnostic("INVALID-EXECUTION-RECORD", "bound normal TEST requires one typed response-linked ownership/timing material")
         return None
 
     if action.kind not in {"PREP", "RECOVER"}:
         return KernelDiagnostic("INVALID-EXECUTION-RECORD", "execution action kind is outside the controlled vocabulary")
     result = record.prep_recover
+    if record.observation_input is not None or record.response_id is not None:
+        return KernelDiagnostic("INVALID-EXECUTION-RECORD", "Prep/Recover cannot manufacture a TEST ownership/timing input")
     if not isinstance(result, PrepRecoverResult):
         return KernelDiagnostic("INVALID-EXECUTION-RECORD", "normal Prep/Recover execution requires a typed recovery result")
     if (
@@ -1954,6 +2613,149 @@ def _incoming_record_error(
     return None
 
 
+def _observation_record_binding_error(
+    record: VisibleExecutionRecord,
+    model: FiniteSessionModel,
+) -> KernelDiagnostic | None:
+    """Bind raw public material bidirectionally to its returned record.
+
+    This check closes the raw/visible binding before an interpretation result
+    can affect a session.  A trace with a valid ownership result is still
+    unusable if it belongs to another execution, action, measurement,
+    uncertainty snapshot, response, or public evidence record.
+    """
+
+    provenance_error = _observation_record_provenance_error(record)
+    if provenance_error is not None:
+        return provenance_error
+    material = record.observation_input
+    assert type(material) is ObservationInput
+    if material.response_id is not None:
+        expected_window = model.uncertainty.window(record.measurement_tick) if type(record.measurement_tick) is Fraction else None
+        if not _strict_interval_equal(material.measurement_interval, expected_window):
+            return KernelDiagnostic(
+                "OBSERVATION-UNCERTAINTY-WINDOW-MISMATCH",
+                "raw measurement interval is not the exact frozen model uncertainty window",
+            )
+    return None
+
+
+def _observation_record_provenance_error(
+    record: VisibleExecutionRecord,
+) -> KernelDiagnostic | None:
+    """Check identity binding independently of the frozen uncertainty window.
+
+    This smaller relation is enough to retain an already issued public trace
+    in an S7 ledger when another structural or U-window error rejects the
+    visible record.  The full binding function above still rejects that record
+    for normal interpretation/commit.
+    """
+
+    material = record.observation_input
+    if type(material) is not ObservationInput:
+        return KernelDiagnostic("OBSERVATION-BINDING-MISMATCH", "bound TEST record has no typed raw observation material")
+    if not all((
+        _strict_scalar_equal(material.execution_attempt_id, record.execution_attempt_id),
+        _strict_scalar_equal(material.action_id, record.action_id),
+        _strict_scalar_equal(material.evidence_ref, record.evidence_ref),
+        _strict_scalar_equal(material.measurement_tick, record.measurement_tick),
+        _strict_scalar_equal(material.uncertainty_identity, record.uncertainty_identity),
+        _strict_scalar_equal(material.response_id, record.response_id),
+    )):
+        return KernelDiagnostic("OBSERVATION-BINDING-MISMATCH", "raw ownership/timing material does not describe this execution record")
+    return None
+
+
+def _bound_rejected_observation_assessment(
+    record: VisibleExecutionRecord,
+    *,
+    action: SyntheticAction,
+    interpretation_contract: InterpretationContract | None,
+    model: FiniteSessionModel,
+    execution_attempt_id: str,
+) -> ObservationAssessment | None:
+    """Preserve only a safely bound raw TEST observation rejected at S4.
+
+    A visible-record shape failure must not erase public response ownership.
+    Conversely, a malformed adapter object must not manufacture a session
+    ledger update.  This narrow helper accepts material only when it names the
+    currently issued TEST exactly and its raw/visible provenance binding
+    closes.  The returned assessment then retains a separate frozen-window
+    diagnostic when applicable, rather than losing ownership facts.
+    """
+
+    if (
+        interpretation_contract is None
+        or action.kind != "TEST"
+        or type(record.observation_input) is not ObservationInput
+        or record.execution_attempt_id != execution_attempt_id
+        or record.action_id != action.action_id
+    ):
+        return None
+    if _observation_record_provenance_error(record) is not None:
+        return None
+    assessment = assess_observation(record.observation_input, interpretation_contract)
+    return _assessment_with_binding_error(
+        assessment,
+        _observation_record_binding_error(record, model),
+    )
+
+
+def _assessment_with_binding_error(
+    assessment: ObservationAssessment,
+    binding_error: KernelDiagnostic | None,
+) -> ObservationAssessment:
+    """Make a frozen-U mismatch a typed measurement ERROR, not a bare S7.
+
+    Provenance/identity binding errors remain outside the observation verdict:
+    they say the returned record is not its claimed public material.  The
+    exact frozen uncertainty-window mismatch instead invalidates the measured
+    interval itself, so retain the ownership replay and publish a named ERROR
+    assessment that both live execution and checkpoint replay recompute.
+    """
+
+    if (
+        binding_error is None
+        or binding_error.code != "OBSERVATION-UNCERTAINTY-WINDOW-MISMATCH"
+    ):
+        return assessment
+    diagnostics = assessment.diagnostics
+    if not any(
+        diagnostic.code == binding_error.code and diagnostic.message == binding_error.message
+        for diagnostic in diagnostics
+    ):
+        diagnostics = diagnostics + (binding_error,)
+    return replace(
+        assessment,
+        verdict="ERROR",
+        score_disposition="ERROR",
+        answered=False,
+        reason=binding_error.message,
+        diagnostics=diagnostics,
+    )
+
+
+def _binding_resolution_code(binding_error: KernelDiagnostic) -> str:
+    """Expose measurement-window rejection without conflating identity faults."""
+
+    return (
+        "OBSERVATION-UNCERTAINTY-WINDOW-MISMATCH"
+        if binding_error.code == "OBSERVATION-UNCERTAINTY-WINDOW-MISMATCH"
+        else "OBSERVATION-INTERPRETATION-ERROR"
+    )
+
+
+def _strict_interval_equal(actual: object, expected: object) -> bool:
+    if actual is None or expected is None:
+        return actual is None and expected is None
+    if type(actual) is not Interval or type(expected) is not Interval:
+        return False
+    return all(
+        _strict_scalar_equal(getattr(actual, field), getattr(expected, field))
+        for field in ("lower", "upper", "lower_closed", "upper_closed")
+    )
+
+
 def _strict_scalar_equal(actual: object, expected: object) -> bool:
     """Compare a closed scalar only after requiring its exact runtime type.
 
@@ -1996,10 +2798,397 @@ def _strict_visible_execution_record_equal(actual: object, expected: object) -> 
         _strict_scalar_equal(actual.measurement_tick, expected.measurement_tick),
         _strict_scalar_equal(actual.uncertainty_identity, expected.uncertainty_identity),
         _strict_scalar_equal(actual.evidence_ref, expected.evidence_ref),
+        _strict_scalar_equal(actual.response_id, expected.response_id),
+        _strict_observation_input_equal(actual.observation_input, expected.observation_input),
         _strict_prep_recover_result_equal(actual.prep_recover, expected.prep_recover)
         if actual.prep_recover is not None or expected.prep_recover is not None
         else True,
     ))
+
+
+def _strict_observation_input_equal(actual: object, expected: object) -> bool:
+    """Compare raw interpretation material only as a type-exact value."""
+
+    return strict_observation_input_equal(actual, expected)
+
+
+def _strict_observation_assessment_equal(actual: object, expected: object) -> bool:
+    """Assessment equality is meaningful only when both values are typed."""
+
+    return strict_observation_assessment_equal(actual, expected)
+
+
+def _terminal_trigger_ids(assessment: ObservationAssessment | None) -> frozenset[str]:
+    """Backward-sized projection of the complete replay ledger delta."""
+
+    return _observation_ledger_delta(assessment).terminal_trigger_ids
+
+
+def _observation_ledger_delta(assessment: ObservationAssessment | None) -> _ObservationLedgerDelta:
+    """Derive the session's terminal facts from one typed ownership replay.
+
+    The selected ``response_id`` is not the extent of an observation trace.
+    A FIFO/MOST-RECENT replay may discharge several requests and may contain
+    unmatched/wrong-key response tokens which are still public facts.  The
+    session consumes every typed response token from that replay, terminalises
+    every non-active contract request, and records every replayed request ID
+    so a later round cannot reintroduce an already terminal instance under a
+    different response or pairing policy.
+    """
+
+    if type(assessment) is not ObservationAssessment:
+        return _ObservationLedgerDelta(
+            frozenset(), frozenset(), frozenset(), MappingProxyType({}), frozenset(),
+        )
+    response_ids: set[str] = set()
+    terminal_trigger_ids: set[str] = set()
+    replayed_request_ids: set[str] = set()
+    active_trigger_ids: set[str] = set()
+    event_refs: dict[str, OwnershipEvent] = {}
+    replay = assessment.replay
+    if type(replay) is OwnershipReplay:
+        for identifier, event in replay.event_refs.items():
+            if type(identifier) is str and identifier and type(event) is OwnershipEvent:
+                event_refs[identifier] = event
+                if event.kind == "RESPONSE":
+                    response_ids.add(identifier)
+        for identifier, disposition in replay.request_dispositions.items():
+            if type(identifier) is not str or not identifier or type(disposition) is not str:
+                continue
+            replayed_request_ids.add(identifier)
+            if disposition in {"DISCHARGED", "AMBIGUOUS", "CANCELLED", "SUPERSEDED"}:
+                terminal_trigger_ids.add(identifier)
+            elif disposition == "ACTIVE":
+                active_trigger_ids.add(identifier)
+    # A syntactically typed selected response with no event object is itself a
+    # sparse public terminal token.  If that identifier names a typed event in
+    # this replay, the event controls its role: a request/cancellation ID must
+    # not be reclassified as a consumed response merely because malformed
+    # material placed it in ``responseId``.
+    if type(assessment.response_id) is str and assessment.response_id:
+        selected_event = event_refs.get(assessment.response_id)
+        if selected_event is None or selected_event.kind == "RESPONSE":
+            response_ids.add(assessment.response_id)
+    if type(assessment.ownership) is OwnershipResolution:
+        ownership = assessment.ownership
+        if ownership.status == "UNIQUE" and type(ownership.owner_request_id) is str and ownership.owner_request_id:
+            terminal_trigger_ids.add(ownership.owner_request_id)
+            replayed_request_ids.add(ownership.owner_request_id)
+        elif ownership.status == "AMBIGUOUS":
+            terminal_trigger_ids.update(
+                identifier for identifier in ownership.candidate_request_ids
+                if type(identifier) is str and identifier
+            )
+            replayed_request_ids.update(
+                identifier for identifier in ownership.candidate_request_ids
+                if type(identifier) is str and identifier
+            )
+    return _ObservationLedgerDelta(
+        frozenset(response_ids), frozenset(terminal_trigger_ids), frozenset(replayed_request_ids),
+        MappingProxyType(dict(event_refs)), frozenset(active_trigger_ids),
+    )
+
+
+def _strict_ownership_event_equal(actual: object, expected: object) -> bool:
+    """Compare one public ownership event without scalar subclass coercion."""
+
+    if type(actual) is not OwnershipEvent or type(expected) is not OwnershipEvent:
+        return False
+    return all(
+        _strict_scalar_equal(getattr(actual, field), getattr(expected, field))
+        for field in (
+            "event_id", "sequence", "kind", "key", "event_type", "timestamp", "target_request_id",
+        )
+    )
+
+
+def _observation_replay_conflict(
+    seen_event_refs: Mapping[str, OwnershipEvent],
+    active_trigger_event_ids: frozenset[str],
+    terminal_trigger_event_ids: frozenset[str],
+    consumed_response_ids: frozenset[str],
+    assessment: ObservationAssessment | None,
+) -> KernelDiagnostic | None:
+    """Apply one closed cross-round ownership identity/terminality policy.
+
+    An exact ACTIVE request may appear again in a later cumulative trace.  No
+    other already seen event can be replayed as fresh material: responses and
+    terminal requests retain their specific duplicate diagnostics, while a
+    changed field/kind or a non-obligation event identity is an immutable
+    event-identity conflict.  This helper is intentionally shared by live
+    execution and causal-ledger replay before any timing/binding verdict.
+    """
+
+    delta = _observation_ledger_delta(assessment)
+    # First scan every immutable/cross-role conflict.  A trace may also carry
+    # a duplicate response; that lower-severity duplicate must not mask a
+    # changed event identity and accidentally choose the FULL ledger path.
+    # Sorting prevents diagnostics from depending on a frozenset iteration.
+    if delta.response_ids & delta.replayed_request_ids:
+        return KernelDiagnostic(
+            "OBSERVATION-EVENT-IDENTITY-CONFLICT",
+            "one replay assigns an identifier both response and request roles",
+        )
+    if (
+        active_trigger_event_ids & delta.response_ids
+        or terminal_trigger_event_ids & delta.response_ids
+        or consumed_response_ids & delta.replayed_request_ids
+    ):
+        return KernelDiagnostic(
+            "OBSERVATION-EVENT-IDENTITY-CONFLICT",
+            "an observation identifier conflicts with an already retained response/request role",
+        )
+    for identifier in sorted(delta.response_ids):
+        prior = seen_event_refs.get(identifier)
+        if prior is not None and prior.kind != "RESPONSE":
+            return KernelDiagnostic(
+                "OBSERVATION-EVENT-IDENTITY-CONFLICT",
+                "a selected response identity was previously retained under a different event kind",
+            )
+    for identifier in sorted(delta.replayed_request_ids):
+        prior = seen_event_refs.get(identifier)
+        if prior is not None and prior.kind != "REQUEST":
+            return KernelDiagnostic(
+                "OBSERVATION-EVENT-IDENTITY-CONFLICT",
+                "a replayed request identity was previously retained under a different event kind",
+            )
+    for identifier in sorted(delta.event_refs):
+        event = delta.event_refs[identifier]
+        prior = seen_event_refs.get(identifier)
+        if prior is not None and not _strict_ownership_event_equal(prior, event):
+            return KernelDiagnostic(
+                "OBSERVATION-EVENT-IDENTITY-CONFLICT",
+                "ownership event identity was reused with different typed public fields",
+            )
+        if prior is None and identifier in consumed_response_ids and event.kind != "RESPONSE":
+            return KernelDiagnostic(
+                "OBSERVATION-EVENT-IDENTITY-CONFLICT",
+                "a consumed response identity was reused under a different event kind",
+            )
+        if prior is None and identifier in terminal_trigger_event_ids and event.kind != "REQUEST":
+            return KernelDiagnostic(
+                "OBSERVATION-EVENT-IDENTITY-CONFLICT",
+                "a terminal trigger identity was reused under a different event kind",
+            )
+
+    # The immutable scan is clear.  Retain only deterministic duplicate
+    # candidates now: all exact response duplicates take precedence over an
+    # exact terminal-request duplicate, and one exact ACTIVE request is the
+    # sole event identity allowed to recur without an error.
+    duplicate_response = False
+    duplicate_trigger = False
+    for identifier in sorted(delta.response_ids):
+        if identifier in consumed_response_ids:
+            duplicate_response = True
+        elif (prior := seen_event_refs.get(identifier)) is not None and prior.kind == "RESPONSE":
+            duplicate_response = True
+    for identifier in sorted(delta.replayed_request_ids):
+        if identifier in terminal_trigger_event_ids:
+            duplicate_trigger = True
+    for identifier in sorted(delta.event_refs):
+        event = delta.event_refs[identifier]
+        prior = seen_event_refs.get(identifier)
+        if prior is None:
+            continue
+        if event.kind == "RESPONSE":
+            duplicate_response = True
+        elif event.kind == "REQUEST":
+            if identifier in terminal_trigger_event_ids:
+                duplicate_trigger = True
+            elif identifier in active_trigger_event_ids:
+                continue
+            else:
+                return KernelDiagnostic(
+                    "OBSERVATION-EVENT-IDENTITY-CONFLICT",
+                    "only an exactly replayed active contract request may recur across rounds",
+                )
+        else:
+            return KernelDiagnostic(
+                "OBSERVATION-EVENT-IDENTITY-CONFLICT",
+                "only an exactly replayed active contract request may recur across rounds",
+            )
+    if duplicate_response:
+        return KernelDiagnostic(
+            "DUPLICATE-OBSERVATION-RESPONSE",
+            "response identity was already consumed by this session",
+        )
+    if duplicate_trigger:
+        return KernelDiagnostic(
+            "DUPLICATE-OBSERVATION-TRIGGER",
+            "trigger instance was already terminal in this session",
+        )
+    return None
+
+
+def _merged_observation_event_refs(
+    seen_event_refs: Mapping[str, OwnershipEvent],
+    assessment: ObservationAssessment | None,
+) -> Mapping[str, OwnershipEvent]:
+    """Extend an already checked event ledger with one typed replay."""
+
+    merged = dict(seen_event_refs)
+    for identifier, event in _observation_ledger_delta(assessment).event_refs.items():
+        merged.setdefault(identifier, event)
+    return MappingProxyType(merged)
+
+
+def _strict_ownership_event_mapping_equal(
+    actual: object,
+    expected: object,
+) -> bool:
+    if not isinstance(actual, Mapping) or not isinstance(expected, Mapping):
+        return False
+    if (
+        len(actual) != len(expected)
+        or any(type(identifier) is not str for identifier in actual)
+        or any(type(identifier) is not str for identifier in expected)
+        or set(actual) != set(expected)
+    ):
+        return False
+    return all(_strict_ownership_event_equal(actual[identifier], expected[identifier]) for identifier in actual)
+
+
+def _advance_observation_ledger(
+    consumed_response_ids: frozenset[str],
+    terminal_trigger_event_ids: frozenset[str],
+    active_trigger_event_ids: frozenset[str],
+    event_identity_refs: Mapping[str, OwnershipEvent],
+    assessment: ObservationAssessment | None,
+) -> tuple[
+    frozenset[str], frozenset[str], Mapping[str, OwnershipEvent], frozenset[str],
+]:
+    """Apply the same complete-replay delta in live and lineage paths."""
+
+    delta = _observation_ledger_delta(assessment)
+    next_terminal = terminal_trigger_event_ids | delta.terminal_trigger_ids
+    return (
+        consumed_response_ids | delta.response_ids,
+        next_terminal,
+        _merged_observation_event_refs(event_identity_refs, assessment),
+        (active_trigger_event_ids | delta.active_trigger_ids) - next_terminal,
+    )
+
+
+def _quarantine_conflicted_observation_ledger(
+    consumed_response_ids: frozenset[str],
+    terminal_trigger_event_ids: frozenset[str],
+    event_identity_refs: Mapping[str, OwnershipEvent],
+    active_trigger_event_ids: frozenset[str],
+    assessment: ObservationAssessment | None,
+) -> tuple[
+    frozenset[str], frozenset[str], Mapping[str, OwnershipEvent], frozenset[str],
+]:
+    """Seal uncontested public facts from a trace with an identity conflict.
+
+    A conflicting request must not mutate its established ownership state, but
+    a new response token in that same public trace cannot be made available
+    for a later, friendlier pairing.  Retain only previously unseen event IDs
+    and consume newly observed response IDs; leave active/terminal request
+    dispositions unchanged.  Causal replay uses this same quarantine path.
+    """
+
+    delta = _observation_ledger_delta(assessment)
+    merged = dict(event_identity_refs)
+    response_ids: set[str] = set()
+    for identifier, event in delta.event_refs.items():
+        # A scalar ledger may deliberately retain a malformed selected
+        # response which had no typed event object.  If a later conflict trace
+        # supplies that identifier under any event kind, the old role wins:
+        # do not create a contradictory map entry while quarantining other
+        # uncontested facts from the same trace.
+        if (
+            identifier in merged
+            or identifier in consumed_response_ids
+            or identifier in terminal_trigger_event_ids
+            or identifier in active_trigger_event_ids
+        ):
+            continue
+        merged[identifier] = event
+        if event.kind == "RESPONSE":
+            response_ids.add(identifier)
+    if type(assessment) is ObservationAssessment and type(assessment.response_id) is str and assessment.response_id:
+        selected_event = delta.event_refs.get(assessment.response_id)
+        if (
+            (selected_event is None or selected_event.kind == "RESPONSE")
+            and assessment.response_id not in event_identity_refs
+            and assessment.response_id not in consumed_response_ids
+            and assessment.response_id not in terminal_trigger_event_ids
+            and assessment.response_id not in active_trigger_event_ids
+        ):
+            response_ids.add(assessment.response_id)
+    return (
+        consumed_response_ids | frozenset(response_ids),
+        terminal_trigger_event_ids,
+        MappingProxyType(merged),
+        active_trigger_event_ids,
+    )
+
+
+def _event_identity_ledger_error(
+    event_identity_refs: object,
+    active_trigger_event_ids: object,
+    terminal_trigger_event_ids: frozenset[str],
+    consumed_response_ids: frozenset[str],
+) -> KernelDiagnostic | None:
+    """Validate the persistent canonical ledger before a resumed dispatch."""
+
+    if type(event_identity_refs) is not _MAPPING_PROXY_TYPE:
+        return KernelDiagnostic("INVALID-OBSERVATION-EVENT-LEDGER", "event identity ledger is not an immutable mapping")
+    if type(terminal_trigger_event_ids) is not frozenset or any(
+        type(identifier) is not str or not identifier for identifier in terminal_trigger_event_ids
+    ):
+        return KernelDiagnostic("INVALID-OBSERVATION-EVENT-LEDGER", "terminal trigger identities are invalid")
+    if type(consumed_response_ids) is not frozenset or any(
+        type(identifier) is not str or not identifier for identifier in consumed_response_ids
+    ):
+        return KernelDiagnostic("INVALID-OBSERVATION-EVENT-LEDGER", "consumed response identities are invalid")
+    if type(active_trigger_event_ids) is not frozenset or any(
+        type(identifier) is not str or not identifier for identifier in active_trigger_event_ids
+    ):
+        return KernelDiagnostic("INVALID-OBSERVATION-EVENT-LEDGER", "active trigger identities are invalid")
+    if active_trigger_event_ids & terminal_trigger_event_ids:
+        return KernelDiagnostic("INVALID-OBSERVATION-EVENT-LEDGER", "active and terminal trigger identities overlap")
+    if active_trigger_event_ids & consumed_response_ids:
+        return KernelDiagnostic("INVALID-OBSERVATION-EVENT-LEDGER", "active trigger and consumed response identities overlap")
+    if consumed_response_ids & terminal_trigger_event_ids:
+        return KernelDiagnostic("INVALID-OBSERVATION-EVENT-LEDGER", "response and terminal-trigger identities overlap")
+    for identifier, event in event_identity_refs.items():
+        if (
+            type(identifier) is not str
+            or not identifier
+            or type(event) is not OwnershipEvent
+            or not _strict_scalar_equal(identifier, event.event_id)
+            or type(event.sequence) is not int
+            or event.sequence < 0
+            or type(event.kind) is not str
+            or event.kind not in {"REQUEST", "RESPONSE", "CANCEL", "SUPERSEDE"}
+            or type(event.key) is not str
+            or not event.key
+            or type(event.event_type) is not str
+            or not event.event_type
+            or type(event.timestamp) is not Fraction
+            or (
+                event.kind in {"CANCEL", "SUPERSEDE"}
+                and (type(event.target_request_id) is not str or not event.target_request_id)
+            )
+            or (
+                event.kind not in {"CANCEL", "SUPERSEDE"}
+                and event.target_request_id is not None
+                and (event.kind != "REQUEST" or type(event.target_request_id) is not str or not event.target_request_id)
+            )
+        ):
+            return KernelDiagnostic("INVALID-OBSERVATION-EVENT-LEDGER", "event identity ledger contains an invalid typed event")
+        if identifier in consumed_response_ids and event.kind != "RESPONSE":
+            return KernelDiagnostic("INVALID-OBSERVATION-EVENT-LEDGER", "a consumed response identity does not name a response event")
+        if identifier in terminal_trigger_event_ids and event.kind != "REQUEST":
+            return KernelDiagnostic("INVALID-OBSERVATION-EVENT-LEDGER", "a terminal trigger identity does not name a request event")
+        if event.kind == "RESPONSE" and identifier not in consumed_response_ids:
+            return KernelDiagnostic("INVALID-OBSERVATION-EVENT-LEDGER", "a retained response event was not consumed")
+    for identifier in active_trigger_event_ids | terminal_trigger_event_ids:
+        event = event_identity_refs.get(identifier)
+        if type(event) is not OwnershipEvent or event.kind != "REQUEST":
+            return KernelDiagnostic("INVALID-OBSERVATION-EVENT-LEDGER", "active/terminal trigger identity does not name a retained request event")
+    return None
 
 
 def _visible_execution_record(value: object) -> VisibleExecutionRecord | None:
@@ -2068,6 +3257,7 @@ def _snapshot_error(
     prediction: ActionPrediction,
     model: FiniteSessionModel,
     binding: RuntimeAuthorityBinding,
+    interpretation_contract_identity: str | None,
 ) -> KernelDiagnostic | None:
     if not isinstance(snapshot, SelectSnapshot):
         return KernelDiagnostic("SNAPSHOT-IDENTITY-MISMATCH", "evidence snapshot has an invalid type")
@@ -2084,6 +3274,7 @@ def _snapshot_error(
         or snapshot.uncertainty_identity != model.uncertainty_identity
         or snapshot.uncertainty_digest != model.uncertainty_digest
         or dict(snapshot.authority_identities) != dict(binding.identities())
+        or snapshot.interpretation_contract_identity != interpretation_contract_identity
     ):
         return KernelDiagnostic("SNAPSHOT-IDENTITY-MISMATCH", "evidence snapshot is not the expected causal selection snapshot")
     return None

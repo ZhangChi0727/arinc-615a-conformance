@@ -10,7 +10,7 @@
 ## Authority-to-runtime mapping
 
 This table is traceability for code; it is not a second method, requirements or
-experiment authority.  Every invocation loads its declared Git-object input
+experiment authority.  Every production invocation loads its declared Git-object input
 directly and emits the commit/path/raw-byte SHA-256 identities it consumed.
 
 | Controlled authority | Runtime projection | Production check | Boundary |
@@ -51,11 +51,24 @@ fallback route.
 The implemented B/C-2A branch closes `CONFIRMED-NOT-SENT`, unknown effect and
 post-dispatch errors, Prep successor confirmation, eligible/unaffordable/no
 eligible Recover (A4/A5), S7 retry caps, Recover-only S8 adoption and S9's
-sole successor-summary commitment.  Ownership/T5, Stop-Empty/equivalence and
-the production evidence/CLI boundary remain explicit later B/C work; this
-table does not claim their execution is complete.
+sole successor-summary commitment.  B/C-2B accepts only raw ordered
+observation material from the synthetic environment.  `ReferenceSession`
+freezes a typed `InterpretationContract`, which owns event encodings, pairing
+policy, interval semantics, clock/unit/error identities and deadline
+authority.  Raw material is bound to the issued execution/action/evidence
+identity before it is retained; it cannot set its own policy, validity flags,
+deadline or expected verdict.  The resulting `verdict` is limited to PASS,
+FAIL, INCONCLUSIVE and ERROR; `scoreDisposition` is separate.  `answered` is
+true exactly when `scoreDisposition == ANSWERED` and the verdict is PASS or
+FAIL, so INCONCLUSIVE is never answered.  A METHOD-ONLY result is an
+`ENGINEERING-WITNESS` with `answered=false`, even where its finite boundary
+calculation yields PASS or FAIL.  Ownership or clock/error-basis ERROR follows
+S7, while no assessment directly rewrites compatible history.  This does not
+make the runtime a protocol stack, a physical clock calibration, a reviewed
+protocol deadline engine, or an IUT claim.  Stop-Empty/equivalence and the
+production evidence/CLI boundary remain explicit later B/C work.
 
-## B/C-2A coverage status
+## B/C-2 coverage status
 
 `VERIFIED` means the named public-entry regression demonstrates the stated
 sub-behaviour. `PARTIAL` means only the stated sub-behaviour is demonstrated;
@@ -78,9 +91,9 @@ substitute for that evidence identity.
 | BC-10 | VERIFIED | shared-uncertainty and frozen-identity interpretation regressions; no physical calibration claim. |
 | BC-11 | PARTIAL | full-history merge and resume/history regressions; complete same-round Stop-Empty policy remains. |
 | BC-12 | VERIFIED | infeasible/multi-path and conservative-path retention regressions; finite bounds only. |
-| BC-13 | PENDING | Ownership, FIFO/MOST-RECENT, cancellation and superseding are later B/C work. |
-| BC-14 | PENDING | T5 closed/open boundary and invalid-clock treatment are later B/C work. |
-| BC-15 | PENDING | No-response horizon and protocol-pending boundary are later B/C work. |
+| BC-13 | PARTIAL | Raw material cannot inject policy/deadline/verdict. FIFO/MOST-RECENT, explicit cancellation/supersession, full-trace request/response identity, exact reappearance of one ACTIVE request, terminal-request/response exclusion, and conflict quarantine are covered by `interpretation` and `session` regressions. A conflict may seal an uncontested new response but cannot reclassify an existing request identity; every emitted ledger state must remain replayable as a portable checkpoint. Bounded synthetic traces only. |
+| BC-14 | PARTIAL | Frozen-contract interval containment/separation/boundary tests, plus empty physical domain and invalid clock/unit/error basis. Contract/material/clock/unit/uncertainty checks occur before deadline authority branching; no physical calibration claim. |
+| BC-15 | PARTIAL | No-response uses cancellation/supersession, qualified horizon and deadline-authority regressions. METHOD-ONLY/UNRESOLVED never becomes a scored deadline. In pure reviewed semantics, closed upper bound uses `earliest > U` and open upper bound uses `earliest >= U`; this runtime rejects REVIEWED authority without a controlled registry. |
 | BC-16 | PENDING | Empty/Singleton/645/Equivalent/Budget priority remains later B/C work. |
 | BC-17 | PENDING | Equivalence proof and its bounded proof domain remain later B/C work. |
 | BC-18 | PARTIAL | public execution-request isolation regression; complete action/state environment matrix remains. |
@@ -192,9 +205,14 @@ members without excluding a retained conservative path.
 Before any effect branch for an adapter-supplied record, the session validates
 the complete visible-record domain and its field combinations:
 identity/action/evidence references are nonblank strings (their accepted value
-is not rewritten), and confirmation is Boolean.  A normal `TEST` record
-carries a visible observation, a confirmed nonempty post-summary, an exact
-measurement tick, and the frozen uncertainty identity.  A normal typed
+is not rewritten), and confirmation is Boolean.  A contract-bound `TEST`
+record either carries one owned response with a visible observation, a
+confirmed nonempty post-summary, an exact measurement tick and the frozen
+uncertainty identity, or has the exclusive no-response shape:
+`effectClass=NONE` with no response ID, measurement interval/tick, uncertainty
+identity, observable or post-summary.  The latter is neither
+`CONFIRMED-NOT-SENT` nor eligible for S9; declaring silence while an owned
+response is present is ERROR.  A normal typed
 `PREP`/`RECOVER` result instead carries its explicit target/summary/error
 contract and may lawfully be summary-only, with no observation or measurement
 tick; that contract selects S7, S8, or S9.  Non-normal records cannot
@@ -229,7 +247,14 @@ belong to this run/session/model, retain its exact development/interface
 authority binding and frozen S0 seed identity, and close its `H`, frontier
 provenance, history version, evidence, and execution identities; validation
 failure occurs before charge or dispatch.  A target session never re-signs a
-foreign S0 state with its own binding.  The public state is replayed read-only from this
+foreign S0 state with its own binding. Before S4, validated top-level frontier
+and event-identity maps are copied into private immutable proxies, so an
+adapter holding a caller's backing dictionary cannot rewrite checked S0 facts
+during dispatch. A fresh dispatch checkpoint recursively reconstructs the
+finite retained public closure (including `OwnershipEvent`, retained evidence,
+assessment and ownership-replay values) before the adapter runs; this prevents
+an adapter that retained an old frozen nested value from using an object-level
+mutation escape hatch to rewrite the lineage consumed after S4. The public state is replayed read-only from this
 session's frozen S0 seed through each retained evidence item, so summary,
 resource, snapshot/action, authority, history and frontier values must be the
 causal terminal state of that ledger.  This replay neither calls the environment
@@ -257,13 +282,37 @@ before it may admit or issue another action.
 exact nonnegative maximum error and identity), not a label.  Prediction forms
 per-hypothesis measurement windows with that snapshot; interpretation checks
 the returned measurement tick and the same frozen uncertainty identity before
-S9.  This is only finite synthetic engineering behavior, not calibrated clock
-accuracy or a protocol timing verdict.
+S9.  Separately, the B/C-2B assessor compares the raw interval with the
+frozen contract: containment is PASS, separation is FAIL, boundary overlap is
+INCONCLUSIVE, and invalid structure/clock/unit/error basis is ERROR.  This is
+only a finite engineering witness, not calibrated clock accuracy or a protocol
+timing verdict.
 
-Interpretation currently admits an observable label when its tick lies in at
-least one compatible per-hypothesis window.  That is a deliberately coarse,
-conservative label-class boundary: it is not a per-hypothesis timing exclusion,
-physical clock calibration, T5 implementation, or deadline verdict.
+The existing label-class check admits an observable label when its tick lies in
+at least one compatible per-hypothesis window.  It remains a deliberately
+coarse, conservative label-class boundary.  The separate B/C-2B assessment is
+contract-scoped and finite; neither component establishes per-hypothesis
+protocol timing, physical clock calibration, reviewed deadline authority or a
+conformance verdict.
+
+For an owned response, the public `measurementTick` must also equal the exact
+timestamp difference between that response and the request selected by the
+controlled ownership policy; a merely interval-contained tick is not enough.
+The session retains the complete typed ownership replay rather than only the
+selected `responseId`: every response token is consumed, every non-active
+request disposition is terminal, and only an exact recurrence of an ACTIVE
+request is permitted in a cumulative later trace. A changed field/kind,
+cross-role reuse, duplicate response, or duplicate terminal request takes S7.
+Those cross-round replay conflicts quarantine newly observed, uncontested
+response facts but never change a retained request into a response (or vice versa), so
+the state it emits remains self-validating and replayable in a fresh equivalent
+coordinator. For no response, clock/error-basis validation occurs before a
+cancellation/supersession can yield NOT-APPLICABLE; an invalid basis is ERROR,
+not an administrative escape. A timely termination needs no elapsed-horizon
+reading. For an ACTIVE obligation, an unqualified observation horizon remains
+PENDING-HORIZON even when no elapsed reading exists; only a qualified reviewed
+deadline determination requires a nonnegative earliest admissible elapsed
+horizon. A supplied invalid elapsed reading remains ERROR.
 
 Pairing and reset are deliberately not inferred from a Recover action.  A
 future experiment adapter must link paired units with `pairingId`, retain a
@@ -289,12 +338,15 @@ responses. Until then this runtime claims controlled preservation, not exact
 branch-cause proof.
 
 The binding/type layer now executes bounded synthetic TEST/Prep/Recover actions
-and replays their public causal ledgers, but it does not infer ownership,
-establish protocol timing, run an IUT or establish runtime integrity.  The
-Researcher startup contract review is recorded; independent review of the new
-fixed implementation head remains pending.  All later runs remain
-`SYNTHETIC-ENGINEERING-VALIDATION` until separately reviewed; they are not
-confirmation experiments or protocol conformance cases.
+and, only for bound finite synthetic material, resolves ownership and performs
+contract-scoped interval assessment.  It does not establish ownership of a
+real protocol service, calibrated timing, reviewed deadline authority, IUT
+behaviour or runtime integrity.  B/C-3 still owns durable
+evidence-transaction/CLI causal closure.  The Researcher startup contract
+review is recorded; independent review of the new fixed implementation head
+remains pending.  All later runs remain `SYNTHETIC-ENGINEERING-VALIDATION`
+until separately reviewed; they are not confirmation experiments or protocol
+conformance cases.
 
 # 中文版
 
@@ -342,13 +394,20 @@ UNKNOWN 会话的 Recover 路径。
 随后由同一资源决定检查合格 Prep。已实现的 B/C-2A 分支覆盖
 `CONFIRMED-NOT-SENT`、unknown effect 和派发后错误、Prep 后继确认、合格／付不起／无合格
 Recover（A4/A5）、S7 retry cap、仅 Recover 的 S8 采纳以及 S9 对后继摘要的唯一提交。
-ownership／T5、Stop-Empty／等价及生产 evidence／CLI 边界仍是后续 B/C 工作；本表不主张它们
-已经执行完成。
+B/C-2B 只从合成环境接收原始有序观测材料；`ReferenceSession` 冻结类型化
+`InterpretationContract`，独占事件编码、配对策略、区间语义、时钟／单位／误差身份及 deadline
+authority。原始材料须先绑定实际 execution/action/evidence 身份才可保留；不得自行声明 policy、
+有效性标志、deadline 或预期判定。`verdict` 仅可为 PASS、FAIL、INCONCLUSIVE、ERROR；
+`scoreDisposition` 独立保存。仅当 `scoreDisposition == ANSWERED` 且判定为 PASS 或 FAIL 时
+`answered=true`；INCONCLUSIVE 永远不是 answered。METHOD-ONLY 即使算得边界 PASS/FAIL，仍为
+`ENGINEERING-WITNESS` 且 `answered=false`。所有权或时钟／误差依据 ERROR 进入 S7；任何评估均
+不得直接改写相容历史。这不使 runtime 成为协议栈、物理时钟校准、已审定的协议 deadline 引擎或
+IUT 主张。Stop-Empty／等价及生产 evidence／CLI 边界仍是后续 B/C 工作。
 
 GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出的 A2：没有合格 Prep 时出口仍为
 具名 prediction gap；只有合格但不可负担的 Prep 才能在该 fallback 路径产生 A2。
 
-## B/C-2A 覆盖状态
+## B/C-2 覆盖状态
 
 `VERIFIED` 表示具名公共入口回归已展示所述子行为；`PARTIAL` 表示仅展示所述子行为；
 `PENDING` 表示本检查点不主张实现完整性。固定候选 Head、命令和结果必须由后续限定复审或
@@ -368,9 +427,9 @@ GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出�
 | BC-10 | VERIFIED | 共享 uncertainty 与冻结 identity 解释回归；不主张物理时钟校准。 |
 | BC-11 | PARTIAL | 完整 history 合并和 resume/history 回归；完整同轮 Stop-Empty 策略仍待完成。 |
 | BC-12 | VERIFIED | 不可行／多路径及保守路径保留回归；仅限有限边界。 |
-| BC-13 | PENDING | ownership、FIFO/MOST-RECENT、取消和替换属于后续 B/C 工作。 |
-| BC-14 | PENDING | T5 开闭边界及无效时钟处理属于后续 B/C 工作。 |
-| BC-15 | PENDING | 无响应 horizon 和协议待决边界属于后续 B/C 工作。 |
+| BC-13 | PARTIAL | 原始材料不得注入 policy／deadline／判定。FIFO/MOST-RECENT、显式取消／替代、完整事件迹的 request/response 身份、一个 ACTIVE request 的精确再次出现、终态 request／response 排除及冲突隔离均由 `interpretation` 和 `session` 回归覆盖。冲突可封存无争议的新 response，但不得重分类既有 request 身份；每个发出的账本 state 都必须能作为可移植 checkpoint 重放。仅为有界 synthetic 事件迹。 |
+| BC-14 | PARTIAL | 冻结合同的区间包含／分离／边界测试，以及空物理域、无效时钟／单位／误差依据。contract/material/clock/unit/uncertainty 必须先于 deadline authority 分支校验；不主张物理校准。 |
+| BC-15 | PARTIAL | 无响应使用取消／替代、合格 horizon 和 deadline authority 回归。METHOD-ONLY／UNRESOLVED 永远不得成为可计分 deadline。纯 reviewed 语义中，闭上界使用 `earliest > U`，开上界使用 `earliest >= U`；本 runtime 没有受控 registry 时拒绝 REVIEWED authority。 |
 | BC-16 | PENDING | Empty/Singleton/645/Equivalent/Budget 优先级属于后续 B/C 工作。 |
 | BC-17 | PENDING | 等价证明及其有界证明域属于后续 B/C 工作。 |
 | BC-18 | PARTIAL | 公共执行请求隔离回归；完整 action/state 环境矩阵仍待完成。 |
@@ -442,9 +501,12 @@ frontier 路径已表明保守，或传播本身未决，则提交后的成员�
 排除保留的保守路径。
 
 进入任何针对适配器返回记录的 effect 分支前，会话校验完整的可见记录域及其字段组合：身份／动作／
-证据引用均为非空白字符串（接受后的值不被改写），确认字段为 Boolean。普通 `TEST` 记录携带
-可见观测、已确认的非空后继摘要、精确 measurement tick 和冻结的 uncertainty identity。普通的有类型
-`PREP`／`RECOVER` 结果则携带其显式 target／summary／error 合同，并可合法地仅确认摘要、没有观测
+证据引用均为非空白字符串（接受后的值不被改写），确认字段为 Boolean。绑定合同的 `TEST` 记录要么
+携带一个已归属响应的可见观测、已确认的非空后继摘要、精确 measurement tick 和冻结的 uncertainty
+identity，要么采用唯一的无响应形态：`effectClass=NONE`，且不得带 response ID、测量区间／tick、
+uncertainty identity、observable 或 post-summary。后者不是 `CONFIRMED-NOT-SENT`，不得进入 S9；
+声明无响应却同时存在已归属响应属于 ERROR。普通的有类型 `PREP`／`RECOVER` 结果则携带其显式
+target／summary／error 合同，并可合法地仅确认摘要、没有观测
 或 measurement tick；该合同决定走 S7、S8 还是 S9。非普通记录不得伪造其分支禁止的字段。为适配器
 异常合成的窄占位记录不是适配器返回的可见记录；它只用于在 evidence 账本中保留 issued identity 和一次已计费
 的 S7 转换。被拒绝的返回记录与期望的 issued 记录分开保存，错误返回的 attempt identity 不得覆盖已计费
@@ -462,7 +524,10 @@ kind 不同，真正精确的旧 TEST、PREP、RECOVER、CONFIRMED-NOT-SENT 或 
 选择前，恢复的 state 必须属于本 run／session／model，保留精确的 development/interface authority
 绑定和冻结的 S0 seed identity，且其 `H`、frontier provenance、history version、evidence 与 execution
 identity 必须闭合；验证失败发生在计费或派发前。目标会话绝不会以自身绑定重新签署外来的 S0 state。
-公共 state 会从
+S4 前，已验证的顶层 frontier 与 event-identity map 会复制为私有的不可变 proxy，因此即使适配器持有
+调用方的 backing dictionary，也不能在派发期间改写已经核对的 S0 事实。适配器运行前还会递归重构
+有限的保留公共闭包（包括 `OwnershipEvent`、保留 evidence、assessment 和 ownership-replay 值）；这会阻止
+一个持有旧 frozen 嵌套值的适配器借由对象级变异逃逸改写 S4 后消费的 lineage。公共 state 会从
 本会话冻结的 S0 seed 逐条只读重放保留的 evidence，因此摘要、资源、snapshot／action、权威、
 history 与 frontier 必须是该账本的因果终态。该重放既不调用环境，也不再派发动作。有限多路径 S0
 seed 仅可在会话构造时声明、绑定到本 model/context 后冻结；手工拼装的替换 frontier 不是恢复权威。
@@ -478,11 +543,26 @@ mapping 不会改变后续可见 measurement；改变环境必须显式创建新
 
 `U` 是有界且有类型的 uncertainty snapshot（`clockId`、`timeUnit=ticks`、精确的非负最大误差和
 身份），不是标签。预测用该 snapshot 为每个 hypothesis 形成测量窗口；解释在 S9 前核对返回的
-measurement tick 以及同一冻结的 uncertainty identity。这仅是有限合成工程行为，不是经校准的
-时钟准确度或协议时序判定。
+measurement tick 以及同一冻结的 uncertainty identity。另行由 B/C-2B assessor 将原始区间与冻结
+合同对照：包含为 PASS、分离为 FAIL、边界交叠为 INCONCLUSIVE、结构／时钟／单位／误差依据无效
+为 ERROR。这只是有限工程见证，不是经校准的时钟准确度或协议时序判定。
 
-当前解释只要某个相容 hypothesis 的窗口包含该 tick，便接纳该 observable label。它是有意保守的
-标签类粗粒度边界：不是逐 hypothesis 的时序排除、物理时钟校准、T5 实现或 deadline 判定。
+既有的标签类检查只要某个相容 hypothesis 的窗口包含该 tick，便接纳该 observable label；它仍是
+有意保守的粗粒度边界。独立的 B/C-2B assessment 仅限合同范围和有限材料；两者都不建立逐
+hypothesis 的协议时序、物理时钟校准、已审定 deadline authority 或符合性判定。
+
+对已归属的 response，公开的 `measurementTick` 还必须精确等于该 response 与由受控 ownership
+policy 选中的 request 之间的 timestamp 差；仅落在区间内的 tick 不足以通过。会话保留完整的类型化
+ownership replay，而不是只保留选中的 `responseId`：每个 response token 都会被消费，每个非 ACTIVE
+request disposition 都成为终态；累计的后续事件迹中，只允许一个 ACTIVE request 精确再次出现。字段／
+kind 改变、跨角色重用、重复 response 或重复的终态 request 均进入 S7。这些跨轮重放冲突会隔离新观察到且无争议的
+response 事实，但绝不把已保留的
+request 变为 response（或反过来），所以其发出的 state 始终可自校验并在一个等价的新协调器中重放。
+对于无 response，clock／error-basis 必须先于取消／替代产生 NOT-APPLICABLE 前校验；依据无效时为
+ERROR，不得用管理性事件规避。及时的终止不需要 elapsed-horizon 读数。对于 ACTIVE obligation，即使
+尚未得到 elapsed 读数，只要 observation horizon 尚未合格，仍为 PENDING-HORIZON；只有合格的
+reviewed deadline 判定才要求非负的 earliest admissible elapsed horizon。已经给出的非法 elapsed
+读数仍为 ERROR。
 
 配对和复位绝不从 Recover 动作推断。后续实验适配器必须用 `pairingId` 链接配对单位，为每个
 臂保留独立、已确认的 `resetId` 与 `resetEvidenceRef`，并将该证据与会话内恢复分开。当前合成
@@ -496,7 +576,8 @@ identity、target 和可见记录错误必须保留存在且域有效的原始�
 纯工具异常不得凭空制造此类返回。关闭门为公共 evidence-transaction／CLI 对“修改或删除原始
 返回”的负变异测试。在此之前，本运行时只主张受控保留，不主张精确的分支因果证明。
 
-绑定／类型层现已执行有界合成 TEST／Prep／Recover 动作并重放其公共因果账本，但尚不推断所有权、
-不建立协议时序、不运行 IUT，也不建立运行完整性。Researcher 启动合同核对已记录；对新的固定实现
-Head 的独立复审仍 pending。后续运行
-在独立复审前均保持 `SYNTHETIC-ENGINEERING-VALIDATION`，不是确认性实验或协议符合性用例。
+绑定／类型层现已执行有界合成 TEST／Prep／Recover 动作，并且只针对已经绑定的有限合成材料解析
+ownership、进行合同范围内的区间 assessment；它不建立真实协议服务的 ownership、校准时序、已审定
+deadline authority、IUT 行为或运行完整性。B/C-3 仍负责持久化 evidence-transaction／CLI 的因果
+闭合。Researcher 启动合同核对已记录；对新的固定实现 Head 的独立复审仍 pending。后续运行在独立
+复审前均保持 `SYNTHETIC-ENGINEERING-VALIDATION`，不是确认性实验或协议符合性用例。

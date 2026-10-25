@@ -12,6 +12,12 @@ from fractions import Fraction
 from types import MappingProxyType
 from typing import Any, Mapping
 
+from .interpretation import (
+    ObservationInput,
+    bind_observation_input,
+    observation_input_from_mapping,
+)
+
 
 @dataclass(frozen=True)
 class ExecutionRequest:
@@ -56,6 +62,14 @@ class VisibleExecutionRecord:
     uncertainty_identity: str | None
     evidence_ref: str
     prep_recover: PrepRecoverResult | None = None
+    # Stable public response identity, distinct from the execution identity.
+    # It is populated only from raw observed material and lets the session
+    # prove that a timing assessment describes this returned record.
+    response_id: str | None = None
+    # Raw public ownership/timing material, not an environment-injected
+    # verdict.  The session independently replays it before it can enter the
+    # retained evidence ledger.
+    observation_input: ObservationInput | None = None
 
 
 @dataclass(frozen=True)
@@ -96,7 +110,7 @@ class SyntheticEnvironment:
                     raise ValueError("synthetic environment action declaration is invalid")
                 allowed = {
                     "effectClass", "observable", "summaryConfirmed", "postSummary", "measurementTick",
-                    "nextPrivateState", "prepRecover",
+                    "nextPrivateState", "prepRecover", "observationMaterial",
                 }
                 required = {
                     "effectClass", "observable", "summaryConfirmed", "postSummary", "measurementTick", "nextPrivateState",
@@ -114,6 +128,10 @@ class SyntheticEnvironment:
                 measurement_tick = outcome.get("measurementTick")
                 successor = outcome.get("nextPrivateState")
                 prep_recover = _prep_recover_result(outcome.get("prepRecover")) if "prepRecover" in outcome else None
+                observation_input = (
+                    observation_input_from_mapping(outcome["observationMaterial"])
+                    if "observationMaterial" in outcome else None
+                )
                 if effect not in {"NONE", "CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"}:
                     raise ValueError("synthetic environment effect class is invalid")
                 if observable is not None and (not isinstance(observable, str) or not observable):
@@ -122,17 +140,23 @@ class SyntheticEnvironment:
                     raise ValueError("synthetic environment outcome is invalid")
                 if effect != "NONE" and (
                     observable is not None or confirmed or post_summary is not None
-                    or measurement_tick is not None or prep_recover is not None
+                    or measurement_tick is not None or prep_recover is not None or observation_input is not None
                 ):
                     raise ValueError("non-normal synthetic outcome cannot manufacture observation or successor fields")
                 if effect == "NONE" and prep_recover is None:
-                    if (
-                        observable is None or not confirmed
-                        or not isinstance(post_summary, str) or not post_summary
-                    ):
-                        raise ValueError("normal TEST outcome requires visible confirmed evidence and an explicit successor summary")
-                    _exact_tick(measurement_tick)
+                    if observation_input is not None and observation_input.response_id is None:
+                        if observable is not None or confirmed or post_summary is not None or measurement_tick is not None:
+                            raise ValueError("response-free TEST outcome requires only raw no-response material")
+                    else:
+                        if (
+                            observable is None or not confirmed
+                            or not isinstance(post_summary, str) or not post_summary
+                        ):
+                            raise ValueError("normal TEST outcome requires visible confirmed evidence and an explicit successor summary")
+                        _exact_tick(measurement_tick)
                 if effect == "NONE" and prep_recover is not None:
+                    if observation_input is not None:
+                        raise ValueError("Prep/Recover outcome cannot carry TEST ownership/timing material")
                     if (
                         confirmed != prep_recover.summary_confirmed
                         or post_summary != prep_recover.post_summary
@@ -157,6 +181,7 @@ class SyntheticEnvironment:
                         "measurementTick": _exact_tick(measurement_tick) if effect == "NONE" and measurement_tick is not None else None,
                         "nextPrivateState": successor,
                         "prepRecover": prep_recover,
+                        "observationInput": observation_input,
                     },
                 )
             parsed[state_id] = MappingProxyType(parsed_actions)
@@ -224,6 +249,21 @@ class SyntheticEnvironment:
             return EnvironmentExecution(record, self)
         successor = SyntheticEnvironment(outcome["nextPrivateState"], self._uncertainty_identity, self._states)
         observable = outcome["observable"]
+        evidence_ref = f"synthetic:{request.execution_attempt_id}:{outcome['effectClass'].lower()}"
+        observation_input = outcome["observationInput"]
+        if observation_input is not None:
+            observation_input = bind_observation_input(
+                observation_input,
+                execution_attempt_id=request.execution_attempt_id,
+                action_id=request.action_id,
+                evidence_ref=evidence_ref,
+                measurement_tick=outcome["measurementTick"],
+                uncertainty_identity=(
+                    self._uncertainty_identity
+                    if outcome["effectClass"] == "NONE" and outcome["observable"] is not None
+                    else None
+                ),
+            )
         record = VisibleExecutionRecord(
             execution_attempt_id=request.execution_attempt_id,
             action_id=request.action_id,
@@ -237,8 +277,14 @@ class SyntheticEnvironment:
                 if outcome["effectClass"] == "NONE" and observable is not None
                 else None
             ),
-            evidence_ref=f"synthetic:{request.execution_attempt_id}:{outcome['effectClass'].lower()}",
+            evidence_ref=evidence_ref,
             prep_recover=outcome["prepRecover"],
+            response_id=(
+                observation_input.response_id
+                if observation_input is not None and isinstance(observation_input.response_id, str)
+                else None
+            ),
+            observation_input=observation_input,
         )
         return EnvironmentExecution(record, successor)
 
