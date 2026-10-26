@@ -991,12 +991,29 @@ class ReferenceSession:
                     # check.  A canonical identity error must retain a visible
                     # record which actually differs from the issued attempt
                     # or action; otherwise a stale/foreign return could be
-                    # rewritten into an ordinary record after its charge.
+                    # rewritten into an ordinary record after its charge.  A
+                    # foreign record with an unsupported outer event carrier
+                    # is instead canonicalized by the earlier carrier-error
+                    # branch, so it cannot be smuggled back by coordinated
+                    # resolution-code and error-history substitution.
+                    retained_record_error = (
+                        _incoming_record_error(
+                            item.rejected_response,
+                            action=action,
+                            interpretation_contract=self._interpretation_contract,
+                        )
+                        if type(item.rejected_response) is VisibleExecutionRecord
+                        else None
+                    )
                     if (
                         type(item.rejected_response) is not VisibleExecutionRecord
                         or (
                             item.rejected_response.execution_attempt_id == expected_execution_id
                             and item.rejected_response.action_id == action.action_id
+                        )
+                        or (
+                            retained_record_error is not None
+                            and retained_record_error.code == "INVALID-OBSERVATION-EVENT-CARRIER"
                         )
                     ):
                         return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "identity error does not retain a foreign execution record")

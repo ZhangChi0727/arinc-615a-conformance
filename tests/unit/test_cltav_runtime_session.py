@@ -17,6 +17,7 @@ from cltav_runtime.bindings import RuntimeAuthorityBinding
 from cltav_runtime.kernel import ContractSnapshot, Interval, ModelContext, initial_entry, propagate_transition
 from cltav_runtime.interpretation import (
     InterpretationContract,
+    ObservationInput,
     OwnershipEvent,
     assess_observation,
     bind_observation_input,
@@ -2656,22 +2657,27 @@ def test_session_canonicalizes_a_foreign_unparseable_carrier_without_retaining_i
     )
 
     class ForeignListCarrierEnvironment:
+        returned_record: VisibleExecutionRecord | None = None
+
         def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
             returned = environment.execute(request)
             material = returned.record.observation_input
             assert material is not None
+            foreign_record = replace(
+                returned.record,
+                execution_attempt_id="foreign-execution",
+                action_id="foreign-action",
+                evidence_ref="foreign-evidence",
+                observation_input=replace(material, events=list(material.events)),
+            )
+            self.returned_record = foreign_record
             return EnvironmentExecution(
-                replace(
-                    returned.record,
-                    execution_attempt_id="foreign-execution",
-                    action_id="foreign-action",
-                    evidence_ref="foreign-evidence",
-                    observation_input=replace(material, events=list(material.events)),
-                ),
+                foreign_record,
                 returned.successor,
             )
 
-    rejected = session.step(session.initial_state, ForeignListCarrierEnvironment())
+    foreign_environment = ForeignListCarrierEnvironment()
+    rejected = session.step(session.initial_state, foreign_environment)
     evidence = rejected.state.evidence[-1]
 
     assert evidence.resolution_code == "INVALID-OBSERVATION-EVENT-CARRIER"
@@ -2693,6 +2699,331 @@ def test_session_canonicalizes_a_foreign_unparseable_carrier_without_retaining_i
         interpretation_contract=_runtime_interpretation_contract(fresh_model),
     )
     assert fresh._state_error(rejected.state) is None
+
+    # Coordinatedly relabeling the canonical carrier error as a foreign
+    # identity error and restoring its raw list record must still fail before
+    # a fresh session can issue or charge another action.
+    foreign_record = foreign_environment.returned_record
+    assert type(foreign_record) is VisibleExecutionRecord
+    forged_context = replace(
+        rejected.state.context,
+        error_history=tuple(
+            entry.replace(
+                "INVALID-OBSERVATION-EVENT-CARRIER:",
+                "EXECUTION-IDENTITY-ERROR:",
+                1,
+            )
+            for entry in rejected.state.context.error_history
+        ),
+        unknown_history=tuple(
+            entry.replace(
+                "INVALID-OBSERVATION-EVENT-CARRIER:",
+                "EXECUTION-IDENTITY-ERROR:",
+                1,
+            )
+            for entry in rejected.state.context.unknown_history
+        ),
+    )
+    forged_state = replace(
+        rejected.state,
+        context=forged_context,
+        evidence=rejected.state.evidence[:-1] + (
+            replace(
+                evidence,
+                resolution_code="EXECUTION-IDENTITY-ERROR",
+                rejected_response=foreign_record,
+            ),
+        ),
+    )
+    assert fresh._state_error(forged_state).code == "EVIDENCE-ERROR-MISMATCH"
+
+    class NoDispatch:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:  # pragma: no cover - must not run
+            raise AssertionError(f"forged carrier checkpoint reached dispatch: {request}")
+
+    blocked = fresh.step(forged_state, NoDispatch())  # type: ignore[arg-type]
+    assert blocked.stop_reason == "Stop-Error"
+    assert blocked.state is forged_state
+    assert blocked.state.resources == forged_state.resources
+    assert blocked.diagnostics[0].code == "EVIDENCE-ERROR-MISMATCH"
+
+
+@pytest.mark.parametrize(
+    ("resources", "expected_after_test", "expected_after_recover"),
+    (
+        (ResourceState.rounds(3), 2, 1),
+        (ResourceState.budget(10), 9, 8),
+    ),
+    ids=("rounds", "budget"),
+)
+def test_session_rejects_a_coordinated_foreign_carrier_checkpoint_before_recover_dispatch(
+    resources: ResourceState,
+    expected_after_test: int,
+    expected_after_recover: int,
+) -> None:
+    """A relabelled carrier error cannot enter the legal identity-error replay path.
+
+    This is the C05 cross-boundary check: it keeps the live carrier priority
+    reciprocal with state replay, including when the recovered checkpoint has
+    a real, affordable Recover action.  The nearby exact-tuple identity error
+    and canonical no-raw carrier checkpoint remain executable fresh-session
+    controls rather than being blocked by an over-broad replay guard.
+    """
+
+    binding, base_model, fixture = _runtime_parts()
+
+    def recovery_model(model: FiniteSessionModel) -> FiniteSessionModel:
+        source = copy.deepcopy(fixture["algorithmModel"])
+        assert isinstance(source, dict)
+        raw_actions = source["actions"]
+        assert isinstance(raw_actions, list)
+        router = copy.deepcopy(next(item for item in raw_actions if item["id"] == "test-router"))
+        recover = copy.deepcopy(router)
+        recover.update({
+            "id": "recover-q",
+            "kind": "RECOVER",
+            "declaredTarget": "recovered-q1",
+            "recoverWhenUnknown": True,
+            "detailCharges": {
+                "acquisition": 0,
+                "computation": 0,
+                "preparation": 0,
+                "recovery": 1,
+                "retry": 0,
+            },
+        })
+        transition = recover["transition"]
+        assert isinstance(transition, dict)
+        transition["id"] = "tr-recover-q"
+        source["actions"] = [router, recover]
+        limits = source["limits"]
+        assert isinstance(limits, dict)
+        limits["actions"] = 2
+        return FiniteSessionModel.from_mapping(context=model.context, value=source)
+
+    def recovery_environment() -> SyntheticEnvironment:
+        source = copy.deepcopy(fixture["environments"]["alpha"])
+        assert isinstance(source, dict)
+        states = source["states"]
+        assert isinstance(states, dict)
+        first = states["private-a0"]
+        assert isinstance(first, dict)
+        router = first["test-router"]
+        assert isinstance(router, dict)
+        router["observationMaterial"] = _runtime_observation_material(
+            trigger_id="A",
+            response_id="R1",
+            events=[
+                {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+                {"id": "R1", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+            ],
+            measurement=_interval_mapping(0, 0),
+        )
+        second = states["private-a1"]
+        assert isinstance(second, dict)
+        second["recover-q"] = {
+            "effectClass": "NONE",
+            "observable": None,
+            "summaryConfirmed": True,
+            "postSummary": "q1",
+            "measurementTick": None,
+            "nextPrivateState": "private-a2",
+            "prepRecover": {
+                "targetConfirmed": True,
+                "summaryConfirmed": True,
+                "prepError": False,
+                "ineligible": False,
+                "declaredTarget": "recovered-q1",
+                "evidence": "synthetic:carrier-replay:recover",
+                "postSummary": "q1",
+            },
+        }
+        return SyntheticEnvironment.from_mapping(source)
+
+    def make_session(
+        authority: RuntimeAuthorityBinding,
+        model: FiniteSessionModel,
+    ) -> ReferenceSession:
+        return ReferenceSession(
+            binding=authority,
+            model=model,
+            session_id=f"carrier-replay-{resources.mode.lower()}",
+            run_id=f"carrier-replay-{resources.mode.lower()}",
+            initial_summary="q0",
+            resources=resources,
+            retry_cap=3,
+            interpretation_contract=_runtime_interpretation_contract(model),
+        )
+
+    class ForeignCarrierEnvironment:
+        def __init__(self, delegate: SyntheticEnvironment, *, outer_events: object) -> None:
+            self.delegate = delegate
+            self.outer_events = outer_events
+            self.calls = 0
+            self.returned_record: VisibleExecutionRecord | None = None
+            self.returned_successor: SyntheticEnvironment | None = None
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            self.calls += 1
+            returned = self.delegate.execute(request)
+            material = returned.record.observation_input
+            assert material is not None
+            events = self.outer_events
+            if events == "LIST":
+                events = list(material.events)
+            elif events == "TUPLE":
+                events = material.events
+            foreign_record = replace(
+                returned.record,
+                execution_attempt_id="foreign-execution",
+                action_id="foreign-action",
+                evidence_ref="foreign-evidence",
+                observation_input=replace(material, events=events),
+            )
+            self.returned_record = foreign_record
+            self.returned_successor = returned.successor
+            return EnvironmentExecution(foreign_record, returned.successor)
+
+    model = recovery_model(base_model)
+    live = make_session(binding, model)
+    list_environment = ForeignCarrierEnvironment(recovery_environment(), outer_events="LIST")
+    canonical = live.step(live.initial_state, list_environment)  # type: ignore[arg-type]
+    carrier_evidence = canonical.state.evidence[-1]
+
+    # D01: both resource modes reach the canonical, charged carrier branch
+    # while preserving the actual successor and without admitting raw facts.
+    assert list_environment.calls == 1
+    assert carrier_evidence.resolution_code == "INVALID-OBSERVATION-EVENT-CARRIER"
+    assert carrier_evidence.rejected_response is None
+    assert carrier_evidence.observation_assessment is None
+    assert canonical.environment is list_environment.returned_successor
+    assert canonical.state.resources.remaining == expected_after_test
+    assert canonical.state.attempts == 1
+    assert canonical.state.context.q_status == "UNKNOWN"
+    assert live._state_error(canonical.state) is None
+
+    fresh_binding, fresh_base_model, _fresh_fixture = _runtime_parts()
+    fresh_model = recovery_model(fresh_base_model)
+
+    # D05: the genuine no-raw carrier checkpoint is still replayable by an
+    # independent coordinator and reaches its declared, charged Recover.
+    genuine = make_session(fresh_binding, fresh_model)
+    assert genuine._state_error(canonical.state) is None
+    genuine_recover = genuine.step(canonical.state, canonical.environment)
+    assert genuine_recover.stop_reason is None
+    assert genuine_recover.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert genuine_recover.state.evidence[-1].resolution_code == "COMMIT"
+    assert genuine_recover.state.context.q_status == "KNOWN"
+    assert genuine_recover.state.context.current_summary == "q1"
+    assert genuine_recover.state.resources.remaining == expected_after_recover
+    assert genuine_recover.state.attempts == 2
+
+    foreign_record = list_environment.returned_record
+    assert type(foreign_record) is VisibleExecutionRecord
+    assert type(foreign_record.observation_input) is ObservationInput
+    assert type(foreign_record.observation_input.events) is list
+    assert any(
+        entry.startswith("INVALID-OBSERVATION-EVENT-CARRIER:")
+        for entry in canonical.state.context.error_history
+    )
+    assert any(
+        entry.startswith("INVALID-OBSERVATION-EVENT-CARRIER:")
+        for entry in canonical.state.context.unknown_history
+    )
+    forged_context = replace(
+        canonical.state.context,
+        error_history=tuple(
+            entry.replace(
+                "INVALID-OBSERVATION-EVENT-CARRIER:",
+                "EXECUTION-IDENTITY-ERROR:",
+                1,
+            )
+            for entry in canonical.state.context.error_history
+        ),
+        unknown_history=tuple(
+            entry.replace(
+                "INVALID-OBSERVATION-EVENT-CARRIER:",
+                "EXECUTION-IDENTITY-ERROR:",
+                1,
+            )
+            for entry in canonical.state.context.unknown_history
+        ),
+    )
+    assert forged_context.error_history != canonical.state.context.error_history
+    assert forged_context.unknown_history != canonical.state.context.unknown_history
+    assert all(
+        not entry.startswith("INVALID-OBSERVATION-EVENT-CARRIER:")
+        for entry in forged_context.error_history + forged_context.unknown_history
+    )
+    assert any(
+        entry.startswith("EXECUTION-IDENTITY-ERROR:")
+        for entry in forged_context.error_history
+    )
+    assert any(
+        entry.startswith("EXECUTION-IDENTITY-ERROR:")
+        for entry in forged_context.unknown_history
+    )
+    forged = replace(
+        canonical.state,
+        context=forged_context,
+        evidence=canonical.state.evidence[:-1] + (
+            replace(
+                carrier_evidence,
+                resolution_code="EXECUTION-IDENTITY-ERROR",
+                rejected_response=foreign_record,
+            ),
+        ),
+    )
+    assert forged.evidence[-1].resolution_code == "EXECUTION-IDENTITY-ERROR"
+    assert forged.evidence[-1].rejected_response is foreign_record
+
+    # D02/D03: all four coordinated fields are changed.  Both a same-model
+    # verifier and a genuinely fresh coordinator reject before the otherwise
+    # affordable Recover can be issued or charged.
+    same_error = live._state_error(forged)
+    fresh_for_forgery = make_session(fresh_binding, fresh_model)
+    fresh_error = fresh_for_forgery._state_error(forged)
+    assert same_error is not None and same_error.code == "EVIDENCE-ERROR-MISMATCH"
+    assert fresh_error is not None and fresh_error.code == "EVIDENCE-ERROR-MISMATCH"
+
+    class NoDispatch:
+        calls = 0
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:  # pragma: no cover - must not run
+            self.calls += 1
+            raise AssertionError(f"coordinated carrier forgery reached Recover dispatch: {request}")
+
+    no_dispatch = NoDispatch()
+    blocked = fresh_for_forgery.step(forged, no_dispatch)  # type: ignore[arg-type]
+    assert no_dispatch.calls == 0
+    assert blocked.stop_reason == "Stop-Error"
+    assert blocked.state is forged
+    assert blocked.environment is no_dispatch
+    assert blocked.state.resources == forged.resources
+    assert blocked.state.attempts == forged.attempts
+    assert blocked.state.evidence == forged.evidence
+    assert blocked.state.context == forged.context
+    assert blocked.diagnostics[0].code == "EVIDENCE-ERROR-MISMATCH"
+
+    # D04: an actually foreign but fully parseable tuple remains the legal
+    # identity-error witness and may be replayed through the same Recover.
+    legal_live = make_session(binding, model)
+    tuple_environment = ForeignCarrierEnvironment(recovery_environment(), outer_events="TUPLE")
+    legal = legal_live.step(legal_live.initial_state, tuple_environment)  # type: ignore[arg-type]
+    legal_evidence = legal.state.evidence[-1]
+    assert legal_evidence.resolution_code == "EXECUTION-IDENTITY-ERROR"
+    assert type(legal_evidence.rejected_response) is VisibleExecutionRecord
+    assert type(legal_evidence.rejected_response.observation_input) is ObservationInput
+    assert type(legal_evidence.rejected_response.observation_input.events) is tuple
+    legal_fresh = make_session(fresh_binding, fresh_model)
+    assert legal_fresh._state_error(legal.state) is None
+    legal_recover = legal_fresh.step(legal.state, legal.environment)
+    assert legal_recover.stop_reason is None
+    assert legal_recover.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert legal_recover.state.evidence[-1].resolution_code == "COMMIT"
+    assert legal_recover.state.context.q_status == "KNOWN"
+    assert legal_recover.state.resources.remaining == expected_after_recover
+    assert legal_recover.state.attempts == 2
 
 
 def test_session_keeps_a_genuine_sparse_response_when_an_unrelated_raw_event_is_rejected() -> None:
