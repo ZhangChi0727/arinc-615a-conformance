@@ -1,0 +1,120 @@
+{
+  "kind": "CLTAV-FINITE-RUNTIME-APPLICABILITY-FIXTURE",
+  "artifact": {
+    "id": "CLTAV-FINITE-SYNTHETIC-RUNTIME-FIXTURE",
+    "version": "1.0",
+    "purpose": "Public finite engineering inputs for unresolved integrity-runtime task routing; this fixture contains no evaluator truth, protocol verdict, runtime qualification, or PR23 experimental result.",
+    "scope": "ENGINEERING-SYNTHETIC-RUNTIME"
+  },
+  "models": [
+    {
+      "id": "MODEL-INTEGRITY-STOP",
+      "algorithmModel": {
+        "model": {
+          "stateIds": ["q0"],
+          "clockIds": ["x"],
+          "typedDomains": {"mode": ["normal"]}
+        },
+        "hypotheses": [
+          {"id": "h0", "controlStateId": "q0", "clockConstraint": {"x": {"lower": {"numerator": 0, "positiveDenominator": 1}, "upper": {"numerator": 0, "positiveDenominator": 1}, "lowerClosed": true, "upperClosed": true}}, "typedStore": {"mode": "normal"}},
+          {"id": "h1", "controlStateId": "q0", "clockConstraint": {"x": {"lower": {"numerator": 0, "positiveDenominator": 1}, "upper": {"numerator": 0, "positiveDenominator": 1}, "lowerClosed": true, "upperClosed": true}}, "typedStore": {"mode": "normal"}}
+        ],
+        "actions": [
+          {"id": "integrity-observe", "kind": "TEST", "cost": 1, "detailCharges": {"acquisition": 0, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0}, "enabledSummaries": ["q0"], "transition": {"id": "tr-integrity-observe", "source": "q0", "target": "q0", "guardAst": {"tag": "TRUE"}, "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}]}, "observableByHypothesis": {"h0": "integrity-alpha", "h1": "integrity-beta"}, "measurementTicksByHypothesis": {"h0": 0, "h1": 1}}
+        ],
+        "limits": {"pathLength": 3, "frontierStates": 4, "hypotheses": 2, "actions": 1, "observationClasses": 2},
+        "uncertainty": {"id": "applicability-u-1", "clockId": "x", "timeUnit": "ticks", "maximumErrorTicks": 0}
+      }
+    },
+    {
+      "id": "MODEL-METHOD-ONLY",
+      "algorithmModel": {
+        "model": {
+          "stateIds": ["q0"],
+          "clockIds": ["x"],
+          "typedDomains": {"mode": ["normal"]}
+        },
+        "hypotheses": [
+          {"id": "m0", "controlStateId": "q0", "clockConstraint": {"x": {"lower": {"numerator": 0, "positiveDenominator": 1}, "upper": {"numerator": 0, "positiveDenominator": 1}, "lowerClosed": true, "upperClosed": true}}, "typedStore": {"mode": "normal"}},
+          {"id": "m1", "controlStateId": "q0", "clockConstraint": {"x": {"lower": {"numerator": 0, "positiveDenominator": 1}, "upper": {"numerator": 0, "positiveDenominator": 1}, "lowerClosed": true, "upperClosed": true}}, "typedStore": {"mode": "normal"}}
+        ],
+        "actions": [
+          {"id": "method-observe", "kind": "TEST", "cost": 1, "detailCharges": {"acquisition": 0, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0}, "enabledSummaries": ["q0"], "transition": {"id": "tr-method-observe", "source": "q0", "target": "q0", "guardAst": {"tag": "TRUE"}, "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}]}, "observableByHypothesis": {"m0": "method-alpha", "m1": "method-beta"}, "measurementTicksByHypothesis": {"m0": 0, "m1": 1}}
+        ],
+        "limits": {"pathLength": 3, "frontierStates": 4, "hypotheses": 2, "actions": 1, "observationClasses": 2},
+        "uncertainty": {"id": "applicability-u-1", "clockId": "x", "timeUnit": "ticks", "maximumErrorTicks": 0}
+      }
+    }
+  ],
+  "references": {
+    "receivers": [
+      {"id": "receiver-information-a", "kind": "RECEIVER", "service": "INFORMATION", "role": "RECEIVER"},
+      {"id": "receiver-upload-a", "kind": "RECEIVER", "service": "UPLOAD", "role": "RECEIVER"}
+    ],
+    "options": [
+      {"id": "option-information-a", "kind": "OPTION", "service": "INFORMATION", "purpose": "INTEGRITY"},
+      {"id": "option-upload-a", "kind": "OPTION", "service": "UPLOAD", "purpose": "INTEGRITY"}
+    ],
+    "supportDeclarations": [
+      {"id": "support-information-a", "kind": "SUPPORT-DECLARATION", "receiverId": "receiver-information-a", "optionId": "option-information-a", "declaredSupport": true, "source": "synthetic-public-receiver-declaration-information"},
+      {"id": "support-upload-a", "kind": "SUPPORT-DECLARATION", "receiverId": "receiver-upload-a", "optionId": "option-upload-a", "declaredSupport": true, "source": "synthetic-public-receiver-declaration-upload"}
+    ],
+    "optionSelections": [
+      {"id": "selection-information-a", "kind": "OPTION-SELECTION", "receiverId": "receiver-information-a", "optionId": "option-information-a", "selected": true, "source": "synthetic-public-option-selection-information"},
+      {"id": "selection-upload-a", "kind": "OPTION-SELECTION", "receiverId": "receiver-upload-a", "optionId": "option-upload-a", "selected": true, "source": "synthetic-public-option-selection-upload"}
+    ],
+    "byteBindings": [
+      {"id": "bytes-information-a", "kind": "PROTECTED-BYTES", "service": "INFORMATION", "hex": "0102"},
+      {"id": "bytes-upload-a", "kind": "PROTECTED-BYTES", "service": "UPLOAD", "hex": "0304"},
+      {"id": "bytes-image-a", "kind": "PROTECTED-BYTES", "service": "UPLOAD", "hex": "aabbcc"},
+      {"id": "bytes-lsp-a", "kind": "PROTECTED-BYTES", "service": "UPLOAD", "hex": "aabbcc"},
+      {"id": "bytes-old-a", "kind": "PROTECTED-BYTES", "service": "UPLOAD", "hex": "0a0b"},
+      {"id": "bytes-new-a", "kind": "PROTECTED-BYTES", "service": "UPLOAD", "hex": "0c0d"},
+      {"id": "bytes-file-a", "kind": "PROTECTED-BYTES", "service": "UPLOAD", "hex": "1011"},
+      {"id": "bytes-file-b", "kind": "PROTECTED-BYTES", "service": "UPLOAD", "hex": "1213"}
+    ],
+    "files": [
+      {"id": "file-image-a", "kind": "FILE", "bytesId": "bytes-image-a", "partNumber": "PN-IMAGE", "partNumberSource": "synthetic-public-image-header"},
+      {"id": "file-lsp-a", "kind": "FILE", "bytesId": "bytes-lsp-a", "partNumber": "PN-LSP", "partNumberSource": "synthetic-public-lsp-header"},
+      {"id": "file-old-a", "kind": "FILE", "bytesId": "bytes-old-a", "partNumber": "PN-OLD", "partNumberSource": "synthetic-public-old-header"},
+      {"id": "file-new-a", "kind": "FILE", "bytesId": "bytes-new-a", "partNumber": "PN-NEW", "partNumberSource": "synthetic-public-new-header"},
+      {"id": "file-a", "kind": "FILE", "bytesId": "bytes-file-a", "partNumber": "PN-SHARED", "partNumberSource": "synthetic-public-file-a-header"},
+      {"id": "file-b", "kind": "FILE", "bytesId": "bytes-file-b", "partNumber": "PN-SHARED", "partNumberSource": "synthetic-public-file-b-header"}
+    ],
+    "algorithmConfigurations": [
+      {"id": "algorithm-config-a", "kind": "ALGORITHM-CONFIGURATION", "algorithmId": "CRC-SYN", "configurationId": "SYNTHETIC-NOT-QUALIFIED"}
+    ],
+    "checkValues": [
+      {"id": "check-image-a", "kind": "CHECK-VALUE", "fileId": "file-image-a", "algorithmConfigurationId": "algorithm-config-a", "source": "synthetic-public-image-check-field"},
+      {"id": "check-lsp-a", "kind": "CHECK-VALUE", "fileId": "file-lsp-a", "algorithmConfigurationId": "algorithm-config-a", "source": "synthetic-public-lsp-check-field"},
+      {"id": "check-old-a", "kind": "CHECK-VALUE", "fileId": "file-old-a", "algorithmConfigurationId": "algorithm-config-a", "source": "synthetic-public-old-check-field"},
+      {"id": "check-new-a", "kind": "CHECK-VALUE", "fileId": "file-new-a", "algorithmConfigurationId": "algorithm-config-a", "source": "synthetic-public-new-check-field"},
+      {"id": "check-file-a", "kind": "CHECK-VALUE", "fileId": "file-a", "algorithmConfigurationId": "algorithm-config-a", "source": "synthetic-public-file-a-check-field"},
+      {"id": "check-file-b", "kind": "CHECK-VALUE", "fileId": "file-b", "algorithmConfigurationId": "algorithm-config-a", "source": "synthetic-public-file-b-check-field"}
+    ],
+    "comparisonDeclarations": [
+      {"id": "comparison-selected-a", "kind": "COMPARISON-DECLARATION", "selected": true, "oldFileId": "file-old-a", "newFileId": "file-new-a", "source": "synthetic-public-comparison-selection"},
+      {"id": "comparison-not-selected-a", "kind": "COMPARISON-DECLARATION", "selected": false, "oldFileId": "file-old-a", "newFileId": "file-new-a", "source": "synthetic-public-comparison-selection"}
+    ],
+    "operations": [
+      {"id": "operation-upload-a", "kind": "OPERATION", "service": "UPLOAD"}
+    ],
+    "events": [
+      {"id": "event-final-data-a", "kind": "EVENT", "operationId": "operation-upload-a", "eventKind": "FINAL-DATA", "at": 10},
+      {"id": "event-status-11-a", "kind": "EVENT", "operationId": "operation-upload-a", "eventKind": "STATUS", "at": 11},
+      {"id": "event-status-12-a", "kind": "EVENT", "operationId": "operation-upload-a", "eventKind": "STATUS", "at": 12}
+    ],
+    "calculationIntervals": [
+      {"id": "interval-calculation-a", "kind": "CALCULATION-INTERVAL", "operationId": "operation-upload-a", "start": 10, "end": 12, "state": "CALCULATION-IN-PROGRESS", "source": "synthetic-public-calculation-state"}
+    ],
+    "statusStreams": [
+      {"id": "stream-status-a", "kind": "STATUS-STREAM", "operationId": "operation-upload-a", "eventIds": ["event-status-11-a", "event-status-12-a"]}
+    ],
+    "observationRanges": [
+      {"id": "range-status-a", "kind": "OBSERVATION-RANGE", "operationId": "operation-upload-a", "observationEventIds": ["event-status-11-a", "event-status-12-a"], "scope": "FINITE-SPECIFICATION-WITNESS-NOT-PROTOCOL-FREQUENCY"}
+    ],
+    "methodOnlyReferences": [
+      {"id": "method-only-context-a", "kind": "METHOD-ONLY-REFERENCE", "source": "synthetic-public-method-only-context", "description": "A finite non-CRC engineering control context with no integrity-runtime task."}
+    ]
+  }
+}

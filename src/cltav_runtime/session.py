@@ -33,6 +33,15 @@ from .model import (
     rebuild_verified_finite_session_model,
     verified_finite_session_model,
 )
+from .stopping import (
+    EquivalenceStatus,
+    Named645Residual,
+    StopDecision,
+    StopInputs,
+    StopTrace,
+    action_domain_identity,
+    evaluate_stop,
+)
 from .synthetic import (
     EnvironmentExecution,
     ExecutionRequest,
@@ -185,6 +194,10 @@ class RoundEvidence:
     # observable class so T5 FAIL/INCONCLUSIVE never becomes an implicit
     # all-candidate history mutation.
     observation_assessment: ObservationAssessment | None = None
+    # The same frozen stop relation is recorded for every normal S9 commit
+    # and terminal retry.  Causal replay recomputes it rather than trusting a
+    # caller-supplied label, so EntryStop and PostUpdateStop cannot drift.
+    stop_trace: StopTrace | None = None
 
 
 @dataclass(frozen=True)
@@ -268,6 +281,7 @@ class SessionResult:
     environment: SyntheticEnvironment
     stop_reason: str | None
     diagnostics: tuple[KernelDiagnostic, ...]
+    stop_trace: StopTrace | None = None
 
 
 @dataclass(frozen=True)
@@ -350,6 +364,9 @@ class ReferenceSession:
         initial_path_bundles: Mapping[str, tuple[FrontierEntry, ...]] | None = None,
         retry_cap: int = 1,
         interpretation_contract: InterpretationContract | None = None,
+        applicability_context_id: str | None = None,
+        scenario_id: object | None = None,
+        named_645_residuals: object | None = None,
     ) -> None:
         try:
             # Selection, charging, evidence and causal replay must all consume
@@ -371,6 +388,18 @@ class ReferenceSession:
         }
         if private_authority_identities["development"] != model_development_identity:
             raise ValueError("runtime model and authority binding use different development snapshots")
+        try:
+            if scenario_id is not None:
+                raise ValueError("APPLICABILITY-INPUT-ERROR: caller scenario identifiers are display metadata, not stop authority")
+            private_stop_inputs = binding.validated_stop_inputs(
+                applicability_context_id=applicability_context_id,
+                legacy_named_645_residuals=named_645_residuals,
+                model=private_model,
+            )
+        except (AttributeError, TypeError, ValueError) as exc:
+            raise ValueError(str(exc) or "session applicability stop inputs are invalid") from exc
+        if type(private_stop_inputs) is not StopInputs:
+            raise ValueError("session named 645 stop inputs are invalid")
         context = SessionContext.create(
             session_id=session_id,
             run_id=run_id,
@@ -396,6 +425,8 @@ class ReferenceSession:
         self.binding = binding
         self._authority_identities = private_authority_identities
         self._model = private_model
+        self._stop_inputs = private_stop_inputs
+        self._action_domain_identity = action_domain_identity(self._model.actions)
         if interpretation_contract is not None:
             try:
                 detached_contract = _detached_dispatch_value(interpretation_contract)
@@ -441,6 +472,7 @@ class ReferenceSession:
             self._authority_identities,
             self._model,
             contract_identity,
+            private_stop_inputs.identity,
         )
         self._seed_identity = _session_seed_identity(
             context=context,
@@ -554,6 +586,7 @@ class ReferenceSession:
                 "TERMINAL-SESSION-STATE",
                 "the retained evidence ledger already records a terminal stop",
             ),),
+            state.evidence[-1].stop_trace,
         )
 
     def _consume_pending_delivery(
@@ -850,7 +883,10 @@ class ReferenceSession:
             else:
                 raise ValueError("observation ledger mode is outside the controlled vocabulary")
 
-        def s7_expected(code: str, record: VisibleExecutionRecord) -> tuple[HistoryHandle, SessionContext, str | None]:
+        def s7_expected(
+            code: str,
+            record: VisibleExecutionRecord,
+        ) -> tuple[HistoryHandle, SessionContext, str | None, StopTrace | None]:
             expected_history = self._conservative_history(history)
             expected_context = self._context_after_retry(
                 context,
@@ -863,7 +899,20 @@ class ReferenceSession:
                 if expected_context.retry_count >= expected_context.retry_cap
                 else None
             )
-            return expected_history, expected_context, expected_stop
+            expected_trace = (
+                self._stop_decision(
+                    phase="RETRY",
+                    context=expected_context,
+                    history=expected_history,
+                    frontiers=frontiers,
+                    resources=charged_resources,
+                    model=replay_model,
+                    retry_cap_terminal=True,
+                ).trace
+                if expected_stop is not None
+                else None
+            )
+            return expected_history, expected_context, expected_stop, expected_trace
 
         for index, item in enumerate(state.evidence, start=1):
             if not isinstance(item, RoundEvidence):
@@ -885,6 +934,7 @@ class ReferenceSession:
                 or not isinstance(item.summary_after, (str, type(None)))
                 or not isinstance(item.rejected_response, (VisibleExecutionRecord, type(None)))
                 or not isinstance(item.observation_assessment, (ObservationAssessment, type(None)))
+                or not _exact_stop_trace_or_none(item.stop_trace)
                 or not isinstance(item.resolution_code, str)
                 or not item.resolution_code
             ):
@@ -897,6 +947,20 @@ class ReferenceSession:
                 self._authority_identity, self._seed_identity, consumed_response_ids,
                 terminal_trigger_event_ids, seen_ownership_events, active_trigger_event_ids,
             )
+            entry_stop = self._stop_decision(
+                phase="ENTRY",
+                context=context,
+                history=history,
+                frontiers=frontiers,
+                resources=resources,
+                model=replay_model,
+                include_resource_stop=False,
+            )
+            if entry_stop.stop_class is not None:
+                return KernelDiagnostic(
+                    "EVIDENCE-TERMINAL-MISMATCH",
+                    "evidence follows a causal prefix that must already stop",
+                )
             admission = self._admit(prefix, model=replay_model)
             if admission.action is None or admission.prediction is None or admission.action.action_id != action.action_id:
                 return KernelDiagnostic("EVIDENCE-ADMISSION-MISMATCH", "evidence action was not admitted by its causal prefix")
@@ -1022,12 +1086,15 @@ class ReferenceSession:
                     or item.resolution_code != expected_code
                 ):
                     return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical charged error record uses an uncontrolled resolution code")
-                expected_history, expected_context, expected_stop = s7_expected(item.resolution_code, item.execution)
+                expected_history, expected_context, expected_stop, expected_trace = s7_expected(
+                    item.resolution_code, item.execution,
+                )
                 if (
                     item.committed
                     or item.history_after != expected_history
                     or item.summary_after is not None
                     or item.stop_reason != expected_stop
+                    or item.stop_trace != expected_trace
                 ):
                     return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "rejected execution evidence does not close over its S7 retry transition")
                 context = expected_context
@@ -1100,7 +1167,7 @@ class ReferenceSession:
             )
             if replay_conflict is not None:
                 conflict_code = replay_conflict.code
-                expected_history, expected_context, expected_stop = s7_expected(
+                expected_history, expected_context, expected_stop, expected_trace = s7_expected(
                     conflict_code, item.execution,
                 )
                 if (
@@ -1110,6 +1177,7 @@ class ReferenceSession:
                     or item.history_after != expected_history
                     or item.summary_after is not None
                     or item.stop_reason != expected_stop
+                    or item.stop_trace != expected_trace
                 ):
                     return KernelDiagnostic("EVIDENCE-EVENT-IDENTITY-MISMATCH", "event-identity conflict does not close over the conservative S7 transition")
                 context = expected_context
@@ -1139,6 +1207,19 @@ class ReferenceSession:
                     if expected_context.retry_count >= expected_context.retry_cap
                     else None
                 )
+                expected_trace = (
+                    self._stop_decision(
+                        phase="RETRY",
+                        context=expected_context,
+                        history=history,
+                        frontiers=frontiers,
+                        resources=charged_resources,
+                        model=replay_model,
+                        retry_cap_terminal=True,
+                    ).trace
+                    if expected_stop is not None
+                    else None
+                )
                 if (
                     item.resolution_code != "CONFIRMED-NOT-SENT"
                     or item.rejected_response is not None
@@ -1146,6 +1227,7 @@ class ReferenceSession:
                     or item.history_after != history
                     or item.summary_after != expected_context.current_summary
                     or item.stop_reason != expected_stop
+                    or item.stop_trace != expected_trace
                 ):
                     return KernelDiagnostic("EVIDENCE-NOT-SENT-MISMATCH", "confirmed-not-sent evidence does not preserve its summary/history retry contract")
                 context = expected_context
@@ -1156,7 +1238,9 @@ class ReferenceSession:
                 continue
 
             if item.execution.effect_class == "UNKNOWN-EFFECT":
-                expected_history, expected_context, expected_stop = s7_expected("UNKNOWN-EFFECT", item.execution)
+                expected_history, expected_context, expected_stop, expected_trace = s7_expected(
+                    "UNKNOWN-EFFECT", item.execution,
+                )
                 if (
                     item.resolution_code != "UNKNOWN-EFFECT"
                     or item.rejected_response is not None
@@ -1164,6 +1248,7 @@ class ReferenceSession:
                     or item.history_after != expected_history
                     or item.summary_after is not None
                     or item.stop_reason != expected_stop
+                    or item.stop_trace != expected_trace
                 ):
                     return KernelDiagnostic("EVIDENCE-UNKNOWN-MISMATCH", "unknown-effect evidence does not close over its S7 retry transition")
                 context = expected_context
@@ -1187,7 +1272,9 @@ class ReferenceSession:
                 ):
                     recovery_error_code = "RECOVER-TARGET-UNCONFIRMED"
             if recovery_error_code is not None:
-                expected_history, expected_context, expected_stop = s7_expected(recovery_error_code, item.execution)
+                expected_history, expected_context, expected_stop, expected_trace = s7_expected(
+                    recovery_error_code, item.execution,
+                )
                 if (
                     item.resolution_code != recovery_error_code
                     or item.rejected_response is not None
@@ -1195,6 +1282,7 @@ class ReferenceSession:
                     or item.history_after != expected_history
                     or item.summary_after is not None
                     or item.stop_reason != expected_stop
+                    or item.stop_trace != expected_trace
                 ):
                     return KernelDiagnostic("EVIDENCE-RECOVERY-MISMATCH", "Prep/Recover evidence does not close over its S7 retry transition")
                 context = expected_context
@@ -1207,7 +1295,7 @@ class ReferenceSession:
 
             if binding_error is not None:
                 binding_code = _binding_resolution_code(binding_error)
-                expected_history, expected_context, expected_stop = s7_expected(
+                expected_history, expected_context, expected_stop, expected_trace = s7_expected(
                     binding_code, item.execution,
                 )
                 if (
@@ -1217,6 +1305,7 @@ class ReferenceSession:
                     or item.history_after != expected_history
                     or item.summary_after is not None
                     or item.stop_reason != expected_stop
+                    or item.stop_trace != expected_trace
                 ):
                     return KernelDiagnostic("EVIDENCE-INTERPRETATION-MISMATCH", "binding-invalid observation does not close over the S7 retry transition")
                 context = expected_context
@@ -1232,7 +1321,7 @@ class ReferenceSession:
                 continue
 
             if assessment is not None and assessment.verdict == "ERROR":
-                expected_history, expected_context, expected_stop = s7_expected(
+                expected_history, expected_context, expected_stop, expected_trace = s7_expected(
                     "OBSERVATION-INTERPRETATION-ERROR", item.execution,
                 )
                 if (
@@ -1242,6 +1331,7 @@ class ReferenceSession:
                     or item.history_after != expected_history
                     or item.summary_after is not None
                     or item.stop_reason != expected_stop
+                    or item.stop_trace != expected_trace
                 ):
                     return KernelDiagnostic("EVIDENCE-INTERPRETATION-MISMATCH", "invalid ownership/timing evidence does not close over the S7 retry transition")
                 context = expected_context
@@ -1257,7 +1347,7 @@ class ReferenceSession:
                 continue
 
             if assessment is not None and assessment.kind == "NO-RESPONSE":
-                expected_history, expected_context, expected_stop = s7_expected(
+                expected_history, expected_context, expected_stop, expected_trace = s7_expected(
                     "OBSERVATION-NO-RESPONSE", item.execution,
                 )
                 if (
@@ -1267,6 +1357,7 @@ class ReferenceSession:
                     or item.history_after != expected_history
                     or item.summary_after is not None
                     or item.stop_reason != expected_stop
+                    or item.stop_trace != expected_trace
                 ):
                     return KernelDiagnostic(
                         "EVIDENCE-NO-RESPONSE-MISMATCH",
@@ -1300,10 +1391,14 @@ class ReferenceSession:
                         str(exc) or type(exc).__name__,
                     )
             else:
-                selected_class, interpretation_error = _matching_class(item.snapshot, item.execution)
+                selected_class, interpretation_error = _matching_class(
+                    item.snapshot,
+                    admission.prediction,
+                    item.execution,
+                )
                 if selected_class is None:
                     assert interpretation_error is not None
-                    expected_history, expected_context, expected_stop = s7_expected(
+                    expected_history, expected_context, expected_stop, expected_trace = s7_expected(
                         interpretation_error.code, item.execution,
                     )
                     if (
@@ -1313,6 +1408,7 @@ class ReferenceSession:
                         or item.history_after != expected_history
                         or item.summary_after is not None
                         or item.stop_reason != expected_stop
+                        or item.stop_trace != expected_trace
                     ):
                         return KernelDiagnostic("EVIDENCE-INTERPRETATION-MISMATCH", "rejected observation does not close over its S7 retry transition")
                     context = expected_context
@@ -1345,13 +1441,26 @@ class ReferenceSession:
                 )
             except (TypeError, ValueError) as exc:
                 return KernelDiagnostic("EVIDENCE-COMMIT-MISMATCH", str(exc) or type(exc).__name__)
-            expected_stop = self._normal_stop_reason(next_history)
+            expected_decision = self._stop_decision(
+                phase="POST-UPDATE",
+                context=next_context,
+                history=next_history,
+                frontiers=next_frontiers,
+                resources=charged_resources,
+                model=replay_model,
+                calculation_diagnostics=(
+                    admission.diagnostics + _summary_diagnostics
+                    if item.execution.observable is None
+                    else admission.diagnostics
+                ),
+            )
             if (
                 item.resolution_code != "COMMIT"
                 or not item.committed
                 or item.history_after != next_history
                 or item.summary_after != next_context.current_summary
-                or item.stop_reason != expected_stop
+                or item.stop_reason != expected_decision.stop_class
+                or item.stop_trace != expected_decision.trace
             ):
                 return KernelDiagnostic("EVIDENCE-COMMIT-MISMATCH", "committed evidence does not match its derived S8/S9 history update")
             context = next_context
@@ -1360,7 +1469,7 @@ class ReferenceSession:
             resources = charged_resources
             processed_ids = processed_ids | {expected_execution_id}
             apply_observation_ledger(assessment)
-            if expected_stop is not None and index != len(state.evidence):
+            if expected_decision.stop_class is not None and index != len(state.evidence):
                 return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a terminal committed evidence item cannot have a later causal round")
 
         if (
@@ -1400,6 +1509,23 @@ class ReferenceSession:
         terminal = self._retained_terminal_result(state, environment)
         if terminal is not None:
             return terminal
+        entry_stop = self._stop_decision(
+            phase="ENTRY",
+            context=state.context,
+            history=state.history,
+            frontiers=state.frontiers,
+            resources=state.resources,
+            model=model,
+            include_resource_stop=False,
+        )
+        if entry_stop.stop_class is not None:
+            return SessionResult(
+                state,
+                environment,
+                entry_stop.stop_class,
+                (KernelDiagnostic("RESOURCE-STOP", entry_stop.trace.reason),),
+                entry_stop.trace,
+            )
         if state.context.q_status == "KNOWN" and state.context.current_summary is None:
             return SessionResult(
                 state, environment, "Stop-Error",
@@ -1407,14 +1533,31 @@ class ReferenceSession:
             )
         admission = self._admit(state, model=model)
         if admission.action is None or admission.prediction is None:
-            stop_reason = {
+            admission_exit = {
                 "PREDICTION-GAP": "Stop-Prediction-Gap",
                 "A2-UNAFFORDABLE": "Stop-Budget",
                 "A5-UNAFFORDABLE-RECOVER": "Stop-Budget",
                 "A4-NO-ELIGIBLE-RECOVER": "Stop-Error",
-                "NO-ADMITTED-ACTION": "Stop-No-Action",
+                "NO-ADMITTED-ACTION": "Stop-NoDistinguisher",
             }.get(admission.reason, "Stop-Error")
-            return SessionResult(state, environment, stop_reason, admission.diagnostics)
+            admission_stop = self._stop_decision(
+                phase="ENTRY",
+                context=state.context,
+                history=state.history,
+                frontiers=state.frontiers,
+                resources=state.resources,
+                model=model,
+                admission_exit=(admission_exit, admission.reason),
+                include_resource_stop=False,
+                calculation_diagnostics=admission.diagnostics,
+            )
+            return SessionResult(
+                state,
+                environment,
+                admission_stop.stop_class,
+                admission.diagnostics,
+                admission_stop.trace,
+            )
         action, prediction = admission.action, admission.prediction
         diagnostics = list(admission.diagnostics)
         snapshot = SelectSnapshot(
@@ -1851,11 +1994,24 @@ class ReferenceSession:
             make_unknown=False,
         )
         stop_reason = "Stop-Error" if next_context.retry_count >= next_context.retry_cap else None
+        stop_trace = (
+            self._stop_decision(
+                phase="RETRY",
+                context=next_context,
+                history=state.history,
+                frontiers=state.frontiers,
+                resources=charged_resources,
+                model=self._model,
+                retry_cap_terminal=True,
+            ).trace
+            if stop_reason is not None
+            else None
+        )
         evidence = RoundEvidence(
             snapshot, prediction, execution_record, True, True, resource_before, resource_after,
             action.detail_charges, action.projected_cost(), state.history, state.history,
             next_context.current_summary, False, stop_reason,
-            resolution_code="CONFIRMED-NOT-SENT",
+            resolution_code="CONFIRMED-NOT-SENT", stop_trace=stop_trace,
         )
         next_state = SessionState(
             next_context, state.history, state.frontiers, charged_resources,
@@ -1871,6 +2027,7 @@ class ReferenceSession:
             tuple(diagnostics + [KernelDiagnostic(
                 "CONFIRMED-NOT-SENT", "environment confirmed that no action was sent",
             )]),
+            stop_trace,
         )
 
     def _s7_retry(
@@ -1903,10 +2060,23 @@ class ReferenceSession:
             make_unknown=True,
         )
         stop_reason = "Stop-Error" if next_context.retry_count >= next_context.retry_cap else None
+        stop_trace = (
+            self._stop_decision(
+                phase="RETRY",
+                context=next_context,
+                history=next_history,
+                frontiers=state.frontiers,
+                resources=charged_resources,
+                model=self._model,
+                retry_cap_terminal=True,
+            ).trace
+            if stop_reason is not None
+            else None
+        )
         evidence = RoundEvidence(
             snapshot, prediction, execution_record, True, True, resource_before, resource_after,
             action.detail_charges, action.projected_cost(), state.history, next_history,
-            None, False, stop_reason, rejected_response, code, observation_assessment,
+            None, False, stop_reason, rejected_response, code, observation_assessment, stop_trace,
         )
         # Ordinary rejected S7 routes apply the same complete typed replay
         # delta as a normal S9 commit. A cross-round identity/duplicate
@@ -1966,6 +2136,7 @@ class ReferenceSession:
             environment_after_execution,
             stop_reason,
             tuple(diagnostics + [KernelDiagnostic(code, message)]),
+            stop_trace,
         )
 
     def _commit_confirmed_execution(
@@ -2103,7 +2274,11 @@ class ReferenceSession:
             )
             diagnostics.extend(summary_diagnostics)
         else:
-            selected_class, interpretation_error = _matching_class(snapshot, execution_record)
+            selected_class, interpretation_error = _matching_class(
+                snapshot,
+                prediction,
+                execution_record,
+            )
             if selected_class is None:
                 assert interpretation_error is not None
                 return self._s7_retry(
@@ -2138,12 +2313,21 @@ class ReferenceSession:
         next_context = self._s9_commit_summary(
             context_before_s9, execution_record.post_summary, s8_adoption=s8_adoption,
         )
-        stop_reason = self._normal_stop_reason(next_history)
+        stop_decision = self._stop_decision(
+            phase="POST-UPDATE",
+            context=next_context,
+            history=next_history,
+            frontiers=next_frontiers,
+            resources=charged_resources,
+            model=model,
+            calculation_diagnostics=tuple(diagnostics),
+        )
         evidence = RoundEvidence(
             snapshot, prediction, execution_record, True, True, resource_before, resource_after,
             action.detail_charges, action.projected_cost(), state.history, next_history,
-            next_context.current_summary, True, stop_reason,
+            next_context.current_summary, True, stop_decision.stop_class,
             resolution_code="COMMIT", observation_assessment=assessment,
+            stop_trace=stop_decision.trace,
         )
         next_state = SessionState(
             next_context, next_history, next_frontiers, charged_resources,
@@ -2157,12 +2341,55 @@ class ReferenceSession:
                 assessment,
             ),
         )
-        return SessionResult(next_state, environment_after_execution, stop_reason, tuple(diagnostics))
+        return SessionResult(
+            next_state,
+            environment_after_execution,
+            stop_decision.stop_class,
+            tuple(diagnostics),
+            stop_decision.trace,
+        )
 
-    @staticmethod
-    def _normal_stop_reason(history: HistoryHandle) -> str | None:
-        return "Stop-Empty" if not history.hypotheses else (
-            "Stop-Singleton" if len(history.hypotheses) == 1 else None
+    def _stop_decision(
+        self,
+        *,
+        phase: str,
+        context: SessionContext,
+        history: HistoryHandle,
+        frontiers: Mapping[str, tuple[FrontierEntry, ...]],
+        resources: ResourceState,
+        model: FiniteSessionModel,
+        admission_exit: tuple[str, str] | None = None,
+        retry_cap_terminal: bool = False,
+        include_resource_stop: bool = True,
+        calculation_diagnostics: tuple[KernelDiagnostic, ...] = (),
+    ) -> StopDecision:
+        """Evaluate the one frozen EntryStop/PostUpdateStop relation.
+
+        S7 retry exhaustion is explicitly kept outside normal P1--P5 so the
+        already charged Stop-Error cannot be relabelled as Stop-Budget merely
+        because the same action consumed the last resource unit.
+        """
+
+        return evaluate_stop(
+            phase=phase,
+            context=context,
+            history=history,
+            frontiers=frontiers,
+            resources=resources,
+            stop_inputs=self._stop_inputs,
+            model_identity=model.identity,
+            authority_identity=self._authority_identity,
+            action_domain_identity_value=self._action_domain_identity,
+            path_limit=model.path_limit,
+            frontier_limit=model.frontier_limit,
+            observation_class_limit=model.observation_class_limit,
+            forced_stop_class="Stop-Error" if retry_cap_terminal else None,
+            forced_reason="RETRY-CAP-EXHAUSTED" if retry_cap_terminal else None,
+            admission_exit=admission_exit,
+            include_resource_stop=include_resource_stop,
+            calculation_diagnostic_codes=tuple(
+                diagnostic.code for diagnostic in calculation_diagnostics
+            ),
         )
 
     @staticmethod
@@ -2600,18 +2827,29 @@ def _frozen_model_snapshot(model: FiniteSessionModel) -> FiniteSessionModel:
 
 
 def _frozen_authority_identities(value: object) -> Mapping[str, Mapping[str, str]]:
-    """Detach and validate the only binding fields consumed after S0.
+    """Detach and validate the binding fields consumed after S0.
 
     The runtime needs stable raw-Git identities, not a live caller-held
-    ``RuntimeAuthorityBinding`` object.  Snapshot the two identity triples at
+    ``RuntimeAuthorityBinding`` object.  Snapshot every identity triple at
     construction so a later object-level mutation cannot change S3 evidence
     or make same-session and fresh coordinator replay disagree.
     """
 
-    if not isinstance(value, Mapping) or set(value) != {"development", "interfaceRegistry"}:
+    required = {"development", "interfaceRegistry"}
+    optional_applicability = {
+        "applicabilitySchema", "applicabilityManifest", "applicabilityFixture", "integrityBaseline",
+    }
+    if not isinstance(value, Mapping):
+        raise ValueError("runtime authority identities are incomplete")
+    source_names = set(value)
+    if (
+        not required <= source_names
+        or source_names - required - optional_applicability
+        or (source_names & optional_applicability and not optional_applicability <= source_names)
+    ):
         raise ValueError("runtime authority identities are incomplete")
     detached: dict[str, Mapping[str, str]] = {}
-    for source in ("development", "interfaceRegistry"):
+    for source in sorted(value):
         identity = value.get(source)
         if not isinstance(identity, Mapping) or set(identity) != {"commit", "path", "blobSha256"}:
             raise ValueError("runtime authority identity is malformed")
@@ -2638,6 +2876,7 @@ def _session_authority_identity(
     identities: Mapping[str, Mapping[str, str]],
     model: FiniteSessionModel,
     interpretation_contract_identity: str | None = None,
+    stop_inputs_identity: str | None = None,
 ) -> str:
     """Bind S0 to the exact controlled snapshots consumed by this session."""
 
@@ -2645,6 +2884,7 @@ def _session_authority_identity(
         model.identity,
         model.context.identity,
         interpretation_contract_identity,
+        stop_inputs_identity,
         tuple(
             (source, tuple(sorted(identity.items())))
             for source, identity in sorted(identities.items())
@@ -2717,7 +2957,9 @@ def _session_seed_identity(
 
 
 def _matching_class(
-    snapshot: SelectSnapshot, execution: VisibleExecutionRecord,
+    snapshot: SelectSnapshot,
+    prediction: ActionPrediction,
+    execution: VisibleExecutionRecord,
 ) -> tuple[PredictionClass | None, KernelDiagnostic | None]:
     if execution.action_id != snapshot.action_id or execution.observable is None:
         return None, KernelDiagnostic(
@@ -2734,16 +2976,40 @@ def _matching_class(
             "OBSERVATION-MEASUREMENT-ERROR",
             "normal visible observation has no exact measurement tick",
         )
-    matches = [
-        value for value in snapshot.classes if value.observable == execution.observable
-    ]
-    if len(matches) != 1:
+    if prediction.action_id != snapshot.action_id or prediction.classes != snapshot.classes:
         return None, KernelDiagnostic(
             "OBSERVATION-OUTSIDE-SNAPSHOT",
-            "visible observation is not in the frozen selected prediction",
+            "prediction does not match the frozen selected nonempty classes",
         )
+    matches = [value for value in snapshot.classes if value.observable == execution.observable]
+    if len(matches) > 1:
+        return None, KernelDiagnostic(
+            "OBSERVATION-OUTSIDE-SNAPSHOT",
+            "visible observation has no unique frozen selected prediction class",
+        )
+    if not matches:
+        empty_matches = [
+            value
+            for value in prediction.declared_empty_observations
+            if value.observable == execution.observable
+        ]
+        if len(empty_matches) != 1:
+            return None, KernelDiagnostic(
+                "OBSERVATION-OUTSIDE-SNAPSHOT",
+                "visible observation is not in the frozen selected prediction",
+            )
+        empty = empty_matches[0]
+        if not _interval_contains(empty.measurement_window, execution.measurement_tick):
+            return None, KernelDiagnostic(
+                "OBSERVATION-MEASUREMENT-OUTSIDE-UNCERTAINTY",
+                "visible measurement tick is outside the declared empty-observation uncertainty window",
+            )
+        return empty.selected_class(), None
     candidate = matches[0]
-    if not any(_interval_contains(window, execution.measurement_tick) for window in candidate.measurement_windows.values()):
+    if not any(
+        _interval_contains(window, execution.measurement_tick)
+        for window in candidate.measurement_windows.values()
+    ):
         return None, KernelDiagnostic(
             "OBSERVATION-MEASUREMENT-OUTSIDE-UNCERTAINTY",
             "visible measurement tick is outside every selected uncertainty window",
@@ -3707,6 +3973,114 @@ def _strict_authority_identities_equal(
         for field, expected_value in expected_identity.items():
             if type(received.get(field)) is not str or received.get(field) != expected_value:
                 return False
+    return True
+
+
+def _exact_stop_trace_or_none(value: object) -> bool:
+    """Reject shape-compatible stop trace substitutes before replay equality.
+
+    Causal replay below recomputes and compares every trace.  This small
+    precondition prevents a subclass or a partially shaped object from
+    supplying custom equality behavior that could mask a coordinated edit to
+    the retained stop evidence before that comparison happens.
+    """
+
+    if value is None:
+        return True
+    if type(value) is not StopTrace:
+        return False
+    equivalence = value.equivalence
+    if type(equivalence) is not EquivalenceStatus:
+        return False
+    if (
+        value.phase not in {"ENTRY", "POST-UPDATE", "RETRY"}
+        or value.stop_class not in {
+            None,
+            "Stop-Empty",
+            "Stop-Singleton",
+            "Stop-645",
+            "Stop-Equivalent",
+            "Stop-Budget",
+            "Stop-Error",
+            "Stop-NoDistinguisher",
+            "Stop-Prediction-Gap",
+        }
+        or type(value.reason) is not str
+        or not value.reason
+        or type(value.final_hypotheses) is not tuple
+        or any(type(item) is not str or not item for item in value.final_hypotheses)
+        or value.final_hypotheses != tuple(sorted(set(value.final_hypotheses)))
+        or type(value.history_version) is not int
+        or value.history_version < 0
+        or value.resource_mode not in {"ROUNDS", "BUDGET"}
+        or type(value.resource_remaining) is not int
+        or value.resource_remaining < 0
+        or type(value.retry_count) is not int
+        or type(value.retry_cap) is not int
+        or value.retry_count < 0
+        or value.retry_cap < 1
+        or value.retry_count > value.retry_cap
+        or value.applicability_status not in {
+            "P3-UNAVAILABLE", "P3-ACTIVE", "P3-EXPLICIT-INACTIVE", "P3-METHOD-ONLY",
+        }
+        or (value.applicability_context_id is None) != (value.applicability_input_identity is None)
+        or (value.applicability_context_id is not None and (
+            type(value.applicability_context_id) is not str or not value.applicability_context_id
+        ))
+        or (value.applicability_input_identity is not None and (
+            type(value.applicability_input_identity) is not str or not value.applicability_input_identity
+        ))
+        or type(value.active_named_645_residuals) is not tuple
+        or any(type(item) is not Named645Residual for item in value.active_named_645_residuals)
+        or any(
+            item.context_id != value.applicability_context_id
+            or item.input_identity != value.applicability_input_identity
+            for item in value.active_named_645_residuals
+        )
+        or any(type(item) is not str or not item for item in (
+            value.model_identity,
+            value.authority_identity,
+            value.trace_identity,
+        ))
+    ):
+        return False
+    if value.applicability_status == "P3-UNAVAILABLE" and (
+        value.applicability_context_id is not None
+        or value.applicability_input_identity is not None
+        or value.active_named_645_residuals
+    ):
+        return False
+    if value.applicability_status != "P3-UNAVAILABLE" and (
+        value.applicability_context_id is None or value.applicability_input_identity is None
+    ):
+        return False
+    if value.applicability_status == "P3-ACTIVE" and not value.active_named_645_residuals:
+        return False
+    if value.applicability_status in {"P3-EXPLICIT-INACTIVE", "P3-METHOD-ONLY"} and value.active_named_645_residuals:
+        return False
+    if (
+        equivalence.tag not in {"notEstablished", "unknown", "established"}
+        or type(equivalence.reason) is not str
+        or not equivalence.reason
+        or type(equivalence.hypotheses) is not tuple
+        or any(type(item) is not str or not item for item in equivalence.hypotheses)
+        or equivalence.hypotheses != tuple(sorted(set(equivalence.hypotheses)))
+        or type(equivalence.history_version) is not int
+        or equivalence.history_version < 0
+        or type(equivalence.action_domain_identity) is not str
+        or not equivalence.action_domain_identity
+        or any(type(limit) is not int or limit < 1 for limit in (
+            equivalence.path_limit,
+            equivalence.frontier_limit,
+            equivalence.observation_class_limit,
+        ))
+        or type(equivalence.calculation_diagnostic_codes) is not tuple
+        or any(type(code) is not str or not code for code in equivalence.calculation_diagnostic_codes)
+        or equivalence.calculation_diagnostic_codes != tuple(
+            sorted(set(equivalence.calculation_diagnostic_codes)),
+        )
+    ):
+        return False
     return True
 
 

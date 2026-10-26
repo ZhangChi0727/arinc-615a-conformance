@@ -16,7 +16,14 @@ import subprocess
 from types import MappingProxyType
 from typing import Any, Mapping
 
-from .kernel import ContractSnapshot
+from .applicability import (
+    ApplicabilityInputError,
+    RuntimeApplicabilityProjection,
+    build_runtime_applicability_projection,
+)
+from .kernel import ContractSnapshot, ModelContext
+from .model import FiniteSessionModel, verified_finite_session_model
+from .stopping import Named645Residual, StopInputs
 
 
 _SOURCE_SNAPSHOT_TOKEN = object()
@@ -220,6 +227,11 @@ class RuntimeAuthorityBinding:
     interface_ids: frozenset[str]
     record_ids: frozenset[str]
     runtime_parameter_ids: frozenset[str]
+    applicability_schema: SourceSnapshot | None = None
+    applicability_manifest: SourceSnapshot | None = None
+    applicability_fixture: SourceSnapshot | None = None
+    integrity_baseline: SourceSnapshot | None = None
+    applicability: RuntimeApplicabilityProjection | None = None
     _verification_token: object | None = field(
         default=None, init=False, compare=False, repr=False,
     )
@@ -233,6 +245,14 @@ class RuntimeAuthorityBinding:
         development_path: str,
         interface_commit: str,
         interface_path: str,
+        applicability_schema_commit: str | None = None,
+        applicability_schema_path: str | None = None,
+        applicability_manifest_commit: str | None = None,
+        applicability_manifest_path: str | None = None,
+        applicability_fixture_commit: str | None = None,
+        applicability_fixture_path: str | None = None,
+        integrity_baseline_commit: str | None = None,
+        integrity_baseline_path: str | None = None,
     ) -> "RuntimeAuthorityBinding":
         development = ContractSnapshot.from_git_object(
             repository=repository,
@@ -244,11 +264,62 @@ class RuntimeAuthorityBinding:
             commit=interface_commit,
             path=interface_path,
         )
-        return cls._from_verified_snapshots(development=development, interfaces=interfaces)
+        applicability_values = (
+            applicability_schema_commit,
+            applicability_schema_path,
+            applicability_manifest_commit,
+            applicability_manifest_path,
+            applicability_fixture_commit,
+            applicability_fixture_path,
+            integrity_baseline_commit,
+            integrity_baseline_path,
+        )
+        if any(value is not None for value in applicability_values) and any(
+            value is None for value in applicability_values
+        ):
+            raise ValueError("runtime applicability source binding is incomplete")
+        if not any(value is not None for value in applicability_values):
+            return cls._from_verified_snapshots(development=development, interfaces=interfaces)
+        assert all(isinstance(value, str) for value in applicability_values)
+        schema = SourceSnapshot.from_git_object(
+            repository=repository,
+            commit=applicability_schema_commit,
+            path=applicability_schema_path,
+        )
+        manifest = SourceSnapshot.from_git_object(
+            repository=repository,
+            commit=applicability_manifest_commit,
+            path=applicability_manifest_path,
+        )
+        fixture = SourceSnapshot.from_git_object(
+            repository=repository,
+            commit=applicability_fixture_commit,
+            path=applicability_fixture_path,
+        )
+        baseline = SourceSnapshot.from_git_object(
+            repository=repository,
+            commit=integrity_baseline_commit,
+            path=integrity_baseline_path,
+        )
+        return cls._from_verified_snapshots(
+            development=development,
+            interfaces=interfaces,
+            applicability_schema=schema,
+            applicability_manifest=manifest,
+            applicability_fixture=fixture,
+            integrity_baseline=baseline,
+        )
 
     @classmethod
     def _from_verified_snapshots(
-        cls, *, development: ContractSnapshot, interfaces: SourceSnapshot,
+        cls,
+        *,
+        development: ContractSnapshot,
+        interfaces: SourceSnapshot,
+        applicability_schema: SourceSnapshot | None = None,
+        applicability_manifest: SourceSnapshot | None = None,
+        applicability_fixture: SourceSnapshot | None = None,
+        integrity_baseline: SourceSnapshot | None = None,
     ) -> "RuntimeAuthorityBinding":
         development_object = development._parsed_contract()
         interface_object = interfaces.json_object()
@@ -297,6 +368,53 @@ class RuntimeAuthorityBinding:
             raise ValueError("development record contracts do not provide runtime records")
         if not _REQUIRED_PARAMETER_IDS <= parameter_ids:
             raise ValueError("development runtime parameters are incomplete")
+        applicability_snapshots = (
+            applicability_schema,
+            applicability_manifest,
+            applicability_fixture,
+            integrity_baseline,
+        )
+        if any(item is None for item in applicability_snapshots) and any(
+            item is not None for item in applicability_snapshots
+        ):
+            raise ValueError("runtime applicability source binding is incomplete")
+        applicability: RuntimeApplicabilityProjection | None = None
+        if all(item is not None for item in applicability_snapshots):
+            assert applicability_schema is not None
+            assert applicability_manifest is not None
+            assert applicability_fixture is not None
+            assert integrity_baseline is not None
+            if not all(_verified_source_snapshot(item) for item in applicability_snapshots):
+                raise ValueError("runtime applicability source snapshot is not verified")
+            development_identity = MappingProxyType(
+                {
+                    "commit": development.contract_commit,
+                    "path": development.contract_path,
+                    "blobSha256": development.contract_blob_sha256,
+                },
+            )
+            try:
+                applicability = build_runtime_applicability_projection(
+                    schema_bytes=applicability_schema._content,
+                    manifest_bytes=applicability_manifest._content,
+                    fixture_bytes=applicability_fixture._content,
+                    development=development_object,
+                    integrity_baseline_bytes=integrity_baseline._content,
+                    source_identities={
+                        "schema": applicability_schema.identity(),
+                        "manifest": applicability_manifest.identity(),
+                        "fixture": applicability_fixture.identity(),
+                        "development": development_identity,
+                        "integrityBaseline": integrity_baseline.identity(),
+                    },
+                )
+                _validate_applicability_fixture_models(
+                    development=development,
+                    fixture=applicability_fixture,
+                    projection=applicability,
+                )
+            except (ApplicabilityInputError, AttributeError, TypeError, ValueError) as exc:
+                raise ValueError(str(exc) or "APPLICABILITY-INPUT-ERROR") from exc
         result = cls(
             development=development,
             interfaces=interfaces,
@@ -306,6 +424,11 @@ class RuntimeAuthorityBinding:
             interface_ids=frozenset(bound_ids),
             record_ids=frozenset(record_ids),
             runtime_parameter_ids=frozenset(parameter_ids),
+            applicability_schema=applicability_schema,
+            applicability_manifest=applicability_manifest,
+            applicability_fixture=applicability_fixture,
+            integrity_baseline=integrity_baseline,
+            applicability=applicability,
         )
         object.__setattr__(result, "_verification_token", _BINDING_TOKEN)
         return result
@@ -325,18 +448,33 @@ class RuntimeAuthorityBinding:
         return self._raw_identities()
 
     def _raw_identities(self) -> Mapping[str, Mapping[str, str]]:
-        return MappingProxyType(
-            {
-                "development": MappingProxyType(
-                    {
-                        "commit": self.development.contract_commit,
-                        "path": self.development.contract_path,
-                        "blobSha256": self.development.contract_blob_sha256,
-                    },
-                ),
-                "interfaceRegistry": self.interfaces.identity(),
-            },
-        )
+        identities: dict[str, Mapping[str, str]] = {
+            "development": MappingProxyType(
+                {
+                    "commit": self.development.contract_commit,
+                    "path": self.development.contract_path,
+                    "blobSha256": self.development.contract_blob_sha256,
+                },
+            ),
+            "interfaceRegistry": self.interfaces.identity(),
+        }
+        if self.applicability is not None:
+            if (
+                self.applicability_schema is None
+                or self.applicability_manifest is None
+                or self.applicability_fixture is None
+                or self.integrity_baseline is None
+            ):
+                raise ValueError("runtime applicability identities are incomplete")
+            identities.update(
+                {
+                    "applicabilitySchema": self.applicability_schema.identity(),
+                    "applicabilityManifest": self.applicability_manifest.identity(),
+                    "applicabilityFixture": self.applicability_fixture.identity(),
+                    "integrityBaseline": self.integrity_baseline.identity(),
+                },
+            )
+        return MappingProxyType(identities)
 
     def _require_verified_projection(self) -> None:
         """Reject fabricated or caller-mutated runtime authority bindings."""
@@ -359,6 +497,10 @@ class RuntimeAuthorityBinding:
             expected = RuntimeAuthorityBinding._from_verified_snapshots(
                 development=self.development,
                 interfaces=self.interfaces,
+                applicability_schema=self.applicability_schema,
+                applicability_manifest=self.applicability_manifest,
+                applicability_fixture=self.applicability_fixture,
+                integrity_baseline=self.integrity_baseline,
             )
         except (AttributeError, TypeError, ValueError) as exc:
             raise ValueError("runtime authority projection is not verified") from exc
@@ -370,6 +512,146 @@ class RuntimeAuthorityBinding:
 
         self._require_verified_projection()
         return NAMED_INTERFACE_ADAPTERS
+
+    def validated_stop_inputs(
+        self,
+        *,
+        applicability_context_id: str | None,
+        legacy_named_645_residuals: object | None,
+        model: FiniteSessionModel,
+    ) -> StopInputs:
+        """Derive immutable P3 inputs from a Git-bound runtime context.
+
+        ``legacy_named_645_residuals`` exists only to reject the pre-addendum
+        caller-supplied API explicitly.  No caller collection, empty or not,
+        can erase a residual selected by the controlled manifest.
+        """
+
+        self._require_verified_projection()
+        if legacy_named_645_residuals is not None:
+            raise ValueError("APPLICABILITY-INPUT-ERROR: caller-supplied named residuals are forbidden")
+        if self.applicability is None:
+            if applicability_context_id is not None:
+                raise ValueError("APPLICABILITY-INPUT-ERROR: no Git-bound runtime applicability manifest is present")
+            return StopInputs(
+                applicability_status="P3-UNAVAILABLE",
+                context_id=None,
+                applicability_input_identity=None,
+                named_645_residuals=(),
+            )
+        if not verified_finite_session_model(model):
+            raise ValueError("APPLICABILITY-INPUT-ERROR: runtime model is not a verified finite model")
+        try:
+            resolution = self.applicability.resolve(
+                context_id=applicability_context_id,
+                model_source_json=model._source_json,
+                action_ids=tuple(sorted(model.actions)),
+            )
+        except (ApplicabilityInputError, AttributeError, TypeError, ValueError) as exc:
+            raise ValueError(str(exc) or "APPLICABILITY-INPUT-ERROR") from exc
+        return StopInputs(
+            applicability_status=resolution.status,
+            context_id=resolution.context_id,
+            applicability_input_identity=resolution.input_identity,
+            named_645_residuals=tuple(
+                Named645Residual(
+                    requirement_id=row.requirement_id,
+                    dependency_id=row.dependency_id,
+                    source_unit_id=row.source_unit_id,
+                    contract_id=row.contract_id,
+                    context_id=row.context_id,
+                    input_identity=row.input_identity,
+                )
+                for row in resolution.residuals
+            ),
+        )
+
+
+def _validate_applicability_fixture_models(
+    *,
+    development: ContractSnapshot,
+    fixture: SourceSnapshot,
+    projection: RuntimeApplicabilityProjection,
+) -> None:
+    """Require every declared fixture model to be an executable finite model.
+
+    The applicability schema deliberately owns the public manifest/reference
+    vocabulary.  The runtime model grammar is already a separate closed
+    contract implemented by :class:`FiniteSessionModel`; validating each
+    fixture model through that parser prevents a structurally loose JSON
+    object from becoming a deferred or hidden applicability input.  The
+    check happens while the Git snapshots are still being bound, before a
+    session can select a context or derive a P3 residual.
+    """
+
+    try:
+        fixture_object = fixture.json_object()
+        rows = fixture_object.get("models")
+        if not isinstance(rows, list) or not rows:
+            raise ValueError("fixture has no finite model rows")
+        parsed_sources: set[bytes] = set()
+        for row in rows:
+            if not isinstance(row, Mapping) or set(row) != {"id", "algorithmModel"}:
+                raise ValueError("fixture model row is malformed")
+            if type(row.get("id")) is not str or not row["id"]:
+                raise ValueError("fixture model identity is invalid")
+            algorithm = row.get("algorithmModel")
+            if not isinstance(algorithm, Mapping):
+                raise ValueError("fixture model algorithm is malformed")
+            public_model = algorithm.get("model")
+            if not isinstance(public_model, Mapping) or set(public_model) != {
+                "stateIds", "clockIds", "typedDomains",
+            }:
+                raise ValueError("fixture model public domain is malformed")
+            state_ids = public_model.get("stateIds")
+            clock_ids = public_model.get("clockIds")
+            typed_domains = public_model.get("typedDomains")
+            if (
+                not isinstance(state_ids, list)
+                or not isinstance(clock_ids, list)
+                or not isinstance(typed_domains, Mapping)
+                or any(type(item) is not str or not item for item in state_ids + clock_ids)
+                or any(
+                    type(name) is not str
+                    or not name
+                    or not isinstance(domain, list)
+                    or any(type(member) is not str or not member for member in domain)
+                    for name, domain in typed_domains.items()
+                )
+            ):
+                raise ValueError("fixture model public domain is malformed")
+            uncertainty = algorithm.get("uncertainty")
+            if not isinstance(uncertainty, Mapping):
+                raise ValueError("fixture model uncertainty is malformed")
+            projection_clock = uncertainty.get("clockId")
+            if (
+                type(projection_clock) is not str
+                or not projection_clock
+                or projection_clock not in clock_ids
+            ):
+                raise ValueError("fixture model uncertainty clock is malformed")
+            context = ModelContext.build(
+                snapshot=development,
+                model={
+                    "stateIds": set(state_ids),
+                    "clockIds": set(clock_ids),
+                    "typedDomains": {
+                        name: set(domain)
+                        for name, domain in typed_domains.items()
+                    },
+                },
+                projection_clock=projection_clock,
+            )
+            parsed = FiniteSessionModel.from_mapping(context=context, value=algorithm)
+            parsed_sources.add(parsed._source_json)
+        if not parsed_sources or any(
+            context.model_source_json not in parsed_sources
+            for context in projection.contexts.values()
+        ):
+            raise ValueError("fixture model binding differs from applicability contexts")
+    except (AttributeError, KeyError, TypeError, ValueError) as exc:
+        message = str(exc) or type(exc).__name__
+        raise ApplicabilityInputError(f"finite fixture model is invalid: {message}") from exc
 
 
 def _verified_source_snapshot(value: object) -> bool:
@@ -421,7 +703,45 @@ def _same_projection(
         and actual.interface_ids == expected.interface_ids
         and actual.record_ids == expected.record_ids
         and actual.runtime_parameter_ids == expected.runtime_parameter_ids
+        and _same_applicability_projection(actual, expected)
     )
+
+
+def _same_applicability_projection(
+    actual: RuntimeAuthorityBinding,
+    expected: RuntimeAuthorityBinding,
+) -> bool:
+    """Compare the optional four-source runtime applicability projection."""
+
+    actual_sources = (
+        actual.applicability_schema,
+        actual.applicability_manifest,
+        actual.applicability_fixture,
+        actual.integrity_baseline,
+    )
+    expected_sources = (
+        expected.applicability_schema,
+        expected.applicability_manifest,
+        expected.applicability_fixture,
+        expected.integrity_baseline,
+    )
+    if any(value is None for value in actual_sources) != any(value is None for value in expected_sources):
+        return False
+    if all(value is None for value in actual_sources + expected_sources):
+        return actual.applicability is None and expected.applicability is None
+    if any(value is None for value in actual_sources + expected_sources):
+        return False
+    if type(actual.applicability) is not RuntimeApplicabilityProjection or type(expected.applicability) is not RuntimeApplicabilityProjection:
+        return False
+    try:
+        return (
+            actual.applicability.identity == expected.applicability.identity
+            and actual.applicability.source_identities == expected.applicability.source_identities
+            and actual.applicability.contexts == expected.applicability.contexts
+            and all(_verified_source_snapshot(value) for value in actual_sources)
+        )
+    except (AttributeError, TypeError, ValueError):
+        return False
 
 
 def _unique_string_ids(

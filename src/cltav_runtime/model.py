@@ -49,6 +49,13 @@ class SyntheticAction:
     measurement_ticks_by_hypothesis: Mapping[str, Fraction]
     declared_target: str | None = None
     recover_when_unknown: bool = False
+    # A finite model may explicitly declare a visible value which is legal at
+    # the system boundary even though no member of the *current* H emits it.
+    # This is the narrow, typed way to represent a real empty intersection;
+    # it is not a fallback for an observation that lies outside S3.
+    declared_empty_observable_ticks: Mapping[str, Fraction] = field(
+        default_factory=lambda: MappingProxyType({}),
+    )
 
     def transition_for_kernel(self) -> Mapping[str, Any]:
         """Return a fresh mutable decoding of this action's frozen AST.
@@ -78,7 +85,13 @@ class SyntheticAction:
 
 @dataclass(frozen=True)
 class PredictionClass:
-    """A nonempty current observation class, produced by model calculation."""
+    """One current observation class produced by model calculation.
+
+    Every member is projected from propagated current hypotheses.  The public
+    ``IF-PRED-OBS`` output is specifically the set of currently valid
+    *nonempty* classes, so a separately declared empty observable must never
+    be inserted into this type or into the S3 selection class set.
+    """
 
     action_id: str
     observable: str
@@ -88,6 +101,32 @@ class PredictionClass:
     measurement_windows: Mapping[str, Interval] = field(
         default_factory=lambda: MappingProxyType({}),
     )
+
+
+@dataclass(frozen=True)
+class DeclaredEmptyObservation:
+    """An internal, typed S4 projection for one declared empty observation.
+
+    This is deliberately not a :class:`PredictionClass`: it permits an
+    observable which is legal at the system boundary but has no compatible
+    member of the current ``H``.  It is held beside, never inside, the
+    IF-PRED-OBS nonempty-class output and is only converted to an ephemeral
+    history-update input after the frozen action prediction is matched.
+    """
+
+    action_id: str
+    observable: str
+    measurement_window: Interval
+
+    def selected_class(self) -> PredictionClass:
+        """Return the private S9 input after exact S4 matching succeeds."""
+
+        return PredictionClass(
+            action_id=self.action_id,
+            observable=self.observable,
+            hypotheses=frozenset(),
+            successors=MappingProxyType({}),
+        )
 
 
 @dataclass(frozen=True)
@@ -116,6 +155,7 @@ class ActionPrediction:
     action_id: str
     classes: tuple[PredictionClass, ...]
     diagnostics: tuple[KernelDiagnostic, ...]
+    declared_empty_observations: tuple[DeclaredEmptyObservation, ...] = ()
 
     @property
     def has_distinguishing_value(self) -> bool:
@@ -390,7 +430,20 @@ class FiniteSessionModel:
                         ]
                     ),
                 )
-        if len(grouped) > self.observation_class_limit:
+        # A declaration here is not an emitted hypothesis value: it is a
+        # typed, model-snapshotted public outcome that may legitimately have
+        # no compatible current member.  Do not manufacture it while any
+        # calculation is itself incomplete (the conservative gap above must
+        # remain visible), and never let it overlap a normal emitted value.
+        empty_observations = tuple(
+            DeclaredEmptyObservation(
+                action_id=action_id,
+                observable=observable,
+                measurement_window=self.uncertainty.window(tick),
+            )
+            for observable, tick in sorted(action.declared_empty_observable_ticks.items())
+        )
+        if len(grouped) + len(empty_observations) > self.observation_class_limit:
             return ActionPrediction(
                 action_id,
                 (),
@@ -407,7 +460,12 @@ class FiniteSessionModel:
             )
             for observable, successors in sorted(grouped.items())
         )
-        return ActionPrediction(action_id, classes, tuple(diagnostics))
+        return ActionPrediction(
+            action_id,
+            classes,
+            tuple(diagnostics),
+            empty_observations,
+        )
 
     def summary_only_successors(
         self,
@@ -665,6 +723,13 @@ def _finite_model_binding_digest(value: FiniteSessionModel) -> str:
             if type(hypothesis) is not str:
                 raise TypeError("finite model action tick key is invalid")
             ticks.append((hypothesis, fraction_key(tick)))
+        declared_empty: list[tuple[str, tuple[int, int]]] = []
+        if not isinstance(action.declared_empty_observable_ticks, Mapping):
+            raise TypeError("finite model declared empty observables are invalid")
+        for observable, tick in sorted(action.declared_empty_observable_ticks.items()):
+            if type(observable) is not str or not observable:
+                raise TypeError("finite model declared empty observable is invalid")
+            declared_empty.append((observable, fraction_key(tick)))
         return (
             identifier,
             action.action_id,
@@ -677,6 +742,7 @@ def _finite_model_binding_digest(value: FiniteSessionModel) -> str:
             tuple(ticks),
             action.declared_target,
             action.recover_when_unknown,
+            tuple(declared_empty),
         )
 
     def frontier_key(identifier: object, frontier: object) -> tuple[object, ...]:
@@ -802,7 +868,7 @@ def _parse_action(item: Any, hypothesis_ids: frozenset[str]) -> SyntheticAction:
     required = {
         "id", "kind", "cost", "detailCharges", "enabledSummaries", "transition", "observableByHypothesis", "measurementTicksByHypothesis",
     }
-    allowed = required | {"declaredTarget", "recoverWhenUnknown"}
+    allowed = required | {"declaredTarget", "recoverWhenUnknown", "declaredEmptyObservableTicks"}
     if not set(item) <= allowed or not required <= set(item):
         raise ValueError("finite session action uses unknown or missing fields")
     identifier = item.get("id")
@@ -815,6 +881,7 @@ def _parse_action(item: Any, hypothesis_ids: frozenset[str]) -> SyntheticAction:
     measurement_ticks = item.get("measurementTicksByHypothesis")
     declared_target = item.get("declaredTarget")
     recover_when_unknown = item.get("recoverWhenUnknown", False)
+    declared_empty_observables = item.get("declaredEmptyObservableTicks", {})
     if not isinstance(identifier, str) or not identifier or kind not in _ACTION_KINDS:
         raise ValueError("finite session action identity or kind is invalid")
     if kind in {"PREP", "RECOVER"}:
@@ -850,6 +917,25 @@ def _parse_action(item: Any, hypothesis_ids: frozenset[str]) -> SyntheticAction:
             raise ValueError("finite session action observable emission is invalid")
         parsed_emissions[hypothesis] = values
         parsed_ticks[hypothesis] = _exact_tick(measurement_ticks[hypothesis], "finite session action measurement tick")
+    if not isinstance(declared_empty_observables, Mapping):
+        raise ValueError("finite session declared empty observables are invalid")
+    ordinary_observables = {
+        observable
+        for values in parsed_emissions.values()
+        for observable in values
+    }
+    parsed_declared_empty: dict[str, Fraction] = {}
+    for observable, tick in declared_empty_observables.items():
+        if (
+            type(observable) is not str
+            or not observable
+            or observable in ordinary_observables
+        ):
+            raise ValueError("finite session declared empty observable is invalid")
+        parsed_declared_empty[observable] = _exact_tick(
+            tick,
+            "finite session declared empty observable measurement tick",
+        )
     transition_json = json.dumps(transition, sort_keys=True, separators=(",", ":"))
     return SyntheticAction(
         identifier,
@@ -862,6 +948,7 @@ def _parse_action(item: Any, hypothesis_ids: frozenset[str]) -> SyntheticAction:
         MappingProxyType(parsed_ticks),
         declared_target,
         recover_when_unknown,
+        MappingProxyType(parsed_declared_empty),
     )
 
 

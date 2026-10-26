@@ -4649,7 +4649,9 @@ def test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_ent
         initial_summary="q0", resources=ResourceState.rounds(1),
     ).run(prep_environment, maximum_rounds=1)
     assert prep_result.state.evidence[0].snapshot.action_id == "prep-after-gap"
-    assert prep_result.stop_reason == "Stop-Round-Limit"
+    assert prep_result.stop_reason == "Stop-Budget"
+    assert prep_result.stop_trace is not None
+    assert prep_result.stop_trace.phase == "POST-UPDATE"
 
     refused = ReferenceSession(
         binding=binding, model=prep_model, session_id="session-prep-refused", run_id="run-prep-refused",
@@ -5585,7 +5587,7 @@ def test_shared_uncertainty_changes_the_prediction_and_interpretation_boundary()
 
     assert alpha_class.measurement_windows["h0"].lower == -1
     assert alpha_class.measurement_windows["h0"].upper == 1
-    assert wide_result.stop_reason == "Stop-Round-Limit"
+    assert wide_result.stop_reason == "Stop-Budget"
     assert wide_result.state.evidence[0].committed is True
 
 
@@ -5649,7 +5651,7 @@ def test_declared_initial_multi_path_seed_is_bound_to_one_session() -> None:
 
     result = session.step(session.initial_state, SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]))
 
-    assert result.stop_reason is None
+    assert result.stop_reason == "Stop-Budget"
     assert result.state.history.hypotheses == {"h0", "h1"}
     assert len(result.state.frontiers["h0"]) == 1
 

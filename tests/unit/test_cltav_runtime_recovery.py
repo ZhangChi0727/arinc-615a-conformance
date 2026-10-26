@@ -504,7 +504,7 @@ def test_summary_only_prep_propagates_typed_store_and_clock_reset_for_next_guard
     } == {("q1", Interval(Fraction(0), Fraction(0), True, True), "recovery")}
 
     second = session.step(first.state, first.environment)
-    assert second.stop_reason is None
+    assert second.stop_reason == "Stop-Budget"
     assert second.state.evidence[-1].snapshot.action_id == "test-after-reset"
 
 
@@ -604,7 +604,7 @@ def test_nonself_test_applies_declared_clock_and_store_updates_to_a_conservative
     assert after_prep.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
 
     after_test = session.step(after_prep.state, after_prep.environment)
-    assert after_test.stop_reason is None
+    assert after_test.stop_reason == "Stop-Budget"
     assert after_test.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
     assert after_test.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
     assert {
@@ -659,7 +659,7 @@ def test_summary_only_prep_retains_every_declared_seed_path_without_observation_
         },
     }))
 
-    assert result.stop_reason is None
+    assert result.stop_reason == "Stop-Budget"
     assert result.state.history.hypotheses == frozenset(model.initial_frontiers)
     assert len(result.state.frontiers["h0"]) == 2
     assert {
@@ -688,7 +688,7 @@ def test_summary_only_prep_accepts_a_legal_finite_self_loop() -> None:
         },
     }))
 
-    assert result.stop_reason is None
+    assert result.stop_reason == "Stop-Budget"
     assert result.state.history.hypotheses == session.initial_state.history.hypotheses
     assert set(result.state.history.status_by_hypothesis.values()) == {"KNOWN"}
     assert {
@@ -737,7 +737,7 @@ def test_summary_only_prep_never_revives_hypotheses_excluded_by_a_prior_observat
     assert filtered.state.history.hypotheses == {"h0", "h1"}
 
     result = session.step(filtered.state, filtered.environment)
-    assert result.stop_reason is None
+    assert result.stop_reason == "Stop-Budget"
     assert result.state.history.hypotheses == {"h0", "h1"}
     assert set(result.state.frontiers) == {"h0", "h1"}
     assert all(path.control_state_id == "q1" for paths in result.state.frontiers.values() for path in paths)
@@ -785,7 +785,7 @@ def test_summary_only_prep_keeps_unresolved_members_as_named_conservative_paths(
         },
     }))
 
-    assert result.stop_reason is None
+    assert result.stop_reason == "Stop-Budget"
     assert result.state.history.hypotheses == frozenset(model.initial_frontiers)
     assert result.state.history.status_by_hypothesis["h0"] == "KNOWN"
     assert {
@@ -839,7 +839,7 @@ def test_summary_only_recover_advances_existing_conservative_paths_without_promo
 
     recovered = session.step(unknown.state, unknown.environment)
 
-    assert recovered.stop_reason is None
+    assert recovered.stop_reason == "Stop-Budget"
     assert recovered.state.context.q_status == "KNOWN"
     assert recovered.state.context.current_summary == "q1"
     assert set(recovered.state.history.status_by_hypothesis.values()) == {"CONSERVATIVE-UNKNOWN"}
@@ -925,7 +925,7 @@ def test_summary_only_prep_preserves_a_conservative_s0_frontier_without_a_status
     )
 
     after_test = session.step(after_prep.state, after_prep.environment)
-    assert after_test.stop_reason is None
+    assert after_test.stop_reason == "Stop-Budget"
     assert after_test.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
     assert after_test.state.history.status_by_hypothesis == {
         "h0": "KNOWN", "h1": "KNOWN", "h2": "CONSERVATIVE-UNKNOWN",
@@ -1011,7 +1011,7 @@ def test_summary_only_prep_aggregates_mixed_known_and_conservative_s0_paths() ->
     # branch-alpha remains allowed to shrink ordinary known candidates, but
     # cannot use the C-U sibling to erase h2 as a whole.
     after_test = session.step(after_prep.state, after_prep.environment)
-    assert after_test.stop_reason is None
+    assert after_test.stop_reason == "Stop-Budget"
     assert after_test.state.resources.remaining == 0
     assert after_test.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
     assert after_test.state.history.status_by_hypothesis == {
@@ -1116,7 +1116,7 @@ def test_nonself_test_advances_mixed_conservative_paths_of_different_lengths() -
     )
 
     after_test = session.step(after_prep.state, after_prep.environment)
-    assert after_test.stop_reason is None
+    assert after_test.stop_reason == "Stop-Budget"
     assert after_test.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
     assert after_test.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
     successors_by_root = {
@@ -1161,7 +1161,7 @@ def test_initial_conservative_s0_frontier_is_not_excluded_by_a_normal_observatio
         "private-0": {"test-q0": _normal("branch-alpha", "after-test", "private-1")},
     }))
 
-    assert result.stop_reason is None
+    assert result.stop_reason == "Stop-Budget"
     assert result.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
     assert result.state.history.status_by_hypothesis == {
         "h0": "KNOWN", "h1": "KNOWN", "h2": "CONSERVATIVE-UNKNOWN",
@@ -1311,7 +1311,7 @@ def test_normal_class_advances_feasible_conservative_paths_and_retains_unresolve
         "private-0": {"test-q0-q1": _normal("branch-alpha", "after-test", "private-1")},
     }))
 
-    assert result.stop_reason is None
+    assert result.stop_reason == "Stop-Budget"
     assert result.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
     assert result.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
     assert {
@@ -1418,7 +1418,7 @@ def test_normal_class_retains_a_path_limited_conservative_witness_without_h3() -
         "private-0": {"test-q0-q1": _normal("branch-alpha", "after-test", "private-1")},
     }))
 
-    assert result.stop_reason is None
+    assert result.stop_reason == "Stop-Budget"
     assert result.state.history.hypotheses == frozenset({"h0", "h1", "h2"})
     assert result.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
     assert {
@@ -1535,7 +1535,7 @@ def test_fresh_checkpoint_replays_and_executes_a_second_summary_only_prep_withou
     first = source.step(source.initial_state, environment)
     assert first.stop_reason is None
     expected = source.step(first.state, first.environment)
-    assert expected.stop_reason is None
+    assert expected.stop_reason == "Stop-Budget"
 
     target_binding, target_base, _target_fixture = _runtime_parts()
     target_model = _model_with(target_base, fixture, [first_prep, second_prep])
@@ -1548,7 +1548,7 @@ def test_fresh_checkpoint_replays_and_executes_a_second_summary_only_prep_withou
 
     resumed = target.step(first.state, first.environment)
 
-    assert resumed.stop_reason is None
+    assert resumed.stop_reason == "Stop-Budget"
     assert resumed.state == expected.state
     assert resumed.state.evidence[-1].snapshot.action_id == "prep-q1-q0"
     assert {
@@ -1643,7 +1643,7 @@ def test_fresh_checkpoint_replays_a_conservative_s0_summary_path_without_cache_w
     expected = source.step(first.state, first.environment)
     assert expected.stop_reason is None
     expected_third = source.step(expected.state, expected.environment)
-    assert expected_third.stop_reason is None
+    assert expected_third.stop_reason == "Stop-Budget"
 
     target_binding, target_base, _target_fixture = _runtime_parts()
     target_model = _model_with(target_base, fixture, [prep, follow_up, third_prep])
@@ -1685,7 +1685,7 @@ def test_fresh_checkpoint_replays_a_conservative_s0_summary_path_without_cache_w
     resumed_by_root = {
         path.history_provenance[0]: path for path in resumed.state.frontiers["h2"]
     }
-    assert resumed_third.stop_reason is None
+    assert resumed_third.stop_reason == "Stop-Budget"
     assert resumed_third.state == expected_third.state
     assert resumed_third.state.evidence[-1].snapshot.action_id == "prep-after-test"
     assert {path.control_state_id for path in resumed_third.state.frontiers["h2"]} == {"q0"}
@@ -1761,7 +1761,7 @@ def test_resumed_checkpoint_rejects_a_coordinated_conservative_status_promotion(
             ),
         },
     }))
-    assert first.stop_reason is None
+    assert first.stop_reason == "Stop-Budget"
     assert first.state.history.status_by_hypothesis["h2"] == "CONSERVATIVE-UNKNOWN"
 
     forged_status = dict(first.state.history.status_by_hypothesis)
@@ -2236,7 +2236,7 @@ def test_unknown_session_admits_confirmed_recover_and_only_s8_sets_target_eviden
     # q1 action, so a normal admission stop (rather than lineage rejection)
     # proves the recovery result is a resumable public checkpoint.
     follow_on = session.step(recovered.state, recovered.environment)
-    assert follow_on.stop_reason == "Stop-No-Action"
+    assert follow_on.stop_reason == "Stop-NoDistinguisher"
 
     class NoDispatchEnvironment:
         calls = 0
