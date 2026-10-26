@@ -83,11 +83,13 @@ two-input form. That compatibility route is explicitly `P3-UNAVAILABLE`: no
 applicability package was loaded, no context was evaluated, and it is neither
 an explicit inactive decision nor a METHOD-ONLY decision. A package-bound
 invocation must provide exactly one controlled context ID. It validates raw Git
-bytes for the schema, manifest, finite fixture, development contract, and
-integrity baseline before S0; their commit/path/blob identities become part of
-the frozen authority/replay closure. A package-bound context cannot silently
-fall back to the compatibility route, and a compatibility binding cannot accept
-a context.
+object bytes for all six controlled sources before S0: the schema, manifest,
+finite fixture, development contract, interface registry, and integrity
+baseline. Their commit/path/blob identities become part of the frozen
+authority/replay closure. The binding does not consume checkout text for any of
+those identities, so an LF or CRLF checkout representation cannot substitute
+different authority bytes. A package-bound context cannot silently fall back to
+the compatibility route, and a compatibility binding cannot accept a context.
 
 The package has three evaluated P3 outcomes:
 
@@ -104,13 +106,29 @@ consumed by its typed prerequisite check. Missing, malformed, contradictory,
 or unparseable package/context material is a named applicability-input error
 before selection, charge, or dispatch; it is never recast as non-applicability.
 
-The implemented priority is P1 processed-empty, P2 singleton, P3 current named
-residual, P4 verified equivalence, then P5 resource exhaustion. This candidate
-has no P4 proof producer: `IF-EQUIV` returns only `notEstablished` or
-`unknown`. The already charged S7 retry-cap exit remains outside that normal
-priority chain. Consequently, this finite implementation demonstrates ordering
-and authority closure only; it does not establish equivalence, integrity
-correctness, or operational readiness.
+The implemented EntryStop priority, including causal checkpoint replay, is P1
+processed-empty, P2 singleton, P3 current named residual, P4 verified
+equivalence, then P5 resource exhaustion. It is evaluated before prediction,
+admission, dispatch, or a new charge. Thus, if P1--P4 do not stop and the
+remaining resource is zero, P5 returns `Stop-Budget` with
+`RESOURCE-EXHAUSTED`; it does not select or dispatch an action. Positive but
+insufficient resource remains the ordinary A2/A5 admission case, not P5. This
+candidate has no P4 proof producer: `IF-EQUIV` returns only `notEstablished`
+or `unknown`. An already reached S7 retry-cap terminal remains protected ahead
+of this normal EntryStop relation. Consequently, this finite implementation
+demonstrates ordering and authority closure only; it does not establish
+equivalence, integrity correctness, or operational readiness.
+
+For `00109`, a valid same-operation/session `FINAL-DATA` plus
+`CALCULATION-IN-PROGRESS` trigger may have a present status-stream object and
+observation-range object whose respective `eventIds` and `observationEventIds`
+membership arrays are empty. That is a legal finite P3 residual, whether
+`observationComplete` is false or true, and it preserves the named `Stop-645`
+result when P1/P2 are absent. It is not a protocol frequency, CRC, or
+conformance observation and cannot infer a protocol FAIL. This narrow allowance
+applies only to those two membership arrays; missing objects, unknown event
+IDs, mismatched operation/time evidence, or an unknown trigger remain named
+applicability-input errors.
 
 ## B/C-2 coverage status
 
@@ -503,9 +521,11 @@ ARINC 645 义务是否满足、不计算校验值、不证明等价、不执行 
 
 `RuntimeAuthorityBinding.from_git_objects` 仍可采用历史的双输入形式。该兼容路径被明确标为
 `P3-UNAVAILABLE`：未加载适用性包、未评估任何 context，且它既不是显式不适用，也不是
-METHOD-ONLY。绑定了包的调用必须提供恰好一个受控 context ID。在 S0 之前，它对 schema、manifest、
-有限 fixture、开发合同和完整性基线的原始 Git 字节进行校验；其 commit／path／blob 身份进入冻结的
-authority／replay 闭包。绑定了包的 context 不得静默回退到兼容路径，兼容绑定也不得接受 context。
+METHOD-ONLY。绑定了包的调用必须提供恰好一个受控 context ID。在 S0 之前，它对全部六项受控来源的
+原始 Git 对象字节进行校验：schema、manifest、有限 fixture、开发合同、接口登记册和完整性基线。其
+commit／path／blob 身份进入冻结的 authority／replay 闭包。绑定不会把工作区文本当作这些身份的来源，
+因此 LF 或 CRLF 工作区表示不得替换不同的权威字节。绑定了包的 context 不得静默回退到兼容路径，
+兼容绑定也不得接受 context。
 
 该包有三种已评估的 P3 结果：
 
@@ -520,10 +540,18 @@ scenario 标签选择 P3。每项任务的 `reasonRefs` 必须与其类型化前
 缺失、畸形、矛盾或不可解析的包／context 材料，必须在选择、计费和派发之前产生具名适用性输入错误；
 不得改写为“不适用”。
 
-已实现的优先级为 P1 已处理空集、P2 单例、P3 当前具名 residual、P4 已验证等价、P5 资源耗尽。
-该候选实现没有 P4 的证明生产者：`IF-EQUIV` 只会返回 `notEstablished` 或 `unknown`。已计费的
-S7 retry-cap 退出仍位于这条普通优先级链之外。因此，该有限实现只展示顺序和 authority 闭合；它不建立
-等价、完整性正确性或运行就绪性。
+已实现的 EntryStop 优先级（包括因果 checkpoint 重放）为 P1 已处理空集、P2 单例、P3 当前具名
+residual、P4 已验证等价、P5 资源耗尽；它在 prediction、admission、dispatch 或新的计费之前评估。因此，
+若 P1--P4 均未停止且任一剩余资源为零，P5 以 `RESOURCE-EXHAUSTED` 返回 `Stop-Budget`，不选择也不
+派发 action。资源为正但不足仍属于通常的 A2/A5 准入情形，而不是 P5。该候选实现没有 P4 的证明生产者：
+`IF-EQUIV` 只会返回 `notEstablished` 或 `unknown`。已经达到的 S7 retry-cap 终态仍优先于这条普通
+EntryStop 关系。因此，该有限实现只展示顺序和 authority 闭合；它不建立等价、完整性正确性或运行就绪性。
+
+对 `00109`，同一 operation/session 的有效 `FINAL-DATA` 加 `CALCULATION-IN-PROGRESS` trigger 可以有
+已经存在的 status-stream 对象和 observation-range 对象，但其 `eventIds` 与 `observationEventIds` 成员数组
+为空。无论 `observationComplete` 为 false 还是 true，这都是合法的有限 P3 residual；P1/P2 不存在时保留
+具名 `Stop-645`。它不是协议频率、CRC 或符合性观测，不得据此推导协议 FAIL。该窄例外只适用于这两个成员
+数组；对象缺失、未知 event ID、operation／time 证据不匹配或未知 trigger 仍是具名适用性输入错误。
 
 GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出的 A2：没有合格 Prep 时出口仍为
 具名 prediction gap；只有合格但不可负担的 Prep 才能在该 fallback 路径产生 A2。
