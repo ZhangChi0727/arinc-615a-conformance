@@ -954,7 +954,6 @@ class ReferenceSession:
                 frontiers=frontiers,
                 resources=resources,
                 model=replay_model,
-                include_resource_stop=False,
             )
             if entry_stop.stop_class is not None:
                 return KernelDiagnostic(
@@ -1516,7 +1515,6 @@ class ReferenceSession:
             frontiers=state.frontiers,
             resources=state.resources,
             model=model,
-            include_resource_stop=False,
         )
         if entry_stop.stop_class is not None:
             return SessionResult(
@@ -1548,7 +1546,6 @@ class ReferenceSession:
                 resources=state.resources,
                 model=model,
                 admission_exit=(admission_exit, admission.reason),
-                include_resource_stop=False,
                 calculation_diagnostics=admission.diagnostics,
             )
             return SessionResult(
@@ -2360,7 +2357,6 @@ class ReferenceSession:
         model: FiniteSessionModel,
         admission_exit: tuple[str, str] | None = None,
         retry_cap_terminal: bool = False,
-        include_resource_stop: bool = True,
         calculation_diagnostics: tuple[KernelDiagnostic, ...] = (),
     ) -> StopDecision:
         """Evaluate the one frozen EntryStop/PostUpdateStop relation.
@@ -2386,7 +2382,6 @@ class ReferenceSession:
             forced_stop_class="Stop-Error" if retry_cap_terminal else None,
             forced_reason="RETRY-CAP-EXHAUSTED" if retry_cap_terminal else None,
             admission_exit=admission_exit,
-            include_resource_stop=include_resource_stop,
             calculation_diagnostic_codes=tuple(
                 diagnostic.code for diagnostic in calculation_diagnostics
             ),

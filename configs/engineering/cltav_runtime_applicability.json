@@ -10,7 +10,7 @@
     "qualificationBoundary": "NOT-ESTABLISHED"
   },
   "sourceBindings": {
-    "schema": {"path": "configs/engineering/cltav_runtime_applicability.schema.json", "blobSha256": "39a22d7e93a5d376affd8669ccc66ee23c5df88f2bb7a4937ed3c2d9b23ba9ce"},
+    "schema": {"path": "configs/engineering/cltav_runtime_applicability.schema.json", "blobSha256": "6b0cda8ac09db2eb82e212c5581fa0de5a9b4d9e23bc6a2c8648ead438a3f966"},
     "development": {"path": "configs/engineering/cltav_development_contracts.json", "blobSha256": "3331fadf2786133f161eded9d1fb42066ca58d7dd510ce6e775da1cd89a5aae1"},
     "integrityBaseline": {"path": "configs/engineering/cltav_integrity_obligation_baseline.json", "blobSha256": "85ec28689371bf557dfad5b9fc5ff80421198a896173ced603dc992e62a2dc57"},
     "fixture": {"path": "configs/engineering/cltav_runtime_applicability_fixture.json", "blobSha256": "ea9241a8830615c500e2b8c20522961148007d26920fd8c474e32fb95ddf94b7"}

@@ -546,8 +546,6 @@ def _status_context(values: Mapping[str, Any], index: Mapping[str, Mapping[str, 
     if (
         not isinstance(event_ids, list)
         or not isinstance(point_ids, list)
-        or not event_ids
-        or not point_ids
         or len(event_ids) != len(set(event_ids))
         or len(point_ids) != len(set(point_ids))
         or not set(point_ids) <= set(event_ids)

@@ -387,7 +387,6 @@ def evaluate_stop(
     forced_stop_class: str | None = None,
     forced_reason: str | None = None,
     admission_exit: tuple[str, str] | None = None,
-    include_resource_stop: bool = True,
     calculation_diagnostic_codes: tuple[str, ...] = (),
 ) -> StopDecision:
     """Apply the finite P1--P5 priority relation to one validated state.
@@ -439,7 +438,7 @@ def evaluate_stop(
     # a no-distinguisher or unknown result into proof by accident.
     elif equivalence.tag == "established":  # pragma: no cover - no producer in this slice
         stop_class, reason = "Stop-Equivalent", "VERIFIED-FINITE-PROOF"
-    elif include_resource_stop and resources.remaining == 0:
+    elif resources.remaining == 0:
         stop_class, reason = "Stop-Budget", "RESOURCE-EXHAUSTED"
     elif admission_exit is not None:
         stop_class, reason = admission_exit

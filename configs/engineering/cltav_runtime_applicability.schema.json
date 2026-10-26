@@ -13,6 +13,11 @@
       "uniqueItems": true,
       "items": {"$ref": "#/$defs/nonblank"}
     },
+    "observationMembershipIdList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonblank"}
+    },
     "sourceBinding": {
       "type": "object",
       "additionalProperties": false,
@@ -229,12 +234,12 @@
     "statusStream": {
       "type": "object", "additionalProperties": false,
       "required": ["id", "kind", "operationId", "eventIds"],
-      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "STATUS-STREAM"}, "operationId": {"$ref": "#/$defs/nonblank"}, "eventIds": {"$ref": "#/$defs/idList"}}
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "STATUS-STREAM"}, "operationId": {"$ref": "#/$defs/nonblank"}, "eventIds": {"$ref": "#/$defs/observationMembershipIdList"}}
     },
     "observationRange": {
       "type": "object", "additionalProperties": false,
       "required": ["id", "kind", "operationId", "observationEventIds", "scope"],
-      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "OBSERVATION-RANGE"}, "operationId": {"$ref": "#/$defs/nonblank"}, "observationEventIds": {"$ref": "#/$defs/idList"}, "scope": {"const": "FINITE-SPECIFICATION-WITNESS-NOT-PROTOCOL-FREQUENCY"}}
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "OBSERVATION-RANGE"}, "operationId": {"$ref": "#/$defs/nonblank"}, "observationEventIds": {"$ref": "#/$defs/observationMembershipIdList"}, "scope": {"const": "FINITE-SPECIFICATION-WITNESS-NOT-PROTOCOL-FREQUENCY"}}
     },
     "methodOnlyReference": {
       "type": "object", "additionalProperties": false,
