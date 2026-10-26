@@ -65,8 +65,52 @@ FAIL, so INCONCLUSIVE is never answered.  A METHOD-ONLY result is an
 calculation yields PASS or FAIL.  Ownership or clock/error-basis ERROR follows
 S7, while no assessment directly rewrites compatible history.  This does not
 make the runtime a protocol stack, a physical clock calibration, a reviewed
-protocol deadline engine, or an IUT claim.  Stop-Empty/equivalence and the
-production evidence/CLI boundary remain explicit later B/C work.
+protocol deadline engine, or an IUT claim.  The production evidence/CLI
+boundary remains explicit later B/C work.
+
+## B/C-2C finite stopping and applicability boundary
+
+The B/C-2C candidate adds only a finite, Git-bound input path to the existing
+in-process stop relation. It does not evaluate an ARINC 645 obligation,
+compute a check value, prove equivalence, execute an IUT, or convert a runtime
+trace into a protocol verdict. Its purpose is narrower: if one of six
+controlled, unresolved integrity-runtime dependencies is selected by complete
+public synthetic inputs, preserve that dependency as a named `Stop-645` reason
+instead of allowing a resource stop to hide it.
+
+`RuntimeAuthorityBinding.from_git_objects` may be used in its historical
+two-input form. That compatibility route is explicitly `P3-UNAVAILABLE`: no
+applicability package was loaded, no context was evaluated, and it is neither
+an explicit inactive decision nor a METHOD-ONLY decision. A package-bound
+invocation must provide exactly one controlled context ID. It validates raw Git
+bytes for the schema, manifest, finite fixture, development contract, and
+integrity baseline before S0; their commit/path/blob identities become part of
+the frozen authority/replay closure. A package-bound context cannot silently
+fall back to the compatibility route, and a compatibility binding cannot accept
+a context.
+
+The package has three evaluated P3 outcomes:
+
+| P3 state | Finite meaning | Stop input |
+|---|---|---|
+| `P3-ACTIVE` | a complete typed context selects one exact unresolved row among `CRS-M1-00076`, `00082`, `00085`, `00086`, `00087`, and `00109` | one source-bound named residual; P3 yields `Stop-645` after P1/P2 |
+| `P3-EXPLICIT-INACTIVE` | a complete selection/comparison context explicitly says the optional integrity input is not selected | no residual; this is an evaluated fact, not an unknown |
+| `P3-METHOD-ONLY` | an explicitly distinct non-integrity model/action domain is supplied with a method-only reference | no residual; it cannot stand in for integrity applicability |
+
+The manifest's display scenario/service fields are metadata only. No caller may
+supply residuals, an `applicable` flag, or a scenario label to choose P3. Each
+task's `reasonRefs` must be exactly the finite public references actually
+consumed by its typed prerequisite check. Missing, malformed, contradictory,
+or unparseable package/context material is a named applicability-input error
+before selection, charge, or dispatch; it is never recast as non-applicability.
+
+The implemented priority is P1 processed-empty, P2 singleton, P3 current named
+residual, P4 verified equivalence, then P5 resource exhaustion. This candidate
+has no P4 proof producer: `IF-EQUIV` returns only `notEstablished` or
+`unknown`. The already charged S7 retry-cap exit remains outside that normal
+priority chain. Consequently, this finite implementation demonstrates ordering
+and authority closure only; it does not establish equivalence, integrity
+correctness, or operational readiness.
 
 ## B/C-2 coverage status
 
@@ -94,7 +138,7 @@ substitute for that evidence identity.
 | BC-13 | PARTIAL | Raw material cannot inject policy/deadline/verdict. FIFO/MOST-RECENT, explicit cancellation/supersession, session-seeded ACTIVE ownership context plus the retained-ledger global event-order frontier for incremental deltas or exact cumulative reappearance, terminal request/response exclusion, and conflict quarantine are covered by `interpretation` and `session` regressions. A conflict may seal an uncontested new response but cannot reclassify an existing request identity; every emitted ledger state must remain replayable as a portable checkpoint. Bounded synthetic traces only. |
 | BC-14 | PARTIAL | Frozen-contract interval containment/separation/boundary tests, plus empty physical domain and invalid clock/unit/error basis. Contract/material/clock/unit/uncertainty checks occur before deadline authority branching; no physical calibration claim. |
 | BC-15 | PARTIAL | No-response uses cancellation/supersession, qualified horizon and deadline-authority regressions. METHOD-ONLY/UNRESOLVED never becomes a scored deadline. In pure reviewed semantics, closed upper bound uses `earliest > U` and open upper bound uses `earliest >= U`; this runtime rejects REVIEWED authority without a controlled registry. |
-| BC-16 | PENDING | Empty/Singleton/645/Equivalent/Budget priority remains later B/C work. |
+| BC-16 | PARTIAL | Public finite regressions cover P1/P2/P3/P5 priority, exact six-row Git-bound residual selection, explicit inactive and METHOD-ONLY outcomes, compatibility `P3-UNAVAILABLE`, and replay identity freezing. P4 remains deliberately unimplemented: no proof producer may emit `established`. |
 | BC-17 | PENDING | Equivalence proof and its bounded proof domain remain later B/C work. |
 | BC-18 | PARTIAL | public execution-request isolation regression; complete action/state environment matrix remains. |
 | BC-19 | VERIFIED | evaluator-truth exclusion and extra-truth-field rejection regressions; later evaluator work remains separate. |
@@ -448,7 +492,38 @@ authority。原始材料须先绑定实际 execution/action/evidence 身份才�
 `answered=true`；INCONCLUSIVE 永远不是 answered。METHOD-ONLY 即使算得边界 PASS/FAIL，仍为
 `ENGINEERING-WITNESS` 且 `answered=false`。所有权或时钟／误差依据 ERROR 进入 S7；任何评估均
 不得直接改写相容历史。这不使 runtime 成为协议栈、物理时钟校准、已审定的协议 deadline 引擎或
-IUT 主张。Stop-Empty／等价及生产 evidence／CLI 边界仍是后续 B/C 工作。
+IUT 主张。生产 evidence／CLI 边界仍是后续 B/C 工作。
+
+## B/C-2C 有限停止与适用性边界
+
+B/C-2C 候选实现只为既有进程内停止关系增加一条有限、Git 绑定的输入路径。它**不**判定
+ARINC 645 义务是否满足、不计算校验值、不证明等价、不执行 IUT，也不把运行时迹转换为协议判定。
+其范围更窄：当完整的公开合成输入选择六项受控且尚未建立的完整性运行时依赖之一时，将该依赖保留为
+具名 `Stop-645` 原因，而不是让资源停止掩盖它。
+
+`RuntimeAuthorityBinding.from_git_objects` 仍可采用历史的双输入形式。该兼容路径被明确标为
+`P3-UNAVAILABLE`：未加载适用性包、未评估任何 context，且它既不是显式不适用，也不是
+METHOD-ONLY。绑定了包的调用必须提供恰好一个受控 context ID。在 S0 之前，它对 schema、manifest、
+有限 fixture、开发合同和完整性基线的原始 Git 字节进行校验；其 commit／path／blob 身份进入冻结的
+authority／replay 闭包。绑定了包的 context 不得静默回退到兼容路径，兼容绑定也不得接受 context。
+
+该包有三种已评估的 P3 结果：
+
+| P3 状态 | 有限含义 | 停止输入 |
+|---|---|---|
+| `P3-ACTIVE` | 完整类型化 context 从 `CRS-M1-00076`、`00082`、`00085`、`00086`、`00087`、`00109` 中选择一条精确的、尚未解决的记录 | 一条来源绑定的具名 residual；在 P1／P2 之后由 P3 产生 `Stop-645` |
+| `P3-EXPLICIT-INACTIVE` | 完整的选择／比较 context 明确表明可选完整性输入未被选择 | 无 residual；这是已评估事实，而非未知 |
+| `P3-METHOD-ONLY` | 提供了与完整性不同的显式模型／动作域及 method-only 引用 | 无 residual；不得替代完整性适用性 |
+
+manifest 的显示 scenario／service 字段只是元数据。调用方不得用 residual、`applicable` 标志或
+scenario 标签选择 P3。每项任务的 `reasonRefs` 必须与其类型化前置检查实际消费的有限公开引用完全一致。
+缺失、畸形、矛盾或不可解析的包／context 材料，必须在选择、计费和派发之前产生具名适用性输入错误；
+不得改写为“不适用”。
+
+已实现的优先级为 P1 已处理空集、P2 单例、P3 当前具名 residual、P4 已验证等价、P5 资源耗尽。
+该候选实现没有 P4 的证明生产者：`IF-EQUIV` 只会返回 `notEstablished` 或 `unknown`。已计费的
+S7 retry-cap 退出仍位于这条普通优先级链之外。因此，该有限实现只展示顺序和 authority 闭合；它不建立
+等价、完整性正确性或运行就绪性。
 
 GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出的 A2：没有合格 Prep 时出口仍为
 具名 prediction gap；只有合格但不可负担的 Prep 才能在该 fallback 路径产生 A2。
@@ -476,7 +551,7 @@ GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出�
 | BC-13 | PARTIAL | 原始材料不得注入 policy／deadline／判定。FIFO/MOST-RECENT、显式取消／替代、由 session 注入的 ACTIVE ownership 上下文及保留账本的全局 event-order 前沿（支持增量 delta 或精确的累计再次出现）、终态 request／response 排除及冲突隔离均由 `interpretation` 和 `session` 回归覆盖。冲突可封存无争议的新 response，但不得重分类既有 request 身份；每个发出的账本 state 都必须能作为可移植 checkpoint 重放。仅为有界 synthetic 事件迹。 |
 | BC-14 | PARTIAL | 冻结合同的区间包含／分离／边界测试，以及空物理域、无效时钟／单位／误差依据。contract/material/clock/unit/uncertainty 必须先于 deadline authority 分支校验；不主张物理校准。 |
 | BC-15 | PARTIAL | 无响应使用取消／替代、合格 horizon 和 deadline authority 回归。METHOD-ONLY／UNRESOLVED 永远不得成为可计分 deadline。纯 reviewed 语义中，闭上界使用 `earliest > U`，开上界使用 `earliest >= U`；本 runtime 没有受控 registry 时拒绝 REVIEWED authority。 |
-| BC-16 | PENDING | Empty/Singleton/645/Equivalent/Budget 优先级属于后续 B/C 工作。 |
+| BC-16 | PARTIAL | 公共有限回归覆盖 P1／P2／P3／P5 优先级、精确六行 Git 绑定 residual 选择、显式不适用和 METHOD-ONLY 结果、兼容 `P3-UNAVAILABLE` 以及 replay 身份冻结。P4 仍被刻意保留：没有证明生产者可发出 `established`。 |
 | BC-17 | PENDING | 等价证明及其有界证明域属于后续 B/C 工作。 |
 | BC-18 | PARTIAL | 公共执行请求隔离回归；完整 action/state 环境矩阵仍待完成。 |
 | BC-19 | VERIFIED | evaluator truth 排除和额外 truth 字段拒绝回归；后续评价端工作保持分离。 |
