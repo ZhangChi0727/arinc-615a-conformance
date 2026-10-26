@@ -441,6 +441,36 @@ def test_p3_checkpoint_cannot_resume_under_a_legacy_binding(tmp_path: Path) -> N
     assert no_dispatch.calls == 0
 
 
+def test_fresh_same_package_replays_the_same_p3_context_and_residual_identity(tmp_path: Path) -> None:
+    """A fresh verified package preserves P3 rather than reinterpreting S0."""
+
+    repository, commit = _temporary_authority_repo(tmp_path)
+    source = _session(
+        _binding(repository, authority_commit=commit),
+        _model(repository, commit, "MODEL-INTEGRITY-STOP"),
+        context_id="CTX-645-00076",
+        session_id="p3-fresh-same-package",
+    )
+    first = source.step(source.initial_state, _NoDispatch())  # type: ignore[arg-type]
+    fresh = _session(
+        _binding(repository, authority_commit=commit),
+        _model(repository, commit, "MODEL-INTEGRITY-STOP"),
+        context_id="CTX-645-00076",
+        session_id="p3-fresh-same-package",
+    )
+    no_dispatch = _NoDispatch()
+
+    replay = fresh.step(first.state, no_dispatch)  # type: ignore[arg-type]
+
+    assert first.stop_reason == replay.stop_reason == "Stop-645"
+    assert first.stop_trace is not None and replay.stop_trace is not None
+    assert first.stop_trace.applicability_status == replay.stop_trace.applicability_status == "P3-ACTIVE"
+    assert first.stop_trace.applicability_context_id == replay.stop_trace.applicability_context_id == "CTX-645-00076"
+    assert first.stop_trace.applicability_input_identity == replay.stop_trace.applicability_input_identity
+    assert first.stop_trace.active_named_645_residuals == replay.stop_trace.active_named_645_residuals
+    assert no_dispatch.calls == 0
+
+
 def _one_integrity_hypothesis(fixture: dict[str, Any]) -> None:
     models = fixture["models"]
     assert isinstance(models, list) and isinstance(models[0], dict)
