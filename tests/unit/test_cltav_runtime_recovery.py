@@ -1201,7 +1201,9 @@ def test_all_conservative_members_produce_a_named_prediction_gap_without_dispatc
     session = ReferenceSession(
         binding=binding, model=model, session_id="session-all-conservative-gap",
         run_id="run-all-conservative-gap", initial_summary="q0",
-        resources=ResourceState.rounds(0), retry_cap=2, initial_path_bundles=seed,
+        # Keep resource available so this test continues to exercise the
+        # conservative-frontier GAP rather than the earlier EntryStop P5.
+        resources=ResourceState.rounds(1), retry_cap=2, initial_path_bundles=seed,
     )
     environment = NoDispatchEnvironment()
 
@@ -1210,7 +1212,7 @@ def test_all_conservative_members_produce_a_named_prediction_gap_without_dispatc
     assert result.stop_reason == "Stop-Prediction-Gap"
     assert result.state is session.initial_state
     assert result.state.attempts == 0
-    assert result.state.resources.remaining == 0
+    assert result.state.resources.remaining == 1
     assert result.state.evidence == ()
     assert result.diagnostics[-1].code == "PREDICTION-GAP"
     assert environment.calls == 0

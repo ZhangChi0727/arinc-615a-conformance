@@ -4659,7 +4659,10 @@ def test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_ent
     ).run(prep_environment, maximum_rounds=1)
     assert refused.stop_reason == "Stop-Budget"
     assert refused.state.evidence == ()
-    assert refused.diagnostics[-1].code == "ADMISSION-A2-UNAFFORDABLE"
+    assert refused.stop_trace is not None
+    assert refused.stop_trace.phase == "ENTRY"
+    assert refused.stop_trace.reason == "RESOURCE-EXHAUSTED"
+    assert refused.diagnostics[-1].code == "RESOURCE-STOP"
 
 
 @pytest.mark.parametrize("reverse_actions", [False, True])
