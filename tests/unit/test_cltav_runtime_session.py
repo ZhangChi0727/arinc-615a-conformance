@@ -510,6 +510,41 @@ def test_session_records_no_response_without_turning_method_only_deadline_into_s
     assert not any(diagnostic.code in {"SESSION-LINEAGE-MISMATCH", "EVIDENCE-NO-RESPONSE-MISMATCH"} for diagnostic in resumed.diagnostics)
 
 
+def test_session_unresolved_deadline_without_registry_keeps_silence_unscored() -> None:
+    """A missing controlled deadline registry cannot manufacture a T5 FAIL."""
+
+    binding, model, fixture = _runtime_parts()
+    session = ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id="session-unresolved-silence",
+        run_id="run-unresolved-silence",
+        initial_summary="q0",
+        resources=ResourceState.rounds(1),
+        interpretation_contract=_runtime_interpretation_contract(
+            model, deadline_authority="UNRESOLVED",
+        ),
+    )
+    result = session.run(
+        _environment_with_observation_material(
+            fixture,
+            _runtime_observation_material(response_id=None, earliest=99),
+            no_response=True,
+        ),
+        maximum_rounds=1,
+    )
+
+    evidence = result.state.evidence[0]
+    assert evidence.observation_assessment is not None
+    assert evidence.observation_assessment.verdict == "INCONCLUSIVE"
+    assert evidence.observation_assessment.score_disposition == "PENDING-DEADLINE"
+    assert evidence.observation_assessment.answered is False
+    assert evidence.committed is False
+    assert evidence.resolution_code == "OBSERVATION-NO-RESPONSE"
+    assert evidence.observation_assessment.verdict != "FAIL"
+    assert result.state.history.hypotheses == session.initial_state.history.hypotheses
+
+
 def test_session_retains_unqualified_silence_without_an_elapsed_reading_as_a_portable_checkpoint() -> None:
     """An unfinished observation window is pending, not an S7 input error."""
 
@@ -4973,6 +5008,81 @@ def test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_ent
     assert refused.stop_trace.phase == "ENTRY"
     assert refused.stop_trace.reason == "RESOURCE-EXHAUSTED"
     assert refused.diagnostics[-1].code == "RESOURCE-STOP"
+
+
+def test_noninformative_test_does_not_squeeze_an_eligible_known_prep() -> None:
+    """A non-distinguishing TEST is not an A2 substitute for a legal Prep."""
+
+    binding, model, fixture = _runtime_parts()
+    model_data = copy.deepcopy(fixture["algorithmModel"])
+    assert isinstance(model_data, dict)
+    source_actions = model_data["actions"]
+    assert isinstance(source_actions, list)
+    no_information = copy.deepcopy(next(
+        item for item in source_actions if item["id"] == "test-no-information"
+    ))
+    router = copy.deepcopy(next(item for item in source_actions if item["id"] == "test-router"))
+    assert isinstance(no_information, dict) and isinstance(router, dict)
+    no_information["enabledSummaries"] = ["q0"]
+    router.update({
+        "id": "prep-after-no-information",
+        "kind": "PREP",
+        "declaredTarget": "prepared-q1",
+        "recoverWhenUnknown": False,
+        "enabledSummaries": ["q0"],
+    })
+    transition = router["transition"]
+    assert isinstance(transition, dict)
+    transition["id"] = "tr-prep-after-no-information"
+    model_data["actions"] = [no_information, router]
+    limits = model_data["limits"]
+    assert isinstance(limits, dict)
+    limits["actions"] = 2
+    admission_model = FiniteSessionModel.from_mapping(context=model.context, value=model_data)
+
+    environment = SyntheticEnvironment.from_mapping({
+        "initialPrivateState": "private-prep",
+        "uncertaintyIdentity": "synthetic-u-1",
+        "states": {
+            "private-prep": {
+                "prep-after-no-information": {
+                    "effectClass": "NONE",
+                    "observable": None,
+                    "summaryConfirmed": True,
+                    "postSummary": "prepared-q1",
+                    "measurementTick": None,
+                    "nextPrivateState": "private-prep",
+                    "prepRecover": {
+                        "targetConfirmed": False,
+                        "summaryConfirmed": True,
+                        "prepError": False,
+                        "ineligible": False,
+                        "declaredTarget": "prepared-q1",
+                        "evidence": "synthetic:bc04:no-information-prep",
+                        "postSummary": "prepared-q1",
+                    },
+                },
+            },
+        },
+    })
+    session = ReferenceSession(
+        binding=binding,
+        model=admission_model,
+        session_id="session-no-information-prep",
+        run_id="run-no-information-prep",
+        initial_summary="q0",
+        resources=ResourceState.rounds(2),
+    )
+    result = session.run(environment, maximum_rounds=1)
+
+    evidence = result.state.evidence[0]
+    assert evidence.snapshot.action_id == "prep-after-no-information"
+    assert evidence.snapshot.action_kind == "PREP"
+    assert evidence.history_after.hypotheses == session.initial_state.history.hypotheses
+    assert evidence.summary_after == "prepared-q1"
+    assert evidence.resource_before.remaining == 2
+    assert evidence.resource_after.remaining == 1
+    assert result.stop_reason == "Stop-Round-Limit"
 
 
 @pytest.mark.parametrize("reverse_actions", [False, True])

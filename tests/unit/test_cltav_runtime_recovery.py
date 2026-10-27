@@ -2259,6 +2259,75 @@ def test_unknown_session_admits_confirmed_recover_and_only_s8_sets_target_eviden
     assert no_dispatch.calls == 0
 
 
+def test_confirmed_recover_repredicts_a_q1_test_without_promoting_conservative_history() -> None:
+    """S8/S9 restores q1, while C-U history correctly withholds TEST scoring.
+
+    The q1 TEST is deliberately present and current after the fully confirmed
+    Recover.  It cannot become an admitted distinguishing action because the
+    preceding S7 left every retained member conservative; a normal visible
+    class must retain those members rather than silently promote them.  A q0
+    Prep is also present so that a stale-summary selector would dispatch it;
+    the named q1 prediction gap is therefore a public re-prediction witness.
+    """
+
+    binding, base, fixture = _runtime_parts()
+    test_q0 = _action(
+        fixture, "test-router", action_id="test-q0", kind="TEST", enabled_summaries=["q0"],
+    )
+    stale_q0_prep = _action(
+        fixture, "test-router", action_id="prep-stale-q0", kind="PREP", enabled_summaries=["q0"],
+        declared_target="stale-prep-target",
+    )
+    recover = _action(
+        fixture, "test-router", action_id="recover-q", kind="RECOVER", enabled_summaries=["q0"],
+        declared_target="recovered-q1", recover_when_unknown=True,
+    )
+    test_q1 = _action(
+        fixture, "test-router", action_id="test-after-recover", kind="TEST", enabled_summaries=["q1"],
+    )
+    model = _model_with(base, fixture, [test_q0, stale_q0_prep, recover, test_q1])
+    session = ReferenceSession(
+        binding=binding, model=model, session_id="session-recover-repredict", run_id="run-recover-repredict",
+        initial_summary="q0", resources=ResourceState.rounds(3), retry_cap=2,
+    )
+    environment = _environment({
+        "private-0": {"test-q0": _unknown("private-1")},
+        "private-1": {
+            "recover-q": _prep_recover(
+                target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="recovered-q1", evidence="synthetic:recover:repredict",
+                post_summary="q1", next_state="private-2",
+            ),
+        },
+        "private-2": {
+            "prep-stale-q0": _prep_recover(
+                target_confirmed=False, summary_confirmed=True, prep_error=False, ineligible=False,
+                declared_target="stale-prep-target", evidence="synthetic:recover:stale-q0",
+                post_summary="stale-prep-summary", next_state="private-2",
+            ),
+        },
+    })
+
+    unknown = session.step(session.initial_state, environment)
+    assert unknown.stop_reason is None
+    recovered = session.step(unknown.state, unknown.environment)
+    assert recovered.stop_reason is None
+    assert recovered.state.context.q_status == "KNOWN"
+    assert recovered.state.context.current_summary == "q1"
+    assert recovered.state.context.known_target == "recovered-q1"
+    assert recovered.state.context.known_evidence == ("synthetic:recover:repredict",)
+    assert set(recovered.state.history.status_by_hypothesis.values()) == {"CONSERVATIVE-UNKNOWN"}
+
+    follow_on = session.step(recovered.state, recovered.environment)
+
+    assert follow_on.stop_reason == "Stop-Prediction-Gap"
+    assert len(follow_on.state.evidence) == 2
+    assert follow_on.state.context.current_summary == "q1"
+    assert follow_on.state.resources.remaining == 1
+    assert any(diagnostic.code == "CONSERVATIVE-PREDICTION-GAP" for diagnostic in follow_on.diagnostics)
+    assert any(diagnostic.code == "PREDICTION-GAP" for diagnostic in follow_on.diagnostics)
+
+
 def test_unconfirmed_recover_stays_on_s7_and_cannot_write_s8_or_s9() -> None:
     binding, base, fixture = _runtime_parts()
     model = _router_recover_model(base, fixture)

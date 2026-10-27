@@ -143,10 +143,10 @@ substitute for that evidence identity.
 |---|---|---|
 | BC-01 | PARTIAL | `session::test_two_round_feedback_consumes_committed_summary_and_changes_selection`; `recovery::test_confirmed_summary_only_prep_propagates_declared_model_successor`; fresh/tampered checkpoint combinations remain later work. |
 | BC-02 | PARTIAL | `session::test_two_round_feedback_consumes_committed_summary_and_changes_selection`; more visible-result/action combinations remain. |
-| BC-03 | VERIFIED | `session::test_prediction_keeps_overlapping_classes_and_names_a_current_gap`; `session::test_unaffordable_best_test_and_no_information_test_do_not_displace_router`; bounded model only. |
+| BC-03 | VERIFIED | `session::test_prediction_keeps_overlapping_classes_and_names_a_current_gap`; `session::test_unaffordable_best_test_and_no_information_test_do_not_displace_router`; `session::test_noninformative_test_does_not_squeeze_an_eligible_known_prep`; bounded model only. |
 | BC-04 | VERIFIED | Public `ReferenceSession.run` regressions hand-check the bounded current TEST set: a smaller worst remaining set wins among affordable distinguishers; an unaffordable global optimum does not hide the router; then cost and stable action ID decide ties; legal action/hypothesis declaration reordering preserves action, candidates, charge and stop semantics. Different declarations need not share a model identity. `session::test_rounds_mode_consumes_one_issued_action_not_declared_action_cost`; `session::test_unaffordable_best_test_and_no_information_test_do_not_displace_router`; `session::test_public_admission_uses_cost_then_stable_id_independent_of_legal_input_order`. |
 | BC-05 | VERIFIED | `session::test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_entry`; Recovery A4/A5 tests; ownership/T5 are outside this result. |
-| BC-06 | PARTIAL | summary-only Prep q0→q1 and unconfirmed-Prep recovery regressions; full Recover continuation remains. |
+| BC-06 | VERIFIED | summary-only Prep q0→q1 and unconfirmed-Prep recovery regressions; `recovery::test_confirmed_recover_repredicts_a_q1_test_without_promoting_conservative_history` proves that a full Recover commits S8/S9's q1/target/evidence and re-predicts the q1 TEST without promoting conservative history or dispatching stale-q0 Prep. Bounded synthetic continuation only. |
 | BC-07 | PARTIAL | confirmed, unconfirmed and target-only Recover public regressions; complete recovery-estimation boundary remains. |
 | BC-08 | VERIFIED | confirmed-not-sent and CNS/UNKNOWN stale-delivery regressions; finite synthetic boundary. |
 | BC-09 | PARTIAL | retry-cap, duplicate and post-dispatch error tests; all return contexts/final stop policy remain. |
@@ -155,7 +155,7 @@ substitute for that evidence identity.
 | BC-12 | VERIFIED | infeasible/multi-path and conservative-path retention regressions; finite bounds only. |
 | BC-13 | PARTIAL | Raw material cannot inject policy/deadline/verdict. FIFO/MOST-RECENT, explicit cancellation/supersession, session-seeded ACTIVE ownership context plus the retained-ledger global event-order frontier for incremental deltas or exact cumulative reappearance, terminal request/response exclusion, and conflict quarantine are covered by `interpretation` and `session` regressions. A conflict may seal an uncontested new response but cannot reclassify an existing request identity; every emitted ledger state must remain replayable as a portable checkpoint. Bounded synthetic traces only. |
 | BC-14 | PARTIAL | Frozen-contract interval containment/separation/boundary tests, plus empty physical domain and invalid clock/unit/error basis. Contract/material/clock/unit/uncertainty checks occur before deadline authority branching; no physical calibration claim. |
-| BC-15 | PARTIAL | No-response uses cancellation/supersession, qualified horizon and deadline-authority regressions. METHOD-ONLY/UNRESOLVED never becomes a scored deadline. In pure reviewed semantics, closed upper bound uses `earliest > U` and open upper bound uses `earliest >= U`; this runtime rejects REVIEWED authority without a controlled registry. |
+| BC-15 | PARTIAL | No-response uses cancellation/supersession, qualified horizon and deadline-authority regressions. `session::test_session_unresolved_deadline_without_registry_keeps_silence_unscored` joins the METHOD-ONLY witness: neither authority becomes a scored deadline. In pure reviewed semantics, closed upper bound uses `earliest > U` and open upper bound uses `earliest >= U`; this runtime rejects REVIEWED authority without a controlled registry. |
 | BC-16 | PARTIAL | Public finite regressions cover P1/P2/P3/P5 priority, exact six-row Git-bound residual selection, explicit inactive and METHOD-ONLY outcomes, compatibility `P3-UNAVAILABLE`, and replay identity freezing. P4 remains deliberately unimplemented: no proof producer may emit `established`. |
 | BC-17 | PENDING | Equivalence proof and its bounded proof domain remain later B/C work. |
 | BC-18 | PARTIAL | public execution-request isolation regression; complete action/state environment matrix remains. |
@@ -597,10 +597,10 @@ GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出�
 |---|---|---|
 | BC-01 | PARTIAL | 两轮反馈和仅摘要 Prep 的 q0→q1 回归；新鲜／篡改 checkpoint 的组合仍属后续工作。 |
 | BC-02 | PARTIAL | 两轮反馈改变后继选择的回归；更多可见结果／动作组合仍待覆盖。 |
-| BC-03 | VERIFIED | 重叠 classes、当前 GAP 和无信息 TEST 的回归；仅限有界模型。 |
+| BC-03 | VERIFIED | 重叠 classes、当前 GAP、无信息 TEST 以及无信息 TEST 不得挤出合格 KNOWN Prep 的回归；仅限有界模型。 |
 | BC-04 | VERIFIED | 公共 `ReferenceSession.run` 回归以人工预期核对有界的当前 TEST 集：在可负担且有区分价值的 TEST 中，较小的最坏剩余集合优先；全局最优但不可负担的 TEST 不得遮蔽 router；随后以成本和稳定 action ID 决定平局。合法 action／hypothesis 声明重排必须保持 action、candidates、charge 和停止语义。不同声明无需具有相同 model identity。`session::test_rounds_mode_consumes_one_issued_action_not_declared_action_cost`；`session::test_unaffordable_best_test_and_no_information_test_do_not_displace_router`；`session::test_public_admission_uses_cost_then_stable_id_independent_of_legal_input_order`。 |
 | BC-05 | VERIFIED | 当前 TEST GAP 与同一准入入口的合格 Prep 回归，以及 Recover A4/A5；ownership／T5 不在本结论内。 |
-| BC-06 | PARTIAL | 仅摘要 Prep q0→q1 和未确认 Prep 的候选保留回归；完整 Recover 后继仍待完成。 |
+| BC-06 | VERIFIED | 仅摘要 Prep q0→q1 和未确认 Prep 的候选保留回归；`recovery::test_confirmed_recover_repredicts_a_q1_test_without_promoting_conservative_history` 证明完整 Recover 提交 S8/S9 的 q1／target／evidence，并重新预测 q1 TEST，不得提升保守 history 或派发过期 q0 Prep。仅限有界 synthetic 后继。 |
 | BC-07 | PARTIAL | 已确认、未确认和仅目标确认 Recover 的公共回归；完整恢复估计边界仍待完成。 |
 | BC-08 | VERIFIED | CONFIRMED-NOT-SENT 及 CNS／UNKNOWN 过期投递回归；仅限有限合成边界。 |
 | BC-09 | PARTIAL | retry-cap、重复投递和派发后错误回归；所有返回上下文／最终停止策略仍待完成。 |
@@ -609,7 +609,7 @@ GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出�
 | BC-12 | VERIFIED | 不可行／多路径及保守路径保留回归；仅限有限边界。 |
 | BC-13 | PARTIAL | 原始材料不得注入 policy／deadline／判定。FIFO/MOST-RECENT、显式取消／替代、由 session 注入的 ACTIVE ownership 上下文及保留账本的全局 event-order 前沿（支持增量 delta 或精确的累计再次出现）、终态 request／response 排除及冲突隔离均由 `interpretation` 和 `session` 回归覆盖。冲突可封存无争议的新 response，但不得重分类既有 request 身份；每个发出的账本 state 都必须能作为可移植 checkpoint 重放。仅为有界 synthetic 事件迹。 |
 | BC-14 | PARTIAL | 冻结合同的区间包含／分离／边界测试，以及空物理域、无效时钟／单位／误差依据。contract/material/clock/unit/uncertainty 必须先于 deadline authority 分支校验；不主张物理校准。 |
-| BC-15 | PARTIAL | 无响应使用取消／替代、合格 horizon 和 deadline authority 回归。METHOD-ONLY／UNRESOLVED 永远不得成为可计分 deadline。纯 reviewed 语义中，闭上界使用 `earliest > U`，开上界使用 `earliest >= U`；本 runtime 没有受控 registry 时拒绝 REVIEWED authority。 |
+| BC-15 | PARTIAL | 无响应使用取消／替代、合格 horizon 和 deadline authority 回归。`session::test_session_unresolved_deadline_without_registry_keeps_silence_unscored` 与 METHOD-ONLY witness 共同证明二者不得成为可计分 deadline。纯 reviewed 语义中，闭上界使用 `earliest > U`，开上界使用 `earliest >= U`；本 runtime 没有受控 registry 时拒绝 REVIEWED authority。 |
 | BC-16 | PARTIAL | 公共有限回归覆盖 P1／P2／P3／P5 优先级、精确六行 Git 绑定 residual 选择、显式不适用和 METHOD-ONLY 结果、兼容 `P3-UNAVAILABLE` 以及 replay 身份冻结。P4 仍被刻意保留：没有证明生产者可发出 `established`。 |
 | BC-17 | PENDING | 等价证明及其有界证明域属于后续 B/C 工作。 |
 | BC-18 | PARTIAL | 公共执行请求隔离回归；完整 action/state 环境矩阵仍待完成。 |
