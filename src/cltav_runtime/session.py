@@ -77,6 +77,14 @@ _OBSERVATION_ORDER_REJECTION_CODES = frozenset({
     "INSUFFICIENT-OWNERSHIP-CONTEXT",
     "INVALID-OWNERSHIP-ORDER-BOUNDARY",
 })
+_OPAQUE_TOOL_ERROR_CODES = frozenset({
+    "POST-DISPATCH-ERROR",
+    "EXECUTION-RESULT-TYPE-ERROR",
+})
+_NO_RAW_PLACEHOLDER_CODES = frozenset({
+    "EXECUTION-TOOL-ERROR",
+    *_OPAQUE_TOOL_ERROR_CODES,
+})
 _MAPPING_PROXY_TYPE = type(MappingProxyType({}))
 
 
@@ -273,6 +281,30 @@ class _ObservationLedgerDelta:
     replayed_request_ids: frozenset[str]
     event_refs: Mapping[str, OwnershipEvent]
     active_trigger_ids: frozenset[str]
+
+
+@dataclass(frozen=True)
+class _RejectedVisibleRecordCause:
+    """One finite S4 cause derived from a retained typed visible record.
+
+    This is deliberately separate from ``RoundEvidence.resolution_code``.
+    The latter is a public audit field and therefore cannot itself prove why
+    a checkpoint entered S7.  Both the live S4 path and public replay derive
+    this small result from the frozen record, issued action/attempt, contract,
+    and prior ownership ledger instead.
+
+    ``raw_policy`` has only two values here.  A calculable ordinary record
+    cause needs the retained typed raw witness; an unsupported outer event
+    carrier must never be retained as a replayable raw witness.  Opaque tool
+    failures are intentionally outside this type because their external
+    failure fact is not represented by a visible record alone.
+    """
+
+    code: str
+    message: str
+    raw_policy: str
+    assessment: ObservationAssessment | None
+    ledger_mode: str
 
 
 @dataclass(frozen=True)
@@ -998,48 +1030,48 @@ class ReferenceSession:
             # An adapter/tool failure is represented by a deliberately narrow
             # placeholder record.  It is still charged and must replay the
             # exact named S7 branch, not the pre-B/C-2 terminal shortcut.
+            # For a retained typed raw record, however, the branch code is
+            # derived again below instead of trusted as editable evidence.
             if _is_expected_error_record(item.execution, item.snapshot, expected_execution_id):
                 assessment = item.observation_assessment
-                expected_code = item.resolution_code
-                if assessment is not None:
-                    if type(item.rejected_response) is not VisibleExecutionRecord:
-                        return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "observation-bearing canonical error has no retained visible record")
-                    expected_assessment = _bound_rejected_observation_assessment(
-                        item.rejected_response,
-                        action=action,
-                        interpretation_contract=self._interpretation_contract,
-                        model=replay_model,
-                        execution_attempt_id=expected_execution_id,
-                        prior_active_requests=_active_ownership_seed(
-                            seen_ownership_events,
-                            active_trigger_event_ids,
-                        ),
-                        prior_order_boundary=_ownership_order_boundary(
-                            seen_ownership_events,
-                            self._interpretation_contract,
-                        ),
-                    )
-                    if (
-                        expected_assessment is None
-                        or not _strict_observation_assessment_equal(assessment, expected_assessment)
-                    ):
-                        return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical error assessment is not the bound rejected TEST material")
-                    rejected_record_error = _incoming_record_error(
-                        item.rejected_response,
-                        action=action,
-                        interpretation_contract=self._interpretation_contract,
-                    )
-                    if rejected_record_error is None:
-                        return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical error retains a normal observation record")
-                    conflict = _observation_replay_conflict(
-                        seen_ownership_events,
-                        active_trigger_event_ids,
-                        terminal_trigger_event_ids,
-                        consumed_response_ids,
-                        assessment,
-                    )
-                    expected_code = conflict.code if conflict is not None else rejected_record_error.code
-                elif expected_code == "INVALID-OBSERVATION-EVENT-CARRIER":
+                expected_code: str | None = None
+                ledger_mode = "FULL"
+                if type(item.rejected_response) is VisibleExecutionRecord:
+                    if item.resolution_code in _OPAQUE_TOOL_ERROR_CODES:
+                        # The original external failure is intentionally not
+                        # inferred by re-running a potentially failed helper
+                        # during replay.  This narrow legacy path may retain
+                        # only a same-attempt/action raw record and no derived
+                        # ownership material; it never proves a calculable
+                        # record/identity cause.
+                        if (
+                            assessment is not None
+                            or item.rejected_response.execution_attempt_id != expected_execution_id
+                            or item.rejected_response.action_id != action.action_id
+                        ):
+                            return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "opaque tool error retains an invalid visible record")
+                        expected_code = item.resolution_code
+                    else:
+                        cause = _classify_rejected_visible_record(
+                            item.rejected_response,
+                            action=action,
+                            interpretation_contract=self._interpretation_contract,
+                            model=replay_model,
+                            execution_attempt_id=expected_execution_id,
+                            prior_seen_events=seen_ownership_events,
+                            prior_active_trigger_ids=active_trigger_event_ids,
+                            prior_terminal_trigger_ids=terminal_trigger_event_ids,
+                            prior_consumed_response_ids=consumed_response_ids,
+                        )
+                        if cause is None:
+                            return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical error raw record has no matching calculable S4 cause")
+                        if cause.raw_policy != "REQUIRED":
+                            return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical carrier error must not retain replayable raw material")
+                        if not _strict_observation_assessment_equal(assessment, cause.assessment):
+                            return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical error assessment is not the bound rejected TEST material")
+                        expected_code = cause.code
+                        ledger_mode = cause.ledger_mode
+                elif item.rejected_response is None and item.resolution_code == "INVALID-OBSERVATION-EVENT-CARRIER":
                     # An unsupported outer carrier has no parseable, typed
                     # evidence content.  Live S4 therefore normalizes it to
                     # the canonical charged error record rather than storing
@@ -1047,46 +1079,27 @@ class ReferenceSession:
                     # The code is still explicit, but a raw list, subclass,
                     # or cyclic object cannot be edited into a later ledger
                     # fact or a coordinated evidence witness.
-                    if item.rejected_response is not None:
-                        return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "invalid observation carrier must not retain replayable raw material")
-                elif expected_code == "EXECUTION-IDENTITY-ERROR":
-                    # This branch is the reciprocal of the live S4 identity
-                    # check.  A canonical identity error must retain a visible
-                    # record which actually differs from the issued attempt
-                    # or action; otherwise a stale/foreign return could be
-                    # rewritten into an ordinary record after its charge.  A
-                    # foreign record with an unsupported outer event carrier
-                    # is instead canonicalized by the earlier carrier-error
-                    # branch, so it cannot be smuggled back by coordinated
-                    # resolution-code and error-history substitution.
-                    retained_record_error = (
-                        _incoming_record_error(
-                            item.rejected_response,
-                            action=action,
-                            interpretation_contract=self._interpretation_contract,
-                        )
-                        if type(item.rejected_response) is VisibleExecutionRecord
-                        else None
-                    )
-                    if (
-                        type(item.rejected_response) is not VisibleExecutionRecord
-                        or (
-                            item.rejected_response.execution_attempt_id == expected_execution_id
-                            and item.rejected_response.action_id == action.action_id
-                        )
-                        or (
-                            retained_record_error is not None
-                            and retained_record_error.code == "INVALID-OBSERVATION-EVENT-CARRIER"
-                        )
-                    ):
-                        return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "identity error does not retain a foreign execution record")
+                    if assessment is not None:
+                        return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "invalid observation carrier cannot retain an ownership assessment")
+                    expected_code = "INVALID-OBSERVATION-EVENT-CARRIER"
+                elif item.rejected_response is None and item.resolution_code in _NO_RAW_PLACEHOLDER_CODES:
+                    # A tool-before-dispatch error has no visible record, and
+                    # a subset of established tool/result errors may have no
+                    # retainable raw record.  They may not manufacture an
+                    # assessment in either case.
+                    if assessment is not None:
+                        return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "opaque tool error cannot retain an ownership assessment")
+                    expected_code = item.resolution_code
+                else:
+                    return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical charged error lacks the required replayable raw witness")
                 if (
-                    expected_code not in _CHARGED_ERROR_CODES
+                    expected_code is None
+                    or expected_code not in _CHARGED_ERROR_CODES
                     or item.resolution_code != expected_code
                 ):
                     return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical charged error record uses an uncontrolled resolution code")
                 expected_history, expected_context, expected_stop, expected_trace = s7_expected(
-                    item.resolution_code, item.execution,
+                    expected_code, item.execution,
                 )
                 if (
                     item.committed
@@ -1102,14 +1115,7 @@ class ReferenceSession:
                 processed_ids = processed_ids | {expected_execution_id}
                 apply_observation_ledger(
                     assessment,
-                    mode=_observation_ledger_mode(
-                        assessment,
-                        conflict_code=(
-                            item.resolution_code
-                            if item.resolution_code in _OBSERVATION_QUARANTINE_CODES
-                            else None
-                        ),
-                    ),
+                    mode=ledger_mode,
                 )
                 if expected_stop is not None and index != len(state.evidence):
                     return KernelDiagnostic("EVIDENCE-TERMINAL-MISMATCH", "a retry-cap error evidence item cannot have a later causal round")
@@ -1730,43 +1736,18 @@ class ReferenceSession:
                     execution.successor if isinstance(execution.successor, SyntheticEnvironment) else None
                 ),
             )
-        record_error = _incoming_record_error(
-            execution.record, action=action, interpretation_contract=self._interpretation_contract,
+        rejected_cause = _classify_rejected_visible_record(
+            execution.record,
+            action=action,
+            interpretation_contract=self._interpretation_contract,
+            model=model,
+            execution_attempt_id=execution_attempt_id,
+            prior_seen_events=state.event_identity_refs,
+            prior_active_trigger_ids=state.active_trigger_event_ids,
+            prior_terminal_trigger_ids=state.terminal_trigger_event_ids,
+            prior_consumed_response_ids=state.consumed_response_ids,
         )
-        if record_error is not None:
-            # A malformed visible S4 record is still not entitled to erase a
-            # correctly bound raw ownership/timing observation.  Preserve the
-            # assessment only when the raw material names this *issued*
-            # execution and passes the bidirectional binding check; arbitrary
-            # malformed adapter objects never acquire ledger authority here.
-            rejected_assessment = _bound_rejected_observation_assessment(
-                execution.record,
-                action=action,
-                interpretation_contract=self._interpretation_contract,
-                model=model,
-                execution_attempt_id=execution_attempt_id,
-                prior_active_requests=_active_ownership_seed(
-                    state.event_identity_refs,
-                    state.active_trigger_event_ids,
-                ),
-                prior_order_boundary=_ownership_order_boundary(
-                    state.event_identity_refs,
-                    self._interpretation_contract,
-                ),
-            )
-            rejected_code = record_error.code
-            rejected_replay_conflict = False
-            if rejected_assessment is not None:
-                rejected_conflict = _observation_replay_conflict(
-                    state.event_identity_refs,
-                    state.active_trigger_event_ids,
-                    state.terminal_trigger_event_ids,
-                    state.consumed_response_ids,
-                    rejected_assessment,
-                )
-                if rejected_conflict is not None:
-                    rejected_code = rejected_conflict.code
-                    rejected_replay_conflict = rejected_code in _OBSERVATION_QUARANTINE_CODES
+        if rejected_cause is not None:
             return self._charged_execution_error(
                 state=state,
                 environment=environment,
@@ -1778,45 +1759,18 @@ class ReferenceSession:
                 charged_resources=charged_resources,
                 execution_attempt_id=execution_attempt_id,
                 diagnostics=diagnostics,
-                code=rejected_code,
-                message=record_error.message,
-                # The unsupported outer carrier is neither typed trace
-                # evidence nor a safe replay witness.  Retain its named S4
-                # failure through the canonical charged error record only;
-                # never place the arbitrary raw container in checkpoint
-                # evidence where a later coordinator could mistake it for
-                # parsed material.
+                code=rejected_cause.code,
+                message=rejected_cause.message,
+                # An unsupported outer carrier is neither typed trace
+                # evidence nor a safe replay witness.  The shared classifier
+                # makes that C05 rule precede foreign identity, while every
+                # ordinary calculable cause retains its typed witness.
                 execution_record=(
-                    None
-                    if rejected_code == "INVALID-OBSERVATION-EVENT-CARRIER"
-                    else execution.record
+                    None if rejected_cause.raw_policy == "FORBIDDEN" else execution.record
                 ),
                 environment_after_execution=execution.successor,
-                observation_assessment=rejected_assessment,
-                observation_ledger_mode=_observation_ledger_mode(
-                    rejected_assessment,
-                    conflict_code=(rejected_code if rejected_replay_conflict else None),
-                ),
-            )
-        if (
-            execution.record.execution_attempt_id != execution_attempt_id
-            or execution.record.action_id != snapshot.action_id
-        ):
-            return self._charged_execution_error(
-                state=state,
-                environment=environment,
-                snapshot=snapshot,
-                prediction=prediction,
-                action=action,
-                resource_before=resource_before,
-                resource_after=resource_after,
-                charged_resources=charged_resources,
-                execution_attempt_id=execution_attempt_id,
-                diagnostics=diagnostics,
-                code="EXECUTION-IDENTITY-ERROR",
-                message="execution result attempt/action identity is invalid",
-                execution_record=execution.record,
-                environment_after_execution=execution.successor,
+                observation_assessment=rejected_cause.assessment,
+                observation_ledger_mode=rejected_cause.ledger_mode,
             )
         if execution.record.effect_class == "CONFIRMED-NOT-SENT":
             return self._retry_after_not_sent(
@@ -3262,6 +3216,101 @@ def _bound_rejected_observation_assessment(
         assessment,
         _observation_record_binding_error(record, model),
     )
+
+
+def _classify_rejected_visible_record(
+    record: VisibleExecutionRecord,
+    *,
+    action: SyntheticAction,
+    interpretation_contract: InterpretationContract | None,
+    model: FiniteSessionModel,
+    execution_attempt_id: str,
+    prior_seen_events: Mapping[str, OwnershipEvent],
+    prior_active_trigger_ids: frozenset[str],
+    prior_terminal_trigger_ids: frozenset[str],
+    prior_consumed_response_ids: frozenset[str],
+) -> _RejectedVisibleRecordCause | None:
+    """Derive one calculable S4 rejection without trusting audit metadata.
+
+    Keep this relation deliberately narrow: it covers causes whose minimum
+    witness is the frozen typed visible record (record shape, carrier,
+    ownership/binding conflict, target and issued identity).  It is shared by
+    live S4 and checkpoint replay so a caller cannot relabel one such witness
+    by coordinating ``resolution_code`` and the resulting S7 history fields.
+    External tool failures remain opaque until their own durable evidence
+    package exists; they are not falsely reconstructed from a record here.
+    """
+
+    record_error = _incoming_record_error(
+        record,
+        action=action,
+        interpretation_contract=interpretation_contract,
+    )
+    if record_error is not None:
+        # A malformed visible S4 record is still not entitled to erase a
+        # correctly bound raw ownership/timing observation.  Preserve an
+        # assessment only when the typed material names this issued execution
+        # exactly and its provenance binding closes.  The outer-carrier case
+        # deliberately returns no assessment and no raw witness.
+        assessment = _bound_rejected_observation_assessment(
+            record,
+            action=action,
+            interpretation_contract=interpretation_contract,
+            model=model,
+            execution_attempt_id=execution_attempt_id,
+            prior_active_requests=_active_ownership_seed(
+                prior_seen_events,
+                prior_active_trigger_ids,
+            ),
+            prior_order_boundary=_ownership_order_boundary(
+                prior_seen_events,
+                interpretation_contract,
+            ),
+        )
+        conflict = (
+            _observation_replay_conflict(
+                prior_seen_events,
+                prior_active_trigger_ids,
+                prior_terminal_trigger_ids,
+                prior_consumed_response_ids,
+                assessment,
+            )
+            if assessment is not None
+            else None
+        )
+        code = conflict.code if conflict is not None else record_error.code
+        return _RejectedVisibleRecordCause(
+            code=code,
+            # Preserve the live diagnostic contract: a ledger conflict may
+            # select the S7 branch, while the immediate S4 message remains
+            # the record-shape diagnosis that exposed the rejected witness.
+            message=record_error.message,
+            raw_policy=(
+                "FORBIDDEN"
+                if record_error.code == "INVALID-OBSERVATION-EVENT-CARRIER"
+                else "REQUIRED"
+            ),
+            assessment=assessment,
+            ledger_mode=_observation_ledger_mode(
+                assessment,
+                conflict_code=(
+                    code if conflict is not None and code in _OBSERVATION_QUARANTINE_CODES else None
+                ),
+            ),
+        )
+
+    if (
+        record.execution_attempt_id != execution_attempt_id
+        or record.action_id != action.action_id
+    ):
+        return _RejectedVisibleRecordCause(
+            code="EXECUTION-IDENTITY-ERROR",
+            message="execution result attempt/action identity is invalid",
+            raw_policy="REQUIRED",
+            assessment=None,
+            ledger_mode="FULL",
+        )
+    return None
 
 
 def _assessment_with_binding_error(

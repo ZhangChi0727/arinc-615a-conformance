@@ -36,6 +36,7 @@ from cltav_runtime.session import (
 from cltav_runtime.synthetic import (
     EnvironmentExecution,
     ExecutionRequest,
+    PrepRecoverResult,
     SyntheticEnvironment,
     VisibleExecutionRecord,
 )
@@ -174,6 +175,147 @@ def _environment_with_observation_material(
             "measurementTick": None,
         })
     return SyntheticEnvironment.from_mapping(source)
+
+
+def _g1_recovery_model(
+    base_model: FiniteSessionModel,
+    fixture: dict[str, object],
+) -> FiniteSessionModel:
+    """A small unknown-session Recover path for public replay controls."""
+
+    source = copy.deepcopy(fixture["algorithmModel"])
+    assert isinstance(source, dict)
+    raw_actions = source["actions"]
+    assert isinstance(raw_actions, list)
+    router = copy.deepcopy(next(item for item in raw_actions if item["id"] == "test-router"))
+    recover = copy.deepcopy(router)
+    recover.update({
+        "id": "recover-q",
+        "kind": "RECOVER",
+        "declaredTarget": "recovered-q1",
+        "recoverWhenUnknown": True,
+        "detailCharges": {
+            "acquisition": 0,
+            "computation": 0,
+            "preparation": 0,
+            "recovery": 1,
+            "retry": 0,
+        },
+    })
+    transition = recover["transition"]
+    assert isinstance(transition, dict)
+    transition["id"] = "tr-g1-recover-q"
+    source["actions"] = [router, recover]
+    limits = source["limits"]
+    assert isinstance(limits, dict)
+    limits["actions"] = 2
+    return FiniteSessionModel.from_mapping(context=base_model.context, value=source)
+
+
+def _g1_recovery_environment(fixture: dict[str, object]) -> SyntheticEnvironment:
+    """Provide a real, affordable Recover after every G1 rejection path."""
+
+    source = copy.deepcopy(fixture["environments"]["alpha"])
+    assert isinstance(source, dict)
+    states = source["states"]
+    assert isinstance(states, dict)
+    recovery_outcome = {
+        "effectClass": "NONE",
+        "observable": None,
+        "summaryConfirmed": True,
+        "postSummary": "q1",
+        "measurementTick": None,
+        "nextPrivateState": "private-a2",
+        "prepRecover": {
+            "targetConfirmed": True,
+            "summaryConfirmed": True,
+            "prepError": False,
+            "ineligible": False,
+            "declaredTarget": "recovered-q1",
+            "evidence": "synthetic:g1-causal-audit:recover",
+            "postSummary": "q1",
+        },
+    }
+    for state_id in ("private-a0", "private-a1", "private-a2"):
+        state = states[state_id]
+        assert isinstance(state, dict)
+        state["recover-q"] = copy.deepcopy(recovery_outcome)
+    return SyntheticEnvironment.from_mapping(source)
+
+
+def _g1_recovery_session(
+    binding: RuntimeAuthorityBinding,
+    model: FiniteSessionModel,
+    *,
+    session_id: str,
+    run_id: str,
+) -> ReferenceSession:
+    return ReferenceSession(
+        binding=binding,
+        model=model,
+        session_id=session_id,
+        run_id=run_id,
+        initial_summary="q0",
+        resources=ResourceState.rounds(4),
+        retry_cap=4,
+    )
+
+
+def _assert_g1_public_replay_rejected(
+    session: ReferenceSession,
+    candidate: SessionState,
+) -> None:
+    """Use the public resume boundary, not a helper-only integrity check."""
+
+    class NoDispatch:
+        calls = 0
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:  # pragma: no cover - must not run
+            self.calls += 1
+            raise AssertionError(f"forged causal checkpoint reached dispatch: {request}")
+
+    no_dispatch = NoDispatch()
+    blocked = session.step(candidate, no_dispatch)  # type: ignore[arg-type]
+    assert no_dispatch.calls == 0
+    assert blocked.stop_reason == "Stop-Error"
+    assert blocked.state is candidate
+    assert blocked.environment is no_dispatch
+    assert blocked.state.resources == candidate.resources
+    assert blocked.state.attempts == candidate.attempts
+    assert blocked.state.history == candidate.history
+    assert blocked.state.context == candidate.context
+    assert blocked.state.evidence == candidate.evidence
+    assert blocked.diagnostics[0].code == "EVIDENCE-ERROR-MISMATCH"
+
+
+def _g1_coordinated_error_relabel(
+    state: SessionState,
+    *,
+    replacement_code: str,
+) -> SessionState:
+    """Make the usual four-field S7 relabel mutation from genuine evidence."""
+
+    evidence = state.evidence[-1]
+    assert evidence.resolution_code is not None
+    original_code = evidence.resolution_code
+    context = replace(
+        state.context,
+        error_history=tuple(
+            entry.replace(f"{original_code}:", f"{replacement_code}:", 1)
+            for entry in state.context.error_history
+        ),
+        unknown_history=tuple(
+            entry.replace(f"{original_code}:", f"{replacement_code}:", 1)
+            for entry in state.context.unknown_history
+        ),
+    )
+    return replace(
+        state,
+        context=context,
+        evidence=state.evidence[:-1] + (
+            replace(evidence, resolution_code=replacement_code),
+        ),
+    )
 
 
 def _two_round_observation_environment(
@@ -5712,3 +5854,271 @@ def test_unknown_path_is_retained_with_a_feasible_path_and_not_upgraded_to_known
     assert alpha.hypotheses == {"h0", "h1"}
     assert alpha.conservative_hypotheses == {"h0"}
     assert len(alpha.successors["h0"]) == 2
+
+
+@pytest.mark.parametrize(
+    ("kind", "expected_code", "replacement_code"),
+    (
+        ("identity", "EXECUTION-IDENTITY-ERROR", "INVALID-EXECUTION-RECORD"),
+        ("summary", "SUMMARY-CONFIRMATION-ERROR", "EXECUTION-IDENTITY-ERROR"),
+        ("record", "INVALID-EXECUTION-RECORD", "SUMMARY-CONFIRMATION-ERROR"),
+    ),
+)
+def test_public_replay_rederives_calculable_test_rejection_before_recover(
+    kind: str,
+    expected_code: str,
+    replacement_code: str,
+) -> None:
+    """A01 core: raw Test cause, not its editable code, admits Recover."""
+
+    binding, base_model, fixture = _runtime_parts()
+    model = _g1_recovery_model(base_model, fixture)
+    source = _g1_recovery_session(
+        binding, model,
+        session_id=f"g1-{kind}-replay",
+        run_id=f"g1-{kind}-replay",
+    )
+    delegate = _g1_recovery_environment(fixture)
+
+    class RejectedTestEnvironment:
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = delegate.execute(request)
+            if kind == "identity":
+                record = replace(
+                    returned.record,
+                    execution_attempt_id="foreign-g1-execution",
+                    action_id="foreign-g1-action",
+                    evidence_ref="synthetic:g1:foreign-identity",
+                )
+            elif kind == "summary":
+                record = replace(
+                    returned.record,
+                    post_summary=None,
+                    evidence_ref="synthetic:g1:missing-summary",
+                )
+            else:
+                record = replace(
+                    returned.record,
+                    effect_class="IMPROVISED",
+                    evidence_ref="synthetic:g1:malformed-visible-record",
+                )
+            return EnvironmentExecution(record, returned.successor)
+
+    genuine = source.step(source.initial_state, RejectedTestEnvironment())  # type: ignore[arg-type]
+    evidence = genuine.state.evidence[-1]
+    raw = evidence.rejected_response
+    assert genuine.stop_reason is None
+    assert evidence.resolution_code == expected_code
+    assert type(raw) is VisibleExecutionRecord
+    assert source._state_error(genuine.state) is None
+
+    # Both a same session and an independent coordinator accept the genuine
+    # public checkpoint and truly issue the next affordable Recover.
+    same_recover = source.step(genuine.state, genuine.environment)
+    assert same_recover.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert same_recover.state.evidence[-1].resolution_code == "COMMIT"
+    fresh_binding, fresh_base_model, _fresh_fixture = _runtime_parts()
+    fresh = _g1_recovery_session(
+        fresh_binding,
+        _g1_recovery_model(fresh_base_model, fixture),
+        session_id=f"g1-{kind}-replay",
+        run_id=f"g1-{kind}-replay",
+    )
+    assert fresh._state_error(genuine.state) is None
+    fresh_recover = fresh.step(genuine.state, genuine.environment)
+    assert fresh_recover.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert fresh_recover.state.evidence[-1].resolution_code == "COMMIT"
+
+    if kind == "identity":
+        repaired_raw = replace(
+            raw,
+            execution_attempt_id=evidence.execution.execution_attempt_id,
+            action_id=evidence.snapshot.action_id,
+        )
+    elif kind == "summary":
+        repaired_raw = replace(raw, post_summary="branch-alpha")
+    else:
+        repaired_raw = replace(raw, effect_class="NONE")
+    missing_raw = replace(
+        genuine.state,
+        evidence=genuine.state.evidence[:-1] + (replace(evidence, rejected_response=None),),
+    )
+    repaired = replace(
+        genuine.state,
+        evidence=genuine.state.evidence[:-1] + (replace(evidence, rejected_response=repaired_raw),),
+    )
+    relabelled = _g1_coordinated_error_relabel(
+        genuine.state,
+        replacement_code=replacement_code,
+    )
+    for forged in (missing_raw, repaired, relabelled):
+        _assert_g1_public_replay_rejected(fresh, forged)
+
+
+def test_public_replay_rederives_recover_target_rejection_before_next_recover() -> None:
+    """A01 target witness remains causal across an unknown-session resume."""
+
+    binding, base_model, fixture = _runtime_parts()
+    model = _g1_recovery_model(base_model, fixture)
+    source = _g1_recovery_session(
+        binding, model, session_id="g1-target-replay", run_id="g1-target-replay",
+    )
+    delegate = _g1_recovery_environment(fixture)
+
+    class UnknownThenWrongTarget:
+        def __init__(self, current: SyntheticEnvironment) -> None:
+            self.current = current
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = self.current.execute(request)
+            if request.action_id == "test-router":
+                return EnvironmentExecution(
+                    VisibleExecutionRecord(
+                        execution_attempt_id=request.execution_attempt_id,
+                        action_id=request.action_id,
+                        effect_class="UNKNOWN-EFFECT",
+                        observable=None,
+                        summary_confirmed=False,
+                        post_summary=None,
+                        measurement_tick=None,
+                        uncertainty_identity=None,
+                        evidence_ref="synthetic:g1:unknown-before-target",
+                    ),
+                    returned.successor,
+                )
+            assert request.action_id == "recover-q"
+            result = returned.record.prep_recover
+            assert type(result) is PrepRecoverResult
+            return EnvironmentExecution(
+                replace(
+                    returned.record,
+                    prep_recover=replace(result, declared_target="foreign-g1-target"),
+                ),
+                returned.successor,
+            )
+
+    source_unknown = source.step(source.initial_state, UnknownThenWrongTarget(delegate))  # type: ignore[arg-type]
+    genuine = source.step(
+        source_unknown.state,
+        UnknownThenWrongTarget(source_unknown.environment),
+    )  # type: ignore[arg-type]
+    evidence = genuine.state.evidence[-1]
+    raw = evidence.rejected_response
+    assert evidence.snapshot.action_id == "recover-q"
+    assert evidence.resolution_code == "RECOVERY-TARGET-MISMATCH"
+    assert type(raw) is VisibleExecutionRecord and type(raw.prep_recover) is PrepRecoverResult
+    assert source._state_error(genuine.state) is None
+    same_resumed = source.step(genuine.state, genuine.environment)
+    assert same_resumed.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert same_resumed.state.evidence[-1].resolution_code == "COMMIT"
+
+    fresh_binding, fresh_base_model, _fresh_fixture = _runtime_parts()
+    fresh = _g1_recovery_session(
+        fresh_binding,
+        _g1_recovery_model(fresh_base_model, fixture),
+        session_id="g1-target-replay",
+        run_id="g1-target-replay",
+    )
+    resumed = fresh.step(genuine.state, genuine.environment)
+    assert resumed.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert resumed.state.evidence[-1].resolution_code == "COMMIT"
+
+    repaired_raw = replace(
+        raw,
+        prep_recover=replace(raw.prep_recover, declared_target="recovered-q1"),
+    )
+    missing_raw = replace(
+        genuine.state,
+        evidence=genuine.state.evidence[:-1] + (replace(evidence, rejected_response=None),),
+    )
+    repaired = replace(
+        genuine.state,
+        evidence=genuine.state.evidence[:-1] + (replace(evidence, rejected_response=repaired_raw),),
+    )
+    relabelled = _g1_coordinated_error_relabel(
+        genuine.state,
+        replacement_code="SUMMARY-CONFIRMATION-ERROR",
+    )
+    for forged in (missing_raw, repaired, relabelled):
+        _assert_g1_public_replay_rejected(fresh, forged)
+
+
+def test_public_replay_rejects_a_manufactured_raw_for_a_pure_tool_exception() -> None:
+    """A01 keeps a pre-dispatch tool failure raw-free at the public resume API."""
+
+    class FailingEnvironment:
+        def execute(self, _request: ExecutionRequest) -> object:
+            raise RuntimeError("g1 controlled pre-dispatch failure")
+
+    binding, model, _fixture = _runtime_parts()
+    source = ReferenceSession(
+        binding=binding, model=model, session_id="g1-tool-raw", run_id="g1-tool-raw",
+        initial_summary="q0", resources=ResourceState.rounds(2),
+    )
+    genuine = source.step(source.initial_state, FailingEnvironment())  # type: ignore[arg-type]
+    evidence = genuine.state.evidence[-1]
+    assert evidence.resolution_code == "EXECUTION-TOOL-ERROR"
+    assert evidence.rejected_response is None
+    assert source._state_error(genuine.state) is None
+
+    manufactured = VisibleExecutionRecord(
+        execution_attempt_id=evidence.execution.execution_attempt_id,
+        action_id=evidence.snapshot.action_id,
+        effect_class="NONE",
+        observable="branch-alpha",
+        summary_confirmed=True,
+        post_summary="branch-alpha",
+        measurement_tick=Fraction(0),
+        uncertainty_identity="synthetic-u-1",
+        evidence_ref="synthetic:g1:manufactured-tool-raw",
+    )
+    forged = replace(
+        genuine.state,
+        evidence=genuine.state.evidence[:-1] + (
+            replace(evidence, rejected_response=manufactured),
+        ),
+    )
+    _assert_g1_public_replay_rejected(source, forged)
+
+
+def test_public_replay_preserves_the_raw_free_result_type_boundary_before_recover() -> None:
+    """Opaque result-type timing remains replayable but never gains raw facts.
+
+    A wrong return type is an external adapter fact, not a visible-record
+    cause.  This is intentionally a preservation control rather than a claim
+    that G1 can prove the external fault from checkpoint material; durable
+    evidence/transaction closure stays with G3.
+    """
+
+    class WrongTypeEnvironment:
+        calls = 0
+
+        def execute(self, _request: ExecutionRequest) -> object:
+            self.calls += 1
+            return object()
+
+    binding, base_model, fixture = _runtime_parts()
+    model = _g1_recovery_model(base_model, fixture)
+    source = _g1_recovery_session(
+        binding, model, session_id="g1-result-type", run_id="g1-result-type",
+    )
+    wrong_type = WrongTypeEnvironment()
+    genuine = source.step(source.initial_state, wrong_type)  # type: ignore[arg-type]
+    evidence = genuine.state.evidence[-1]
+    assert wrong_type.calls == 1
+    assert evidence.resolution_code == "EXECUTION-RESULT-TYPE-ERROR"
+    assert evidence.rejected_response is None
+    assert evidence.observation_assessment is None
+    assert genuine.state.resources.remaining == 3
+    assert source._state_error(genuine.state) is None
+
+    fresh_binding, fresh_base_model, _fresh_fixture = _runtime_parts()
+    fresh = _g1_recovery_session(
+        fresh_binding,
+        _g1_recovery_model(fresh_base_model, fixture),
+        session_id="g1-result-type",
+        run_id="g1-result-type",
+    )
+    resumed = fresh.step(genuine.state, _g1_recovery_environment(fixture))
+    assert resumed.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert resumed.state.evidence[-1].resolution_code == "COMMIT"
