@@ -4686,9 +4686,16 @@ def test_unaffordable_best_test_and_no_information_test_do_not_displace_router()
     binding, model, fixture = _runtime_parts()
     budget_model_data = copy.deepcopy(fixture["algorithmModel"])
     for action in budget_model_data["actions"]:
-        if action["id"] in {"test-router", "test-expensive-optimal"}:
+        if action["id"] in {
+            "test-router", "test-expensive-optimal", "test-no-information",
+        }:
             action["enabledSummaries"] = ["budget-q0"]
     budget_model = FiniteSessionModel.from_mapping(context=model.context, value=budget_model_data)
+    # Hand-derived BC-04 witness, deliberately not a call to ``predict``:
+    # test-expensive-optimal leaves singleton outcomes but costs 3; test-router
+    # leaves {h0,h1}/{h2,h3} but costs 1; test-no-information is not
+    # distinguishing. With budget 2, the unaffordable global optimum cannot
+    # obscure the affordable router.
     result = ReferenceSession(
         binding=binding,
         model=budget_model,
@@ -4698,16 +4705,137 @@ def test_unaffordable_best_test_and_no_information_test_do_not_displace_router()
         resources=ResourceState.budget(2),
     ).run(SyntheticEnvironment.from_mapping(fixture["environments"]["alpha"]), maximum_rounds=1)
 
-    assert result.state.evidence[0].snapshot.action_id == "test-router"
-    assert result.state.evidence[0].snapshot.action_id != "test-no-information"
+    evidence = result.state.evidence[0]
+    assert evidence.snapshot.action_id == "test-router"
+    assert evidence.snapshot.action_id != "test-expensive-optimal"
+    assert evidence.snapshot.action_id != "test-no-information"
+    assert [(item.observable, item.hypotheses) for item in evidence.snapshot.classes] == [
+        ("branch-alpha", frozenset({"h0", "h1"})),
+        ("branch-beta", frozenset({"h2", "h3"})),
+    ]
+    assert evidence.resource_before.remaining == 2
+    assert evidence.resource_after.remaining == 1
+    assert evidence.history_after.hypotheses == {"h0", "h1"}
+    assert evidence.detail_charges == {
+        "acquisition": 0, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0,
+    }
+    assert evidence.projected_cost == {
+        "acquisition": 0, "computation": 1, "preparation": 0, "retry": 0,
+    }
+    assert evidence.stop_reason is None
+    assert result.stop_reason == "Stop-Round-Limit"
 
 
-def test_rounds_mode_consumes_one_issued_action_not_declared_action_cost() -> None:
+@pytest.mark.parametrize("reverse_actions", [False, True])
+def test_public_admission_uses_cost_then_stable_id_independent_of_legal_input_order(
+    reverse_actions: bool,
+) -> None:
+    """Exercise BC-04 tie breaks through public ``run``, not ``_admit``.
+
+    Every declared TEST below has the same hand-specified visible partition:
+    ``{h0,h1}`` and ``{h2,h3}``, hence the same worst remaining set of two.
+    ``test-a-cost-two`` is therefore worse only on cost; the two remaining
+    actions tie on both score and cost, so their stable IDs decide the result.
+    Reversing their legal declaration order must not change the selected
+    action, its candidate partition, charge, or terminal run semantics.
+    Different declaration orders intentionally produce distinct model
+    identities, which is not an equivalence requirement for BC-04.
+    """
+
+    binding, model, fixture = _runtime_parts()
+    model_data = copy.deepcopy(fixture["algorithmModel"])
+    assert isinstance(model_data, dict)
+    source_actions = model_data["actions"]
+    assert isinstance(source_actions, list)
+    router = next(item for item in source_actions if item["id"] == "test-router")
+    assert isinstance(router, dict)
+
+    declared: list[dict[str, object]] = []
+    for action_id, cost in (
+        ("test-a-cost-two", 2),
+        ("test-b-stable", 1),
+        ("test-c-stable", 1),
+    ):
+        action = copy.deepcopy(router)
+        action["id"] = action_id
+        action["cost"] = cost
+        action["enabledSummaries"] = ["bc04-q0"]
+        transition = action["transition"]
+        assert isinstance(transition, dict)
+        transition["id"] = f"tr-{action_id}"
+        charges = action["detailCharges"]
+        assert isinstance(charges, dict)
+        charges["computation"] = cost
+        declared.append(action)
+    if reverse_actions:
+        declared.reverse()
+        hypotheses = model_data["hypotheses"]
+        assert isinstance(hypotheses, list)
+        hypotheses.reverse()
+    model_data["actions"] = declared
+    limits = model_data["limits"]
+    assert isinstance(limits, dict)
+    limits["actions"] = len(declared)
+    tie_model = FiniteSessionModel.from_mapping(context=model.context, value=model_data)
+
+    environment_data = copy.deepcopy(fixture["environments"]["alpha"])
+    assert isinstance(environment_data, dict)
+    states = environment_data["states"]
+    assert isinstance(states, dict)
+    initial_actions = states["private-a0"]
+    assert isinstance(initial_actions, dict)
+    router_outcome = initial_actions["test-router"]
+    assert isinstance(router_outcome, dict)
+    for action in declared:
+        action_id = action["id"]
+        assert isinstance(action_id, str)
+        initial_actions[action_id] = copy.deepcopy(router_outcome)
+
+    result = ReferenceSession(
+        binding=binding,
+        model=tie_model,
+        session_id=f"session-bc04-tie-{reverse_actions}",
+        run_id=f"run-bc04-tie-{reverse_actions}",
+        initial_summary="bc04-q0",
+        resources=ResourceState.budget(2),
+    ).run(SyntheticEnvironment.from_mapping(environment_data), maximum_rounds=1)
+
+    evidence = result.state.evidence[0]
+    assert evidence.snapshot.action_id == "test-b-stable"
+    assert evidence.snapshot.action_id != "test-a-cost-two"
+    assert evidence.snapshot.action_id != "test-c-stable"
+    assert [(item.observable, item.hypotheses) for item in evidence.snapshot.classes] == [
+        ("branch-alpha", frozenset({"h0", "h1"})),
+        ("branch-beta", frozenset({"h2", "h3"})),
+    ]
+    assert evidence.resource_before.remaining == 2
+    assert evidence.resource_after.remaining == 1
+    assert evidence.history_after.hypotheses == {"h0", "h1"}
+    assert evidence.detail_charges == {
+        "acquisition": 0, "computation": 1, "preparation": 0, "recovery": 0, "retry": 0,
+    }
+    assert evidence.projected_cost == {
+        "acquisition": 0, "computation": 1, "preparation": 0, "retry": 0,
+    }
+    assert evidence.stop_reason is None
+    assert result.stop_reason == "Stop-Round-Limit"
+
+
+@pytest.mark.parametrize("reverse_actions", [False, True])
+def test_rounds_mode_consumes_one_issued_action_not_declared_action_cost(
+    reverse_actions: bool,
+) -> None:
     binding, model, fixture = _runtime_parts()
     rounds_model_data = copy.deepcopy(fixture["algorithmModel"])
     for action in rounds_model_data["actions"]:
         if action["id"] == "test-expensive-optimal":
             action["enabledSummaries"] = ["q0"]
+    if reverse_actions:
+        actions = rounds_model_data["actions"]
+        hypotheses = rounds_model_data["hypotheses"]
+        assert isinstance(actions, list) and isinstance(hypotheses, list)
+        actions.reverse()
+        hypotheses.reverse()
     rounds_model = FiniteSessionModel.from_mapping(context=model.context, value=rounds_model_data)
     environment = SyntheticEnvironment.from_mapping(
         {
@@ -4721,13 +4849,42 @@ def test_rounds_mode_consumes_one_issued_action_not_declared_action_cost() -> No
         },
     )
     result = ReferenceSession(
-        binding=binding, model=rounds_model, session_id="session-rounds", run_id="run-rounds",
+        binding=binding, model=rounds_model,
+        session_id=f"session-rounds-{reverse_actions}", run_id=f"run-rounds-{reverse_actions}",
         initial_summary="q0", resources=ResourceState.rounds(1),
     ).run(environment, maximum_rounds=1)
 
-    assert result.state.evidence[0].snapshot.action_id == "test-expensive-optimal"
-    assert result.state.evidence[0].resource_before.remaining == 1
-    assert result.state.evidence[0].resource_after.remaining == 0
+    # Hand-computed minimax witness: expensive-optimal exposes four singleton
+    # outcomes (worst = 1), while every other enabled distinguishing TEST has
+    # a worst remaining candidate set of two. ROUNDS makes the declared
+    # monetary cost irrelevant to affordability, but still consumes one
+    # actually issued action.
+    evidence = result.state.evidence[0]
+    assert evidence.snapshot.action_id == "test-expensive-optimal"
+    assert evidence.snapshot.action_id != "test-router"
+    assert [(item.observable, item.hypotheses) for item in evidence.snapshot.classes] == [
+        ("e0", frozenset({"h0"})),
+        ("e1", frozenset({"h1"})),
+        ("e2", frozenset({"h2"})),
+        ("e3", frozenset({"h3"})),
+    ]
+    assert evidence.resource_before.remaining == 1
+    assert evidence.resource_after.remaining == 0
+    assert evidence.history_after.hypotheses == {"h0"}
+    assert evidence.detail_charges == {
+        "acquisition": 0, "computation": 3, "preparation": 0, "recovery": 0, "retry": 0,
+    }
+    assert evidence.projected_cost == {
+        "acquisition": 0, "computation": 3, "preparation": 0, "retry": 0,
+    }
+    # The singleton result has the defined post-update precedence over the
+    # exhausted ROUNDS counter; this must also remain invariant under input
+    # reordering.
+    assert result.stop_reason == "Stop-Singleton"
+    assert evidence.stop_reason == "Stop-Singleton"
+    assert evidence.stop_trace is not None
+    assert evidence.stop_trace.phase == "POST-UPDATE"
+    assert evidence.stop_trace.reason == "SINGLETON-HISTORY"
 
 
 def test_invalid_resource_mode_is_rejected_at_the_typed_boundary() -> None:

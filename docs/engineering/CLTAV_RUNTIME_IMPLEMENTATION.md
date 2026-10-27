@@ -144,7 +144,7 @@ substitute for that evidence identity.
 | BC-01 | PARTIAL | `session::test_two_round_feedback_consumes_committed_summary_and_changes_selection`; `recovery::test_confirmed_summary_only_prep_propagates_declared_model_successor`; fresh/tampered checkpoint combinations remain later work. |
 | BC-02 | PARTIAL | `session::test_two_round_feedback_consumes_committed_summary_and_changes_selection`; more visible-result/action combinations remain. |
 | BC-03 | VERIFIED | `session::test_prediction_keeps_overlapping_classes_and_names_a_current_gap`; `session::test_unaffordable_best_test_and_no_information_test_do_not_displace_router`; bounded model only. |
-| BC-04 | PARTIAL | `session::test_prediction_gap_revokes_an_unaffordable_test_score_before_a2`; full tie/cost/ID production matrix remains. |
+| BC-04 | VERIFIED | Public `ReferenceSession.run` regressions hand-check the bounded current TEST set: a smaller worst remaining set wins among affordable distinguishers; an unaffordable global optimum does not hide the router; then cost and stable action ID decide ties; legal action/hypothesis declaration reordering preserves action, candidates, charge and stop semantics. Different declarations need not share a model identity. `session::test_rounds_mode_consumes_one_issued_action_not_declared_action_cost`; `session::test_unaffordable_best_test_and_no_information_test_do_not_displace_router`; `session::test_public_admission_uses_cost_then_stable_id_independent_of_legal_input_order`. |
 | BC-05 | VERIFIED | `session::test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_entry`; Recovery A4/A5 tests; ownership/T5 are outside this result. |
 | BC-06 | PARTIAL | summary-only Prep q0→q1 and unconfirmed-Prep recovery regressions; full Recover continuation remains. |
 | BC-07 | PARTIAL | confirmed, unconfirmed and target-only Recover public regressions; complete recovery-estimation boundary remains. |
@@ -598,7 +598,7 @@ GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出�
 | BC-01 | PARTIAL | 两轮反馈和仅摘要 Prep 的 q0→q1 回归；新鲜／篡改 checkpoint 的组合仍属后续工作。 |
 | BC-02 | PARTIAL | 两轮反馈改变后继选择的回归；更多可见结果／动作组合仍待覆盖。 |
 | BC-03 | VERIFIED | 重叠 classes、当前 GAP 和无信息 TEST 的回归；仅限有界模型。 |
-| BC-04 | PARTIAL | GAP 撤销不可负担 TEST 评分的 A2 回归；完整 tie／cost／ID 生产矩阵仍待完成。 |
+| BC-04 | VERIFIED | 公共 `ReferenceSession.run` 回归以人工预期核对有界的当前 TEST 集：在可负担且有区分价值的 TEST 中，较小的最坏剩余集合优先；全局最优但不可负担的 TEST 不得遮蔽 router；随后以成本和稳定 action ID 决定平局。合法 action／hypothesis 声明重排必须保持 action、candidates、charge 和停止语义。不同声明无需具有相同 model identity。`session::test_rounds_mode_consumes_one_issued_action_not_declared_action_cost`；`session::test_unaffordable_best_test_and_no_information_test_do_not_displace_router`；`session::test_public_admission_uses_cost_then_stable_id_independent_of_legal_input_order`。 |
 | BC-05 | VERIFIED | 当前 TEST GAP 与同一准入入口的合格 Prep 回归，以及 Recover A4/A5；ownership／T5 不在本结论内。 |
 | BC-06 | PARTIAL | 仅摘要 Prep q0→q1 和未确认 Prep 的候选保留回归；完整 Recover 后继仍待完成。 |
 | BC-07 | PARTIAL | 已确认、未确认和仅目标确认 Recover 的公共回归；完整恢复估计边界仍待完成。 |
