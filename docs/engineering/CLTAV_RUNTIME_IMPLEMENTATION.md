@@ -442,8 +442,10 @@ classifier is used by both live execution and replay: record/carrier errors,
 target mismatch and issued attempt/action identity are derived from the frozen
 record, action, attempt, interpretation contract and prior ownership ledger.
 The existing typed interpretation/binding/ownership replay remains a separate
-derived relation. A required raw witness cannot be deleted, repaired or
-relabelled together with its S7 histories to select another branch.
+derived relation. For an ordinary calculable raw-required rejection, its
+witness cannot be deleted, repaired or relabelled together with its S7
+histories to select another branch. This G1 relation does not authenticate a
+raw-free opaque external-source detail.
 
 | Error family | Verified finite inputs and priority | Raw/normalization rule | Live effect and replay check |
 |---|---|---|---|
@@ -451,23 +453,28 @@ relabelled together with its S7 histories to select another branch.
 | Visible-record, target or summary error | frozen visible record, admitted action, issued attempt and interpretation contract; after carrier, before identity | typed raw is required; any safely bound assessment follows the existing FULL/QUARANTINE ledger rule | S7 makes history conservative without S8/S9 commit; replay recomputes the code and assessment before applying the same ledger mode. |
 | Foreign execution/action identity | typed record, issued attempt and admitted action; only after the record has passed the carrier/record checks | typed foreign raw is required | S7 is charged once and preserves the actual successor; replay requires the same foreign relation, so a repaired identity fails before a new dispatch. |
 | Interpretation, binding or ownership conflict | typed execution material, frozen uncertainty/contract and prior ownership ledger | existing typed execution/assessment relation remains the witness | existing S7 replay recomputes assessment, binding and ledger conflict before applying the matching conservative history transition. |
-| Tool/result fault outside visible-record evidence | issued request/charge and any actual returned successor; no unrepresented external exception is inferred | pure pre-dispatch tool error is raw-free; established post-dispatch/result-type behavior may retain same-attempt typed raw but not a derived assessment | one issued charge and actual successor are preserved; it is an opaque timing boundary, not a G1 causal-proof branch. |
+| Tool/result fault outside visible-record evidence | issued request/charge and any actual returned successor; no unrepresented external exception is inferred | pure pre-dispatch tool error is raw-free; post-dispatch/result-type optional typed raw is retained only after the same classifier finds no calculable carrier/record/summary/target/identity cause; otherwise raw and assessment are normalized to absent | one issued charge and actual successor are preserved; replay reruns that classifier and rejects unsafe/calculable typed raw. It remains an opaque timing boundary, not a G1 causal-proof branch. |
 
 The C05 exception remains deliberate: an invalid outer event carrier is
 canonicalized to `INVALID-OBSERVATION-EVENT-CARRIER` with neither raw witness
 nor assessment, before any foreign identity test; a fully typed foreign record
 with an exact tuple remains an `EXECUTION-IDENTITY-ERROR` witness and may reach
 a fresh Recover. A pure pre-dispatch tool exception cannot manufacture raw
-material. Existing post-dispatch/result-type faults retain their established
-charged timing and may retain a same-attempt typed record, but the external
-exception/invalid-successor fact is not representable by that record alone.
-That opaque evidence boundary is not claimed as a causal raw proof here.
+material. For post-dispatch/result-type errors, a typed optional record with
+any calculable cause (including a carrier) is normalized to no raw/no
+assessment; only a normal same-attempt/action record can remain. If
+classification itself fails, it is safely discarded without a recursive
+classification attempt. Replay applies the same condition before accepting
+opaque typed raw. The external exception/invalid-successor fact is not
+representable by that record alone, so the opaque timing boundary is not
+claimed as a causal raw proof here.
 
-This is not total A01 closure. The remaining B/C-3 gate is the public durable
-evidence-transaction/CLI negative-mutation and rollback proof for modified or
-deleted raw material and for opaque external tool facts. Until that gate has
-independently accepted its own fixed head, this runtime claims only the
-in-memory calculable branch-cause audit described above.
+This is not total A01 closure. G3 must establish producer/source and durable
+consumer evidence for raw-free opaque facts. In particular, G1 does not claim
+to distinguish deletion of raw plus a coordinated change to a raw-free opaque
+category from a genuine external opaque fact. Until that gate has independently
+accepted its own fixed head, this runtime claims only the in-memory calculable
+branch-cause audit described above.
 
 The binding/type layer now executes bounded synthetic TEST/Prep/Recover actions
 and, only for bound finite synthetic material, resolves ownership and performs
@@ -770,8 +777,9 @@ reviewed deadline 判定才要求非负的 earliest admissible elapsed horizon�
 rejected record 重算有限因果关系，再接受其具名 `resolution_code`。live 执行与 replay 共用同一 S4
 分类器：record／carrier 错误、target 不匹配以及已发出 attempt／action identity 都由冻结
 record、action、attempt、interpretation contract 和既有 ownership ledger 推导。既有的类型化
-interpretation／binding／ownership replay 仍是独立的推导关系。所需的 raw witness 不能通过删除、修复，
-或连同 S7 history 一起改名来选择另一个分支。
+interpretation／binding／ownership replay 仍是独立的推导关系。对于普通、可计算且要求保留 raw 的
+拒绝，其 witness 不能通过删除、修复，或连同 S7 history 一起改名来选择另一个分支。G1 不认证无 raw
+的不透明外部来源细节。
 
 | 错误族 | 已核验的有限输入与优先级 | raw／规范化规则 | live 效果与 replay 核验 |
 |---|---|---|---|
@@ -779,18 +787,20 @@ interpretation／binding／ownership replay 仍是独立的推导关系。所需
 | visible-record、target 或 summary 错误 | 冻结的 visible record、已准入 action、已发出 attempt 与 interpretation contract；在 carrier 之后、identity 之前 | 必须保留类型正确的 raw；任何可安全绑定的 assessment 遵循既有 FULL／QUARANTINE ledger 规则 | S7 使 history 保守而不执行 S8/S9 commit；replay 在采用相同 ledger mode 前重算 code 与 assessment。 |
 | foreign execution/action identity | 类型正确的 record、已发出 attempt 与已准入 action；仅在 record 通过 carrier／record 检查后 | 必须保留类型正确的 foreign raw | S7 只计费一次并保留实际 successor；replay 要求相同的 foreign 关系，因此被修复的 identity 会在新 dispatch 前失败。 |
 | interpretation、binding 或 ownership conflict | 类型正确的 execution material、冻结的 uncertainty／contract 和既有 ownership ledger | 既有类型正确的 execution／assessment 关系仍是 witness | 既有 S7 replay 在采用匹配的保守 history transition 前重算 assessment、binding 与 ledger conflict。 |
-| visible-record evidence 之外的 tool/result fault | 已发出 request／charge 与任何实际返回的 successor；不推断未表示的外部 exception | 纯派发前工具错误不保留 raw；既有的派发后／返回类型行为可保留同一 attempt 的类型正确 raw，但不产生推导出的 assessment | 保留一次已发出计费和实际 successor；这是不透明的时点边界，而不是 G1 的因果证明分支。 |
+| visible-record evidence 之外的 tool/result fault | 已发出 request／charge 与任何实际返回的 successor；不推断未表示的外部 exception | 纯派发前工具错误不保留 raw；派发后／返回类型的可选类型化 raw 只有在同一分类器未发现任何可计算的 carrier／record／summary／target／identity 原因时才保留；否则 raw 和 assessment 规范化为不存在 | 保留一次已发出计费和实际 successor；replay 重跑该分类器并拒绝不安全／可计算的类型化 raw。这仍是不透明的时点边界，而不是 G1 的因果证明分支。 |
 
 C05 例外仍是有意保留的边界：非法外层 event carrier 必须先于任何 foreign identity 测试被规范化为
 `INVALID-OBSERVATION-EVENT-CARRIER`，不保留 raw witness 或 assessment；完全类型化、carrier 为精确
 tuple 的 foreign record 则仍是 `EXECUTION-IDENTITY-ERROR` witness，并且可以进入 fresh Recover。
-纯派发前的工具异常不得凭空制造 raw material。既有的派发后／返回类型错误仍保留其已经收费的时点，
-且可以保留同一 attempt 的类型化 record；但外部 exception／invalid-successor 事实不能仅从该 record
-重建，因此这里不把它宣称为 raw 因果证明。
+纯派发前的工具异常不得凭空制造 raw material。对于派发后／返回类型错误，带有任一可计算原因
+（包括 carrier）的类型化可选 record 被规范化为无 raw／无 assessment；只有正常且同一
+attempt/action 的 record 才可保留。若分类本身失败，则安全丢弃，且不递归重试分类。replay 在接受
+不透明类型 raw 前应用相同条件。外部 exception／invalid-successor 事实不能仅从该 record 重建，
+因此这里不把不透明时点边界宣称为 raw 因果证明。
 
-这不是 A01 的完全关闭。余下的 B/C-3 门禁是针对“修改或删除 raw material”及不透明外部工具事实的
-公共持久化 evidence-transaction／CLI 负变异和 rollback 证明。该门禁在其自己的固定 Head 上独立接受前，
-本运行时只主张上文所述的、进程内可计算分支原因审计。
+这不是 A01 的完全关闭。G3 必须为无 raw 的不透明事实建立生产者／来源及持久化消费者证据。特别地，
+G1 不主张能够区分“删除 raw 并协调改为无 raw 不透明类别”与真实外部不透明事实。该门禁在其自己的
+固定 Head 上独立接受前，本运行时只主张上文所述的、进程内可计算分支原因审计。
 
 绑定／类型层现已执行有界合成 TEST／Prep／Recover 动作，并且只针对已经绑定的有限合成材料解析
 ownership、进行合同范围内的区间 assessment；它不建立真实协议服务的 ownership、校准时序、已审定
