@@ -1037,21 +1037,7 @@ class ReferenceSession:
                 expected_code: str | None = None
                 ledger_mode = "FULL"
                 if type(item.rejected_response) is VisibleExecutionRecord:
-                    if item.resolution_code in _OPAQUE_TOOL_ERROR_CODES:
-                        # The original external failure is intentionally not
-                        # inferred by re-running a potentially failed helper
-                        # during replay.  This narrow legacy path may retain
-                        # only a same-attempt/action raw record and no derived
-                        # ownership material; it never proves a calculable
-                        # record/identity cause.
-                        if (
-                            assessment is not None
-                            or item.rejected_response.execution_attempt_id != expected_execution_id
-                            or item.rejected_response.action_id != action.action_id
-                        ):
-                            return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "opaque tool error retains an invalid visible record")
-                        expected_code = item.resolution_code
-                    else:
+                    try:
                         cause = _classify_rejected_visible_record(
                             item.rejected_response,
                             action=action,
@@ -1063,6 +1049,24 @@ class ReferenceSession:
                             prior_terminal_trigger_ids=terminal_trigger_event_ids,
                             prior_consumed_response_ids=consumed_response_ids,
                         )
+                    except Exception:
+                        return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "opaque tool error raw record cannot be classified safely")
+                    if item.resolution_code in _OPAQUE_TOOL_ERROR_CODES:
+                        # The original external failure is intentionally not
+                        # reconstructed from the raw record.  That does not
+                        # exempt the raw from the finite S4 safety relation:
+                        # a carrier/record/target/summary/identity cause must
+                        # have been normalized away live and cannot be
+                        # reintroduced by coordinating an opaque code/history.
+                        if (
+                            cause is not None
+                            or assessment is not None
+                            or item.rejected_response.execution_attempt_id != expected_execution_id
+                            or item.rejected_response.action_id != action.action_id
+                        ):
+                            return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "opaque tool error retains an invalid visible record")
+                        expected_code = item.resolution_code
+                    else:
                         if cause is None:
                             return KernelDiagnostic("EVIDENCE-ERROR-MISMATCH", "canonical error raw record has no matching calculable S4 cause")
                         if cause.raw_policy != "REQUIRED":
@@ -1665,6 +1669,17 @@ class ReferenceSession:
                 execution=execution,
             )
         except Exception as exc:
+            opaque_record = _normalized_opaque_rejected_raw(
+                _visible_execution_record(execution),
+                action=action,
+                interpretation_contract=self._interpretation_contract,
+                model=model,
+                execution_attempt_id=execution_attempt_id,
+                prior_seen_events=state.event_identity_refs,
+                prior_active_trigger_ids=state.active_trigger_event_ids,
+                prior_terminal_trigger_ids=state.terminal_trigger_event_ids,
+                prior_consumed_response_ids=state.consumed_response_ids,
+            )
             return self._charged_execution_error(
                 state=state,
                 environment=environment,
@@ -1678,7 +1693,7 @@ class ReferenceSession:
                 diagnostics=diagnostics,
                 code="POST-DISPATCH-ERROR",
                 message=str(exc) or type(exc).__name__,
-                execution_record=_visible_execution_record(execution),
+                execution_record=opaque_record,
                 environment_after_execution=_returned_environment(execution),
             )
 
@@ -1714,6 +1729,17 @@ class ReferenceSession:
                 message="environment did not return an EnvironmentExecution",
             )
         if not isinstance(execution.record, VisibleExecutionRecord) or not isinstance(execution.successor, SyntheticEnvironment):
+            opaque_record = _normalized_opaque_rejected_raw(
+                execution.record if isinstance(execution.record, VisibleExecutionRecord) else None,
+                action=action,
+                interpretation_contract=self._interpretation_contract,
+                model=model,
+                execution_attempt_id=execution_attempt_id,
+                prior_seen_events=state.event_identity_refs,
+                prior_active_trigger_ids=state.active_trigger_event_ids,
+                prior_terminal_trigger_ids=state.terminal_trigger_event_ids,
+                prior_consumed_response_ids=state.consumed_response_ids,
+            )
             return self._charged_execution_error(
                 state=state,
                 environment=environment,
@@ -1727,11 +1753,7 @@ class ReferenceSession:
                 diagnostics=diagnostics,
                 code="EXECUTION-RESULT-TYPE-ERROR",
                 message="environment execution has an invalid record or successor",
-                execution_record=(
-                    execution.record
-                    if isinstance(execution.record, VisibleExecutionRecord)
-                    else None
-                ),
+                execution_record=opaque_record,
                 environment_after_execution=(
                     execution.successor if isinstance(execution.successor, SyntheticEnvironment) else None
                 ),
@@ -3311,6 +3333,53 @@ def _classify_rejected_visible_record(
             ledger_mode="FULL",
         )
     return None
+
+
+def _normalized_opaque_rejected_raw(
+    record: object,
+    *,
+    action: SyntheticAction,
+    interpretation_contract: InterpretationContract | None,
+    model: FiniteSessionModel,
+    execution_attempt_id: str,
+    prior_seen_events: Mapping[str, OwnershipEvent],
+    prior_active_trigger_ids: frozenset[str],
+    prior_terminal_trigger_ids: frozenset[str],
+    prior_consumed_response_ids: frozenset[str],
+) -> VisibleExecutionRecord | None:
+    """Keep optional opaque raw only when it names no calculable S4 cause.
+
+    An opaque result-type/post-dispatch failure may retain an otherwise normal
+    same-attempt visible record because the external invalid-successor or tool
+    fact is not encoded in that record.  It must not, however, use its opaque
+    label to carry a record which independently proves a carrier, shape,
+    target, summary, or identity rejection.  Live normalization and replay
+    use the same finite classifier so the optional raw domain is closed.
+
+    This is intentionally defensive: if the classifier itself fails while an
+    opaque failure is already being handled, discard optional raw material
+    rather than recursively re-enter the failing boundary or leak an adapter
+    exception.  The issued charge and any separately typed actual successor
+    remain the caller's existing S7 responsibility.
+    """
+
+    if type(record) is not VisibleExecutionRecord:
+        return None
+    try:
+        cause = _classify_rejected_visible_record(
+            record,
+            action=action,
+            interpretation_contract=interpretation_contract,
+            model=model,
+            execution_attempt_id=execution_attempt_id,
+            prior_seen_events=prior_seen_events,
+            prior_active_trigger_ids=prior_active_trigger_ids,
+            prior_terminal_trigger_ids=prior_terminal_trigger_ids,
+            prior_consumed_response_ids=prior_consumed_response_ids,
+        )
+    except Exception:
+        return None
+    return None if cause is not None else record
 
 
 def _assessment_with_binding_error(

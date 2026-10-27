@@ -212,7 +212,11 @@ def _g1_recovery_model(
     return FiniteSessionModel.from_mapping(context=base_model.context, value=source)
 
 
-def _g1_recovery_environment(fixture: dict[str, object]) -> SyntheticEnvironment:
+def _g1_recovery_environment(
+    fixture: dict[str, object],
+    *,
+    observation_material: dict[str, object] | None = None,
+) -> SyntheticEnvironment:
     """Provide a real, affordable Recover after every G1 rejection path."""
 
     source = copy.deepcopy(fixture["environments"]["alpha"])
@@ -240,6 +244,10 @@ def _g1_recovery_environment(fixture: dict[str, object]) -> SyntheticEnvironment
         state = states[state_id]
         assert isinstance(state, dict)
         state["recover-q"] = copy.deepcopy(recovery_outcome)
+        if observation_material is not None:
+            router = state.get("test-router")
+            if isinstance(router, dict):
+                router["observationMaterial"] = copy.deepcopy(observation_material)
     return SyntheticEnvironment.from_mapping(source)
 
 
@@ -249,6 +257,8 @@ def _g1_recovery_session(
     *,
     session_id: str,
     run_id: str,
+    resources: ResourceState | None = None,
+    interpretation_contract: InterpretationContract | None = None,
 ) -> ReferenceSession:
     return ReferenceSession(
         binding=binding,
@@ -256,8 +266,9 @@ def _g1_recovery_session(
         session_id=session_id,
         run_id=run_id,
         initial_summary="q0",
-        resources=ResourceState.rounds(4),
+        resources=resources or ResourceState.rounds(4),
         retry_cap=4,
+        interpretation_contract=interpretation_contract,
     )
 
 
@@ -5133,7 +5144,15 @@ def test_post_dispatch_faults_keep_the_issued_charge_and_successor(
     assert result.state.context.q_status == "UNKNOWN"
     assert result.state.evidence[0].committed is False
     assert result.state.evidence[0].execution.execution_attempt_id.endswith(":execution:1")
-    assert result.state.evidence[0].rejected_response is not None
+    # A classifier failure while closing an already-issued post-dispatch
+    # boundary must not recursively preserve an unverified optional raw
+    # record.  Other post-dispatch faults retain their independently normal
+    # same-attempt raw record for replay.
+    if failure_site == "record-validation":
+        assert result.state.evidence[0].rejected_response is None
+        assert result.state.evidence[0].observation_assessment is None
+    else:
+        assert result.state.evidence[0].rejected_response is not None
     assert result.environment._state == "private-a1"
     resumed = session.step(result.state, result.environment)
     assert resumed.stop_reason == "Stop-Error"
@@ -5947,11 +5966,18 @@ def test_public_replay_rederives_calculable_test_rejection_before_recover(
         genuine.state,
         evidence=genuine.state.evidence[:-1] + (replace(evidence, rejected_response=repaired_raw),),
     )
-    relabelled = _g1_coordinated_error_relabel(
-        genuine.state,
-        replacement_code=replacement_code,
+    relabelled = tuple(
+        _g1_coordinated_error_relabel(
+            genuine.state,
+            replacement_code=code,
+        )
+        for code in (
+            replacement_code,
+            "POST-DISPATCH-ERROR",
+            "EXECUTION-RESULT-TYPE-ERROR",
+        )
     )
-    for forged in (missing_raw, repaired, relabelled):
+    for forged in (missing_raw, repaired, *relabelled):
         _assert_g1_public_replay_rejected(fresh, forged)
 
 
@@ -6035,11 +6061,18 @@ def test_public_replay_rederives_recover_target_rejection_before_next_recover() 
         genuine.state,
         evidence=genuine.state.evidence[:-1] + (replace(evidence, rejected_response=repaired_raw),),
     )
-    relabelled = _g1_coordinated_error_relabel(
-        genuine.state,
-        replacement_code="SUMMARY-CONFIRMATION-ERROR",
+    relabelled = tuple(
+        _g1_coordinated_error_relabel(
+            genuine.state,
+            replacement_code=code,
+        )
+        for code in (
+            "SUMMARY-CONFIRMATION-ERROR",
+            "POST-DISPATCH-ERROR",
+            "EXECUTION-RESULT-TYPE-ERROR",
+        )
     )
-    for forged in (missing_raw, repaired, relabelled):
+    for forged in (missing_raw, repaired, *relabelled):
         _assert_g1_public_replay_rejected(fresh, forged)
 
 
@@ -6122,3 +6155,446 @@ def test_public_replay_preserves_the_raw_free_result_type_boundary_before_recove
     resumed = fresh.step(genuine.state, _g1_recovery_environment(fixture))
     assert resumed.state.evidence[-1].snapshot.action_id == "recover-q"
     assert resumed.state.evidence[-1].resolution_code == "COMMIT"
+
+
+@pytest.mark.parametrize(
+    ("resources", "expected_after_error", "expected_after_recover"),
+    (
+        (ResourceState.rounds(3), 2, 1),
+        (ResourceState.budget(10), 9, 8),
+    ),
+    ids=("rounds", "budget"),
+)
+@pytest.mark.parametrize("identity_kind", ("issued", "foreign"))
+def test_opaque_result_type_checkpoint_normalizes_foreign_raw_and_replays_genuinely(
+    resources: ResourceState,
+    expected_after_error: int,
+    expected_after_recover: int,
+    identity_kind: str,
+) -> None:
+    """R01: invalid successors remain charged, replayable opaque facts.
+
+    The returned successor is deliberately invalid, so the record is optional
+    opaque material rather than a normal S4 result.  A normal issued record is
+    safe to retain; a foreign record is not.  Both live checkpoints must still
+    preserve the occurred attempt/charge and permit a real same/fresh Recover.
+    """
+
+    binding, base_model, fixture = _runtime_parts()
+    model = _g1_recovery_model(base_model, fixture)
+    source = _g1_recovery_session(
+        binding,
+        model,
+        session_id=f"g1-invalid-successor-{identity_kind}-{resources.mode}",
+        run_id=f"g1-invalid-successor-{identity_kind}-{resources.mode}",
+        resources=resources,
+    )
+    delegate = _g1_recovery_environment(fixture)
+
+    class InvalidSuccessorWithVisibleRecord:
+        raw: VisibleExecutionRecord | None = None
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = delegate.execute(request)
+            if request.action_id == "recover-q":
+                return returned
+            raw = returned.record
+            if identity_kind == "foreign":
+                raw = replace(
+                    raw,
+                    execution_attempt_id="foreign-g1-result-type",
+                    action_id="foreign-g1-result-type-action",
+                    evidence_ref="synthetic:g1:foreign-result-type",
+                )
+            self.raw = raw
+            return EnvironmentExecution(raw, object())  # type: ignore[arg-type]
+
+    faulty = InvalidSuccessorWithVisibleRecord()
+    genuine = source.step(source.initial_state, faulty)  # type: ignore[arg-type]
+    evidence = genuine.state.evidence[-1]
+
+    assert evidence.resolution_code == "EXECUTION-RESULT-TYPE-ERROR"
+    assert genuine.state.attempts == 1
+    assert genuine.state.resources == ResourceState(resources.mode, expected_after_error)
+    assert evidence.observation_assessment is None
+    if identity_kind == "issued":
+        assert evidence.rejected_response is faulty.raw
+    else:
+        assert evidence.rejected_response is None
+    assert source._state_error(genuine.state) is None
+
+    same_recover = source.step(genuine.state, genuine.environment)
+    assert same_recover.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert same_recover.state.evidence[-1].resolution_code == "COMMIT"
+    assert same_recover.state.resources == ResourceState(resources.mode, expected_after_recover)
+
+    fresh_binding, fresh_base_model, _fresh_fixture = _runtime_parts()
+    fresh = _g1_recovery_session(
+        fresh_binding,
+        _g1_recovery_model(fresh_base_model, fixture),
+        session_id=f"g1-invalid-successor-{identity_kind}-{resources.mode}",
+        run_id=f"g1-invalid-successor-{identity_kind}-{resources.mode}",
+        resources=resources,
+    )
+    assert fresh._state_error(genuine.state) is None
+    fresh_recover = fresh.step(genuine.state, _g1_recovery_environment(fixture))
+    assert fresh_recover.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert fresh_recover.state.evidence[-1].resolution_code == "COMMIT"
+    assert fresh_recover.state.resources == ResourceState(resources.mode, expected_after_recover)
+
+
+def test_post_dispatch_normal_raw_remains_an_opaque_checkpoint_and_replays(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """R02: a real late helper fault preserves normal typed raw/successor."""
+
+    binding, base_model, fixture = _runtime_parts()
+    model = _g1_recovery_model(base_model, fixture)
+    source = _g1_recovery_session(
+        binding, model, session_id="g1-post-dispatch-normal", run_id="g1-post-dispatch-normal",
+    )
+    delegate = _g1_recovery_environment(fixture)
+
+    class NormalRecordEnvironment:
+        raw: VisibleExecutionRecord | None = None
+        successor: SyntheticEnvironment | None = None
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = delegate.execute(request)
+            self.raw = returned.record
+            self.successor = returned.successor
+            return returned
+
+    def late_failure(*_args: object, **_kwargs: object) -> object:
+        raise RuntimeError("controlled late post-dispatch helper fault")
+
+    environment = NormalRecordEnvironment()
+    with monkeypatch.context() as fault:
+        fault.setattr("cltav_runtime.session._matching_class", late_failure)
+        genuine = source.step(source.initial_state, environment)  # type: ignore[arg-type]
+
+    evidence = genuine.state.evidence[-1]
+    assert evidence.resolution_code == "POST-DISPATCH-ERROR"
+    assert evidence.rejected_response is environment.raw
+    assert evidence.observation_assessment is None
+    assert genuine.environment is environment.successor
+    assert genuine.state.attempts == 1
+    assert genuine.state.resources == ResourceState.rounds(3)
+    assert source._state_error(genuine.state) is None
+
+    same_recover = source.step(genuine.state, genuine.environment)
+    assert same_recover.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert same_recover.state.evidence[-1].resolution_code == "COMMIT"
+
+    fresh_binding, fresh_base_model, _fresh_fixture = _runtime_parts()
+    fresh = _g1_recovery_session(
+        fresh_binding,
+        _g1_recovery_model(fresh_base_model, fixture),
+        session_id="g1-post-dispatch-normal",
+        run_id="g1-post-dispatch-normal",
+    )
+    assert fresh._state_error(genuine.state) is None
+    fresh_recover = fresh.step(genuine.state, _g1_recovery_environment(fixture))
+    assert fresh_recover.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert fresh_recover.state.evidence[-1].resolution_code == "COMMIT"
+
+
+def test_opaque_classifier_failure_drops_optional_raw_without_a_recursive_fault(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """R04: classifier faults are contained at the existing opaque boundary."""
+
+    binding, base_model, fixture = _runtime_parts()
+    model = _g1_recovery_model(base_model, fixture)
+    source = _g1_recovery_session(
+        binding, model, session_id="g1-opaque-classifier-fault", run_id="g1-opaque-classifier-fault",
+    )
+    environment = _g1_recovery_environment(fixture)
+
+    def classifier_failure(*_args: object, **_kwargs: object) -> object:
+        raise RuntimeError("controlled classifier fault")
+
+    with monkeypatch.context() as fault:
+        fault.setattr("cltav_runtime.session._incoming_record_error", classifier_failure)
+        genuine = source.step(source.initial_state, environment)
+
+    evidence = genuine.state.evidence[-1]
+    assert evidence.resolution_code == "POST-DISPATCH-ERROR"
+    assert evidence.rejected_response is None
+    assert evidence.observation_assessment is None
+    assert genuine.state.attempts == 1
+    assert genuine.state.resources == ResourceState.rounds(3)
+    assert genuine.environment._state == "private-a1"
+    assert source._state_error(genuine.state) is None
+
+    resumed = source.step(genuine.state, genuine.environment)
+    assert resumed.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert resumed.state.evidence[-1].resolution_code == "COMMIT"
+
+
+@pytest.mark.parametrize("cause_kind", ("summary", "record", "foreign"))
+def test_opaque_result_type_normalizes_each_calculable_test_raw_cause(
+    cause_kind: str,
+) -> None:
+    """R03: an opaque invalid successor never retains a calculable TEST cause."""
+
+    binding, base_model, fixture = _runtime_parts()
+    model = _g1_recovery_model(base_model, fixture)
+    source = _g1_recovery_session(
+        binding,
+        model,
+        session_id=f"g1-opaque-normalize-{cause_kind}",
+        run_id=f"g1-opaque-normalize-{cause_kind}",
+    )
+    delegate = _g1_recovery_environment(fixture)
+
+    class CalculableRawWithInvalidSuccessor:
+        raw: VisibleExecutionRecord | None = None
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = delegate.execute(request)
+            if request.action_id == "recover-q":
+                return returned
+            raw = returned.record
+            if cause_kind == "summary":
+                raw = replace(raw, post_summary=None, evidence_ref="synthetic:g1:opaque-summary")
+            elif cause_kind == "record":
+                raw = replace(raw, effect_class="IMPROVISED", evidence_ref="synthetic:g1:opaque-record")
+            else:
+                raw = replace(
+                    raw,
+                    execution_attempt_id="foreign-g1-opaque",
+                    action_id="foreign-g1-opaque-action",
+                    evidence_ref="synthetic:g1:opaque-foreign",
+                )
+            self.raw = raw
+            return EnvironmentExecution(raw, object())  # type: ignore[arg-type]
+
+    environment = CalculableRawWithInvalidSuccessor()
+    genuine = source.step(source.initial_state, environment)  # type: ignore[arg-type]
+    evidence = genuine.state.evidence[-1]
+
+    assert type(environment.raw) is VisibleExecutionRecord
+    assert evidence.resolution_code == "EXECUTION-RESULT-TYPE-ERROR"
+    assert evidence.rejected_response is None
+    assert evidence.observation_assessment is None
+    assert genuine.state.resources == ResourceState.rounds(3)
+    assert source._state_error(genuine.state) is None
+
+    resumed = source.step(genuine.state, genuine.environment)
+    assert resumed.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert resumed.state.evidence[-1].resolution_code == "COMMIT"
+
+
+def test_opaque_result_type_normalizes_a_calculable_recover_target_raw() -> None:
+    """R03: target causes are also discarded before the opaque error is saved."""
+
+    binding, base_model, fixture = _runtime_parts()
+    model = _g1_recovery_model(base_model, fixture)
+    source = _g1_recovery_session(
+        binding, model, session_id="g1-opaque-normalize-target", run_id="g1-opaque-normalize-target",
+    )
+    delegate = _g1_recovery_environment(fixture)
+
+    class UnknownThenInvalidTargetSuccessor:
+        raw: VisibleExecutionRecord | None = None
+        invalid_target_sent = False
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = delegate.execute(request)
+            if request.action_id == "test-router":
+                return EnvironmentExecution(
+                    VisibleExecutionRecord(
+                        execution_attempt_id=request.execution_attempt_id,
+                        action_id=request.action_id,
+                        effect_class="UNKNOWN-EFFECT",
+                        observable=None,
+                        summary_confirmed=False,
+                        post_summary=None,
+                        measurement_tick=None,
+                        uncertainty_identity=None,
+                        evidence_ref="synthetic:g1:unknown-before-opaque-target",
+                    ),
+                    returned.successor,
+                )
+            assert request.action_id == "recover-q"
+            if self.invalid_target_sent:
+                return returned
+            recovery = returned.record.prep_recover
+            assert type(recovery) is PrepRecoverResult
+            raw = replace(
+                returned.record,
+                prep_recover=replace(recovery, declared_target="foreign-g1-opaque-target"),
+            )
+            self.raw = raw
+            self.invalid_target_sent = True
+            return EnvironmentExecution(raw, object())  # type: ignore[arg-type]
+
+    environment = UnknownThenInvalidTargetSuccessor()
+    unknown = source.step(source.initial_state, environment)  # type: ignore[arg-type]
+    assert unknown.state.evidence[-1].resolution_code == "UNKNOWN-EFFECT"
+    genuine = source.step(unknown.state, environment)  # type: ignore[arg-type]
+    evidence = genuine.state.evidence[-1]
+
+    assert type(environment.raw) is VisibleExecutionRecord
+    assert evidence.snapshot.action_id == "recover-q"
+    assert evidence.resolution_code == "EXECUTION-RESULT-TYPE-ERROR"
+    assert evidence.rejected_response is None
+    assert evidence.observation_assessment is None
+    assert source._state_error(genuine.state) is None
+
+    resumed = source.step(genuine.state, genuine.environment)
+    assert resumed.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert resumed.state.evidence[-1].resolution_code == "COMMIT"
+
+
+def test_opaque_result_type_normalizes_an_unsafe_carrier_raw() -> None:
+    """R03/C05: opaque timing cannot retain a list-carrier record either."""
+
+    binding, base_model, fixture = _runtime_parts()
+    model = _g1_recovery_model(base_model, fixture)
+    material = _runtime_observation_material(
+        trigger_id="A",
+        response_id="R1",
+        events=[
+            {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+            {"id": "R1", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+        ],
+        measurement=_interval_mapping(0, 0),
+    )
+    source = _g1_recovery_session(
+        binding,
+        model,
+        session_id="g1-opaque-normalize-carrier",
+        run_id="g1-opaque-normalize-carrier",
+        interpretation_contract=_runtime_interpretation_contract(model),
+    )
+    delegate = _g1_recovery_environment(fixture, observation_material=material)
+
+    class ListCarrierWithInvalidSuccessor:
+        raw: VisibleExecutionRecord | None = None
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = delegate.execute(request)
+            if request.action_id == "recover-q":
+                return returned
+            observation = returned.record.observation_input
+            assert type(observation) is ObservationInput
+            raw = replace(
+                returned.record,
+                observation_input=replace(observation, events=list(observation.events)),
+            )
+            self.raw = raw
+            return EnvironmentExecution(raw, object())  # type: ignore[arg-type]
+
+    environment = ListCarrierWithInvalidSuccessor()
+    genuine = source.step(source.initial_state, environment)  # type: ignore[arg-type]
+    evidence = genuine.state.evidence[-1]
+
+    assert type(environment.raw) is VisibleExecutionRecord
+    assert evidence.resolution_code == "EXECUTION-RESULT-TYPE-ERROR"
+    assert evidence.rejected_response is None
+    assert evidence.observation_assessment is None
+    assert source._state_error(genuine.state) is None
+
+    resumed = source.step(genuine.state, genuine.environment)
+    assert resumed.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert resumed.state.evidence[-1].resolution_code == "COMMIT"
+
+
+@pytest.mark.parametrize("carrier_kind", ("list", "tuple-subclass", "cyclic-list"))
+def test_public_replay_rejects_opaque_reinsertion_of_each_unsafe_carrier(
+    carrier_kind: str,
+) -> None:
+    """R06: opaque labels cannot reintroduce a forbidden C05 carrier raw."""
+
+    binding, base_model, fixture = _runtime_parts()
+    model = _g1_recovery_model(base_model, fixture)
+    material = _runtime_observation_material(
+        trigger_id="A",
+        response_id="R1",
+        events=[
+            {"id": "A", "sequence": 1, "kind": "REQUEST", "key": "k", "eventType": "REQ", "timestamp": 0},
+            {"id": "R1", "sequence": 2, "kind": "RESPONSE", "key": "k", "eventType": "RESP", "timestamp": 0},
+        ],
+        measurement=_interval_mapping(0, 0),
+    )
+    contract = _runtime_interpretation_contract(model)
+    source = _g1_recovery_session(
+        binding,
+        model,
+        session_id=f"g1-opaque-carrier-{carrier_kind}",
+        run_id=f"g1-opaque-carrier-{carrier_kind}",
+        interpretation_contract=contract,
+    )
+    delegate = _g1_recovery_environment(fixture, observation_material=material)
+
+    class CanonicalCarrierEnvironment:
+        raw: VisibleExecutionRecord | None = None
+
+        def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
+            returned = delegate.execute(request)
+            if request.action_id == "recover-q":
+                return returned
+            observation = returned.record.observation_input
+            assert type(observation) is ObservationInput
+            if carrier_kind == "list":
+                events: object = list(observation.events)
+            elif carrier_kind == "tuple-subclass":
+                class TupleSubclass(tuple):
+                    pass
+
+                events = TupleSubclass(observation.events)
+            else:
+                events = []
+                assert isinstance(events, list)
+                events.append(events)
+            raw = replace(
+                returned.record,
+                observation_input=replace(observation, events=events),
+            )
+            self.raw = raw
+            return EnvironmentExecution(raw, returned.successor)
+
+    environment = CanonicalCarrierEnvironment()
+    genuine = source.step(source.initial_state, environment)  # type: ignore[arg-type]
+    evidence = genuine.state.evidence[-1]
+    unsafe_raw = environment.raw
+
+    assert type(unsafe_raw) is VisibleExecutionRecord
+    assert evidence.resolution_code == "INVALID-OBSERVATION-EVENT-CARRIER"
+    assert evidence.rejected_response is None
+    assert evidence.observation_assessment is None
+    assert source._state_error(genuine.state) is None
+
+    fresh_binding, fresh_base_model, _fresh_fixture = _runtime_parts()
+    fresh_model = _g1_recovery_model(fresh_base_model, fixture)
+    fresh = _g1_recovery_session(
+        fresh_binding,
+        fresh_model,
+        session_id=f"g1-opaque-carrier-{carrier_kind}",
+        run_id=f"g1-opaque-carrier-{carrier_kind}",
+        interpretation_contract=_runtime_interpretation_contract(fresh_model),
+    )
+    assert fresh._state_error(genuine.state) is None
+
+    for code in ("POST-DISPATCH-ERROR", "EXECUTION-RESULT-TYPE-ERROR"):
+        relabelled = _g1_coordinated_error_relabel(
+            genuine.state,
+            replacement_code=code,
+        )
+        forged = replace(
+            relabelled,
+            evidence=relabelled.evidence[:-1] + (
+                replace(relabelled.evidence[-1], rejected_response=unsafe_raw),
+            ),
+        )
+        _assert_g1_public_replay_rejected(source, forged)
+        _assert_g1_public_replay_rejected(fresh, forged)
+
+    same_recover = source.step(genuine.state, genuine.environment)
+    assert same_recover.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert same_recover.state.evidence[-1].resolution_code == "COMMIT"
+    fresh_recover = fresh.step(genuine.state, _g1_recovery_environment(fixture))
+    assert fresh_recover.state.evidence[-1].snapshot.action_id == "recover-q"
+    assert fresh_recover.state.evidence[-1].resolution_code == "COMMIT"
