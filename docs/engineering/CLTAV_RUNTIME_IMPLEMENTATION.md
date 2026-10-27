@@ -435,15 +435,39 @@ tool error without publishing an invalid evidence package.
 
 ## Open work and evidence boundary
 
-**Deferred B/C-3 audit obligation (A01).** Public replay currently preserves a
-raw rejected response and its named `resolution_code`, but does not yet
-recompute and verify their causal relation. B/C-3 evidence/CLI work owns the
-closure: identity, target and visible-record errors must retain a present,
-domain-valid raw response whose minimum cause agrees with the code; a pure tool
-exception must not manufacture one. The closing gate is a public
-evidence-transaction/CLI negative-mutation test for modified and deleted raw
-responses. Until then this runtime claims controlled preservation, not exact
-branch-cause proof.
+**B/C-3 audit core (A01) — implemented, pending independent G1 review.**
+Public replay now recomputes the finite causal relation for a retained typed
+rejected record before it accepts the named `resolution_code`. The shared S4
+classifier is used by both live execution and replay: record/carrier errors,
+target mismatch and issued attempt/action identity are derived from the frozen
+record, action, attempt, interpretation contract and prior ownership ledger.
+The existing typed interpretation/binding/ownership replay remains a separate
+derived relation. A required raw witness cannot be deleted, repaired or
+relabelled together with its S7 histories to select another branch.
+
+| Error family | Verified finite inputs and priority | Raw/normalization rule | Live effect and replay check |
+|---|---|---|---|
+| Unsupported outer carrier | action, bound TEST material and exact outer carrier; before record and identity | canonical `INVALID-OBSERVATION-EVENT-CARRIER`; raw and assessment are both absent | S7 charges the issued action once, preserves the actual successor, and replay accepts only the canonical no-raw form. |
+| Visible-record, target or summary error | frozen visible record, admitted action, issued attempt and interpretation contract; after carrier, before identity | typed raw is required; any safely bound assessment follows the existing FULL/QUARANTINE ledger rule | S7 makes history conservative without S8/S9 commit; replay recomputes the code and assessment before applying the same ledger mode. |
+| Foreign execution/action identity | typed record, issued attempt and admitted action; only after the record has passed the carrier/record checks | typed foreign raw is required | S7 is charged once and preserves the actual successor; replay requires the same foreign relation, so a repaired identity fails before a new dispatch. |
+| Interpretation, binding or ownership conflict | typed execution material, frozen uncertainty/contract and prior ownership ledger | existing typed execution/assessment relation remains the witness | existing S7 replay recomputes assessment, binding and ledger conflict before applying the matching conservative history transition. |
+| Tool/result fault outside visible-record evidence | issued request/charge and any actual returned successor; no unrepresented external exception is inferred | pure pre-dispatch tool error is raw-free; established post-dispatch/result-type behavior may retain same-attempt typed raw but not a derived assessment | one issued charge and actual successor are preserved; it is an opaque timing boundary, not a G1 causal-proof branch. |
+
+The C05 exception remains deliberate: an invalid outer event carrier is
+canonicalized to `INVALID-OBSERVATION-EVENT-CARRIER` with neither raw witness
+nor assessment, before any foreign identity test; a fully typed foreign record
+with an exact tuple remains an `EXECUTION-IDENTITY-ERROR` witness and may reach
+a fresh Recover. A pure pre-dispatch tool exception cannot manufacture raw
+material. Existing post-dispatch/result-type faults retain their established
+charged timing and may retain a same-attempt typed record, but the external
+exception/invalid-successor fact is not representable by that record alone.
+That opaque evidence boundary is not claimed as a causal raw proof here.
+
+This is not total A01 closure. The remaining B/C-3 gate is the public durable
+evidence-transaction/CLI negative-mutation and rollback proof for modified or
+deleted raw material and for opaque external tool facts. Until that gate has
+independently accepted its own fixed head, this runtime claims only the
+in-memory calculable branch-cause audit described above.
 
 The binding/type layer now executes bounded synthetic TEST/Prep/Recover actions
 and, only for bound finite synthetic material, resolves ownership and performs
@@ -742,14 +766,34 @@ reviewed deadline 判定才要求非负的 earliest admissible elapsed horizon�
 
 ## 待完成工作和证据边界
 
-**延期至 B/C-3 的审计义务（A01）。** 当前公共重放会保留原始 rejected response 及其具名
-`resolution_code`，但尚未重算并验证二者的因果关系。B/C-3 的 evidence／CLI 工作负责关闭：
-identity、target 和可见记录错误必须保留存在且域有效的原始返回，其最小原因必须与该 code 一致；
-纯工具异常不得凭空制造此类返回。关闭门为公共 evidence-transaction／CLI 对“修改或删除原始
-返回”的负变异测试。在此之前，本运行时只主张受控保留，不主张精确的分支因果证明。
+**B/C-3 审计核心（A01）——已实现，等待独立 G1 复审。** 公共重放现在会先从保留的、类型正确的
+rejected record 重算有限因果关系，再接受其具名 `resolution_code`。live 执行与 replay 共用同一 S4
+分类器：record／carrier 错误、target 不匹配以及已发出 attempt／action identity 都由冻结
+record、action、attempt、interpretation contract 和既有 ownership ledger 推导。既有的类型化
+interpretation／binding／ownership replay 仍是独立的推导关系。所需的 raw witness 不能通过删除、修复，
+或连同 S7 history 一起改名来选择另一个分支。
+
+| 错误族 | 已核验的有限输入与优先级 | raw／规范化规则 | live 效果与 replay 核验 |
+|---|---|---|---|
+| 不支持的外层 carrier | action、绑定的 TEST material 与精确的外层 carrier；先于 record 和 identity | 规范化为 `INVALID-OBSERVATION-EVENT-CARRIER`；raw 和 assessment 均不存在 | S7 对已发出 action 只计费一次、保留实际 successor；replay 只接受该无 raw 的规范形式。 |
+| visible-record、target 或 summary 错误 | 冻结的 visible record、已准入 action、已发出 attempt 与 interpretation contract；在 carrier 之后、identity 之前 | 必须保留类型正确的 raw；任何可安全绑定的 assessment 遵循既有 FULL／QUARANTINE ledger 规则 | S7 使 history 保守而不执行 S8/S9 commit；replay 在采用相同 ledger mode 前重算 code 与 assessment。 |
+| foreign execution/action identity | 类型正确的 record、已发出 attempt 与已准入 action；仅在 record 通过 carrier／record 检查后 | 必须保留类型正确的 foreign raw | S7 只计费一次并保留实际 successor；replay 要求相同的 foreign 关系，因此被修复的 identity 会在新 dispatch 前失败。 |
+| interpretation、binding 或 ownership conflict | 类型正确的 execution material、冻结的 uncertainty／contract 和既有 ownership ledger | 既有类型正确的 execution／assessment 关系仍是 witness | 既有 S7 replay 在采用匹配的保守 history transition 前重算 assessment、binding 与 ledger conflict。 |
+| visible-record evidence 之外的 tool/result fault | 已发出 request／charge 与任何实际返回的 successor；不推断未表示的外部 exception | 纯派发前工具错误不保留 raw；既有的派发后／返回类型行为可保留同一 attempt 的类型正确 raw，但不产生推导出的 assessment | 保留一次已发出计费和实际 successor；这是不透明的时点边界，而不是 G1 的因果证明分支。 |
+
+C05 例外仍是有意保留的边界：非法外层 event carrier 必须先于任何 foreign identity 测试被规范化为
+`INVALID-OBSERVATION-EVENT-CARRIER`，不保留 raw witness 或 assessment；完全类型化、carrier 为精确
+tuple 的 foreign record 则仍是 `EXECUTION-IDENTITY-ERROR` witness，并且可以进入 fresh Recover。
+纯派发前的工具异常不得凭空制造 raw material。既有的派发后／返回类型错误仍保留其已经收费的时点，
+且可以保留同一 attempt 的类型化 record；但外部 exception／invalid-successor 事实不能仅从该 record
+重建，因此这里不把它宣称为 raw 因果证明。
+
+这不是 A01 的完全关闭。余下的 B/C-3 门禁是针对“修改或删除 raw material”及不透明外部工具事实的
+公共持久化 evidence-transaction／CLI 负变异和 rollback 证明。该门禁在其自己的固定 Head 上独立接受前，
+本运行时只主张上文所述的、进程内可计算分支原因审计。
 
 绑定／类型层现已执行有界合成 TEST／Prep／Recover 动作，并且只针对已经绑定的有限合成材料解析
 ownership、进行合同范围内的区间 assessment；它不建立真实协议服务的 ownership、校准时序、已审定
 deadline authority、IUT 行为或运行完整性。B/C-3 仍负责持久化 evidence-transaction／CLI 的因果
-闭合。Researcher 启动合同核对已记录；对新的固定实现 Head 的独立复审仍 pending。后续运行在独立
+闭合。Researcher 启动合同核对已记录；对本轮固定实现 Head 的 G1 独立复审仍 pending。后续运行在独立
 复审前均保持 `SYNTHETIC-ENGINEERING-VALIDATION`，不是确认性实验或协议符合性用例。
