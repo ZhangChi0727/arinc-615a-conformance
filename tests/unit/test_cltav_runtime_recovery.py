@@ -8,6 +8,7 @@ the bounded synthetic adapter.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 import copy
 from dataclasses import replace
 from fractions import Fraction
@@ -20,7 +21,7 @@ import pytest
 from cltav_runtime.bindings import RuntimeAuthorityBinding
 from cltav_runtime.kernel import ContractSnapshot, FrontierEntry, Interval, ModelContext, initial_entry, propagate_transition
 from cltav_runtime.model import FiniteSessionModel
-from cltav_runtime.session import ReferenceSession, ResourceState
+from cltav_runtime.session import ReferenceSession, ResourceState, SessionResult, SessionState
 from cltav_runtime.synthetic import (
     EnvironmentExecution,
     ExecutionRequest,
@@ -2259,73 +2260,268 @@ def test_unknown_session_admits_confirmed_recover_and_only_s8_sets_target_eviden
     assert no_dispatch.calls == 0
 
 
-def test_confirmed_recover_repredicts_a_q1_test_without_promoting_conservative_history() -> None:
-    """S8/S9 restores q1, while C-U history correctly withholds TEST scoring.
+def _q06_recovered_session(
+    binding: RuntimeAuthorityBinding,
+    base: FiniteSessionModel,
+    fixture: dict[str, object],
+    *,
+    confirmed_summary: str,
+    include_q1_test: bool,
+) -> tuple[ReferenceSession, SessionResult]:
+    """Drive one real TEST→S7→confirmed Recover prefix for Q06 controls."""
 
-    The q1 TEST is deliberately present and current after the fully confirmed
-    Recover.  It cannot become an admitted distinguishing action because the
-    preceding S7 left every retained member conservative; a normal visible
-    class must retain those members rather than silently promote them.  A q0
-    Prep is also present so that a stale-summary selector would dispatch it;
-    the named q1 prediction gap is therefore a public re-prediction witness.
-    """
-
-    binding, base, fixture = _runtime_parts()
     test_q0 = _action(
         fixture, "test-router", action_id="test-q0", kind="TEST", enabled_summaries=["q0"],
     )
-    stale_q0_prep = _action(
-        fixture, "test-router", action_id="prep-stale-q0", kind="PREP", enabled_summaries=["q0"],
-        declared_target="stale-prep-target",
-    )
     recover = _action(
         fixture, "test-router", action_id="recover-q", kind="RECOVER", enabled_summaries=["q0"],
-        declared_target="recovered-q1", recover_when_unknown=True,
+        declared_target=f"recovered-{confirmed_summary}", recover_when_unknown=True,
     )
-    test_q1 = _action(
-        fixture, "test-router", action_id="test-after-recover", kind="TEST", enabled_summaries=["q1"],
-    )
-    model = _model_with(base, fixture, [test_q0, stale_q0_prep, recover, test_q1])
+    actions = [test_q0, recover]
+    if include_q1_test:
+        actions.append(_action(
+            fixture, "test-router", action_id="test-after-recover", kind="TEST",
+            enabled_summaries=["q1"],
+        ))
+    model = _model_with(base, fixture, actions)
     session = ReferenceSession(
-        binding=binding, model=model, session_id="session-recover-repredict", run_id="run-recover-repredict",
-        initial_summary="q0", resources=ResourceState.rounds(3), retry_cap=2,
+        binding=binding,
+        model=model,
+        session_id=f"session-recover-repredict-{confirmed_summary}-{include_q1_test}",
+        run_id=f"run-recover-repredict-{confirmed_summary}-{include_q1_test}",
+        initial_summary="q0",
+        resources=ResourceState.rounds(3),
+        retry_cap=2,
     )
     environment = _environment({
         "private-0": {"test-q0": _unknown("private-1")},
         "private-1": {
             "recover-q": _prep_recover(
-                target_confirmed=True, summary_confirmed=True, prep_error=False, ineligible=False,
-                declared_target="recovered-q1", evidence="synthetic:recover:repredict",
-                post_summary="q1", next_state="private-2",
-            ),
-        },
-        "private-2": {
-            "prep-stale-q0": _prep_recover(
-                target_confirmed=False, summary_confirmed=True, prep_error=False, ineligible=False,
-                declared_target="stale-prep-target", evidence="synthetic:recover:stale-q0",
-                post_summary="stale-prep-summary", next_state="private-2",
+                target_confirmed=True,
+                summary_confirmed=True,
+                prep_error=False,
+                ineligible=False,
+                declared_target=f"recovered-{confirmed_summary}",
+                evidence=f"synthetic:recover:repredict:{confirmed_summary}",
+                post_summary=confirmed_summary,
+                next_state="private-2",
             ),
         },
     })
-
     unknown = session.step(session.initial_state, environment)
     assert unknown.stop_reason is None
     recovered = session.step(unknown.state, unknown.environment)
     assert recovered.stop_reason is None
+    return session, recovered
+
+
+def _observe_q06_current_s2(
+    session: ReferenceSession,
+    recovered: SessionResult,
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    stale_summary: str | None = None,
+) -> tuple[SessionResult, list[dict[str, object]], list[dict[str, object]]]:
+    """Observe only the final public step while delegating production calls.
+
+    Evidence replay also invokes ``_admit``. Identity against the returned
+    public checkpoint, rather than a summary label, separates that replay
+    from the one live S2 call. The optional fault changes only the argument
+    consumed by that live admission; it never rewrites S9's retained state.
+    """
+
+    recovered_state = recovered.state
+    recovered_environment = recovered.environment
+    original_admit = ReferenceSession._admit
+    original_predict = FiniteSessionModel.predict
+    current_depth = 0
+    admissions: list[dict[str, object]] = []
+    predictions: list[dict[str, object]] = []
+
+    def observe_admit(
+        target: ReferenceSession,
+        state: SessionState,
+        *,
+        model: FiniteSessionModel | None = None,
+    ) -> object:
+        nonlocal current_depth
+        if target is not session or state is not recovered_state:
+            return original_admit(target, state, model=model)
+        consumed_state = state
+        if stale_summary is not None:
+            consumed_state = replace(
+                state,
+                context=replace(state.context, current_summary=stale_summary),
+            )
+        admissions.append({
+            "checkpoint": state,
+            "consumed": consumed_state,
+            "summary": consumed_state.context.current_summary,
+            "history": consumed_state.history,
+            "frontiers": consumed_state.frontiers,
+            "status": consumed_state.history.status_by_hypothesis,
+            "model": model,
+        })
+        current_depth += 1
+        try:
+            return original_admit(target, consumed_state, model=model)
+        finally:
+            current_depth -= 1
+
+    def observe_predict(
+        model: FiniteSessionModel,
+        *,
+        hypotheses: frozenset[str],
+        frontiers: Mapping[str, FrontierEntry | tuple[FrontierEntry, ...]],
+        status_by_hypothesis: Mapping[str, str],
+        action_id: str,
+    ) -> object:
+        if current_depth:
+            predictions.append({
+                "model": model,
+                "actionId": action_id,
+                "hypotheses": hypotheses,
+                "frontiers": frontiers,
+                "status": status_by_hypothesis,
+            })
+        return original_predict(
+            model,
+            hypotheses=hypotheses,
+            frontiers=frontiers,
+            status_by_hypothesis=status_by_hypothesis,
+            action_id=action_id,
+        )
+
+    with monkeypatch.context() as scope:
+        scope.setattr(ReferenceSession, "_admit", observe_admit)
+        scope.setattr(FiniteSessionModel, "predict", observe_predict)
+        result = session.step(recovered_state, recovered_environment)
+    return result, admissions, predictions
+
+
+def _assert_q06_current_q1_consumption(
+    recovered: SessionResult,
+    admissions: list[dict[str, object]],
+    predictions: list[dict[str, object]],
+) -> None:
+    """Assert the current production S2 call, independently of its GAP stop."""
+
+    recovered_state = recovered.state
+    assert len(admissions) == 1, "current S2 must have one live admission call"
+    admission = admissions[0]
+    assert admission["checkpoint"] is recovered_state, "current S2 must use the recovered checkpoint"
+    assert admission["summary"] == "q1", "current S2 must consume q1"
+    assert admission["history"] is recovered_state.history, "current S2 must consume recovered H/history"
+    assert admission["frontiers"] is recovered_state.frontiers, "current S2 must consume recovered frontiers"
+    assert admission["status"] is recovered_state.history.status_by_hypothesis, "current S2 must consume recovered status"
+    assert [item["actionId"] for item in predictions] == ["test-after-recover"], (
+        "current S2 must predict the q1 TEST",
+    )
+    for prediction in predictions:
+        assert prediction["model"] is admission["model"], "current S2 must delegate to its production model"
+        assert prediction["hypotheses"] == recovered_state.history.hypotheses, "current S2 must predict recovered H"
+        assert prediction["frontiers"] is recovered_state.frontiers, "current S2 must predict recovered frontiers"
+        assert prediction["status"] is recovered_state.history.status_by_hypothesis, (
+            "current S2 must predict recovered status",
+        )
+
+
+def test_confirmed_recover_repredicts_a_q1_test_without_promoting_conservative_history(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The public current S2 call consumes q1 even when C-U yields a GAP.
+
+    A fully confirmed Recover restores session KNOWN and writes q1/target/
+    evidence through S8/S9. It does not promote the S7 conservative members:
+    the q1 TEST is actually predicted from the recovered state, then the
+    bounded public step legitimately returns the named prediction gap without
+    a third dispatch or charge.
+    """
+
+    binding, base, fixture = _runtime_parts()
+    session, recovered = _q06_recovered_session(
+        binding, base, fixture, confirmed_summary="q1", include_q1_test=True,
+    )
     assert recovered.state.context.q_status == "KNOWN"
     assert recovered.state.context.current_summary == "q1"
     assert recovered.state.context.known_target == "recovered-q1"
-    assert recovered.state.context.known_evidence == ("synthetic:recover:repredict",)
+    assert recovered.state.context.known_evidence == ("synthetic:recover:repredict:q1",)
     assert set(recovered.state.history.status_by_hypothesis.values()) == {"CONSERVATIVE-UNKNOWN"}
 
-    follow_on = session.step(recovered.state, recovered.environment)
+    follow_on, admissions, predictions = _observe_q06_current_s2(
+        session, recovered, monkeypatch,
+    )
 
+    _assert_q06_current_q1_consumption(recovered, admissions, predictions)
     assert follow_on.stop_reason == "Stop-Prediction-Gap"
     assert len(follow_on.state.evidence) == 2
     assert follow_on.state.context.current_summary == "q1"
-    assert follow_on.state.resources.remaining == 1
+    assert follow_on.state.resources == recovered.state.resources
     assert any(diagnostic.code == "CONSERVATIVE-PREDICTION-GAP" for diagnostic in follow_on.diagnostics)
     assert any(diagnostic.code == "PREDICTION-GAP" for diagnostic in follow_on.diagnostics)
+
+    stale_session, stale_recovered = _q06_recovered_session(
+        binding, base, fixture, confirmed_summary="q1", include_q1_test=True,
+    )
+    stale_follow, stale_admissions, stale_predictions = _observe_q06_current_s2(
+        stale_session, stale_recovered, monkeypatch, stale_summary="q0",
+    )
+    # S9's stored q1/target/evidence are unchanged; only the live S2 input is
+    # fault-injected. The shared q1 witness must detect stale consumption.
+    assert stale_recovered.state.context.current_summary == "q1"
+    assert stale_recovered.state.context.known_target == "recovered-q1"
+    assert stale_recovered.state.context.known_evidence == ("synthetic:recover:repredict:q1",)
+    assert stale_follow.state.context.current_summary == "q1"
+    assert stale_follow.stop_reason == "Stop-Prediction-Gap"
+    assert [item["summary"] for item in stale_admissions] == ["q0"]
+    assert [item["actionId"] for item in stale_predictions] == ["test-q0"]
+    with pytest.raises(AssertionError, match="current S2 must consume q1"):
+        _assert_q06_current_q1_consumption(
+            stale_recovered, stale_admissions, stale_predictions,
+        )
+
+
+def test_confirmed_recover_q0_control_records_actual_q0_consumption(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A legal q0 confirmation records q0 honestly, even if it also gaps."""
+
+    binding, base, fixture = _runtime_parts()
+    session, recovered = _q06_recovered_session(
+        binding, base, fixture, confirmed_summary="q0", include_q1_test=True,
+    )
+    follow_on, admissions, predictions = _observe_q06_current_s2(
+        session, recovered, monkeypatch,
+    )
+
+    assert recovered.state.context.current_summary == "q0"
+    assert recovered.state.context.known_target == "recovered-q0"
+    assert recovered.state.context.known_evidence == ("synthetic:recover:repredict:q0",)
+    assert [item["summary"] for item in admissions] == ["q0"]
+    assert [item["actionId"] for item in predictions] == ["test-q0"]
+    assert follow_on.stop_reason == "Stop-Prediction-Gap"
+    assert len(follow_on.state.evidence) == 2
+    assert follow_on.state.resources == recovered.state.resources
+
+
+def test_confirmed_recover_without_q1_test_is_not_reprediction_gap(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """No q1 action produces NoDistinguisher, not a fabricated q1 TEST GAP."""
+
+    binding, base, fixture = _runtime_parts()
+    session, recovered = _q06_recovered_session(
+        binding, base, fixture, confirmed_summary="q1", include_q1_test=False,
+    )
+    follow_on, admissions, predictions = _observe_q06_current_s2(
+        session, recovered, monkeypatch,
+    )
+
+    assert [item["summary"] for item in admissions] == ["q1"]
+    assert predictions == []
+    assert follow_on.stop_reason == "Stop-NoDistinguisher"
+    assert len(follow_on.state.evidence) == 2
+    assert follow_on.state.resources == recovered.state.resources
 
 
 def test_unconfirmed_recover_stays_on_s7_and_cannot_write_s8_or_s9() -> None:
