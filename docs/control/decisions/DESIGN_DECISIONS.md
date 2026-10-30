@@ -1211,9 +1211,10 @@ engineering evidence, typed bindings, production entry/evidence controls and
 their tests.  CRS, M2, method/algorithm authority, research experiment
 definitions, offline-intake scope and paper claims remain unchanged.
 
-**Status:** Candidate under CR-2026-021; independent engineering review and
-final-head CI are required.  This is neither run admission nor approval of a
-conformance, capability, experiment or publication claim.
+**Status:** Candidate under CR-2026-021. G1–G4 limited reviews have accepted
+their bounded engineering scopes; G5 whole-PR joint review and final-head CI
+remain required before PR acceptance. This is neither run admission nor
+approval of a conformance, capability, experiment or publication claim.
 
 # 中文版
 
@@ -1845,5 +1846,6 @@ PR #22 所有权。
 **范围：** B/C 参考会话协调、进程内合成工程证据、类型化绑定、生产入口／证据控制及其
 测试。CRS、M2、方法／算法权威、研究实验定义、离线接入范围和论文主张均不改变。
 
-**状态：** 在 CR-2026-021 下为候选；需要独立工程评审和最终 Head CI。这既不是运行
-准入，也不是符合性、能力、实验或出版主张的批准。
+**状态：** 在 CR-2026-021 下为候选。G1～G4 有限复审已接受各自有界工程范围；在 PR
+接受前，G5 整支联合评审和最终 Head CI 仍为必需。这既不是运行准入，也不是符合性、能力、实验
+或出版主张的批准。

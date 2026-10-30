@@ -5,7 +5,21 @@
 | Authorization | CR-2026-021 / DD-045 |
 | Initial kernel checkpoint | PR #25 `87f9330306be411a3d2d580a356070072dcf903f` |
 | Scope | Finite reference session coordination and in-process synthetic engineering validation |
-| Status | Candidate implementation on a Draft PR; independent review required |
+| Status | Draft PR candidate; G1–G4 limited reviews accepted their bounded scopes, while G5 whole-PR review remains required |
+
+### Limited-review provenance (not whole-PR acceptance)
+
+The following records identify the fixed heads at which their bounded scopes
+were independently accepted. They do not combine into a PR acceptance, do not
+supersede the controlled boundaries below, and do not authorize M3, a real IUT,
+runtime-integrity claims, or conformance claims.
+
+| Scope | Fixed accepted Head | Audit-held review record ID | Bounded engineering conclusion |
+|---|---|---|---|
+| G1 | `2848dfdc433b155573a6ef58cfbc788a115fee0a` | `RR-PR25-2026-030` | finite causal replay and opaque-evidence normalization only |
+| G2 | `d50445ef66228e45408b8d626bc6dbdbaf5a499c` | `RR-PR25-2026-032` | bounded session / Recover re-prediction witness only |
+| G3 | `2c7b08f747dfe51b73f9da7c90a1a4f9e5f1366c` | `RR-PR25-2026-034` | Git-bound, recomputable finite synthetic evidence, CLI, checkpoint/continue, and publication boundary only |
+| G4 | `c7f1aafb2507d4712ac532413c1655eb9ef6699d` | `RR-PR25-2026-036` | passive, non-scoring offline replay bridge only |
 
 ## Authority-to-runtime mapping
 
@@ -65,8 +79,9 @@ FAIL, so INCONCLUSIVE is never answered.  A METHOD-ONLY result is an
 calculation yields PASS or FAIL.  Ownership or clock/error-basis ERROR follows
 S7, while no assessment directly rewrites compatible history.  This does not
 make the runtime a protocol stack, a physical clock calibration, a reviewed
-protocol deadline engine, or an IUT claim.  The production evidence/CLI
-boundary remains explicit later B/C work.
+protocol deadline engine, or an IUT claim. Broader production evidence/CLI
+work beyond G3's bounded, Git-bound finite synthetic consumer remains explicit
+later B/C work.
 
 ## B/C-2C finite stopping and applicability boundary
 
@@ -135,9 +150,10 @@ applicability-input errors.
 `VERIFIED` means the named public-entry regression demonstrates the stated
 sub-behaviour. `PARTIAL` means only the stated sub-behaviour is demonstrated;
 `PENDING` means this checkpoint makes no implementation-completeness claim.
-The fixed candidate Head, command and result belong in the subsequent limited
-review or gate record. The paths below are durable test locators, not a
-substitute for that evidence identity.
+This table retains the B/C-2 checkpoint while identifying later G1–G4 limited
+closures; those scoped records do not replace the pending G5 whole-PR review.
+The paths below are durable test locators, not a substitute for fixed-Head
+review identity.
 
 | ID | Status | Durable public-entry evidence or retained boundary |
 |---|---|---|
@@ -161,10 +177,10 @@ substitute for that evidence identity.
 | BC-18 | PARTIAL | public execution-request isolation regression; complete action/state environment matrix remains. |
 | BC-19 | VERIFIED | evaluator-truth exclusion and extra-truth-field rejection regressions; later evaluator work remains separate. |
 | BC-20 | PARTIAL | S0 unset-status and committed/retry regressions; reset/Recover/attempt reconstruction matrix remains. |
-| BC-21 | PARTIAL | public `ReferenceSession.step` malformed/identity regressions; independent CLI and reproducible-run boundary remains. |
-| BC-22 | PENDING | Publication transaction and rollback are outside this in-process checkpoint. |
-| BC-23 | PENDING | A non-editable repository-external wheel is outside this checkpoint. |
-| BC-24 | PARTIAL | kernel/session offline regressions; complete no-network entry evidence remains. |
+| BC-21 | VERIFIED | G3 accepts the bounded Git-bound `cltav-runtime` run/validate/replay/checkpoint/continue paths, including exact source identity and named malformed-input rejection. `evidence::test_git_bound_two_round_evidence_round_trips_exact_rationals`; `evidence::test_cli_checkpoint_then_continue_consumes_a_genuine_error_prefix_once`; `evidence::test_cli_rebuilds_a_genuine_error_then_recover_trace_from_the_same_git_inputs`. |
+| BC-22 | VERIFIED | G3 accepts managed-artifact staging, validation, replacement rollback and first-publication failure without residue. `evidence::test_real_publication_success_rollback_and_first_failure_are_byte_safe`; `evidence::test_checkpoint_publication_is_transactional_for_existing_and_first_targets`. |
+| BC-23 | VERIFIED | G3 accepts the repository-external non-editable wheel only for the bounded synthetic command with declared dependencies and packaged resources. `evidence::test_noneditable_wheel_runs_the_real_finite_cli_from_an_unrelated_directory`. |
+| BC-24 | VERIFIED | G3's socket-guarded installed runtime command and G4's socket-guarded installed offline bridge exercise their actual entry points without network creation; G4 remains passive and `NOT-SCORED`. This is an entry-point boundary, not an operating-system sandbox or protocol/IUT capability claim. |
 
 ## Initial type boundary
 
@@ -435,7 +451,7 @@ tool error without publishing an invalid evidence package.
 
 ## Open work and evidence boundary
 
-**B/C-3 audit core (A01) — the limited G1/G2 reviews are accepted; durable G3 closure remains pending.**
+**B/C-3 audit core (A01) — the limited G1/G2/G3 reviews accepted their bounded closure.**
 Public replay now recomputes the finite causal relation for a retained typed
 rejected record before it accepts the named `resolution_code`. The shared S4
 classifier is used by both live execution and replay: record/carrier errors,
@@ -469,25 +485,24 @@ opaque typed raw. The external exception/invalid-successor fact is not
 representable by that record alone, so the opaque timing boundary is not
 claimed as a causal raw proof here.
 
-This is not total A01 closure. G3 must establish producer/source and durable
-consumer evidence for raw-free opaque facts. In particular, G1 does not claim
-to distinguish deletion of raw plus a coordinated change to a raw-free opaque
-category from a genuine external opaque fact. Until that gate has independently
-accepted its own fixed head, this runtime claims only the in-memory calculable
-branch-cause audit described above.
+G3 closes A01 only in the supported, Git-bound and recomputable finite
+synthetic producer domain. It does not authenticate raw-free opaque external
+source facts or claim to distinguish arbitrary deletion/reclassification of
+those facts from a genuine external opaque event. Such inputs remain excluded
+from qualified validation and continuation. G5 whole-PR review is still
+pending; this statement is not a capability, conformance or merge claim.
 
 The binding/type layer now executes bounded synthetic TEST/Prep/Recover actions
 and, only for bound finite synthetic material, resolves ownership and performs
-contract-scoped interval assessment.  It does not establish ownership of a
-real protocol service, calibrated timing, reviewed deadline authority, IUT
-behaviour or runtime integrity.  B/C-3 still owns durable
-evidence-transaction/CLI causal closure.  The G1/G2 review records do not
-close that durable consumer boundary; independent review of the fixed G3
-implementation head remains pending.  All later runs remain `SYNTHETIC-ENGINEERING-VALIDATION`
-until separately reviewed; they are not confirmation experiments or protocol
-conformance cases.
+contract-scoped interval assessment. G3's limited acceptance covers its
+durable evidence-transaction/CLI consumer boundary in that same supported
+domain; G4 separately accepts a passive, non-scoring offline bridge. Neither
+scope establishes ownership of a real protocol service, calibrated timing,
+reviewed deadline authority, IUT behaviour or runtime integrity. All runs
+remain `SYNTHETIC-ENGINEERING-VALIDATION`, not confirmation experiments or
+protocol-conformance cases.
 
-## G3 finite evidence and CLI candidate (pending independent review)
+## G3 finite evidence and CLI (limited-accepted engineering boundary)
 
 `cltav-runtime` is a narrow installed command for a **Git-bound synthetic
 engineering scenario**.  Every `run`, `checkpoint`, `validate`, `continue`,
@@ -571,10 +586,12 @@ rejects repository targets, links, and unowned existing files; replacement
 failure restores the previous validated package, while a first publication
 failure leaves no partial package.  A non-editable-wheel regression installs
 declared dependencies into a clean temporary venv and runs the real command
-from an unrelated directory with a socket guard.  These are G3 candidate
-engineering checks only.  They do **not** establish runtime integrity,
+from an unrelated directory with a socket guard. These are G3
+limited-accepted engineering checks. They close the durable A01 consumer only
+in the supported, Git-bound recomputable synthetic domain; they do **not**
+authenticate arbitrary external opaque facts or establish runtime integrity,
 conformance, actual IUT execution, physical timing calibration, experiment
-truth, reviewed deadline authority, A01 closure, or a merge decision.
+truth, reviewed deadline authority, or a merge decision.
 
 # 中文版
 
@@ -585,7 +602,19 @@ truth, reviewed deadline authority, A01 closure, or a merge decision.
 | 授权 | CR-2026-021／DD-045 |
 | 初始内核检查点 | PR #25 `87f9330306be411a3d2d580a356070072dcf903f` |
 | 范围 | 有限参考会话协调与进程内合成工程验证 |
-| 状态 | Draft PR 上的候选实现；需要独立评审 |
+| 状态 | Draft PR 上的候选实现；G1～G4 已接受各自有界范围，G5 整支评审仍为必需 |
+
+### 有限复审来源（不是整支 PR 接受）
+
+下列记录给出各自有界范围获独立接受时的固定 Head。它们不会组合成整支 PR 接受，不会替代下文
+的受控边界，也不授权 M3、真实 IUT、运行完整性主张或符合性主张。
+
+| 范围 | 已接受的固定 Head | 审计留存的复审记录 ID | 有界工程结论 |
+|---|---|---|---|
+| G1 | `2848dfdc433b155573a6ef58cfbc788a115fee0a` | `RR-PR25-2026-030` | 仅限有限因果 replay 与不透明证据归一化 |
+| G2 | `d50445ef66228e45408b8d626bc6dbdbaf5a499c` | `RR-PR25-2026-032` | 仅限有界 session／Recover 再预测见证 |
+| G3 | `2c7b08f747dfe51b73f9da7c90a1a4f9e5f1366c` | `RR-PR25-2026-034` | 仅限 Git 绑定、可重算的有限 synthetic 证据、CLI、checkpoint／continue 与发布边界 |
+| G4 | `c7f1aafb2507d4712ac532413c1655eb9ef6699d` | `RR-PR25-2026-036` | 仅限被动、非评分的 offline replay bridge |
 
 ## 权威到运行时映射
 
@@ -630,7 +659,8 @@ authority。原始材料须先绑定实际 execution/action/evidence 身份才�
 `answered=true`；INCONCLUSIVE 永远不是 answered。METHOD-ONLY 即使算得边界 PASS/FAIL，仍为
 `ENGINEERING-WITNESS` 且 `answered=false`。所有权或时钟／误差依据 ERROR 进入 S7；任何评估均
 不得直接改写相容历史。这不使 runtime 成为协议栈、物理时钟校准、已审定的协议 deadline 引擎或
-IUT 主张。生产 evidence／CLI 边界仍是后续 B/C 工作。
+IUT 主张。超出 G3 的有界、Git 绑定、有限 synthetic 消费者之外的生产 evidence／CLI 工作仍是
+后续 B/C 工作。
 
 ## B/C-2C 有限停止与适用性边界
 
@@ -679,8 +709,9 @@ GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出�
 ## B/C-2 覆盖状态
 
 `VERIFIED` 表示具名公共入口回归已展示所述子行为；`PARTIAL` 表示仅展示所述子行为；
-`PENDING` 表示本检查点不主张实现完整性。固定候选 Head、命令和结果必须由后续限定复审或
-门禁记录绑定。下列路径是持久化测试定位，不替代该证据身份。
+`PENDING` 表示本检查点不主张实现完整性。本表保留 B/C-2 检查点，同时标明后续 G1～G4
+有限闭合；这些范围记录不取代仍待完成的 G5 整支评审。下列路径是持久化测试定位，不替代
+固定 Head 的评审身份。
 
 | ID | 状态 | 持久化公共入口证据或明确保留边界 |
 |---|---|---|
@@ -704,10 +735,10 @@ GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出�
 | BC-18 | PARTIAL | 公共执行请求隔离回归；完整 action/state 环境矩阵仍待完成。 |
 | BC-19 | VERIFIED | evaluator truth 排除和额外 truth 字段拒绝回归；后续评价端工作保持分离。 |
 | BC-20 | PARTIAL | S0 未设置状态及 committed/retry 回归；reset／Recover／attempt 重建矩阵仍待完成。 |
-| BC-21 | PARTIAL | 公共 `ReferenceSession.step` 畸形／身份回归；独立 CLI 和可复现运行边界仍待完成。 |
-| BC-22 | PENDING | 发布事务和回滚不属于本进程内检查点。 |
-| BC-23 | PENDING | 仓库外不可编辑 wheel 不属于本检查点。 |
-| BC-24 | PARTIAL | kernel/session 离线回归；完整无网络入口证据仍待完成。 |
+| BC-21 | VERIFIED | G3 接受有界 Git 绑定的 `cltav-runtime` run／validate／replay／checkpoint／continue 路径，包括精确来源身份和具名畸形输入拒绝。`evidence::test_git_bound_two_round_evidence_round_trips_exact_rationals`；`evidence::test_cli_checkpoint_then_continue_consumes_a_genuine_error_prefix_once`；`evidence::test_cli_rebuilds_a_genuine_error_then_recover_trace_from_the_same_git_inputs`。 |
+| BC-22 | VERIFIED | G3 接受受管制品的 staging、校验、替换回滚和首次发布无残留。`evidence::test_real_publication_success_rollback_and_first_failure_are_byte_safe`；`evidence::test_checkpoint_publication_is_transactional_for_existing_and_first_targets`。 |
+| BC-23 | VERIFIED | G3 仅接受带已声明依赖和打包资源的、有界合成命令在仓库外 non-editable wheel 中运行。`evidence::test_noneditable_wheel_runs_the_real_finite_cli_from_an_unrelated_directory`。 |
+| BC-24 | VERIFIED | G3 的 socket-guard 已安装 runtime 命令和 G4 的 socket-guard 已安装 offline bridge 均通过实际入口运行而不创建网络；G4 仍是被动 `NOT-SCORED`。这是入口边界，不是操作系统沙箱或协议／IUT 能力主张。 |
 
 ## 初始类型边界
 
@@ -862,7 +893,7 @@ reviewed deadline 判定才要求非负的 earliest admissible elapsed horizon�
 
 ## 待完成工作和证据边界
 
-**B/C-3 审计核心（A01）——有限 G1／G2 复审已接受；持久化 G3 闭合仍待完成。** 公共重放现在会先从保留的、类型正确的
+**B/C-3 审计核心（A01）——有限 G1／G2／G3 复审已接受其有界闭合。** 公共重放现在会先从保留的、类型正确的
 rejected record 重算有限因果关系，再接受其具名 `resolution_code`。live 执行与 replay 共用同一 S4
 分类器：record／carrier 错误、target 不匹配以及已发出 attempt／action identity 都由冻结
 record、action、attempt、interpretation contract 和既有 ownership ledger 推导。既有的类型化
@@ -887,17 +918,17 @@ attempt/action 的 record 才可保留。若分类本身失败，则安全丢弃
 不透明类型 raw 前应用相同条件。外部 exception／invalid-successor 事实不能仅从该 record 重建，
 因此这里不把不透明时点边界宣称为 raw 因果证明。
 
-这不是 A01 的完全关闭。G3 必须为无 raw 的不透明事实建立生产者／来源及持久化消费者证据。特别地，
-G1 不主张能够区分“删除 raw 并协调改为无 raw 不透明类别”与真实外部不透明事实。该门禁在其自己的
-固定 Head 上独立接受前，本运行时只主张上文所述的、进程内可计算分支原因审计。
+G3 只在受支持、Git 绑定且可重算的有限 synthetic producer 域内关闭 A01。它不认证无 raw 的不透明
+外部来源事实，也不主张区分对这些事实的任意删除／重分类与真实外部不透明事件。此类输入继续被排除在
+qualified validation 与 continuation 之外。G5 整支评审仍待完成；这不是能力、符合性或合并主张。
 
 绑定／类型层现已执行有界合成 TEST／Prep／Recover 动作，并且只针对已经绑定的有限合成材料解析
-ownership、进行合同范围内的区间 assessment；它不建立真实协议服务的 ownership、校准时序、已审定
-deadline authority、IUT 行为或运行完整性。B/C-3 仍负责持久化 evidence-transaction／CLI 的因果
-闭合。G1／G2 复审记录并不关闭这一持久化消费者边界；对固定 G3 实现 Head 的独立复审仍 pending。后续运行在独立
-复审前均保持 `SYNTHETIC-ENGINEERING-VALIDATION`，不是确认性实验或协议符合性用例。
+ownership、进行合同范围内的区间 assessment。G3 的有限接受覆盖同一受支持域内持久化
+evidence-transaction／CLI 消费者边界；G4 另行接受被动、非评分的 offline bridge。二者均不建立真实
+协议服务 ownership、校准时序、已审定 deadline authority、IUT 行为或运行完整性。全部运行仍为
+`SYNTHETIC-ENGINEERING-VALIDATION`，不是确认性实验或协议符合性用例。
 
-## G3 有限证据与 CLI 候选（等待独立复审）
+## G3 有限证据与 CLI（有限接受的工程边界）
 
 `cltav-runtime` 是面向**Git 绑定的合成工程场景**的窄安装命令。每个 `run`、`checkpoint`、`validate`、`continue` 和 `replay`
 调用都必须显式给出本地 authority repository、精确的 40 位 commit、development-contract path、
@@ -945,5 +976,6 @@ evaluation 文件不是运行时输入。
 
 发布先写入私有 staging 文件，读回并完成校验，再进行有界替换事务。它拒绝仓库内目标、链接和未受管的既有文件；
 替换中途失败会恢复此前已验证的包，首次发布失败不会留下半包。non-editable wheel 回归会把已声明的依赖安装到干净
-临时 venv，并从无关目录运行真实命令且启用 socket guard。这些均只是 G3 候选工程检查；**不**建立运行完整性、
-符合性、真实 IUT 执行、物理时间校准、实验真值、已审定 deadline authority、A01 闭合或合并决定。
+临时 venv，并从无关目录运行真实命令且启用 socket guard。这些是 G3 有限接受的工程检查；它们仅在
+受支持、Git 绑定且可重算的 synthetic 域内关闭持久化 A01 消费者，不认证任意不透明外部事实，且**不**建立
+运行完整性、符合性、真实 IUT 执行、物理时间校准、实验真值、已审定 deadline authority 或合并决定。

@@ -5,7 +5,7 @@
 | Authorization | CR-2026-017 / DD-041 |
 | Specification inputs | CR-2026-016 / DD-038–040 and the current controlled development package |
 | Scope | Read-only capture intake through bounded reconstruction evidence and a limited non-scoring replay bridge |
-| Status | Candidate implementation on a Draft PR; independent review required |
+| Status | Draft PR implementation; the G4 passive bridge has limited acceptance, while G5 whole-PR review remains required |
 
 ## 1. Purpose and contract mapping
 
@@ -212,7 +212,7 @@ affect scoring.
 | 授权 | CR-2026-017／DD-041 |
 | 规格输入 | CR-2026-016／DD-038～040 及当前受控开发包 |
 | 范围 | 从只读捕获接入到有界重建证据及受限、非评分的回放桥接 |
-| 状态 | Draft PR 上的候选实现；需要独立评审 |
+| 状态 | Draft PR 上的实现；G4 被动桥接已获有限接受，G5 整支评审仍为必需 |
 
 ## 1. 目的与合同映射
 
