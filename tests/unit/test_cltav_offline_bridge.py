@@ -319,6 +319,44 @@ def test_bridge_rejects_tampered_producer_chain_without_overwriting_owned_output
     assert repeated.value.code == "OFFLINE-EVIDENCE-INVALID"
 
 
+def test_cli_maps_runtime_limited_json_integers_to_named_source_and_bridge_errors(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Parser resource limits must not turn malformed external JSON into a traceback."""
+
+    digit_limit = getattr(sys, "get_int_max_str_digits", lambda: 0)()
+    if not digit_limit:
+        pytest.skip("this Python runtime has no enforced JSON integer-digit limit")
+    capture, evidence_path, evidence_raw = _produce_evidence(
+        tmp_path, name="integer-limit", capture_id="cap-g4-integer-limit", records=_complete_exchange(),
+    )
+    run = adapt_offline_evidence_bytes(evidence_raw, capture_path=capture, evidence_path=evidence_path)
+    protected = tmp_path / "integer-limit.bridge.json"
+    publish_offline_replay(run, output=protected)
+    old = protected.read_bytes()
+    oversized = b'{"x":' + (b"9" * (digit_limit + 1)) + b"}"
+    bad_evidence = tmp_path / "oversized.intake.json"
+    bad_evidence.write_bytes(oversized)
+    assert offline_main([
+        "replay", "--input", str(capture), "--offline-evidence", str(bad_evidence), "--output", str(protected),
+    ]) == 1
+    source_stderr = capsys.readouterr().err
+    assert "OFFLINE-EVIDENCE-JSON-ERROR" in source_stderr
+    assert "Traceback" not in source_stderr
+    assert protected.read_bytes() == old
+
+    bad_bridge = tmp_path / "oversized.bridge.json"
+    bad_bridge.write_bytes(oversized)
+    assert offline_main([
+        "validate-replay", "--input", str(capture), "--offline-evidence", str(evidence_path), "--bridge", str(bad_bridge),
+    ]) == 1
+    bridge_stderr = capsys.readouterr().err
+    assert "OFFLINE-BRIDGE-JSON-ERROR" in bridge_stderr
+    assert "Traceback" not in bridge_stderr
+    assert protected.read_bytes() == old
+
+
 @pytest.mark.parametrize("mutation", ["wrong-key", "invented-cancel", "cross-domain"])
 def test_unproven_ownership_or_termination_facts_cannot_create_an_offline_verdict(
     tmp_path: Path,
@@ -443,8 +481,8 @@ def test_bridge_rechecks_the_capture_bytes_before_replacing_an_existing_artifact
     assert target.read_bytes() == old
 
 
-def test_public_run_views_cannot_mutate_a_non_scoring_rendered_artifact(tmp_path: Path) -> None:
-    """A shallow-frozen run must not leak a mutable PASS-producing API path."""
+def test_public_or_private_cached_rows_cannot_mutate_a_non_scoring_rendered_artifact(tmp_path: Path) -> None:
+    """Public rendering derives again from source, not from mutable run caches."""
 
     capture, evidence, raw = _produce_evidence(
         tmp_path, name="defensive-view", capture_id="cap-g4-defensive-view", records=_complete_exchange(),
@@ -453,19 +491,27 @@ def test_public_run_views_cannot_mutate_a_non_scoring_rendered_artifact(tmp_path
     exposed_records = run.records
     exposed_source = run.offline_evidence
     exposed_records[0]["scoring"]["protocolVerdict"] = "PASS"
+    exposed_records[0]["sourceRefs"]["packetRefIds"] = ["forged-packet-ref"]
     exposed_source["input"]["captureId"] = "forged-capture-id"
     document = offline_replay_document(run)
+    document_bytes = offline_replay_bytes(run)
     _assert_non_scoring(document)
     assert document["source"]["captureIdentity"]["captureId"] == "cap-g4-defensive-view"
-    assert b'"PASS"' not in offline_replay_bytes(run)
+    assert b'"PASS"' not in document_bytes
 
-    # Even deliberate mutation through a private implementation attribute is
-    # caught as a provenance violation before either public render API emits
-    # a bridge document.
-    run._records[0]["scoring"]["protocolVerdict"] = "PASS"  # pyright: ignore[reportPrivateUsage]
-    with pytest.raises(OfflineReplayError) as altered:
-        offline_replay_document(run)
-    assert altered.value.code == "OFFLINE-BRIDGE-PROVENANCE-ERROR"
+    # Model the former shallow-freeze bypass: even a caller which injects a
+    # fake cache and a matching-looking marker cannot affect public render or
+    # bytes because both reconstruct from the original capture/evidence pair.
+    object.__setattr__(run, "_records", tuple(exposed_records))
+    object.__setattr__(run, "_offline_evidence", exposed_source)
+    object.__setattr__(run, "_snapshot_digest", "refreshed-by-caller")
+    rebuilt_document = offline_replay_document(run)
+    assert rebuilt_document == document
+    _assert_non_scoring(rebuilt_document)
+    assert offline_replay_bytes(run) == document_bytes
+    published = publish_offline_replay(run, output=tmp_path / "cache-injection.bridge.json")
+    assert published == document
+    _assert_non_scoring(published)
 
 
 def test_bridge_rechecks_the_declared_evidence_bytes_before_replacing_an_existing_artifact(tmp_path: Path) -> None:

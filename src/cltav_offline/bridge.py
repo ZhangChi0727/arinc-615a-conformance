@@ -65,10 +65,7 @@ class OfflineReplayRun:
     capture_path: Path = field(repr=False, compare=False)
     evidence_path: Path | None = field(repr=False, compare=False)
     _offline_evidence_raw: bytes = field(repr=False, compare=False)
-    _offline_evidence: dict[str, Any] = field(repr=False, compare=False)
-    _records: tuple[dict[str, Any], ...] = field(repr=False, compare=False)
     _token: object | None = field(default=None, init=False, repr=False, compare=False)
-    _snapshot_digest: str | None = field(default=None, init=False, repr=False, compare=False)
 
     @property
     def offline_evidence_raw(self) -> bytes:
@@ -78,15 +75,15 @@ class OfflineReplayRun:
 
     @property
     def offline_evidence(self) -> dict[str, Any]:
-        """Return a defensive copy; callers cannot alter bridge provenance."""
+        """Return a defensive copy of the retained source bytes."""
 
-        return deepcopy(self._offline_evidence)
+        return load_offline_evidence_bytes(self._offline_evidence_raw)
 
     @property
     def records(self) -> tuple[dict[str, Any], ...]:
-        """Return defensive record copies; replay results remain non-scoring."""
+        """Derive defensive, non-scoring record copies from source bytes."""
 
-        return tuple(deepcopy(record) for record in self._records)
+        return tuple(deepcopy(record) for record in _adapt_records(self.offline_evidence))
 
 
 def canonical_json_bytes(value: object) -> bytes:
@@ -127,7 +124,7 @@ def load_offline_evidence_bytes(raw: bytes) -> dict[str, Any]:
         value = json.loads(text, object_pairs_hook=no_duplicates, parse_constant=_reject_json_constant)
     except OfflineReplayError:
         raise
-    except json.JSONDecodeError as exc:
+    except (json.JSONDecodeError, ValueError) as exc:
         raise OfflineReplayError("OFFLINE-EVIDENCE-JSON-ERROR", "offline evidence is not valid JSON") from exc
     if type(value) is not dict:
         raise OfflineReplayError("OFFLINE-EVIDENCE-SHAPE-ERROR", "offline evidence root must be an object")
@@ -176,15 +173,14 @@ def adapt_offline_evidence_bytes(
             "OFFLINE-SOURCE-MISMATCH",
             f"offline evidence does not match the rebuilt decoder/projection at {difference}",
         )
-    records = tuple(deepcopy(record) for record in _adapt_records(source))
+    # Force the finite adapter to validate the source projection at adaptation
+    # time, but never retain its mutable dict rows as the later render source.
+    _adapt_records(source)
     run = OfflineReplayRun(
         capture_path=capture,
         evidence_path=resolved_evidence,
         _offline_evidence_raw=raw,
-        _offline_evidence=deepcopy(source),
-        _records=records,
     )
-    object.__setattr__(run, "_snapshot_digest", _snapshot_digest(run))
     object.__setattr__(run, "_token", _RUN_TOKEN)
     return run
 
@@ -193,7 +189,15 @@ def offline_replay_document(run: OfflineReplayRun) -> dict[str, Any]:
     """Render the closed, non-scoring bridge envelope for one verified run."""
 
     run = _require_run(run)
-    source = run.offline_evidence
+    # A run is deliberately not a cache authority.  Recreate the producer
+    # relation for every public render so mutable implementation attributes
+    # (or a refreshed in-memory digest) cannot manufacture a scored artifact.
+    rebuilt_run = adapt_offline_evidence_bytes(
+        run.offline_evidence_raw,
+        capture_path=run.capture_path,
+        evidence_path=run.evidence_path,
+    )
+    source = rebuilt_run.offline_evidence
     input_value = _mapping(source.get("input"), "OFFLINE-EVIDENCE-SHAPE-ERROR", "offline evidence input")
     tool = _mapping(source.get("tool"), "OFFLINE-EVIDENCE-SHAPE-ERROR", "offline evidence tool")
     projection = _mapping(
@@ -214,7 +218,7 @@ def offline_replay_document(run: OfflineReplayRun) -> dict[str, Any]:
             "integrity": "NOT-EVALUATED",
         },
         "source": {
-            "offlineEvidenceSha256": sha256(run.offline_evidence_raw).hexdigest(),
+            "offlineEvidenceSha256": sha256(rebuilt_run.offline_evidence_raw).hexdigest(),
             "captureIdentity": {
                 "captureId": input_value.get("captureId"),
                 "byteCount": input_value.get("byteCount"),
@@ -227,7 +231,7 @@ def offline_replay_document(run: OfflineReplayRun) -> dict[str, Any]:
         # validator a complete relation to rebuild.  It is not a new source of
         # truth: validation always re-runs the PR22 decoder/projection first.
         "offlineEvidence": deepcopy(source),
-        "records": [deepcopy(record) for record in run.records],
+        "records": [deepcopy(record) for record in rebuilt_run.records],
         "activeExecution": {
             "issuedActionCount": 0,
             "chargedCost": 0,
@@ -849,7 +853,7 @@ def _load_bridge_bytes(raw: bytes) -> dict[str, Any]:
         value = json.loads(text, object_pairs_hook=_no_duplicate_object, parse_constant=_reject_json_constant)
     except OfflineReplayError:
         raise
-    except json.JSONDecodeError as exc:
+    except (json.JSONDecodeError, ValueError) as exc:
         raise OfflineReplayError("OFFLINE-BRIDGE-JSON-ERROR", "offline replay is not valid JSON") from exc
     if type(value) is not dict:
         raise OfflineReplayError("OFFLINE-BRIDGE-SHAPE-ERROR", "offline replay root must be an object")
@@ -944,28 +948,9 @@ def _first_difference(actual: object, expected: object, path: str) -> str | None
     return None if actual == expected else path
 
 
-def _snapshot_digest(run: OfflineReplayRun) -> str:
-    """Bind the opaque run to the exact source and derived bridge records."""
-
-    try:
-        snapshot = {
-            "offlineEvidenceRawSha256": sha256(run._offline_evidence_raw).hexdigest(),
-            "offlineEvidence": run._offline_evidence,
-            "records": list(run._records),
-        }
-        return sha256(canonical_json_bytes(snapshot)).hexdigest()
-    except OfflineReplayError as exc:
-        raise OfflineReplayError(
-            "OFFLINE-BRIDGE-PROVENANCE-ERROR",
-            "offline replay run contains a noncanonical or altered source snapshot",
-        ) from exc
-
-
 def _require_run(value: object) -> OfflineReplayRun:
     if type(value) is not OfflineReplayRun or value._token is not _RUN_TOKEN:
         raise OfflineReplayError("OFFLINE-BRIDGE-PROVENANCE-ERROR", "offline replay run was not source-rebuilt by the bridge")
-    if value._snapshot_digest != _snapshot_digest(value):
-        raise OfflineReplayError("OFFLINE-BRIDGE-PROVENANCE-ERROR", "offline replay run changed after source rebuild")
     return value
 
 

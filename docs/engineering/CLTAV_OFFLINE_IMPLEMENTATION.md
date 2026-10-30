@@ -152,8 +152,9 @@ rebuild before adapting source witnesses. A successful replay or validation
 returns `0` even when the bounded source says `GAPPED`, `CONFLICT`, partial,
 or non-projectable: those are retained as named `NOT-SCORED` evidence, not
 quietly promoted to a protocol answer. A bridge output is canonical JSON and
-is staged and relation-validated before replacement. It may replace only an
-existing bridge artifact for the same rebuilt source relation; a failed stage
+each public render re-establishes the source relation rather than trusting
+mutable cached rows. It is staged and relation-validated before replacement.
+It may replace only an existing bridge artifact for the same rebuilt source relation; a failed stage
 or ordinary failed swap preserves the previous bytes, while an exceptional
 rollback failure preserves its named backup rather than deleting it.
 
@@ -268,7 +269,7 @@ cltav-offline validate-replay --input <capture> --offline-evidence <inspect-outp
 
 `0` 表示有界重建完成且无受控问题；`2` 表示已写入输出，但包含受控未知、不支持条件、冲突、未完成重建，或 corpus 模式下逐捕获的输入故障；`1` 表示致命调用、身份、受控资源、schema、工具或发布错误。畸形捕获仅在 corpus 模式下以逐文件 `FATAL-INPUT-ERROR` 证据表示；工具或受控资源失败会中止整个 staging 事务，绝不伪造成某一捕获的输入错误。这些代码是工具运行状态，不是 ARINC 615A 判定值。
 
-`replay` 与主动合成执行严格分开。它先从所指捕获字节重建实际 PR22 intake envelope，再要求给定 envelope 及其受控投影与该重建结果完全相等，之后才适配来源见证。即使有界来源标为 `GAPPED`、`CONFLICT`、部分解析或不可投影，成功的 replay／validation 也返回 `0`：这些状态会以具名 `NOT-SCORED` 证据保留，绝不能静默升级为协议答案。桥接输出是 canonical JSON，在替换前先 staging 并作关系校验；只能替换属于同一已重建来源关系的既有桥接制品。staging 失败或普通替换失败时保持旧字节；若回滚本身异常，则保留具名 backup，不得删除旧制品。
+`replay` 与主动合成执行严格分开。它先从所指捕获字节重建实际 PR22 intake envelope，再要求给定 envelope 及其受控投影与该重建结果完全相等，之后才适配来源见证。即使有界来源标为 `GAPPED`、`CONFLICT`、部分解析或不可投影，成功的 replay／validation 也返回 `0`：这些状态会以具名 `NOT-SCORED` 证据保留，绝不能静默升级为协议答案。桥接输出是 canonical JSON；每次公开渲染都会重新建立来源关系，不信任可变缓存行。在替换前先 staging 并作关系校验；只能替换属于同一已重建来源关系的既有桥接制品。staging 失败或普通替换失败时保持旧字节；若回滚本身异常，则保留具名 backup，不得删除旧制品。
 
 `--source-commit` 是可选的调用方来源声明。若给出，必须是小写 40 位 Git 对象 ID，并标为 `CLAIMED-UNVERIFIED`；若未给出，标为 `UNAVAILABLE`。命令不会读取 `GITHUB_SHA`、当前目录或本地 Git checkout 来制造声明。每个输出改为记录确定性的运行源码快照 SHA-256 及精确的受控合同身份。这些是不同强度的断言：语法正确的调用方声明不得表述成已核验构建身份。
 
