@@ -32,7 +32,7 @@ directly and emits the commit/path/raw-byte SHA-256 identities it consumed.
 | `CLTAV-DEVELOPMENT-CONTRACTS` / `AR-FINITE` | `RuntimeAuthorityBinding`, `ModelContext`, finite path kernel | exact AR-FINITE interface IDs, record IDs and runtime parameters | Finite declared syntax and limits only; no general solver. |
 | Interface registry: `SessionContext`, `HistoryHandle`, `IF-PRED-OBS` through `IF-RESOURCE-STOP` | `SessionContext`, `HistoryHandle`, later session adapters | exact eight-interface binding and ownership checks | Selection remains read-only; S3/S8/S9 responsibilities remain distinct. |
 | CR-2026-016 / DD-038–040 | Source and evidence boundary | source identity and synthetic-only labels | Does not execute or promote first-slice requirements. |
-| CR-2026-017 / DD-041 | Optional future offline-record adapter | separately tested adapter only | Does not turn capture intake into active execution. |
+| CR-2026-017 / DD-041 | Passive, read-only offline-record adapter / G4 bridge | source reconstruction, projection and bridge checks only | Does not turn capture intake into active execution. |
 | CR-2026-019 / DD-043 and experiment design | Evaluator-only identity and evidence fields | no truth object accepted by algorithm input | No experiment admission, denominator result or scientific claim. |
 
 ## Named interface bridge
@@ -498,9 +498,10 @@ contract-scoped interval assessment. G3's limited acceptance covers its
 durable evidence-transaction/CLI consumer boundary in that same supported
 domain; G4 separately accepts a passive, non-scoring offline bridge. Neither
 scope establishes ownership of a real protocol service, calibrated timing,
-reviewed deadline authority, IUT behaviour or runtime integrity. All runs
-remain `SYNTHETIC-ENGINEERING-VALIDATION`, not confirmation experiments or
-protocol-conformance cases.
+reviewed deadline authority, IUT behaviour or runtime integrity. Runtime
+executions remain `SYNTHETIC-ENGINEERING-VALIDATION`; the distinct G4 bridge
+produces only `OFFLINE-REPLAY`, `NOT-SCORED` / `NOT-EVALUATED` structural
+evidence. Neither is a confirmation experiment or protocol-conformance case.
 
 ## G3 finite evidence and CLI (limited-accepted engineering boundary)
 
@@ -626,7 +627,7 @@ truth, reviewed deadline authority, or a merge decision.
 | `CLTAV-DEVELOPMENT-CONTRACTS`／`AR-FINITE` | `RuntimeAuthorityBinding`、`ModelContext`、有限路径内核 | 精确核验 AR-FINITE 接口 ID、记录 ID 和运行参数 | 仅声明语法和限额；不是通用求解器。 |
 | 接口登记：`SessionContext`、`HistoryHandle`、`IF-PRED-OBS` 至 `IF-RESOURCE-STOP` | `SessionContext`、`HistoryHandle`、后续会话适配器 | 精确核验八个接口绑定和职责 | 选择保持只读；S3／S8／S9 职责保持分离。 |
 | CR-2026-016／DD-038～040 | 来源和证据边界 | 来源身份和仅合成标签 | 不执行或晋级首轮需求。 |
-| CR-2026-017／DD-041 | 未来可选的离线记录适配器 | 仅通过独立测试的适配器 | 不把捕获接入转为主动执行。 |
+| CR-2026-017／DD-041 | 被动、只读的离线记录适配器／G4 bridge | 仅限来源重建、投影和 bridge 检查 | 不把捕获接入转为主动执行。 |
 | CR-2026-019／DD-043 与实验设计 | 仅评价端的身份和证据字段 | 算法输入不得接受真值对象 | 不准入实验、不产出分母结果或科学主张。 |
 
 ## 具名接口桥接
@@ -925,8 +926,9 @@ qualified validation 与 continuation 之外。G5 整支评审仍待完成；这
 绑定／类型层现已执行有界合成 TEST／Prep／Recover 动作，并且只针对已经绑定的有限合成材料解析
 ownership、进行合同范围内的区间 assessment。G3 的有限接受覆盖同一受支持域内持久化
 evidence-transaction／CLI 消费者边界；G4 另行接受被动、非评分的 offline bridge。二者均不建立真实
-协议服务 ownership、校准时序、已审定 deadline authority、IUT 行为或运行完整性。全部运行仍为
-`SYNTHETIC-ENGINEERING-VALIDATION`，不是确认性实验或协议符合性用例。
+协议服务 ownership、校准时序、已审定 deadline authority、IUT 行为或运行完整性。runtime 执行仍为
+`SYNTHETIC-ENGINEERING-VALIDATION`；独立的 G4 bridge 只产生 `OFFLINE-REPLAY`、
+`NOT-SCORED`／`NOT-EVALUATED` 结构证据。二者均不是确认性实验或协议符合性用例。
 
 ## G3 有限证据与 CLI（有限接受的工程边界）
 
