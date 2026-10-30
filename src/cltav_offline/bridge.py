@@ -64,10 +64,29 @@ class OfflineReplayRun:
 
     capture_path: Path = field(repr=False, compare=False)
     evidence_path: Path | None = field(repr=False, compare=False)
-    offline_evidence_raw: bytes = field(repr=False, compare=False)
-    offline_evidence: dict[str, Any]
-    records: tuple[dict[str, Any], ...]
+    _offline_evidence_raw: bytes = field(repr=False, compare=False)
+    _offline_evidence: dict[str, Any] = field(repr=False, compare=False)
+    _records: tuple[dict[str, Any], ...] = field(repr=False, compare=False)
     _token: object | None = field(default=None, init=False, repr=False, compare=False)
+    _snapshot_digest: str | None = field(default=None, init=False, repr=False, compare=False)
+
+    @property
+    def offline_evidence_raw(self) -> bytes:
+        """Return immutable source bytes retained by the source-rebuilt run."""
+
+        return self._offline_evidence_raw
+
+    @property
+    def offline_evidence(self) -> dict[str, Any]:
+        """Return a defensive copy; callers cannot alter bridge provenance."""
+
+        return deepcopy(self._offline_evidence)
+
+    @property
+    def records(self) -> tuple[dict[str, Any], ...]:
+        """Return defensive record copies; replay results remain non-scoring."""
+
+        return tuple(deepcopy(record) for record in self._records)
 
 
 def canonical_json_bytes(value: object) -> bytes:
@@ -157,14 +176,15 @@ def adapt_offline_evidence_bytes(
             "OFFLINE-SOURCE-MISMATCH",
             f"offline evidence does not match the rebuilt decoder/projection at {difference}",
         )
-    records = tuple(_adapt_records(source))
+    records = tuple(deepcopy(record) for record in _adapt_records(source))
     run = OfflineReplayRun(
         capture_path=capture,
         evidence_path=resolved_evidence,
-        offline_evidence_raw=raw,
-        offline_evidence=deepcopy(source),
-        records=records,
+        _offline_evidence_raw=raw,
+        _offline_evidence=deepcopy(source),
+        _records=records,
     )
+    object.__setattr__(run, "_snapshot_digest", _snapshot_digest(run))
     object.__setattr__(run, "_token", _RUN_TOKEN)
     return run
 
@@ -924,9 +944,28 @@ def _first_difference(actual: object, expected: object, path: str) -> str | None
     return None if actual == expected else path
 
 
+def _snapshot_digest(run: OfflineReplayRun) -> str:
+    """Bind the opaque run to the exact source and derived bridge records."""
+
+    try:
+        snapshot = {
+            "offlineEvidenceRawSha256": sha256(run._offline_evidence_raw).hexdigest(),
+            "offlineEvidence": run._offline_evidence,
+            "records": list(run._records),
+        }
+        return sha256(canonical_json_bytes(snapshot)).hexdigest()
+    except OfflineReplayError as exc:
+        raise OfflineReplayError(
+            "OFFLINE-BRIDGE-PROVENANCE-ERROR",
+            "offline replay run contains a noncanonical or altered source snapshot",
+        ) from exc
+
+
 def _require_run(value: object) -> OfflineReplayRun:
     if type(value) is not OfflineReplayRun or value._token is not _RUN_TOKEN:
         raise OfflineReplayError("OFFLINE-BRIDGE-PROVENANCE-ERROR", "offline replay run was not source-rebuilt by the bridge")
+    if value._snapshot_digest != _snapshot_digest(value):
+        raise OfflineReplayError("OFFLINE-BRIDGE-PROVENANCE-ERROR", "offline replay run changed after source rebuild")
     return value
 
 

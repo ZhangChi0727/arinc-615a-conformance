@@ -24,6 +24,7 @@ from cltav_offline.bridge import (
     OfflineReplayError,
     adapt_offline_evidence_bytes,
     canonical_json_bytes,
+    offline_replay_bytes,
     offline_replay_document,
     publish_offline_replay,
     validate_offline_replay_bytes,
@@ -440,6 +441,31 @@ def test_bridge_rechecks_the_capture_bytes_before_replacing_an_existing_artifact
         publish_offline_replay(run, output=target)
     assert changed.value.code == "OFFLINE-SOURCE-MISMATCH"
     assert target.read_bytes() == old
+
+
+def test_public_run_views_cannot_mutate_a_non_scoring_rendered_artifact(tmp_path: Path) -> None:
+    """A shallow-frozen run must not leak a mutable PASS-producing API path."""
+
+    capture, evidence, raw = _produce_evidence(
+        tmp_path, name="defensive-view", capture_id="cap-g4-defensive-view", records=_complete_exchange(),
+    )
+    run = adapt_offline_evidence_bytes(raw, capture_path=capture, evidence_path=evidence)
+    exposed_records = run.records
+    exposed_source = run.offline_evidence
+    exposed_records[0]["scoring"]["protocolVerdict"] = "PASS"
+    exposed_source["input"]["captureId"] = "forged-capture-id"
+    document = offline_replay_document(run)
+    _assert_non_scoring(document)
+    assert document["source"]["captureIdentity"]["captureId"] == "cap-g4-defensive-view"
+    assert b'"PASS"' not in offline_replay_bytes(run)
+
+    # Even deliberate mutation through a private implementation attribute is
+    # caught as a provenance violation before either public render API emits
+    # a bridge document.
+    run._records[0]["scoring"]["protocolVerdict"] = "PASS"  # pyright: ignore[reportPrivateUsage]
+    with pytest.raises(OfflineReplayError) as altered:
+        offline_replay_document(run)
+    assert altered.value.code == "OFFLINE-BRIDGE-PROVENANCE-ERROR"
 
 
 def test_bridge_rechecks_the_declared_evidence_bytes_before_replacing_an_existing_artifact(tmp_path: Path) -> None:
