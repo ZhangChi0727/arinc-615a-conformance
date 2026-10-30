@@ -759,3 +759,40 @@ def test_installed_wheel_runs_real_offline_replay_without_network_or_source_impo
     assert rejected.returncode == 1
     assert "OFFLINE-EVIDENCE-VERSION-ERROR" in rejected.stderr
     assert bridge.read_bytes() == old
+
+    digit_limit = getattr(sys, "get_int_max_str_digits", lambda: 0)()
+    if digit_limit:
+        oversized = b'{"x":' + (b"9" * (digit_limit + 1)) + b"}"
+        bad_integer_evidence = outside / "wheel.oversized-intake.json"
+        bad_integer_evidence.write_bytes(oversized)
+        rejected_integer_source = subprocess.run(
+            [
+                str(entrypoint), "replay", "--input", str(capture), "--offline-evidence",
+                str(bad_integer_evidence), "--output", str(bridge),
+            ],
+            cwd=outside,
+            text=True,
+            capture_output=True,
+            env=environment,
+        )
+        assert rejected_integer_source.returncode == 1
+        assert "OFFLINE-EVIDENCE-JSON-ERROR" in rejected_integer_source.stderr
+        assert "Traceback" not in rejected_integer_source.stderr
+        assert bridge.read_bytes() == old
+
+        bad_integer_bridge = outside / "wheel.oversized-bridge.json"
+        bad_integer_bridge.write_bytes(oversized)
+        rejected_integer_bridge = subprocess.run(
+            [
+                str(entrypoint), "validate-replay", "--input", str(capture), "--offline-evidence",
+                str(evidence), "--bridge", str(bad_integer_bridge),
+            ],
+            cwd=outside,
+            text=True,
+            capture_output=True,
+            env=environment,
+        )
+        assert rejected_integer_bridge.returncode == 1
+        assert "OFFLINE-BRIDGE-JSON-ERROR" in rejected_integer_bridge.stderr
+        assert "Traceback" not in rejected_integer_bridge.stderr
+        assert bridge.read_bytes() == old
