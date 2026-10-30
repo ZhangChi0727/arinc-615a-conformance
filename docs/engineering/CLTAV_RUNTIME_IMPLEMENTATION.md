@@ -435,7 +435,7 @@ tool error without publishing an invalid evidence package.
 
 ## Open work and evidence boundary
 
-**B/C-3 audit core (A01) — implemented, pending independent G1 review.**
+**B/C-3 audit core (A01) — the limited G1/G2 reviews are accepted; durable G3 closure remains pending.**
 Public replay now recomputes the finite causal relation for a retained typed
 rejected record before it accepts the named `resolution_code`. The shared S4
 classifier is used by both live execution and replay: record/carrier errors,
@@ -481,11 +481,71 @@ and, only for bound finite synthetic material, resolves ownership and performs
 contract-scoped interval assessment.  It does not establish ownership of a
 real protocol service, calibrated timing, reviewed deadline authority, IUT
 behaviour or runtime integrity.  B/C-3 still owns durable
-evidence-transaction/CLI causal closure.  The Researcher startup contract
-review is recorded; independent review of the new fixed implementation head
-remains pending.  All later runs remain `SYNTHETIC-ENGINEERING-VALIDATION`
+evidence-transaction/CLI causal closure.  The G1/G2 review records do not
+close that durable consumer boundary; independent review of the fixed G3
+implementation head remains pending.  All later runs remain `SYNTHETIC-ENGINEERING-VALIDATION`
 until separately reviewed; they are not confirmation experiments or protocol
 conformance cases.
+
+## G3 finite evidence and CLI candidate (pending independent review)
+
+`cltav-runtime` is a narrow installed command for a **Git-bound synthetic
+engineering scenario**.  Every `run`, `validate`, and `replay` invocation
+requires an explicit local authority repository, exact 40-character commit,
+development-contract path, interface-registry path, and closed scenario path.
+It reads each authority input with `git show <commit>:<path>`; it neither uses
+the current worktree as authority nor silently substitutes `HEAD`.
+
+The tracked two-round example is
+`configs/examples/cltav_runtime_g3_two_round_scenario.json`.  After it is in a
+named authority commit, a user may run it from a directory outside that
+repository with the following shape (the output directory must also be outside
+the authority repository):
+
+```text
+cltav-runtime run --authority-repository <local-repository> --authority-commit <40-hex-commit> \
+  --development-path configs/engineering/cltav_development_contracts.json \
+  --interface-path configs/research/cltav_interface_registry.json \
+  --scenario-path configs/examples/cltav_runtime_g3_two_round_scenario.json \
+  --output <external-directory>/g3-evidence.json
+cltav-runtime validate <same authority arguments> --evidence <external-directory>/g3-evidence.json
+cltav-runtime replay <same authority arguments> --evidence <external-directory>/g3-evidence.json
+```
+
+The version `1.0` envelope is canonical UTF-8 JSON with sorted keys and one LF
+terminator.  It retains exact rational endpoints and topology, source
+commit/path/raw-byte SHA-256 identities, S3 selection inputs, S4 issue/charge
+facts, all finite fee projections, S7/S8/S9 histories, optional public
+ownership/timing material and the session-derived assessment or stop trace.
+Validation decodes that one object once, rejects floats/duplicate keys/open
+envelopes, checks its self-integrity value, then rebuilds the finite run from
+the caller's explicit Git sources and requires exact relation equality.  A
+evidence package cannot select a weaker validation branch through its contained
+resolution code, stage, source, producer-mode, runtime distribution/version,
+history, or digest fields.
+
+The only supported producer modes are `SYNTHETIC-NORMAL`,
+`CALCULABLE-IDENTITY-MISMATCH`, `OPAQUE-INVALID-SUCCESSOR`, and
+`OPAQUE-TOOL-ERROR`.  A fault is confined to its first issued S4 attempt;
+later eligible recovery uses the ordinary synthetic environment.  An
+`EXTERNAL-OPAQUE-UNVERIFIED` source is explicitly rejected from qualified
+validation/replay and cannot become a successful publication simply by
+removing producer facts or refreshing a hash.  The optional scenario timing
+contract is Git-bound, can only use `METHOD-ONLY` or `UNRESOLVED` deadline
+authority, and is separately bound to the parsed model clock/uncertainty; it
+cannot manufacture a reviewed protocol deadline.  Scenario grammar has no
+truth/evaluation field, and adjacent evaluation files are not runtime inputs.
+
+Publication first writes a private staging file, reads and fully validates the
+staged bytes, and only then performs a bounded replacement transaction.  It
+rejects repository targets, links, and unowned existing files; replacement
+failure restores the previous validated package, while a first publication
+failure leaves no partial package.  A non-editable-wheel regression installs
+declared dependencies into a clean temporary venv and runs the real command
+from an unrelated directory with a socket guard.  These are G3 candidate
+engineering checks only.  They do **not** establish runtime integrity,
+conformance, actual IUT execution, physical timing calibration, experiment
+truth, reviewed deadline authority, A01 closure, or a merge decision.
 
 # 中文版
 
@@ -773,7 +833,7 @@ reviewed deadline 判定才要求非负的 earliest admissible elapsed horizon�
 
 ## 待完成工作和证据边界
 
-**B/C-3 审计核心（A01）——已实现，等待独立 G1 复审。** 公共重放现在会先从保留的、类型正确的
+**B/C-3 审计核心（A01）——有限 G1／G2 复审已接受；持久化 G3 闭合仍待完成。** 公共重放现在会先从保留的、类型正确的
 rejected record 重算有限因果关系，再接受其具名 `resolution_code`。live 执行与 replay 共用同一 S4
 分类器：record／carrier 错误、target 不匹配以及已发出 attempt／action identity 都由冻结
 record、action、attempt、interpretation contract 和既有 ownership ledger 推导。既有的类型化
@@ -805,5 +865,46 @@ G1 不主张能够区分“删除 raw 并协调改为无 raw 不透明类别”�
 绑定／类型层现已执行有界合成 TEST／Prep／Recover 动作，并且只针对已经绑定的有限合成材料解析
 ownership、进行合同范围内的区间 assessment；它不建立真实协议服务的 ownership、校准时序、已审定
 deadline authority、IUT 行为或运行完整性。B/C-3 仍负责持久化 evidence-transaction／CLI 的因果
-闭合。Researcher 启动合同核对已记录；对本轮固定实现 Head 的 G1 独立复审仍 pending。后续运行在独立
+闭合。G1／G2 复审记录并不关闭这一持久化消费者边界；对固定 G3 实现 Head 的独立复审仍 pending。后续运行在独立
 复审前均保持 `SYNTHETIC-ENGINEERING-VALIDATION`，不是确认性实验或协议符合性用例。
+
+## G3 有限证据与 CLI 候选（等待独立复审）
+
+`cltav-runtime` 是面向**Git 绑定的合成工程场景**的窄安装命令。每个 `run`、`validate` 和 `replay`
+调用都必须显式给出本地 authority repository、精确的 40 位 commit、development-contract path、
+interface-registry path 以及封闭 scenario path。它以 `git show <commit>:<path>` 读取所有权威输入；
+不会把当前工作区当作权威，也不会静默替换为 `HEAD`。
+
+受跟踪的两轮示例位于
+`configs/examples/cltav_runtime_g3_two_round_scenario.json`。在它进入一个具名 authority commit 后，用户可从
+该 repository 之外的目录按如下形态运行（输出目录也必须位于 authority repository 之外）：
+
+```text
+cltav-runtime run --authority-repository <local-repository> --authority-commit <40-hex-commit> \
+  --development-path configs/engineering/cltav_development_contracts.json \
+  --interface-path configs/research/cltav_interface_registry.json \
+  --scenario-path configs/examples/cltav_runtime_g3_two_round_scenario.json \
+  --output <external-directory>/g3-evidence.json
+cltav-runtime validate <same authority arguments> --evidence <external-directory>/g3-evidence.json
+cltav-runtime replay <same authority arguments> --evidence <external-directory>/g3-evidence.json
+```
+
+版本 `1.0` envelope 使用键排序、UTF-8 且仅一个 LF 结尾的规范 JSON。它保留精确有理数端点及开闭拓扑、
+来源 commit/path/raw-byte SHA-256 身份、S3 选择输入、S4 发出／计费事实、全部有限费用投影、S7/S8/S9
+history、可选的公开 ownership/timing material，以及由 session 推导的 assessment 或 stop trace。校验器只
+解码同一对象一次，拒绝浮点／重复键／开放 envelope，检查自身完整性值，再从调用者显式给出的 Git 来源重建有限
+运行并要求关系完全相等。包内的 resolution code、stage、source、producer mode、history 或 digest 不能自行选择较弱的
+核验分支；runtime distribution/version 也作为 producer fact 被重新核对。
+
+唯一支持的 producer mode 是 `SYNTHETIC-NORMAL`、`CALCULABLE-IDENTITY-MISMATCH`、
+`OPAQUE-INVALID-SUCCESSOR` 和 `OPAQUE-TOOL-ERROR`。故障只作用于首个已发出的 S4 attempt；其后满足
+条件的 Recover 使用普通 synthetic environment。`EXTERNAL-OPAQUE-UNVERIFIED` 来源会被明确拒绝，不能进入
+qualified validate/replay，也不能通过删除 producer facts 或刷新 hash 变成成功发布物。可选的 scenario timing
+contract 同样受 Git 绑定，只能采用 `METHOD-ONLY` 或 `UNRESOLVED` deadline authority，并单独绑定已解析 model
+的 clock／uncertainty；它不能制造已审定的协议 deadline。scenario grammar 没有 truth/evaluation 字段，且相邻的
+evaluation 文件不是运行时输入。
+
+发布先写入私有 staging 文件，读回并完成校验，再进行有界替换事务。它拒绝仓库内目标、链接和未受管的既有文件；
+替换中途失败会恢复此前已验证的包，首次发布失败不会留下半包。non-editable wheel 回归会把已声明的依赖安装到干净
+临时 venv，并从无关目录运行真实命令且启用 socket guard。这些均只是 G3 候选工程检查；**不**建立运行完整性、
+符合性、真实 IUT 执行、物理时间校准、实验真值、已审定 deadline authority、A01 闭合或合并决定。

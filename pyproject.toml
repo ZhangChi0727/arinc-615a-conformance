@@ -19,6 +19,7 @@ dev = ["pytest>=7.0", "setuptools>=61"]
 [project.scripts]
 a615a-sim = "a615a_sim.cli:main"
 cltav-offline = "cltav_offline.cli:main"
+cltav-runtime = "cltav_runtime.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
