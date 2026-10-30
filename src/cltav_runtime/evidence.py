@@ -1,11 +1,11 @@
 """Versioned, replayable evidence for the bounded CL-TAV reference runtime.
 
 This module is deliberately narrower than a general persistence layer.  It
-serialises one finite, synthetic engineering run which is reconstructed from
-three explicitly named Git objects: the development contract, the interface
-registry, and a closed scenario object.  The evidence file is *not* a
-conformance verdict, an experiment result, or an attestation for an arbitrary
-external executor.
+serialises one finite, synthetic engineering run or an explicitly open prefix
+which is reconstructed from three explicitly named Git objects: the
+development contract, the interface registry, and a closed scenario object.
+Neither artifact is a conformance verdict, an experiment result, or an
+attestation for an arbitrary external executor.
 
 The crucial boundary is that evidence is checked by rebuilding the same finite
 run from the verified Git bytes.  A field in the JSON file therefore never
@@ -15,7 +15,7 @@ producer label, or a refreshed digest cannot make a modified trace acceptable.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from fractions import Fraction
 from hashlib import sha256
 from importlib.metadata import PackageNotFoundError, version as distribution_version
@@ -35,7 +35,7 @@ from .interpretation import (
     OwnershipReplay,
     OwnershipResolution,
 )
-from .kernel import ContractSnapshot, FrontierEntry, Interval, ModelContext
+from .kernel import ContractSnapshot, FrontierEntry, Interval, KernelDiagnostic, ModelContext
 from .model import FiniteSessionModel, PredictionClass
 from .session import (
     AlgorithmResourceView,
@@ -51,10 +51,14 @@ from .stopping import EquivalenceStatus, Named645Residual, StopTrace
 
 EVIDENCE_ARTIFACT_TYPE = "CLTAV-FINITE-RUNTIME-EVIDENCE"
 EVIDENCE_SCHEMA_VERSION = "1.0"
+CHECKPOINT_ARTIFACT_TYPE = "CLTAV-FINITE-RUNTIME-CHECKPOINT"
+CHECKPOINT_SCHEMA_VERSION = "1.0"
 SCENARIO_ARTIFACT_TYPE = "CLTAV-FINITE-SYNTHETIC-SCENARIO"
 SCENARIO_SCHEMA_VERSION = "1.0"
 _PRODUCER_PROTOCOL = "CLTAV-FINITE-PRODUCER/1.0"
 _RUNTIME_DISTRIBUTION = "a615a-sim"
+_CHECKPOINT_TOKEN = object()
+_CHECKPOINT_RUN_TOKEN = object()
 
 
 def _runtime_distribution_version() -> str:
@@ -123,6 +127,55 @@ class EvidenceRun:
     scenario: RuntimeScenario
     sources: EvidenceSources
     result: SessionResult
+
+
+@dataclass(frozen=True)
+class _RuntimeContext:
+    """One source-built live runtime, retained only for bounded G3 work."""
+
+    scenario: RuntimeScenario
+    sources: EvidenceSources
+    session: ReferenceSession
+    producer: SyntheticEnvironment | _FiniteFaultDriver
+
+
+@dataclass(frozen=True)
+class CheckpointRun:
+    """An open, source-derived finite prefix before durable validation.
+
+    This is deliberately not a deserialised JSON checkpoint.  It can only be
+    created from explicit Git sources, and publication validates its projected
+    bytes before handing back a continuation-capable typed checkpoint.
+    """
+
+    scenario: RuntimeScenario
+    sources: EvidenceSources
+    result: SessionResult
+    prefix_rounds: int
+    _context: _RuntimeContext = field(repr=False, compare=False)
+    _construction_token: object | None = field(
+        default=None, init=False, repr=False, compare=False,
+    )
+
+
+@dataclass(frozen=True)
+class VerifiedCheckpoint:
+    """A validated, source-reconstructed typed prefix for formal continuation.
+
+    No JSON field is converted into a ``SessionState`` or environment.  The
+    state and environment are the outputs of a fresh execution from the
+    caller's verified Git objects whose canonical checkpoint projection was
+    proven equal to the supplied durable package.
+    """
+
+    scenario: RuntimeScenario
+    sources: EvidenceSources
+    result: SessionResult
+    prefix_rounds: int
+    _context: _RuntimeContext = field(repr=False, compare=False)
+    _verification_token: object | None = field(
+        default=None, init=False, repr=False, compare=False,
+    )
 
 
 _PRODUCER_MODES = frozenset(
@@ -198,13 +251,25 @@ def _strict_json_object(raw: bytes, *, label: str) -> dict[str, Any]:
 def load_evidence_bytes(raw: bytes) -> dict[str, Any]:
     """Load a canonical evidence document once for schema and relation checks."""
 
-    value = _strict_json_object(raw, label="evidence")
+    return _load_canonical_document(raw, label="evidence")
+
+
+def _load_canonical_document(raw: bytes, *, label: str) -> dict[str, Any]:
+    """Decode one canonical finite JSON envelope without double-reading it."""
+
+    value = _strict_json_object(raw, label=label)
     if canonical_json_bytes(value) != raw:
         raise EvidenceError(
             "EVIDENCE-NONCANONICAL-ENCODING",
-            "evidence must use the documented UTF-8, sorted-key, LF-terminated encoding",
+            f"{label} must use the documented UTF-8, sorted-key, LF-terminated encoding",
         )
     return value
+
+
+def load_checkpoint_bytes(raw: bytes) -> dict[str, Any]:
+    """Load one canonical durable open-prefix checkpoint exactly once."""
+
+    return _load_canonical_document(raw, label="checkpoint")
 
 
 def load_sources(
@@ -299,7 +364,10 @@ def parse_scenario(snapshot: SourceSnapshot) -> RuntimeScenario:
     maximum_rounds = session["maximumRounds"]
     if any(type(value) is not str or not value for value in (session_id, run_id, initial_summary)):
         raise EvidenceError("SCENARIO-SHAPE-ERROR", "runtime scenario session identifiers are invalid")
-    if mode not in {"ROUNDS", "BUDGET"}:
+    # Check the exact JSON scalar type before set membership.  This both
+    # distinguishes bool from integer-like values and prevents malformed
+    # arrays/objects from leaking Python's unhashable-container exception.
+    if type(mode) is not str or mode not in {"ROUNDS", "BUDGET"}:
         raise EvidenceError("SCENARIO-SHAPE-ERROR", "runtime scenario resource mode is invalid")
     if any(type(value) is not int or value < 1 for value in (remaining, retry_cap, maximum_rounds)):
         raise EvidenceError("SCENARIO-SHAPE-ERROR", "runtime scenario numeric limits must be positive integers")
@@ -326,8 +394,21 @@ def parse_scenario(snapshot: SourceSnapshot) -> RuntimeScenario:
 def run_scenario(sources: EvidenceSources) -> EvidenceRun:
     """Run one actual finite synthetic scenario using the verified sources."""
 
-    scenario = parse_scenario(sources.scenario)
+    context = _build_runtime(sources)
     try:
+        result = context.session.run(context.producer, maximum_rounds=context.scenario.maximum_rounds)  # type: ignore[arg-type]
+    except EvidenceError:
+        raise
+    except (AttributeError, TypeError, ValueError) as exc:
+        raise EvidenceError("SCENARIO-EXECUTION-ERROR", str(exc) or type(exc).__name__) from exc
+    return EvidenceRun(context.scenario, sources, result)
+
+
+def _build_runtime(sources: EvidenceSources) -> _RuntimeContext:
+    """Build one live finite runtime solely from verified Git source objects."""
+
+    try:
+        scenario = parse_scenario(sources.scenario)
         binding = RuntimeAuthorityBinding._from_verified_snapshots(
             development=sources.development,
             interfaces=sources.interfaces,
@@ -355,12 +436,115 @@ def run_scenario(sources: EvidenceSources) -> EvidenceRun:
             producer = environment
         else:
             producer = _FiniteFaultDriver(environment, scenario.producer_mode)
-        result = session.run(producer, maximum_rounds=scenario.maximum_rounds)  # type: ignore[arg-type]
     except EvidenceError:
         raise
     except (AttributeError, TypeError, ValueError) as exc:
         raise EvidenceError("SCENARIO-EXECUTION-ERROR", str(exc) or type(exc).__name__) from exc
-    return EvidenceRun(scenario, sources, result)
+    return _RuntimeContext(scenario, sources, session, producer)
+
+
+def create_checkpoint(sources: EvidenceSources, *, prefix_rounds: int) -> CheckpointRun:
+    """Create one bounded open prefix from explicit source authority.
+
+    The result is useful only after :func:`publish_checkpoint` or
+    :func:`validate_checkpoint_bytes` establishes the durable relation.  It
+    contains typed outputs from an actual public ``ReferenceSession`` run; it
+    never rehydrates a state from evidence JSON.
+    """
+
+    if type(prefix_rounds) is not int or prefix_rounds < 1:
+        raise EvidenceError("CHECKPOINT-PREFIX-ERROR", "checkpoint prefix rounds must be a positive integer")
+    context = _build_runtime(sources)
+    if prefix_rounds >= context.scenario.maximum_rounds:
+        raise EvidenceError(
+            "CHECKPOINT-PREFIX-ERROR",
+            "checkpoint prefix must leave at least one declared source round for continuation",
+        )
+    try:
+        result = context.session.run(context.producer, maximum_rounds=prefix_rounds)  # type: ignore[arg-type]
+    except (AttributeError, TypeError, ValueError) as exc:
+        raise EvidenceError("CHECKPOINT-EXECUTION-ERROR", str(exc) or type(exc).__name__) from exc
+    if (
+        result.stop_reason != "Stop-Round-Limit"
+        or len(result.state.evidence) != prefix_rounds
+        or (result.state.evidence and result.state.evidence[-1].stop_reason is not None)
+    ):
+        raise EvidenceError(
+            "CHECKPOINT-NOT-OPEN",
+            "checkpoint prefix must end at an open round-limit boundary rather than a terminal session state",
+        )
+    checkpoint = CheckpointRun(
+        scenario=context.scenario,
+        sources=sources,
+        result=result,
+        prefix_rounds=prefix_rounds,
+        _context=context,
+    )
+    object.__setattr__(checkpoint, "_construction_token", _CHECKPOINT_RUN_TOKEN)
+    return checkpoint
+
+
+def _require_checkpoint_run(value: object) -> CheckpointRun:
+    if type(value) is not CheckpointRun or value._construction_token is not _CHECKPOINT_RUN_TOKEN:
+        raise EvidenceError("CHECKPOINT-PROVENANCE-ERROR", "checkpoint prefix was not created by the verified finite runtime")
+    return value
+
+
+def _verified_checkpoint(run: CheckpointRun) -> VerifiedCheckpoint:
+    """Mark one already stage-validated source prefix as continuation-ready."""
+
+    run = _require_checkpoint_run(run)
+    verified = VerifiedCheckpoint(
+        scenario=run.scenario,
+        sources=run.sources,
+        result=run.result,
+        prefix_rounds=run.prefix_rounds,
+        _context=run._context,
+    )
+    object.__setattr__(verified, "_verification_token", _CHECKPOINT_TOKEN)
+    return verified
+
+
+def _require_verified_checkpoint(value: object) -> VerifiedCheckpoint:
+    if type(value) is not VerifiedCheckpoint or value._verification_token is not _CHECKPOINT_TOKEN:
+        raise EvidenceError("CHECKPOINT-PROVENANCE-ERROR", "checkpoint was not validated from explicit Git sources")
+    return value
+
+
+def continue_checkpoint(checkpoint: VerifiedCheckpoint) -> EvidenceRun:
+    """Execute only the remaining declared rounds from a verified prefix.
+
+    The original evidence, attempts, history and resource ledger remain in
+    ``checkpoint.result.state``.  This function calls the public ``step``
+    boundary only for post-prefix work; it never re-runs the initial prefix.
+    """
+
+    checkpoint = _require_verified_checkpoint(checkpoint)
+    remaining_rounds = checkpoint.scenario.maximum_rounds - checkpoint.prefix_rounds
+    if remaining_rounds < 1:
+        raise EvidenceError("CHECKPOINT-NOT-OPEN", "checkpoint has no declared source rounds remaining")
+    state = checkpoint.result.state
+    environment = checkpoint.result.environment
+    session = checkpoint._context.session
+    for _ in range(remaining_rounds):
+        step = session.step(state, environment)
+        state, environment = step.state, step.environment
+        if step.stop_reason is not None:
+            return EvidenceRun(
+                checkpoint.scenario,
+                checkpoint.sources,
+                SessionResult(state, environment, step.stop_reason, step.diagnostics, step.stop_trace),
+            )
+    return EvidenceRun(
+        checkpoint.scenario,
+        checkpoint.sources,
+        SessionResult(
+            state,
+            environment,
+            "Stop-Round-Limit",
+            (KernelDiagnostic("ROUND-LIMIT", "declared synthetic round limit reached"),),
+        ),
+    )
 
 
 def _model_from_scenario(development: ContractSnapshot, scenario: RuntimeScenario) -> FiniteSessionModel:
@@ -589,6 +773,37 @@ def evidence_bytes(run: EvidenceRun) -> bytes:
     return canonical_json_bytes(evidence_document(run))
 
 
+def checkpoint_document(checkpoint: CheckpointRun) -> dict[str, Any]:
+    """Project one open source prefix into a versioned checkpoint envelope."""
+
+    checkpoint = _require_checkpoint_run(checkpoint)
+    # Start from the same independently projected state/evidence relation as
+    # a final run, then make the open-prefix boundary explicit.  The
+    # checkpoint is not a terminal verdict and cannot silently impersonate a
+    # complete evidence artifact.
+    projected = evidence_document(EvidenceRun(
+        checkpoint.scenario,
+        checkpoint.sources,
+        checkpoint.result,
+    ))
+    payload = {key: value for key, value in projected.items() if key != "integrity"}
+    payload["artifactType"] = CHECKPOINT_ARTIFACT_TYPE
+    payload["schemaVersion"] = CHECKPOINT_SCHEMA_VERSION
+    payload["checkpoint"] = {
+        "prefixRounds": checkpoint.prefix_rounds,
+        "sourceMaximumRounds": checkpoint.scenario.maximum_rounds,
+        "status": "OPEN-PREFIX",
+    }
+    digest = sha256(canonical_json_bytes(payload)).hexdigest()
+    return {**payload, "integrity": {"canonicalPayloadSha256": digest}}
+
+
+def checkpoint_bytes(checkpoint: CheckpointRun) -> bytes:
+    """Return canonical durable bytes for an open finite prefix."""
+
+    return canonical_json_bytes(checkpoint_document(checkpoint))
+
+
 def _producer_facts(run: EvidenceRun) -> list[dict[str, str]]:
     """Derive stage facts from actual S4/S7 output plus verified scenario mode.
 
@@ -618,12 +833,32 @@ def _producer_facts(run: EvidenceRun) -> list[dict[str, str]]:
             "actionKind": item.snapshot.action_kind,
         }
         if mode == "SYNTHETIC-NORMAL":
-            if item.resolution_code != "COMMIT" or item.rejected_response is not None:
+            # This fact is about the observed producer boundary, not whether
+            # the coordinator later commits the result.  In particular, a
+            # normal finite environment can truthfully return a
+            # CONFIRMED-NOT-SENT or UNKNOWN-EFFECT record, and a valid timing
+            # contract can retain response-free material through S7.  Keep
+            # those distinct from an injected fault and let the established
+            # session/rebuild validate their downstream history and resource
+            # semantics.
+            normal_facts = {
+                "NONE": "TYPED-VISIBLE-RECORD",
+                "CONFIRMED-NOT-SENT": "TYPED-CONFIRMED-NOT-SENT",
+                "UNKNOWN-EFFECT": "TYPED-UNKNOWN-EFFECT",
+            }
+            normal_fact = normal_facts.get(item.execution.effect_class)
+            if normal_fact is None or item.execution.action_id != item.snapshot.action_id:
                 raise EvidenceError(
                     "PRODUCER-FACT-MISMATCH",
-                    "normal finite producer did not reach a committed S4/S9 result",
+                    "normal finite producer did not return a typed record for the issued action",
                 )
-            facts.append({**base, "stage": "S4-EXECUTE-RETURN", "fact": "TYPED-VISIBLE-RECORD"})
+            if (
+                item.execution.effect_class == "NONE"
+                and item.observation_assessment is not None
+                and item.observation_assessment.kind == "NO-RESPONSE"
+            ):
+                normal_fact = "TYPED-NO-RESPONSE-MATERIAL"
+            facts.append({**base, "stage": "S4-EXECUTE-RETURN", "fact": normal_fact})
         elif mode == "CALCULABLE-IDENTITY-MISMATCH":
             if (
                 item.resolution_code != "EXECUTION-IDENTITY-ERROR"
@@ -1052,18 +1287,29 @@ def validate_evidence_document(document: object, *, sources: EvidenceSources) ->
     _validate_integrity(document)
     if document.get("artifactType") != EVIDENCE_ARTIFACT_TYPE or document.get("schemaVersion") != EVIDENCE_SCHEMA_VERSION:
         raise EvidenceError("EVIDENCE-VERSION-ERROR", "evidence artifact type or schema version is unsupported")
+    # The envelope identities are checked before source reconstruction.  A
+    # package cannot select another Git path/commit and cause an unnecessary
+    # verification execution before receiving its named source rejection.
+    actual_inputs = document.get("inputs")
+    expected_inputs = sources.identities()
+    if _first_difference(actual_inputs, expected_inputs, "$.inputs"):
+        raise EvidenceError("EVIDENCE-SOURCE-MISMATCH", "evidence source identities differ from the explicit Git inputs")
     expected_run = run_scenario(sources)
     expected = evidence_document(expected_run)
-    actual_inputs = document.get("inputs")
-    if actual_inputs != expected["inputs"]:
-        raise EvidenceError("EVIDENCE-SOURCE-MISMATCH", "evidence source identities differ from the explicit Git inputs")
-    if document != expected:
-        path = _first_difference(document, expected)
+    # Integrity is already independently checked against the supplied
+    # canonical payload.  Compare the semantic payload without the derived
+    # digest so a coordinated, self-consistent mutation is located at the
+    # actual action/raw/history field.  ``_first_difference`` remains exact
+    # about types, unlike ordinary Python dict equality (where True == 1).
+    actual_payload = {key: value for key, value in document.items() if key != "integrity"}
+    expected_payload = {key: value for key, value in expected.items() if key != "integrity"}
+    path = _first_difference(actual_payload, expected_payload)
+    if path:
         raise EvidenceError("EVIDENCE-RELATION-MISMATCH", f"evidence does not match the rebuilt finite run at {path}")
     return expected
 
 
-def _validate_evidence_shape(document: dict[str, Any]) -> None:
+def _validate_evidence_shape(document: dict[str, Any], *, checkpoint: bool = False) -> None:
     """Reject an incomplete or open envelope before relation replay.
 
     The exact nested relation is still checked against a fresh production run
@@ -1075,6 +1321,8 @@ def _validate_evidence_shape(document: dict[str, Any]) -> None:
     required = {
         "artifactType", "schemaVersion", "boundary", "inputs", "run", "rounds", "producerFacts", "outcome", "integrity",
     }
+    if checkpoint:
+        required.add("checkpoint")
     if set(document) != required:
         raise EvidenceError("EVIDENCE-SHAPE-ERROR", "evidence has unknown or missing top-level fields")
     boundary = document["boundary"]
@@ -1124,12 +1372,66 @@ def _validate_evidence_shape(document: dict[str, Any]) -> None:
         raise EvidenceError("EVIDENCE-SHAPE-ERROR", "evidence stop reason is invalid")
     if type(outcome["diagnostics"]) is not list or type(outcome["state"]) is not dict:
         raise EvidenceError("EVIDENCE-SHAPE-ERROR", "evidence outcome records are invalid")
+    if checkpoint:
+        prefix = document["checkpoint"]
+        if type(prefix) is not dict or set(prefix) != {"prefixRounds", "sourceMaximumRounds", "status"}:
+            raise EvidenceError("CHECKPOINT-SHAPE-ERROR", "checkpoint boundary is invalid")
+        if (
+            type(prefix["prefixRounds"]) is not int
+            or prefix["prefixRounds"] < 1
+            or type(prefix["sourceMaximumRounds"]) is not int
+            or prefix["sourceMaximumRounds"] < 2
+            or prefix["prefixRounds"] >= prefix["sourceMaximumRounds"]
+            or prefix["status"] != "OPEN-PREFIX"
+        ):
+            raise EvidenceError("CHECKPOINT-SHAPE-ERROR", "checkpoint progress fields are invalid")
 
 
 def validate_evidence_bytes(raw: bytes, *, sources: EvidenceSources) -> dict[str, Any]:
     """Decode once, then run structural and production relation validation."""
 
     return validate_evidence_document(load_evidence_bytes(raw), sources=sources)
+
+
+def validate_checkpoint_document(document: object, *, sources: EvidenceSources) -> VerifiedCheckpoint:
+    """Validate a durable prefix and rebuild a typed continuation boundary.
+
+    The document supplies only a bounded declaration and its observed
+    projection.  The returned state/environment come from a new actual run of
+    the explicit Git sources through exactly the declared prefix; no evidence
+    JSON is deserialised into runtime objects.
+    """
+
+    if type(document) is not dict:
+        raise EvidenceError("CHECKPOINT-SHAPE-ERROR", "checkpoint must be a JSON object")
+    _reject_floats(document)
+    _validate_evidence_shape(document, checkpoint=True)
+    _validate_integrity(document)
+    if (
+        document.get("artifactType") != CHECKPOINT_ARTIFACT_TYPE
+        or document.get("schemaVersion") != CHECKPOINT_SCHEMA_VERSION
+    ):
+        raise EvidenceError("CHECKPOINT-VERSION-ERROR", "checkpoint artifact type or schema version is unsupported")
+    actual_inputs = document.get("inputs")
+    expected_inputs = sources.identities()
+    if _first_difference(actual_inputs, expected_inputs, "$.inputs"):
+        raise EvidenceError("EVIDENCE-SOURCE-MISMATCH", "checkpoint source identities differ from the explicit Git inputs")
+    prefix = document["checkpoint"]
+    assert type(prefix) is dict  # established by the closed shape gate above.
+    rebuilt = create_checkpoint(sources, prefix_rounds=prefix["prefixRounds"])
+    expected = checkpoint_document(rebuilt)
+    actual_payload = {key: value for key, value in document.items() if key != "integrity"}
+    expected_payload = {key: value for key, value in expected.items() if key != "integrity"}
+    path = _first_difference(actual_payload, expected_payload)
+    if path:
+        raise EvidenceError("CHECKPOINT-RELATION-MISMATCH", f"checkpoint does not match the rebuilt finite prefix at {path}")
+    return _verified_checkpoint(rebuilt)
+
+
+def validate_checkpoint_bytes(raw: bytes, *, sources: EvidenceSources) -> VerifiedCheckpoint:
+    """Decode a canonical checkpoint once, then rebuild its trusted prefix."""
+
+    return validate_checkpoint_document(load_checkpoint_bytes(raw), sources=sources)
 
 
 def _validate_integrity(document: dict[str, Any]) -> None:
@@ -1183,6 +1485,35 @@ def publish_run(run: EvidenceRun, *, output: Path, replace_fn: Callable[[Path, P
     return document
 
 
+def publish_checkpoint(
+    checkpoint: CheckpointRun,
+    *,
+    output: Path,
+    replace_fn: Callable[[Path, Path], None] = os.replace,
+) -> VerifiedCheckpoint:
+    """Atomically publish and validate an open prefix before it can continue."""
+
+    checkpoint = _require_checkpoint_run(checkpoint)
+    document = checkpoint_document(checkpoint)
+    encoded = canonical_json_bytes(document)
+
+    def stage_validator(raw: bytes) -> None:
+        validate_checkpoint_bytes(raw, sources=checkpoint.sources)
+
+    _publish_bytes(
+        encoded,
+        output=output,
+        sources=checkpoint.sources,
+        validator=stage_validator,
+        replace_fn=replace_fn,
+    )
+    # The staged package has been independently rebuilt and compared before
+    # any target replacement.  Retain the original live prefix for the
+    # "same" continuation case; a caller that rereads the file receives a
+    # separate fresh reconstruction through ``validate_checkpoint_bytes``.
+    return _verified_checkpoint(checkpoint)
+
+
 def _publish_bytes(
     raw: bytes,
     *,
@@ -1206,7 +1537,7 @@ def _publish_bytes(
         # This is intentionally a real file round trip before any target move.
         validator(stage.read_bytes())
         if target.exists():
-            _assert_owned_target(target, sources=sources)
+            _assert_owned_target(target, validator=validator)
             replace_fn(target, backup)
             moved_old = True
         replace_fn(stage, target)
@@ -1257,11 +1588,15 @@ def _safe_output_target(output: Path, repository: Path) -> Path:
     raise EvidenceError("UNSAFE-OUTPUT-PATH", "evidence output must not be inside the authority repository")
 
 
-def _assert_owned_target(target: Path, *, sources: EvidenceSources) -> None:
-    """Do not replace arbitrary user files merely because the path exists."""
+def _assert_owned_target(target: Path, *, validator: Callable[[bytes], None]) -> None:
+    """Do not replace arbitrary user files merely because the path exists.
+
+    The ownership relation is artifact-specific: an evidence publisher may
+    replace only a valid evidence file for the same source authority, while a
+    checkpoint publisher may replace only its corresponding checkpoint.
+    """
 
     try:
-        document = load_evidence_bytes(target.read_bytes())
-        validate_evidence_document(document, sources=sources)
+        validator(target.read_bytes())
     except (OSError, EvidenceError) as exc:
-        raise EvidenceError("UNSAFE-OUTPUT-PATH", "refusing to replace a file not owned by this evidence publisher") from exc
+        raise EvidenceError("UNSAFE-OUTPUT-PATH", "refusing to replace a file not owned by this finite artifact publisher") from exc

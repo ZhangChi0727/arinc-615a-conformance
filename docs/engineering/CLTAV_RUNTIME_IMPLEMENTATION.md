@@ -490,7 +490,8 @@ conformance cases.
 ## G3 finite evidence and CLI candidate (pending independent review)
 
 `cltav-runtime` is a narrow installed command for a **Git-bound synthetic
-engineering scenario**.  Every `run`, `validate`, and `replay` invocation
+engineering scenario**.  Every `run`, `checkpoint`, `validate`, `continue`,
+and `replay` invocation
 requires an explicit local authority repository, exact 40-character commit,
 development-contract path, interface-registry path, and closed scenario path.
 It reads each authority input with `git show <commit>:<path>`; it neither uses
@@ -510,6 +511,11 @@ cltav-runtime run --authority-repository <local-repository> --authority-commit <
   --output <external-directory>/g3-evidence.json
 cltav-runtime validate <same authority arguments> --evidence <external-directory>/g3-evidence.json
 cltav-runtime replay <same authority arguments> --evidence <external-directory>/g3-evidence.json
+cltav-runtime checkpoint <same authority arguments> --prefix-rounds 1 \
+  --output <external-directory>/g3-prefix.json
+cltav-runtime validate <same authority arguments> --evidence <external-directory>/g3-prefix.json
+cltav-runtime continue <same authority arguments> --checkpoint <external-directory>/g3-prefix.json \
+  --output <external-directory>/g3-continued-evidence.json
 ```
 
 The version `1.0` envelope is canonical UTF-8 JSON with sorted keys and one LF
@@ -524,6 +530,22 @@ evidence package cannot select a weaker validation branch through its contained
 resolution code, stage, source, producer-mode, runtime distribution/version,
 history, or digest fields.
 
+An ordinary evidence envelope is a complete bounded source replay. A distinct
+`CLTAV-FINITE-RUNTIME-CHECKPOINT/1.0` envelope records an explicitly open
+prefix with its prefix count and declared source round limit. It is accepted
+only when its source identities match the caller's already verified Git
+snapshots **before** any producer execution. Validation then reconstructs that
+prefix from source and returns the resulting typed session state and
+environment; it never deserialises a `SessionState`, environment, provenance
+token, or arbitrary Python object from the package. `continue` calls the
+public step boundary only for the remaining declared rounds. Source
+reconstruction used for validation is therefore separate from formal
+continuation: it does not add attempts or fees to the retained prefix, while a
+genuine next action is charged once. A terminal prefix, stale source, forged
+raw/history, or coordinated self-hash mutation is rejected before formal
+continuation or publication. The older `replay` command remains a complete
+initial-source reproduction and is not described as checkpoint continuation.
+
 The only supported producer modes are `SYNTHETIC-NORMAL`,
 `CALCULABLE-IDENTITY-MISMATCH`, `OPAQUE-INVALID-SUCCESSOR`, and
 `OPAQUE-TOOL-ERROR`.  A fault is confined to its first issued S4 attempt;
@@ -535,6 +557,13 @@ contract is Git-bound, can only use `METHOD-ONLY` or `UNRESOLVED` deadline
 authority, and is separately bound to the parsed model clock/uncertainty; it
 cannot manufacture a reviewed protocol deadline.  Scenario grammar has no
 truth/evaluation field, and adjacent evaluation files are not runtime inputs.
+
+For `SYNTHETIC-NORMAL`, a producer fact describes the actual typed S4 return,
+not whether later S7/S9 logic commits it. A normal `CONFIRMED-NOT-SENT`,
+`UNKNOWN-EFFECT`, or typed response-free timing record can therefore be
+exported and independently rebuilt without manufacturing a COMMIT or a
+protocol verdict. The session still owns its conservative history, retry,
+summary, and resource effects.
 
 Publication first writes a private staging file, reads and fully validates the
 staged bytes, and only then performs a bounded replacement transaction.  It
@@ -870,7 +899,7 @@ deadline authority、IUT 行为或运行完整性。B/C-3 仍负责持久化 evi
 
 ## G3 有限证据与 CLI 候选（等待独立复审）
 
-`cltav-runtime` 是面向**Git 绑定的合成工程场景**的窄安装命令。每个 `run`、`validate` 和 `replay`
+`cltav-runtime` 是面向**Git 绑定的合成工程场景**的窄安装命令。每个 `run`、`checkpoint`、`validate`、`continue` 和 `replay`
 调用都必须显式给出本地 authority repository、精确的 40 位 commit、development-contract path、
 interface-registry path 以及封闭 scenario path。它以 `git show <commit>:<path>` 读取所有权威输入；
 不会把当前工作区当作权威，也不会静默替换为 `HEAD`。
@@ -887,6 +916,11 @@ cltav-runtime run --authority-repository <local-repository> --authority-commit <
   --output <external-directory>/g3-evidence.json
 cltav-runtime validate <same authority arguments> --evidence <external-directory>/g3-evidence.json
 cltav-runtime replay <same authority arguments> --evidence <external-directory>/g3-evidence.json
+cltav-runtime checkpoint <same authority arguments> --prefix-rounds 1 \
+  --output <external-directory>/g3-prefix.json
+cltav-runtime validate <same authority arguments> --evidence <external-directory>/g3-prefix.json
+cltav-runtime continue <same authority arguments> --checkpoint <external-directory>/g3-prefix.json \
+  --output <external-directory>/g3-continued-evidence.json
 ```
 
 版本 `1.0` envelope 使用键排序、UTF-8 且仅一个 LF 结尾的规范 JSON。它保留精确有理数端点及开闭拓扑、
@@ -896,6 +930,9 @@ history、可选的公开 ownership/timing material，以及由 session 推导�
 运行并要求关系完全相等。包内的 resolution code、stage、source、producer mode、history 或 digest 不能自行选择较弱的
 核验分支；runtime distribution/version 也作为 producer fact 被重新核对。
 
+普通 evidence envelope 表示完整的有界来源重放。独立的
+`CLTAV-FINITE-RUNTIME-CHECKPOINT/1.0` envelope 则记录一个明确开放的前缀、其前缀轮数和声明的来源轮数上限。只有在其来源身份与调用方已经核验的 Git snapshot **一致且在任何 producer 执行之前**，它才会被接受。随后核验会从来源重建该前缀，并交付由该重建产生的类型化 session state 与 environment；绝不从包中反序列化 `SessionState`、environment、provenance token 或任意 Python 对象。`continue` 只会针对剩余的声明轮数调用公共 step 边界。因此用于核验的来源重建与正式继续相互分离：前者不会给已保留前缀追加 attempt 或费用，而真实后继 action 只计费一次。terminal 前缀、过期来源、伪造 raw/history 或协调修改后的 self-hash，都会在正式继续或发布前被拒绝。旧的 `replay` 命令仍是从初始来源进行完整复现，不能被描述为 checkpoint 继续。
+
 唯一支持的 producer mode 是 `SYNTHETIC-NORMAL`、`CALCULABLE-IDENTITY-MISMATCH`、
 `OPAQUE-INVALID-SUCCESSOR` 和 `OPAQUE-TOOL-ERROR`。故障只作用于首个已发出的 S4 attempt；其后满足
 条件的 Recover 使用普通 synthetic environment。`EXTERNAL-OPAQUE-UNVERIFIED` 来源会被明确拒绝，不能进入
@@ -903,6 +940,8 @@ qualified validate/replay，也不能通过删除 producer facts 或刷新 hash 
 contract 同样受 Git 绑定，只能采用 `METHOD-ONLY` 或 `UNRESOLVED` deadline authority，并单独绑定已解析 model
 的 clock／uncertainty；它不能制造已审定的协议 deadline。scenario grammar 没有 truth/evaluation 字段，且相邻的
 evaluation 文件不是运行时输入。
+
+对于 `SYNTHETIC-NORMAL`，producer fact 描述实际的类型化 S4 返回，而不是后续 S7/S9 逻辑是否提交。因此，普通的 `CONFIRMED-NOT-SENT`、`UNKNOWN-EFFECT` 或类型正确的无响应时序记录都可导出并独立重建，不会被伪造成 COMMIT 或协议判定。session 仍独占其保守 history、retry、summary 与资源效果。
 
 发布先写入私有 staging 文件，读回并完成校验，再进行有界替换事务。它拒绝仓库内目标、链接和未受管的既有文件；
 替换中途失败会恢复此前已验证的包，首次发布失败不会留下半包。non-editable wheel 回归会把已声明的依赖安装到干净

@@ -9,6 +9,7 @@ knowledge of the test directory.
 from __future__ import annotations
 
 import copy
+from dataclasses import replace
 from hashlib import sha256
 import json
 import os
@@ -22,15 +23,23 @@ import zipfile
 import pytest
 
 from cltav_runtime import cli
+import cltav_runtime.evidence as evidence_module
+from cltav_runtime.synthetic import SyntheticEnvironment
 from cltav_runtime.evidence import (
     EvidenceError,
     _publish_bytes,
     canonical_json_bytes,
+    checkpoint_document,
+    continue_checkpoint,
+    create_checkpoint,
     evidence_document,
+    load_checkpoint_bytes,
     load_evidence_bytes,
     load_sources,
+    publish_checkpoint,
     publish_run,
     run_scenario,
+    validate_checkpoint_bytes,
     validate_evidence_document,
 )
 
@@ -72,7 +81,11 @@ def _published_example_scenario() -> dict[str, object]:
 
 
 def _recovery_scenario(
-    *, producer_mode: str = "CALCULABLE-IDENTITY-MISMATCH",
+    *,
+    producer_mode: str = "CALCULABLE-IDENTITY-MISMATCH",
+    resource_mode: str = "ROUNDS",
+    resource_remaining: int = 2,
+    recover_cost: int = 1,
 ) -> dict[str, object]:
     """One real G1 identity error followed by an affordable Recover path."""
 
@@ -94,9 +107,10 @@ def _recovery_scenario(
             "acquisition": 0,
             "computation": 0,
             "preparation": 0,
-            "recovery": 1,
+            "recovery": recover_cost,
             "retry": 0,
         },
+        "cost": recover_cost,
     })
     transition = recover["transition"]
     assert isinstance(transition, dict)
@@ -129,7 +143,12 @@ def _recovery_scenario(
         }
     session = scenario["session"]
     assert isinstance(session, dict)
-    session.update({"resourceRemaining": 2, "retryCap": 2, "maximumRounds": 2})
+    session.update({
+        "resourceMode": resource_mode,
+        "resourceRemaining": resource_remaining,
+        "retryCap": 2,
+        "maximumRounds": 2,
+    })
     scenario["model"] = model
     scenario["environment"] = environment
     return scenario
@@ -245,6 +264,78 @@ def _refresh_integrity(document: dict[str, object]) -> None:
     document["integrity"] = {"canonicalPayloadSha256": sha256(canonical_json_bytes(payload)).hexdigest()}
 
 
+def _normal_noncommit_scenario(effect_class: str, *, missing_action: bool = False) -> dict[str, object]:
+    """Return a legal normal producer scenario with a non-COMMIT S4 result."""
+
+    scenario = _scenario(maximum_rounds=1)
+    environment = scenario["environment"]
+    assert isinstance(environment, dict)
+    states = environment["states"]
+    assert isinstance(states, dict)
+    initial = states["private-a0"]
+    assert isinstance(initial, dict)
+    normal = initial["test-router"]
+    assert isinstance(normal, dict)
+    if missing_action:
+        # Keep an ordinary nonempty environment state while deliberately not
+        # defining the action selected by the source model.  The real normal
+        # environment must then emit CONFIRMED-NOT-SENT itself.
+        initial["unused-normal-action"] = copy.deepcopy(normal)
+        del initial["test-router"]
+        return scenario
+    normal.update({
+        "effectClass": effect_class,
+        "observable": None,
+        "summaryConfirmed": False,
+        "postSummary": None,
+        "measurementTick": None,
+    })
+    return scenario
+
+
+def _response_free_timing_scenario() -> dict[str, object]:
+    """A legal normal TEST with insufficient elapsed evidence at deadline."""
+
+    scenario = _timed_observation_scenario()
+    environment = scenario["environment"]
+    assert isinstance(environment, dict)
+    states = environment["states"]
+    assert isinstance(states, dict)
+    initial = states["private-a0"]
+    assert isinstance(initial, dict)
+    action = initial["test-router"]
+    assert isinstance(action, dict)
+    action.update({
+        "observable": None,
+        "summaryConfirmed": False,
+        "postSummary": None,
+        "measurementTick": None,
+        "observationMaterial": {
+            "events": [
+                {"id": "req-g3", "sequence": 1, "kind": "REQUEST", "key": "g3-key", "eventType": "REQ", "timestamp": 0},
+            ],
+            "triggerEventId": "req-g3",
+            "responseId": None,
+            "measurementInterval": None,
+            "observationEndQualified": True,
+            "earliestElapsed": 0,
+            "clockIdentity": "x",
+            "unit": "ticks",
+        },
+    })
+    return scenario
+
+
+def _authority_arguments(repo: Path, commit: str, *, scenario_path: str = SCENARIO_PATH) -> list[str]:
+    return [
+        "--authority-repository", str(repo),
+        "--authority-commit", commit,
+        "--development-path", DEVELOPMENT_PATH,
+        "--interface-path", INTERFACE_PATH,
+        "--scenario-path", scenario_path,
+    ]
+
+
 def test_git_bound_two_round_evidence_round_trips_exact_rationals(tmp_path: Path) -> None:
     sources = _sources(tmp_path)
     run = run_scenario(sources)
@@ -260,6 +351,426 @@ def test_git_bound_two_round_evidence_round_trips_exact_rationals(tmp_path: Path
     raw = canonical_json_bytes(document)
     decoded = load_evidence_bytes(raw)
     assert validate_evidence_document(decoded, sources=sources) == document
+
+
+def test_open_checkpoint_is_durably_validated_then_continues_without_repeating_prefix(
+    tmp_path: Path,
+) -> None:
+    """EV04 consumes a saved prefix, rather than performing a second full run."""
+
+    sources = _sources(tmp_path)
+    prefix = create_checkpoint(sources, prefix_rounds=1)
+    prefix_document = checkpoint_document(prefix)
+    assert prefix_document["checkpoint"] == {
+        "prefixRounds": 1,
+        "sourceMaximumRounds": 2,
+        "status": "OPEN-PREFIX",
+    }
+    assert prefix_document["outcome"]["stopReason"] == "Stop-Round-Limit"
+    output_parent = tmp_path / "checkpoint-output"
+    output_parent.mkdir()
+    checkpoint_path = output_parent / "prefix.json"
+
+    # Publication has already staged and independently rebuilt this package.
+    # The returned value retains the actual same-session typed prefix.
+    same = publish_checkpoint(prefix, output=checkpoint_path)
+    assert load_checkpoint_bytes(checkpoint_path.read_bytes()) == prefix_document
+    prior_evidence = same.result.state.evidence
+    prior_attempts = same.result.state.attempts
+    prior_remaining = same.result.state.resources.remaining
+    same_continued = continue_checkpoint(same)
+    assert same_continued.result.state.evidence[:1] == prior_evidence
+    assert same_continued.result.state.attempts == prior_attempts + 1
+    assert same_continued.result.state.resources.remaining == prior_remaining - 1
+    assert [item.execution.execution_attempt_id for item in same_continued.result.state.evidence] == [
+        "g3-run:g3-session:execution:1",
+        "g3-run:g3-session:execution:2",
+    ]
+
+    # A reread package gets a separate source reconstruction, then formally
+    # executes only its post-prefix action.  Its final public result is the
+    # same as uninterrupted execution, without trusting JSON as a state.
+    fresh = validate_checkpoint_bytes(checkpoint_path.read_bytes(), sources=sources)
+    assert fresh._context.session is not same._context.session
+    fresh_continued = continue_checkpoint(fresh)
+    assert evidence_document(fresh_continued) == evidence_document(same_continued)
+    assert evidence_document(fresh_continued) == evidence_document(run_scenario(sources))
+
+
+@pytest.mark.parametrize(
+    ("producer_mode", "first_resolution"),
+    [
+        ("CALCULABLE-IDENTITY-MISMATCH", "EXECUTION-IDENTITY-ERROR"),
+        ("OPAQUE-INVALID-SUCCESSOR", "EXECUTION-RESULT-TYPE-ERROR"),
+        ("OPAQUE-TOOL-ERROR", "EXECUTION-TOOL-ERROR"),
+    ],
+)
+def test_checkpoint_rebuilds_each_error_prefix_then_formally_recovers_once(
+    tmp_path: Path,
+    producer_mode: str,
+    first_resolution: str,
+) -> None:
+    """A reconstructed fault prefix cannot reinject its old first fault."""
+
+    sources = _sources(tmp_path, scenario=_recovery_scenario(producer_mode=producer_mode))
+    prefix = create_checkpoint(sources, prefix_rounds=1)
+    checkpoint_path = tmp_path / f"{producer_mode.lower()}-prefix.json"
+    same = publish_checkpoint(prefix, output=checkpoint_path)
+    prefix_evidence = same.result.state.evidence
+    assert prefix_evidence[0].resolution_code == first_resolution
+    assert same.result.state.resources.mode == "ROUNDS"
+    assert same.result.state.resources.remaining == 1
+
+    same_continued = continue_checkpoint(same)
+    assert [item.resolution_code for item in same_continued.result.state.evidence] == [
+        first_resolution,
+        "COMMIT",
+    ]
+    assert same_continued.result.state.evidence[:1] == prefix_evidence
+    assert same_continued.result.state.context.q_status == "KNOWN"
+    assert same_continued.result.state.resources.remaining == 0
+    assert same_continued.result.state.evidence[1].snapshot.action_id == "recover-q1"
+
+    fresh_continued = continue_checkpoint(
+        validate_checkpoint_bytes(checkpoint_path.read_bytes(), sources=sources),
+    )
+    assert evidence_document(fresh_continued) == evidence_document(same_continued)
+    assert evidence_document(fresh_continued) == evidence_document(run_scenario(sources))
+
+
+def test_checkpoint_continuation_distinguishes_rounds_from_nonunit_budget_cost(tmp_path: Path) -> None:
+    """EV04 retains the original mode and charges the new Recover exactly once."""
+
+    rounds_sources = _sources(
+        tmp_path / "rounds",
+        scenario=_recovery_scenario(recover_cost=2),
+    )
+    budget_sources = _sources(
+        tmp_path / "budget",
+        scenario=_recovery_scenario(
+            resource_mode="BUDGET",
+            resource_remaining=3,
+            recover_cost=2,
+        ),
+    )
+    rounds = continue_checkpoint(publish_checkpoint(
+        create_checkpoint(rounds_sources, prefix_rounds=1),
+        output=tmp_path / "rounds-prefix.json",
+    ))
+    budget = continue_checkpoint(publish_checkpoint(
+        create_checkpoint(budget_sources, prefix_rounds=1),
+        output=tmp_path / "budget-prefix.json",
+    ))
+    assert rounds.result.state.evidence[0].resource_after.remaining == 1
+    assert budget.result.state.evidence[0].resource_after.remaining == 2
+    assert rounds.result.state.evidence[1].resource_after.remaining == 0
+    assert budget.result.state.evidence[1].resource_after.remaining == 0
+    assert rounds.result.state.resources == rounds.result.state.resources.rounds(0)
+    assert budget.result.state.resources == budget.result.state.resources.budget(0)
+    assert rounds.result.state.evidence[1].detail_charges["recovery"] == 2
+    assert budget.result.state.evidence[1].detail_charges["recovery"] == 2
+
+
+def test_checkpoint_validation_rebuild_and_formal_continue_have_distinct_execution_counts(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A verification replay is isolated; formal continuation adds one step."""
+
+    sources = _sources(tmp_path)
+    calls: list[str] = []
+    original_execute = SyntheticEnvironment.execute
+
+    def counted_execute(self, request):
+        calls.append(request.execution_attempt_id)
+        return original_execute(self, request)
+
+    monkeypatch.setattr(SyntheticEnvironment, "execute", counted_execute)
+    prefix = create_checkpoint(sources, prefix_rounds=1)
+    output = tmp_path / "counted-prefix.json"
+    same = publish_checkpoint(prefix, output=output)
+    assert calls == [
+        "g3-run:g3-session:execution:1",  # original prefix
+        "g3-run:g3-session:execution:1",  # isolated staged validation
+    ]
+    continued = continue_checkpoint(same)
+    assert calls == [
+        "g3-run:g3-session:execution:1",
+        "g3-run:g3-session:execution:1",
+        "g3-run:g3-session:execution:2",  # only formal new work
+    ]
+    assert continued.result.state.attempts == 2
+
+
+def test_checkpoint_publication_is_transactional_for_existing_and_first_targets(tmp_path: Path) -> None:
+    sources = _sources(tmp_path)
+    prefix = create_checkpoint(sources, prefix_rounds=1)
+    output_parent = tmp_path / "checkpoint-publication"
+    output_parent.mkdir()
+    output = output_parent / "prefix.json"
+    publish_checkpoint(prefix, output=output)
+    previous = output.read_bytes()
+
+    calls = 0
+
+    def fail_replace(source: Path, target: Path) -> None:
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise OSError("injected checkpoint replacement failure")
+        os.replace(source, target)
+
+    with pytest.raises(EvidenceError) as replacement_failure:
+        publish_checkpoint(prefix, output=output, replace_fn=fail_replace)
+    assert replacement_failure.value.code == "EVIDENCE-PUBLISH-ERROR"
+    assert output.read_bytes() == previous
+    assert not list(output_parent.glob(".prefix.json.staging-*"))
+    assert not list(output_parent.glob(".prefix.json.backup-*"))
+
+    first_target = output_parent / "first-prefix.json"
+    with pytest.raises(EvidenceError) as first_failure:
+        publish_checkpoint(
+            prefix,
+            output=first_target,
+            replace_fn=lambda _source, _target: (_ for _ in ()).throw(OSError("injected first failure")),
+        )
+    assert first_failure.value.code == "EVIDENCE-PUBLISH-ERROR"
+    assert not first_target.exists()
+    assert not list(output_parent.glob(".first-prefix.json.staging-*"))
+
+
+def test_checkpoint_rejects_terminal_prefix_and_semantic_forgery_before_continuation(
+    tmp_path: Path,
+) -> None:
+    terminal = _scenario(maximum_rounds=2)
+    terminal_session = terminal["session"]
+    assert isinstance(terminal_session, dict)
+    terminal_session["resourceRemaining"] = 1
+    with pytest.raises(EvidenceError) as terminal_error:
+        create_checkpoint(_sources(tmp_path / "terminal", scenario=terminal), prefix_rounds=1)
+    assert terminal_error.value.code == "CHECKPOINT-NOT-OPEN"
+
+    sources = _sources(tmp_path / "forged")
+    path = tmp_path / "forged" / "prefix.json"
+    path.parent.mkdir(exist_ok=True)
+    publish_checkpoint(create_checkpoint(sources, prefix_rounds=1), output=path)
+    genuine = path.read_bytes()
+    forged = load_checkpoint_bytes(genuine)
+    forged["rounds"][0]["selection"]["actionId"] = "forged-after-prefix"
+    _refresh_integrity(forged)
+    with pytest.raises(EvidenceError) as relation_error:
+        validate_checkpoint_bytes(canonical_json_bytes(forged), sources=sources)
+    assert relation_error.value.code == "CHECKPOINT-RELATION-MISMATCH"
+    assert path.read_bytes() == genuine
+
+
+def test_continuation_rejects_a_reconstructed_public_checkpoint_object(tmp_path: Path) -> None:
+    sources = _sources(tmp_path)
+    verified = publish_checkpoint(
+        create_checkpoint(sources, prefix_rounds=1),
+        output=tmp_path / "trusted-prefix.json",
+    )
+    with pytest.raises(EvidenceError) as rejected:
+        continue_checkpoint(replace(verified, prefix_rounds=0))
+    assert rejected.value.code == "CHECKPOINT-PROVENANCE-ERROR"
+
+
+@pytest.mark.parametrize("mutation", ["raw", "resolution", "history", "producer", "source"])
+def test_checkpoint_mutations_are_rejected_before_formal_continuation(
+    tmp_path: Path,
+    mutation: str,
+) -> None:
+    sources = _sources(tmp_path)
+    checkpoint = checkpoint_document(create_checkpoint(sources, prefix_rounds=1))
+    if mutation == "raw":
+        checkpoint["rounds"][0]["execution"]["evidenceRef"] = "forged-raw"
+    elif mutation == "resolution":
+        checkpoint["rounds"][0]["resolutionCode"] = "forged-resolution"
+    elif mutation == "history":
+        checkpoint["outcome"]["state"]["history"]["version"] = 99
+    elif mutation == "producer":
+        checkpoint["producerFacts"] = []
+    else:
+        checkpoint["inputs"]["scenario"]["path"] = "configs/runtime/forged.json"
+    _refresh_integrity(checkpoint)
+    with pytest.raises(EvidenceError) as rejected:
+        validate_checkpoint_bytes(canonical_json_bytes(checkpoint), sources=sources)
+    assert rejected.value.code in {"CHECKPOINT-RELATION-MISMATCH", "EVIDENCE-SOURCE-MISMATCH"}
+
+
+def test_cli_checkpoint_then_continue_consumes_a_genuine_error_prefix_once(
+    tmp_path: Path,
+) -> None:
+    repo, commit = _authority_repo(
+        tmp_path,
+        scenario=_recovery_scenario(producer_mode="OPAQUE-TOOL-ERROR"),
+    )
+    outside = tmp_path / "continuation-cli-outside"
+    outside.mkdir()
+    checkpoint_path = outside / "prefix.json"
+    final_path = outside / "continued.json"
+    authority = _authority_arguments(repo, commit)
+
+    assert cli.main([
+        "checkpoint", *authority, "--prefix-rounds", "1", "--output", str(checkpoint_path),
+    ]) == 0
+    prefix = load_checkpoint_bytes(checkpoint_path.read_bytes())
+    assert prefix["rounds"][0]["resolutionCode"] == "EXECUTION-TOOL-ERROR"
+    assert cli.main(["validate", *authority, "--evidence", str(checkpoint_path)]) == 0
+    assert cli.main([
+        "continue", *authority, "--checkpoint", str(checkpoint_path), "--output", str(final_path),
+    ]) == 0
+    final = load_evidence_bytes(final_path.read_bytes())
+    assert [item["resolutionCode"] for item in final["rounds"]] == [
+        "EXECUTION-TOOL-ERROR", "COMMIT",
+    ]
+    assert final["rounds"][1]["selection"]["actionId"] == "recover-q1"
+
+    forged = copy.deepcopy(prefix)
+    forged["rounds"][0]["execution"]["evidenceRef"] = "forged-prefix-raw"
+    _refresh_integrity(forged)
+    forged_path = outside / "forged-prefix.json"
+    forged_path.write_bytes(canonical_json_bytes(forged))
+    previous_final = final_path.read_bytes()
+    assert cli.main([
+        "continue", *authority, "--checkpoint", str(forged_path), "--output", str(final_path),
+    ]) == 1
+    assert final_path.read_bytes() == previous_final
+
+
+@pytest.mark.parametrize("invalid_mode", [[], {}, None, 1, True, "UNBOUNDED"])
+def test_malformed_resource_mode_has_named_cli_error_without_publication(
+    tmp_path: Path,
+    invalid_mode: object,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    scenario = _scenario()
+    session = scenario["session"]
+    assert isinstance(session, dict)
+    session["resourceMode"] = invalid_mode
+    repo, commit = _authority_repo(tmp_path, scenario=scenario)
+    output = tmp_path / "bad-mode.json"
+    assert cli.main(["run", *_authority_arguments(repo, commit), "--output", str(output)]) == 1
+    captured = capsys.readouterr()
+    assert "SCENARIO-SHAPE-ERROR" in captured.err
+    assert "Traceback" not in captured.err
+    assert not output.exists()
+
+
+@pytest.mark.parametrize(
+    ("field", "replacement"),
+    [
+        ("path", "configs/runtime/other.json"),
+        ("commit", "0" * 40),
+        ("blobSha256", "0" * 64),
+    ],
+)
+def test_source_identity_is_rejected_before_any_verification_run(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    field: str,
+    replacement: str,
+) -> None:
+    sources = _sources(tmp_path)
+    document = evidence_document(run_scenario(sources))
+    document["inputs"]["scenario"][field] = replacement
+    _refresh_integrity(document)
+    calls = 0
+    original = evidence_module.run_scenario
+
+    def counted(value):
+        nonlocal calls
+        calls += 1
+        return original(value)
+
+    monkeypatch.setattr(evidence_module, "run_scenario", counted)
+    with pytest.raises(EvidenceError) as rejected:
+        validate_evidence_document(document, sources=sources)
+    assert rejected.value.code == "EVIDENCE-SOURCE-MISMATCH"
+    assert calls == 0
+
+
+def test_checkpoint_source_identity_is_rejected_before_prefix_rebuild(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sources = _sources(tmp_path)
+    document = checkpoint_document(create_checkpoint(sources, prefix_rounds=1))
+    document["inputs"]["scenario"]["path"] = "configs/runtime/other.json"
+    _refresh_integrity(document)
+    calls = 0
+    original = evidence_module.create_checkpoint
+
+    def counted(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(evidence_module, "create_checkpoint", counted)
+    with pytest.raises(EvidenceError) as rejected:
+        evidence_module.validate_checkpoint_document(document, sources=sources)
+    assert rejected.value.code == "EVIDENCE-SOURCE-MISMATCH"
+    assert calls == 0
+
+
+def test_relation_diagnostics_name_the_semantic_field_and_preserve_exact_types(tmp_path: Path) -> None:
+    sources = _sources(tmp_path)
+    changed_action = evidence_document(run_scenario(sources))
+    changed_action["rounds"][0]["selection"]["actionId"] = "forged-action"
+    _refresh_integrity(changed_action)
+    with pytest.raises(EvidenceError) as action_error:
+        validate_evidence_document(changed_action, sources=sources)
+    assert action_error.value.code == "EVIDENCE-RELATION-MISMATCH"
+    assert "$.rounds[0].selection.actionId" in str(action_error.value)
+
+    changed_boolean = evidence_document(run_scenario(sources))
+    changed_boolean["rounds"][0]["chargedOnce"] = 1
+    _refresh_integrity(changed_boolean)
+    with pytest.raises(EvidenceError) as type_error:
+        validate_evidence_document(changed_boolean, sources=sources)
+    assert type_error.value.code == "EVIDENCE-RELATION-MISMATCH"
+    assert "$.rounds[0].chargedOnce" in str(type_error.value)
+
+
+@pytest.mark.parametrize(
+    ("scenario", "resolution", "fact"),
+    [
+        (_normal_noncommit_scenario("CONFIRMED-NOT-SENT"), "CONFIRMED-NOT-SENT", "TYPED-CONFIRMED-NOT-SENT"),
+        (_normal_noncommit_scenario("UNKNOWN-EFFECT"), "UNKNOWN-EFFECT", "TYPED-UNKNOWN-EFFECT"),
+        (_normal_noncommit_scenario("NONE", missing_action=True), "CONFIRMED-NOT-SENT", "TYPED-CONFIRMED-NOT-SENT"),
+    ],
+)
+def test_normal_noncommit_producer_facts_publish_and_rebuild(
+    tmp_path: Path,
+    scenario: dict[str, object],
+    resolution: str,
+    fact: str,
+) -> None:
+    sources = _sources(tmp_path, scenario=scenario)
+    document = evidence_document(run_scenario(sources))
+    assert document["rounds"][0]["resolutionCode"] == resolution
+    assert document["producerFacts"][0]["fact"] == fact
+    assert validate_evidence_document(document, sources=sources) == document
+    repo = sources.repository
+    output = tmp_path / "normal-noncommit.json"
+    assert cli.main(["run", *_authority_arguments(repo, sources.scenario.commit), "--output", str(output)]) == 0
+    assert load_evidence_bytes(output.read_bytes())["producerFacts"][0]["fact"] == fact
+
+
+def test_normal_response_free_pending_deadline_material_can_publish_without_commit(
+    tmp_path: Path,
+) -> None:
+    sources = _sources(tmp_path, scenario=_response_free_timing_scenario())
+    document = evidence_document(run_scenario(sources))
+    assert document["rounds"][0]["resolutionCode"] == "OBSERVATION-NO-RESPONSE"
+    assert document["rounds"][0]["observationAssessment"]["verdict"] == "INCONCLUSIVE"
+    assert document["producerFacts"][0]["fact"] == "TYPED-NO-RESPONSE-MATERIAL"
+    assert validate_evidence_document(document, sources=sources) == document
+    output = tmp_path / "response-free.json"
+    assert cli.main([
+        "run", *_authority_arguments(sources.repository, sources.scenario.commit), "--output", str(output),
+    ]) == 0
+    assert load_evidence_bytes(output.read_bytes())["producerFacts"][0]["fact"] == "TYPED-NO-RESPONSE-MATERIAL"
 
 
 def test_published_example_is_a_closed_git_bound_two_round_scenario(tmp_path: Path) -> None:
@@ -929,3 +1440,56 @@ def test_noneditable_wheel_runs_the_real_finite_cli_from_an_unrelated_directory(
     )
     assert rejected.returncode == 1
     assert "EVIDENCE-RELATION-MISMATCH" in rejected.stderr
+
+    # The same non-editable installed command must also consume a durable
+    # error prefix and execute only the post-prefix Recover action.
+    recovery_repo, recovery_commit = _authority_repo(
+        tmp_path / "wheel-recovery-authority",
+        scenario=_recovery_scenario(producer_mode="OPAQUE-INVALID-SUCCESSOR"),
+    )
+    recovery_authority = _authority_arguments(recovery_repo, recovery_commit)
+    checkpoint_path = outside / "wheel-prefix.json"
+    continued_path = outside / "wheel-continued.json"
+    checkpoint = subprocess.run(
+        [str(entrypoint), "checkpoint", *recovery_authority, "--prefix-rounds", "1", "--output", str(checkpoint_path)],
+        cwd=outside,
+        text=True,
+        capture_output=True,
+        env=runtime_environment,
+    )
+    assert checkpoint.returncode == 0, checkpoint.stderr
+    checkpoint_validation = subprocess.run(
+        [str(entrypoint), "validate", *recovery_authority, "--evidence", str(checkpoint_path)],
+        cwd=outside,
+        text=True,
+        capture_output=True,
+        env=runtime_environment,
+    )
+    assert checkpoint_validation.returncode == 0, checkpoint_validation.stderr
+    continuation = subprocess.run(
+        [str(entrypoint), "continue", *recovery_authority, "--checkpoint", str(checkpoint_path), "--output", str(continued_path)],
+        cwd=outside,
+        text=True,
+        capture_output=True,
+        env=runtime_environment,
+    )
+    assert continuation.returncode == 0, continuation.stderr
+    continued = load_evidence_bytes(continued_path.read_bytes())
+    assert [item["resolutionCode"] for item in continued["rounds"]] == [
+        "EXECUTION-RESULT-TYPE-ERROR", "COMMIT",
+    ]
+
+    forged_checkpoint = load_checkpoint_bytes(checkpoint_path.read_bytes())
+    forged_checkpoint["producerFacts"] = []
+    _refresh_integrity(forged_checkpoint)
+    forged_checkpoint_path = outside / "wheel-forged-prefix.json"
+    forged_checkpoint_path.write_bytes(canonical_json_bytes(forged_checkpoint))
+    forged_continuation = subprocess.run(
+        [str(entrypoint), "continue", *recovery_authority, "--checkpoint", str(forged_checkpoint_path), "--output", str(continued_path)],
+        cwd=outside,
+        text=True,
+        capture_output=True,
+        env=runtime_environment,
+    )
+    assert forged_continuation.returncode == 1
+    assert "CHECKPOINT-RELATION-MISMATCH" in forged_continuation.stderr
