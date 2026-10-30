@@ -1,0 +1,115 @@
+{
+  "kind": "CLTAV-FINITE-RUNTIME-APPLICABILITY-MANIFEST",
+  "artifact": {
+    "id": "CLTAV-FINITE-SYNTHETIC-RUNTIME-APPLICABILITY",
+    "version": "1.0",
+    "purpose": "Finite engineering routing of already bound unresolved integrity-runtime tasks; it records typed public inputs only and does not qualify an implementation or state a protocol verdict.",
+    "purposeZh": "已绑定未解决完整性运行时任务的有限工程路由；仅记录带类型公开输入，不建立实现资格或协议判定。",
+    "scope": "ENGINEERING-SYNTHETIC-RUNTIME",
+    "experimentBoundary": "NOT-PR23-EXPERIMENT",
+    "qualificationBoundary": "NOT-ESTABLISHED"
+  },
+  "sourceBindings": {
+    "schema": {"path": "configs/engineering/cltav_runtime_applicability.schema.json", "blobSha256": "6b0cda8ac09db2eb82e212c5581fa0de5a9b4d9e23bc6a2c8648ead438a3f966"},
+    "development": {"path": "configs/engineering/cltav_development_contracts.json", "blobSha256": "3331fadf2786133f161eded9d1fb42066ca58d7dd510ce6e775da1cd89a5aae1"},
+    "integrityBaseline": {"path": "configs/engineering/cltav_integrity_obligation_baseline.json", "blobSha256": "85ec28689371bf557dfad5b9fc5ff80421198a896173ced603dc992e62a2dc57"},
+    "fixture": {"path": "configs/engineering/cltav_runtime_applicability_fixture.json", "blobSha256": "ea9241a8830615c500e2b8c20522961148007d26920fd8c474e32fb95ddf94b7"}
+  },
+  "tasks": [
+    {
+      "id": "RT-645-00076",
+      "contextId": "CTX-645-00076",
+      "requirementId": "CRS-M1-00076",
+      "dependencyId": "DEP-INTEGRITY-RUNTIME",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-025-3CF28DC21423",
+      "contractId": "INT-INFORMATION-RECEIVER-SUPPORT",
+      "modelId": "MODEL-INTEGRITY-STOP",
+      "actionIds": ["integrity-observe"],
+      "displayScenarioId": "DISPLAY-INFORMATION-OPTION-SUPPORT",
+      "displayService": "INFORMATION",
+      "reasonRefs": ["receiver-information-a", "option-information-a", "selection-information-a", "support-information-a", "bytes-information-a"],
+      "publicInputs": {"receiverId": "receiver-information-a", "optionId": "option-information-a", "optionSelected": true, "selectionDeclarationId": "selection-information-a", "supportDeclarationId": "support-information-a", "protectedBytesId": "bytes-information-a"}
+    },
+    {
+      "id": "RT-645-00082",
+      "contextId": "CTX-645-00082",
+      "requirementId": "CRS-M1-00082",
+      "dependencyId": "DEP-INTEGRITY-RUNTIME",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-3-P048-PROSE-SENTENCE-026-F38D018C4499",
+      "contractId": "INT-UPLOAD-RECEIVER-SUPPORT",
+      "modelId": "MODEL-INTEGRITY-STOP",
+      "actionIds": ["integrity-observe"],
+      "displayScenarioId": "DISPLAY-UPLOAD-OPTION-SUPPORT",
+      "displayService": "UPLOAD",
+      "reasonRefs": ["receiver-upload-a", "option-upload-a", "selection-upload-a", "support-upload-a", "bytes-upload-a"],
+      "publicInputs": {"receiverId": "receiver-upload-a", "optionId": "option-upload-a", "optionSelected": true, "selectionDeclarationId": "selection-upload-a", "supportDeclarationId": "support-upload-a", "protectedBytesId": "bytes-upload-a"}
+    },
+    {
+      "id": "RT-645-00085",
+      "contextId": "CTX-645-00085",
+      "requirementId": "CRS-M1-00085",
+      "dependencyId": "DEP-INTEGRITY-RUNTIME",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-007-F209ABE1376B",
+      "contractId": "INT-FINAL-IMAGE-LSP-VALUE",
+      "modelId": "MODEL-INTEGRITY-STOP",
+      "actionIds": ["integrity-observe"],
+      "displayScenarioId": "DISPLAY-FINAL-IMAGE-LSP",
+      "displayService": "UPLOAD",
+      "reasonRefs": ["file-image-a", "file-lsp-a", "bytes-image-a", "algorithm-config-a", "check-image-a", "check-lsp-a"],
+      "publicInputs": {"finalImageFileId": "file-image-a", "lspFileId": "file-lsp-a", "orderedBytesId": "bytes-image-a", "algorithmConfigurationId": "algorithm-config-a", "finalImageCheckValueId": "check-image-a", "lspCheckValueId": "check-lsp-a"}
+    },
+    {
+      "id": "RT-645-00086",
+      "contextId": "CTX-645-00086",
+      "requirementId": "CRS-M1-00086",
+      "dependencyId": "DEP-INTEGRITY-RUNTIME",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-008-CDA43D6568CC",
+      "contractId": "INT-OPTIONAL-OLD-NEW-COMPARE",
+      "modelId": "MODEL-INTEGRITY-STOP",
+      "actionIds": ["integrity-observe"],
+      "displayScenarioId": "DISPLAY-OPTIONAL-OLD-NEW",
+      "displayService": "UPLOAD",
+      "reasonRefs": ["comparison-selected-a", "file-old-a", "file-new-a", "check-old-a", "check-new-a"],
+      "publicInputs": {"comparisonSelected": true, "comparisonDeclarationId": "comparison-selected-a", "oldFileId": "file-old-a", "newFileId": "file-new-a", "oldCheckValueId": "check-old-a", "newCheckValueId": "check-new-a"}
+    },
+    {
+      "id": "RT-645-00087",
+      "contextId": "CTX-645-00087",
+      "requirementId": "CRS-M1-00087",
+      "dependencyId": "DEP-INTEGRITY-RUNTIME",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-010-F4624AC8DCB4",
+      "contractId": "INT-SAME-PART-NUMBER-CRC-EQUALITY",
+      "modelId": "MODEL-INTEGRITY-STOP",
+      "actionIds": ["integrity-observe"],
+      "displayScenarioId": "DISPLAY-SAME-PART-NUMBER",
+      "displayService": "UPLOAD",
+      "reasonRefs": ["file-a", "file-b", "algorithm-config-a", "check-file-a", "check-file-b"],
+      "publicInputs": {"fileAId": "file-a", "fileBId": "file-b", "algorithmConfigurationId": "algorithm-config-a", "checkValueAId": "check-file-a", "checkValueBId": "check-file-b"}
+    },
+    {
+      "id": "RT-645-00109",
+      "contextId": "CTX-645-00109",
+      "requirementId": "CRS-M1-00109",
+      "dependencyId": "DEP-INTEGRITY-RUNTIME",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-2-P068-PROSE-SENTENCE-042-4C1D759A6B9A",
+      "contractId": "INT-POST-DATA-STATUS-CONTINUATION",
+      "modelId": "MODEL-INTEGRITY-STOP",
+      "actionIds": ["integrity-observe"],
+      "displayScenarioId": "DISPLAY-POST-DATA-STATUS",
+      "displayService": "UPLOAD",
+      "reasonRefs": ["operation-upload-a", "event-final-data-a", "interval-calculation-a", "stream-status-a", "range-status-a"],
+      "publicInputs": {"operationId": "operation-upload-a", "finalDataEventId": "event-final-data-a", "calculationIntervalId": "interval-calculation-a", "statusStreamId": "stream-status-a", "observationRangeId": "range-status-a", "observationComplete": false}
+    }
+  ],
+  "methodOnlyContexts": [
+    {
+      "id": "CTX-METHOD-ONLY",
+      "modelId": "MODEL-METHOD-ONLY",
+      "actionIds": ["method-observe"],
+      "displayScenarioId": "DISPLAY-METHOD-ONLY",
+      "displayService": "METHOD-ONLY",
+      "reasonRefs": ["method-only-context-a"],
+      "publicContext": {"kind": "METHOD-ONLY-NO-INTEGRITY-CONTEXT", "description": "Explicit finite engineering control with a distinct non-CRC model and no integrity task context.", "referenceId": "method-only-context-a"}
+    }
+  ]
+}

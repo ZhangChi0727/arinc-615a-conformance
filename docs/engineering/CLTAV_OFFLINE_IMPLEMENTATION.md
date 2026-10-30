@@ -4,8 +4,8 @@
 |---|---|
 | Authorization | CR-2026-017 / DD-041 |
 | Specification inputs | CR-2026-016 / DD-038–040 and the current controlled development package |
-| Scope | Read-only capture intake through bounded reconstruction evidence |
-| Status | Candidate implementation on a Draft PR; independent review required |
+| Scope | Read-only capture intake through bounded reconstruction evidence and a limited non-scoring replay bridge |
+| Status | Draft PR implementation; the G4 passive bridge has limited acceptance, while G5 whole-PR review remains required |
 
 ## 1. Purpose and contract mapping
 
@@ -20,8 +20,8 @@ requirements package or a claim that a downstream module has run.
 |---|---|---|---|
 | `inspect` input identity and pcap/pcapng reader | `MOD-CAPTURE` / `TR-CAPTURE-INTAKE` | `CAPTURE-IDENTITY`, `INTAKE-METADATA`, `PACKET-REF`, `AC-SYN-TRANSFER` | Caller-provided, read-only input; no live capture or clock-accuracy claim. |
 | Ethernet/VLAN/IPv4 and finite fragment accumulator | `MOD-REASSEMBLY` / `TR-DATAGRAM-REASSEMBLY` | `PACKET-REF`, `DATAGRAM-RECORD`, `AC-SYN-TRANSFER` | `COMPLETE`, `GAPPED`, and `CONFLICT` are reconstruction states, not product verdicts. |
-| UDP/TFTP association and bounded file-role/header parsing | `MOD-TRANSFER` / `TR-TRANSFER-RECONSTRUCTION`, `TR-PROTOCOL-EVENT` | `TRANSFER-RECORD`, `PROTOCOL-EVENT`, `AC-SYN-TRANSFER` | `IF-EXECUTE-RECORD` is used only as the existing intake/output compatibility boundary; `IF-OBS-INTERPRET` is not invoked as an ownership or verdict oracle. |
-| Versioned JSON evidence envelope and adapter projection | `MOD-CAPTURE` → `MOD-TRANSFER` output chain | `PACKET-REF`, `DATAGRAM-RECORD`, `TRANSFER-RECORD`, `PROTOCOL-EVENT` | A versioned projection identifies its controlled contract snapshot and records non-projectable unknowns explicitly. It does not create `OWNERSHIP-RESULT`, `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, or `FINDING-RECORD`. |
+| UDP/TFTP association and bounded file-role/header parsing | `MOD-TRANSFER` / `TR-TRANSFER-RECONSTRUCTION`, `TR-PROTOCOL-EVENT` | `TRANSFER-RECORD`, `PROTOCOL-EVENT`, `AC-SYN-TRANSFER` | The G4 bridge consumes only source-rebuilt evidence and calls public `replay_ownership` for an explicitly unqualified structural trace. It never calls `assess_observation`, and neither interface is a verdict oracle for a passive capture. |
+| Versioned JSON evidence envelope, adapter projection and G4 replay | `MOD-CAPTURE` → `MOD-TRANSFER` output chain | `PACKET-REF`, `DATAGRAM-RECORD`, `TRANSFER-RECORD`, `PROTOCOL-EVENT`, `OFFLINE-REPLAY` | A versioned projection identifies its controlled contract snapshot and records non-projectable unknowns explicitly. A bridge record may retain an unqualified structural ownership replay, but it creates no `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, qualified ownership result, or `FINDING-RECORD`. |
 
 ## 2. Supported intake and uncertainty rules
 
@@ -129,6 +129,10 @@ cltav-offline inspect --input <capture> --capture-id <stable-id> \
 cltav-offline corpus --manifest configs/research/cltav_historical_capture_manifest.json \
   --corpus-root <authorized-local-corpus-root> \
   --output-dir .cltav-local/offline-intake/corpus [--source-commit <caller-claim-40-hex>]
+cltav-offline replay --input <capture> --offline-evidence <inspect-output.json> \
+  --output .cltav-local/offline-replay/<stable-id>.json
+cltav-offline validate-replay --input <capture> --offline-evidence <inspect-output.json> \
+  --bridge .cltav-local/offline-replay/<stable-id>.json
 ```
 
 `0` means the bounded reconstruction completed without controlled issues;
@@ -140,6 +144,19 @@ per-file `FATAL-INPUT-ERROR` evidence only in corpus mode. A tool or
 controlled-resource failure aborts the staged corpus transaction and never
 fabricates a capture-level input error. These codes are tool-operation states,
 not ARINC 615A verdict values.
+
+`replay` is separate from active synthetic execution. It first rebuilds the
+actual PR22 intake envelope from the named capture bytes, then requires the
+supplied envelope and its controlled projection to be exactly equal to that
+rebuild before adapting source witnesses. A successful replay or validation
+returns `0` even when the bounded source says `GAPPED`, `CONFLICT`, partial,
+or non-projectable: those are retained as named `NOT-SCORED` evidence, not
+quietly promoted to a protocol answer. A bridge output is canonical JSON and
+each public render re-establishes the source relation rather than trusting
+mutable cached rows. It is staged and relation-validated before replacement.
+It may replace only an existing bridge artifact for the same rebuilt source relation; a failed stage
+or ordinary failed swap preserves the previous bytes, while an exceptional
+rollback failure preserves its named backup rather than deleting it.
 
 `--source-commit` is optional caller provenance. If supplied, it must be a
 lowercase 40-character Git object ID and is recorded as
@@ -175,6 +192,17 @@ product conformance, certification readiness or authority acceptance. The
 paper line consumes a reviewed evidence manifest later; this implementation
 does not modify manuscript sources, PDF or research claims.
 
+The `OFFLINE-REPLAY` artifact is likewise passive. It preserves capture,
+packet, datagram, transfer and event references; producer quality; clock
+domain, tick resolution and unknown accuracy; and controlled non-projectable
+reasons. It never issues an action, charges a cost, applies a reset, updates
+history, claims a response deadline, creates protocol PASS/FAIL, or attributes
+an IUT failure. A request/final-data pair is only a structural candidate when
+the production source proves both witnesses; unknown/cross-domain clocks,
+missing/ambiguous lineage, cancellation or supersession facts not produced by
+the bounded decoder, and unresolved deadlines are not inferred and cannot
+affect scoring.
+
 # 中文版
 
 # 有界 CL-TAV 离线接入实现
@@ -183,8 +211,8 @@ does not modify manuscript sources, PDF or research claims.
 |---|---|
 | 授权 | CR-2026-017／DD-041 |
 | 规格输入 | CR-2026-016／DD-038～040 及当前受控开发包 |
-| 范围 | 从只读捕获接入到有界重建证据 |
-| 状态 | Draft PR 上的候选实现；需要独立评审 |
+| 范围 | 从只读捕获接入到有界重建证据及受限、非评分的回放桥接 |
+| 状态 | Draft PR 上的实现；G4 被动桥接已获有限接受，G5 整支评审仍为必需 |
 
 ## 1. 目的与合同映射
 
@@ -198,8 +226,8 @@ does not modify manuscript sources, PDF or research claims.
 |---|---|---|---|
 | `inspect` 输入身份与 pcap／pcapng 读取器 | `MOD-CAPTURE`／`TR-CAPTURE-INTAKE` | `CAPTURE-IDENTITY`、`INTAKE-METADATA`、`PACKET-REF`、`AC-SYN-TRANSFER` | 调用方提供的只读输入；不主张实时捕获或时钟精度。 |
 | Ethernet/VLAN/IPv4 与有限分片累加器 | `MOD-REASSEMBLY`／`TR-DATAGRAM-REASSEMBLY` | `PACKET-REF`、`DATAGRAM-RECORD`、`AC-SYN-TRANSFER` | `COMPLETE`、`GAPPED`、`CONFLICT` 是重建状态，不是产品判定。 |
-| UDP/TFTP 关联与有界文件角色／头解析 | `MOD-TRANSFER`／`TR-TRANSFER-RECONSTRUCTION`、`TR-PROTOCOL-EVENT` | `TRANSFER-RECORD`、`PROTOCOL-EVENT`、`AC-SYN-TRANSFER` | `IF-EXECUTE-RECORD` 仅作为已有接入／输出相容边界；不调用 `IF-OBS-INTERPRET` 作为所有权或判定 oracle。 |
-| 版本化 JSON 证据 envelope 与适配投影 | `MOD-CAPTURE` → `MOD-TRANSFER` 输出链 | `PACKET-REF`、`DATAGRAM-RECORD`、`TRANSFER-RECORD`、`PROTOCOL-EVENT` | 版本化投影标识受控合同快照，并明确登记无法投影的未知项；不创建 `OWNERSHIP-RESULT`、`OBSERVATION-ASSESSMENT`、`HISTORY-HANDLE` 或 `FINDING-RECORD`。 |
+| UDP/TFTP 关联与有界文件角色／头解析 | `MOD-TRANSFER`／`TR-TRANSFER-RECONSTRUCTION`、`TR-PROTOCOL-EVENT` | `TRANSFER-RECORD`、`PROTOCOL-EVENT`、`AC-SYN-TRANSFER` | G4 桥接只消费可按来源重建的证据，并仅调用公开 `replay_ownership` 对显式不合格的结构迹回放；绝不调用 `assess_observation`，两个接口均不得被当作被动捕获的判定 oracle。 |
+| 版本化 JSON 证据 envelope、适配投影和 G4 回放 | `MOD-CAPTURE` → `MOD-TRANSFER` 输出链 | `PACKET-REF`、`DATAGRAM-RECORD`、`TRANSFER-RECORD`、`PROTOCOL-EVENT`、`OFFLINE-REPLAY` | 版本化投影标识受控合同快照，并明确登记无法投影的未知项；桥接记录可保留不合格的结构所有权回放，但不创建 `OBSERVATION-ASSESSMENT`、`HISTORY-HANDLE`、合格的所有权结果或 `FINDING-RECORD`。 |
 
 ## 2. 已支持的接入与不确定性规则
 
@@ -233,9 +261,15 @@ cltav-offline inspect --input <capture> --capture-id <stable-id> \
 cltav-offline corpus --manifest configs/research/cltav_historical_capture_manifest.json \
   --corpus-root <authorized-local-corpus-root> \
   --output-dir .cltav-local/offline-intake/corpus [--source-commit <caller-claim-40-hex>]
+cltav-offline replay --input <capture> --offline-evidence <inspect-output.json> \
+  --output .cltav-local/offline-replay/<stable-id>.json
+cltav-offline validate-replay --input <capture> --offline-evidence <inspect-output.json> \
+  --bridge .cltav-local/offline-replay/<stable-id>.json
 ```
 
 `0` 表示有界重建完成且无受控问题；`2` 表示已写入输出，但包含受控未知、不支持条件、冲突、未完成重建，或 corpus 模式下逐捕获的输入故障；`1` 表示致命调用、身份、受控资源、schema、工具或发布错误。畸形捕获仅在 corpus 模式下以逐文件 `FATAL-INPUT-ERROR` 证据表示；工具或受控资源失败会中止整个 staging 事务，绝不伪造成某一捕获的输入错误。这些代码是工具运行状态，不是 ARINC 615A 判定值。
+
+`replay` 与主动合成执行严格分开。它先从所指捕获字节重建实际 PR22 intake envelope，再要求给定 envelope 及其受控投影与该重建结果完全相等，之后才适配来源见证。即使有界来源标为 `GAPPED`、`CONFLICT`、部分解析或不可投影，成功的 replay／validation 也返回 `0`：这些状态会以具名 `NOT-SCORED` 证据保留，绝不能静默升级为协议答案。桥接输出是 canonical JSON；每次公开渲染都会重新建立来源关系，不信任可变缓存行。在替换前先 staging 并作关系校验；只能替换属于同一已重建来源关系的既有桥接制品。staging 失败或普通替换失败时保持旧字节；若回滚本身异常，则保留具名 backup，不得删除旧制品。
 
 `--source-commit` 是可选的调用方来源声明。若给出，必须是小写 40 位 Git 对象 ID，并标为 `CLAIMED-UNVERIFIED`；若未给出，标为 `UNAVAILABLE`。命令不会读取 `GITHUB_SHA`、当前目录或本地 Git checkout 来制造声明。每个输出改为记录确定性的运行源码快照 SHA-256 及精确的受控合同身份。这些是不同强度的断言：语法正确的调用方声明不得表述成已核验构建身份。
 
@@ -248,3 +282,5 @@ cltav-offline corpus --manifest configs/research/cltav_historical_capture_manife
 它在发布时实际执行，而不只是作为文档发布。它排除原始载荷、绝对本地路径、根因标签和符合性 PASS/FAIL。证据 envelope 始终声明 `conformanceVerdict: NOT-EVALUATED`，传输完整性为 `NOT-EVALUATED`。
 
 历史抓包运行只是探索性解析／重建证据。它可使后续工程和论文工作引用工具发布、输入身份和明确的支持边界；不能建立运行完整性、受控执行、故障真值、实验分母、产品符合性、认证准备度或权威接受。论文线在后续消费经过评审的 evidence manifest；本实现不修改稿件源、PDF 或研究主张。
+
+`OFFLINE-REPLAY` 制品同样是被动的。它保留 capture、packet、datagram、transfer 和 event 引用，生产者质量，clock domain、tick 分辨率和未知精度，以及受控的不可投影原因；绝不发出动作、计费、施加复位、更新历史、主张响应期限、产生协议 PASS/FAIL，或归因 IUT 失败。只有生产来源同时证明 request/final-data 两个见证时，二者才可形成结构候选；未知／跨域时钟、缺失／歧义来源、有界解码器未产生的 cancellation 或 supersession 事实，以及未决期限，均不得被推断，也不得影响评分。

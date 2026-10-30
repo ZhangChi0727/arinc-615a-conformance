@@ -1,0 +1,168 @@
+{
+  "artifactType": "CLTAV-FINITE-SYNTHETIC-SCENARIO",
+  "schemaVersion": "1.0",
+  "purpose": "SYNTHETIC-ENGINEERING-VALIDATION",
+  "scenarioId": "cltav-g3-two-round-example",
+  "model": {
+    "model": {
+      "stateIds": ["q0", "q1"],
+      "clockIds": ["x"],
+      "typedDomains": {"mode": ["normal"]}
+    },
+    "hypotheses": [
+      {
+        "id": "h0",
+        "controlStateId": "q0",
+        "clockConstraint": {
+          "x": {
+            "lower": {"numerator": 0, "positiveDenominator": 1},
+            "upper": {"numerator": 0, "positiveDenominator": 1},
+            "lowerClosed": true,
+            "upperClosed": true
+          }
+        },
+        "typedStore": {"mode": "normal"}
+      },
+      {
+        "id": "h1",
+        "controlStateId": "q0",
+        "clockConstraint": {
+          "x": {
+            "lower": {"numerator": 0, "positiveDenominator": 1},
+            "upper": {"numerator": 0, "positiveDenominator": 1},
+            "lowerClosed": true,
+            "upperClosed": true
+          }
+        },
+        "typedStore": {"mode": "normal"}
+      },
+      {
+        "id": "h2",
+        "controlStateId": "q0",
+        "clockConstraint": {
+          "x": {
+            "lower": {"numerator": 0, "positiveDenominator": 1},
+            "upper": {"numerator": 0, "positiveDenominator": 1},
+            "lowerClosed": true,
+            "upperClosed": true
+          }
+        },
+        "typedStore": {"mode": "normal"}
+      }
+    ],
+    "actions": [
+      {
+        "id": "test-route",
+        "kind": "TEST",
+        "cost": 1,
+        "detailCharges": {
+          "acquisition": 0,
+          "computation": 1,
+          "preparation": 0,
+          "recovery": 0,
+          "retry": 0
+        },
+        "enabledSummaries": ["q0"],
+        "transition": {
+          "id": "tr-route",
+          "source": "q0",
+          "target": "q0",
+          "guardAst": {"tag": "TRUE"},
+          "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}]
+        },
+        "observableByHypothesis": {
+          "h0": "branch-alpha",
+          "h1": "branch-alpha",
+          "h2": "branch-beta"
+        },
+        "measurementTicksByHypothesis": {"h0": 0, "h1": 0, "h2": 1}
+      },
+      {
+        "id": "test-follow",
+        "kind": "TEST",
+        "cost": 1,
+        "detailCharges": {
+          "acquisition": 0,
+          "computation": 1,
+          "preparation": 0,
+          "recovery": 0,
+          "retry": 0
+        },
+        "enabledSummaries": ["q1"],
+        "transition": {
+          "id": "tr-follow",
+          "source": "q0",
+          "target": "q0",
+          "guardAst": {"tag": "TRUE"},
+          "simultaneousUpdates": [{"tag": "STATE-ASSIGN", "state": "q0"}]
+        },
+        "observableByHypothesis": {
+          "h0": "final-alpha",
+          "h1": "final-beta",
+          "h2": "final-gamma"
+        },
+        "measurementTicksByHypothesis": {"h0": 0, "h1": 1, "h2": 2}
+      }
+    ],
+    "limits": {
+      "pathLength": 3,
+      "frontierStates": 6,
+      "hypotheses": 3,
+      "actions": 2,
+      "observationClasses": 4
+    },
+    "uncertainty": {
+      "id": "g3-synthetic-u-1",
+      "clockId": "x",
+      "timeUnit": "ticks",
+      "maximumErrorTicks": 0
+    }
+  },
+  "environment": {
+    "initialPrivateState": "private-s0",
+    "uncertaintyIdentity": "g3-synthetic-u-1",
+    "states": {
+      "private-s0": {
+        "test-route": {
+          "effectClass": "NONE",
+          "observable": "branch-alpha",
+          "summaryConfirmed": true,
+          "postSummary": "q1",
+          "measurementTick": 0,
+          "nextPrivateState": "private-s1"
+        }
+      },
+      "private-s1": {
+        "test-follow": {
+          "effectClass": "NONE",
+          "observable": "final-alpha",
+          "summaryConfirmed": true,
+          "postSummary": "q2",
+          "measurementTick": 0,
+          "nextPrivateState": "private-s2"
+        }
+      },
+      "private-s2": {
+        "test-follow": {
+          "effectClass": "NONE",
+          "observable": "final-alpha",
+          "summaryConfirmed": true,
+          "postSummary": "q2",
+          "measurementTick": 0,
+          "nextPrivateState": "private-s2"
+        }
+      }
+    }
+  },
+  "interpretationContract": null,
+  "session": {
+    "sessionId": "g3-example-session",
+    "runId": "g3-example-run",
+    "initialSummary": "q0",
+    "resourceMode": "ROUNDS",
+    "resourceRemaining": 2,
+    "retryCap": 1,
+    "maximumRounds": 2
+  },
+  "producerMode": "SYNTHETIC-NORMAL"
+}

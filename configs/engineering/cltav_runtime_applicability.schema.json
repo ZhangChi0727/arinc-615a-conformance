@@ -1,0 +1,281 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CL-TAV finite synthetic-runtime applicability documents",
+  "oneOf": [
+    {"$ref": "#/$defs/manifest"},
+    {"$ref": "#/$defs/fixture"}
+  ],
+  "$defs": {
+    "nonblank": {"type": "string", "minLength": 1},
+    "idList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonblank"}
+    },
+    "observationMembershipIdList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonblank"}
+    },
+    "sourceBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "blobSha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/nonblank"},
+        "blobSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "manifestArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "purpose", "purposeZh", "scope", "experimentBoundary", "qualificationBoundary"],
+      "properties": {
+        "id": {"$ref": "#/$defs/nonblank"},
+        "version": {"$ref": "#/$defs/nonblank"},
+        "purpose": {"$ref": "#/$defs/nonblank"},
+        "purposeZh": {"$ref": "#/$defs/nonblank"},
+        "scope": {"const": "ENGINEERING-SYNTHETIC-RUNTIME"},
+        "experimentBoundary": {"const": "NOT-PR23-EXPERIMENT"},
+        "qualificationBoundary": {"const": "NOT-ESTABLISHED"}
+      }
+    },
+    "fixtureArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "purpose", "scope"],
+      "properties": {
+        "id": {"$ref": "#/$defs/nonblank"},
+        "version": {"$ref": "#/$defs/nonblank"},
+        "purpose": {"$ref": "#/$defs/nonblank"},
+        "scope": {"const": "ENGINEERING-SYNTHETIC-RUNTIME"}
+      }
+    },
+    "publicInputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "receiverId": {"$ref": "#/$defs/nonblank"},
+        "optionId": {"$ref": "#/$defs/nonblank"},
+        "optionSelected": {"type": ["boolean", "null"]},
+        "selectionDeclarationId": {"$ref": "#/$defs/nonblank"},
+        "supportDeclarationId": {"$ref": "#/$defs/nonblank"},
+        "protectedBytesId": {"$ref": "#/$defs/nonblank"},
+        "finalImageFileId": {"$ref": "#/$defs/nonblank"},
+        "lspFileId": {"$ref": "#/$defs/nonblank"},
+        "orderedBytesId": {"$ref": "#/$defs/nonblank"},
+        "algorithmConfigurationId": {"$ref": "#/$defs/nonblank"},
+        "finalImageCheckValueId": {"$ref": "#/$defs/nonblank"},
+        "lspCheckValueId": {"$ref": "#/$defs/nonblank"},
+        "comparisonSelected": {"type": ["boolean", "null"]},
+        "comparisonDeclarationId": {"$ref": "#/$defs/nonblank"},
+        "oldFileId": {"$ref": "#/$defs/nonblank"},
+        "newFileId": {"$ref": "#/$defs/nonblank"},
+        "oldCheckValueId": {"$ref": "#/$defs/nonblank"},
+        "newCheckValueId": {"$ref": "#/$defs/nonblank"},
+        "fileAId": {"$ref": "#/$defs/nonblank"},
+        "fileBId": {"$ref": "#/$defs/nonblank"},
+        "checkValueAId": {"$ref": "#/$defs/nonblank"},
+        "checkValueBId": {"$ref": "#/$defs/nonblank"},
+        "operationId": {"$ref": "#/$defs/nonblank"},
+        "finalDataEventId": {"$ref": "#/$defs/nonblank"},
+        "calculationIntervalId": {"$ref": "#/$defs/nonblank"},
+        "statusStreamId": {"$ref": "#/$defs/nonblank"},
+        "observationRangeId": {"$ref": "#/$defs/nonblank"},
+        "observationComplete": {"type": "boolean"}
+      }
+    },
+    "integrityTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "contextId", "requirementId", "dependencyId", "sourceUnitId", "contractId", "modelId", "actionIds", "displayScenarioId", "displayService", "reasonRefs", "publicInputs"],
+      "properties": {
+        "id": {"$ref": "#/$defs/nonblank"},
+        "contextId": {"$ref": "#/$defs/nonblank"},
+        "requirementId": {"type": "string", "pattern": "^CRS-M1-[0-9]{5}$"},
+        "dependencyId": {"$ref": "#/$defs/nonblank"},
+        "sourceUnitId": {"$ref": "#/$defs/nonblank"},
+        "contractId": {"$ref": "#/$defs/nonblank"},
+        "modelId": {"$ref": "#/$defs/nonblank"},
+        "actionIds": {"$ref": "#/$defs/idList"},
+        "displayScenarioId": {"$ref": "#/$defs/nonblank"},
+        "displayService": {"$ref": "#/$defs/nonblank"},
+        "reasonRefs": {"$ref": "#/$defs/idList"},
+        "publicInputs": {"$ref": "#/$defs/publicInputs"}
+      }
+    },
+    "methodOnlyContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "modelId", "actionIds", "displayScenarioId", "displayService", "reasonRefs", "publicContext"],
+      "properties": {
+        "id": {"$ref": "#/$defs/nonblank"},
+        "modelId": {"$ref": "#/$defs/nonblank"},
+        "actionIds": {"$ref": "#/$defs/idList"},
+        "displayScenarioId": {"$ref": "#/$defs/nonblank"},
+        "displayService": {"$ref": "#/$defs/nonblank"},
+        "reasonRefs": {"$ref": "#/$defs/idList"},
+        "publicContext": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "description", "referenceId"],
+          "properties": {
+            "kind": {"const": "METHOD-ONLY-NO-INTEGRITY-CONTEXT"},
+            "description": {"$ref": "#/$defs/nonblank"},
+            "referenceId": {"$ref": "#/$defs/nonblank"}
+          }
+        }
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "artifact", "sourceBindings", "tasks", "methodOnlyContexts"],
+      "properties": {
+        "kind": {"const": "CLTAV-FINITE-RUNTIME-APPLICABILITY-MANIFEST"},
+        "artifact": {"$ref": "#/$defs/manifestArtifact"},
+        "sourceBindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schema", "development", "integrityBaseline", "fixture"],
+          "properties": {
+            "schema": {"$ref": "#/$defs/sourceBinding"},
+            "development": {"$ref": "#/$defs/sourceBinding"},
+            "integrityBaseline": {"$ref": "#/$defs/sourceBinding"},
+            "fixture": {"$ref": "#/$defs/sourceBinding"}
+          }
+        },
+        "tasks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/integrityTask"}},
+        "methodOnlyContexts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/methodOnlyContext"}}
+      }
+    },
+    "algorithmModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "hypotheses", "actions", "limits", "uncertainty"],
+      "properties": {
+        "model": {"type": "object"},
+        "hypotheses": {"type": "array", "minItems": 1},
+        "actions": {"type": "array", "minItems": 1},
+        "limits": {"type": "object"},
+        "uncertainty": {"type": "object"}
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "algorithmModel"],
+      "properties": {
+        "id": {"$ref": "#/$defs/nonblank"},
+        "algorithmModel": {"$ref": "#/$defs/algorithmModel"}
+      }
+    },
+    "receiver": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "service", "role"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "RECEIVER"}, "service": {"$ref": "#/$defs/nonblank"}, "role": {"$ref": "#/$defs/nonblank"}}
+    },
+    "option": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "service", "purpose"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "OPTION"}, "service": {"$ref": "#/$defs/nonblank"}, "purpose": {"const": "INTEGRITY"}}
+    },
+    "supportDeclaration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "receiverId", "optionId", "declaredSupport", "source"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "SUPPORT-DECLARATION"}, "receiverId": {"$ref": "#/$defs/nonblank"}, "optionId": {"$ref": "#/$defs/nonblank"}, "declaredSupport": {"type": ["boolean", "null"]}, "source": {"$ref": "#/$defs/nonblank"}}
+    },
+    "optionSelection": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "receiverId", "optionId", "selected", "source"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "OPTION-SELECTION"}, "receiverId": {"$ref": "#/$defs/nonblank"}, "optionId": {"$ref": "#/$defs/nonblank"}, "selected": {"type": "boolean"}, "source": {"$ref": "#/$defs/nonblank"}}
+    },
+    "bytes": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "service", "hex"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "PROTECTED-BYTES"}, "service": {"$ref": "#/$defs/nonblank"}, "hex": {"$ref": "#/$defs/nonblank"}}
+    },
+    "file": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "bytesId", "partNumber", "partNumberSource"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "FILE"}, "bytesId": {"$ref": "#/$defs/nonblank"}, "partNumber": {"$ref": "#/$defs/nonblank"}, "partNumberSource": {"$ref": "#/$defs/nonblank"}}
+    },
+    "algorithmConfiguration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "algorithmId", "configurationId"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "ALGORITHM-CONFIGURATION"}, "algorithmId": {"$ref": "#/$defs/nonblank"}, "configurationId": {"$ref": "#/$defs/nonblank"}}
+    },
+    "checkValue": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "fileId", "algorithmConfigurationId", "source"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "CHECK-VALUE"}, "fileId": {"$ref": "#/$defs/nonblank"}, "algorithmConfigurationId": {"$ref": "#/$defs/nonblank"}, "source": {"$ref": "#/$defs/nonblank"}}
+    },
+    "comparisonDeclaration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "selected", "oldFileId", "newFileId", "source"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "COMPARISON-DECLARATION"}, "selected": {"type": "boolean"}, "oldFileId": {"$ref": "#/$defs/nonblank"}, "newFileId": {"$ref": "#/$defs/nonblank"}, "source": {"$ref": "#/$defs/nonblank"}}
+    },
+    "operation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "service"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "OPERATION"}, "service": {"$ref": "#/$defs/nonblank"}}
+    },
+    "event": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "operationId", "eventKind", "at"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "EVENT"}, "operationId": {"$ref": "#/$defs/nonblank"}, "eventKind": {"enum": ["FINAL-DATA", "STATUS"]}, "at": {"type": "integer"}}
+    },
+    "interval": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "operationId", "start", "end", "state", "source"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "CALCULATION-INTERVAL"}, "operationId": {"$ref": "#/$defs/nonblank"}, "start": {"type": "integer"}, "end": {"type": "integer"}, "state": {"const": "CALCULATION-IN-PROGRESS"}, "source": {"$ref": "#/$defs/nonblank"}}
+    },
+    "statusStream": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "operationId", "eventIds"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "STATUS-STREAM"}, "operationId": {"$ref": "#/$defs/nonblank"}, "eventIds": {"$ref": "#/$defs/observationMembershipIdList"}}
+    },
+    "observationRange": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "operationId", "observationEventIds", "scope"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "OBSERVATION-RANGE"}, "operationId": {"$ref": "#/$defs/nonblank"}, "observationEventIds": {"$ref": "#/$defs/observationMembershipIdList"}, "scope": {"const": "FINITE-SPECIFICATION-WITNESS-NOT-PROTOCOL-FREQUENCY"}}
+    },
+    "methodOnlyReference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "source", "description"],
+      "properties": {"id": {"$ref": "#/$defs/nonblank"}, "kind": {"const": "METHOD-ONLY-REFERENCE"}, "source": {"$ref": "#/$defs/nonblank"}, "description": {"$ref": "#/$defs/nonblank"}}
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "artifact", "models", "references"],
+      "properties": {
+        "kind": {"const": "CLTAV-FINITE-RUNTIME-APPLICABILITY-FIXTURE"},
+        "artifact": {"$ref": "#/$defs/fixtureArtifact"},
+        "models": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/model"}},
+        "references": {
+          "type": "object", "additionalProperties": false,
+          "required": ["receivers", "options", "supportDeclarations", "optionSelections", "byteBindings", "files", "algorithmConfigurations", "checkValues", "comparisonDeclarations", "operations", "events", "calculationIntervals", "statusStreams", "observationRanges", "methodOnlyReferences"],
+          "properties": {
+            "receivers": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/receiver"}},
+            "options": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/option"}},
+            "supportDeclarations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/supportDeclaration"}},
+            "optionSelections": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/optionSelection"}},
+            "byteBindings": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/bytes"}},
+            "files": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/file"}},
+            "algorithmConfigurations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/algorithmConfiguration"}},
+            "checkValues": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/checkValue"}},
+            "comparisonDeclarations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/comparisonDeclaration"}},
+            "operations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/operation"}},
+            "events": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/event"}},
+            "calculationIntervals": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/interval"}},
+            "statusStreams": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/statusStream"}},
+            "observationRanges": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/observationRange"}},
+            "methodOnlyReferences": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/methodOnlyReference"}}
+          }
+        }
+      }
+    }
+  }
+}

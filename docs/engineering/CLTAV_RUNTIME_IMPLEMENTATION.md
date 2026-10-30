@@ -1,0 +1,983 @@
+# Bounded CL-TAV session runtime implementation
+
+| Control | Value |
+|---|---|
+| Authorization | CR-2026-021 / DD-045 |
+| Initial kernel checkpoint | PR #25 `87f9330306be411a3d2d580a356070072dcf903f` |
+| Scope | Finite reference session coordination and in-process synthetic engineering validation |
+| Status | Draft PR candidate; G1–G4 limited reviews accepted their bounded scopes, while G5 whole-PR review remains required |
+
+### Limited-review provenance (not whole-PR acceptance)
+
+The following records identify the fixed heads at which their bounded scopes
+were independently accepted. They do not combine into a PR acceptance, do not
+supersede the controlled boundaries below, and do not authorize M3, a real IUT,
+runtime-integrity claims, or conformance claims.
+
+| Scope | Fixed accepted Head | Audit-held review record ID | Bounded engineering conclusion |
+|---|---|---|---|
+| G1 | `2848dfdc433b155573a6ef58cfbc788a115fee0a` | `RR-PR25-2026-030` | finite causal replay and opaque-evidence normalization only |
+| G2 | `d50445ef66228e45408b8d626bc6dbdbaf5a499c` | `RR-PR25-2026-032` | bounded session / Recover re-prediction witness only |
+| G3 | `2c7b08f747dfe51b73f9da7c90a1a4f9e5f1366c` | `RR-PR25-2026-034` | Git-bound, recomputable finite synthetic evidence, CLI, checkpoint/continue, and publication boundary only |
+| G4 | `c7f1aafb2507d4712ac532413c1655eb9ef6699d` | `RR-PR25-2026-036` | passive, non-scoring offline replay bridge only |
+
+## Authority-to-runtime mapping
+
+This table is traceability for code; it is not a second method, requirements or
+experiment authority.  Every production invocation loads its declared Git-object input
+directly and emits the commit/path/raw-byte SHA-256 identities it consumed.
+
+| Controlled authority | Runtime projection | Production check | Boundary |
+|---|---|---|---|
+| `CLTAV-DEVELOPMENT-CONTRACTS` / `AR-FINITE` | `RuntimeAuthorityBinding`, `ModelContext`, finite path kernel | exact AR-FINITE interface IDs, record IDs and runtime parameters | Finite declared syntax and limits only; no general solver. |
+| Interface registry: `SessionContext`, `HistoryHandle`, `IF-PRED-OBS` through `IF-RESOURCE-STOP` | `SessionContext`, `HistoryHandle`, later session adapters | exact eight-interface binding and ownership checks | Selection remains read-only; S3/S8/S9 responsibilities remain distinct. |
+| CR-2026-016 / DD-038–040 | Source and evidence boundary | source identity and synthetic-only labels | Does not execute or promote first-slice requirements. |
+| CR-2026-017 / DD-041 | Passive, read-only offline-record adapter / G4 bridge | source reconstruction, projection and bridge checks only | Does not turn capture intake into active execution. |
+| CR-2026-019 / DD-043 and experiment design | Evaluator-only identity and evidence fields | no truth object accepted by algorithm input | No experiment admission, denominator result or scientific claim. |
+
+## Named interface bridge
+
+The runtime does not unpack positional tuples.  `RuntimeAuthorityBinding`
+requires the exact registry output names and exposes the following one-to-one
+aliases for all eight algorithm interfaces.  A missing, reordered or
+conflicting name is a controlled binding error, not a default value.
+
+| Interface | Named runtime fields |
+|---|---|
+| `IF-PRED-OBS` | `prediction.classes`, `prediction.gapDiagnostic` |
+| `IF-SELECT-ADMIT` | `selection.kind`, `selection.actionId`, `selection.classes`, `selection.admission` |
+| `IF-EXECUTE-RECORD` | `execution.visibleRecord`, `execution.effectClass`, `execution.executionAttemptId` |
+| `IF-OBS-INTERPRET` | observation class, effect, summary confirmation/post-summary, ownership and measurement fields |
+| `IF-PREP-RECOVER` | target/summary confirmation, error, eligibility, declared target, evidence and post-summary |
+| `IF-HIST-UPDATE` | `history.after`, `history.after.hypotheses`, `stop.empty` |
+| `IF-EQUIV` | explicit `established`, `notEstablished`, `unknown` tags |
+| `IF-RESOURCE-STOP` | stop reason, final hypotheses and trace |
+
+The current B/C-2A checkpoint implements normal TEST, named
+prediction-gap/Prep, and UNKNOWN-session Recover routes through controlled
+read-only admission decisions.  A
+current TEST prediction gap withholds TEST minimax even when another TEST has
+classes; eligible PREP is then evaluated by that same resource decision.
+The GAP revokes the whole current TEST scoring set, including any unaffordable
+TEST-derived A2 conclusion: with no eligible PREP, the exit remains the named
+prediction gap; only an eligible but unaffordable PREP may produce A2 on that
+fallback route.
+The implemented B/C-2A branch closes `CONFIRMED-NOT-SENT`, unknown effect and
+post-dispatch errors, Prep successor confirmation, eligible/unaffordable/no
+eligible Recover (A4/A5), S7 retry caps, Recover-only S8 adoption and S9's
+sole successor-summary commitment.  B/C-2B accepts only raw ordered
+observation material from the synthetic environment.  `ReferenceSession`
+freezes a typed `InterpretationContract`, which owns event encodings, pairing
+policy, interval semantics, clock/unit/error identities and deadline
+authority.  Raw material is bound to the issued execution/action/evidence
+identity before it is retained; it cannot set its own policy, validity flags,
+deadline or expected verdict.  The resulting `verdict` is limited to PASS,
+FAIL, INCONCLUSIVE and ERROR; `scoreDisposition` is separate.  `answered` is
+true exactly when `scoreDisposition == ANSWERED` and the verdict is PASS or
+FAIL, so INCONCLUSIVE is never answered.  A METHOD-ONLY result is an
+`ENGINEERING-WITNESS` with `answered=false`, even where its finite boundary
+calculation yields PASS or FAIL.  Ownership or clock/error-basis ERROR follows
+S7, while no assessment directly rewrites compatible history.  This does not
+make the runtime a protocol stack, a physical clock calibration, a reviewed
+protocol deadline engine, or an IUT claim. Broader production evidence/CLI
+work beyond G3's bounded, Git-bound finite synthetic consumer remains explicit
+later B/C work.
+
+## B/C-2C finite stopping and applicability boundary
+
+The B/C-2C candidate adds only a finite, Git-bound input path to the existing
+in-process stop relation. It does not evaluate an ARINC 645 obligation,
+compute a check value, prove equivalence, execute an IUT, or convert a runtime
+trace into a protocol verdict. Its purpose is narrower: if one of six
+controlled, unresolved integrity-runtime dependencies is selected by complete
+public synthetic inputs, preserve that dependency as a named `Stop-645` reason
+instead of allowing a resource stop to hide it.
+
+`RuntimeAuthorityBinding.from_git_objects` may be used in its historical
+two-input form. That compatibility route is explicitly `P3-UNAVAILABLE`: no
+applicability package was loaded, no context was evaluated, and it is neither
+an explicit inactive decision nor a METHOD-ONLY decision. A package-bound
+invocation must provide exactly one controlled context ID. It validates raw Git
+object bytes for all six controlled sources before S0: the schema, manifest,
+finite fixture, development contract, interface registry, and integrity
+baseline. Their commit/path/blob identities become part of the frozen
+authority/replay closure. The binding does not consume checkout text for any of
+those identities, so an LF or CRLF checkout representation cannot substitute
+different authority bytes. A package-bound context cannot silently fall back to
+the compatibility route, and a compatibility binding cannot accept a context.
+
+The package has three evaluated P3 outcomes:
+
+| P3 state | Finite meaning | Stop input |
+|---|---|---|
+| `P3-ACTIVE` | a complete typed context selects one exact unresolved row among `CRS-M1-00076`, `00082`, `00085`, `00086`, `00087`, and `00109` | one source-bound named residual; P3 yields `Stop-645` after P1/P2 |
+| `P3-EXPLICIT-INACTIVE` | a complete selection/comparison context explicitly says the optional integrity input is not selected | no residual; this is an evaluated fact, not an unknown |
+| `P3-METHOD-ONLY` | an explicitly distinct non-integrity model/action domain is supplied with a method-only reference | no residual; it cannot stand in for integrity applicability |
+
+The manifest's display scenario/service fields are metadata only. No caller may
+supply residuals, an `applicable` flag, or a scenario label to choose P3. Each
+task's `reasonRefs` must be exactly the finite public references actually
+consumed by its typed prerequisite check. Missing, malformed, contradictory,
+or unparseable package/context material is a named applicability-input error
+before selection, charge, or dispatch; it is never recast as non-applicability.
+
+The implemented EntryStop priority, including causal checkpoint replay, is P1
+processed-empty, P2 singleton, P3 current named residual, P4 verified
+equivalence, then P5 resource exhaustion. It is evaluated before prediction,
+admission, dispatch, or a new charge. Thus, if P1--P4 do not stop and the
+remaining resource is zero, P5 returns `Stop-Budget` with
+`RESOURCE-EXHAUSTED`; it does not select or dispatch an action. Positive but
+insufficient resource remains the ordinary A2/A5 admission case, not P5. This
+candidate has no P4 proof producer: `IF-EQUIV` returns only `notEstablished`
+or `unknown`. An already reached S7 retry-cap terminal remains protected ahead
+of this normal EntryStop relation. Consequently, this finite implementation
+demonstrates ordering and authority closure only; it does not establish
+equivalence, integrity correctness, or operational readiness.
+
+For `00109`, a valid same-operation/session `FINAL-DATA` plus
+`CALCULATION-IN-PROGRESS` trigger may have a present status-stream object and
+observation-range object whose respective `eventIds` and `observationEventIds`
+membership arrays are empty. That is a legal finite P3 residual, whether
+`observationComplete` is false or true, and it preserves the named `Stop-645`
+result when P1/P2 are absent. It is not a protocol frequency, CRC, or
+conformance observation and cannot infer a protocol FAIL. This narrow allowance
+applies only to those two membership arrays; missing objects, unknown event
+IDs, mismatched operation/time evidence, or an unknown trigger remain named
+applicability-input errors.
+
+## B/C-2 coverage status
+
+`VERIFIED` means the named public-entry regression demonstrates the stated
+sub-behaviour. `PARTIAL` means only the stated sub-behaviour is demonstrated;
+`PENDING` means this checkpoint makes no implementation-completeness claim.
+This table retains the B/C-2 checkpoint while identifying later G1–G4 limited
+closures; those scoped records do not replace the pending G5 whole-PR review.
+The paths below are durable test locators, not a substitute for fixed-Head
+review identity.
+
+| ID | Status | Durable public-entry evidence or retained boundary |
+|---|---|---|
+| BC-01 | PARTIAL | `session::test_two_round_feedback_consumes_committed_summary_and_changes_selection`; `recovery::test_confirmed_summary_only_prep_propagates_declared_model_successor`; fresh/tampered checkpoint combinations remain later work. |
+| BC-02 | PARTIAL | `session::test_two_round_feedback_consumes_committed_summary_and_changes_selection`; more visible-result/action combinations remain. |
+| BC-03 | VERIFIED | `session::test_prediction_keeps_overlapping_classes_and_names_a_current_gap`; `session::test_unaffordable_best_test_and_no_information_test_do_not_displace_router`; `session::test_noninformative_test_does_not_squeeze_an_eligible_known_prep`; bounded model only. |
+| BC-04 | VERIFIED | Public `ReferenceSession.run` regressions hand-check the bounded current TEST set: a smaller worst remaining set wins among affordable distinguishers; an unaffordable global optimum does not hide the router; then cost and stable action ID decide ties; legal action/hypothesis declaration reordering preserves action, candidates, charge and stop semantics. Different declarations need not share a model identity. `session::test_rounds_mode_consumes_one_issued_action_not_declared_action_cost`; `session::test_unaffordable_best_test_and_no_information_test_do_not_displace_router`; `session::test_public_admission_uses_cost_then_stable_id_independent_of_legal_input_order`. |
+| BC-05 | VERIFIED | `session::test_current_test_gap_is_named_and_eligible_prep_uses_the_same_admission_entry`; Recovery A4/A5 tests; ownership/T5 are outside this result. |
+| BC-06 | VERIFIED | summary-only Prep q0→q1 and unconfirmed-Prep recovery regressions; `recovery::test_confirmed_recover_repredicts_a_q1_test_without_promoting_conservative_history` uses a test-local read-only observation of the current public S2 call to prove that a full Recover commits S8/S9's q1/target/evidence and delegates q1, the q1 TEST, and recovered H/status/frontiers to production prediction. An isolated stale-q0 admission mutation preserves the retained S9 fields but fails that same witness. All-conservative history may still stop at the named GAP without a dispatch. Bounded synthetic continuation only. |
+| BC-07 | PARTIAL | confirmed, unconfirmed and target-only Recover public regressions; complete recovery-estimation boundary remains. |
+| BC-08 | VERIFIED | confirmed-not-sent and CNS/UNKNOWN stale-delivery regressions; finite synthetic boundary. |
+| BC-09 | PARTIAL | retry-cap, duplicate and post-dispatch error tests; all return contexts/final stop policy remain. |
+| BC-10 | VERIFIED | shared-uncertainty and frozen-identity interpretation regressions; no physical calibration claim. |
+| BC-11 | PARTIAL | full-history merge and resume/history regressions; complete same-round Stop-Empty policy remains. |
+| BC-12 | VERIFIED | infeasible/multi-path and conservative-path retention regressions; finite bounds only. |
+| BC-13 | PARTIAL | Raw material cannot inject policy/deadline/verdict. FIFO/MOST-RECENT, explicit cancellation/supersession, session-seeded ACTIVE ownership context plus the retained-ledger global event-order frontier for incremental deltas or exact cumulative reappearance, terminal request/response exclusion, and conflict quarantine are covered by `interpretation` and `session` regressions. A conflict may seal an uncontested new response but cannot reclassify an existing request identity; every emitted ledger state must remain replayable as a portable checkpoint. Bounded synthetic traces only. |
+| BC-14 | PARTIAL | Frozen-contract interval containment/separation/boundary tests, plus empty physical domain and invalid clock/unit/error basis. Contract/material/clock/unit/uncertainty checks occur before deadline authority branching; no physical calibration claim. |
+| BC-15 | PARTIAL | No-response uses cancellation/supersession, qualified horizon and deadline-authority regressions. `session::test_session_unresolved_deadline_without_registry_keeps_silence_unscored` joins the METHOD-ONLY witness: neither authority becomes a scored deadline. In pure reviewed semantics, closed upper bound uses `earliest > U` and open upper bound uses `earliest >= U`; this runtime rejects REVIEWED authority without a controlled registry. |
+| BC-16 | PARTIAL | Public finite regressions cover P1/P2/P3/P5 priority, exact six-row Git-bound residual selection, explicit inactive and METHOD-ONLY outcomes, compatibility `P3-UNAVAILABLE`, and replay identity freezing. P4 remains deliberately unimplemented: no proof producer may emit `established`. |
+| BC-17 | PENDING | Equivalence proof and its bounded proof domain remain later B/C work. |
+| BC-18 | PARTIAL | public execution-request isolation regression; complete action/state environment matrix remains. |
+| BC-19 | VERIFIED | evaluator-truth exclusion and extra-truth-field rejection regressions; later evaluator work remains separate. |
+| BC-20 | PARTIAL | S0 unset-status and committed/retry regressions; reset/Recover/attempt reconstruction matrix remains. |
+| BC-21 | VERIFIED | G3 accepts the bounded Git-bound `cltav-runtime` run/validate/replay/checkpoint/continue paths, including exact source identity and named malformed-input rejection. `evidence::test_git_bound_two_round_evidence_round_trips_exact_rationals`; `evidence::test_cli_checkpoint_then_continue_consumes_a_genuine_error_prefix_once`; `evidence::test_cli_rebuilds_a_genuine_error_then_recover_trace_from_the_same_git_inputs`. |
+| BC-22 | VERIFIED | G3 accepts managed-artifact staging, validation, replacement rollback and first-publication failure without residue. `evidence::test_real_publication_success_rollback_and_first_failure_are_byte_safe`; `evidence::test_checkpoint_publication_is_transactional_for_existing_and_first_targets`. |
+| BC-23 | VERIFIED | G3 accepts the repository-external non-editable wheel only for the bounded synthetic command with declared dependencies and packaged resources. `evidence::test_noneditable_wheel_runs_the_real_finite_cli_from_an_unrelated_directory`. |
+| BC-24 | VERIFIED | G3's socket-guarded installed runtime command and G4's socket-guarded installed offline bridge exercise their actual entry points without network creation; G4 remains passive and `NOT-SCORED`. This is an entry-point boundary, not an operating-system sandbox or protocol/IUT capability claim. |
+
+## Initial type boundary
+
+`HistoryHandle.initial` represents S0 input.  It permits an empty member-status
+map because a status need not exist before processing.  `HistoryHandle.committed`
+represents an S9/processed result and requires one controlled status for every
+surviving member.  Empty `H` is legal only as a processed Stop-Empty result.
+`SessionContext` separates `KNOWN` plus a confirmed summary from session-level
+`UNKNOWN`, which carries no usable current summary.  `CONSERVATIVE-UNKNOWN` is
+instead a per-member `HistoryHandle` status; it preserves a candidate without
+pretending that its session summary remains usable.
+
+Each surviving `H` member carries a nonempty, bounded tuple of current frontier
+provenance references, rather than a single flattened representative.  The
+finite predictor propagates every path independently: an infeasible path in a
+known member removes only that known path, while an unsupported or bounded
+calculation retains its source path as conservative.  For an already
+conservative member, an otherwise infeasible source remains a conservative
+witness because its earlier unknown effect cannot establish an exclusion.
+Conservative membership prevents an unproved
+observation-based exclusion; it does not skip the admitted action transition.
+Consequently, a feasible conservative path still carries its computed state,
+clock/store update, path-length increment and terminal provenance into every
+completed normal observation class, while the member is committed as
+`CONSERVATIVE-UNKNOWN`.  It is never turned into a synthetic observable outcome.
+If no completed visible class is
+available, or the declared observation-class bound is exceeded, the result is a
+named prediction gap and TEST selection is withheld.
+
+## Execution and experiment-identity bridge
+
+An engineering session always has a `runId`, `sessionId`, immutable
+`snapshotId`, `actionId`, and one `executionAttemptId` for each dispatch.  The
+optional `experimentAttemptId` is a foreign key to a later registered
+experiment unit; it is absent in the present engineering fixtures.  Retrying
+therefore creates a new execution identity without manufacturing a second
+experimental sample.  A repeated or malformed returned execution identity is
+rejected without S9 commitment; it never becomes a second history update.
+
+`issuedToExecutor` means that S4's admitted immutable action was handed to the
+execution interface.  It does **not** mean that a network packet was sent or
+that an IUT was stimulated.  Each issued execution records its resource view
+before/after, five declared detail-charge components
+(`acquisition`, `computation`, `preparation`, `recovery`, `retry`) and a
+separate four-component projection where preparation contains recovery exactly
+once.  The session selector sees only the causal resource mode, remaining
+resource and declared action cost; audit-only outcome/status fields never flow
+back into selection.
+
+`ROUNDS` consumes exactly one issued action, irrespective of the action's
+declared monetary/computational cost.  `BUDGET` consumes that declared cost.
+After S4, an execution-side exception, malformed execution result, invalid
+result identity, or ordinary failure during returned-record validation,
+interpretation, or S9 preparation does not restore the pre-issue state: it
+retains the one charge and expected attempt identity, records a controlled S7
+error, sets the session to `UNKNOWN`, marks every retained history member
+`CONSERVATIVE-UNKNOWN`, and does not invoke S8/S9.  If
+a returned result includes a typed successor environment, that actual successor
+is retained even when its record is rejected.  A normal record which claims
+summary confirmation but omits its post-summary is the same controlled
+post-dispatch error.  `CONFIRMED-NOT-SENT` is distinct: because no action was
+sent, it bypasses interpretation and Prep/Recover confirmation; it is charged
+once, increments the controlled retry state, but preserves the prior history
+and known summary.  Its evidence `resolution_code` records the controlled branch
+selected during public-ledger replay; it is not yet an independently recomputed
+proof that a retained rejected response caused that branch.  A retry reaches
+`Stop-Error` only at its
+declared cap; it does not lose the charged resource fact or silently become a
+budget stop.
+
+The public `SessionContext` therefore carries the resource remainder, retry
+count/cap, confirmed Recover target/evidence, and error/unknown histories in
+addition to the current summary.  S8 alone may restore `KNOWN` and write the
+confirmed Recover target/evidence.  S9 is the sole post-effect committer of a
+confirmed successor `currentSummary` (S0 seeds it and S7 may clear it): a
+confirmed Prep summary may advance it even when the Prep target was not
+confirmed, while a Recover needs both target and summary confirmation.  A
+summary-only confirmation preserves `H`; only a valid observation class can
+derive the new compatible-history intersection.  Target and summary
+confirmation are independent typed return facts: target-only is a valid but
+insufficient result, so an unconfirmed Prep summary or a Recover missing either
+confirmation follows S7 rather than being misclassified as a malformed record.
+A summary-only confirmed Prep (and a Recover that has satisfied its own S8/S9
+confirmation condition) preserves `H` and performs no observation-class
+intersection.  It nevertheless applies the admitted frozen finite transition to
+every retained frontier path and commits the successor frontier provenance and
+history version. An already `CONSERVATIVE-UNKNOWN` path is propagated but
+remains `CONSERVATIVE-UNKNOWN`; only a path whose propagation is unsupported,
+infeasible, or bound-limited retains its source path as conservative. No member
+is silently removed or promoted. `postSummary` commits only `currentSummary`;
+it is never decoded as a model control state.
+For an S0 history, an absent optional member-status entry is not a positive
+`KNOWN` assertion: a committed member is conservatively classified whenever
+its retained history says so, any source or result frontier path says so, or
+the propagation itself is unresolved.
+The same aggregate is consumed by the next normal prediction and committed
+observation class, so a known observation may still eliminate known-incompatible
+members without excluding a retained conservative path.
+
+Before any effect branch for an adapter-supplied record, the session validates
+the complete visible-record domain and its field combinations:
+identity/action/evidence references are nonblank strings (their accepted value
+is not rewritten), and confirmation is Boolean.  A contract-bound `TEST`
+record either carries one owned response with a visible observation, a
+confirmed nonempty post-summary, an exact measurement tick and the frozen
+uncertainty identity, or has the exclusive no-response shape:
+`effectClass=NONE` with no response ID, measurement interval/tick, uncertainty
+identity, observable or post-summary.  The latter is neither
+`CONFIRMED-NOT-SENT` nor eligible for S9; declaring silence while an owned
+response is present is ERROR.  A normal typed
+`PREP`/`RECOVER` result instead carries its explicit target/summary/error
+contract and may lawfully be summary-only, with no observation or measurement
+tick; that contract selects S7, S8, or S9.  Non-normal records cannot
+manufacture the fields that their branch forbids.  The narrowly synthesized
+placeholder used for an adapter exception is not an adapter-supplied visible
+record; it exists only to retain the issued identity and one charged S7
+transition in the evidence ledger.  A rejected response is retained separately
+from the expected issued record, so an incorrect returned attempt identity
+cannot overwrite the request identity in the charged evidence.  Ordinary
+adapter exceptions are controlled post-dispatch errors; this does not catch
+process-interrupt exceptions.  A record which repeats an already processed
+execution identity is an inbound stale delivery only if it first passes the
+complete closed visible-record validation for the canonical record's original
+action, and then matches that canonical record (already retained under its
+frozen snapshot) recursively with exact runtime types and values. Exact comparison includes nested
+`PrepRecoverResult`, Boolean confirmation fields, measurement scalar types,
+effect/field combinations, and nonblank identity/evidence fields; Python `==`
+is not an exact comparison.  The record is never validated under an action
+selected for a later round.  A genuinely exact old TEST, PREP, RECOVER,
+CONFIRMED-NOT-SENT, or UNKNOWN-EFFECT delivery remains idempotent even when the
+currently admissible action has another kind.  A same-identity record that
+fails either condition is a controlled ingress error.  Conversely, a
+mismatched record returned *after* a newly issued action is a post-dispatch
+error, not a duplicate: the actual typed successor and one charge are retained
+through S7.
+
+The finite model is JSON-detached at construction.  Its nested guard/update
+AST is retained only in canonical frozen form and decoded afresh for each
+kernel call.  Before S0 accepts it, the factory-issued model token verifies
+the exact source JSON identity and a digest over every finite value consumed
+by the coordinator (actions/costs, ASTs, frontiers, limits and uncertainty).
+Likewise, the binding revalidates both raw Git snapshots and its reconstructed
+finite projection; the development commit/path/blob triple must equal the
+verified model context triple.  `ReferenceSession` then reconstructs private
+model and binding projections, so a caller-held alias cannot rewrite accepted
+authority before or after S0.  The declared append-only live provenance
+publication store remains compatible with the supplied model; causal replay
+uses an isolated copy before it validates retained evidence.  S3 selection,
+admission, charging, evidence, causal replay and later propagation consume
+only those private projections; they never reread a caller-held model or
+binding as authority after S0.  This is a finite authority-closure rule, not
+a general Python sandbox: it protects the declared model/actions/uncertainty/
+provenance roots and the actual binding identity fields consumed by this
+runtime.  Before selection, a resumed state must
+belong to this run/session/model, retain its exact development/interface
+authority binding and frozen S0 seed identity, and close its `H`, frontier
+provenance, history version, evidence, and execution identities; validation
+failure occurs before charge or dispatch.  A target session never re-signs a
+foreign S0 state with its own binding. Before S4, validated top-level frontier
+and event-identity maps are copied into private immutable proxies, so an
+adapter holding a caller's backing dictionary cannot rewrite checked S0 facts
+during dispatch. A fresh dispatch checkpoint recursively reconstructs the
+finite retained public closure (including `OwnershipEvent`, retained evidence,
+assessment and ownership-replay values) before the adapter runs; this prevents
+an adapter that retained an old frozen nested value from using an object-level
+mutation escape hatch to rewrite the lineage consumed after S4. The public state is replayed read-only from this
+session's frozen S0 seed through each retained evidence item, so summary,
+resource, snapshot/action, authority, history and frontier values must be the
+causal terminal state of that ledger.  This replay neither calls the environment
+nor issues another action or writes the shared provenance store.  A
+complete checkpoint whose derived records are absent from a fresh target cache
+remains resumable when that detached replay closes; its next propagation uses
+the detached verified context rather than treating cache absence as a prediction
+gap or rehydrating the target cache.  An already locally verified source-record
+closure may instead be reused by its own session continuation.  A finite
+multi-path S0 seed is permitted only when
+declared at session construction, bound to this model/context, and then frozen;
+hand-assembled replacement frontiers are not an alternate resume authority.
+Each declared path must close over verified model provenance during replay,
+rather than merely a target's mutable cache, but a bounded
+bundle does not require its paths to have equal history lengths.
+
+The synthetic environment likewise normalizes and detaches each nested outcome
+value that it actually consumes.  Modifying a caller's source rational mapping
+after construction cannot change a later visible measurement; a changed
+environment requires an explicit new declaration and instance.  It carries at
+most one explicit inbound delivery; a resumed session consumes that delivery
+before it may admit or issue another action.
+
+`U` is a bounded, typed uncertainty snapshot (`clockId`, `timeUnit=ticks`,
+exact nonnegative maximum error and identity), not a label.  Prediction forms
+per-hypothesis measurement windows with that snapshot; interpretation checks
+the returned measurement tick and the same frozen uncertainty identity before
+S9.  Separately, the B/C-2B assessor compares the raw interval with the
+frozen contract: containment is PASS, separation is FAIL, boundary overlap is
+INCONCLUSIVE, and invalid structure/clock/unit/error basis is ERROR.  This is
+only a finite engineering witness, not calibrated clock accuracy or a protocol
+timing verdict.
+
+The existing label-class check admits an observable label when its tick lies in
+at least one compatible per-hypothesis window.  It remains a deliberately
+coarse, conservative label-class boundary.  The separate B/C-2B assessment is
+contract-scoped and finite; neither component establishes per-hypothesis
+protocol timing, physical clock calibration, reviewed deadline authority or a
+conformance verdict.
+
+For an owned response, the public `measurementTick` must also equal the exact
+timestamp difference between that response and the request selected by the
+controlled ownership policy; a merely interval-contained tick is not enough.
+The session retains the complete typed ownership replay rather than only the
+selected `responseId`: every response token is consumed and every non-active
+request disposition is terminal. Before each later ownership decision it
+seeds the replay separately with (a) the verified ledger's still-ACTIVE request
+identities and (b) an immutable global high-water boundary derived from every
+retained controlled ownership event, including terminal requests and consumed
+responses. The seed determines candidates; the boundary prevents an incremental
+delta from retroactively changing an already recorded pairing. A legal raw delta
+may omit terminal receipts and retained ACTIVE requests. An exact reappearance
+of a retained ACTIVE request is confirmation only, never a second obligation.
+Every newly introduced controlled request, response, or termination must have
+sequence strictly greater than the retained high-water sequence and timestamp
+no earlier than the retained high-water timestamp. Otherwise the runtime
+reports `INSUFFICIENT-OWNERSHIP-CONTEXT`, preserves the prior ownership ledger,
+and does not recompute or reassign a retained response. Equal timestamps remain
+legal; equal sequences do not. A changed field/kind, cross-role reuse, duplicate
+response or duplicate terminal request takes S7. An admission refusal is
+derived from the replayed raw material rather than its displayed primary
+diagnostic: a concurrent clock, unit, measurement, visible-record, or parse
+error cannot obscure a failed boundary check. A partially parsed delta can
+retain a parsed event only after that event itself passes the same boundary
+check; a failed or unchecked event remains audit material rather than a new
+ledger fact. A scalar selected `responseId` remains a sparse receipt only when
+the raw trace contains no same-ID ownership event; if that raw event was
+explicitly supplied but rejected by the typed parser, it cannot fall back into
+the consumed-response ledger. Only a nonempty exact tuple carrier can establish
+that a same-ID event was absent; an unsupported outer carrier is rejected at S4
+and normalized to canonical charged-error evidence rather than retained as
+replayable raw trace material, never as an ownership-ledger fact. A
+replacement request must actually terminate its named current ACTIVE predecessor before it can satisfy a
+non-concurrent admission rule: a stale target is not an admission token. A
+complete CANCEL/SUPERSEDE transaction for another key is ignored only when it
+names neither a retained ACTIVE controlled request nor any matching request in
+the complete raw trace; a foreign-key event that targets a current *or future*
+controlled request is still validated and rejected when incompatible. Those
+cross-round replay conflicts quarantine newly observed, uncontested response
+facts but never change a retained request into a response (or vice versa), so
+the state it emits remains self-validating and replayable in a fresh equivalent
+coordinator. For no response, clock/error-basis validation occurs before a
+cancellation/supersession can yield NOT-APPLICABLE; an invalid basis is ERROR,
+not an administrative escape. A timely termination needs no elapsed-horizon
+reading; when a legal incremental delta carries only the terminating event,
+the verified retained ACTIVE trigger supplies the timestamp needed to assess
+that termination. For an ACTIVE obligation, an unqualified observation horizon remains
+PENDING-HORIZON even when no elapsed reading exists; only a qualified reviewed
+deadline determination requires a nonnegative earliest admissible elapsed
+horizon. A supplied invalid elapsed reading remains ERROR.
+
+Pairing and reset are deliberately not inferred from a Recover action.  A
+future experiment adapter must link paired units with `pairingId`, retain a
+separate confirmed `resetId` and `resetEvidenceRef` for each arm, and keep that
+evidence distinct from session-internal recovery.  The present synthetic
+engineering runs have no registered experiment attempt or paired-reset claim.
+
+The implementation must return controlled diagnostics at serialization and
+session boundaries.  Python constructor `ValueError` is an internal input
+boundary, not an IUT verdict; later production entry points map it to a named
+tool error without publishing an invalid evidence package.
+
+## Open work and evidence boundary
+
+**B/C-3 audit core (A01) — the limited G1/G2/G3 reviews accepted their bounded closure.**
+Public replay now recomputes the finite causal relation for a retained typed
+rejected record before it accepts the named `resolution_code`. The shared S4
+classifier is used by both live execution and replay: record/carrier errors,
+target mismatch and issued attempt/action identity are derived from the frozen
+record, action, attempt, interpretation contract and prior ownership ledger.
+The existing typed interpretation/binding/ownership replay remains a separate
+derived relation. For an ordinary calculable raw-required rejection, its
+witness cannot be deleted, repaired or relabelled together with its S7
+histories to select another branch. This G1 relation does not authenticate a
+raw-free opaque external-source detail.
+
+| Error family | Verified finite inputs and priority | Raw/normalization rule | Live effect and replay check |
+|---|---|---|---|
+| Unsupported outer carrier | action, bound TEST material and exact outer carrier; before record and identity | canonical `INVALID-OBSERVATION-EVENT-CARRIER`; raw and assessment are both absent | S7 charges the issued action once, preserves the actual successor, and replay accepts only the canonical no-raw form. |
+| Visible-record, target or summary error | frozen visible record, admitted action, issued attempt and interpretation contract; after carrier, before identity | typed raw is required; any safely bound assessment follows the existing FULL/QUARANTINE ledger rule | S7 makes history conservative without S8/S9 commit; replay recomputes the code and assessment before applying the same ledger mode. |
+| Foreign execution/action identity | typed record, issued attempt and admitted action; only after the record has passed the carrier/record checks | typed foreign raw is required | S7 is charged once and preserves the actual successor; replay requires the same foreign relation, so a repaired identity fails before a new dispatch. |
+| Interpretation, binding or ownership conflict | typed execution material, frozen uncertainty/contract and prior ownership ledger | existing typed execution/assessment relation remains the witness | existing S7 replay recomputes assessment, binding and ledger conflict before applying the matching conservative history transition. |
+| Tool/result fault outside visible-record evidence | issued request/charge and any actual returned successor; no unrepresented external exception is inferred | pure pre-dispatch tool error is raw-free; post-dispatch/result-type optional typed raw is retained only after the same classifier finds no calculable carrier/record/summary/target/identity cause; otherwise raw and assessment are normalized to absent | one issued charge and actual successor are preserved; replay reruns that classifier and rejects unsafe/calculable typed raw. It remains an opaque timing boundary, not a G1 causal-proof branch. |
+
+The C05 exception remains deliberate: an invalid outer event carrier is
+canonicalized to `INVALID-OBSERVATION-EVENT-CARRIER` with neither raw witness
+nor assessment, before any foreign identity test; a fully typed foreign record
+with an exact tuple remains an `EXECUTION-IDENTITY-ERROR` witness and may reach
+a fresh Recover. A pure pre-dispatch tool exception cannot manufacture raw
+material. For post-dispatch/result-type errors, a typed optional record with
+any calculable cause (including a carrier) is normalized to no raw/no
+assessment; only a normal same-attempt/action record can remain. If
+classification itself fails, it is safely discarded without a recursive
+classification attempt. Replay applies the same condition before accepting
+opaque typed raw. The external exception/invalid-successor fact is not
+representable by that record alone, so the opaque timing boundary is not
+claimed as a causal raw proof here.
+
+G3 closes A01 only in the supported, Git-bound and recomputable finite
+synthetic producer domain. It does not authenticate raw-free opaque external
+source facts or claim to distinguish arbitrary deletion/reclassification of
+those facts from a genuine external opaque event. Such inputs remain excluded
+from qualified validation and continuation. G5 whole-PR review is still
+pending; this statement is not a capability, conformance or merge claim.
+
+The binding/type layer now executes bounded synthetic TEST/Prep/Recover actions
+and, only for bound finite synthetic material, resolves ownership and performs
+contract-scoped interval assessment. G3's limited acceptance covers its
+durable evidence-transaction/CLI consumer boundary in that same supported
+domain; G4 separately accepts a passive, non-scoring offline bridge. Neither
+scope establishes ownership of a real protocol service, calibrated timing,
+reviewed deadline authority, IUT behaviour or runtime integrity. Runtime
+executions remain `SYNTHETIC-ENGINEERING-VALIDATION`; the distinct G4 bridge
+produces only `OFFLINE-REPLAY`, `NOT-SCORED` / `NOT-EVALUATED` structural
+evidence. Neither is a confirmation experiment or protocol-conformance case.
+
+## G3 finite evidence and CLI (limited-accepted engineering boundary)
+
+`cltav-runtime` is a narrow installed command for a **Git-bound synthetic
+engineering scenario**.  Every `run`, `checkpoint`, `validate`, `continue`,
+and `replay` invocation
+requires an explicit local authority repository, exact 40-character commit,
+development-contract path, interface-registry path, and closed scenario path.
+It reads each authority input with `git show <commit>:<path>`; it neither uses
+the current worktree as authority nor silently substitutes `HEAD`.
+
+The tracked two-round example is
+`configs/examples/cltav_runtime_g3_two_round_scenario.json`.  After it is in a
+named authority commit, a user may run it from a directory outside that
+repository with the following shape (the output directory must also be outside
+the authority repository):
+
+```text
+cltav-runtime run --authority-repository <local-repository> --authority-commit <40-hex-commit> \
+  --development-path configs/engineering/cltav_development_contracts.json \
+  --interface-path configs/research/cltav_interface_registry.json \
+  --scenario-path configs/examples/cltav_runtime_g3_two_round_scenario.json \
+  --output <external-directory>/g3-evidence.json
+cltav-runtime validate <same authority arguments> --evidence <external-directory>/g3-evidence.json
+cltav-runtime replay <same authority arguments> --evidence <external-directory>/g3-evidence.json
+cltav-runtime checkpoint <same authority arguments> --prefix-rounds 1 \
+  --output <external-directory>/g3-prefix.json
+cltav-runtime validate <same authority arguments> --evidence <external-directory>/g3-prefix.json
+cltav-runtime continue <same authority arguments> --checkpoint <external-directory>/g3-prefix.json \
+  --output <external-directory>/g3-continued-evidence.json
+```
+
+The version `1.0` envelope is canonical UTF-8 JSON with sorted keys and one LF
+terminator.  It retains exact rational endpoints and topology, source
+commit/path/raw-byte SHA-256 identities, S3 selection inputs, S4 issue/charge
+facts, all finite fee projections, S7/S8/S9 histories, optional public
+ownership/timing material and the session-derived assessment or stop trace.
+Validation decodes that one object once, rejects floats/duplicate keys/open
+envelopes, checks its self-integrity value, then rebuilds the finite run from
+the caller's explicit Git sources and requires exact relation equality.  A
+evidence package cannot select a weaker validation branch through its contained
+resolution code, stage, source, producer-mode, runtime distribution/version,
+history, or digest fields.
+
+An ordinary evidence envelope is a complete bounded source replay. A distinct
+`CLTAV-FINITE-RUNTIME-CHECKPOINT/1.0` envelope records an explicitly open
+prefix with its prefix count and declared source round limit. It is accepted
+only when its source identities match the caller's already verified Git
+snapshots **before** any producer execution. Validation then reconstructs that
+prefix from source and returns the resulting typed session state and
+environment; it never deserialises a `SessionState`, environment, provenance
+token, or arbitrary Python object from the package. `continue` calls the
+public step boundary only for the remaining declared rounds. Source
+reconstruction used for validation is therefore separate from formal
+continuation: it does not add attempts or fees to the retained prefix, while a
+genuine next action is charged once. A terminal prefix, stale source, forged
+raw/history, or coordinated self-hash mutation is rejected before formal
+continuation or publication. The older `replay` command remains a complete
+initial-source reproduction and is not described as checkpoint continuation.
+
+The only supported producer modes are `SYNTHETIC-NORMAL`,
+`CALCULABLE-IDENTITY-MISMATCH`, `OPAQUE-INVALID-SUCCESSOR`, and
+`OPAQUE-TOOL-ERROR`.  A fault is confined to its first issued S4 attempt;
+later eligible recovery uses the ordinary synthetic environment.  An
+`EXTERNAL-OPAQUE-UNVERIFIED` source is explicitly rejected from qualified
+validation/replay and cannot become a successful publication simply by
+removing producer facts or refreshing a hash.  The optional scenario timing
+contract is Git-bound, can only use `METHOD-ONLY` or `UNRESOLVED` deadline
+authority, and is separately bound to the parsed model clock/uncertainty; it
+cannot manufacture a reviewed protocol deadline.  Scenario grammar has no
+truth/evaluation field, and adjacent evaluation files are not runtime inputs.
+
+For `SYNTHETIC-NORMAL`, a producer fact describes the actual typed S4 return,
+not whether later S7/S9 logic commits it. A normal `CONFIRMED-NOT-SENT`,
+`UNKNOWN-EFFECT`, or typed response-free timing record can therefore be
+exported and independently rebuilt without manufacturing a COMMIT or a
+protocol verdict. The session still owns its conservative history, retry,
+summary, and resource effects.
+
+Publication first writes a private staging file, reads and fully validates the
+staged bytes, and only then performs a bounded replacement transaction.  It
+rejects repository targets, links, and unowned existing files; replacement
+failure restores the previous validated package, while a first publication
+failure leaves no partial package.  A non-editable-wheel regression installs
+declared dependencies into a clean temporary venv and runs the real command
+from an unrelated directory with a socket guard. These are G3
+limited-accepted engineering checks. They close the durable A01 consumer only
+in the supported, Git-bound recomputable synthetic domain; they do **not**
+authenticate arbitrary external opaque facts or establish runtime integrity,
+conformance, actual IUT execution, physical timing calibration, experiment
+truth, reviewed deadline authority, or a merge decision.
+
+# 中文版
+
+# 有界 CL-TAV 会话运行时实现
+
+| 控制项 | 取值 |
+|---|---|
+| 授权 | CR-2026-021／DD-045 |
+| 初始内核检查点 | PR #25 `87f9330306be411a3d2d580a356070072dcf903f` |
+| 范围 | 有限参考会话协调与进程内合成工程验证 |
+| 状态 | Draft PR 上的候选实现；G1～G4 已接受各自有界范围，G5 整支评审仍为必需 |
+
+### 有限复审来源（不是整支 PR 接受）
+
+下列记录给出各自有界范围获独立接受时的固定 Head。它们不会组合成整支 PR 接受，不会替代下文
+的受控边界，也不授权 M3、真实 IUT、运行完整性主张或符合性主张。
+
+| 范围 | 已接受的固定 Head | 审计留存的复审记录 ID | 有界工程结论 |
+|---|---|---|---|
+| G1 | `2848dfdc433b155573a6ef58cfbc788a115fee0a` | `RR-PR25-2026-030` | 仅限有限因果 replay 与不透明证据归一化 |
+| G2 | `d50445ef66228e45408b8d626bc6dbdbaf5a499c` | `RR-PR25-2026-032` | 仅限有界 session／Recover 再预测见证 |
+| G3 | `2c7b08f747dfe51b73f9da7c90a1a4f9e5f1366c` | `RR-PR25-2026-034` | 仅限 Git 绑定、可重算的有限 synthetic 证据、CLI、checkpoint／continue 与发布边界 |
+| G4 | `c7f1aafb2507d4712ac532413c1655eb9ef6699d` | `RR-PR25-2026-036` | 仅限被动、非评分的 offline replay bridge |
+
+## 权威到运行时映射
+
+下表是代码追踪，而不是第二套方法、需求或实验权威。每次调用均直接加载其声明的 Git
+对象输入，并输出实际消费的 commit／path／原始字节 SHA-256 身份。
+
+| 受控权威 | 运行时投影 | 生产检查 | 边界 |
+|---|---|---|---|
+| `CLTAV-DEVELOPMENT-CONTRACTS`／`AR-FINITE` | `RuntimeAuthorityBinding`、`ModelContext`、有限路径内核 | 精确核验 AR-FINITE 接口 ID、记录 ID 和运行参数 | 仅声明语法和限额；不是通用求解器。 |
+| 接口登记：`SessionContext`、`HistoryHandle`、`IF-PRED-OBS` 至 `IF-RESOURCE-STOP` | `SessionContext`、`HistoryHandle`、后续会话适配器 | 精确核验八个接口绑定和职责 | 选择保持只读；S3／S8／S9 职责保持分离。 |
+| CR-2026-016／DD-038～040 | 来源和证据边界 | 来源身份和仅合成标签 | 不执行或晋级首轮需求。 |
+| CR-2026-017／DD-041 | 被动、只读的离线记录适配器／G4 bridge | 仅限来源重建、投影和 bridge 检查 | 不把捕获接入转为主动执行。 |
+| CR-2026-019／DD-043 与实验设计 | 仅评价端的身份和证据字段 | 算法输入不得接受真值对象 | 不准入实验、不产出分母结果或科学主张。 |
+
+## 具名接口桥接
+
+运行时绝不解构位置元组。`RuntimeAuthorityBinding` 要求接口登记输出名称精确一致，并为全部
+八个算法接口公开下列一对一别名。缺失、重排或冲突的名称是受控绑定错误，不得用默认值掩盖。
+
+| 接口 | 具名运行时字段 |
+|---|---|
+| `IF-PRED-OBS` | `prediction.classes`、`prediction.gapDiagnostic` |
+| `IF-SELECT-ADMIT` | `selection.kind`、`selection.actionId`、`selection.classes`、`selection.admission` |
+| `IF-EXECUTE-RECORD` | `execution.visibleRecord`、`execution.effectClass`、`execution.executionAttemptId` |
+| `IF-OBS-INTERPRET` | 观测类、效果、摘要确认／后继摘要、所有权和测量字段 |
+| `IF-PREP-RECOVER` | 目标／摘要确认、错误、资格、声明目标、证据和后继摘要 |
+| `IF-HIST-UPDATE` | `history.after`、`history.after.hypotheses`、`stop.empty` |
+| `IF-EQUIV` | 显式 `established`、`notEstablished`、`unknown` 标签 |
+| `IF-RESOURCE-STOP` | 停止理由、最终假设和 trace |
+
+当前 B/C-2A 检查点通过受控的只读准入决定实现普通 TEST、具名 prediction-gap／Prep 路径以及
+UNKNOWN 会话的 Recover 路径。
+当前 TEST prediction gap 即使与另一具有 classes 的 TEST 同时存在，也会先抑制 TEST minimax；
+随后由同一资源决定检查合格 Prep。已实现的 B/C-2A 分支覆盖
+`CONFIRMED-NOT-SENT`、unknown effect 和派发后错误、Prep 后继确认、合格／付不起／无合格
+Recover（A4/A5）、S7 retry cap、仅 Recover 的 S8 采纳以及 S9 对后继摘要的唯一提交。
+B/C-2B 只从合成环境接收原始有序观测材料；`ReferenceSession` 冻结类型化
+`InterpretationContract`，独占事件编码、配对策略、区间语义、时钟／单位／误差身份及 deadline
+authority。原始材料须先绑定实际 execution/action/evidence 身份才可保留；不得自行声明 policy、
+有效性标志、deadline 或预期判定。`verdict` 仅可为 PASS、FAIL、INCONCLUSIVE、ERROR；
+`scoreDisposition` 独立保存。仅当 `scoreDisposition == ANSWERED` 且判定为 PASS 或 FAIL 时
+`answered=true`；INCONCLUSIVE 永远不是 answered。METHOD-ONLY 即使算得边界 PASS/FAIL，仍为
+`ENGINEERING-WITNESS` 且 `answered=false`。所有权或时钟／误差依据 ERROR 进入 S7；任何评估均
+不得直接改写相容历史。这不使 runtime 成为协议栈、物理时钟校准、已审定的协议 deadline 引擎或
+IUT 主张。超出 G3 的有界、Git 绑定、有限 synthetic 消费者之外的生产 evidence／CLI 工作仍是
+后续 B/C 工作。
+
+## B/C-2C 有限停止与适用性边界
+
+B/C-2C 候选实现只为既有进程内停止关系增加一条有限、Git 绑定的输入路径。它**不**判定
+ARINC 645 义务是否满足、不计算校验值、不证明等价、不执行 IUT，也不把运行时迹转换为协议判定。
+其范围更窄：当完整的公开合成输入选择六项受控且尚未建立的完整性运行时依赖之一时，将该依赖保留为
+具名 `Stop-645` 原因，而不是让资源停止掩盖它。
+
+`RuntimeAuthorityBinding.from_git_objects` 仍可采用历史的双输入形式。该兼容路径被明确标为
+`P3-UNAVAILABLE`：未加载适用性包、未评估任何 context，且它既不是显式不适用，也不是
+METHOD-ONLY。绑定了包的调用必须提供恰好一个受控 context ID。在 S0 之前，它对全部六项受控来源的
+原始 Git 对象字节进行校验：schema、manifest、有限 fixture、开发合同、接口登记册和完整性基线。其
+commit／path／blob 身份进入冻结的 authority／replay 闭包。绑定不会把工作区文本当作这些身份的来源，
+因此 LF 或 CRLF 工作区表示不得替换不同的权威字节。绑定了包的 context 不得静默回退到兼容路径，
+兼容绑定也不得接受 context。
+
+该包有三种已评估的 P3 结果：
+
+| P3 状态 | 有限含义 | 停止输入 |
+|---|---|---|
+| `P3-ACTIVE` | 完整类型化 context 从 `CRS-M1-00076`、`00082`、`00085`、`00086`、`00087`、`00109` 中选择一条精确的、尚未解决的记录 | 一条来源绑定的具名 residual；在 P1／P2 之后由 P3 产生 `Stop-645` |
+| `P3-EXPLICIT-INACTIVE` | 完整的选择／比较 context 明确表明可选完整性输入未被选择 | 无 residual；这是已评估事实，而非未知 |
+| `P3-METHOD-ONLY` | 提供了与完整性不同的显式模型／动作域及 method-only 引用 | 无 residual；不得替代完整性适用性 |
+
+manifest 的显示 scenario／service 字段只是元数据。调用方不得用 residual、`applicable` 标志或
+scenario 标签选择 P3。每项任务的 `reasonRefs` 必须与其类型化前置检查实际消费的有限公开引用完全一致。
+缺失、畸形、矛盾或不可解析的包／context 材料，必须在选择、计费和派发之前产生具名适用性输入错误；
+不得改写为“不适用”。
+
+已实现的 EntryStop 优先级（包括因果 checkpoint 重放）为 P1 已处理空集、P2 单例、P3 当前具名
+residual、P4 已验证等价、P5 资源耗尽；它在 prediction、admission、dispatch 或新的计费之前评估。因此，
+若 P1--P4 均未停止且任一剩余资源为零，P5 以 `RESOURCE-EXHAUSTED` 返回 `Stop-Budget`，不选择也不
+派发 action。资源为正但不足仍属于通常的 A2/A5 准入情形，而不是 P5。该候选实现没有 P4 的证明生产者：
+`IF-EQUIV` 只会返回 `notEstablished` 或 `unknown`。已经达到的 S7 retry-cap 终态仍优先于这条普通
+EntryStop 关系。因此，该有限实现只展示顺序和 authority 闭合；它不建立等价、完整性正确性或运行就绪性。
+
+对 `00109`，同一 operation/session 的有效 `FINAL-DATA` 加 `CALCULATION-IN-PROGRESS` trigger 可以有
+已经存在的 status-stream 对象和 observation-range 对象，但其 `eventIds` 与 `observationEventIds` 成员数组
+为空。无论 `observationComplete` 为 false 还是 true，这都是合法的有限 P3 residual；P1/P2 不存在时保留
+具名 `Stop-645`。它不是协议频率、CRC 或符合性观测，不得据此推导协议 FAIL。该窄例外只适用于这两个成员
+数组；对象缺失、未知 event ID、operation／time 证据不匹配或未知 trigger 仍是具名适用性输入错误。
+
+GAP 会撤销整个当前 TEST 评分集，包括由不可负担 TEST 推导出的 A2：没有合格 Prep 时出口仍为
+具名 prediction gap；只有合格但不可负担的 Prep 才能在该 fallback 路径产生 A2。
+
+## B/C-2 覆盖状态
+
+`VERIFIED` 表示具名公共入口回归已展示所述子行为；`PARTIAL` 表示仅展示所述子行为；
+`PENDING` 表示本检查点不主张实现完整性。本表保留 B/C-2 检查点，同时标明后续 G1～G4
+有限闭合；这些范围记录不取代仍待完成的 G5 整支评审。下列路径是持久化测试定位，不替代
+固定 Head 的评审身份。
+
+| ID | 状态 | 持久化公共入口证据或明确保留边界 |
+|---|---|---|
+| BC-01 | PARTIAL | 两轮反馈和仅摘要 Prep 的 q0→q1 回归；新鲜／篡改 checkpoint 的组合仍属后续工作。 |
+| BC-02 | PARTIAL | 两轮反馈改变后继选择的回归；更多可见结果／动作组合仍待覆盖。 |
+| BC-03 | VERIFIED | 重叠 classes、当前 GAP、无信息 TEST 以及无信息 TEST 不得挤出合格 KNOWN Prep 的回归；仅限有界模型。 |
+| BC-04 | VERIFIED | 公共 `ReferenceSession.run` 回归以人工预期核对有界的当前 TEST 集：在可负担且有区分价值的 TEST 中，较小的最坏剩余集合优先；全局最优但不可负担的 TEST 不得遮蔽 router；随后以成本和稳定 action ID 决定平局。合法 action／hypothesis 声明重排必须保持 action、candidates、charge 和停止语义。不同声明无需具有相同 model identity。`session::test_rounds_mode_consumes_one_issued_action_not_declared_action_cost`；`session::test_unaffordable_best_test_and_no_information_test_do_not_displace_router`；`session::test_public_admission_uses_cost_then_stable_id_independent_of_legal_input_order`。 |
+| BC-05 | VERIFIED | 当前 TEST GAP 与同一准入入口的合格 Prep 回归，以及 Recover A4/A5；ownership／T5 不在本结论内。 |
+| BC-06 | VERIFIED | 仅摘要 Prep q0→q1 和未确认 Prep 的候选保留回归；`recovery::test_confirmed_recover_repredicts_a_q1_test_without_promoting_conservative_history` 在当前公开 S2 调用中使用仅测试的只读观察，证明完整 Recover 提交 S8/S9 的 q1／target／evidence，并将 q1、q1 TEST 及恢复后的 H/status/frontiers 委托给生产预测。隔离的 stale-q0 admission 变异保留已存 S9 字段，却会使同一见证失败。全保守 history 仍可合法以具名 GAP 停止而不派发动作。仅限有界 synthetic 后继。 |
+| BC-07 | PARTIAL | 已确认、未确认和仅目标确认 Recover 的公共回归；完整恢复估计边界仍待完成。 |
+| BC-08 | VERIFIED | CONFIRMED-NOT-SENT 及 CNS／UNKNOWN 过期投递回归；仅限有限合成边界。 |
+| BC-09 | PARTIAL | retry-cap、重复投递和派发后错误回归；所有返回上下文／最终停止策略仍待完成。 |
+| BC-10 | VERIFIED | 共享 uncertainty 与冻结 identity 解释回归；不主张物理时钟校准。 |
+| BC-11 | PARTIAL | 完整 history 合并和 resume/history 回归；完整同轮 Stop-Empty 策略仍待完成。 |
+| BC-12 | VERIFIED | 不可行／多路径及保守路径保留回归；仅限有限边界。 |
+| BC-13 | PARTIAL | 原始材料不得注入 policy／deadline／判定。FIFO/MOST-RECENT、显式取消／替代、由 session 注入的 ACTIVE ownership 上下文及保留账本的全局 event-order 前沿（支持增量 delta 或精确的累计再次出现）、终态 request／response 排除及冲突隔离均由 `interpretation` 和 `session` 回归覆盖。冲突可封存无争议的新 response，但不得重分类既有 request 身份；每个发出的账本 state 都必须能作为可移植 checkpoint 重放。仅为有界 synthetic 事件迹。 |
+| BC-14 | PARTIAL | 冻结合同的区间包含／分离／边界测试，以及空物理域、无效时钟／单位／误差依据。contract/material/clock/unit/uncertainty 必须先于 deadline authority 分支校验；不主张物理校准。 |
+| BC-15 | PARTIAL | 无响应使用取消／替代、合格 horizon 和 deadline authority 回归。`session::test_session_unresolved_deadline_without_registry_keeps_silence_unscored` 与 METHOD-ONLY witness 共同证明二者不得成为可计分 deadline。纯 reviewed 语义中，闭上界使用 `earliest > U`，开上界使用 `earliest >= U`；本 runtime 没有受控 registry 时拒绝 REVIEWED authority。 |
+| BC-16 | PARTIAL | 公共有限回归覆盖 P1／P2／P3／P5 优先级、精确六行 Git 绑定 residual 选择、显式不适用和 METHOD-ONLY 结果、兼容 `P3-UNAVAILABLE` 以及 replay 身份冻结。P4 仍被刻意保留：没有证明生产者可发出 `established`。 |
+| BC-17 | PENDING | 等价证明及其有界证明域属于后续 B/C 工作。 |
+| BC-18 | PARTIAL | 公共执行请求隔离回归；完整 action/state 环境矩阵仍待完成。 |
+| BC-19 | VERIFIED | evaluator truth 排除和额外 truth 字段拒绝回归；后续评价端工作保持分离。 |
+| BC-20 | PARTIAL | S0 未设置状态及 committed/retry 回归；reset／Recover／attempt 重建矩阵仍待完成。 |
+| BC-21 | VERIFIED | G3 接受有界 Git 绑定的 `cltav-runtime` run／validate／replay／checkpoint／continue 路径，包括精确来源身份和具名畸形输入拒绝。`evidence::test_git_bound_two_round_evidence_round_trips_exact_rationals`；`evidence::test_cli_checkpoint_then_continue_consumes_a_genuine_error_prefix_once`；`evidence::test_cli_rebuilds_a_genuine_error_then_recover_trace_from_the_same_git_inputs`。 |
+| BC-22 | VERIFIED | G3 接受受管制品的 staging、校验、替换回滚和首次发布无残留。`evidence::test_real_publication_success_rollback_and_first_failure_are_byte_safe`；`evidence::test_checkpoint_publication_is_transactional_for_existing_and_first_targets`。 |
+| BC-23 | VERIFIED | G3 仅接受带已声明依赖和打包资源的、有界合成命令在仓库外 non-editable wheel 中运行。`evidence::test_noneditable_wheel_runs_the_real_finite_cli_from_an_unrelated_directory`。 |
+| BC-24 | VERIFIED | G3 的 socket-guard 已安装 runtime 命令和 G4 的 socket-guard 已安装 offline bridge 均通过实际入口运行而不创建网络；G4 仍是被动 `NOT-SCORED`。这是入口边界，不是操作系统沙箱或协议／IUT 能力主张。 |
+
+## 初始类型边界
+
+`HistoryHandle.initial` 表示 S0 输入；因处理前成员状态可以尚未设置，允许空状态表。
+`HistoryHandle.committed` 表示 S9／已处理结果，要求每个存活成员都有一个受控状态。空
+`H` 只可作为已处理的 Stop-Empty 结果。`SessionContext` 将带确认摘要的 `KNOWN` 与不
+携带可用当前摘要的会话级 `UNKNOWN` 分开。`CONSERVATIVE-UNKNOWN` 则是每个
+`HistoryHandle` 成员的状态：它保留候选，绝不声称会话摘要仍可使用。
+
+每个存活的 `H` 成员均携带非空且有界的当前 frontier provenance 引用元组，而不是一个被
+扁平化的代表。有限预测器逐路径传播：已知成员中的不可行路径只会排除该已知路径；不支持或受限的计算
+则将其源路径保留为保守路径。对已属保守的成员，即使某源路径表面不可行，也仍须保留为保守见证，因为
+其先前未知效果不能证明该路径可被排除。保守成员只阻止未经证明的基于观测的排除，不得跳过已准入动作的
+transition。因此，可行的保守路径仍将其计算得到的状态、clock/store 更新、path-length 递增和末端
+provenance 带入每个已完成的普通观测类，同时成员以 `CONSERVATIVE-UNKNOWN` 提交；它绝不会被伪造为
+一个可观测结果。若没有已完成的可见类，或
+超过声明的观测类上限，则结果为具名 prediction gap，并抑制 TEST 选择。
+
+实现必须在序列化和会话边界返回受控诊断。Python 构造器的 `ValueError` 是内部输入
+边界，不是 IUT 判定；后续生产入口会将其映射为具名工具错误，且不发布无效证据包。
+
+## 执行与实验身份桥接
+
+工程会话始终具有 `runId`、`sessionId`、不可变 `snapshotId`、`actionId`，且每次派发
+均有一个 `executionAttemptId`。可选的 `experimentAttemptId` 是后续已登记实验单位的外键；
+当前工程 fixture 中该字段为空。因此，重试会产生新的执行身份，但不会伪造第二个实验样本。
+重复或畸形的返回执行身份会在 S9 提交前被拒绝；它绝不会变成第二次历史更新。
+
+`issuedToExecutor` 表示 S4 已将准入后的不可变动作交给执行接口；**不**表示网络报文已发送
+或 IUT 已被刺激。每次 issued 执行记录其前后资源视图、五项声明的费用明细
+（`acquisition`、`computation`、`preparation`、`recovery`、`retry`）及独立的四维投影；
+投影中的 preparation 恰好折叠一次 recovery。会话选择器只读取因果资源模式、剩余资源和
+声明动作成本；仅审计的 outcome/status 字段绝不回流到选择。
+
+`ROUNDS` 每次 issued 恰好消耗一个动作，和动作声明的金钱／计算成本无关；`BUDGET` 才消耗该
+声明成本。S4 之后发生执行侧异常、畸形执行返回、返回身份无效，或已返回记录的校验、解释、S9
+提交准备出现普通错误时，均不得恢复到派发前状态：保留一次计费和期望的 attempt 身份，记录受控 S7
+错误，将会话置为 `UNKNOWN`、把全部保留的 history 成员标为 `CONSERVATIVE-UNKNOWN`，且不得调用
+S8／S9。若返回结果包含有类型的后继环境，即使其
+记录被拒绝，也保留该实际后继环境。声称已确认摘要却缺少后继摘要的普通记录，同样属于派发后的
+受控错误。`CONFIRMED-NOT-SENT` 与此不同：因为动作根本没有发送，它绕过解释和 Prep/Recover
+确认；它恰好计费一次、增加受控 retry 状态，但保留此前 history 和已知摘要。其 evidence 的
+`resolution_code` 记录公共账本重放中选取的受控分支；它尚不是对保留的 rejected response
+确实导致该分支的独立重算证明。只有达到声明的 retry cap 才进入 `Stop-Error`；它不会丢失已计费
+事实，也不会静默变成 budget stop。
+
+因此，公开的 `SessionContext` 除当前摘要外还保存 resource remainder、retry count/cap、已确认
+Recover 的 target/evidence 以及 error/unknown histories。只有 S8 可以恢复 `KNOWN` 并写入已确认的
+Recover 目标／证据；S9 是确认后继 `currentSummary` 的唯一派发后提交者（S0 负责初始值，S7 可以清空它）。Prep 目标未确认但后继摘要已确认时，S9
+仍可推进该摘要；Recover 必须同时确认目标和摘要。目标确认和摘要确认是彼此独立的有类型返回
+事实：只确认目标是合法但不足的结果；未确认摘要的 Prep，或任一确认缺失的 Recover，均走 S7，
+而不是被误分为畸形记录。仅摘要确认的 Prep（以及已满足其自身 S8/S9 确认条件的 Recover）保持
+`H`，且不做观测类交集。它仍对每条保留 frontier 路径应用已准入、冻结的有限 transition，并提交
+后继 frontier provenance 与 history version。已有 `CONSERVATIVE-UNKNOWN` 路径仍会传播但保持
+`CONSERVATIVE-UNKNOWN`；只有传播不支持、不可行、受限的路径才以保守方式保留源路径。不得静默
+删除或提升任何成员。`postSummary` 只提交 `currentSummary`，绝不得解码为模型控制状态。
+对于 S0 history，缺少可选成员状态项不是对 `KNOWN` 的正向断言：若保留 history、任一源或结果
+frontier 路径已表明保守，或传播本身未决，则提交后的成员必须按保守状态分类。
+下一次普通预测和已提交的观测类也消费同一汇总：已知观测仍可排除已知且不相容的成员，但不得
+排除保留的保守路径。
+
+进入任何针对适配器返回记录的 effect 分支前，会话校验完整的可见记录域及其字段组合：身份／动作／
+证据引用均为非空白字符串（接受后的值不被改写），确认字段为 Boolean。绑定合同的 `TEST` 记录要么
+携带一个已归属响应的可见观测、已确认的非空后继摘要、精确 measurement tick 和冻结的 uncertainty
+identity，要么采用唯一的无响应形态：`effectClass=NONE`，且不得带 response ID、测量区间／tick、
+uncertainty identity、observable 或 post-summary。后者不是 `CONFIRMED-NOT-SENT`，不得进入 S9；
+声明无响应却同时存在已归属响应属于 ERROR。普通的有类型 `PREP`／`RECOVER` 结果则携带其显式
+target／summary／error 合同，并可合法地仅确认摘要、没有观测
+或 measurement tick；该合同决定走 S7、S8 还是 S9。非普通记录不得伪造其分支禁止的字段。为适配器
+异常合成的窄占位记录不是适配器返回的可见记录；它只用于在 evidence 账本中保留 issued identity 和一次已计费
+的 S7 转换。被拒绝的返回记录与期望的 issued 记录分开保存，错误返回的 attempt identity 不得覆盖已计费
+证据中的请求身份。普通适配器异常属于派发后的受控错误；这不捕获进程中断类异常。若返回记录重用
+已经处理过的 execution identity，只有先按该规范已处理记录的原 action 通过完整、封闭的可见记录校验，
+且随后以递归的运行时类型和值精确匹配该规范记录（其本身已绑定冻结 snapshot），它才是入站过期投递。精确比较覆盖嵌套
+`PrepRecoverResult`、Boolean 确认字段、测量标量类型、effect／字段组合以及非空白 identity／evidence
+字段；Python `==` 不是精确比较。不得按后续轮次当前选择的 action 校验该记录。即使当前可准入 action 的
+kind 不同，真正精确的旧 TEST、PREP、RECOVER、CONFIRMED-NOT-SENT 或 UNKNOWN-EFFECT 投递仍应幂等
+消费。相同 identity 但任一条件不满足的记录属于受控入口错误。相反，若在已经发出一个新动作后才返回不匹配的
+记录，它是派发后错误而不是重复：实际的有类型后继和一次计费均通过 S7 保留。
+
+有限模型在构造时会与 JSON 源对象断开。嵌套 guard／update AST 只以规范化冻结形式保留，每次
+内核调用再重新解码。S0 接纳前，工厂签发的 model token 会核验精确的源 JSON identity，以及协调器
+实际消费的全部有限值（action／cost、AST、frontier、limit 和 uncertainty）的摘要。binding 同样会重新
+核验两份 raw-Git snapshot 及其重建出的有限投影；development 的 commit／path／blob 三元组必须与已验证
+model context 的三元组完全相同。随后 `ReferenceSession` 重建私有 model 与 binding 投影，因此调用方
+持有的 alias 无法在 S0 前或之后重写已接纳的 authority。已声明的 append-only live provenance
+publication store 仍与提供的 model 保持兼容；因果重放在核验保留 evidence 前使用它的隔离副本。S3 的选择、
+准入、计费、evidence、因果重放和后续传播只消费这些私有投影；S0 之后绝不重新把调用方持有的 model 或
+binding 当作 authority。这是一条有限 authority-closure 规则，而非通用 Python sandbox：它保护本运行时实际消费的
+已声明 model／action／uncertainty／provenance root 和 binding identity 字段。选择前，恢复的 state 必须属于本 run／session／model，保留精确的 development/interface authority
+绑定和冻结的 S0 seed identity，且其 `H`、frontier provenance、history version、evidence 与 execution
+identity 必须闭合；验证失败发生在计费或派发前。目标会话绝不会以自身绑定重新签署外来的 S0 state。
+S4 前，已验证的顶层 frontier 与 event-identity map 会复制为私有的不可变 proxy，因此即使适配器持有
+调用方的 backing dictionary，也不能在派发期间改写已经核对的 S0 事实。适配器运行前还会递归重构
+有限的保留公共闭包（包括 `OwnershipEvent`、保留 evidence、assessment 和 ownership-replay 值）；这会阻止
+一个持有旧 frozen 嵌套值的适配器借由对象级变异逃逸改写 S4 后消费的 lineage。公共 state 会从
+本会话冻结的 S0 seed 逐条只读重放保留的 evidence，因此摘要、资源、snapshot／action、权威、
+history 与 frontier 必须是该账本的因果终态。该重放既不调用环境，也不再派发动作。有限多路径 S0
+seed 仅可在会话构造时声明、绑定到本 model/context 后冻结；手工拼装的替换 frontier 不是恢复权威。
+重放也不写共享 provenance store。若完整 checkpoint
+的派生记录尚不在一个新目标缓存中，但该分离重放能够闭合，它仍可恢复；其后继传播使用同一个分离的已验证
+context，而不会把缓存缺失当作 prediction gap，也不会回填目标缓存。已在本地验证的 source-record 闭包可以
+由其自身会话的后继计算复用。每一条声明路径必须在重放中闭合到已验证 model provenance，而不是仅闭合到目标的
+可变缓存；但有界 bundle 不要求各路径具有相同的历史长度。
+
+合成环境同样会规范化并断开它实际消费的每一项嵌套 outcome 值。构造后修改调用方的源有理数
+mapping 不会改变后续可见 measurement；改变环境必须显式创建新的声明和实例。它至多携带一条显式
+入站投递；恢复的会话在准入或发出下一动作前先消费该投递。
+
+`U` 是有界且有类型的 uncertainty snapshot（`clockId`、`timeUnit=ticks`、精确的非负最大误差和
+身份），不是标签。预测用该 snapshot 为每个 hypothesis 形成测量窗口；解释在 S9 前核对返回的
+measurement tick 以及同一冻结的 uncertainty identity。另行由 B/C-2B assessor 将原始区间与冻结
+合同对照：包含为 PASS、分离为 FAIL、边界交叠为 INCONCLUSIVE、结构／时钟／单位／误差依据无效
+为 ERROR。这只是有限工程见证，不是经校准的时钟准确度或协议时序判定。
+
+既有的标签类检查只要某个相容 hypothesis 的窗口包含该 tick，便接纳该 observable label；它仍是
+有意保守的粗粒度边界。独立的 B/C-2B assessment 仅限合同范围和有限材料；两者都不建立逐
+hypothesis 的协议时序、物理时钟校准、已审定 deadline authority 或符合性判定。
+
+对已归属的 response，公开的 `measurementTick` 还必须精确等于该 response 与由受控 ownership
+policy 选中的 request 之间的 timestamp 差；仅落在区间内的 tick 不足以通过。会话保留完整的类型化
+ownership replay，而不是只保留选中的 `responseId`：每个 response token 都会被消费，每个非 ACTIVE
+request disposition 都成为终态。每次后续 ownership 判定前，session 分别注入：(a) 已验证账本中仍为
+ACTIVE 的 request identity；以及 (b) 从所有已保留、受控的 ownership event（包括终态 request 与已消费
+response）导出的不可变全局高水位前沿。前者决定候选者，后者阻止增量 delta 追溯改变已经记录的配对。
+合法原始 delta 可以省略终态 receipt 和保留的 ACTIVE request。保留 ACTIVE request 的精确再次出现只作确认，
+绝不建立第二个 obligation。每个新引入的受控 request、response 或 termination 都必须满足 sequence 严格大于
+保留高水位 sequence，且 timestamp 不早于保留高水位 timestamp；否则 runtime 返回
+`INSUFFICIENT-OWNERSHIP-CONTEXT`、保留原 ownership ledger，且不得重新计算或改派已保留 response。相同
+timestamp 仍可合法，sequence 相同则不可以。字段／kind 改变、跨角色重用、重复 response 或重复的终态
+request 均进入 S7。准入拒绝由重放的原始材料决定，而非展示出的首要 diagnostic：并存的 clock、unit、
+measurement、visible-record 或 parse 错误不得遮蔽已经失败的前沿核验。部分解析的 delta 只有在其中每个
+已解析 event 都实际通过同一前沿核验后，才可保留为 ledger 事实；失败或未经核验的 event 仅保留为审计材料。
+只有原始迹中不存在同 ID ownership event 时，标量选中 `responseId` 才可作为稀疏 receipt；若同 ID 原始
+event 已明确给出但被类型化 parser 拒绝，绝不得回退写入 consumed-response ledger。只有非空且精确的 tuple carrier
+才能证明同 ID event 未出现；不受支持的外层 carrier 在 S4 被拒绝，并归一化为规范的已收费错误证据，不保留为可重放的
+原始迹材料，绝不得成为 ownership-ledger 事实。替代 request 必须实际终止其具名的当前 ACTIVE 前驱，才可以满足非并发准入条件；已终态的
+旧 target 不是准入令牌。其他 key 的完整 CANCEL/SUPERSEDE 事务仅在其既不指向已保留的 ACTIVE 受控 request、
+也不指向完整原始事件迹中任何匹配 request 时才被忽略；若外键事件指向当前或未来的受控 request，仍必须核验并
+在不相容时拒绝。这些跨轮重放冲突会隔离新观察到且无争议的 response 事实，但绝不把已保留的 request 变为
+response（或反过来），所以其发出的 state 始终可自校验并在一个等价的新协调器中重放。
+对于无 response，clock／error-basis 必须先于取消／替代产生 NOT-APPLICABLE 前校验；依据无效时为
+ERROR，不得用管理性事件规避。及时的终止不需要 elapsed-horizon 读数；若合法的增量 delta 只携带终止
+事件，则用已经验证的、保留的 ACTIVE trigger 提供计算该终止所需的 timestamp。对于 ACTIVE obligation，即使
+尚未得到 elapsed 读数，只要 observation horizon 尚未合格，仍为 PENDING-HORIZON；只有合格的
+reviewed deadline 判定才要求非负的 earliest admissible elapsed horizon。已经给出的非法 elapsed
+读数仍为 ERROR。
+
+配对和复位绝不从 Recover 动作推断。后续实验适配器必须用 `pairingId` 链接配对单位，为每个
+臂保留独立、已确认的 `resetId` 与 `resetEvidenceRef`，并将该证据与会话内恢复分开。当前合成
+工程运行没有登记实验 attempt 或配对复位主张。
+
+## 待完成工作和证据边界
+
+**B/C-3 审计核心（A01）——有限 G1／G2／G3 复审已接受其有界闭合。** 公共重放现在会先从保留的、类型正确的
+rejected record 重算有限因果关系，再接受其具名 `resolution_code`。live 执行与 replay 共用同一 S4
+分类器：record／carrier 错误、target 不匹配以及已发出 attempt／action identity 都由冻结
+record、action、attempt、interpretation contract 和既有 ownership ledger 推导。既有的类型化
+interpretation／binding／ownership replay 仍是独立的推导关系。对于普通、可计算且要求保留 raw 的
+拒绝，其 witness 不能通过删除、修复，或连同 S7 history 一起改名来选择另一个分支。G1 不认证无 raw
+的不透明外部来源细节。
+
+| 错误族 | 已核验的有限输入与优先级 | raw／规范化规则 | live 效果与 replay 核验 |
+|---|---|---|---|
+| 不支持的外层 carrier | action、绑定的 TEST material 与精确的外层 carrier；先于 record 和 identity | 规范化为 `INVALID-OBSERVATION-EVENT-CARRIER`；raw 和 assessment 均不存在 | S7 对已发出 action 只计费一次、保留实际 successor；replay 只接受该无 raw 的规范形式。 |
+| visible-record、target 或 summary 错误 | 冻结的 visible record、已准入 action、已发出 attempt 与 interpretation contract；在 carrier 之后、identity 之前 | 必须保留类型正确的 raw；任何可安全绑定的 assessment 遵循既有 FULL／QUARANTINE ledger 规则 | S7 使 history 保守而不执行 S8/S9 commit；replay 在采用相同 ledger mode 前重算 code 与 assessment。 |
+| foreign execution/action identity | 类型正确的 record、已发出 attempt 与已准入 action；仅在 record 通过 carrier／record 检查后 | 必须保留类型正确的 foreign raw | S7 只计费一次并保留实际 successor；replay 要求相同的 foreign 关系，因此被修复的 identity 会在新 dispatch 前失败。 |
+| interpretation、binding 或 ownership conflict | 类型正确的 execution material、冻结的 uncertainty／contract 和既有 ownership ledger | 既有类型正确的 execution／assessment 关系仍是 witness | 既有 S7 replay 在采用匹配的保守 history transition 前重算 assessment、binding 与 ledger conflict。 |
+| visible-record evidence 之外的 tool/result fault | 已发出 request／charge 与任何实际返回的 successor；不推断未表示的外部 exception | 纯派发前工具错误不保留 raw；派发后／返回类型的可选类型化 raw 只有在同一分类器未发现任何可计算的 carrier／record／summary／target／identity 原因时才保留；否则 raw 和 assessment 规范化为不存在 | 保留一次已发出计费和实际 successor；replay 重跑该分类器并拒绝不安全／可计算的类型化 raw。这仍是不透明的时点边界，而不是 G1 的因果证明分支。 |
+
+C05 例外仍是有意保留的边界：非法外层 event carrier 必须先于任何 foreign identity 测试被规范化为
+`INVALID-OBSERVATION-EVENT-CARRIER`，不保留 raw witness 或 assessment；完全类型化、carrier 为精确
+tuple 的 foreign record 则仍是 `EXECUTION-IDENTITY-ERROR` witness，并且可以进入 fresh Recover。
+纯派发前的工具异常不得凭空制造 raw material。对于派发后／返回类型错误，带有任一可计算原因
+（包括 carrier）的类型化可选 record 被规范化为无 raw／无 assessment；只有正常且同一
+attempt/action 的 record 才可保留。若分类本身失败，则安全丢弃，且不递归重试分类。replay 在接受
+不透明类型 raw 前应用相同条件。外部 exception／invalid-successor 事实不能仅从该 record 重建，
+因此这里不把不透明时点边界宣称为 raw 因果证明。
+
+G3 只在受支持、Git 绑定且可重算的有限 synthetic producer 域内关闭 A01。它不认证无 raw 的不透明
+外部来源事实，也不主张区分对这些事实的任意删除／重分类与真实外部不透明事件。此类输入继续被排除在
+qualified validation 与 continuation 之外。G5 整支评审仍待完成；这不是能力、符合性或合并主张。
+
+绑定／类型层现已执行有界合成 TEST／Prep／Recover 动作，并且只针对已经绑定的有限合成材料解析
+ownership、进行合同范围内的区间 assessment。G3 的有限接受覆盖同一受支持域内持久化
+evidence-transaction／CLI 消费者边界；G4 另行接受被动、非评分的 offline bridge。二者均不建立真实
+协议服务 ownership、校准时序、已审定 deadline authority、IUT 行为或运行完整性。runtime 执行仍为
+`SYNTHETIC-ENGINEERING-VALIDATION`；独立的 G4 bridge 只产生 `OFFLINE-REPLAY`、
+`NOT-SCORED`／`NOT-EVALUATED` 结构证据。二者均不是确认性实验或协议符合性用例。
+
+## G3 有限证据与 CLI（有限接受的工程边界）
+
+`cltav-runtime` 是面向**Git 绑定的合成工程场景**的窄安装命令。每个 `run`、`checkpoint`、`validate`、`continue` 和 `replay`
+调用都必须显式给出本地 authority repository、精确的 40 位 commit、development-contract path、
+interface-registry path 以及封闭 scenario path。它以 `git show <commit>:<path>` 读取所有权威输入；
+不会把当前工作区当作权威，也不会静默替换为 `HEAD`。
+
+受跟踪的两轮示例位于
+`configs/examples/cltav_runtime_g3_two_round_scenario.json`。在它进入一个具名 authority commit 后，用户可从
+该 repository 之外的目录按如下形态运行（输出目录也必须位于 authority repository 之外）：
+
+```text
+cltav-runtime run --authority-repository <local-repository> --authority-commit <40-hex-commit> \
+  --development-path configs/engineering/cltav_development_contracts.json \
+  --interface-path configs/research/cltav_interface_registry.json \
+  --scenario-path configs/examples/cltav_runtime_g3_two_round_scenario.json \
+  --output <external-directory>/g3-evidence.json
+cltav-runtime validate <same authority arguments> --evidence <external-directory>/g3-evidence.json
+cltav-runtime replay <same authority arguments> --evidence <external-directory>/g3-evidence.json
+cltav-runtime checkpoint <same authority arguments> --prefix-rounds 1 \
+  --output <external-directory>/g3-prefix.json
+cltav-runtime validate <same authority arguments> --evidence <external-directory>/g3-prefix.json
+cltav-runtime continue <same authority arguments> --checkpoint <external-directory>/g3-prefix.json \
+  --output <external-directory>/g3-continued-evidence.json
+```
+
+版本 `1.0` envelope 使用键排序、UTF-8 且仅一个 LF 结尾的规范 JSON。它保留精确有理数端点及开闭拓扑、
+来源 commit/path/raw-byte SHA-256 身份、S3 选择输入、S4 发出／计费事实、全部有限费用投影、S7/S8/S9
+history、可选的公开 ownership/timing material，以及由 session 推导的 assessment 或 stop trace。校验器只
+解码同一对象一次，拒绝浮点／重复键／开放 envelope，检查自身完整性值，再从调用者显式给出的 Git 来源重建有限
+运行并要求关系完全相等。包内的 resolution code、stage、source、producer mode、history 或 digest 不能自行选择较弱的
+核验分支；runtime distribution/version 也作为 producer fact 被重新核对。
+
+普通 evidence envelope 表示完整的有界来源重放。独立的
+`CLTAV-FINITE-RUNTIME-CHECKPOINT/1.0` envelope 则记录一个明确开放的前缀、其前缀轮数和声明的来源轮数上限。只有在其来源身份与调用方已经核验的 Git snapshot **一致且在任何 producer 执行之前**，它才会被接受。随后核验会从来源重建该前缀，并交付由该重建产生的类型化 session state 与 environment；绝不从包中反序列化 `SessionState`、environment、provenance token 或任意 Python 对象。`continue` 只会针对剩余的声明轮数调用公共 step 边界。因此用于核验的来源重建与正式继续相互分离：前者不会给已保留前缀追加 attempt 或费用，而真实后继 action 只计费一次。terminal 前缀、过期来源、伪造 raw/history 或协调修改后的 self-hash，都会在正式继续或发布前被拒绝。旧的 `replay` 命令仍是从初始来源进行完整复现，不能被描述为 checkpoint 继续。
+
+唯一支持的 producer mode 是 `SYNTHETIC-NORMAL`、`CALCULABLE-IDENTITY-MISMATCH`、
+`OPAQUE-INVALID-SUCCESSOR` 和 `OPAQUE-TOOL-ERROR`。故障只作用于首个已发出的 S4 attempt；其后满足
+条件的 Recover 使用普通 synthetic environment。`EXTERNAL-OPAQUE-UNVERIFIED` 来源会被明确拒绝，不能进入
+qualified validate/replay，也不能通过删除 producer facts 或刷新 hash 变成成功发布物。可选的 scenario timing
+contract 同样受 Git 绑定，只能采用 `METHOD-ONLY` 或 `UNRESOLVED` deadline authority，并单独绑定已解析 model
+的 clock／uncertainty；它不能制造已审定的协议 deadline。scenario grammar 没有 truth/evaluation 字段，且相邻的
+evaluation 文件不是运行时输入。
+
+对于 `SYNTHETIC-NORMAL`，producer fact 描述实际的类型化 S4 返回，而不是后续 S7/S9 逻辑是否提交。因此，普通的 `CONFIRMED-NOT-SENT`、`UNKNOWN-EFFECT` 或类型正确的无响应时序记录都可导出并独立重建，不会被伪造成 COMMIT 或协议判定。session 仍独占其保守 history、retry、summary 与资源效果。
+
+发布先写入私有 staging 文件，读回并完成校验，再进行有界替换事务。它拒绝仓库内目标、链接和未受管的既有文件；
+替换中途失败会恢复此前已验证的包，首次发布失败不会留下半包。non-editable wheel 回归会把已声明的依赖安装到干净
+临时 venv，并从无关目录运行真实命令且启用 socket guard。这些是 G3 有限接受的工程检查；它们仅在
+受支持、Git 绑定且可重算的 synthetic 域内关闭持久化 A01 消费者，不认证任意不透明外部事实，且**不**建立
+运行完整性、符合性、真实 IUT 执行、物理时间校准、实验真值、已审定 deadline authority 或合并决定。

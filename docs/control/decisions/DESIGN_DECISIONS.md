@@ -1192,6 +1192,30 @@ against reviewed Head `8ffbe6cb79c3de886148907ea3e4d5b31a52c728`;
 Decision Maker re-review, independent scientific review and all
 run-admission decisions remain open. This is not acceptance.
 
+## DD-045 — Bounded session coordination and synthetic engineering validation
+
+**Decision:** Permit the candidate implementation, under CR-2026-021, of a
+finite CL-TAV reference session and an in-process synthetic engineering
+environment.  Runtime consumers must bind exact Git-object contract bytes and
+preserve the existing `IF-*` read/write ownership.  The environment receives
+an admitted action and returns visible evidence only; it does not receive the
+algorithm's hypothesis set, scores, evaluator truth or expected answer.
+
+**Why:** The accepted finite kernel needs a reviewable integration path before
+any IUT, full protocol engine or experiment is considered.  Binding exact
+inputs and separating S0 input from committed history prevents a convenient
+fixture or mutable worktree from silently redefining the session contract.
+
+**Scope:** B/C reference-session coordination, process-local synthetic
+engineering evidence, typed bindings, production entry/evidence controls and
+their tests.  CRS, M2, method/algorithm authority, research experiment
+definitions, offline-intake scope and paper claims remain unchanged.
+
+**Status:** Candidate under CR-2026-021. G1–G4 limited reviews have accepted
+their bounded engineering scopes; G5 whole-PR joint review and final-head CI
+remain required before PR acceptance. This is neither run admission nor
+approval of a conformance, capability, experiment or publication claim.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -1808,3 +1832,20 @@ PR #22 所有权。
 **范围：** 仅呈现、契约与回归；不改候选更新、停止、资源、重试或后继摘要。
 
 **状态：** 在 CR-2026-014 下为候选。
+
+## DD-045——有界会话协调与合成工程验证
+
+**决定：** 在 CR-2026-021 下许可候选实现一个有限 CL-TAV 参考会话和进程内合成工程
+环境。运行时消费者必须绑定精确 Git 对象合同字节，并保持既有 `IF-*` 的读写职责。
+环境只接受已准入动作并返回可见证据；不得接收算法假设集、评分、评价真值或预期答案。
+
+**理由：** 在考虑 IUT、完整协议引擎或实验之前，已接受的有限内核需要可评审的集成
+路径。绑定精确输入并区分 S0 输入与已提交历史，避免方便的 fixture 或可变工作区静默
+重定义会话合同。
+
+**范围：** B/C 参考会话协调、进程内合成工程证据、类型化绑定、生产入口／证据控制及其
+测试。CRS、M2、方法／算法权威、研究实验定义、离线接入范围和论文主张均不改变。
+
+**状态：** 在 CR-2026-021 下为候选。G1～G4 有限复审已接受各自有界工程范围；在 PR
+接受前，G5 整支联合评审和最终 Head CI 仍为必需。这既不是运行准入，也不是符合性、能力、实验
+或出版主张的批准。
