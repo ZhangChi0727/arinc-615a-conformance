@@ -100,10 +100,10 @@ named incomplete/invalid and cannot roll back object state.
 | B01 | Normal preparation, ready, WRQ, ACK, DATA microsteps and named duplicate behavior |
 | B02 | Real EARLY-WRQ readiness-only bypass, install vs. activation distinction |
 | B03 | Real EARLY-DATA matching-ACK-only bypass and late-ACK preservation |
-| B04 | Direct package has no runtime/prediction/session dependency |
-| B05 | Immutable public DTO projection is independent of evaluator-only audit |
+| B04 | Every direct-object source module has no protected runtime/network import; the real controller consumes no prediction/session input |
+| B05 | The same public control script drives NORMAL, EARLY-WRQ and EARLY-DATA; immutable public DTO projection remains independent of evaluator-only audit |
 | B06 | Full reset clears active objects while preserving archived audit and new epochs |
-| B07 | Old, foreign, wrong-correlation and duplicate ACKs cannot advance the active Loader |
+| B07 | Old, foreign, wrong-correlation, wrong-WRQ-reference and duplicate ACKs cannot advance the active Loader |
 | B08 | No-fault, installed/not-triggered, failed, reset-failed and single-fault-limit records |
 | B09 | Integer virtual ticks, same-tick stable order and finite engineering receipts |
 | B10 | Immutable snapshots, append-only continuity and failure-without-rollback |

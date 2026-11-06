@@ -311,7 +311,7 @@ def _render_fault_variants(data: dict[str, Any], *, chinese: bool) -> list[str]:
 
 
 def _render_object_contract(data: dict[str, Any], *, chinese: bool) -> list[str]:
-    """Render the bounded surrogate/peer contract without inventing an implementation."""
+    """Render the bounded surrogate/peer contract and its explicit non-claims."""
 
     contract = data["objectContract"]
     states = sorted(contract["stateVariables"], key=lambda row: str(row["id"]))
@@ -363,7 +363,8 @@ def _render_object_contract(data: dict[str, Any], *, chinese: bool) -> list[str]
             f"- {plain_text(lifecycle['meaningZh'])}",
             f"- 安装生命周期：`{lifecycle['faultInstallationLifetime']}`；撤销动作：`{lifecycle['faultRevocationAction']}`；撤销证据：`{lifecycle['revocationEvidence']}`。",
             f"- {plain_text(identity['meaningZh'])}",
-            f"- 身份状态：`{identity['status']}`；后续实现必须绑定：{_cell(identity['requiredAtImplementation'], chinese=True)}。",
+            f"- 身份状态：`{identity['status']}`；源码根：`{identity['sourceRoot']}`；直接入口：`{identity['entryPoint']}`；后续实现必须绑定：{_cell(identity['requiredAtImplementation'], chinese=True)}。",
+            f"- 尚未建立：{plain_text(identity['notEstablishedZh'])}",
             "",
         ])
         return lines
@@ -400,7 +401,7 @@ def _render_object_contract(data: dict[str, Any], *, chinese: bool) -> list[str]
         f"- Evaluator-only: {_cell(private['evaluatorOnly'])}; algorithm-forbidden: {_cell(private['algorithmForbidden'])}; permitted public projection: {_cell(private['permittedAlgorithmProjection'])}.",
         "", "### Fault revocation and implementation identity plan", "",
         f"- Installation lifetime: `{lifecycle['faultInstallationLifetime']}`; revocation action: `{lifecycle['faultRevocationAction']}`; revocation evidence: `{lifecycle['revocationEvidence']}`.",
-        f"- Identity status: `{identity['status']}`; implementation must bind: {_cell(identity['requiredAtImplementation'])}.",
+        f"- Identity status: `{identity['status']}`; source root: `{identity['sourceRoot']}`; direct entry point: `{identity['entryPoint']}`; downstream implementation must bind: {_cell(identity['requiredAtImplementation'])}.",
         f"- Not established: {plain_text(identity['notEstablished'])}",
         "",
     ])
@@ -462,7 +463,7 @@ def render(data: dict[str, Any]) -> str:
             row['scenarioRationale'],
         ) for row in sources),
     ))
-    lines.extend(["", "## A-stage source / interface / acceptance matrix", ""])
+    lines.extend(["", "## Scenario source / interface / acceptance matrix", ""])
     lines.extend(_table(
         ["State or action", "Source relations", "Visible evidence", "Existing interface use", "Acceptance witness", "Not covered"],
         ((
@@ -494,7 +495,7 @@ def render(data: dict[str, Any]) -> str:
         f"- Post-dispatch error: `{data['resourceContract']['postDispatchError']}`; not evaluated: {_cell(data['resourceContract']['notEvaluated'])}",
         "",
         "## Fault-installation and activation variants", "",
-        f"- Full reset: {_cell(lifecycle['fullReset']['scope'])}; evidence `{lifecycle['fullReset']['successEvidence']}`; protocol abort={_bool(lifecycle['fullReset']['notProtocolAbort'], chinese=False)}",
+        f"- Full reset: {_cell(lifecycle['fullReset']['scope'])}; evidence `{lifecycle['fullReset']['successEvidence']}`; not a protocol abort={_bool(lifecycle['fullReset']['notProtocolAbort'], chinese=False)}",
         f"- Fault injection: install `{lifecycle['faultInjection']['installationEvidence']}`; activate `{lifecycle['faultInjection']['activationEvidence']}`; unconfirmed `{lifecycle['faultInjection']['unconfirmedDisposition']}`",
         f"- Installation lifetime: `{lifecycle['faultInjection']['installationLifetime']}`; revocation action: `{lifecycle['faultInjection']['revocationAction']}`; revocation evidence: `{lifecycle['faultInjection']['revocationEvidence']}`; revocation failure: `{lifecycle['faultInjection']['revocationFailureDisposition']}`",
     ])
@@ -560,7 +561,7 @@ def render(data: dict[str, Any]) -> str:
         ) for row in sources),
         chinese=True,
     ))
-    lines.extend(["", "## A 阶段来源／接口／验收矩阵", ""])
+    lines.extend(["", "## 场景来源／接口／验收矩阵", ""])
     lines.extend(_table(
         ["状态或动作", "来源关系", "可见证据", "既有接口用途", "验收见证", "未覆盖边界", "中文说明"],
         ((

@@ -8,12 +8,10 @@ object's transition helpers, or claim a protocol verdict.
 from __future__ import annotations
 
 import ast
-import builtins
 from dataclasses import fields, replace
-import importlib
 import inspect
+import json
 from pathlib import Path
-import sys
 
 import pytest
 
@@ -167,8 +165,11 @@ def test_b03_early_data_bypasses_only_matching_ack_and_late_ack_cannot_erase_it(
     assert normal.public_snapshot() == before
 
     controller = LurStartController()
-    wrq = _normal_to_current_wrq(controller)
+    # Installation is an attempt setup operation.  The branch must remain
+    # dormant until a real WRQ has been emitted, rather than being installed
+    # after a preconstructed normal prefix.
     assert controller.install_fault(FaultVariant.EARLY_DATA).status is InstallationStatus.INSTALLED
+    wrq = _normal_to_current_wrq(controller)
     early_data = controller.advance_loader()
     assert early_data.accepted and early_data.event is not None
     assert early_data.event.kind == EVENT_DL_DATA_LUR
@@ -187,33 +188,73 @@ def test_b03_early_data_bypasses_only_matching_ack_and_late_ack_cannot_erase_it(
 
 
 def test_b04_direct_objects_neither_import_nor_consume_runtime_prediction() -> None:
-    """Poison the protected runtime import while reloading the direct controller."""
+    """The complete direct-object package has no protected runtime/network edge."""
 
-    controller_module = importlib.import_module("cltav_615a.controller")
-    original_import = builtins.__import__
+    protected_roots = ("cltav_runtime", "cltav_offline", "a615a_sim")
+    package_sources = sorted((ROOT / "src" / "cltav_615a").glob("*.py"))
+    assert package_sources
+    for source_path in package_sources:
+        parsed = ast.parse(source_path.read_text(encoding="utf-8"), filename=str(source_path))
+        imported = [
+            alias.name
+            for node in ast.walk(parsed)
+            if isinstance(node, ast.Import)
+            for alias in node.names
+        ]
+        imported.extend(
+            node.module
+            for node in ast.walk(parsed)
+            if isinstance(node, ast.ImportFrom) and node.module is not None
+        )
+        assert not any(name.startswith(protected_roots) for name in imported), source_path
 
-    def guarded_import(name, globals=None, locals=None, fromlist=(), level=0):  # type: ignore[no-untyped-def]
-        if name.startswith(("cltav_runtime", "cltav_offline", "a615a_sim")):
-            raise AssertionError(f"B object must not import protected runtime/network package: {name}")
-        return original_import(name, globals, locals, fromlist, level)
-
-    builtins.__import__ = guarded_import
-    try:
-        reloaded = importlib.reload(controller_module)
-        controller = reloaded.LurStartController()
-        events = controller.run_shared_control_script()
-    finally:
-        builtins.__import__ = original_import
-        importlib.reload(controller_module)
-    assert events
+    controller = LurStartController()
+    assert controller.run_shared_control_script()
     public_methods = (
-        reloaded.LurStartController.record_list_submission_precondition,
-        reloaded.LurStartController.emit_target_lus_ready,
-        reloaded.LurStartController.advance_loader,
-        reloaded.LurStartController.advance_target_hardware,
+        LurStartController.record_list_submission_precondition,
+        LurStartController.emit_target_lus_ready,
+        LurStartController.advance_loader,
+        LurStartController.advance_target_hardware,
     )
     for method in public_methods:
         assert not {"prediction", "expected", "hypotheses", "minimax", "history"} & set(inspect.signature(method).parameters)
+
+
+@pytest.mark.parametrize(
+    ("variant", "expected_kinds", "activation"),
+    (
+        (
+            FaultVariant.NORMAL,
+            [EVENT_LIST_PREPARED, EVENT_TH_LUS_READY, EVENT_DL_WRQ_LUR, EVENT_TH_ACK_LUR, EVENT_DL_DATA_LUR],
+            ActivationStatus.NOT_TRIGGERED,
+        ),
+        (
+            FaultVariant.EARLY_WRQ,
+            [EVENT_LIST_PREPARED, EVENT_DL_WRQ_LUR, EVENT_TH_ACK_LUR, EVENT_DL_DATA_LUR],
+            ActivationStatus.TRIGGERED,
+        ),
+        (
+            FaultVariant.EARLY_DATA,
+            [EVENT_LIST_PREPARED, EVENT_TH_LUS_READY, EVENT_DL_WRQ_LUR, EVENT_DL_DATA_LUR, EVENT_TH_ACK_LUR],
+            ActivationStatus.TRIGGERED,
+        ),
+    ),
+)
+def test_b05_same_public_stimulus_script_drives_each_variant(
+    variant: FaultVariant,
+    expected_kinds: list[str],
+    activation: ActivationStatus,
+) -> None:
+    """Only real object guards make the three shared-script traces diverge."""
+
+    controller = LurStartController()
+    if variant is not FaultVariant.NORMAL:
+        assert controller.install_fault(variant).status is InstallationStatus.INSTALLED
+    results = controller.run_shared_control_script()
+    assert results
+    assert _event_kinds(controller) == expected_kinds
+    assert controller.evaluator_fault_readback().activation_status is activation
+    assert all(variant.value not in event.kind for event in controller.public_snapshot().events)
 
 
 def test_b05_public_projection_is_independent_of_private_installation_audit() -> None:
@@ -300,6 +341,12 @@ def test_b07_stale_foreign_and_duplicate_ack_cannot_advance_the_new_attempt() ->
 
     current_ack = controller.advance_target_hardware().event
     assert current_ack is not None and current_ack.in_reply_to_event_id == new_wrq.event_id
+    before_wrong_reference = controller.evaluator_readback()
+    wrong_reference = replace(current_ack, in_reply_to_event_id="not-the-current-wrq")
+    rejected = controller.deliver_external_event(wrong_reference)
+    assert rejected.delivered and not rejected.accepted
+    assert rejected.reason == "ACK-REJECTED-WRQ-IDENTITY-MISMATCH"
+    assert controller.evaluator_readback() == before_wrong_reference
     assert controller.deliver_next().accepted
     assert controller.deliver_external_event(current_ack).reason == "ACK-IGNORED-DUPLICATE"
     assert controller.advance_loader().accepted
@@ -320,6 +367,7 @@ def test_b08_fault_installation_lifecycle_records_failures_and_single_fault_limi
     failed = LurStartController()
     record = failed.install_fault(FaultVariant.EARLY_WRQ, force_failure=True)
     assert record.status is InstallationStatus.FAILED
+    assert failed.evaluator_fault_readback().installation_status is InstallationStatus.FAILED
     assert failed.record_list_submission_precondition().reason == "CONTROL-UNCONFIRMED-ATTEMPT-NOT-DRIVABLE"
     assert failed.evaluator_audit()[-1].installation_records[-1].reason.endswith("UNCONFIRMED")
 
@@ -398,9 +446,10 @@ def test_b11_early_events_remain_raw_semantic_records_and_documented_as_bounded(
 
 
 def test_b12_existing_a_contract_remains_bound_and_direct_package_is_not_a_runtime_adapter() -> None:
-    package = (ROOT / "configs/engineering/cltav_615a_scenarios.json").read_text(encoding="utf-8")
-    assert '"acceptedAuthorityCommit": "c577f34e98b91083a69f0a731a990c01aa7fa08b"' in package
-    assert '"stage": "A-CONTRACT-ONLY-NO-OBJECT-IMPLEMENTATION"' in package
+    package = json.loads((ROOT / "configs/engineering/cltav_615a_scenarios.json").read_text(encoding="utf-8"))
+    authority_commit = package["identity"]["acceptedAuthorityCommit"]
+    assert all(row["commit"] == authority_commit for row in package["acceptedInputs"])
+    assert package["objectContract"]["stage"] == "B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
     controller_source = (ROOT / "src/cltav_615a/controller.py").read_text(encoding="utf-8")
     imported = [node.module for node in ast.walk(ast.parse(controller_source)) if isinstance(node, ast.ImportFrom)]
     assert not any(

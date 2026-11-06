@@ -3,13 +3,13 @@
   "artifactId": "CLTAV-615A-SCENARIO-PACKAGE",
   "identity": {
     "scenarioFamilyId": "ENG-UPLOAD-LUR-START",
-    "version": "0.1.0-candidate",
+    "version": "0.2.0-b-candidate",
     "engineeringPurpose": "ENGINEERING-SUBSCENE-ONLY",
     "acceptedAuthorityCommit": "c577f34e98b91083a69f0a731a990c01aa7fa08b",
     "changeRequest": "CR-2026-022",
     "decision": "DD-046",
     "runClassification": "SYNTHETIC-ENGINEERING-VALIDATION",
-    "stageStatus": "G0-A-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
+    "stageStatus": "B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
   },
   "controlBinding": {
     "controlCommit": "331abdf26b550111df56226a88ca5a6a989c1d76",
@@ -18,7 +18,7 @@
     "rawSha256": "d4db86a0eb6e2d9d81504865126d91728a3463ecf9090bf169b8180e26448719"
   },
   "translationsZh": {
-    "identity.title": "ARINC 615A UPLOAD 的 LUR 起始控制切片工程场景包；仅用于受控工程规格走查。",
+    "identity.title": "ARINC 615A UPLOAD 的 LUR 起始控制切片工程场景包；仅用于受控合成工程对象和规格走查。",
     "scope.summary": "该切片仅覆盖清单提交后的 LUS-0001 就绪、LUR WRQ、匹配 ACK 与 LUR DATA 的有限控制边界；不构成完整 UPLOAD 或设备符合性结论。",
     "scope.relationship.reason": "该 LUR 起始切片只准备工程接口，不证明合格的 UPLOAD 完成，也不证明已准入的实验执行。",
     "sourceRelations.SRC-LIST-OFFER-PRECONDITION.summary": "应用层清单提交只记录为前置准备边界；DLA 不是本场景 WRQ、ACK 或 DATA 的网络端点。",
@@ -157,7 +157,7 @@
     }
   },
   "objectContract": {
-    "stage": "A-CONTRACT-ONLY-NO-OBJECT-IMPLEMENTATION",
+    "stage": "B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW",
     "objectKind": "IN-PROCESS-CONTROLLED-DATA-LOADER-SURROGATE",
     "peerKind": "IN-PROCESS-CONTROLLED-TARGET-HARDWARE-DRIVER",
     "stateVariables": [
@@ -323,14 +323,17 @@
       "meaningZh": "故障安装只在当前工程尝试中有效；全量 reset 必须撤销全部具名变体，并产生故障安装状态已清除的回读证据。"
     },
     "implementationIdentityPlan": {
-      "status": "CONTRACT-ONLY-NO-LOADER-SOURCE-AT-A",
+      "status": "SOURCE-OBJECT-CANDIDATE-PENDING-INDEPENDENT-REVIEW",
+      "sourceRoot": "src/cltav_615a",
+      "entryPoint": "cltav_615a.LurStartController",
       "requiredAtImplementation": [
         "OBJECT-SOURCE-COMMIT",
         "OBJECT-DISTRIBUTION-IDENTITY",
         "ADAPTER-SOURCE-IDENTITY"
       ],
-      "notEstablished": "No loader implementation, real-IUT identity, or executable object behavior is established by this A-stage contract.",
-      "meaningZh": "A 阶段只定义对象合同；后续实现必须绑定对象源码提交、分发制品身份和适配器源码身份，当前不建立加载器实现、真实 IUT 身份或可执行对象行为。"
+      "notEstablished": "The bounded source-controlled Loader/TH surrogate is available only for direct synthetic engineering validation; no real-IUT identity, CL-TAV adapter, experiment execution, or protocol conformance behavior is established.",
+      "notEstablishedZh": "该受控源码 Loader／TH 替身仅用于直接合成工程验证；尚未建立真实 IUT 身份、CL-TAV 适配器、实验执行或协议符合性行为。",
+      "meaningZh": "B 阶段提供受控源码的 Loader／TH 替身，只用于直接合成工程验证；不建立真实 IUT 身份、CL-TAV 适配器、实验执行或协议符合性行为。后续仍须绑定对象源码提交、分发制品身份和适配器源码身份。"
     }
   },
   "sourceRelations": [

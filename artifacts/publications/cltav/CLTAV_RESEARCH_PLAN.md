@@ -54,24 +54,24 @@ SysML 1.6 notation-based PlantUML sources: [`../../../docs/research/publication/
 
 Four arms CL-T, CL-A, CL-TA, CL-LOOP; detection, localization and ablation families in `docs/research/EXPERIMENT_PLAN.md`. Top-level algorithm source: [`../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex`](../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex). Typeset reader PDF: [`ALG-CLTAV-01.pdf`](ALG-CLTAV-01.pdf). Register before confirmatory runs. No Configuration and no live load in this increment. No filled result numbers here.
 
-## 615A UPLOAD scenario-prototype status (A stage; not a result)
+## 615A UPLOAD scenario-prototype status (B candidate; not a result)
 
-PR #26 currently contains a source-bound, declarative LUR-start control-slice
-package: four bounded UPLOAD scenario/continuation contracts together with a
-separate resource-admission-block witness, a checker, generated bilingual
-review view, and test-only feasibility witnesses.  The
-controlled simulated-object boundary is recorded, but the package explicitly
-declares `A-CONTRACT-ONLY-NO-OBJECT-IMPLEMENTATION`: it is not a Loader/TH
-implementation, a network or IUT execution, or a complete UPLOAD transfer.
-The public execution--observation--history handoff is specified and exercised
-only through a test-only `ReferenceSession` seam.  It does not establish
-independent object, truth, clock, fault-activation, or timing-calibration
-evidence.  The four-arm runner, a valid pre-experiment, integrity capability,
-and independent mathematical review remain uncompleted.  No result,
-performance, conformance, or C1/C2 claim follows from this candidate material.
-See the [`615A scenario prototype`](../../../docs/engineering/CLTAV_615A_SCENARIO_PROTOTYPE.md)
-and its [controlled package](../../../configs/engineering/cltav_615a_scenarios.json).
-The package remains Draft; this status text does not record an A-stage acceptance.
+After separate G0/A stage acceptance, PR #26 contains a source-bound LUR-start
+control-slice package and a direct B-stage Loader/TH lifecycle candidate in
+`src/cltav_615a/`.  The process-local surrogate drives NORMAL, EARLY-WRQ and
+EARLY-DATA semantic branches through real guards, append-only public journal
+events, deterministic virtual ticks, full-reset epochs and evaluator-only
+installation/activation readbacks.  It is not a network or IUT execution,
+complete UPLOAD transfer, `ReferenceSession` closure, history/q commitment,
+parser, solver, integrity capability or experiment runner.  The B candidate
+awaits its own fixed-head independent review.  The four-arm runner, valid
+pre-experiment, independent clock/truth, integrity capability and independent
+mathematical review remain uncompleted.  No result, performance, conformance,
+or C1/C2 claim follows from this material.  See the
+[`615A scenario prototype`](../../../docs/engineering/CLTAV_615A_SCENARIO_PROTOTYPE.md),
+its [controlled package](../../../configs/engineering/cltav_615a_scenarios.json),
+and the [object lifecycle boundary](../../../docs/engineering/CLTAV_615A_OBJECT_LIFECYCLE.md).
+The PR remains Draft; this status text does not record B-stage acceptance.
 
 ## Expanded CRS index and audit
 
@@ -123,20 +123,19 @@ SysML 1.6 记法 PlantUML 源：[`../../../docs/research/publication/models/`](.
 
 四臂 CL-T、CL-A、CL-TA、CL-LOOP；检测、定位、消融。总体算法源：[`../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex`](../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex)。排版读者 PDF：[`ALG-CLTAV-01.pdf`](ALG-CLTAV-01.pdf)。确认性运行前登记。本增量无 Configuration、无实网加载。此处不填结果数字。
 
-## 615A UPLOAD 场景原型状态（A 阶段；不是结果）
+## 615A UPLOAD 场景原型状态（B 候选；不是结果）
 
-PR #26 当前包含一个具有来源绑定的、声明式 LUR 起始控制切片包：四个有界的 UPLOAD
-场景／续接合同，以及一个独立的资源准入阻断见证；并配有检查器、生成的双语评审视图
-和仅测试用的可行性见证。受控
-模拟对象边界已被记录，但该包明确声明
-`A-CONTRACT-ONLY-NO-OBJECT-IMPLEMENTATION`：它不是 Loader／TH 实现、网络或 IUT
-执行，也不是完整 UPLOAD 传输。公开的执行—观测—历史交接仅被规格化，并只通过测试
-专用 `ReferenceSession` 接缝演练；这不建立独立的对象、真值、时钟、故障激活或时钟
-校准证据。四臂 runner、有效预实验、完整性能力和独立数学审查均仍未完成。该候选材料
-不产生结果、性能、符合性或 C1／C2 主张。参见
-[`615A 场景原型`](../../../docs/engineering/CLTAV_615A_SCENARIO_PROTOTYPE.md)及其
-[受控场景包](../../../configs/engineering/cltav_615a_scenarios.json)。该包仍为 Draft；
-本状态文字不记录 A 阶段接受。
+在 G0/A 分别获得阶段接受后，PR #26 包含一个具有来源绑定的 LUR 起始控制切片包，以及
+`src/cltav_615a/` 中的直接 B 阶段 Loader／TH 生命周期候选。这个进程内替身通过实际守卫、
+只追加的公开 journal 事件、确定性虚拟 tick、全量复位 epoch 与仅评估方可见的安装／激活读回，
+驱动 NORMAL、EARLY-WRQ 和 EARLY-DATA 语义分支。它不是网络或 IUT 执行、完整 UPLOAD
+传输、`ReferenceSession` 闭环、历史／q 提交、解析器、求解器、完整性能力或实验 runner。
+B 候选等待自身固定 Head 的独立评审。四臂 runner、有效预实验、独立时钟／真值、完整性能力
+和独立数学审查均仍未完成。该材料不产生结果、性能、符合性或 C1／C2 主张。参见
+[`615A 场景原型`](../../../docs/engineering/CLTAV_615A_SCENARIO_PROTOTYPE.md)、
+[受控场景包](../../../configs/engineering/cltav_615a_scenarios.json)及
+[对象生命周期边界](../../../docs/engineering/CLTAV_615A_OBJECT_LIFECYCLE.md)。PR 仍为 Draft；
+本状态文字不记录 B 阶段接受。
 
 ## 扩大 CRS 索引与审计
 

@@ -1247,11 +1247,12 @@ evidence, not private state. A stopped session is not extended merely to
 complete a demonstration. Fault records remain type-valid visible events and
 are not filtered as tool errors.
 
-**Status:** Candidate under CR-2026-022. G0/A must be independently reviewed
-on a fixed Head before object implementation; subsequent stages and whole-PR
-acceptance remain separate. This decision authorizes neither Ready, approval,
-merge, Configuration/M3, capability/conformance/certification nor scientific
-result claims.
+**Status:** G0/A received their separate fixed-head stage acceptance before
+object implementation. The current B-stage Loader/TH lifecycle material is a
+candidate pending its own fixed-head independent review; subsequent stages and
+whole-PR acceptance remain separate. This decision authorizes neither Ready,
+approval, merge, Configuration/M3, capability/conformance/certification nor
+scientific result claims.
 
 # 中文版
 
@@ -1905,6 +1906,6 @@ NORMAL、EARLY-WRQ 与 EARLY-DATA 是评价域中的对象变体，而不是协�
 摘要与确认必须由许可的公开 journal／回执证据重算，而不是私有状态。会话停止后不得为完成演示
 而延长运行。故障记录仍是类型合法的可见事件，不得过滤为工具错误。
 
-**状态：** 在 CR-2026-022 下为候选。G0/A 必须在固定 Head 上接受独立评审后才可实现对象；
-后续阶段和整支 PR 接受仍然独立。本决定不授权 Ready、批准、合并、Configuration/M3、能力／
-符合性／认证或科学结果主张。
+**状态：** G0/A 已在对象实现前分别以固定 Head 获得阶段接受。当前 B 阶段的 Loader／TH
+生命周期材料仍是等待自身固定 Head 独立评审的候选；后续阶段和整支 PR 接受仍然独立。本决定
+不授权 Ready、批准、合并、Configuration/M3、能力／符合性／认证或科学结果主张。

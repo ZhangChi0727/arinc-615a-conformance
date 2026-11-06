@@ -646,8 +646,16 @@ REQUIRED_OBJECT_STATE_INVARIANTS = {
     "TH-MATCHING-LUR-WRQ-RECEIVED": "Only a current-session LUR WRQ establishes the peer state that permits the matching TH ACK emission.",
 }
 REQUIRED_OBJECT_NOT_ESTABLISHED = (
-    "No loader implementation, real-IUT identity, or executable object behavior is established by this A-stage contract."
+    "The bounded source-controlled Loader/TH surrogate is available only for direct synthetic engineering validation; "
+    "no real-IUT identity, CL-TAV adapter, experiment execution, or protocol conformance behavior is established."
 )
+REQUIRED_OBJECT_NOT_ESTABLISHED_ZH = (
+    "该受控源码 Loader／TH 替身仅用于直接合成工程验证；尚未建立真实 IUT 身份、CL-TAV 适配器、实验执行或协议符合性行为。"
+)
+REQUIRED_OBJECT_STAGE = "B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
+REQUIRED_OBJECT_IDENTITY_STATUS = "SOURCE-OBJECT-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
+REQUIRED_OBJECT_SOURCE_ROOT = "src/cltav_615a"
+REQUIRED_OBJECT_ENTRY_POINT = "cltav_615a.LurStartController"
 REQUIRED_OBJECT_GUARDS = {
     "GUARD-WRQ-AFTER-READY": {
         "sourceRelationId": "SRC-LUR-WRQ",
@@ -880,7 +888,7 @@ def _control_authority_errors(root: Path, package: dict[str, Any]) -> list[str]:
     The control document is read from the Git commit that first introduced it,
     not from the mutable worktree or from an authority commit declared by the
     package. Thus rebinding accepted-input rows cannot silently advance the
-    A-stage authority baseline.
+    controlled scenario authority baseline.
     """
 
     errors: list[str] = []
@@ -1206,7 +1214,7 @@ def _source_errors(package: dict[str, Any], snapshot: dict[str, bytes]) -> list[
 
 
 def _boundary_errors(package: dict[str, Any]) -> list[str]:
-    """Keep A-stage scope and virtual observation explicitly non-protocol."""
+    """Keep the controlled scenario scope and virtual observation non-protocol."""
 
     errors: list[str] = []
     scope = package.get("scope") if isinstance(package.get("scope"), dict) else {}
@@ -1219,12 +1227,12 @@ def _boundary_errors(package: dict[str, Any]) -> list[str]:
 
 
 def _object_contract_errors(package: dict[str, Any]) -> list[str]:
-    """Validate the A-stage object/peer contract without claiming an implementation."""
+    """Validate the bounded B-stage object/peer contract and its non-claims."""
 
     errors: list[str] = []
     contract = package.get("objectContract") if isinstance(package.get("objectContract"), dict) else {}
-    if contract.get("stage") != "A-CONTRACT-ONLY-NO-OBJECT-IMPLEMENTATION":
-        errors.append("OBJECT: contract must remain an A-stage non-implementation contract")
+    if contract.get("stage") != REQUIRED_OBJECT_STAGE:
+        errors.append("OBJECT: contract must retain the controlled B-stage object-lifecycle candidate state")
     if contract.get("objectKind") != "IN-PROCESS-CONTROLLED-DATA-LOADER-SURROGATE":
         errors.append("OBJECT: object kind must remain the controlled in-process loader surrogate")
     if contract.get("peerKind") != "IN-PROCESS-CONTROLLED-TARGET-HARDWARE-DRIVER":
@@ -1324,16 +1332,22 @@ def _object_contract_errors(package: dict[str, Any]) -> list[str]:
             break
 
     identity = contract.get("implementationIdentityPlan") if isinstance(contract.get("implementationIdentityPlan"), dict) else {}
-    if identity.get("status") != "CONTRACT-ONLY-NO-LOADER-SOURCE-AT-A":
-        errors.append("OBJECT: A-stage must not claim an implemented loader identity")
+    if identity.get("status") != REQUIRED_OBJECT_IDENTITY_STATUS:
+        errors.append("OBJECT: implementation identity must retain the controlled B-stage candidate status")
+    if identity.get("sourceRoot") != REQUIRED_OBJECT_SOURCE_ROOT:
+        errors.append("OBJECT: implementation source root differs from the controlled bounded object package")
+    if identity.get("entryPoint") != REQUIRED_OBJECT_ENTRY_POINT:
+        errors.append("OBJECT: implementation entry point differs from the controlled direct lifecycle controller")
     if set(identity.get("requiredAtImplementation", [])) != {
         "OBJECT-SOURCE-COMMIT",
         "OBJECT-DISTRIBUTION-IDENTITY",
         "ADAPTER-SOURCE-IDENTITY",
     }:
-        errors.append("OBJECT: future implementation identity requirements are incomplete")
+        errors.append("OBJECT: downstream implementation identity requirements are incomplete")
     if identity.get("notEstablished") != REQUIRED_OBJECT_NOT_ESTABLISHED:
-        errors.append("OBJECT: A-stage non-claim identity boundary differs from the controlled contract")
+        errors.append("OBJECT: B-stage non-claim identity boundary differs from the controlled contract")
+    if identity.get("notEstablishedZh") != REQUIRED_OBJECT_NOT_ESTABLISHED_ZH:
+        errors.append("OBJECT: B-stage Chinese non-claim identity boundary differs from the controlled contract")
     return errors
 
 
@@ -1578,7 +1592,7 @@ def _action_and_case_errors(package: dict[str, Any]) -> list[str]:
 
 
 def _traceability_errors(package: dict[str, Any], snapshot: dict[str, bytes]) -> list[str]:
-    """Close every A-stage action/state to source, existing interface and witness."""
+    """Close every scenario action/state to source, existing interface and witness."""
 
     errors: list[str] = []
     registry = _json_snapshot(snapshot, "configs/research/cltav_interface_registry.json", errors)

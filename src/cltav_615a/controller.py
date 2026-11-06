@@ -259,11 +259,12 @@ class LurStartController:
             session_id=self._session_id,
             correlation_id=self._correlation_id,
         )
-        self._installation_records = [self._new_installation_record(
+        self._installation_records = []
+        self._new_installation_record(
             requested_fault=None,
             status=InstallationStatus.NOT_INSTALLED,
             reason="NO-PROTOCOL-FAULT-INSTALLED",
-        )]
+        )
         after = self.evaluator_readback()
         record = ResetReadback(
             reset_id=self._reset_id,

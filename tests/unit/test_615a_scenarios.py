@@ -265,6 +265,7 @@ def test_a06b_object_contract_locator_resource_case_and_revocation_are_closed() 
             )
         )
     )
+
     def resource_errors(field: str, value: object, *, expectation: bool = True) -> list[str]:
         def mutate(data: dict) -> None:
             round_ = next(
@@ -297,6 +298,28 @@ def test_a06b_object_contract_locator_resource_case_and_revocation_are_closed() 
         "resource-admission witness" in error
         for error in resource_errors("expectedCandidates", ["EARLY-WRQ"], expectation=False)
     )
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "expected"),
+    (
+        ("sourceRoot", "src/a615a_sim", "objectContract.implementationIdentityPlan.sourceRoot"),
+        ("entryPoint", "cltav_615a.NotController", "objectContract.implementationIdentityPlan.entryPoint"),
+        ("status", "FORGED-B-STATUS", "objectContract.implementationIdentityPlan.status"),
+        ("notEstablishedZh", "伪造的中文非主张", "B-stage Chinese non-claim identity boundary"),
+    ),
+)
+def test_b01_bounded_object_identity_mapping_fails_closed(
+    field: str,
+    value: str,
+    expected: str,
+) -> None:
+    """The B candidate cannot silently point at another source package or claim."""
+
+    errors = errors_for(
+        lambda data: data["objectContract"]["implementationIdentityPlan"].update({field: value})
+    )
+    assert any(expected in error for error in errors)
 
 
 def test_a06c_action_history_and_bilingual_operational_contracts_are_not_decorative() -> None:
@@ -633,12 +656,18 @@ def test_a09_generated_bilingual_view_renders_controlled_fields_by_section_and_d
     assert PACKAGE["translationsZh"]["actions.ACT-TEST-ACK-BEFORE-DATA.summary"] in chinese
     assert PACKAGE["translationsZh"]["sourceRelations.SRC-LUR-WRQ.summary"] in chinese
     assert PACKAGE["translationsZh"]["resourceContract.summary"] in chinese
-    assert "对象与对端合同" in chinese and "状态边界" in chinese and "实验接口交接" in chinese and "A 阶段来源／接口／验收矩阵" in chinese
+    assert "对象与对端合同" in chinese and "状态边界" in chinese and "实验接口交接" in chinese and "场景来源／接口／验收矩阵" in chinese
     assert contract["stateVariables"][0]["invariant"] in english
     assert contract["stateVariables"][0]["meaningZh"] in chinese
     assert contract["guardTransitions"][0]["meaningZh"] in chinese
     assert contract["lifecycleBoundary"]["faultRevocationAction"] in english
     assert contract["implementationIdentityPlan"]["meaningZh"] in chinese
+    assert contract["implementationIdentityPlan"]["notEstablishedZh"] in chinese
+    assert contract["implementationIdentityPlan"]["sourceRoot"] in english
+    assert contract["implementationIdentityPlan"]["entryPoint"] in english
+    assert contract["implementationIdentityPlan"]["sourceRoot"] in chinese
+    assert contract["implementationIdentityPlan"]["entryPoint"] in chinese
+    assert "not a protocol abort=yes" in english
     for field in ("admissionOwner", "accountingOwner", "admissionBoundary", "postDispatchError"):
         assert resource[field] in english
         assert resource[field] in chinese

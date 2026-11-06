@@ -175,7 +175,7 @@
           "const": "SYNTHETIC-ENGINEERING-VALIDATION"
         },
         "stageStatus": {
-          "const": "G0-A-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
+          "const": "B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
         }
       }
     },
@@ -424,7 +424,7 @@
       ],
       "properties": {
         "stage": {
-          "const": "A-CONTRACT-ONLY-NO-OBJECT-IMPLEMENTATION"
+          "const": "B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
         },
         "objectKind": {
           "const": "IN-PROCESS-CONTROLLED-DATA-LOADER-SURROGATE"
@@ -561,13 +561,22 @@
           "additionalProperties": false,
           "required": [
             "status",
+            "sourceRoot",
+            "entryPoint",
             "requiredAtImplementation",
             "notEstablished",
+            "notEstablishedZh",
             "meaningZh"
           ],
           "properties": {
             "status": {
-              "const": "CONTRACT-ONLY-NO-LOADER-SOURCE-AT-A"
+              "const": "SOURCE-OBJECT-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
+            },
+            "sourceRoot": {
+              "const": "src/cltav_615a"
+            },
+            "entryPoint": {
+              "const": "cltav_615a.LurStartController"
             },
             "requiredAtImplementation": {
               "type": "array",
@@ -577,6 +586,9 @@
               }
             },
             "notEstablished": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "notEstablishedZh": {
               "$ref": "#/$defs/nonBlank"
             },
             "meaningZh": {

@@ -2,10 +2,10 @@
 
 > Generated from `configs/engineering/cltav_615a_scenarios.json`; do not edit this view directly. It is a bounded engineering specification, not a protocol conformance verdict, experiment result, or capability claim.
 
-- Artifact: `CLTAV-615A-SCENARIO-PACKAGE`; family: `ENG-UPLOAD-LUR-START`; version: `0.1.0-candidate`
+- Artifact: `CLTAV-615A-SCENARIO-PACKAGE`; family: `ENG-UPLOAD-LUR-START`; version: `0.2.0-b-candidate`
 - Control: `CR-2026-022` / `DD-046`; accepted authority commit: `c577f34e98b91083a69f0a731a990c01aa7fa08b`
 - Immutable G0 control record: `docs/control/changes/CR-2026-022.md` @ `331abdf26b550111df56226a88ca5a6a989c1d76`; Git blob `e031045720207218bbc24c810e7f4d33d5d76791`; SHA-256 `d4db86a0eb6e2d9d81504865126d91728a3463ecf9090bf169b8180e26448719`
-- Classification: `SYNTHETIC-ENGINEERING-VALIDATION`; stage: `G0-A-CANDIDATE-PENDING-INDEPENDENT-REVIEW`
+- Classification: `SYNTHETIC-ENGINEERING-VALIDATION`; stage: `B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW`
 
 ## Accepted authority snapshot
 
@@ -30,7 +30,7 @@
 - Experiment relation: `SC-NORMAL-UPLOAD` / `PREPARES-INTERFACE` — The LUR-start slice records engineering interfaces only; it does not demonstrate qualified UPLOAD completion or admitted experiment execution.
 ## Object and peer contract
 
-- Stage: `A-CONTRACT-ONLY-NO-OBJECT-IMPLEMENTATION`; object: `IN-PROCESS-CONTROLLED-DATA-LOADER-SURROGATE`; peer: `IN-PROCESS-CONTROLLED-TARGET-HARDWARE-DRIVER`.
+- Stage: `B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW`; object: `IN-PROCESS-CONTROLLED-DATA-LOADER-SURROGATE`; peer: `IN-PROCESS-CONTROLLED-TARGET-HARDWARE-DRIVER`.
 
 ### State and invariants
 
@@ -71,8 +71,8 @@
 ### Fault revocation and implementation identity plan
 
 - Installation lifetime: `CURRENT-ENGINEERING-ATTEMPT-UNTIL-FULL-RESET`; revocation action: `FULL-RESET-REVOKES-ALL-NAMED-VARIANTS`; revocation evidence: `RESET-READBACK-FAULT-INSTALLATION-STATE-CLEARED`.
-- Identity status: `CONTRACT-ONLY-NO-LOADER-SOURCE-AT-A`; implementation must bind: OBJECT-SOURCE-COMMIT<br>OBJECT-DISTRIBUTION-IDENTITY<br>ADAPTER-SOURCE-IDENTITY.
-- Not established: No loader implementation, real-IUT identity, or executable object behavior is established by this A-stage contract.
+- Identity status: `SOURCE-OBJECT-CANDIDATE-PENDING-INDEPENDENT-REVIEW`; source root: `src/cltav_615a`; direct entry point: `cltav_615a.LurStartController`; downstream implementation must bind: OBJECT-SOURCE-COMMIT<br>OBJECT-DISTRIBUTION-IDENTITY<br>ADAPTER-SOURCE-IDENTITY.
+- Not established: The bounded source-controlled Loader/TH surrogate is available only for direct synthetic engineering validation; no real-IUT identity, CL-TAV adapter, experiment execution, or protocol conformance behavior is established.
 
 ## Source-to-model control relations
 
@@ -84,7 +84,7 @@
 | SRC-LUR-ACK | CRS-M1-00366<br>SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E008-F1D3B51077A3<br>doc/PDF 53/65 | ARINC-615A-3 §6.3.2 / Section 6.3.2 sequence chart A / SEQUENCE-EVENT E008 | TFTP-ACK-SEMANTIC | LUR | T_UPL_LUR_ACK<br>EV_TH_ACK_LUR<br>TH-TO-DL | TARGET-HARDWARE<br>DATA-LOADER | VISIBLE-STIMULUS<br>executed=yes<br>wire=yes | before: S_UPL_LUR_WRQ<br>after: S_UPL_LUR_ACK | The matching ACK is specific to the preceding LUR WRQ. | Binds the TARGET-HARDWARE peer response to the preceding matching semantic LUR WRQ. |
 | SRC-LUR-DATA | CRS-M1-00367<br>SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E009-9A7CD75981CB<br>doc/PDF 53/65 | ARINC-615A-3 §6.3.2 / Section 6.3.2 sequence chart A / SEQUENCE-EVENT E009 | TFTP-DATA-SEMANTIC | LUR | T_UPL_LUR_XFER<br>EV_DL_DATA_LUR<br>DL-TO-TH | DATA-LOADER<br>TARGET-HARDWARE | VISIBLE-OBJECT-EVENT<br>executed=yes<br>wire=yes | before: S_UPL_LUR_ACK<br>after: S_UPL_LUR_XFER | Normal execution emits DATA only after the matching ACK state.<br>EARLY-DATA is a named local guard bypass, not an ACK timeout assertion. | Binds normal DATA emission to the matching-ACK state; the named fault bypass remains evaluator-only. |
 
-## A-stage source / interface / acceptance matrix
+## Scenario source / interface / acceptance matrix
 
 | State or action | Source relations | Visible evidence | Existing interface use | Acceptance witness | Not covered |
 |---|---|---|---|---|---|
@@ -197,7 +197,7 @@
 
 ## Fault-installation and activation variants
 
-- Full reset: LOADER-STATE<br>TH-STATE<br>VIRTUAL-CLOCK<br>EVENT-JOURNAL<br>PENDING-DELIVERY<br>CORRELATION-ID-SEQUENCE<br>FAULT-INSTALLATION-STATE; evidence `RESET-READBACK-AND-EMPTY-NEW-ATTEMPT-JOURNAL`; protocol abort=yes
+- Full reset: LOADER-STATE<br>TH-STATE<br>VIRTUAL-CLOCK<br>EVENT-JOURNAL<br>PENDING-DELIVERY<br>CORRELATION-ID-SEQUENCE<br>FAULT-INSTALLATION-STATE; evidence `RESET-READBACK-AND-EMPTY-NEW-ATTEMPT-JOURNAL`; not a protocol abort=yes
 - Fault injection: install `CONTROLLER-READBACK-OF-NAMED-GUARD-OR-EMISSION-VARIANT`; activate `INDEPENDENT-JOURNAL-BRANCH-ACTIVATION`; unconfirmed `RETAIN-ATTEMPT-AS-UNCONFIRMED-NOT-NORMAL`
 - Installation lifetime: `CURRENT-ENGINEERING-ATTEMPT-UNTIL-FULL-RESET`; revocation action: `FULL-RESET-REVOKES-ALL-NAMED-VARIANTS`; revocation evidence: `RESET-READBACK-FAULT-INSTALLATION-STATE-CLEARED`; revocation failure: `RETAIN-ATTEMPT-AS-INVALID-NOT-NORMAL`
 | Hypothesis | Installation target | Controller readback | Activation observable | Algorithm visibility |
@@ -272,10 +272,10 @@
 
 > 本视图由 `configs/engineering/cltav_615a_scenarios.json` 生成，禁止直接修改。它是有限工程规格，不是协议符合性判定、实验结果或能力主张。
 
-- ARINC 615A UPLOAD 的 LUR 起始控制切片工程场景包；仅用于受控工程规格走查。
+- ARINC 615A UPLOAD 的 LUR 起始控制切片工程场景包；仅用于受控合成工程对象和规格走查。
 - 控制：`CR-2026-022` / `DD-046`；已接受权威提交：`c577f34e98b91083a69f0a731a990c01aa7fa08b`
 - 不可变 G0 控制记录：`docs/control/changes/CR-2026-022.md` @ `331abdf26b550111df56226a88ca5a6a989c1d76`；Git blob `e031045720207218bbc24c810e7f4d33d5d76791`；SHA-256 `d4db86a0eb6e2d9d81504865126d91728a3463ecf9090bf169b8180e26448719`
-- 分类：`SYNTHETIC-ENGINEERING-VALIDATION`；阶段：`G0-A-CANDIDATE-PENDING-INDEPENDENT-REVIEW`
+- 分类：`SYNTHETIC-ENGINEERING-VALIDATION`；阶段：`B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW`
 
 ## 已接受权威快照
 
@@ -301,7 +301,7 @@
 - 实验关系：`SC-NORMAL-UPLOAD` / `PREPARES-INTERFACE` — 该 LUR 起始切片只准备工程接口，不证明合格的 UPLOAD 完成，也不证明已准入的实验执行。
 ## 对象与对端合同
 
-- 阶段：`A-CONTRACT-ONLY-NO-OBJECT-IMPLEMENTATION`；对象：`IN-PROCESS-CONTROLLED-DATA-LOADER-SURROGATE`；对端：`IN-PROCESS-CONTROLLED-TARGET-HARDWARE-DRIVER`。
+- 阶段：`B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW`；对象：`IN-PROCESS-CONTROLLED-DATA-LOADER-SURROGATE`；对端：`IN-PROCESS-CONTROLLED-TARGET-HARDWARE-DRIVER`。
 
 ### 状态与不变量
 
@@ -345,8 +345,9 @@
 
 - 故障安装只在当前工程尝试中有效；全量 reset 必须撤销全部具名变体，并产生故障安装状态已清除的回读证据。
 - 安装生命周期：`CURRENT-ENGINEERING-ATTEMPT-UNTIL-FULL-RESET`；撤销动作：`FULL-RESET-REVOKES-ALL-NAMED-VARIANTS`；撤销证据：`RESET-READBACK-FAULT-INSTALLATION-STATE-CLEARED`。
-- A 阶段只定义对象合同；后续实现必须绑定对象源码提交、分发制品身份和适配器源码身份，当前不建立加载器实现、真实 IUT 身份或可执行对象行为。
-- 身份状态：`CONTRACT-ONLY-NO-LOADER-SOURCE-AT-A`；后续实现必须绑定：OBJECT-SOURCE-COMMIT<br>OBJECT-DISTRIBUTION-IDENTITY<br>ADAPTER-SOURCE-IDENTITY。
+- B 阶段提供受控源码的 Loader／TH 替身，只用于直接合成工程验证；不建立真实 IUT 身份、CL-TAV 适配器、实验执行或协议符合性行为。后续仍须绑定对象源码提交、分发制品身份和适配器源码身份。
+- 身份状态：`SOURCE-OBJECT-CANDIDATE-PENDING-INDEPENDENT-REVIEW`；源码根：`src/cltav_615a`；直接入口：`cltav_615a.LurStartController`；后续实现必须绑定：OBJECT-SOURCE-COMMIT<br>OBJECT-DISTRIBUTION-IDENTITY<br>ADAPTER-SOURCE-IDENTITY。
+- 尚未建立：该受控源码 Loader／TH 替身仅用于直接合成工程验证；尚未建立真实 IUT 身份、CL-TAV 适配器、实验执行或协议符合性行为。
 
 ## 来源到模型的控制关系
 
@@ -358,7 +359,7 @@
 | SRC-LUR-ACK | CRS-M1-00366<br>SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E008-F1D3B51077A3<br>文档/PDF 53/65 | ARINC-615A-3 §6.3.2 / Section 6.3.2 sequence chart A / SEQUENCE-EVENT E008 | TFTP-ACK-SEMANTIC | LUR | T_UPL_LUR_ACK<br>EV_TH_ACK_LUR<br>TH-TO-DL | TARGET-HARDWARE<br>DATA-LOADER | VISIBLE-STIMULUS<br>执行=是<br>报文=是 | 前：S_UPL_LUR_WRQ<br>后：S_UPL_LUR_ACK | 把 TARGET-HARDWARE 对端响应绑定到前序匹配的语义 LUR WRQ。 | TARGET-HARDWARE 只从 LUR WRQ 状态发送匹配的 LUR ACK，不能因同一操作名而无条件接受 ACK。 |
 | SRC-LUR-DATA | CRS-M1-00367<br>SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E009-9A7CD75981CB<br>文档/PDF 53/65 | ARINC-615A-3 §6.3.2 / Section 6.3.2 sequence chart A / SEQUENCE-EVENT E009 | TFTP-DATA-SEMANTIC | LUR | T_UPL_LUR_XFER<br>EV_DL_DATA_LUR<br>DL-TO-TH | DATA-LOADER<br>TARGET-HARDWARE | VISIBLE-OBJECT-EVENT<br>执行=是<br>报文=是 | 前：S_UPL_LUR_ACK<br>后：S_UPL_LUR_XFER | 把正常 DATA 发射绑定到匹配 ACK 状态；具名故障旁路仍仅评估方可见。 | DATA-LOADER 只在匹配 ACK 后发送 LUR DATA；EARLY-DATA 是受限的、评估方可见的单故障分支。 |
 
-## A 阶段来源／接口／验收矩阵
+## 场景来源／接口／验收矩阵
 
 | 状态或动作 | 来源关系 | 可见证据 | 既有接口用途 | 验收见证 | 未覆盖边界 | 中文说明 |
 |---|---|---|---|---|---|---|
