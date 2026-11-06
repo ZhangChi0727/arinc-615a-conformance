@@ -1216,6 +1216,43 @@ their bounded engineering scopes; G5 whole-PR joint review and final-head CI
 remain required before PR acceptance. This is neither run admission nor
 approval of a conformance, capability, experiment or publication claim.
 
+---
+
+## DD-046 — Controlled 615A UPLOAD control-slice engineering prototype
+
+**Decision:** Under CR-2026-022, permit one bounded, source-traceable,
+process-local DATA-LOADER surrogate and TARGET-HARDWARE driver for the opening
+UPLOAD control slice. The object begins only after a named list-submission
+preparation boundary and preserves the distinction among list offered, target
+ready, list accepted, LUR WRQ, corresponding ACK and DATA. NORMAL, EARLY-WRQ
+and EARLY-DATA are evaluation-domain object variants, not protocol verdict
+labels.
+
+**Why:** The accepted finite CL-TAV session needs a recognizable, resettable and
+source-bound engineering object to exercise real visible events and bounded
+feedback without promoting an implementation fixture into a complete protocol
+engine or experiment.
+
+**Scope:** A closed scenario/schema package, direct surrogate/TH execution,
+finite virtual time, injection/read-back/activation records, public/private
+projection, narrow reference-session adaptation and later engineering-only
+evidence replay. Source requirements, M2, existing algorithm/interface
+authority, experimental arms and admission, integrity capability, publication
+claims and network/IUT behavior remain unchanged.
+
+**Guardrails:** An absent WRQ is only a completed finite engineering inspection;
+it is never a source-defined no-response fail. Observable summaries and
+confirmation are recomputed from permitted public journal/acknowledgement
+evidence, not private state. A stopped session is not extended merely to
+complete a demonstration. Fault records remain type-valid visible events and
+are not filtered as tool errors.
+
+**Status:** Candidate under CR-2026-022. G0/A must be independently reviewed
+on a fixed Head before object implementation; subsequent stages and whole-PR
+acceptance remain separate. This decision authorizes neither Ready, approval,
+merge, Configuration/M3, capability/conformance/certification nor scientific
+result claims.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -1849,45 +1886,6 @@ PR #22 所有权。
 **状态：** 在 CR-2026-021 下为候选。G1～G4 有限复审已接受各自有界工程范围；在 PR
 接受前，G5 整支联合评审和最终 Head CI 仍为必需。这既不是运行准入，也不是符合性、能力、实验
 或出版主张的批准。
-
----
-
-## DD-046 — Controlled 615A UPLOAD control-slice engineering prototype
-
-**Decision:** Under CR-2026-022, permit one bounded, source-traceable,
-process-local DATA-LOADER surrogate and TARGET-HARDWARE driver for the opening
-UPLOAD control slice. The object begins only after a named list-submission
-preparation boundary and preserves the distinction among list offered, target
-ready, list accepted, LUR WRQ, corresponding ACK and DATA. NORMAL, EARLY-WRQ
-and EARLY-DATA are evaluation-domain object variants, not protocol verdict
-labels.
-
-**Why:** The accepted finite CL-TAV session needs a recognizable, resettable and
-source-bound engineering object to exercise real visible events and bounded
-feedback without promoting an implementation fixture into a complete protocol
-engine or experiment.
-
-**Scope:** A closed scenario/schema package, direct surrogate/TH execution,
-finite virtual time, injection/read-back/activation records, public/private
-projection, narrow reference-session adaptation and later engineering-only
-evidence replay. Source requirements, M2, existing algorithm/interface
-authority, experimental arms and admission, integrity capability, publication
-claims and network/IUT behavior remain unchanged.
-
-**Guardrails:** An absent WRQ is only a completed finite engineering inspection;
-it is never a source-defined no-response fail. Observable summaries and
-confirmation are recomputed from permitted public journal/acknowledgement
-evidence, not private state. A stopped session is not extended merely to
-complete a demonstration. Fault records remain type-valid visible events and
-are not filtered as tool errors.
-
-**Status:** Candidate under CR-2026-022. G0/A must be independently reviewed
-on a fixed Head before object implementation; subsequent stages and whole-PR
-acceptance remain separate. This decision authorizes neither Ready, approval,
-merge, Configuration/M3, capability/conformance/certification nor scientific
-result claims.
-
----
 
 ## DD-046——受控的 615A UPLOAD 控制片段工程原型
 
