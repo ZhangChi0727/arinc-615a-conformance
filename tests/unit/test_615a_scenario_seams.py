@@ -352,32 +352,30 @@ def _projection_outcome(
     return _PublicProjection(True, observable, post_summary, tuple(compatible))
 
 
-def _project_public_summary(
+def _validated_completed_public_prefix(
     package: dict[str, object],
     request: ExecutionRequest,
     *,
     correlation_id: str,
     material: _ActionPublicMaterial | None,
-    retained_prefix: tuple[_PublicJournalEvent, ...] = (),
-) -> _PublicProjection:
-    """Derive one A-stage public result from journal + receipt material.
+) -> tuple[_PublicJournalEvent, ...] | None:
+    """Return a valid current-session closed prefix independently of its meaning.
 
-    This intentionally tiny projector is a test-side feasibility witness, not
-    a loader, protocol parser or network adapter.  It establishes that the
-    A-package's bounded public-evidence contract can feed its real
-    ``ReferenceSession`` seam without an expected outcome being copied into
-    the execution fixture.
+    ``None`` means that material is absent, malformed, incomplete, or belongs
+    to a different action/session/correlation.  A tuple, including ``()``, is
+    a completed public prefix that may be retained as an actual execution
+    fact even when it is not yet sufficient to derive an observable summary.
     """
 
     if material is None or material.action_id != request.action_id:
-        return _unconfirmed_projection()
+        return None
     action = _action(package, request.action_id)
     derivation = _require_mapping(action.get("summaryDerivation"))
     contract = _require_mapping(derivation.get("publicEvidenceProjection"))
     inspection = _require_mapping(action.get("inspection"))
     receipt = material.receipt
     if receipt is None:
-        return _unconfirmed_projection()
+        return None
     canonical_empty_prefix = (
         not material.journal
         and receipt.prefix_start == 0
@@ -399,7 +397,7 @@ def _project_public_summary(
         or receipt.completed is not True
         or not (ordinary_prefix or canonical_empty_prefix)
     ):
-        return _unconfirmed_projection()
+        return None
 
     journal = material.journal
     sequence_numbers = [event.sequence_number for event in journal]
@@ -425,7 +423,32 @@ def _project_public_summary(
         or sequence_numbers != expected_sequence_numbers
         or receipt.prefix_end != (sequence_numbers[-1] if sequence_numbers else 0)
     ):
+        return None
+    return journal
+
+
+def _project_public_summary(
+    package: dict[str, object],
+    request: ExecutionRequest,
+    *,
+    validated_prefix: tuple[_PublicJournalEvent, ...] | None,
+    retained_prefix: tuple[_PublicJournalEvent, ...] = (),
+    unresolved_public_action_id: str | None = None,
+) -> _PublicProjection:
+    """Derive one A-stage observable only after material validation.
+
+    This intentionally tiny projector is a test-side feasibility witness, not
+    a loader, protocol parser or network adapter.  It establishes that the
+    A-package's bounded public-evidence contract can feed its real
+    ``ReferenceSession`` seam without an expected outcome being copied into
+    the execution fixture.  Structural public-prefix validity and semantic
+    summary confirmation deliberately remain separate.
+    """
+
+    if validated_prefix is None:
         return _unconfirmed_projection()
+    action = _action(package, request.action_id)
+    journal = validated_prefix
 
     def first_position(event_id: str) -> int | None:
         return next(
@@ -474,7 +497,7 @@ def _project_public_summary(
         )
         return _projection_outcome(action, observable)
     if request.action_id == RECOVER_ACTION_ID:
-        if not retained_prefix:
+        if unresolved_public_action_id is not None or not retained_prefix:
             return _unconfirmed_projection()
         prefix_length = len(retained_prefix)
         extension = journal[prefix_length:]
@@ -563,7 +586,10 @@ class _LoaderScenarioEnvironment(SyntheticEnvironment):
     """Constrained, immutable A seam; this is not the future object model.
 
     ``public_materials`` are immutable action-scoped journal/receipt snapshots.
-    The environment has no evaluator-fault label field, and a public result is
+    ``retained_public_journal`` records the latest valid actual boundary;
+    ``unresolved_public_action_id`` prevents an earlier boundary from being
+    mistaken for a later action with missing or invalid public material.  The
+    environment has no evaluator-fault label field, and a public result is
     derived only by ``_project_public_summary`` before it enters the accepted
     ReferenceSession seam.
     """
@@ -571,6 +597,7 @@ class _LoaderScenarioEnvironment(SyntheticEnvironment):
     correlation_id: str = ""
     public_materials: tuple[_ActionPublicMaterial, ...] = ()
     retained_public_journal: tuple[_PublicJournalEvent, ...] = ()
+    unresolved_public_action_id: str | None = None
     visible_evidence_refs: tuple[str, ...] = ()
     loader_state: str = ""
     target_hardware_state: str = ""
@@ -584,6 +611,7 @@ class _LoaderScenarioEnvironment(SyntheticEnvironment):
         state: str | None = None,
         pending: VisibleExecutionRecord | None = None,
         retained_public_journal: tuple[_PublicJournalEvent, ...] | None = None,
+        unresolved_public_action_id: str | None = None,
         evidence_refs: tuple[str, ...] | None = None,
         loader_state: str | None = None,
         target_hardware_state: str | None = None,
@@ -600,6 +628,11 @@ class _LoaderScenarioEnvironment(SyntheticEnvironment):
                 self.retained_public_journal
                 if retained_public_journal is None
                 else retained_public_journal
+            ),
+            unresolved_public_action_id=(
+                self.unresolved_public_action_id
+                if unresolved_public_action_id is None
+                else unresolved_public_action_id
             ),
             visible_evidence_refs=(
                 self.visible_evidence_refs if evidence_refs is None else evidence_refs
@@ -635,14 +668,22 @@ class _LoaderScenarioEnvironment(SyntheticEnvironment):
         execution = super().execute(request)
         record = execution.record
         material = self._material(request.action_id)
-        projection = _project_public_summary(
-            _scenario_package(),
+        package = _scenario_package()
+        validated_prefix = _validated_completed_public_prefix(
+            package,
             request,
             correlation_id=self.correlation_id,
             material=material,
+        )
+        projection = _project_public_summary(
+            package,
+            request,
+            validated_prefix=validated_prefix,
             retained_prefix=self.retained_public_journal,
+            unresolved_public_action_id=self.unresolved_public_action_id,
         )
         retained_public_journal = self.retained_public_journal
+        unresolved_public_action_id = self.unresolved_public_action_id
         ready_receipt = self.current_session_ready_receipt
         loader_state = self.loader_state
         target_state = self.target_hardware_state
@@ -715,15 +756,25 @@ class _LoaderScenarioEnvironment(SyntheticEnvironment):
                 loader_state = "LOADER-READY-RECONFIRMED"
                 target_state = "TH-READY-READBACK-RETAINED"
 
-        # Each admitted action supplies one immutable, completed public prefix.
-        # The next Recover may only extend the actual prefix retained here; it
-        # cannot replace it with an independently authored read-back snapshot.
-        if projection.confirmed and material is not None:
-            retained_public_journal = material.journal
+        # Retention records an actual, valid completed public prefix; it is
+        # deliberately independent from whether that prefix was informative
+        # enough to derive an observable/post-summary.  A malformed or absent
+        # action material leaves a named unresolved execution boundary so that
+        # Recover cannot silently reuse an earlier checkpoint.  A structurally
+        # valid but non-extending Recover also cannot replace that checkpoint;
+        # it may remain retryable with the real retained prefix.
+        if validated_prefix is None:
+            unresolved_public_action_id = request.action_id
+        elif request.action_id == RECOVER_ACTION_ID:
+            if projection.confirmed and unresolved_public_action_id is None:
+                retained_public_journal = validated_prefix
+        elif unresolved_public_action_id is None:
+            retained_public_journal = validated_prefix
 
         successor = self._next(
             state=execution.successor._state,
             retained_public_journal=retained_public_journal,
+            unresolved_public_action_id=unresolved_public_action_id,
             evidence_refs=self.visible_evidence_refs + (record.evidence_ref,),
             loader_state=loader_state,
             target_hardware_state=target_state,
@@ -1307,6 +1358,329 @@ def test_a12c_order_projection_classifies_first_data_without_matching_ack_as_ear
         assert unconfirmed.state.context.current_summary is None
         assert unconfirmed.state.history.hypotheses == frozenset({"NORMAL", "EARLY-DATA"})
         assert all("NO-RESPONSE" not in diagnostic.code for diagnostic in unconfirmed.diagnostics)
+        assert all("FAIL" not in diagnostic.code for diagnostic in unconfirmed.diagnostics)
+
+
+def test_a12d_unconfirmed_complete_order_prefix_is_retained_and_controls_recover() -> None:
+    """Keep an executed, valid no-DATA prefix distinct from its unknown summary.
+
+    A completed LIST/READY/WRQ/ACK prefix is structurally valid but does not
+    yet establish either normal order or EARLY-DATA.  The actual four-event
+    boundary must nevertheless be retained for Recover.  In contrast, an
+    absent or malformed current TEST material creates a named unresolved
+    boundary that an old Prep prefix cannot silently close.
+    """
+
+    package = _scenario_package()
+    binding, model = _scenario_runtime_parts(package, include_recover=True)
+
+    def fresh_materials(
+        session_id: str,
+    ) -> tuple[tuple[_ActionPublicMaterial, ...], str]:
+        correlation_id = "scenario-current-lur-start"
+        return _public_materials(
+            package,
+            session_id=session_id,
+            correlation_id=correlation_id,
+        ), correlation_id
+
+    def action_material(
+        base: _ActionPublicMaterial,
+        action_id: str,
+        journal: tuple[_PublicJournalEvent, ...],
+        *,
+        completed: bool = True,
+    ) -> _ActionPublicMaterial:
+        assert base.receipt is not None
+        return _ActionPublicMaterial(
+            action_id,
+            journal,
+            replace(
+                base.receipt,
+                completed=completed,
+                prefix_start=1,
+                prefix_end=len(journal),
+            ),
+        )
+
+    def run_to_order(
+        case_id: str,
+        materials: tuple[_ActionPublicMaterial, ...],
+        correlation_id: str,
+    ) -> tuple[ReferenceSession, object, object]:
+        session_id = f"scenario-retained-prefix-{case_id}"
+        environment = _scenario_environment(
+            package,
+            model,
+            session_id=session_id,
+            correlation_id=correlation_id,
+            public_materials=materials,
+        )
+        session = ReferenceSession(
+            binding=binding,
+            model=model,
+            session_id=session_id,
+            run_id=session_id,
+            initial_summary="SCENE-ENTRY",
+            resources=ResourceState.rounds(4),
+            retry_cap=4,
+        )
+        inspected = session.step(session.initial_state, environment)
+        prepared = session.step(inspected.state, inspected.environment)
+        assert prepared.state.context.current_summary == "Q-TARGET-READY"
+        return session, prepared, session.step(prepared.state, prepared.environment)
+
+    # The semantic order is unconfirmed because DATA is absent, but this is a
+    # valid completed current-session prefix and therefore an actual boundary.
+    session_id = "scenario-retained-prefix-no-data"
+    materials, correlation_id = fresh_materials(session_id)
+    base_order = next(item for item in materials if item.action_id == ORDER_TEST_ACTION_ID)
+    no_data_journal = tuple(
+        _PublicJournalEvent(session_id, correlation_id, index, event_id)
+        for index, event_id in enumerate(
+            (
+                "EV_DL_OFFER_LIST",
+                "EV_TH_LUS0001",
+                "EV_DL_WRQ_LUR",
+                "EV_TH_ACK_LUR",
+            ),
+            start=1,
+        )
+    )
+    no_data_order = action_material(base_order, ORDER_TEST_ACTION_ID, no_data_journal)
+    materials = _replace_material(materials, no_data_order)
+    session, prepared, unknown = run_to_order("no-data", materials, correlation_id)
+    unknown_evidence = unknown.state.evidence[-1]
+    assert unknown_evidence.snapshot.action_id == ORDER_TEST_ACTION_ID
+    assert unknown_evidence.resolution_code == "UNKNOWN-EFFECT"
+    assert unknown.stop_reason is None
+    assert unknown.state.context.q_status == "UNKNOWN"
+    assert unknown.state.context.current_summary is None
+    assert unknown.state.history.hypotheses == frozenset({"NORMAL", "EARLY-DATA"})
+    assert type(unknown.environment) is _LoaderScenarioEnvironment
+    assert unknown.environment._state == "LOADER-AFTER-TEST"
+    assert unknown.environment.loader_state == "LOADER-CONTROL-STEP-ISSUED"
+    assert unknown.environment.retained_public_journal == no_data_journal
+    assert unknown.environment.unresolved_public_action_id is None
+    assert all("NO-RESPONSE" not in diagnostic.code for diagnostic in unknown.diagnostics)
+    assert all("FAIL" not in diagnostic.code for diagnostic in unknown.diagnostics)
+
+    base_recover = next(item for item in materials if item.action_id == RECOVER_ACTION_ID)
+
+    def with_readback(
+        prefix: tuple[_PublicJournalEvent, ...],
+    ) -> tuple[_PublicJournalEvent, ...]:
+        return prefix + (
+            _PublicJournalEvent(
+                session_id,
+                correlation_id,
+                len(prefix) + 1,
+                "RECOVER-READY-READBACK",
+            ),
+        )
+
+    def recover_material_for(
+        journal: tuple[_PublicJournalEvent, ...],
+    ) -> _ActionPublicMaterial:
+        return action_material(base_recover, RECOVER_ACTION_ID, journal)
+
+    # The actual four-event checkpoint plus exactly one ready readback closes
+    # Recover; the result is an explicit re-confirmation, not a replay.
+    actual_recover = recover_material_for(with_readback(no_data_journal))
+    recovered = session.step(
+        unknown.state,
+        replace(
+            unknown.environment,
+            public_materials=_replace_material(unknown.environment.public_materials, actual_recover),
+        ),
+    )
+    recovered_evidence = recovered.state.evidence[-1]
+    assert recovered_evidence.snapshot.action_id == RECOVER_ACTION_ID
+    assert recovered_evidence.resolution_code == "COMMIT"
+    assert recovered.state.context.q_status == "KNOWN"
+    assert recovered.state.context.current_summary == "Q-TARGET-READY"
+    assert recovered.state.history.hypotheses == unknown.state.history.hypotheses
+    assert type(recovered.environment) is _LoaderScenarioEnvironment
+    assert recovered.environment.loader_state == "LOADER-READY-RECONFIRMED"
+    assert recovered.environment.retained_public_journal == actual_recover.journal
+    assert recovered.environment.unresolved_public_action_id is None
+
+    stale_prep_prefix = prepared.environment.retained_public_journal
+    assert stale_prep_prefix != no_data_journal
+    stale_anchor = recover_material_for(with_readback(stale_prep_prefix))
+    cropped_prefix = tuple(
+        replace(event, sequence_number=index)
+        for index, event in enumerate(no_data_journal[1:], start=1)
+    )
+    replaced_prefix = tuple(
+        replace(event, event_id="EV_TH_LUS0001-REPLACED") if index == 1 else event
+        for index, event in enumerate(no_data_journal)
+    )
+    reordered_prefix = tuple(
+        replace(
+            event,
+            event_id=(
+                no_data_journal[2].event_id if index == 1
+                else no_data_journal[1].event_id if index == 2
+                else event.event_id
+            ),
+        )
+        for index, event in enumerate(no_data_journal)
+    )
+    invalid_recover_materials = (
+        stale_anchor,
+        recover_material_for((
+            _PublicJournalEvent(
+                session_id,
+                correlation_id,
+                1,
+                "RECOVER-READY-READBACK",
+            ),
+        )),
+        recover_material_for(with_readback(cropped_prefix)),
+        recover_material_for(with_readback(replaced_prefix)),
+        recover_material_for(with_readback(reordered_prefix)),
+    )
+    for invalid_recover in invalid_recover_materials:
+        failed = session.step(
+            unknown.state,
+            replace(
+                unknown.environment,
+                public_materials=_replace_material(
+                    unknown.environment.public_materials,
+                    invalid_recover,
+                ),
+            ),
+        )
+        failed_evidence = failed.state.evidence[-1]
+        assert failed_evidence.snapshot.action_id == RECOVER_ACTION_ID
+        assert failed_evidence.committed is False
+        assert failed_evidence.resolution_code == "RECOVER-TARGET-UNCONFIRMED"
+        assert failed.state.context.q_status == "UNKNOWN"
+        assert failed.state.context.current_summary is None
+        assert failed.state.history.hypotheses == unknown.state.history.hypotheses
+        assert type(failed.environment) is _LoaderScenarioEnvironment
+        assert failed.environment.retained_public_journal == no_data_journal
+        assert failed.environment.unresolved_public_action_id is None
+        assert failed.environment.loader_state != "LOADER-READY-RECONFIRMED"
+
+    # An absent or malformed current TEST prefix must fail closed instead of
+    # letting the retained two-event Prep anchor authorize a later Recover.
+    for case_id, incomplete_materials in (
+        (
+            "missing-order-material",
+            tuple(item for item in materials if item.action_id != ORDER_TEST_ACTION_ID),
+        ),
+        (
+            "incomplete-order-receipt",
+            _replace_material(
+                materials,
+                action_material(
+                    base_order,
+                    ORDER_TEST_ACTION_ID,
+                    no_data_journal,
+                    completed=False,
+                ),
+            ),
+        ),
+        (
+            "wrong-order-correlation",
+            _replace_material(
+                materials,
+                action_material(base_order, ORDER_TEST_ACTION_ID, no_data_journal),
+            ),
+        ),
+    ):
+        invalid_session_id = f"scenario-retained-prefix-{case_id}"
+        invalid_materials = tuple(
+            replace(
+                item,
+                journal=tuple(
+                    replace(event, session_id=invalid_session_id)
+                    for event in item.journal
+                ),
+                receipt=(
+                    None
+                    if item.receipt is None
+                    else replace(item.receipt, session_id=invalid_session_id)
+                ),
+            )
+            for item in incomplete_materials
+        )
+        if case_id == "wrong-order-correlation":
+            wrong_order = next(
+                item
+                for item in invalid_materials
+                if item.action_id == ORDER_TEST_ACTION_ID
+            )
+            assert wrong_order.receipt is not None
+            invalid_materials = _replace_material(
+                invalid_materials,
+                replace(
+                    wrong_order,
+                    receipt=replace(wrong_order.receipt, correlation_id="foreign-correlation"),
+                ),
+            )
+        invalid_session, invalid_prepared, invalid_unknown = run_to_order(
+            case_id,
+            invalid_materials,
+            correlation_id,
+        )
+        # The material fixture is rebuilt for a distinct session ID above;
+        # its current operation correlation remains the same controlled one.
+        invalid_evidence = invalid_unknown.state.evidence[-1]
+        assert invalid_evidence.snapshot.action_id == ORDER_TEST_ACTION_ID
+        assert invalid_evidence.resolution_code == "UNKNOWN-EFFECT"
+        assert invalid_unknown.state.context.q_status == "UNKNOWN"
+        assert invalid_unknown.state.context.current_summary is None
+        assert invalid_unknown.state.history.hypotheses == frozenset({"NORMAL", "EARLY-DATA"})
+        assert type(invalid_unknown.environment) is _LoaderScenarioEnvironment
+        assert invalid_unknown.environment._state == "LOADER-AFTER-TEST"
+        assert invalid_unknown.environment.loader_state == "LOADER-CONTROL-STEP-ISSUED"
+        assert invalid_unknown.environment.unresolved_public_action_id == ORDER_TEST_ACTION_ID
+        old_prefix = invalid_prepared.environment.retained_public_journal
+        assert invalid_unknown.environment.retained_public_journal == old_prefix
+        invalid_base_recover = next(
+            item for item in invalid_materials if item.action_id == RECOVER_ACTION_ID
+        )
+        assert invalid_base_recover.receipt is not None
+        old_anchor_recover = _ActionPublicMaterial(
+            RECOVER_ACTION_ID,
+            old_prefix + (
+                _PublicJournalEvent(
+                    invalid_session_id,
+                    correlation_id,
+                    len(old_prefix) + 1,
+                    "RECOVER-READY-READBACK",
+                ),
+            ),
+            replace(
+                invalid_base_recover.receipt,
+                prefix_start=1,
+                prefix_end=len(old_prefix) + 1,
+            ),
+        )
+        failed_old_anchor = invalid_session.step(
+            invalid_unknown.state,
+            replace(
+                invalid_unknown.environment,
+                public_materials=_replace_material(
+                    invalid_unknown.environment.public_materials,
+                    old_anchor_recover,
+                ),
+            ),
+        )
+        failed_evidence = failed_old_anchor.state.evidence[-1]
+        assert failed_evidence.snapshot.action_id == RECOVER_ACTION_ID
+        assert failed_evidence.committed is False
+        assert failed_evidence.resolution_code == "RECOVER-TARGET-UNCONFIRMED"
+        assert failed_old_anchor.state.context.q_status == "UNKNOWN"
+        assert failed_old_anchor.state.context.current_summary is None
+        assert failed_old_anchor.state.history.hypotheses == invalid_unknown.state.history.hypotheses
+        assert type(failed_old_anchor.environment) is _LoaderScenarioEnvironment
+        assert failed_old_anchor.environment.retained_public_journal == old_prefix
+        assert failed_old_anchor.environment.unresolved_public_action_id == ORDER_TEST_ACTION_ID
+        assert failed_old_anchor.environment.loader_state != "LOADER-READY-RECONFIRMED"
 
 
 def test_a13_actual_package_bound_runtime_binding_keeps_p3_unavailable() -> None:
@@ -1394,6 +1768,16 @@ def test_a14_prep_effect_branches_preserve_the_declared_history_and_successor_sp
             assert after_prep.state.history == before_prep.history
             assert after_prep.environment._state == "LOADER-AFTER-INSPECTION"
             assert after_prep.environment.loader_state == after_inspect.environment.loader_state
+            # CNS is explicitly not dispatched: it must not manufacture a
+            # post-action public prefix or an unresolved execution boundary.
+            assert (
+                after_prep.environment.retained_public_journal
+                == after_inspect.environment.retained_public_journal
+            )
+            assert (
+                after_prep.environment.unresolved_public_action_id
+                == after_inspect.environment.unresolved_public_action_id
+            )
         elif branch == "executedSummaryUnconfirmed":
             assert evidence.resolution_code == "UNKNOWN-EFFECT"
             assert after_prep.state.context.q_status == "UNKNOWN"
@@ -1401,6 +1785,13 @@ def test_a14_prep_effect_branches_preserve_the_declared_history_and_successor_sp
             assert after_prep.environment._state == "LOADER-AFTER-PREP"
             assert after_prep.environment.loader_state == "LOADER-READY-WINDOW-EXECUTED-UNCONFIRMED"
             assert after_prep.state.history.hypotheses == before_prep.history.hypotheses
+            prep_material = next(
+                item
+                for item in after_prep.environment.public_materials
+                if item.action_id == PREP_ACTION_ID
+            )
+            assert after_prep.environment.retained_public_journal == prep_material.journal
+            assert after_prep.environment.unresolved_public_action_id is None
         else:
             assert evidence.resolution_code == "COMMIT"
             assert after_prep.state.context.q_status == "KNOWN"
@@ -1609,6 +2000,8 @@ def test_a15_explicit_continuation_preserves_post_dispatch_state_then_recovers_w
         assert failed_recover.state.history.hypotheses == unknown.state.history.hypotheses
         assert failed_recover.state.context.current_summary != initial_context["currentSummary"]
         assert type(failed_recover.environment) is _LoaderScenarioEnvironment
+        assert failed_recover.environment.retained_public_journal == retained_journal
+        assert failed_recover.environment.unresolved_public_action_id is None
         assert failed_recover.environment.loader_state != "LOADER-READY-RECONFIRMED"
 
     recovered = session.step(unknown.state, unknown.environment)
