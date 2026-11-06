@@ -358,6 +358,7 @@ def _project_public_summary(
     *,
     correlation_id: str,
     material: _ActionPublicMaterial | None,
+    retained_prefix: tuple[_PublicJournalEvent, ...] = (),
 ) -> _PublicProjection:
     """Derive one A-stage public result from journal + receipt material.
 
@@ -383,7 +384,9 @@ def _project_public_summary(
         and receipt.prefix_end == 0
     )
     ordinary_prefix = (
-        receipt.prefix_start == 1
+        isinstance(receipt.prefix_start, int)
+        and not isinstance(receipt.prefix_start, bool)
+        and receipt.prefix_start == 1
         and isinstance(receipt.prefix_end, int)
         and not isinstance(receipt.prefix_end, bool)
         and receipt.prefix_end >= 1
@@ -400,6 +403,11 @@ def _project_public_summary(
 
     journal = material.journal
     sequence_numbers = [event.sequence_number for event in journal]
+    expected_sequence_numbers = (
+        []
+        if canonical_empty_prefix
+        else list(range(receipt.prefix_start, receipt.prefix_end + 1))
+    )
     if (
         any(
             event.session_id != request.session_id
@@ -414,6 +422,7 @@ def _project_public_summary(
         )
         or sequence_numbers != sorted(sequence_numbers)
         or len(sequence_numbers) != len(set(sequence_numbers))
+        or sequence_numbers != expected_sequence_numbers
         or receipt.prefix_end != (sequence_numbers[-1] if sequence_numbers else 0)
     ):
         return _unconfirmed_projection()
@@ -450,16 +459,31 @@ def _project_public_summary(
         wrq = first_position("EV_DL_WRQ_LUR")
         if wrq is None:
             return _unconfirmed_projection()
-        matching_acks = positions_after("EV_TH_ACK_LUR", wrq)
         data_after_wrq = positions_after("EV_DL_DATA_LUR", wrq)
-        if not matching_acks or not data_after_wrq:
+        if not data_after_wrq:
             return _unconfirmed_projection()
-        ack = matching_acks[0]
         data = data_after_wrq[0]
-        observable = "DATA-BEFORE-MATCHING-ACK" if data < ack else "WRQ-ACK-DATA-IN-ORDER"
+        matching_ack_precedes_data = any(
+            wrq < ack < data
+            for ack in positions_after("EV_TH_ACK_LUR", wrq)
+        )
+        observable = (
+            "WRQ-ACK-DATA-IN-ORDER"
+            if matching_ack_precedes_data
+            else "DATA-BEFORE-MATCHING-ACK"
+        )
         return _projection_outcome(action, observable)
     if request.action_id == RECOVER_ACTION_ID:
-        if first_position("RECOVER-READY-READBACK") is None:
+        if not retained_prefix:
+            return _unconfirmed_projection()
+        prefix_length = len(retained_prefix)
+        extension = journal[prefix_length:]
+        if (
+            journal[:prefix_length] != retained_prefix
+            or len(extension) != 1
+            or extension[0].event_id != "RECOVER-READY-READBACK"
+            or extension[0].sequence_number != retained_prefix[-1].sequence_number + 1
+        ):
             return _unconfirmed_projection()
         return _projection_outcome(action, "RECOVER-READY-READBACK")
     return _unconfirmed_projection()
@@ -546,6 +570,7 @@ class _LoaderScenarioEnvironment(SyntheticEnvironment):
 
     correlation_id: str = ""
     public_materials: tuple[_ActionPublicMaterial, ...] = ()
+    retained_public_journal: tuple[_PublicJournalEvent, ...] = ()
     visible_evidence_refs: tuple[str, ...] = ()
     loader_state: str = ""
     target_hardware_state: str = ""
@@ -558,6 +583,7 @@ class _LoaderScenarioEnvironment(SyntheticEnvironment):
         *,
         state: str | None = None,
         pending: VisibleExecutionRecord | None = None,
+        retained_public_journal: tuple[_PublicJournalEvent, ...] | None = None,
         evidence_refs: tuple[str, ...] | None = None,
         loader_state: str | None = None,
         target_hardware_state: str | None = None,
@@ -570,6 +596,11 @@ class _LoaderScenarioEnvironment(SyntheticEnvironment):
             _pending_delivery=pending,
             correlation_id=self.correlation_id,
             public_materials=self.public_materials,
+            retained_public_journal=(
+                self.retained_public_journal
+                if retained_public_journal is None
+                else retained_public_journal
+            ),
             visible_evidence_refs=(
                 self.visible_evidence_refs if evidence_refs is None else evidence_refs
             ),
@@ -603,12 +634,15 @@ class _LoaderScenarioEnvironment(SyntheticEnvironment):
     def execute(self, request: ExecutionRequest) -> EnvironmentExecution:
         execution = super().execute(request)
         record = execution.record
+        material = self._material(request.action_id)
         projection = _project_public_summary(
             _scenario_package(),
             request,
             correlation_id=self.correlation_id,
-            material=self._material(request.action_id),
+            material=material,
+            retained_prefix=self.retained_public_journal,
         )
+        retained_public_journal = self.retained_public_journal
         ready_receipt = self.current_session_ready_receipt
         loader_state = self.loader_state
         target_state = self.target_hardware_state
@@ -681,8 +715,15 @@ class _LoaderScenarioEnvironment(SyntheticEnvironment):
                 loader_state = "LOADER-READY-RECONFIRMED"
                 target_state = "TH-READY-READBACK-RETAINED"
 
+        # Each admitted action supplies one immutable, completed public prefix.
+        # The next Recover may only extend the actual prefix retained here; it
+        # cannot replace it with an independently authored read-back snapshot.
+        if projection.confirmed and material is not None:
+            retained_public_journal = material.journal
+
         successor = self._next(
             state=execution.successor._state,
+            retained_public_journal=retained_public_journal,
             evidence_refs=self.visible_evidence_refs + (record.evidence_ref,),
             loader_state=loader_state,
             target_hardware_state=target_state,
@@ -1078,6 +1119,44 @@ def test_a12b_invalid_public_receipts_become_unknown_without_a_summary_commit() 
             current.journal,
             replace(current.receipt, prefix_end=0),
         ),
+        # A completed receipt claims a closed [1, 2] prefix, but the first
+        # available event is 2.  The projector must not treat this as a
+        # generic "no WRQ" observation and silently shrink H.
+        _ActionPublicMaterial(
+            INSPECT_ACTION_ID,
+            (replace(current.journal[0], sequence_number=2),),
+            replace(current.receipt, prefix_start=1, prefix_end=2),
+        ),
+        # The same witness with a missing middle event: a receipt for [1, 3]
+        # cannot be confirmed from journal entries 1 and 3 alone.
+        _ActionPublicMaterial(
+            INSPECT_ACTION_ID,
+            (
+                current.journal[0],
+                replace(current.journal[0], sequence_number=3),
+            ),
+            replace(current.receipt, prefix_start=1, prefix_end=3),
+        ),
+        # Nor may a receipt for [1, 2] accept a prefix with its endpoint
+        # absent, even though the remaining event happens to support no WRQ.
+        _ActionPublicMaterial(
+            INSPECT_ACTION_ID,
+            current.journal,
+            replace(current.receipt, prefix_start=1, prefix_end=2),
+        ),
+        _ActionPublicMaterial(
+            INSPECT_ACTION_ID,
+            (
+                current.journal[0],
+                replace(current.journal[0], sequence_number=1),
+            ),
+            replace(current.receipt, prefix_start=1, prefix_end=1),
+        ),
+        _ActionPublicMaterial(
+            INSPECT_ACTION_ID,
+            (replace(current.journal[0], sequence_number=3),),
+            replace(current.receipt, prefix_start=1, prefix_end=2),
+        ),
     )
     for invalid in invalid_materials:
         result, _session, _environment, _model = _inspection_result(
@@ -1093,6 +1172,141 @@ def test_a12b_invalid_public_receipts_become_unknown_without_a_summary_commit() 
         assert result.state.history.hypotheses == frozenset({"NORMAL", "EARLY-WRQ", "EARLY-DATA"})
         assert type(result.environment) is _LoaderScenarioEnvironment
         assert result.environment._state == "LOADER-AFTER-INSPECTION"
+
+
+def test_a12c_order_projection_classifies_first_data_without_matching_ack_as_early_data() -> None:
+    """Exercise both normal and early order witnesses through ReferenceSession.
+
+    This is deliberately a public-journal seam test, not a simulated timeout.
+    A completed prefix that reaches DATA before a matching ACK establishes the
+    EARLY-DATA observation whether or not a later ACK is present; absent WRQ
+    or absent DATA instead leaves the result UNKNOWN.
+    """
+
+    package = _scenario_package()
+    binding, model = _scenario_runtime_parts(package, include_recover=True)
+
+    def run_order_case(
+        case_id: str,
+        event_ids: tuple[str, ...],
+    ) -> object:
+        session_id = f"scenario-order-{case_id}"
+        correlation_id = "scenario-current-lur-start"
+        materials = _public_materials(
+            package,
+            session_id=session_id,
+            correlation_id=correlation_id,
+        )
+        base = next(item for item in materials if item.action_id == ORDER_TEST_ACTION_ID)
+        assert base.receipt is not None
+        order_material = _ActionPublicMaterial(
+            ORDER_TEST_ACTION_ID,
+            tuple(
+                _PublicJournalEvent(session_id, correlation_id, index, event_id)
+                for index, event_id in enumerate(event_ids, start=1)
+            ),
+            replace(base.receipt, prefix_start=1, prefix_end=len(event_ids)),
+        )
+        environment = _scenario_environment(
+            package,
+            model,
+            session_id=session_id,
+            correlation_id=correlation_id,
+            public_materials=_replace_material(materials, order_material),
+        )
+        session = ReferenceSession(
+            binding=binding,
+            model=model,
+            session_id=session_id,
+            run_id=session_id,
+            initial_summary="SCENE-ENTRY",
+            resources=ResourceState.rounds(4),
+            retry_cap=4,
+        )
+        inspected = session.step(session.initial_state, environment)
+        prepared = session.step(inspected.state, inspected.environment)
+        assert prepared.state.context.current_summary == "Q-TARGET-READY"
+        return session.step(prepared.state, prepared.environment)
+
+    normal = run_order_case(
+        "ack-before-data",
+        (
+            "EV_DL_OFFER_LIST",
+            "EV_TH_LUS0001",
+            "EV_DL_WRQ_LUR",
+            "EV_TH_ACK_LUR",
+            "EV_DL_DATA_LUR",
+        ),
+    )
+    normal_evidence = normal.state.evidence[-1]
+    # A singleton is a normal finite-session stop, not a timeout or a FAIL.
+    assert normal.stop_reason == "Stop-Singleton"
+    assert normal_evidence.snapshot.action_id == ORDER_TEST_ACTION_ID
+    assert normal_evidence.execution.observable == "WRQ-ACK-DATA-IN-ORDER"
+    assert normal_evidence.resolution_code == "COMMIT"
+    assert normal.state.context.q_status == "KNOWN"
+    assert normal.state.history.hypotheses == frozenset({"NORMAL"})
+
+    for case_id, event_ids in (
+        (
+            "data-before-ack",
+            (
+                "EV_DL_OFFER_LIST",
+                "EV_TH_LUS0001",
+                "EV_DL_WRQ_LUR",
+                "EV_DL_DATA_LUR",
+            ),
+        ),
+        (
+            "data-before-late-ack",
+            (
+                "EV_DL_OFFER_LIST",
+                "EV_TH_LUS0001",
+                "EV_DL_WRQ_LUR",
+                "EV_DL_DATA_LUR",
+                "EV_TH_ACK_LUR",
+            ),
+        ),
+    ):
+        early = run_order_case(case_id, event_ids)
+        early_evidence = early.state.evidence[-1]
+        # A later ACK cannot rewrite the already observed DATA-first order.
+        assert early.stop_reason == "Stop-Singleton"
+        assert early_evidence.execution.observable == "DATA-BEFORE-MATCHING-ACK"
+        assert early_evidence.resolution_code == "COMMIT"
+        assert early.state.context.q_status == "KNOWN"
+        assert early.state.context.current_summary == "Q-LUR-ORDER-ASSESSED"
+        assert early.state.history.hypotheses == frozenset({"EARLY-DATA"})
+
+    for case_id, event_ids in (
+        (
+            "missing-wrq",
+            (
+                "EV_DL_OFFER_LIST",
+                "EV_TH_LUS0001",
+                "EV_TH_ACK_LUR",
+                "EV_DL_DATA_LUR",
+            ),
+        ),
+        (
+            "incomplete-before-data",
+            (
+                "EV_DL_OFFER_LIST",
+                "EV_TH_LUS0001",
+                "EV_DL_WRQ_LUR",
+                "EV_TH_ACK_LUR",
+            ),
+        ),
+    ):
+        unconfirmed = run_order_case(case_id, event_ids)
+        unconfirmed_evidence = unconfirmed.state.evidence[-1]
+        assert unconfirmed.stop_reason is None
+        assert unconfirmed_evidence.execution.observable is None
+        assert unconfirmed_evidence.resolution_code == "UNKNOWN-EFFECT"
+        assert unconfirmed.state.context.q_status == "UNKNOWN"
+        assert unconfirmed.state.context.current_summary is None
+        assert unconfirmed.state.history.hypotheses == frozenset({"NORMAL", "EARLY-DATA"})
+        assert all("NO-RESPONSE" not in diagnostic.code for diagnostic in unconfirmed.diagnostics)
 
 
 def test_a13_actual_package_bound_runtime_binding_keeps_p3_unavailable() -> None:
@@ -1299,6 +1513,7 @@ def test_a15_explicit_continuation_preserves_post_dispatch_state_then_recovers_w
     assert set(unknown_contract["mayHaveVisibleEvents"]) <= {
         event.event_id for event in trigger_material.journal
     }
+    assert unknown.environment.retained_public_journal == trigger_material.journal
     assert unknown_contract["sessionDisposition"] == (
         "UNKNOWN-PRESERVE-ACTUAL-SUCCESSOR-AND-POST-DISPATCH-JOURNAL"
     )
@@ -1316,38 +1531,85 @@ def test_a15_explicit_continuation_preserves_post_dispatch_state_then_recovers_w
     assert set(unknown_contract["recoverRequiredPublicEvidence"]) == {
         "CURRENT-SESSION-READY-READBACK",
         recover_receipt_id,
-        "RETAINED-CURRENT-SESSION-JOURNAL-PREDICATE",
+        "EXACT-RETAINED-POST-DISPATCH-PUBLIC-PREFIX",
+        "RECOVER-READY-READBACK-ONLY-EXTENSION",
     }
+    assert unknown_contract["targetAndSummaryConfirmation"] == (
+        "SEPARATE-REQUIRED-NO-REWIND-OR-REPLAY"
+    )
     assert recover_material.receipt.session_id == session_id
     assert recover_material.receipt.correlation_id == unknown.environment.correlation_id
-    assert any(event.event_id == "RECOVER-READY-READBACK" for event in recover_material.journal)
-
-    # A missing public Recover read-back is a real session negative: S8/S9
-    # cannot make it KNOWN or rewind it to the inherited Q-PRE context.
-    missing_readback_journal = tuple(
-        event for event in recover_material.journal
-        if event.event_id != "RECOVER-READY-READBACK"
-    )
-    missing_readback = _ActionPublicMaterial(
-        RECOVER_ACTION_ID,
-        missing_readback_journal,
-        replace(recover_material.receipt, prefix_end=len(missing_readback_journal)),
-    )
-    failed_environment = replace(
-        unknown.environment,
-        public_materials=_replace_material(
-            unknown.environment.public_materials, missing_readback,
+    retained_journal = unknown.environment.retained_public_journal
+    assert recover_material.journal[:len(retained_journal)] == retained_journal
+    assert recover_material.journal[len(retained_journal):] == (
+        _PublicJournalEvent(
+            session_id,
+            unknown.environment.correlation_id,
+            retained_journal[-1].sequence_number + 1,
+            "RECOVER-READY-READBACK",
         ),
     )
-    failed_recover = session.step(unknown.state, failed_environment)
-    failed_evidence = failed_recover.state.evidence[-1]
-    assert failed_evidence.snapshot.action_id == RECOVER_ACTION_ID
-    assert failed_evidence.committed is False
-    assert failed_evidence.resolution_code == "RECOVER-TARGET-UNCONFIRMED"
-    assert failed_recover.state.context.q_status == unknown_contract["recoverEntryQStatus"]
-    assert failed_recover.state.context.current_summary is None
-    assert failed_recover.state.history.hypotheses == unknown.state.history.hypotheses
-    assert failed_recover.state.context.current_summary != initial_context["currentSummary"]
+
+    def recover_material_for(journal: tuple[_PublicJournalEvent, ...]) -> _ActionPublicMaterial:
+        return _ActionPublicMaterial(
+            RECOVER_ACTION_ID,
+            journal,
+            replace(recover_material.receipt, prefix_start=1, prefix_end=len(journal)),
+        )
+
+    # Every variant below has a syntactically complete current-session receipt.
+    # They fail because Recover must extend the actual retained post-dispatch
+    # prefix, not because the test merely omitted a receipt.
+    missing_readback = recover_material_for(retained_journal)
+    readback_only = recover_material_for((
+        _PublicJournalEvent(
+            session_id,
+            unknown.environment.correlation_id,
+            1,
+            "RECOVER-READY-READBACK",
+        ),
+    ))
+    cropped_prefix = recover_material_for(tuple(
+        replace(event, sequence_number=index)
+        for index, event in enumerate(recover_material.journal[1:], start=1)
+    ))
+    replaced_prefix = recover_material_for(tuple(
+        replace(event, event_id="EV_DL_OFFER_LIST-REPLACED") if index == 1 else event
+        for index, event in enumerate(recover_material.journal)
+    ))
+    reordered_prefix = recover_material_for(tuple(
+        replace(event, event_id=(
+            recover_material.journal[2].event_id if index == 1
+            else recover_material.journal[1].event_id if index == 2
+            else event.event_id
+        ))
+        for index, event in enumerate(recover_material.journal)
+    ))
+
+    for invalid_material in (
+        missing_readback,
+        readback_only,
+        cropped_prefix,
+        replaced_prefix,
+        reordered_prefix,
+    ):
+        failed_environment = replace(
+            unknown.environment,
+            public_materials=_replace_material(
+                unknown.environment.public_materials, invalid_material,
+            ),
+        )
+        failed_recover = session.step(unknown.state, failed_environment)
+        failed_evidence = failed_recover.state.evidence[-1]
+        assert failed_evidence.snapshot.action_id == RECOVER_ACTION_ID
+        assert failed_evidence.committed is False
+        assert failed_evidence.resolution_code == "RECOVER-TARGET-UNCONFIRMED"
+        assert failed_recover.state.context.q_status == unknown_contract["recoverEntryQStatus"]
+        assert failed_recover.state.context.current_summary is None
+        assert failed_recover.state.history.hypotheses == unknown.state.history.hypotheses
+        assert failed_recover.state.context.current_summary != initial_context["currentSummary"]
+        assert type(failed_recover.environment) is _LoaderScenarioEnvironment
+        assert failed_recover.environment.loader_state != "LOADER-READY-RECONFIRMED"
 
     recovered = session.step(unknown.state, unknown.environment)
     recover_outcome = _outcome(recover_action, "RECOVER-READY-READBACK")
@@ -1362,7 +1624,6 @@ def test_a15_explicit_continuation_preserves_post_dispatch_state_then_recovers_w
     assert recovered.environment.current_session_ready_receipt == recover_receipt_id
     result = recovered.state.evidence[-1].execution.prep_recover
     assert isinstance(result, PrepRecoverResult)
-    assert unknown_contract["targetAndSummaryConfirmation"] == "SEPARATE-REQUIRED"
     assert result.target_confirmed is True and result.summary_confirmed is True
     assert unknown_contract["rewindProhibited"] == f"NO-REWIND-TO-{initial_context['currentSummary']}"
     assert recovered.state.context.current_summary != initial_context["currentSummary"]

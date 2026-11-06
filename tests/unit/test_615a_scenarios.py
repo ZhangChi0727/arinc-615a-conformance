@@ -340,6 +340,12 @@ def test_a06e_public_projection_prep_branches_and_unknown_recover_context_are_co
     def prep(data: dict) -> dict:
         return next(row for row in data["actionLibrary"] if row["id"] == "ACT-PREP-ENTER-READY-WINDOW")
 
+    def inspect(data: dict) -> dict:
+        return next(row for row in data["actionLibrary"] if row["id"] == "ACT-INSPECT-NO-WRQ-BEFORE-READY")
+
+    def recover(data: dict) -> dict:
+        return next(row for row in data["actionLibrary"] if row["id"] == "ACT-RECOVER-RECONFIRM-READY")
+
     def unknown_recover_case(data: dict) -> dict:
         return next(row for row in data["cases"] if row["id"] == "CASE-UNKNOWN-RECOVER-CONTINUATION")
 
@@ -348,6 +354,18 @@ def test_a06e_public_projection_prep_branches_and_unknown_recover_context_are_co
         for error in errors_for(
             lambda data: prep(data)["summaryDerivation"]["publicEvidenceProjection"].update(
                 completionReceipt="FORGED-PUBLIC-RECEIPT"
+            )
+        )
+    )
+    # A receipt alone is not enough: every ordinary action projection is a
+    # contiguous closed public prefix.  The seam exercises the corresponding
+    # missing-boundary cases, while this test prevents the package/checker
+    # contract from silently returning to a merely receipt-bounded range.
+    assert any(
+        "public evidence projection differs" in error
+        for error in errors_for(
+            lambda data: inspect(data)["summaryDerivation"]["publicEvidenceProjection"].update(
+                inspectedRange="RECEIPT-BOUNDED-PREFIX"
             )
         )
     )
@@ -370,6 +388,25 @@ def test_a06e_public_projection_prep_branches_and_unknown_recover_context_are_co
         for error in errors_for(
             lambda data: unknown_recover_case(data)["unknownRecoverContract"].update(
                 targetAndSummaryConfirmation="FORGED-RECOVER-CONFIRMATION"
+            )
+        )
+    )
+    assert any(
+        "UNKNOWN Recover contract must retain" in error
+        for error in errors_for(
+            lambda data: unknown_recover_case(data)["unknownRecoverContract"].update(
+                recoverRequiredPublicEvidence=[
+                    "CURRENT-SESSION-READY-READBACK",
+                    "RECOVER-READY-READBACK-COMPLETED",
+                ]
+            )
+        )
+    )
+    assert any(
+        "detailed action/observation/cost contract differs" in error
+        for error in errors_for(
+            lambda data: recover(data)["inspection"].update(
+                journalPredicate="CURRENT-SESSION-READY-READBACK-ONLY"
             )
         )
     )
@@ -422,6 +459,21 @@ def test_a06d_scope_action_lifecycle_experiment_and_private_boundary_contracts_a
         ),
     ):
         assert any(error.startswith("ACTION:") for error in errors_for(mutate))
+
+    # The normal and early-DATA branches deliberately have distinct public
+    # order predicates.  Both must remain controlled rather than allowing a
+    # later ACK to rewrite the first DATA-after-WRQ observation.
+    for outcome_index in (0, 1):
+        assert any(
+            "detailed action/observation/cost contract differs" in error
+            for error in errors_for(
+                lambda data, outcome_index=outcome_index: action_row(
+                    data, "ACT-TEST-ACK-BEFORE-DATA"
+                )["possibleOutcomes"][outcome_index].update(
+                    summaryConfirmedWhen="FORGED-ORDER-CONFIRMATION"
+                )
+            )
+        )
 
     for mutate in (
         lambda data: data["lifecycle"]["fullReset"].update(successEvidence="FORGED-EVIDENCE"),
@@ -657,6 +709,26 @@ def test_a09b_projection_branch_and_unknown_recover_view_fields_are_rendered_in_
     chinese_actions = top_level_section(chinese, "## 受控动作")
     english_cases = top_level_section(english, "## Scenario entry and continuation contexts")
     chinese_cases = top_level_section(chinese, "## 场景入口与续接上下文")
+    order = next(row for row in PACKAGE["actionLibrary"] if row["id"] == "ACT-TEST-ACK-BEFORE-DATA")
+    unknown = next(row for row in PACKAGE["cases"] if row["id"] == "CASE-UNKNOWN-RECOVER-CONTINUATION")
+
+    # The generated bilingual review view is the human-facing counterpart to
+    # the controlled prefix/order/recovery contracts.  Keep each field in its
+    # own language/section instead of merely proving that a token exists
+    # somewhere in the whole artifact.
+    inspected_range = order["summaryDerivation"]["publicEvidenceProjection"]["inspectedRange"]
+    assert inspected_range == "RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX"
+    assert inspected_range in english_actions and inspected_range in chinese_actions
+    for outcome in order["possibleOutcomes"]:
+        assert outcome["summaryConfirmedWhen"] in english_actions
+        assert outcome["summaryConfirmedWhen"] not in chinese_actions
+        assert outcome["summaryConfirmedWhenZh"] in chinese_actions
+        assert outcome["summaryConfirmedWhenZh"] not in english_actions
+    for evidence_id in unknown["unknownRecoverContract"]["recoverRequiredPublicEvidence"]:
+        assert evidence_id in english_cases
+        assert evidence_id in chinese_cases
+    confirmation = unknown["unknownRecoverContract"]["targetAndSummaryConfirmation"]
+    assert confirmation in english_cases and confirmation in chinese_cases
 
     changed = copy.deepcopy(PACKAGE)
     prep = next(row for row in changed["actionLibrary"] if row["id"] == "ACT-PREP-ENTER-READY-WINDOW")
@@ -679,9 +751,28 @@ def test_a09b_projection_branch_and_unknown_recover_view_fields_are_rendered_in_
     assert changed_chinese_actions != chinese_actions
 
     changed = copy.deepcopy(PACKAGE)
+    order = next(row for row in changed["actionLibrary"] if row["id"] == "ACT-TEST-ACK-BEFORE-DATA")
+    order["summaryDerivation"]["publicEvidenceProjection"]["inspectedRange"] = "ORDER-PREFIX-VIEW-DRIFT"
+    order["possibleOutcomes"][0]["summaryConfirmedWhen"] = "Normal order English view drift."
+    order["possibleOutcomes"][1]["summaryConfirmedWhenZh"] = "早到 DATA 中文视图漂移。"
+    changed_rendered = reader.render(changed)
+    changed_english, changed_chinese = changed_rendered.split("# 中文版", 1)
+    changed_english_actions = top_level_section(changed_english, "## Controlled actions / 受控动作")
+    changed_chinese_actions = top_level_section(changed_chinese, "## 受控动作")
+    assert "ORDER-PREFIX-VIEW-DRIFT" in changed_english_actions
+    assert "ORDER-PREFIX-VIEW-DRIFT" in changed_chinese_actions
+    assert "Normal order English view drift." in changed_english_actions
+    assert "Normal order English view drift." not in changed_chinese_actions
+    assert "早到 DATA 中文视图漂移。" in changed_chinese_actions
+    assert "早到 DATA 中文视图漂移。" not in changed_english_actions
+    assert changed_english_actions != english_actions
+    assert changed_chinese_actions != chinese_actions
+
+    changed = copy.deepcopy(PACKAGE)
     unknown = next(row for row in changed["cases"] if row["id"] == "CASE-UNKNOWN-RECOVER-CONTINUATION")
     unknown["initialContext"]["currentSummary"] = "CASE-CONTEXT-VIEW-DRIFT"
     unknown["unknownRecoverContract"]["targetAndSummaryConfirmation"] = "RECOVER-CONTRACT-VIEW-DRIFT"
+    unknown["unknownRecoverContract"]["recoverRequiredPublicEvidence"][-1] = "RECOVER-PREFIX-VIEW-DRIFT"
     changed_rendered = reader.render(changed)
     changed_english, changed_chinese = changed_rendered.split("# 中文版", 1)
     changed_english_cases = top_level_section(changed_english, "## Scenario entry and continuation contexts")
@@ -690,8 +781,11 @@ def test_a09b_projection_branch_and_unknown_recover_view_fields_are_rendered_in_
     assert "CASE-CONTEXT-VIEW-DRIFT" in changed_chinese_cases
     assert "RECOVER-CONTRACT-VIEW-DRIFT" in changed_english_cases
     assert "RECOVER-CONTRACT-VIEW-DRIFT" in changed_chinese_cases
+    assert "RECOVER-PREFIX-VIEW-DRIFT" in changed_english_cases
+    assert "RECOVER-PREFIX-VIEW-DRIFT" in changed_chinese_cases
     assert "CASE-CONTEXT-VIEW-DRIFT" not in english_actions
     assert "RECOVER-CONTRACT-VIEW-DRIFT" not in chinese_actions
+    assert "RECOVER-PREFIX-VIEW-DRIFT" not in english_actions
     assert changed_english_cases != english_cases
     assert changed_chinese_cases != chinese_cases
 

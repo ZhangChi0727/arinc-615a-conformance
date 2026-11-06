@@ -589,7 +589,7 @@
       "sourceRelationIds": [
         "SRC-LUS-READY"
       ],
-      "visibleEvidence": "Current-session public ready read-back, its public receipt and the prior UNKNOWN-effect evidence identity.",
+      "visibleEvidence": "Exact retained current-session post-dispatch public prefix, followed only by the current ready read-back and its completed public receipt.",
       "existingInterfaceIds": [
         "IF-EXECUTE-RECORD",
         "IF-PREP-RECOVER",
@@ -676,7 +676,7 @@
           "sessionBinding": "CURRENT-SESSION",
           "correlationBinding": "CURRENT-OPERATION-CORRELATION",
           "ordering": "STABLE-SEQUENCE-NUMBER",
-          "inspectedRange": "RECEIPT-BOUNDED-PREFIX",
+          "inspectedRange": "RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX",
           "completionReceipt": "INSPECT-NO-WRQ-BEFORE-READY-COMPLETED",
           "receiptMustBeCompleted": true,
           "invalidOrUnconfirmedDisposition": "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER"
@@ -753,7 +753,7 @@
           "sessionBinding": "CURRENT-SESSION",
           "correlationBinding": "CURRENT-OPERATION-CORRELATION",
           "ordering": "STABLE-SEQUENCE-NUMBER",
-          "inspectedRange": "RECEIPT-BOUNDED-PREFIX",
+          "inspectedRange": "RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX",
           "completionReceipt": "TH-LUS0001-READY-RECEIPT",
           "receiptMustBeCompleted": true,
           "invalidOrUnconfirmedDisposition": "EXECUTED-UNCONFIRMED-SUMMARY-REQUIRES-UNKNOWN"
@@ -844,7 +844,7 @@
       "historyDisposition": "SUBMIT-CONFIRMED-SUMMARY-THROUGH-IF-HIST-UPDATE",
       "inspection": {
         "completionReceipt": "LUR-ORDER-CHECK-COMPLETED",
-        "journalPredicate": "EV_DL_WRQ_LUR then matching EV_TH_ACK_LUR before EV_DL_DATA_LUR",
+        "journalPredicate": "EV_DL_WRQ_LUR followed either by matching EV_TH_ACK_LUR before EV_DL_DATA_LUR, or by EV_DL_DATA_LUR before any matching ACK",
         "finiteHorizonTicks": 3,
         "isProtocolNoResponseVerdict": false,
         "fabricatedProtocolResponse": false
@@ -864,7 +864,7 @@
         "sessionBinding": "CURRENT-SESSION",
         "correlationBinding": "CURRENT-OPERATION-CORRELATION",
         "ordering": "STABLE-SEQUENCE-NUMBER",
-        "inspectedRange": "RECEIPT-BOUNDED-PREFIX",
+        "inspectedRange": "RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX",
         "completionReceipt": "LUR-ORDER-CHECK-COMPLETED",
         "receiptMustBeCompleted": true,
         "invalidOrUnconfirmedDisposition": "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER"
@@ -874,8 +874,8 @@
         {
           "observable": "WRQ-ACK-DATA-IN-ORDER",
           "postSummary": "Q-LUR-ORDER-ASSESSED",
-          "summaryConfirmedWhen": "The bounded public order check completes for the current operation correlation.",
-          "summaryConfirmedWhenZh": "当前操作关联的有界公开顺序检查完成时，才确认摘要。",
+          "summaryConfirmedWhen": "The completed current-correlation prefix contains a matching ACK before its first DATA after WRQ.",
+          "summaryConfirmedWhenZh": "已完成的当前操作关联前缀在 WRQ 后的首个 DATA 之前包含匹配 ACK 时，才确认摘要。",
           "compatibleHypotheses": [
             "NORMAL"
           ]
@@ -883,8 +883,8 @@
         {
           "observable": "DATA-BEFORE-MATCHING-ACK",
           "postSummary": "Q-LUR-ORDER-ASSESSED",
-          "summaryConfirmedWhen": "The bounded public order check completes for the current operation correlation.",
-          "summaryConfirmedWhenZh": "当前操作关联的有界公开顺序检查完成时，才确认摘要。",
+          "summaryConfirmedWhen": "The completed current-correlation prefix contains the first DATA after WRQ before any matching ACK; a later ACK cannot change that observed order.",
+          "summaryConfirmedWhenZh": "已完成的当前操作关联前缀中，WRQ 后的首个 DATA 先于任何匹配 ACK；后续 ACK 不得改变这一已观测顺序时，才确认摘要。",
           "compatibleHypotheses": [
             "EARLY-DATA"
           ]
@@ -896,7 +896,7 @@
       ],
       "zh": {
         "eligibility": "Q-TARGET-READY 已确认，且会话拥有可负担的 TEST 资源。",
-        "publicStimulus": "驱动一个有界加载器控制步，并检查可见的 LUR WRQ、TH ACK 和加载器 DATA 事件顺序。",
+        "publicStimulus": "驱动一个有界加载器控制步，并检查当前关联的完整前缀中 LUR WRQ、TH ACK 和加载器 DATA 的顺序。",
         "observationMode": "有限日志顺序检查。",
         "successorConfirmation": "通过公开观测与公开摘要确认实际后继。",
         "unconfirmedEffectDisposition": "未确认效果进入 UNKNOWN，且只能经合格 Recover 继续。",
@@ -920,7 +920,7 @@
       "historyDisposition": "SUBMIT-CONFIRMED-SUMMARY-THROUGH-IF-HIST-UPDATE",
       "inspection": {
         "completionReceipt": "RECOVER-READY-READBACK-COMPLETED",
-        "journalPredicate": "CURRENT-SESSION-READY-READBACK-RECORDED",
+        "journalPredicate": "EXACT-RETAINED-POST-DISPATCH-PREFIX-EXTENDED-BY-CURRENT-SESSION-READY-READBACK",
         "finiteHorizonTicks": 1,
         "isProtocolNoResponseVerdict": false,
         "fabricatedProtocolResponse": false
@@ -940,7 +940,7 @@
           "sessionBinding": "CURRENT-SESSION",
           "correlationBinding": "CURRENT-OPERATION-CORRELATION",
           "ordering": "STABLE-SEQUENCE-NUMBER",
-          "inspectedRange": "RECEIPT-BOUNDED-PREFIX",
+          "inspectedRange": "RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX",
           "completionReceipt": "RECOVER-READY-READBACK-COMPLETED",
           "receiptMustBeCompleted": true,
           "invalidOrUnconfirmedDisposition": "DO-NOT-MARK-KNOWN"
@@ -950,8 +950,8 @@
         {
           "observable": "RECOVER-READY-READBACK",
           "postSummary": "Q-TARGET-READY",
-          "summaryConfirmedWhen": "The public recover receipt is current-session bound and agrees with the visible journal.",
-          "summaryConfirmedWhenZh": "公开 Recover 回执绑定当前会话且与可见日志一致时，才确认摘要。",
+          "summaryConfirmedWhen": "The public recover receipt extends the exact retained post-dispatch public prefix only by the current-session ready read-back; it re-confirms ready without replaying or rewinding an earlier action.",
+          "summaryConfirmedWhenZh": "公开 Recover 回执仅以当前会话就绪回读扩展精确保留的调度后公开前缀；它重新确认就绪，但不得重放或回退先前动作时，才确认摘要。",
           "compatibleHypotheses": [
             "NORMAL",
             "EARLY-DATA"
@@ -963,7 +963,7 @@
       ],
       "zh": {
         "eligibility": "SessionContext 为 UNKNOWN，且可在有限对象边界内公开重新确认具名就绪目标。",
-        "publicStimulus": "请求受控的目标硬件就绪回读，并保留其可见日志回执。",
+        "publicStimulus": "请求受控的目标硬件就绪回读，并以该回读仅扩展保留的调度后公开前缀。",
         "observationMode": "可见 Recover 回读。",
         "successorConfirmation": "Recover 目标确认与摘要确认必须分别成立。",
         "unconfirmedEffectDisposition": "确认失败不得标记为 KNOWN。",
@@ -1253,9 +1253,10 @@
       "recoverRequiredPublicEvidence": [
         "CURRENT-SESSION-READY-READBACK",
         "RECOVER-READY-READBACK-COMPLETED",
-        "RETAINED-CURRENT-SESSION-JOURNAL-PREDICATE"
+        "EXACT-RETAINED-POST-DISPATCH-PUBLIC-PREFIX",
+        "RECOVER-READY-READBACK-ONLY-EXTENSION"
       ],
-      "targetAndSummaryConfirmation": "SEPARATE-REQUIRED",
+      "targetAndSummaryConfirmation": "SEPARATE-REQUIRED-NO-REWIND-OR-REPLAY",
       "rewindProhibited": "NO-REWIND-TO-Q-PRE-READY-NO-WRQ",
       "unconfirmedRecoveryDisposition": "REMAIN-UNKNOWN"
     },

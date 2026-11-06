@@ -92,7 +92,7 @@
 | ACT-INSPECT-NO-WRQ-BEFORE-READY | SRC-LUS-READY<br>SRC-LUR-WRQ | Bounded public journal-prefix predicate plus current inspection-completion receipt. | FINITE-TEST-OBSERVATION-AND-HISTORY<br>IF-EXECUTE-RECORD<br>IF-OBS-INTERPRET<br>IF-HIST-UPDATE | WIT-FINITE-NO-WRQ-TEST<br>WIT-PUBLIC-SUMMARY | PROTOCOL-NO-RESPONSE-DEADLINE<br>PHYSICAL-CLOCK-CALIBRATION |
 | ACT-PREP-ENTER-READY-WINDOW | SRC-LUS-READY | Current-session EV_TH_LUS0001 journal event and TH ready receipt. | PREP-RECEIPT-AND-CONFIRMATION<br>IF-EXECUTE-RECORD<br>IF-PREP-RECOVER<br>IF-HIST-UPDATE | WIT-PUBLIC-SUMMARY | FULL-UPLOAD-COMPLETION |
 | ACT-TEST-ACK-BEFORE-DATA | SRC-LUR-WRQ<br>SRC-LUR-ACK<br>SRC-LUR-DATA | Bounded current-correlation journal order for LUR WRQ, matching ACK and LUR DATA, plus the completed order-check receipt. | FINITE-TEST-OBSERVATION-AND-HISTORY<br>IF-EXECUTE-RECORD<br>IF-OBS-INTERPRET<br>IF-HIST-UPDATE | WIT-PUBLIC-SUMMARY | LUR-PAYLOAD-INTEGRITY<br>FULL-UPLOAD-COMPLETION |
-| ACT-RECOVER-RECONFIRM-READY | SRC-LUS-READY | Current-session public ready read-back, its public receipt and the prior UNKNOWN-effect evidence identity. | UNKNOWN-TO-QUALIFIED-RECOVER<br>IF-EXECUTE-RECORD<br>IF-PREP-RECOVER<br>IF-HIST-UPDATE | WIT-SUCCESSOR-AND-RECOVER | PHYSICAL-DEVICE-RECOVERY |
+| ACT-RECOVER-RECONFIRM-READY | SRC-LUS-READY | Exact retained current-session post-dispatch public prefix, followed only by the current ready read-back and its completed public receipt. | UNKNOWN-TO-QUALIFIED-RECOVER<br>IF-EXECUTE-RECORD<br>IF-PREP-RECOVER<br>IF-HIST-UPDATE | WIT-SUCCESSOR-AND-RECOVER | PHYSICAL-DEVICE-RECOVERY |
 
 ## Finite hypothesis domain
 
@@ -117,7 +117,7 @@
 - History disposition: `SUBMIT-CONFIRMED-SUMMARY-THROUGH-IF-HIST-UPDATE`
 - Inspection: completionReceipt=INSPECT-NO-WRQ-BEFORE-READY-COMPLETED; fabricatedProtocolResponse=no; finiteHorizonTicks=1; isProtocolNoResponseVerdict=no; journalPredicate=NO-EV_DL_WRQ_LUR-BEFORE-EV_TH_LUS0001
 - Public summary sources: VISIBLE-JOURNAL-PREFIX<br>INSPECTION-COMPLETION-RECEIPT; prohibited private sources: ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
-- Public-evidence projection contract: completionReceipt=INSPECT-NO-WRQ-BEFORE-READY-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-PREFIX; invalidOrUnconfirmedDisposition=UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=yes; sessionBinding=CURRENT-SESSION
+- Public-evidence projection contract: completionReceipt=INSPECT-NO-WRQ-BEFORE-READY-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX; invalidOrUnconfirmedDisposition=UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=yes; sessionBinding=CURRENT-SESSION
 - Possible outcomes:
 | Observable | Post-summary | Summary confirmed when | Compatible hypotheses |
 |---|---|---|---|
@@ -134,7 +134,7 @@
 - History disposition: `SUBMIT-CONFIRMED-SUMMARY-THROUGH-IF-HIST-UPDATE`
 - Inspection: completionReceipt=TH-LUS0001-READY-RECEIPT; fabricatedProtocolResponse=no; finiteHorizonTicks=1; isProtocolNoResponseVerdict=no; journalPredicate=EV_TH_LUS0001-RECORDED-FOR-CURRENT-SESSION
 - Public summary sources: VISIBLE-JOURNAL-PREFIX<br>TH-LUS0001-READY-RECEIPT; prohibited private sources: ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
-- Public-evidence projection contract: completionReceipt=TH-LUS0001-READY-RECEIPT; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-PREFIX; invalidOrUnconfirmedDisposition=EXECUTED-UNCONFIRMED-SUMMARY-REQUIRES-UNKNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=yes; sessionBinding=CURRENT-SESSION
+- Public-evidence projection contract: completionReceipt=TH-LUS0001-READY-RECEIPT; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX; invalidOrUnconfirmedDisposition=EXECUTED-UNCONFIRMED-SUMMARY-REQUIRES-UNKNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=yes; sessionBinding=CURRENT-SESSION
 - Possible outcomes:
 | Observable | Post-summary | Summary confirmed when | Compatible hypotheses |
 |---|---|---|---|
@@ -155,14 +155,14 @@
 - Successor confirmation: `PUBLIC-OBSERVATION-SUMMARY-CONFIRMATION`
 - Unconfirmed-effect disposition: `UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER`
 - History disposition: `SUBMIT-CONFIRMED-SUMMARY-THROUGH-IF-HIST-UPDATE`
-- Inspection: completionReceipt=LUR-ORDER-CHECK-COMPLETED; fabricatedProtocolResponse=no; finiteHorizonTicks=3; isProtocolNoResponseVerdict=no; journalPredicate=EV_DL_WRQ_LUR then matching EV_TH_ACK_LUR before EV_DL_DATA_LUR
+- Inspection: completionReceipt=LUR-ORDER-CHECK-COMPLETED; fabricatedProtocolResponse=no; finiteHorizonTicks=3; isProtocolNoResponseVerdict=no; journalPredicate=EV_DL_WRQ_LUR followed either by matching EV_TH_ACK_LUR before EV_DL_DATA_LUR, or by EV_DL_DATA_LUR before any matching ACK
 - Public summary sources: VISIBLE-JOURNAL-PREFIX<br>LUR-ORDER-CHECK-COMPLETED; prohibited private sources: ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
-- Public-evidence projection contract: completionReceipt=LUR-ORDER-CHECK-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-PREFIX; invalidOrUnconfirmedDisposition=UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=yes; sessionBinding=CURRENT-SESSION
+- Public-evidence projection contract: completionReceipt=LUR-ORDER-CHECK-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX; invalidOrUnconfirmedDisposition=UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=yes; sessionBinding=CURRENT-SESSION
 - Possible outcomes:
 | Observable | Post-summary | Summary confirmed when | Compatible hypotheses |
 |---|---|---|---|
-| WRQ-ACK-DATA-IN-ORDER | Q-LUR-ORDER-ASSESSED | The bounded public order check completes for the current operation correlation. | NORMAL |
-| DATA-BEFORE-MATCHING-ACK | Q-LUR-ORDER-ASSESSED | The bounded public order check completes for the current operation correlation. | EARLY-DATA |
+| WRQ-ACK-DATA-IN-ORDER | Q-LUR-ORDER-ASSESSED | The completed current-correlation prefix contains a matching ACK before its first DATA after WRQ. | NORMAL |
+| DATA-BEFORE-MATCHING-ACK | Q-LUR-ORDER-ASSESSED | The completed current-correlation prefix contains the first DATA after WRQ before any matching ACK; a later ACK cannot change that observed order. | EARLY-DATA |
 - Non-evaluated obligations: LUR-PAYLOAD-INTEGRITY<br>FULL-UPLOAD-COMPLETION
 
 ### `ACT-RECOVER-RECONFIRM-READY` — RECOVER
@@ -172,13 +172,13 @@
 - Successor confirmation: `TARGET-AND-SUMMARY-CONFIRMED-SEPARATELY`
 - Unconfirmed-effect disposition: `DO-NOT-MARK-KNOWN`
 - History disposition: `SUBMIT-CONFIRMED-SUMMARY-THROUGH-IF-HIST-UPDATE`
-- Inspection: completionReceipt=RECOVER-READY-READBACK-COMPLETED; fabricatedProtocolResponse=no; finiteHorizonTicks=1; isProtocolNoResponseVerdict=no; journalPredicate=CURRENT-SESSION-READY-READBACK-RECORDED
+- Inspection: completionReceipt=RECOVER-READY-READBACK-COMPLETED; fabricatedProtocolResponse=no; finiteHorizonTicks=1; isProtocolNoResponseVerdict=no; journalPredicate=EXACT-RETAINED-POST-DISPATCH-PREFIX-EXTENDED-BY-CURRENT-SESSION-READY-READBACK
 - Public summary sources: VISIBLE-JOURNAL-PREFIX<br>RECOVER-READY-READBACK-COMPLETED; prohibited private sources: ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
-- Public-evidence projection contract: completionReceipt=RECOVER-READY-READBACK-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-PREFIX; invalidOrUnconfirmedDisposition=DO-NOT-MARK-KNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=yes; sessionBinding=CURRENT-SESSION
+- Public-evidence projection contract: completionReceipt=RECOVER-READY-READBACK-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX; invalidOrUnconfirmedDisposition=DO-NOT-MARK-KNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=yes; sessionBinding=CURRENT-SESSION
 - Possible outcomes:
 | Observable | Post-summary | Summary confirmed when | Compatible hypotheses |
 |---|---|---|---|
-| RECOVER-READY-READBACK | Q-TARGET-READY | The public recover receipt is current-session bound and agrees with the visible journal. | NORMAL<br>EARLY-DATA |
+| RECOVER-READY-READBACK | Q-TARGET-READY | The public recover receipt extends the exact retained post-dispatch public prefix only by the current-session ready read-back; it re-confirms ready without replaying or rewinding an earlier action. | NORMAL<br>EARLY-DATA |
 - Non-evaluated obligations: PHYSICAL-DEVICE-RECOVERY
 
 ## Clock, observation, reset and recovery
@@ -221,7 +221,7 @@
 
 | Trigger | Action | Round | May-have visible events | Session disposition | Recover entry q | Required public evidence | Target/summary confirmation | Rewind rule | Unconfirmed Recover |
 |---|---|---|---|---|---|---|---|---|---|
-| POST-DISPATCH-TEST-SUMMARY-CONFIRMATION-FAILURE | ACT-TEST-ACK-BEFORE-DATA | 2 | EV_DL_WRQ_LUR<br>EV_TH_ACK_LUR<br>EV_DL_DATA_LUR | UNKNOWN-PRESERVE-ACTUAL-SUCCESSOR-AND-POST-DISPATCH-JOURNAL | UNKNOWN | CURRENT-SESSION-READY-READBACK<br>RECOVER-READY-READBACK-COMPLETED<br>RETAINED-CURRENT-SESSION-JOURNAL-PREDICATE | SEPARATE-REQUIRED | NO-REWIND-TO-Q-PRE-READY-NO-WRQ | REMAIN-UNKNOWN |
+| POST-DISPATCH-TEST-SUMMARY-CONFIRMATION-FAILURE | ACT-TEST-ACK-BEFORE-DATA | 2 | EV_DL_WRQ_LUR<br>EV_TH_ACK_LUR<br>EV_DL_DATA_LUR | UNKNOWN-PRESERVE-ACTUAL-SUCCESSOR-AND-POST-DISPATCH-JOURNAL | UNKNOWN | CURRENT-SESSION-READY-READBACK<br>RECOVER-READY-READBACK-COMPLETED<br>EXACT-RETAINED-POST-DISPATCH-PUBLIC-PREFIX<br>RECOVER-READY-READBACK-ONLY-EXTENSION | SEPARATE-REQUIRED-NO-REWIND-OR-REPLAY | NO-REWIND-TO-Q-PRE-READY-NO-WRQ | REMAIN-UNKNOWN |
 
 ## Timelines / 时线
 
@@ -366,7 +366,7 @@
 | ACT-INSPECT-NO-WRQ-BEFORE-READY | SRC-LUS-READY<br>SRC-LUR-WRQ | Bounded public journal-prefix predicate plus current inspection-completion receipt. | FINITE-TEST-OBSERVATION-AND-HISTORY<br>IF-EXECUTE-RECORD<br>IF-OBS-INTERPRET<br>IF-HIST-UPDATE | WIT-FINITE-NO-WRQ-TEST<br>WIT-PUBLIC-SUMMARY | PROTOCOL-NO-RESPONSE-DEADLINE<br>PHYSICAL-CLOCK-CALIBRATION | 有限无 WRQ 检查由执行、解释和历史接口消费公开日志／回执；它不评价协议无响应期限。 |
 | ACT-PREP-ENTER-READY-WINDOW | SRC-LUS-READY | Current-session EV_TH_LUS0001 journal event and TH ready receipt. | PREP-RECEIPT-AND-CONFIRMATION<br>IF-EXECUTE-RECORD<br>IF-PREP-RECOVER<br>IF-HIST-UPDATE | WIT-PUBLIC-SUMMARY | FULL-UPLOAD-COMPLETION | 准备动作把当前会话 LUS-0001 公开刺激交给执行、Prep/Recover 和历史接口；仅在摘要确认后提交下一轮历史，不宣称完整上传。 |
 | ACT-TEST-ACK-BEFORE-DATA | SRC-LUR-WRQ<br>SRC-LUR-ACK<br>SRC-LUR-DATA | Bounded current-correlation journal order for LUR WRQ, matching ACK and LUR DATA, plus the completed order-check receipt. | FINITE-TEST-OBSERVATION-AND-HISTORY<br>IF-EXECUTE-RECORD<br>IF-OBS-INTERPRET<br>IF-HIST-UPDATE | WIT-PUBLIC-SUMMARY | LUR-PAYLOAD-INTEGRITY<br>FULL-UPLOAD-COMPLETION | 顺序 TEST 把 WRQ、ACK、DATA 的可见顺序交给执行、解释和历史接口；不评价 LUR 负载完整性。 |
-| ACT-RECOVER-RECONFIRM-READY | SRC-LUS-READY | Current-session public ready read-back, its public receipt and the prior UNKNOWN-effect evidence identity. | UNKNOWN-TO-QUALIFIED-RECOVER<br>IF-EXECUTE-RECORD<br>IF-PREP-RECOVER<br>IF-HIST-UPDATE | WIT-SUCCESSOR-AND-RECOVER | PHYSICAL-DEVICE-RECOVERY | UNKNOWN 后的 Recover 通过执行、Prep/Recover 和历史接口重新确认独立目标与摘要；失败不得产生 KNOWN。 |
+| ACT-RECOVER-RECONFIRM-READY | SRC-LUS-READY | Exact retained current-session post-dispatch public prefix, followed only by the current ready read-back and its completed public receipt. | UNKNOWN-TO-QUALIFIED-RECOVER<br>IF-EXECUTE-RECORD<br>IF-PREP-RECOVER<br>IF-HIST-UPDATE | WIT-SUCCESSOR-AND-RECOVER | PHYSICAL-DEVICE-RECOVERY | UNKNOWN 后的 Recover 通过执行、Prep/Recover 和历史接口重新确认独立目标与摘要；失败不得产生 KNOWN。 |
 
 ## 有限假设域
 
@@ -391,7 +391,7 @@
 - 历史提交：仅将已确认摘要经 IF-HIST-UPDATE 提交给后续历史。
 - 检查：completionReceipt=INSPECT-NO-WRQ-BEFORE-READY-COMPLETED; fabricatedProtocolResponse=否; finiteHorizonTicks=1; isProtocolNoResponseVerdict=否; journalPredicate=NO-EV_DL_WRQ_LUR-BEFORE-EV_TH_LUS0001
 - 摘要来源（公开）：VISIBLE-JOURNAL-PREFIX<br>INSPECTION-COMPLETION-RECEIPT；禁止私有来源：ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
-- 公开证据投影合同：completionReceipt=INSPECT-NO-WRQ-BEFORE-READY-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-PREFIX; invalidOrUnconfirmedDisposition=UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=是; sessionBinding=CURRENT-SESSION
+- 公开证据投影合同：completionReceipt=INSPECT-NO-WRQ-BEFORE-READY-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX; invalidOrUnconfirmedDisposition=UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=是; sessionBinding=CURRENT-SESSION
 - 可能结果：
 | 可见量 | 后继摘要 | 摘要确认条件 | 相容假设 |
 |---|---|---|---|
@@ -408,7 +408,7 @@
 - 历史提交：仅将已确认摘要经 IF-HIST-UPDATE 提交给后续历史。
 - 检查：completionReceipt=TH-LUS0001-READY-RECEIPT; fabricatedProtocolResponse=否; finiteHorizonTicks=1; isProtocolNoResponseVerdict=否; journalPredicate=EV_TH_LUS0001-RECORDED-FOR-CURRENT-SESSION
 - 摘要来源（公开）：VISIBLE-JOURNAL-PREFIX<br>TH-LUS0001-READY-RECEIPT；禁止私有来源：ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
-- 公开证据投影合同：completionReceipt=TH-LUS0001-READY-RECEIPT; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-PREFIX; invalidOrUnconfirmedDisposition=EXECUTED-UNCONFIRMED-SUMMARY-REQUIRES-UNKNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=是; sessionBinding=CURRENT-SESSION
+- 公开证据投影合同：completionReceipt=TH-LUS0001-READY-RECEIPT; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX; invalidOrUnconfirmedDisposition=EXECUTED-UNCONFIRMED-SUMMARY-REQUIRES-UNKNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=是; sessionBinding=CURRENT-SESSION
 - 可能结果：
 | 可见量 | 后继摘要 | 摘要确认条件 | 相容假设 |
 |---|---|---|---|
@@ -424,35 +424,35 @@
 
 ### `ACT-TEST-ACK-BEFORE-DATA` — 有限顺序检查：观察 LUR WRQ、匹配 ACK 与 DATA 的公开顺序，区分正常与提前 DATA。
 - 类别：`TEST`；资格：Q-TARGET-READY 已确认，且会话拥有可负担的 TEST 资源。
-- 公开刺激：驱动一个有界加载器控制步，并检查可见的 LUR WRQ、TH ACK 和加载器 DATA 事件顺序。
+- 公开刺激：驱动一个有界加载器控制步，并检查当前关联的完整前缀中 LUR WRQ、TH ACK 和加载器 DATA 的顺序。
 - 观测模式：有限日志顺序检查。；成本：acquisition=1; computation=1; preparation=0; retry=0
 - 后继确认：通过公开观测与公开摘要确认实际后继。
 - 未确认效果：未确认效果进入 UNKNOWN，且只能经合格 Recover 继续。
 - 历史提交：仅将已确认摘要经 IF-HIST-UPDATE 提交给后续历史。
-- 检查：completionReceipt=LUR-ORDER-CHECK-COMPLETED; fabricatedProtocolResponse=否; finiteHorizonTicks=3; isProtocolNoResponseVerdict=否; journalPredicate=EV_DL_WRQ_LUR then matching EV_TH_ACK_LUR before EV_DL_DATA_LUR
+- 检查：completionReceipt=LUR-ORDER-CHECK-COMPLETED; fabricatedProtocolResponse=否; finiteHorizonTicks=3; isProtocolNoResponseVerdict=否; journalPredicate=EV_DL_WRQ_LUR followed either by matching EV_TH_ACK_LUR before EV_DL_DATA_LUR, or by EV_DL_DATA_LUR before any matching ACK
 - 摘要来源（公开）：VISIBLE-JOURNAL-PREFIX<br>LUR-ORDER-CHECK-COMPLETED；禁止私有来源：ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
-- 公开证据投影合同：completionReceipt=LUR-ORDER-CHECK-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-PREFIX; invalidOrUnconfirmedDisposition=UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=是; sessionBinding=CURRENT-SESSION
+- 公开证据投影合同：completionReceipt=LUR-ORDER-CHECK-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX; invalidOrUnconfirmedDisposition=UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=是; sessionBinding=CURRENT-SESSION
 - 可能结果：
 | 可见量 | 后继摘要 | 摘要确认条件 | 相容假设 |
 |---|---|---|---|
-| WRQ-ACK-DATA-IN-ORDER | Q-LUR-ORDER-ASSESSED | 当前操作关联的有界公开顺序检查完成时，才确认摘要。 | NORMAL |
-| DATA-BEFORE-MATCHING-ACK | Q-LUR-ORDER-ASSESSED | 当前操作关联的有界公开顺序检查完成时，才确认摘要。 | EARLY-DATA |
+| WRQ-ACK-DATA-IN-ORDER | Q-LUR-ORDER-ASSESSED | 已完成的当前操作关联前缀在 WRQ 后的首个 DATA 之前包含匹配 ACK 时，才确认摘要。 | NORMAL |
+| DATA-BEFORE-MATCHING-ACK | Q-LUR-ORDER-ASSESSED | 已完成的当前操作关联前缀中，WRQ 后的首个 DATA 先于任何匹配 ACK；后续 ACK 不得改变这一已观测顺序时，才确认摘要。 | EARLY-DATA |
 - 未评估义务：LUR-PAYLOAD-INTEGRITY<br>FULL-UPLOAD-COMPLETION
 
 ### `ACT-RECOVER-RECONFIRM-READY` — 恢复动作：仅在 UNKNOWN 效果后，用独立的公开就绪回读重新确认目标与摘要；失败不得标记为已知。
 - 类别：`RECOVER`；资格：SessionContext 为 UNKNOWN，且可在有限对象边界内公开重新确认具名就绪目标。
-- 公开刺激：请求受控的目标硬件就绪回读，并保留其可见日志回执。
+- 公开刺激：请求受控的目标硬件就绪回读，并以该回读仅扩展保留的调度后公开前缀。
 - 观测模式：可见 Recover 回读。；成本：acquisition=0; computation=1; preparation=1; retry=0
 - 后继确认：Recover 目标确认与摘要确认必须分别成立。
 - 未确认效果：确认失败不得标记为 KNOWN。
 - 历史提交：仅将已确认摘要经 IF-HIST-UPDATE 提交给后续历史。
-- 检查：completionReceipt=RECOVER-READY-READBACK-COMPLETED; fabricatedProtocolResponse=否; finiteHorizonTicks=1; isProtocolNoResponseVerdict=否; journalPredicate=CURRENT-SESSION-READY-READBACK-RECORDED
+- 检查：completionReceipt=RECOVER-READY-READBACK-COMPLETED; fabricatedProtocolResponse=否; finiteHorizonTicks=1; isProtocolNoResponseVerdict=否; journalPredicate=EXACT-RETAINED-POST-DISPATCH-PREFIX-EXTENDED-BY-CURRENT-SESSION-READY-READBACK
 - 摘要来源（公开）：VISIBLE-JOURNAL-PREFIX<br>RECOVER-READY-READBACK-COMPLETED；禁止私有来源：ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
-- 公开证据投影合同：completionReceipt=RECOVER-READY-READBACK-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-PREFIX; invalidOrUnconfirmedDisposition=DO-NOT-MARK-KNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=是; sessionBinding=CURRENT-SESSION
+- 公开证据投影合同：completionReceipt=RECOVER-READY-READBACK-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX; invalidOrUnconfirmedDisposition=DO-NOT-MARK-KNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=是; sessionBinding=CURRENT-SESSION
 - 可能结果：
 | 可见量 | 后继摘要 | 摘要确认条件 | 相容假设 |
 |---|---|---|---|
-| RECOVER-READY-READBACK | Q-TARGET-READY | 公开 Recover 回执绑定当前会话且与可见日志一致时，才确认摘要。 | NORMAL<br>EARLY-DATA |
+| RECOVER-READY-READBACK | Q-TARGET-READY | 公开 Recover 回执仅以当前会话就绪回读扩展精确保留的调度后公开前缀；它重新确认就绪，但不得重放或回退先前动作时，才确认摘要。 | NORMAL<br>EARLY-DATA |
 - 未评估义务：PHYSICAL-DEVICE-RECOVERY
 
 ## 时钟、观测、复位和恢复
@@ -495,7 +495,7 @@
 
 | 触发 | 动作 | 轮次 | 可能已发生的可见事件 | 会话处置 | Recover 入口 q | 所需公开证据 | 目标／摘要确认 | 回退规则 | 未确认 Recover |
 |---|---|---|---|---|---|---|---|---|---|
-| POST-DISPATCH-TEST-SUMMARY-CONFIRMATION-FAILURE | ACT-TEST-ACK-BEFORE-DATA | 2 | EV_DL_WRQ_LUR<br>EV_TH_ACK_LUR<br>EV_DL_DATA_LUR | UNKNOWN-PRESERVE-ACTUAL-SUCCESSOR-AND-POST-DISPATCH-JOURNAL | UNKNOWN | CURRENT-SESSION-READY-READBACK<br>RECOVER-READY-READBACK-COMPLETED<br>RETAINED-CURRENT-SESSION-JOURNAL-PREDICATE | SEPARATE-REQUIRED | NO-REWIND-TO-Q-PRE-READY-NO-WRQ | REMAIN-UNKNOWN |
+| POST-DISPATCH-TEST-SUMMARY-CONFIRMATION-FAILURE | ACT-TEST-ACK-BEFORE-DATA | 2 | EV_DL_WRQ_LUR<br>EV_TH_ACK_LUR<br>EV_DL_DATA_LUR | UNKNOWN-PRESERVE-ACTUAL-SUCCESSOR-AND-POST-DISPATCH-JOURNAL | UNKNOWN | CURRENT-SESSION-READY-READBACK<br>RECOVER-READY-READBACK-COMPLETED<br>EXACT-RETAINED-POST-DISPATCH-PUBLIC-PREFIX<br>RECOVER-READY-READBACK-ONLY-EXTENSION | SEPARATE-REQUIRED-NO-REWIND-OR-REPLAY | NO-REWIND-TO-Q-PRE-READY-NO-WRQ | REMAIN-UNKNOWN |
 
 ## 场景时线
 
