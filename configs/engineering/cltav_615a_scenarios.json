@@ -326,6 +326,20 @@
       "status": "SOURCE-OBJECT-CANDIDATE-PENDING-INDEPENDENT-REVIEW",
       "sourceRoot": "src/cltav_615a",
       "entryPoint": "cltav_615a.LurStartController",
+      "sourceBinding": {
+        "scheme": "CLTAV-615A-LOADED-SOURCE-SHA256-LF-V1",
+        "files": [
+          "src/cltav_615a/__init__.py",
+          "src/cltav_615a/controller.py",
+          "src/cltav_615a/objects.py",
+          "src/cltav_615a/source_identity.py",
+          "src/cltav_615a/types.py"
+        ],
+        "loadVerification": "MODULE-CODE-EQUALITY-FROZEN-SOURCE-AND-CONSTRUCTOR-DRIFT-CHECK",
+        "auditLinkage": "FROZEN-MANIFEST-IN-ATTEMPT-AUDIT-SHARED-CODE-IDENTITY",
+        "meaning": "B binds the five tracked ordinary source files to the executing module code, freezes their LF-normalized content hashes, and rejects missing or changed source before construction. Reset, installation, activation and attempt audit reference that manifest identity. A caller run label is evaluator-only and cannot replace it; public events contain neither label nor source identity. This is controlled normal-load provenance, not a malicious-code sandbox. C adapter and D distribution binding remain unestablished; a review commit pin complements, not replaces, the B content binding.",
+        "meaningZh": "B 将五个受跟踪普通源码文件与实际执行的模块代码核对，冻结 LF 规范化内容散列，构造前拒绝源码缺失或漂移。复位、安装、激活和尝试审计共同引用该清单身份。调用者运行标签仅限评估方，不能替代源码身份；公开事件不含标签或源码身份。这是受控正常加载的来源核验，不是恶意代码沙箱。C 适配器与 D 分发身份仍未建立；评审提交定位补充而不替代 B 内容绑定。"
+      },
       "requiredAtImplementation": [
         "OBJECT-SOURCE-COMMIT",
         "OBJECT-DISTRIBUTION-IDENTITY",
@@ -333,7 +347,7 @@
       ],
       "notEstablished": "The bounded source-controlled Loader/TH surrogate is available only for direct synthetic engineering validation; no real-IUT identity, CL-TAV adapter, experiment execution, or protocol conformance behavior is established.",
       "notEstablishedZh": "该受控源码 Loader／TH 替身仅用于直接合成工程验证；尚未建立真实 IUT 身份、CL-TAV 适配器、实验执行或协议符合性行为。",
-      "meaningZh": "B 阶段提供受控源码的 Loader／TH 替身，只用于直接合成工程验证；不建立真实 IUT 身份、CL-TAV 适配器、实验执行或协议符合性行为。后续仍须绑定对象源码提交、分发制品身份和适配器源码身份。"
+      "meaningZh": "B 阶段提供具有实际加载源码内容身份的 Loader／TH 替身，只用于直接合成工程验证；不建立真实 IUT 身份、CL-TAV 适配器、实验执行或协议符合性行为。后续交付仍须关联评审源码提交、分发制品身份和适配器源码身份。"
     }
   },
   "sourceRelations": [

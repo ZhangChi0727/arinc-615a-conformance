@@ -72,6 +72,9 @@
 
 - Installation lifetime: `CURRENT-ENGINEERING-ATTEMPT-UNTIL-FULL-RESET`; revocation action: `FULL-RESET-REVOKES-ALL-NAMED-VARIANTS`; revocation evidence: `RESET-READBACK-FAULT-INSTALLATION-STATE-CLEARED`.
 - Identity status: `SOURCE-OBJECT-CANDIDATE-PENDING-INDEPENDENT-REVIEW`; source root: `src/cltav_615a`; direct entry point: `cltav_615a.LurStartController`; downstream implementation must bind: OBJECT-SOURCE-COMMIT<br>OBJECT-DISTRIBUTION-IDENTITY<br>ADAPTER-SOURCE-IDENTITY.
+- B source identity scheme: `CLTAV-615A-LOADED-SOURCE-SHA256-LF-V1`; load verification: `MODULE-CODE-EQUALITY-FROZEN-SOURCE-AND-CONSTRUCTOR-DRIFT-CHECK`; audit linkage: `FROZEN-MANIFEST-IN-ATTEMPT-AUDIT-SHARED-CODE-IDENTITY`.
+- B bound source files: src/cltav_615a/__init__.py<br>src/cltav_615a/controller.py<br>src/cltav_615a/objects.py<br>src/cltav_615a/source_identity.py<br>src/cltav_615a/types.py.
+- B binds the five tracked ordinary source files to the executing module code, freezes their LF-normalized content hashes, and rejects missing or changed source before construction. Reset, installation, activation and attempt audit reference that manifest identity. A caller run label is evaluator-only and cannot replace it; public events contain neither label nor source identity. This is controlled normal-load provenance, not a malicious-code sandbox. C adapter and D distribution binding remain unestablished; a review commit pin complements, not replaces, the B content binding.
 - Not established: The bounded source-controlled Loader/TH surrogate is available only for direct synthetic engineering validation; no real-IUT identity, CL-TAV adapter, experiment execution, or protocol conformance behavior is established.
 
 ## Source-to-model control relations
@@ -345,8 +348,11 @@
 
 - 故障安装只在当前工程尝试中有效；全量 reset 必须撤销全部具名变体，并产生故障安装状态已清除的回读证据。
 - 安装生命周期：`CURRENT-ENGINEERING-ATTEMPT-UNTIL-FULL-RESET`；撤销动作：`FULL-RESET-REVOKES-ALL-NAMED-VARIANTS`；撤销证据：`RESET-READBACK-FAULT-INSTALLATION-STATE-CLEARED`。
-- B 阶段提供受控源码的 Loader／TH 替身，只用于直接合成工程验证；不建立真实 IUT 身份、CL-TAV 适配器、实验执行或协议符合性行为。后续仍须绑定对象源码提交、分发制品身份和适配器源码身份。
+- B 阶段提供具有实际加载源码内容身份的 Loader／TH 替身，只用于直接合成工程验证；不建立真实 IUT 身份、CL-TAV 适配器、实验执行或协议符合性行为。后续交付仍须关联评审源码提交、分发制品身份和适配器源码身份。
 - 身份状态：`SOURCE-OBJECT-CANDIDATE-PENDING-INDEPENDENT-REVIEW`；源码根：`src/cltav_615a`；直接入口：`cltav_615a.LurStartController`；后续实现必须绑定：OBJECT-SOURCE-COMMIT<br>OBJECT-DISTRIBUTION-IDENTITY<br>ADAPTER-SOURCE-IDENTITY。
+- B 源码身份方案：`CLTAV-615A-LOADED-SOURCE-SHA256-LF-V1`；加载核验：`MODULE-CODE-EQUALITY-FROZEN-SOURCE-AND-CONSTRUCTOR-DRIFT-CHECK`；审计关联：`FROZEN-MANIFEST-IN-ATTEMPT-AUDIT-SHARED-CODE-IDENTITY`。
+- B 绑定源码：src/cltav_615a/__init__.py<br>src/cltav_615a/controller.py<br>src/cltav_615a/objects.py<br>src/cltav_615a/source_identity.py<br>src/cltav_615a/types.py。
+- B 将五个受跟踪普通源码文件与实际执行的模块代码核对，冻结 LF 规范化内容散列，构造前拒绝源码缺失或漂移。复位、安装、激活和尝试审计共同引用该清单身份。调用者运行标签仅限评估方，不能替代源码身份；公开事件不含标签或源码身份。这是受控正常加载的来源核验，不是恶意代码沙箱。C 适配器与 D 分发身份仍未建立；评审提交定位补充而不替代 B 内容绑定。
 - 尚未建立：该受控源码 Loader／TH 替身仅用于直接合成工程验证；尚未建立真实 IUT 身份、CL-TAV 适配器、实验执行或协议符合性行为。
 
 ## 来源到模型的控制关系

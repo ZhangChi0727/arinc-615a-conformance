@@ -47,6 +47,10 @@ def isolated_snapshot_repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> t
         target = root / binding["path"]
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
+    for relative in checker.REQUIRED_OBJECT_SOURCE_FILES:
+        target = root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / relative, target)
     subprocess.run(["git", "add", "."], cwd=root, check=True)
     subprocess.run(["git", "commit", "-qm", "accepted authority"], cwd=root, check=True)
     base_commit = _git(root, "rev-parse", "HEAD")
@@ -320,6 +324,91 @@ def test_b01_bounded_object_identity_mapping_fails_closed(
         lambda data: data["objectContract"]["implementationIdentityPlan"].update({field: value})
     )
     assert any(expected in error for error in errors)
+
+
+@pytest.mark.parametrize("failure,diagnostic", (
+    ("untracked", "source must be a tracked ordinary file"),
+    ("missing", "source unavailable or invalid"),
+    ("directory", "unsafe or nonordinary source path"),
+    ("no-hook", "source must register its executing module frame"),
+))
+def test_b_source_gate_checks_real_git_and_files_and_refuses_publication(
+    isolated_snapshot_repo: tuple[Path, dict], capsys: pytest.CaptureFixture[str], failure: str, diagnostic: str,
+) -> None:
+    root, candidate = isolated_snapshot_repo
+    assert checker.validate_package(root, candidate) == []
+    assert reader.sync(root, write=True)[0]
+    view = root / reader.VIEW_PATH
+    before = view.read_bytes()
+    relative = "src/cltav_615a/source_identity.py"
+    source = root / relative
+    if failure == "untracked":
+        _git(root, "rm", "--cached", "--", relative)
+        assert source.is_file()
+    elif failure == "missing":
+        source.unlink()
+    elif failure == "directory":
+        source.unlink()
+        source.mkdir()
+    else:
+        text = source.read_text(encoding="utf-8")
+        assert text.count("register_loaded_module(__name__, __file__)") == 1
+        source.write_text(text.replace("register_loaded_module(__name__, __file__)", "# unbound source"), encoding="utf-8")
+    assert checker.main(["--root", str(root)]) == 1
+    assert "OBJECT-SOURCE: " + diagnostic in capsys.readouterr().err
+    for mode in ("--write", "--check"):
+        assert reader.main(["--root", str(root), mode]) == 1
+        assert diagnostic in capsys.readouterr().err
+        assert view.read_bytes() == before
+    view.unlink()
+    assert reader.main(["--root", str(root), "--write"]) == 1
+    assert diagnostic in capsys.readouterr().err and not view.exists()
+
+
+def test_b_source_binding_policy_is_closed_and_both_languages_track_its_meaning(
+    isolated_snapshot_repo: tuple[Path, dict], capsys: pytest.CaptureFixture[str],
+) -> None:
+    root, candidate = isolated_snapshot_repo
+    package_path = root / checker.PACKAGE_PATH
+    assert reader.sync(root, write=True)[0]
+    view = root / reader.VIEW_PATH
+    before = view.read_bytes()
+    for field, bad in (
+        ("scheme", "CALLER-LABEL"),
+        ("files", ["src/uncontrolled.py", *checker.REQUIRED_OBJECT_SOURCE_FILES[1:]]),
+        ("loadVerification", "HASH-OTHER-SOURCE"),
+        ("auditLinkage", "NO-AUDIT-BINDING"),
+        ("meaningZh", " \r\n "),
+    ):
+        invalid = copy.deepcopy(candidate)
+        invalid["objectContract"]["implementationIdentityPlan"]["sourceBinding"][field] = bad
+        package_path.write_text(json.dumps(invalid, ensure_ascii=False), encoding="utf-8")
+        assert checker.main(["--root", str(root)]) == 1
+        expected = "binding must cover the exact five B source modules" if field == "files" else "sourceBinding"
+        assert expected in capsys.readouterr().err
+        assert reader.main(["--root", str(root), "--write"]) == 1
+        assert "validation failed" in capsys.readouterr().err
+        assert view.read_bytes() == before
+
+    binding = candidate["objectContract"]["implementationIdentityPlan"]["sourceBinding"]
+    binding["meaning"] += " English source binding annotation."
+    binding["meaningZh"] += " 中文源码绑定补充说明。"
+    package_path.write_text(json.dumps(candidate, ensure_ascii=False), encoding="utf-8")
+    assert checker.main(["--root", str(root)]) == 0
+    assert reader.main(["--root", str(root), "--check"]) == 1
+    assert "stale" in capsys.readouterr().err
+    assert view.read_bytes() == before
+    assert reader.main(["--root", str(root), "--write"]) == 0
+    assert reader.main(["--root", str(root), "--check"]) == 0
+    english, chinese = view.read_text(encoding="utf-8").split("# 中文版", 1)
+    en_section = english.split("### Fault revocation and implementation identity plan", 1)[1].split("\n## ", 1)[0]
+    zh_section = chinese.split("### 故障撤销与实现身份计划", 1)[1].split("\n## ", 1)[0]
+    assert "English source binding annotation." in en_section and "English source binding annotation." not in zh_section
+    assert "中文源码绑定补充说明。" in zh_section and "中文源码绑定补充说明。" not in en_section
+    for field in ("scheme", "loadVerification", "auditLinkage"):
+        assert binding[field] in en_section and binding[field] in zh_section
+    for path in checker.REQUIRED_OBJECT_SOURCE_FILES:
+        assert path in en_section and path in zh_section
 
 
 def test_a06c_action_history_and_bilingual_operational_contracts_are_not_decorative() -> None:

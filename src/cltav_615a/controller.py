@@ -12,6 +12,9 @@ from __future__ import annotations
 from collections import deque
 from types import MappingProxyType
 from typing import Mapping
+from uuid import uuid4
+
+from .source_identity import LoadedSourceIdentity, SourceIdentityError, loaded_source_identity, register_loaded_module
 
 from .objects import (
     EVENT_DL_DATA_LUR,
@@ -21,6 +24,7 @@ from .objects import (
     EVENT_TH_LUS_READY,
     LoaderSurrogate,
     TargetHardwareDriver,
+    semantic_event_error,
 )
 from .types import (
     ActivationRecord,
@@ -71,10 +75,17 @@ class LurStartController:
 
     _FAMILY_ID = "ENG-UPLOAD-LUR-START"
 
-    def __init__(self, *, implementation_identity: str = "cltav_615a-b-candidate-source") -> None:
-        if not isinstance(implementation_identity, str) or not implementation_identity.strip():
-            raise ValueError("implementation_identity must be nonblank")
-        self._implementation_identity = implementation_identity
+    def __init__(self, *, implementation_identity: str | None = None, run_label: str | None = None) -> None:
+        self._source_identity = loaded_source_identity()
+        self._implementation_identity = self._source_identity.identifier
+        if implementation_identity is not None and implementation_identity != self._implementation_identity:
+            raise SourceIdentityError("SOURCE-IDENTITY-REQUEST-MISMATCH")
+        if run_label is not None and (not isinstance(run_label, str) or not run_label.strip()):
+            raise ValueError("RUN-LABEL-MUST-BE-NONBLANK-WHEN-PRESENT")
+        self._run_label = run_label
+        # Independent controller runs must not share event/response identities.
+        # This random namespace is unrelated to the selected private variant.
+        self._run_id = f"run-{uuid4().hex}"
         self._reset_counter = 0
         self._attempt_counter = 0
         self._receipt_counter = 0
@@ -103,9 +114,23 @@ class LurStartController:
 
     @property
     def implementation_identity(self) -> str:
-        """Evaluator-side source identity supplied for this bounded object."""
+        """Verified loaded-source identity, never a caller display label."""
 
         return self._implementation_identity
+
+    @property
+    def source_identity(self) -> LoadedSourceIdentity:
+        return self._source_identity
+
+    @property
+    def run_label(self) -> str | None:
+        """Non-authoritative evaluator label, excluded from all public records."""
+
+        return self._run_label
+
+    @property
+    def run_id(self) -> str:
+        return self._run_id
 
     @property
     def attempt_id(self) -> str:
@@ -150,6 +175,7 @@ class LurStartController:
             delivered_event_count=len(self._delivered_event_ids),
             active_fault=self._active_fault,
             attempt_blocked=self._attempt_blocked,
+            code_identity=self._implementation_identity,
         )
 
     def evaluator_audit(self) -> tuple[AttemptAudit, ...]:
@@ -162,6 +188,8 @@ class LurStartController:
             installation_records=tuple(self._installation_records),
             activation_records=tuple(self._activation_records),
             final_readback=self.evaluator_readback(),
+            code_identity=self._implementation_identity,
+            source_identity=self._source_identity,
         )
         return (*self._archives, current)
 
@@ -229,16 +257,18 @@ class LurStartController:
                     installation_records=tuple(self._installation_records),
                     activation_records=tuple(self._activation_records),
                     final_readback=before if before is not None else self.evaluator_readback(),
+                    code_identity=self._implementation_identity,
+                    source_identity=self._source_identity,
                 )
             )
 
         previous_attempt_id = self._attempt_id or None
         self._reset_counter += 1
         self._attempt_counter += 1
-        self._reset_id = f"reset-{self._reset_counter:04d}"
-        self._attempt_id = f"attempt-{self._attempt_counter:04d}"
-        self._session_id = f"upload-session-{self._attempt_counter:04d}"
-        self._correlation_id = f"lur-operation-{self._attempt_counter:04d}"
+        self._reset_id = f"{self._run_id}:reset-{self._reset_counter:04d}"
+        self._attempt_id = f"{self._run_id}:attempt-{self._attempt_counter:04d}"
+        self._session_id = f"{self._run_id}:upload-session-{self._attempt_counter:04d}"
+        self._correlation_id = f"{self._run_id}:lur-operation-{self._attempt_counter:04d}"
         self._virtual_tick = 0
         self._next_sequence = 1
         self._journal = []
@@ -376,32 +406,60 @@ class LurStartController:
             return DeliveryResult(False, False, "DELIVERY-REJECTED-CONTROL-UNCONFIRMED", None)
         if not self._pending:
             return DeliveryResult(False, False, "DELIVERY-NO-PENDING-EVENT", None)
-        event = self._pending.popleft()
-        result = self._route_event(event)
-        self._delivered_event_ids.append(event.event_id)
-        return DeliveryResult(True, result.accepted, result.reason, event)
+        return self._deliver_recorded_event(self._pending[0])
 
     def deliver_all(self) -> tuple[DeliveryResult, ...]:
-        """Deliver the current queue in its real append order."""
+        """Deliver in append order, stopping on an undelivered control rejection.
+
+        Preserve the pending queue and include the named rejection once when
+        control is unconfirmed.  A delivered event rejected by its peer has
+        still consumed its queue entry, so it does not stop subsequent delivery.
+        """
 
         delivered: list[DeliveryResult] = []
         while self._pending:
-            delivered.append(self.deliver_next())
+            result = self.deliver_next()
+            delivered.append(result)
+            if not result.delivered:
+                break
         return tuple(delivered)
 
     def deliver_external_event(self, event: object) -> DeliveryResult:
-        """Route a retained/foreign event without adding it to the new journal.
+        """Submit an event value to the same single-consumption delivery boundary.
 
-        This direct entry supports ownership tests for old attempts, wrong
-        session/correlation material and duplicate delivery.  A foreign event
-        therefore cannot be transformed into a freshly emitted public record.
+        Only an exact copy of the current owned queue head can be delivered.
+        Retained, foreign, forged and out-of-order material never mutates peer
+        state or manufactures a journal entry.  This is not a network ingress.
         """
 
+        return self._deliver_recorded_event(event)
+
+    def _deliver_recorded_event(self, event: object) -> DeliveryResult:
         if self._attempt_blocked:
             return DeliveryResult(False, False, "DELIVERY-REJECTED-CONTROL-UNCONFIRMED", None)
         if not isinstance(event, PublicEvent):
             return DeliveryResult(False, False, "DELIVERY-REJECTED-MALFORMED-EVENT", None)
+        semantic_error = semantic_event_error(event)
+        if semantic_error is not None:
+            return DeliveryResult(False, False, f"DELIVERY-REJECTED-SEMANTIC-{semantic_error}", None)
+        if event.reset_id != self._reset_id or event.attempt_id != self._attempt_id:
+            return DeliveryResult(False, False, "DELIVERY-REJECTED-STALE-OR-FOREIGN-ATTEMPT", None)
+        if event.session_id != self._session_id:
+            return DeliveryResult(False, False, "DELIVERY-REJECTED-SESSION-MISMATCH", None)
+        if event.correlation_id != self._correlation_id:
+            return DeliveryResult(False, False, "DELIVERY-REJECTED-CORRELATION-MISMATCH", None)
+        recorded = next((entry for entry in self._journal if entry.event_id == event.event_id), None)
+        if recorded is None:
+            return DeliveryResult(False, False, "DELIVERY-REJECTED-UNRECORDED-EVENT", None)
+        if recorded != event:
+            return DeliveryResult(False, False, "DELIVERY-REJECTED-EVENT-CONTENT-MISMATCH", None)
+        if event.event_id in self._delivered_event_ids:
+            return DeliveryResult(False, False, "DELIVERY-IGNORED-ALREADY-CONSUMED", None)
+        if not self._pending or self._pending[0] != event:
+            return DeliveryResult(False, False, "DELIVERY-REJECTED-OUT-OF-ORDER", None)
+        self._pending.popleft()
         result = self._route_event(event)
+        self._delivered_event_ids.append(event.event_id)
         return DeliveryResult(True, result.accepted, result.reason, event)
 
     def advance_tick(self, steps: int = 1) -> int:
@@ -452,6 +510,12 @@ class LurStartController:
                 False,
                 "PREFIX-INVALID-REPLACED-REORDERED-OR-DISCONNECTED",
                 self._receipt("RETAINED-PREFIX-INVALID", candidate, completed=False),
+            )
+        if self._attempt_blocked:
+            return PrefixVerification(
+                False,
+                "PREFIX-INCOMPLETE-CONTROL-UNCONFIRMED",
+                self._receipt("RETAINED-PREFIX-CONTROL-UNCONFIRMED", candidate, completed=False),
             )
         reason = "PREFIX-EQUAL-CURRENT-JOURNAL" if len(candidate) == len(self._journal) else "PREFIX-RETAINED-AND-APPENDED"
         return PrefixVerification(True, reason, self._receipt("RETAINED-PREFIX-VALID", candidate, completed=True))
@@ -583,6 +647,7 @@ class LurStartController:
                     fault=decision.activation_fault,
                     public_event_id=event.event_id,
                     execution_position=decision.activation_position or "UNSPECIFIED-BYPASS-POSITION",
+                    code_identity=self._implementation_identity,
                 )
             )
         return OperationResult(True, decision.reason, event)
@@ -609,8 +674,12 @@ class LurStartController:
             start_sequence=events[0].sequence_number if events else None,
             end_sequence=events[-1].sequence_number if events else None,
             event_ids=tuple(event.event_id for event in events),
-            completed=completed,
-            reason="ENGINEERING-FINITE-JOURNAL-CHECK-NOT-PROTOCOL-DEADLINE",
+            completed=completed and not self._attempt_blocked,
+            reason=(
+                "CONTROL-UNCONFIRMED-ATTEMPT-NOT-DRIVABLE"
+                if self._attempt_blocked
+                else "ENGINEERING-FINITE-JOURNAL-CHECK-NOT-PROTOCOL-DEADLINE"
+            ),
         )
 
     def _new_installation_record(
@@ -650,3 +719,6 @@ class LurStartController:
         if self._target is None:
             raise RuntimeError("controller target hardware is not initialized")
         return self._target
+
+
+register_loaded_module(__name__, __file__)

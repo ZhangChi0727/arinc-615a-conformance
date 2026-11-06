@@ -322,6 +322,7 @@ def _render_object_contract(data: dict[str, Any], *, chinese: bool) -> list[str]
     private = contract["privateBoundary"]
     lifecycle = contract["lifecycleBoundary"]
     identity = contract["implementationIdentityPlan"]
+    binding = identity["sourceBinding"]
     if chinese:
         lines = [
             "## 对象与对端合同", "",
@@ -364,6 +365,9 @@ def _render_object_contract(data: dict[str, Any], *, chinese: bool) -> list[str]
             f"- 安装生命周期：`{lifecycle['faultInstallationLifetime']}`；撤销动作：`{lifecycle['faultRevocationAction']}`；撤销证据：`{lifecycle['revocationEvidence']}`。",
             f"- {plain_text(identity['meaningZh'])}",
             f"- 身份状态：`{identity['status']}`；源码根：`{identity['sourceRoot']}`；直接入口：`{identity['entryPoint']}`；后续实现必须绑定：{_cell(identity['requiredAtImplementation'], chinese=True)}。",
+            f"- B 源码身份方案：`{binding['scheme']}`；加载核验：`{binding['loadVerification']}`；审计关联：`{binding['auditLinkage']}`。",
+            f"- B 绑定源码：{_cell(sorted(binding['files']), chinese=True)}。",
+            f"- {plain_text(binding['meaningZh'])}",
             f"- 尚未建立：{plain_text(identity['notEstablishedZh'])}",
             "",
         ])
@@ -402,6 +406,9 @@ def _render_object_contract(data: dict[str, Any], *, chinese: bool) -> list[str]
         "", "### Fault revocation and implementation identity plan", "",
         f"- Installation lifetime: `{lifecycle['faultInstallationLifetime']}`; revocation action: `{lifecycle['faultRevocationAction']}`; revocation evidence: `{lifecycle['revocationEvidence']}`.",
         f"- Identity status: `{identity['status']}`; source root: `{identity['sourceRoot']}`; direct entry point: `{identity['entryPoint']}`; downstream implementation must bind: {_cell(identity['requiredAtImplementation'])}.",
+        f"- B source identity scheme: `{binding['scheme']}`; load verification: `{binding['loadVerification']}`; audit linkage: `{binding['auditLinkage']}`.",
+        f"- B bound source files: {_cell(sorted(binding['files']))}.",
+        f"- {plain_text(binding['meaning'])}",
         f"- Not established: {plain_text(identity['notEstablished'])}",
         "",
     ])

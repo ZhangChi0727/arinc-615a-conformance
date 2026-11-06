@@ -8,9 +8,11 @@ parse those same bytes; mutable worktree files never substitute an authority.
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import re
+import stat
 import subprocess
 import sys
 from collections import Counter
@@ -656,6 +658,14 @@ REQUIRED_OBJECT_STAGE = "B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW
 REQUIRED_OBJECT_IDENTITY_STATUS = "SOURCE-OBJECT-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
 REQUIRED_OBJECT_SOURCE_ROOT = "src/cltav_615a"
 REQUIRED_OBJECT_ENTRY_POINT = "cltav_615a.LurStartController"
+REQUIRED_OBJECT_SOURCE_FILES = tuple(
+    f"src/cltav_615a/{name}" for name in ("__init__.py", "controller.py", "objects.py", "source_identity.py", "types.py")
+)
+REQUIRED_OBJECT_SOURCE_BINDING = {
+    "scheme": "CLTAV-615A-LOADED-SOURCE-SHA256-LF-V1",
+    "loadVerification": "MODULE-CODE-EQUALITY-FROZEN-SOURCE-AND-CONSTRUCTOR-DRIFT-CHECK",
+    "auditLinkage": "FROZEN-MANIFEST-IN-ATTEMPT-AUDIT-SHARED-CODE-IDENTITY",
+}
 REQUIRED_OBJECT_GUARDS = {
     "GUARD-WRQ-AFTER-READY": {
         "sourceRelationId": "SRC-LUR-WRQ",
@@ -1226,6 +1236,55 @@ def _boundary_errors(package: dict[str, Any]) -> list[str]:
     return errors
 
 
+def _object_source_file_errors(root: Path) -> list[str]:
+    """Check the current B source tree, not the separately pinned A authorities.
+
+    This verifies safe tracked source presence and the declared loading hook;
+    runtime code/source equality and immutable hashes are checked by that hook.
+    No B module is imported or executed by this governance checker.
+    """
+    errors: list[str] = []
+    try:
+        entries = _git_bytes(root, "ls-files", "--stage", "-z", "--", *REQUIRED_OBJECT_SOURCE_FILES)
+        tracked = {}
+        for entry in entries.decode("utf-8").split("\0"):
+            if entry:
+                metadata, path = entry.split("\t", 1)
+                mode, _, stage = metadata.split()
+                tracked[path] = (mode, stage)
+    except (OSError, subprocess.CalledProcessError, UnicodeError, ValueError) as exc:
+        return [f"OBJECT-SOURCE: unable to verify source Git tracking: {type(exc).__name__}"]
+    for relative in REQUIRED_OBJECT_SOURCE_FILES:
+        if tracked.get(relative) not in {("100644", "0"), ("100755", "0")}:
+            errors.append(f"OBJECT-SOURCE: source must be a tracked ordinary file: {relative}")
+            continue
+        path = root / relative
+        try:
+            components = [root.joinpath(*Path(relative).parts[:index]) for index in range(1, len(Path(relative).parts) + 1)]
+            if any(
+                part.is_symlink() or getattr(part.lstat(), "st_file_attributes", 0) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+                for part in components
+            ) or not path.resolve().is_relative_to(root.resolve()) or not stat.S_ISREG(path.lstat().st_mode):
+                errors.append(f"OBJECT-SOURCE: unsafe or nonordinary source path: {relative}")
+                continue
+            tree = ast.parse(path.read_bytes(), filename=relative)
+            last = tree.body[-1] if tree.body else None
+            if not (
+                isinstance(last, ast.Expr) and isinstance(last.value, ast.Call)
+                and isinstance(last.value.func, ast.Name) and last.value.func.id == "register_loaded_module"
+                and [ast.dump(arg) for arg in last.value.args] == [ast.dump(ast.Name(id=name, ctx=ast.Load())) for name in ("__name__", "__file__")]
+                and not last.value.keywords
+            ):
+                errors.append(f"OBJECT-SOURCE: source must register its executing module frame: {relative}")
+            if relative.endswith("/controller.py") and not any(
+                isinstance(node, ast.ClassDef) and node.name == "LurStartController" for node in tree.body
+            ):
+                errors.append("OBJECT-SOURCE: declared controller entry point is absent")
+        except (OSError, SyntaxError, ValueError) as exc:
+            errors.append(f"OBJECT-SOURCE: source unavailable or invalid: {relative}: {type(exc).__name__}")
+    return errors
+
+
 def _object_contract_errors(package: dict[str, Any]) -> list[str]:
     """Validate the bounded B-stage object/peer contract and its non-claims."""
 
@@ -1338,6 +1397,14 @@ def _object_contract_errors(package: dict[str, Any]) -> list[str]:
         errors.append("OBJECT: implementation source root differs from the controlled bounded object package")
     if identity.get("entryPoint") != REQUIRED_OBJECT_ENTRY_POINT:
         errors.append("OBJECT: implementation entry point differs from the controlled direct lifecycle controller")
+    binding = identity.get("sourceBinding", {})
+    if any(binding.get(key) != value for key, value in REQUIRED_OBJECT_SOURCE_BINDING.items()):
+        errors.append("OBJECT-SOURCE: loaded source binding policy differs from the controlled B contract")
+    if set(binding.get("files", [])) != set(REQUIRED_OBJECT_SOURCE_FILES):
+        errors.append("OBJECT-SOURCE: binding must cover the exact five B source modules")
+    for field in ("meaning", "meaningZh"):
+        if not isinstance(binding.get(field), str) or not binding[field].strip():
+            errors.append(f"OBJECT-SOURCE: binding requires nonblank {field}")
     if set(identity.get("requiredAtImplementation", [])) != {
         "OBJECT-SOURCE-COMMIT",
         "OBJECT-DISTRIBUTION-IDENTITY",
@@ -1738,6 +1805,7 @@ def validate_package(
         errors.extend(_experiment_and_limit_errors(package, snapshot))
     errors.extend(_boundary_errors(package))
     errors.extend(_object_contract_errors(package))
+    errors.extend(_object_source_file_errors(root))
     errors.extend(_action_and_case_errors(package))
     if snapshot:
         errors.extend(_traceability_errors(package, snapshot))

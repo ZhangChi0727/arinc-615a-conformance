@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .types import EmissionDecision, FaultVariant, PublicEvent
+from .source_identity import register_loaded_module
 
 
 EVENT_LIST_PREPARED = "LIST-SUBMISSION-PRECONDITION-RECORDED"
@@ -12,6 +13,28 @@ EVENT_TH_LUS_READY = "EV_TH_LUS0001"
 EVENT_DL_WRQ_LUR = "EV_DL_WRQ_LUR"
 EVENT_TH_ACK_LUR = "EV_TH_ACK_LUR"
 EVENT_DL_DATA_LUR = "EV_DL_DATA_LUR"
+
+
+def semantic_event_error(event: PublicEvent) -> str | None:
+    """Validate the five bounded event types, not their protocol order."""
+
+    expected = {
+        EVENT_LIST_PREPARED: ("APPLICATION", "DLA", "TARGET-HARDWARE", None, None, "LOAD-LIST"),
+        EVENT_TH_LUS_READY: ("SEMANTIC-PROTOCOL", "TARGET-HARDWARE", "DATA-LOADER", "TH-TO-DL", None, "LUS-0001"),
+        EVENT_DL_WRQ_LUR: ("SEMANTIC-PROTOCOL", "DATA-LOADER", "TARGET-HARDWARE", "DL-TO-TH", "WRQ", "LUR"),
+        EVENT_TH_ACK_LUR: ("SEMANTIC-PROTOCOL", "TARGET-HARDWARE", "DATA-LOADER", "TH-TO-DL", "ACK", "LUR"),
+        EVENT_DL_DATA_LUR: ("SEMANTIC-PROTOCOL", "DATA-LOADER", "TARGET-HARDWARE", "DL-TO-TH", "DATA", "LUR"),
+    }
+    if event.kind not in expected:
+        return "UNKNOWN-KIND"
+    actual = (event.layer, event.actor, event.receiver, event.direction, event.opcode, event.file_role)
+    if actual != expected[event.kind]:
+        return "CONTRADICTORY-TUPLE"
+    if event.kind in {EVENT_LIST_PREPARED, EVENT_TH_LUS_READY, EVENT_DL_WRQ_LUR} and event.in_reply_to_event_id is not None:
+        return "UNEXPECTED-REPLY-REFERENCE"
+    if event.kind == EVENT_TH_ACK_LUR and event.in_reply_to_event_id is None:
+        return "MISSING-WRQ-REFERENCE"
+    return None
 
 
 @dataclass(frozen=True)
@@ -113,7 +136,7 @@ class LoaderSurrogate:
 
         if not isinstance(event, PublicEvent):
             return EmissionDecision(False, "READY-REJECTED-MALFORMED-EVENT")
-        if event.kind != EVENT_TH_LUS_READY or event.actor != "TARGET-HARDWARE" or event.receiver != "DATA-LOADER":
+        if event.kind != EVENT_TH_LUS_READY or semantic_event_error(event) is not None:
             return EmissionDecision(False, "READY-REJECTED-UNEXPECTED-EVENT")
         if event.reset_id != self._reset_id or event.attempt_id != self._attempt_id:
             return EmissionDecision(False, "READY-REJECTED-STALE-ATTEMPT")
@@ -163,6 +186,7 @@ class LoaderSurrogate:
             return EmissionDecision(False, "ACK-REJECTED-MALFORMED-EVENT")
         if (
             event.kind != EVENT_TH_ACK_LUR
+            or semantic_event_error(event) is not None
             or event.actor != "TARGET-HARDWARE"
             or event.receiver != "DATA-LOADER"
             or event.direction != "TH-TO-DL"
@@ -267,6 +291,7 @@ class TargetHardwareDriver:
             return EmissionDecision(False, "TH-WRQ-REJECTED-MALFORMED-EVENT")
         if (
             event.kind != EVENT_DL_WRQ_LUR
+            or semantic_event_error(event) is not None
             or event.actor != "DATA-LOADER"
             or event.receiver != "TARGET-HARDWARE"
             or event.direction != "DL-TO-TH"
@@ -304,3 +329,6 @@ class TargetHardwareDriver:
             file_role="LUR",
             in_reply_to_event_id=self._received_wrq_event_id,
         )
+
+
+register_loaded_module(__name__, __file__)

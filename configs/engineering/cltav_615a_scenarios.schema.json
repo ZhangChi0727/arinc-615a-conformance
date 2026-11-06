@@ -563,6 +563,7 @@
             "status",
             "sourceRoot",
             "entryPoint",
+            "sourceBinding",
             "requiredAtImplementation",
             "notEstablished",
             "notEstablishedZh",
@@ -577,6 +578,22 @@
             },
             "entryPoint": {
               "const": "cltav_615a.LurStartController"
+            },
+            "sourceBinding": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["scheme", "files", "loadVerification", "auditLinkage", "meaning", "meaningZh"],
+              "properties": {
+                "scheme": {"const": "CLTAV-615A-LOADED-SOURCE-SHA256-LF-V1"},
+                "files": {
+                  "type": "array", "minItems": 5, "maxItems": 5, "uniqueItems": true,
+                  "items": {"$ref": "#/$defs/nonBlank"}
+                },
+                "loadVerification": {"const": "MODULE-CODE-EQUALITY-FROZEN-SOURCE-AND-CONSTRUCTOR-DRIFT-CHECK"},
+                "auditLinkage": {"const": "FROZEN-MANIFEST-IN-ATTEMPT-AUDIT-SHARED-CODE-IDENTITY"},
+                "meaning": {"$ref": "#/$defs/nonBlank"},
+                "meaningZh": {"$ref": "#/$defs/nonBlank"}
+              }
             },
             "requiredAtImplementation": {
               "type": "array",

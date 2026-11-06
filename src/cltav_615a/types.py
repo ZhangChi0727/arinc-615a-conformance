@@ -11,6 +11,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 
+from .source_identity import LoadedSourceIdentity, register_loaded_module
+
 
 class FaultVariant(str, Enum):
     """The only protocol-behaviour variants permitted by the B-stage slice."""
@@ -100,7 +102,11 @@ class PublicEvent:
 
 @dataclass(frozen=True)
 class OperationResult:
-    """A named result of one direct stimulus or emission request."""
+    """Evaluator/control result; internal guard reasons are not public input.
+
+    Only the owned event may be projected to the public journal.  In particular,
+    bypass reasons must not be forwarded to a future algorithm adapter.
+    """
 
     accepted: bool
     reason: str
@@ -115,7 +121,7 @@ class OperationResult:
 
 @dataclass(frozen=True)
 class DeliveryResult:
-    """Result of delivering an already-emitted semantic event to its peer."""
+    """Control/evaluator delivery result, not an algorithm-facing projection."""
 
     delivered: bool
     accepted: bool
@@ -194,6 +200,7 @@ class RuntimeReadback:
     delivered_event_count: int
     active_fault: FaultVariant
     attempt_blocked: bool
+    code_identity: str
 
 
 @dataclass(frozen=True)
@@ -233,6 +240,7 @@ class ActivationRecord:
     fault: FaultVariant
     public_event_id: str
     execution_position: str
+    code_identity: str
     status: ActivationStatus = ActivationStatus.TRIGGERED
 
 
@@ -261,6 +269,8 @@ class AttemptAudit:
     installation_records: tuple[FaultInstallationRecord, ...]
     activation_records: tuple[ActivationRecord, ...]
     final_readback: RuntimeReadback
+    code_identity: str
+    source_identity: LoadedSourceIdentity
 
 
 @dataclass(frozen=True)
@@ -279,3 +289,6 @@ class EmissionDecision:
     in_reply_to_event_id: str | None = None
     activation_fault: FaultVariant | None = None
     activation_position: str | None = None
+
+
+register_loaded_module(__name__, __file__)
