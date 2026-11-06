@@ -54,9 +54,28 @@ SysML 1.6 notation-based PlantUML sources: [`../../../docs/research/publication/
 
 Four arms CL-T, CL-A, CL-TA, CL-LOOP; detection, localization and ablation families in `docs/research/EXPERIMENT_PLAN.md`. Top-level algorithm source: [`../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex`](../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex). Typeset reader PDF: [`ALG-CLTAV-01.pdf`](ALG-CLTAV-01.pdf). Register before confirmatory runs. No Configuration and no live load in this increment. No filled result numbers here.
 
+## 615A UPLOAD scenario-prototype status (B candidate; not a result)
+
+After separate G0/A stage acceptance, PR #26 contains a source-bound LUR-start
+control-slice package and a direct B-stage Loader/TH lifecycle candidate in
+`src/cltav_615a/`.  The process-local surrogate drives NORMAL, EARLY-WRQ and
+EARLY-DATA semantic branches through real guards, append-only public journal
+events, deterministic virtual ticks, full-reset epochs and evaluator-only
+installation/activation readbacks.  It is not a network or IUT execution,
+complete UPLOAD transfer, `ReferenceSession` closure, history/q commitment,
+parser, solver, integrity capability or experiment runner.  The B candidate
+awaits its own fixed-head independent review.  The four-arm runner, valid
+pre-experiment, independent clock/truth, integrity capability and independent
+mathematical review remain uncompleted.  No result, performance, conformance,
+or C1/C2 claim follows from this material.  See the
+[`615A scenario prototype`](../../../docs/engineering/CLTAV_615A_SCENARIO_PROTOTYPE.md),
+its [controlled package](../../../configs/engineering/cltav_615a_scenarios.json),
+and the [object lifecycle boundary](../../../docs/engineering/CLTAV_615A_OBJECT_LIFECYCLE.md).
+The PR remains Draft; this status text does not record B-stage acceptance.
+
 ## Expanded CRS index and audit
 
-Current bound package is M1-CANDIDATE-25: 3152 coverage units and 862 requirements, including 664-7 max_jitter equations with VL summation, 150 us technological latency, MAC source construction, 664P4-1 address-rule leaves for the first CRS-M1-00519 alternative, and 615A-triggered 645 semantic leaves. The integrator-identified address path remains open; this does not select Part 4 or activate AFDX. FIND abort does not waive the 2 s / 3 s clocks. Commentary and examples stay non-normative. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. 665 §2.3 is not leaf-CRS-closed. ARINC 645-1 2021 is SOURCE/SEMANTIC bound; four integrity capabilities stay NOT-ESTABLISHED. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename remaining deferred labels. Tool software requirements are out of this PR.
+Current bound package is M1-CANDIDATE-25: 3153 coverage units and 863 requirements, including 664-7 max_jitter equations with VL summation, 150 us technological latency, MAC source construction, 664P4-1 address-rule leaves for the first CRS-M1-00519 alternative, and 615A-triggered 645 semantic leaves. The integrator-identified address path remains open; this does not select Part 4 or activate AFDX. FIND abort does not waive the 2 s / 3 s clocks. Commentary and examples stay non-normative. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. 665 §2.3 is not leaf-CRS-closed. ARINC 645-1 2021 is SOURCE/SEMANTIC bound; four integrity capabilities stay NOT-ESTABLISHED. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename remaining deferred labels. Tool software requirements are out of this PR.
 
 ## Historical versus successor evidence
 
@@ -104,9 +123,23 @@ SysML 1.6 记法 PlantUML 源：[`../../../docs/research/publication/models/`](.
 
 四臂 CL-T、CL-A、CL-TA、CL-LOOP；检测、定位、消融。总体算法源：[`../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex`](../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex)。排版读者 PDF：[`ALG-CLTAV-01.pdf`](ALG-CLTAV-01.pdf)。确认性运行前登记。本增量无 Configuration、无实网加载。此处不填结果数字。
 
+## 615A UPLOAD 场景原型状态（B 候选；不是结果）
+
+在 G0/A 分别获得阶段接受后，PR #26 包含一个具有来源绑定的 LUR 起始控制切片包，以及
+`src/cltav_615a/` 中的直接 B 阶段 Loader／TH 生命周期候选。这个进程内替身通过实际守卫、
+只追加的公开 journal 事件、确定性虚拟 tick、全量复位 epoch 与仅评估方可见的安装／激活读回，
+驱动 NORMAL、EARLY-WRQ 和 EARLY-DATA 语义分支。它不是网络或 IUT 执行、完整 UPLOAD
+传输、`ReferenceSession` 闭环、历史／q 提交、解析器、求解器、完整性能力或实验 runner。
+B 候选等待自身固定 Head 的独立评审。四臂 runner、有效预实验、独立时钟／真值、完整性能力
+和独立数学审查均仍未完成。该材料不产生结果、性能、符合性或 C1／C2 主张。参见
+[`615A 场景原型`](../../../docs/engineering/CLTAV_615A_SCENARIO_PROTOTYPE.md)、
+[受控场景包](../../../configs/engineering/cltav_615a_scenarios.json)及
+[对象生命周期边界](../../../docs/engineering/CLTAV_615A_OBJECT_LIFECYCLE.md)。PR 仍为 Draft；
+本状态文字不记录 B 阶段接受。
+
 ## 扩大 CRS 索引与审计
 
-当前绑定包为 M1-CANDIDATE-25：3152 条 coverage、862 条需求，含带 VL 求和的 664-7 max_jitter 公式、150 微秒技术时延、MAC 源地址构造、CRS-M1-00519 第一条替代路径的 664P4-1 地址规则叶，以及 615A 触发的 645 语义叶。集成商指明的地址路径仍开放；这不选定第 4 部分，也不激活 AFDX。FIND 中止不豁免 2 秒／3 秒时钟。评注与示例保持非规范。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。665 §2.3 不是叶级 CRS 已闭合。ARINC 645-1 2021 来源／语义已绑定；四项完整性能力仍为 NOT-ESTABLISHED。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名仍延期的标签。工具软件需求不属于本 PR。
+当前绑定包为 M1-CANDIDATE-25：3153 条 coverage、863 条需求，含带 VL 求和的 664-7 max_jitter 公式、150 微秒技术时延、MAC 源地址构造、CRS-M1-00519 第一条替代路径的 664P4-1 地址规则叶，以及 615A 触发的 645 语义叶。集成商指明的地址路径仍开放；这不选定第 4 部分，也不激活 AFDX。FIND 中止不豁免 2 秒／3 秒时钟。评注与示例保持非规范。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。665 §2.3 不是叶级 CRS 已闭合。ARINC 645-1 2021 来源／语义已绑定；四项完整性能力仍为 NOT-ESTABLISHED。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名仍延期的标签。工具软件需求不属于本 PR。
 
 ## 历史与后继证据
 

@@ -48,6 +48,19 @@ DEV_SPEC = importlib.util.spec_from_file_location(
 assert DEV_SPEC and DEV_SPEC.loader
 development_readiness = importlib.util.module_from_spec(DEV_SPEC)
 DEV_SPEC.loader.exec_module(development_readiness)
+SCENARIO_SPEC = importlib.util.spec_from_file_location(
+    "check_615a_scenarios", ROOT / "scripts/check_615a_scenarios.py"
+)
+assert SCENARIO_SPEC and SCENARIO_SPEC.loader
+scenario_checker = importlib.util.module_from_spec(SCENARIO_SPEC)
+sys.modules[SCENARIO_SPEC.name] = scenario_checker
+SCENARIO_SPEC.loader.exec_module(scenario_checker)
+SCENARIO_SYNC_SPEC = importlib.util.spec_from_file_location(
+    "sync_615a_scenarios", ROOT / "scripts/sync_615a_scenarios.py"
+)
+assert SCENARIO_SYNC_SPEC and SCENARIO_SYNC_SPEC.loader
+scenario_sync = importlib.util.module_from_spec(SCENARIO_SYNC_SPEC)
+SCENARIO_SYNC_SPEC.loader.exec_module(scenario_sync)
 STATUS = sync.load_status(STATUS_PATH)
 SOURCE_REGISTER_PATH = ROOT / STATUS["technicalDirection"]["sourceRegisterPath"]
 CONTROLLED_SOURCES = sync.load_source_register(SOURCE_REGISTER_PATH)
@@ -3963,6 +3976,16 @@ def main() -> int:
         errors.extend(f"development readiness: {item}" for item in development_readiness.package_errors(development_package))
     except (OSError, json.JSONDecodeError) as exc:
         errors.append(f"development readiness package validation failed: {exc}")
+    try:
+        errors.extend(
+            f"615A scenario package: {item}"
+            for item in scenario_checker.validate_package(ROOT)
+        )
+        scenario_ok, scenario_message = scenario_sync.sync(ROOT, write=False)
+        if not scenario_ok:
+            errors.append(f"615A scenario reader view: {scenario_message}")
+    except (OSError, json.JSONDecodeError, ValueError, ImportError) as exc:
+        errors.append(f"615A scenario package validation failed: {exc}")
     try:
         m1_package = m1_sync.load_package()
     except (OSError, json.JSONDecodeError, m1_sync.M1Error) as exc:

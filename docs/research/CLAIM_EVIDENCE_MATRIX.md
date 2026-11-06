@@ -38,12 +38,25 @@ Passing tests is not Result, Evidence, or a superiority Claim.
 | CL-ABLATION | Feedback, FIND-clock non-waiver and Prep/Recover cost change outcomes | EXP-CLTAV-ABLATION, including the forbidden abort-waiver negative control | To be verified |
 | CL-CRS | Expanded protocol CRS is reviewable for INFORMATION, UPLOAD, both DOWNLOAD modes, FIND, bounded 665/664/RFC support and 615A-triggered 645 semantic leaves | M1 package, source audit, bilingual review view | Specified as candidate; 645 SOURCE/SEMANTIC bound; capabilities NOT-ESTABLISHED; not independently approved |
 | CL-ALG | Top-level CL-TAV process and abstract interfaces are specified | ALG-CLTAV-01, method §3.9.2, DD-033 | Specified; not implemented; independent math review open |
-| CL-DEV | A bounded finite-path kernel, eight algorithm bindings, seven experiment bindings and synthetic contract witnesses are development-specified | `CLTAV-DEVELOPMENT-CONTRACTS` and generated bilingual review view | Specification candidate only; no parser, solver, IUT, integrity capability or experiment executed |
+| CL-DEV | A bounded finite-path kernel, eight algorithm bindings, seven experiment bindings, and synthetic contract witnesses are development-specified; PR #26 additionally has a source-bound 615A UPLOAD LUR-start control slice and direct B-stage Loader/TH lifecycle candidate for NORMAL, EARLY-WRQ and EARLY-DATA engineering runs | `CLTAV-DEVELOPMENT-CONTRACTS`, `configs/engineering/cltav_615a_scenarios.json`, `src/cltav_615a/`, generated bilingual review views and B-stage direct-object tests | B-stage candidate only; it is a process-local synthetic surrogate with no ReferenceSession closure, parser, solver, IUT, integrity capability, experiment execution, independent clock/truth evidence, protocol verdict or performance result |
 
 Observation → Result → Evidence → Argument/Decision → Claim stays the control
 boundary. ARINC 645-1 2021 is identity-bound for 615A-triggered CRC, check-value
 and naming leaves; CRC/check-value/naming/complete-integrity capabilities stay
 not established.
+
+### PR #26 B-stage engineering-status boundary
+
+G0/A was stage-accepted before object work began.  The current B candidate
+adds a source-controlled, process-local Loader/TH lifecycle object with direct
+NORMAL, EARLY-WRQ and EARLY-DATA semantic runs, append-only public journal,
+virtual engineering ticks, reset epochs, and evaluator-only installation and
+activation records.  It remains independent of `ReferenceSession`, prediction,
+history/q commitment, real networking/IUT execution and experiment admission.
+The object is awaiting its own fixed-head B review; four-arm comparison, valid
+pre-experiment admission, integrity capability, independent clock/truth and
+independent mathematical review remain open.  This status note does not change
+any `A-*`, `R-*`, or `CL-*` maturity or assurance state.
 
 ## Engineering claims
 
@@ -187,8 +200,18 @@ interval candidate. These remain design obligations, not observed evidence.
 | CL-ABLATION | 反馈、FIND 时钟不豁免与 Prep／Recover 成本改变结局 | EXP-CLTAV-ABLATION，含禁止的中止豁免反例对照 | To be verified |
 | CL-CRS | 扩大协议 CRS 对 INFORMATION、UPLOAD、两种 DOWNLOAD、FIND、有界 665／664／RFC 支持及 615A 触发的 645 语义叶可评审 | M1 包、来源审计、双语评审视图 | Specified 为候选；645 来源／语义已绑定；能力未建立；未经独立批准 |
 | CL-ALG | CL-TAV 总体过程与抽象接口已规格化 | ALG-CLTAV-01、方法报告 §3.9.2、DD-033 | Specified；未实现；独立数学评审仍开放 |
+| CL-DEV | 有界有限路径内核、八个算法绑定、七个实验绑定和合成合同见证已进入开发规格；PR #26 另有来源绑定的 615A UPLOAD LUR 起始控制切片，以及供 NORMAL、EARLY-WRQ、EARLY-DATA 工程运行的直接 B 阶段 Loader／TH 生命周期候选 | `CLTAV-DEVELOPMENT-CONTRACTS`、`configs/engineering/cltav_615a_scenarios.json`、`src/cltav_615a/`、生成的双语评审视图和 B 阶段直接对象测试 | 仅为 B 阶段候选；它是进程内合成替身，不具有 ReferenceSession 闭环、解析器、求解器、IUT、完整性能力、实验执行、独立时钟／真值证据、协议判定或性能结果 |
 
 观察→结果→证据→论证／决策→主张边界保持。ARINC 645-1 2021 已按 615A 触发的 CRC、校验值与命名叶完成身份绑定；CRC／校验值／命名／完整完整性能力仍未建立。
+
+### PR #26 B 阶段工程状态边界
+
+G0/A 已在对象工作开始前获得阶段接受。当前 B 候选新增一个受控源码、进程内的 Loader／TH
+生命周期对象，具有直接的 NORMAL、EARLY-WRQ、EARLY-DATA 语义运行、只追加的公开 journal、
+虚拟工程 tick、复位 epoch，以及仅评估方可见的安装和激活记录。它仍独立于
+`ReferenceSession`、预测、历史／q 提交、真实网络／IUT 执行和实验准入。该对象等待自身固定
+Head B 评审；四臂比较、有效预实验准入、完整性能力、独立时钟／真值和独立数学审查仍开放。
+本状态说明不改变任何 `A-*`、`R-*` 或 `CL-*` 的成熟度或保证状态。
 
 ## ARINC/Profile 面向认证候选主张
 

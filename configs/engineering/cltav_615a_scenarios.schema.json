@@ -1,0 +1,1858 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schema/cltav-615a-scenarios-1.0.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "artifactId",
+    "identity",
+    "controlBinding",
+    "translationsZh",
+    "acceptedInputs",
+    "scope",
+    "objectContract",
+    "sourceRelations",
+    "traceabilityMatrix",
+    "hypothesisDomain",
+    "actionLibrary",
+    "timeAndObservation",
+    "resourceContract",
+    "lifecycle",
+    "cases",
+    "experimentRelations",
+    "limitations",
+    "feasibilityWitnesses"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "artifactId": {
+      "const": "CLTAV-615A-SCENARIO-PACKAGE"
+    },
+    "identity": {
+      "$ref": "#/$defs/identity"
+    },
+    "controlBinding": {
+      "$ref": "#/$defs/controlBinding"
+    },
+    "translationsZh": {
+      "$ref": "#/$defs/translationsZh"
+    },
+    "acceptedInputs": {
+      "type": "array",
+      "minItems": 9,
+      "items": {
+        "$ref": "#/$defs/inputBinding"
+      }
+    },
+    "scope": {
+      "$ref": "#/$defs/scope"
+    },
+    "objectContract": {
+      "$ref": "#/$defs/objectContract"
+    },
+    "sourceRelations": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "$ref": "#/$defs/sourceRelation"
+      }
+    },
+    "traceabilityMatrix": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "$ref": "#/$defs/traceabilityRelation"
+      }
+    },
+    "hypothesisDomain": {
+      "$ref": "#/$defs/hypothesisDomain"
+    },
+    "actionLibrary": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "$ref": "#/$defs/action"
+      }
+    },
+    "timeAndObservation": {
+      "$ref": "#/$defs/timeAndObservation"
+    },
+    "resourceContract": {
+      "$ref": "#/$defs/resourceContract"
+    },
+    "lifecycle": {
+      "$ref": "#/$defs/lifecycle"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "$ref": "#/$defs/case"
+      }
+    },
+    "experimentRelations": {
+      "type": "array",
+      "minItems": 7,
+      "items": {
+        "$ref": "#/$defs/experimentRelation"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "$ref": "#/$defs/nonBlank"
+      }
+    },
+    "feasibilityWitnesses": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "$ref": "#/$defs/witness"
+      }
+    }
+  },
+  "$defs": {
+    "nonBlank": {
+      "type": "string",
+      "pattern": ".*\\S.*"
+    },
+    "translationsZh": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/nonBlank"
+      }
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_-]*$"
+    },
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scenarioFamilyId",
+        "version",
+        "engineeringPurpose",
+        "acceptedAuthorityCommit",
+        "changeRequest",
+        "decision",
+        "runClassification",
+        "stageStatus"
+      ],
+      "properties": {
+        "scenarioFamilyId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "engineeringPurpose": {
+          "const": "ENGINEERING-SUBSCENE-ONLY"
+        },
+        "acceptedAuthorityCommit": {
+          "$ref": "#/$defs/sha1"
+        },
+        "changeRequest": {
+          "const": "CR-2026-022"
+        },
+        "decision": {
+          "const": "DD-046"
+        },
+        "runClassification": {
+          "const": "SYNTHETIC-ENGINEERING-VALIDATION"
+        },
+        "stageStatus": {
+          "const": "B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
+        }
+      }
+    },
+    "controlBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "controlCommit",
+        "path",
+        "gitBlobOid",
+        "rawSha256"
+      ],
+      "properties": {
+        "controlCommit": {
+          "$ref": "#/$defs/sha1"
+        },
+        "path": {
+          "const": "docs/control/changes/CR-2026-022.md"
+        },
+        "gitBlobOid": {
+          "$ref": "#/$defs/sha1"
+        },
+        "rawSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "inputBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "commit",
+        "path",
+        "gitBlobOid",
+        "rawSha256",
+        "role"
+      ],
+      "properties": {
+        "commit": {
+          "$ref": "#/$defs/sha1"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[^\\\\/:][^\\\\]*$"
+        },
+        "gitBlobOid": {
+          "$ref": "#/$defs/sha1"
+        },
+        "rawSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "role": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "roles",
+        "startBoundary",
+        "endBoundary",
+        "preparedButNotExecuted",
+        "notEvaluatedObligations",
+        "relationshipToExperimentScenario"
+      ],
+      "properties": {
+        "operation": {
+          "const": "UPLOAD"
+        },
+        "roles": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "startBoundary": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "endBoundary": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "preparedButNotExecuted": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "notEvaluatedObligations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "relationshipToExperimentScenario": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "scenarioId",
+            "relation",
+            "reason"
+          ],
+          "properties": {
+            "scenarioId": {
+              "$ref": "#/$defs/identifier"
+            },
+            "relation": {
+              "enum": [
+                "IMPLEMENTS-SUBSCENE",
+                "PREPARES-INTERFACE",
+                "NOT-ADMITTED"
+              ]
+            },
+            "reason": {
+              "$ref": "#/$defs/nonBlank"
+            }
+          }
+        }
+      }
+    },
+    "objectStateVariable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sourceAnchor",
+        "initial",
+        "owner",
+        "invariant",
+        "meaningZh"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sourceAnchor": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "initial": {
+          "enum": [
+            "FALSE",
+            "TRUE"
+          ]
+        },
+        "owner": {
+          "enum": [
+            "DATA-LOADER",
+            "TARGET-HARDWARE"
+          ]
+        },
+        "invariant": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "meaningZh": {
+          "$ref": "#/$defs/nonBlank"
+        }
+      }
+    },
+    "objectGuardTransition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sourceRelationId",
+        "requiresState",
+        "normalVisibleOutputId",
+        "faultBypassHypothesisId",
+        "meaningZh"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sourceRelationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "requiresState": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/nonBlank"
+          }
+        },
+        "normalVisibleOutputId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "faultBypassHypothesisId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "meaningZh": {
+          "$ref": "#/$defs/nonBlank"
+        }
+      }
+    },
+    "objectEventProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sourceRelationId",
+        "eventId",
+        "visibility",
+        "meaningZh"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sourceRelationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "eventId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "visibility": {
+          "enum": [
+            "APPLICATION",
+            "NETWORK-VISIBLE"
+          ]
+        },
+        "meaningZh": {
+          "$ref": "#/$defs/nonBlank"
+        }
+      }
+    },
+    "objectContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stage",
+        "objectKind",
+        "peerKind",
+        "stateVariables",
+        "guardTransitions",
+        "publicStimuli",
+        "visibleOutputs",
+        "semanticPayloadBoundary",
+        "privateBoundary",
+        "lifecycleBoundary",
+        "implementationIdentityPlan"
+      ],
+      "properties": {
+        "stage": {
+          "const": "B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
+        },
+        "objectKind": {
+          "const": "IN-PROCESS-CONTROLLED-DATA-LOADER-SURROGATE"
+        },
+        "peerKind": {
+          "const": "IN-PROCESS-CONTROLLED-TARGET-HARDWARE-DRIVER"
+        },
+        "stateVariables": {
+          "type": "array",
+          "minItems": 5,
+          "items": {
+            "$ref": "#/$defs/objectStateVariable"
+          }
+        },
+        "guardTransitions": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "$ref": "#/$defs/objectGuardTransition"
+          }
+        },
+        "publicStimuli": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "$ref": "#/$defs/objectEventProjection"
+          }
+        },
+        "visibleOutputs": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "$ref": "#/$defs/objectEventProjection"
+          }
+        },
+        "semanticPayloadBoundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "fileRole",
+            "semanticOpcodes",
+            "payloadRepresentation",
+            "notWirePacketImplementation",
+            "meaningZh"
+          ],
+          "properties": {
+            "fileRole": {
+              "const": "LUR"
+            },
+            "semanticOpcodes": {
+              "type": "array",
+              "minItems": 3,
+              "items": {
+                "enum": [
+                  "WRQ",
+                  "ACK",
+                  "DATA"
+                ]
+              }
+            },
+            "payloadRepresentation": {
+              "const": "OPAQUE-NO-LUR-BYTE-PAYLOAD-OR-CHECKSUM-EVALUATED"
+            },
+            "notWirePacketImplementation": {
+              "const": true
+            },
+            "meaningZh": {
+              "$ref": "#/$defs/nonBlank"
+            }
+          }
+        },
+        "privateBoundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "evaluatorOnly",
+            "algorithmForbidden",
+            "permittedAlgorithmProjection",
+            "meaningZh"
+          ],
+          "properties": {
+            "evaluatorOnly": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/identifier"
+              }
+            },
+            "algorithmForbidden": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/identifier"
+              }
+            },
+            "permittedAlgorithmProjection": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/identifier"
+              }
+            },
+            "meaningZh": {
+              "$ref": "#/$defs/nonBlank"
+            }
+          }
+        },
+        "lifecycleBoundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "faultInstallationLifetime",
+            "faultRevocationAction",
+            "revocationEvidence",
+            "meaningZh"
+          ],
+          "properties": {
+            "faultInstallationLifetime": {
+              "const": "CURRENT-ENGINEERING-ATTEMPT-UNTIL-FULL-RESET"
+            },
+            "faultRevocationAction": {
+              "const": "FULL-RESET-REVOKES-ALL-NAMED-VARIANTS"
+            },
+            "revocationEvidence": {
+              "const": "RESET-READBACK-FAULT-INSTALLATION-STATE-CLEARED"
+            },
+            "meaningZh": {
+              "$ref": "#/$defs/nonBlank"
+            }
+          }
+        },
+        "implementationIdentityPlan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "sourceRoot",
+            "entryPoint",
+            "sourceBinding",
+            "requiredAtImplementation",
+            "notEstablished",
+            "notEstablishedZh",
+            "meaningZh"
+          ],
+          "properties": {
+            "status": {
+              "const": "SOURCE-OBJECT-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
+            },
+            "sourceRoot": {
+              "const": "src/cltav_615a"
+            },
+            "entryPoint": {
+              "const": "cltav_615a.LurStartController"
+            },
+            "sourceBinding": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["scheme", "files", "loadVerification", "auditLinkage", "meaning", "meaningZh"],
+              "properties": {
+                "scheme": {"const": "CLTAV-615A-LOADED-SOURCE-SHA256-LF-V1"},
+                "files": {
+                  "type": "array", "minItems": 5, "maxItems": 5, "uniqueItems": true,
+                  "items": {"$ref": "#/$defs/nonBlank"}
+                },
+                "loadVerification": {"const": "MODULE-CODE-EQUALITY-FROZEN-SOURCE-AND-CONSTRUCTOR-DRIFT-CHECK"},
+                "auditLinkage": {"const": "FROZEN-MANIFEST-IN-ATTEMPT-AUDIT-SHARED-CODE-IDENTITY"},
+                "meaning": {"$ref": "#/$defs/nonBlank"},
+                "meaningZh": {"$ref": "#/$defs/nonBlank"}
+              }
+            },
+            "requiredAtImplementation": {
+              "type": "array",
+              "minItems": 3,
+              "items": {
+                "$ref": "#/$defs/identifier"
+              }
+            },
+            "notEstablished": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "notEstablishedZh": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "meaningZh": {
+              "$ref": "#/$defs/nonBlank"
+            }
+          }
+        }
+      }
+    },
+    "stateFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "before",
+        "after",
+        "assertions"
+      ],
+      "properties": {
+        "before": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "after": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "assertions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/nonBlank"
+          }
+        }
+      }
+    },
+    "sourceRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "requirementId",
+        "sourceUnitId",
+        "sourceLocator",
+        "documentPage",
+        "pdfPage",
+        "transitionId",
+        "eventId",
+        "eventDirection",
+        "actor",
+        "receiver",
+        "action",
+        "objects",
+        "semanticOpcodeClass",
+        "fileRole",
+        "scenarioRationale",
+        "scenarioRationaleZh",
+        "visibility",
+        "scenarioUse",
+        "executedByScenario",
+        "notWireOpcode",
+        "stateFacts"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "requirementId": {
+          "type": "string",
+          "pattern": "^CRS-M1-[0-9]{5}$"
+        },
+        "sourceUnitId": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "sourceLocator": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "documentPage": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pdfPage": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "transitionId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "eventId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "eventDirection": {
+          "enum": [
+            "APPLICATION-NO-WIRE",
+            "TH-TO-DL",
+            "DL-TO-TH"
+          ]
+        },
+        "actor": {
+          "$ref": "#/$defs/identifier"
+        },
+        "receiver": {
+          "$ref": "#/$defs/identifier"
+        },
+        "action": {
+          "$ref": "#/$defs/identifier"
+        },
+        "objects": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "semanticOpcodeClass": {
+          "$ref": "#/$defs/identifier"
+        },
+        "fileRole": {
+          "$ref": "#/$defs/identifier"
+        },
+        "scenarioRationale": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "scenarioRationaleZh": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "visibility": {
+          "enum": [
+            "APPLICATION",
+            "NETWORK-VISIBLE"
+          ]
+        },
+        "scenarioUse": {
+          "enum": [
+            "PRECONDITION-ONLY",
+            "VISIBLE-STIMULUS",
+            "VISIBLE-OBJECT-EVENT"
+          ]
+        },
+        "executedByScenario": {
+          "type": "boolean"
+        },
+        "notWireOpcode": {
+          "type": "boolean"
+        },
+        "stateFacts": {
+          "$ref": "#/$defs/stateFacts"
+        }
+      }
+    },
+    "traceabilityRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "stateOrActionId",
+        "sourceRelationIds",
+        "visibleEvidence",
+        "existingInterfaceIds",
+        "interfaceUse",
+        "acceptanceWitnessIds",
+        "notCovered"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "stateOrActionId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sourceRelationIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "visibleEvidence": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "existingInterfaceIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "interfaceUse": {
+          "$ref": "#/$defs/identifier"
+        },
+        "acceptanceWitnessIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "notCovered": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      }
+    },
+    "hypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "definition"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "kind": {
+          "enum": [
+            "NORMAL",
+            "SINGLE-FAULT"
+          ]
+        },
+        "definition": {
+          "$ref": "#/$defs/nonBlank"
+        }
+      }
+    },
+    "hypothesisDomain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "members",
+        "activeFaultVisibility",
+        "algorithmMayKnow",
+        "algorithmMustNotReceive",
+        "coverageLimit",
+        "coverageLimitZh"
+      ],
+      "properties": {
+        "members": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "$ref": "#/$defs/hypothesis"
+          }
+        },
+        "activeFaultVisibility": {
+          "const": "EVALUATOR-ONLY"
+        },
+        "algorithmMayKnow": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "algorithmMustNotReceive": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "coverageLimit": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "coverageLimitZh": {
+          "$ref": "#/$defs/nonBlank"
+        }
+      }
+    },
+    "cost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "acquisition",
+        "computation",
+        "preparation",
+        "retry"
+      ],
+      "properties": {
+        "acquisition": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "computation": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "preparation": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retry": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "inspection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "completionReceipt",
+        "journalPredicate",
+        "finiteHorizonTicks",
+        "isProtocolNoResponseVerdict",
+        "fabricatedProtocolResponse"
+      ],
+      "properties": {
+        "completionReceipt": {
+          "$ref": "#/$defs/identifier"
+        },
+        "journalPredicate": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "finiteHorizonTicks": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "isProtocolNoResponseVerdict": {
+          "const": false
+        },
+        "fabricatedProtocolResponse": {
+          "const": false
+        }
+      }
+    },
+    "summaryDerivation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publicSources",
+        "forbiddenPrivateSources",
+        "publicEvidenceProjection"
+      ],
+      "properties": {
+        "publicSources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "forbiddenPrivateSources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "publicEvidenceProjection": {
+          "$ref": "#/$defs/publicEvidenceProjection"
+        }
+      }
+    },
+    "publicEvidenceProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projectionKind",
+        "sessionBinding",
+        "correlationBinding",
+        "ordering",
+        "inspectedRange",
+        "completionReceipt",
+        "receiptMustBeCompleted",
+        "invalidOrUnconfirmedDisposition"
+      ],
+      "properties": {
+        "projectionKind": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sessionBinding": {
+          "$ref": "#/$defs/identifier"
+        },
+        "correlationBinding": {
+          "$ref": "#/$defs/identifier"
+        },
+        "ordering": {
+          "$ref": "#/$defs/identifier"
+        },
+        "inspectedRange": {
+          "$ref": "#/$defs/identifier"
+        },
+        "completionReceipt": {
+          "$ref": "#/$defs/identifier"
+        },
+        "receiptMustBeCompleted": {
+          "const": true
+        },
+        "invalidOrUnconfirmedDisposition": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "prepEffectBranch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effectClass",
+        "targetConfirmation",
+        "summaryConfirmation",
+        "historyDisposition",
+        "qDisposition",
+        "successorDisposition",
+        "chargeDisposition"
+      ],
+      "properties": {
+        "effectClass": {
+          "$ref": "#/$defs/identifier"
+        },
+        "targetConfirmation": {
+          "$ref": "#/$defs/identifier"
+        },
+        "summaryConfirmation": {
+          "$ref": "#/$defs/identifier"
+        },
+        "historyDisposition": {
+          "$ref": "#/$defs/identifier"
+        },
+        "qDisposition": {
+          "$ref": "#/$defs/identifier"
+        },
+        "successorDisposition": {
+          "$ref": "#/$defs/identifier"
+        },
+        "chargeDisposition": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "prepEffectBranches": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "confirmed",
+        "confirmedNotSent",
+        "executedSummaryUnconfirmed",
+        "targetNotReachedWithConfirmedSuccessor"
+      ],
+      "properties": {
+        "confirmed": {
+          "$ref": "#/$defs/prepEffectBranch"
+        },
+        "confirmedNotSent": {
+          "$ref": "#/$defs/prepEffectBranch"
+        },
+        "executedSummaryUnconfirmed": {
+          "$ref": "#/$defs/prepEffectBranch"
+        },
+        "targetNotReachedWithConfirmedSuccessor": {
+          "$ref": "#/$defs/prepEffectBranch"
+        }
+      }
+    },
+    "prepEffectBranchesZh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "confirmed",
+        "confirmedNotSent",
+        "executedSummaryUnconfirmed",
+        "targetNotReachedWithConfirmedSuccessor"
+      ],
+      "properties": {
+        "confirmed": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "confirmedNotSent": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "executedSummaryUnconfirmed": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "targetNotReachedWithConfirmedSuccessor": {
+          "$ref": "#/$defs/nonBlank"
+        }
+      }
+    },
+    "possibleOutcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observable",
+        "postSummary",
+        "summaryConfirmedWhen",
+        "summaryConfirmedWhenZh",
+        "compatibleHypotheses"
+      ],
+      "properties": {
+        "observable": {
+          "$ref": "#/$defs/identifier"
+        },
+        "postSummary": {
+          "$ref": "#/$defs/identifier"
+        },
+        "summaryConfirmedWhen": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "summaryConfirmedWhenZh": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "compatibleHypotheses": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "eligibility",
+        "cost",
+        "publicStimulus",
+        "observationMode",
+        "successorConfirmation",
+        "unconfirmedEffectDisposition",
+        "historyDisposition",
+        "inspection",
+        "summaryDerivation",
+        "possibleOutcomes",
+        "nonEvaluatedObligations",
+        "zh"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "kind": {
+          "enum": [
+            "TEST",
+            "PREP",
+            "RECOVER"
+          ]
+        },
+        "eligibility": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "cost": {
+          "$ref": "#/$defs/cost"
+        },
+        "publicStimulus": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "observationMode": {
+          "$ref": "#/$defs/identifier"
+        },
+        "successorConfirmation": {
+          "$ref": "#/$defs/identifier"
+        },
+        "unconfirmedEffectDisposition": {
+          "$ref": "#/$defs/identifier"
+        },
+        "historyDisposition": {
+          "const": "SUBMIT-CONFIRMED-SUMMARY-THROUGH-IF-HIST-UPDATE"
+        },
+        "inspection": {
+          "$ref": "#/$defs/inspection"
+        },
+        "summaryDerivation": {
+          "$ref": "#/$defs/summaryDerivation"
+        },
+        "prepEffectBranches": {
+          "$ref": "#/$defs/prepEffectBranches"
+        },
+        "possibleOutcomes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/possibleOutcome"
+          }
+        },
+        "nonEvaluatedObligations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "zh": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "eligibility",
+            "publicStimulus",
+            "observationMode",
+            "successorConfirmation",
+            "unconfirmedEffectDisposition",
+            "historyDisposition"
+          ],
+          "properties": {
+            "eligibility": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "publicStimulus": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "observationMode": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "successorConfirmation": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "unconfirmedEffectDisposition": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "historyDisposition": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "prepEffectBranches": {
+              "$ref": "#/$defs/prepEffectBranchesZh"
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "PREP"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "prepEffectBranches"
+            ],
+            "properties": {
+              "zh": {
+                "required": [
+                  "prepEffectBranches"
+                ]
+              }
+            }
+          },
+          "else": {
+            "not": {
+              "required": [
+                "prepEffectBranches"
+              ]
+            },
+            "properties": {
+              "zh": {
+                "not": {
+                  "required": [
+                    "prepEffectBranches"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "timeAndObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "virtualClockId",
+        "tickRepresentation",
+        "tickMeaning",
+        "uncertaintyIdentity",
+        "uncertaintyModel",
+        "sameTickOrdering",
+        "ownershipPolicy",
+        "finiteObservationBoundary"
+      ],
+      "properties": {
+        "virtualClockId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "tickRepresentation": {
+          "const": "NONNEGATIVE-INTEGER"
+        },
+        "tickMeaning": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "uncertaintyIdentity": {
+          "$ref": "#/$defs/identifier"
+        },
+        "uncertaintyModel": {
+          "const": "ZERO-WIDTH-VIRTUAL-ENGINEERING-MODEL"
+        },
+        "sameTickOrdering": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "ownershipPolicy": {
+          "const": "CURRENT-SESSION-MATCHING-CORRELATION-ONLY"
+        },
+        "finiteObservationBoundary": {
+          "$ref": "#/$defs/nonBlank"
+        }
+      }
+    },
+    "resourceContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "admissionOwner",
+        "accountingOwner",
+        "allowedModes",
+        "admissionBoundary",
+        "roundsMeaning",
+        "budgetMeaning",
+        "postDispatchError",
+        "notEvaluated",
+        "zh"
+      ],
+      "properties": {
+        "admissionOwner": {
+          "const": "IF-SELECT-ADMIT"
+        },
+        "accountingOwner": {
+          "const": "REFERENCE-SESSION"
+        },
+        "allowedModes": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "enum": ["ROUNDS", "BUDGET"]
+          }
+        },
+        "admissionBoundary": {
+          "const": "CHECK-BEFORE-DISPATCH"
+        },
+        "roundsMeaning": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "budgetMeaning": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "postDispatchError": {
+          "const": "CHARGE-ONCE-PRESERVE-ACTUAL-SUCCESSOR"
+        },
+        "notEvaluated": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "zh": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "roundsMeaning",
+            "budgetMeaning",
+            "admissionBoundary",
+            "postDispatchError",
+            "notEvaluated"
+          ],
+          "properties": {
+            "roundsMeaning": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "budgetMeaning": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "admissionBoundary": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "postDispatchError": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "notEvaluated": {
+              "$ref": "#/$defs/nonBlank"
+            }
+          }
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fullReset",
+        "faultInjection",
+        "recover"
+      ],
+      "properties": {
+        "fullReset": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "scope",
+            "successEvidence",
+            "notProtocolAbort"
+          ],
+          "properties": {
+            "scope": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/identifier"
+              }
+            },
+            "successEvidence": {
+              "$ref": "#/$defs/identifier"
+            },
+            "notProtocolAbort": {
+              "const": true
+            }
+          }
+        },
+        "faultInjection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "installationEvidence",
+            "activationEvidence",
+            "unconfirmedDisposition",
+            "installationLifetime",
+            "revocationAction",
+            "revocationEvidence",
+            "revocationFailureDisposition",
+            "variants"
+          ],
+          "properties": {
+            "installationEvidence": {
+              "$ref": "#/$defs/identifier"
+            },
+            "activationEvidence": {
+              "$ref": "#/$defs/identifier"
+            },
+            "unconfirmedDisposition": {
+              "$ref": "#/$defs/identifier"
+            },
+            "installationLifetime": {
+              "const": "CURRENT-ENGINEERING-ATTEMPT-UNTIL-FULL-RESET"
+            },
+            "revocationAction": {
+              "const": "FULL-RESET-REVOKES-ALL-NAMED-VARIANTS"
+            },
+            "revocationEvidence": {
+              "const": "RESET-READBACK-FAULT-INSTALLATION-STATE-CLEARED"
+            },
+            "revocationFailureDisposition": {
+              "const": "RETAIN-ATTEMPT-AS-INVALID-NOT-NORMAL"
+            },
+            "variants": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "$ref": "#/$defs/faultVariant"
+              }
+            }
+          }
+        },
+        "recover": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "requires",
+            "targetAndSummaryAreDistinct",
+            "confirmationFailureDisposition"
+          ],
+          "properties": {
+            "requires": {
+              "const": "UNKNOWN-EFFECT"
+            },
+            "targetAndSummaryAreDistinct": {
+              "const": true
+            },
+            "confirmationFailureDisposition": {
+              "const": "DO-NOT-MARK-KNOWN"
+            }
+          }
+        }
+      }
+    },
+    "faultVariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hypothesisId",
+        "installationTarget",
+        "activationObservable",
+        "controllerReadback",
+        "algorithmVisibility"
+      ],
+      "properties": {
+        "hypothesisId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "installationTarget": {
+          "$ref": "#/$defs/identifier"
+        },
+        "activationObservable": {
+          "$ref": "#/$defs/identifier"
+        },
+        "controllerReadback": {
+          "$ref": "#/$defs/identifier"
+        },
+        "algorithmVisibility": {
+          "const": "EVALUATOR-ONLY"
+        }
+      }
+    },
+    "round": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "round",
+        "actionId",
+        "expectedVisibleEvents",
+        "expectedPublicSummary",
+        "expectedCandidates",
+        "continues"
+      ],
+      "properties": {
+        "round": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "actionId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "expectedVisibleEvents": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "expectedPublicSummary": {
+          "$ref": "#/$defs/identifier"
+        },
+        "expectedCandidates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "continues": {
+          "type": "boolean"
+        },
+        "resourceExpectation": {
+          "$ref": "#/$defs/resourceExpectation"
+        }
+      }
+    },
+    "resourceExpectation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "admission",
+        "reason",
+        "mode",
+        "availableRounds",
+        "requiredRounds",
+        "actionCostCharged",
+        "successorDisposition"
+      ],
+      "properties": {
+        "admission": {
+          "const": "NOT-ADMITTED"
+        },
+        "reason": {
+          "const": "INSUFFICIENT-RESOURCE-BEFORE-DISPATCH"
+        },
+        "mode": {
+          "const": "ROUNDS"
+        },
+        "availableRounds": {
+          "const": 0
+        },
+        "requiredRounds": {
+          "const": 1
+        },
+        "actionCostCharged": {
+          "const": false
+        },
+        "successorDisposition": {
+          "const": "PRE-DISPATCH-SUCCESSOR-UNCHANGED"
+        }
+      }
+    },
+    "caseInitialContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entryKind",
+        "sessionBinding",
+        "correlationBinding",
+        "qStatus",
+        "currentSummary",
+        "compatibleHypotheses",
+        "completedActionIds",
+        "retainedPublicPrefix"
+      ],
+      "properties": {
+        "entryKind": {
+          "enum": [
+            "FRESH-ATTEMPT",
+            "INHERITED-CONTINUATION"
+          ]
+        },
+        "sessionBinding": {
+          "$ref": "#/$defs/identifier"
+        },
+        "correlationBinding": {
+          "$ref": "#/$defs/identifier"
+        },
+        "qStatus": {
+          "const": "KNOWN"
+        },
+        "currentSummary": {
+          "$ref": "#/$defs/identifier"
+        },
+        "compatibleHypotheses": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "completedActionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "retainedPublicPrefix": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      }
+    },
+    "unknownRecoverContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trigger",
+        "triggerActionId",
+        "triggerRound",
+        "mayHaveVisibleEvents",
+        "sessionDisposition",
+        "recoverEntryQStatus",
+        "recoverRequiredPublicEvidence",
+        "targetAndSummaryConfirmation",
+        "rewindProhibited",
+        "unconfirmedRecoveryDisposition"
+      ],
+      "properties": {
+        "trigger": {
+          "$ref": "#/$defs/identifier"
+        },
+        "triggerActionId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "triggerRound": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "mayHaveVisibleEvents": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "sessionDisposition": {
+          "$ref": "#/$defs/identifier"
+        },
+        "recoverEntryQStatus": {
+          "const": "UNKNOWN"
+        },
+        "recoverRequiredPublicEvidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "targetAndSummaryConfirmation": {
+          "$ref": "#/$defs/identifier"
+        },
+        "rewindProhibited": {
+          "$ref": "#/$defs/identifier"
+        },
+        "unconfirmedRecoveryDisposition": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "purpose",
+        "activeFaultVisibility",
+        "initialContext",
+        "rounds",
+        "afterStopMayEmitEvents",
+        "executionStatus"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "purpose": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "activeFaultVisibility": {
+          "const": "EVALUATOR-ONLY"
+        },
+        "initialContext": {
+          "$ref": "#/$defs/caseInitialContext"
+        },
+        "unknownRecoverContract": {
+          "$ref": "#/$defs/unknownRecoverContract"
+        },
+        "rounds": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/round"
+          }
+        },
+        "afterStopMayEmitEvents": {
+          "const": false
+        },
+        "executionStatus": {
+          "const": "NOT-EXECUTED-DESIGN-WITNESS"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "CASE-UNKNOWN-RECOVER-CONTINUATION"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "required": [
+              "unknownRecoverContract"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "unknownRecoverContract"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "experimentRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "interfaceId",
+        "engineeringHandoff",
+        "publicProjection",
+        "evaluatorProjection",
+        "sharedComponentRisk",
+        "notAdmitted",
+        "zh"
+      ],
+      "properties": {
+        "interfaceId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "engineeringHandoff": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "publicProjection": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "evaluatorProjection": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "sharedComponentRisk": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "notAdmitted": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "zh": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "engineeringHandoff",
+            "publicProjection",
+            "evaluatorProjection",
+            "sharedComponentRisk",
+            "notAdmitted"
+          ],
+          "properties": {
+            "engineeringHandoff": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "publicProjection": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "evaluatorProjection": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "sharedComponentRisk": {
+              "$ref": "#/$defs/nonBlank"
+            },
+            "notAdmitted": {
+              "$ref": "#/$defs/nonBlank"
+            }
+          }
+        }
+      }
+    },
+    "witness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "entryPoint",
+        "claim"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "entryPoint": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "claim": {
+          "$ref": "#/$defs/nonBlank"
+        }
+      }
+    }
+  }
+}

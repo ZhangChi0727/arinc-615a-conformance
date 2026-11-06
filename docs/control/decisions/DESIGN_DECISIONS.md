@@ -1216,6 +1216,44 @@ their bounded engineering scopes; G5 whole-PR joint review and final-head CI
 remain required before PR acceptance. This is neither run admission nor
 approval of a conformance, capability, experiment or publication claim.
 
+---
+
+## DD-046 — Controlled 615A UPLOAD control-slice engineering prototype
+
+**Decision:** Under CR-2026-022, permit one bounded, source-traceable,
+process-local DATA-LOADER surrogate and TARGET-HARDWARE driver for the opening
+UPLOAD control slice. The object begins only after a named list-submission
+preparation boundary and preserves the distinction among list offered, target
+ready, list accepted, LUR WRQ, corresponding ACK and DATA. NORMAL, EARLY-WRQ
+and EARLY-DATA are evaluation-domain object variants, not protocol verdict
+labels.
+
+**Why:** The accepted finite CL-TAV session needs a recognizable, resettable and
+source-bound engineering object to exercise real visible events and bounded
+feedback without promoting an implementation fixture into a complete protocol
+engine or experiment.
+
+**Scope:** A closed scenario/schema package, direct surrogate/TH execution,
+finite virtual time, injection/read-back/activation records, public/private
+projection, narrow reference-session adaptation and later engineering-only
+evidence replay. Source requirements, M2, existing algorithm/interface
+authority, experimental arms and admission, integrity capability, publication
+claims and network/IUT behavior remain unchanged.
+
+**Guardrails:** An absent WRQ is only a completed finite engineering inspection;
+it is never a source-defined no-response fail. Observable summaries and
+confirmation are recomputed from permitted public journal/acknowledgement
+evidence, not private state. A stopped session is not extended merely to
+complete a demonstration. Fault records remain type-valid visible events and
+are not filtered as tool errors.
+
+**Status:** G0/A received their separate fixed-head stage acceptance before
+object implementation. The current B-stage Loader/TH lifecycle material is a
+candidate pending its own fixed-head independent review; subsequent stages and
+whole-PR acceptance remain separate. This decision authorizes neither Ready,
+approval, merge, Configuration/M3, capability/conformance/certification nor
+scientific result claims.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -1849,3 +1887,25 @@ PR #22 所有权。
 **状态：** 在 CR-2026-021 下为候选。G1～G4 有限复审已接受各自有界工程范围；在 PR
 接受前，G5 整支联合评审和最终 Head CI 仍为必需。这既不是运行准入，也不是符合性、能力、实验
 或出版主张的批准。
+
+## DD-046——受控的 615A UPLOAD 控制片段工程原型
+
+**决定：** 在 CR-2026-022 下，许可一个有界、可追溯来源、进程内的 DATA-LOADER 替身和
+TARGET-HARDWARE 驱动，用于 UPLOAD 控制片段的起始部分。对象只能在具名列表提交准备边界之后
+开始，并保持列表已提供、目标已就绪、列表已接受、LUR WRQ、对应 ACK 和 DATA 之间的区分。
+NORMAL、EARLY-WRQ 与 EARLY-DATA 是评价域中的对象变体，而不是协议判定标签。
+
+**理由：** 已接受的有限 CL-TAV 会话需要一个可辨认、可复位且来源绑定的工程对象，以在不把
+实现 fixture 晋级为完整协议引擎或实验的前提下，演练真实可见事件和有界反馈。
+
+**范围：** 封闭的场景/schema 包、直接替身／TH 执行、有限虚拟时基、注入／读回／激活记录、
+公私投影、狭窄的 reference-session 适配以及后续仅工程证据重放。来源需求、M2、既有算法／
+接口权威、实验臂及准入、完整性能力、出版主张和网络／IUT 行为保持不变。
+
+**护栏：** 没有 WRQ 只能表示一次已完成的有限工程检查，绝不是来源定义的无响应 FAIL。可观测
+摘要与确认必须由许可的公开 journal／回执证据重算，而不是私有状态。会话停止后不得为完成演示
+而延长运行。故障记录仍是类型合法的可见事件，不得过滤为工具错误。
+
+**状态：** G0/A 已在对象实现前分别以固定 Head 获得阶段接受。当前 B 阶段的 Loader／TH
+生命周期材料仍是等待自身固定 Head 独立评审的候选；后续阶段和整支 PR 接受仍然独立。本决定
+不授权 Ready、批准、合并、Configuration/M3、能力／符合性／认证或科学结果主张。
