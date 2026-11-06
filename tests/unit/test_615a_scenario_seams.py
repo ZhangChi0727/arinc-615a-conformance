@@ -427,6 +427,27 @@ def _validated_completed_public_prefix(
     return journal
 
 
+def _continues_retained_public_prefix(
+    candidate: tuple[_PublicJournalEvent, ...],
+    retained: tuple[_PublicJournalEvent, ...],
+) -> bool:
+    """Require a dispatched ordinary action to preserve the actual checkpoint.
+
+    A receipt can make a material structurally complete without making it a
+    legal successor to an already observed action.  Once a public checkpoint
+    exists, the next executed non-Recover action must retain it byte-for-byte
+    (as the event dataclasses are immutable), whether the observation is the
+    same completed prefix or has a later tail.  The initial completed prefix,
+    including the contract's canonical empty prefix, has no predecessor to
+    preserve.
+    """
+
+    return not retained or (
+        len(candidate) >= len(retained)
+        and candidate[: len(retained)] == retained
+    )
+
+
 def _project_public_summary(
     package: dict[str, object],
     request: ExecutionRequest,
@@ -675,6 +696,22 @@ class _LoaderScenarioEnvironment(SyntheticEnvironment):
             correlation_id=self.correlation_id,
             material=material,
         )
+        # A valid receipt is necessary but insufficient for a newly executed
+        # ordinary action.  It must also be an append-only successor to the
+        # actual public checkpoint.  Do this before semantic projection: a
+        # replacement snapshot must not manufacture either an observable
+        # summary or a fresh checkpoint merely because it is well-formed.
+        # Recover has its own exact-one-readback continuation rule below and
+        # deliberately remains retryable when that rule is not met.
+        if (
+            validated_prefix is not None
+            and request.action_id != RECOVER_ACTION_ID
+            and not _continues_retained_public_prefix(
+                validated_prefix,
+                self.retained_public_journal,
+            )
+        ):
+            validated_prefix = None
         projection = _project_public_summary(
             package,
             request,
@@ -1465,6 +1502,36 @@ def test_a12d_unconfirmed_complete_order_prefix_is_retained_and_controls_recover
     assert all("NO-RESPONSE" not in diagnostic.code for diagnostic in unknown.diagnostics)
     assert all("FAIL" not in diagnostic.code for diagnostic in unknown.diagnostics)
 
+    # A later action may truthfully observe the same complete boundary before
+    # it sees a new public event.  Equality is not a rewrite: it retains the
+    # identical checkpoint and leaves no unresolved-action marker.
+    assert tuple(
+        event.event_id for event in prepared.environment.retained_public_journal
+    ) == ("EV_DL_OFFER_LIST", "EV_TH_LUS0001")
+    same_prefix_order = action_material(
+        base_order,
+        ORDER_TEST_ACTION_ID,
+        prepared.environment.retained_public_journal,
+    )
+    same_prefix = session.step(
+        prepared.state,
+        replace(
+            prepared.environment,
+            public_materials=_replace_material(
+                prepared.environment.public_materials,
+                same_prefix_order,
+            ),
+        ),
+    )
+    assert same_prefix.state.evidence[-1].resolution_code == "UNKNOWN-EFFECT"
+    assert same_prefix.state.context.q_status == "UNKNOWN"
+    assert type(same_prefix.environment) is _LoaderScenarioEnvironment
+    assert (
+        same_prefix.environment.retained_public_journal
+        == prepared.environment.retained_public_journal
+    )
+    assert same_prefix.environment.unresolved_public_action_id is None
+
     base_recover = next(item for item in materials if item.action_id == RECOVER_ACTION_ID)
 
     def with_readback(
@@ -1566,6 +1633,82 @@ def test_a12d_unconfirmed_complete_order_prefix_is_retained_and_controls_recover
 
     # An absent or malformed current TEST prefix must fail closed instead of
     # letting the retained two-event Prep anchor authorize a later Recover.
+    disconnected_order_journal = (
+        _PublicJournalEvent(
+            session_id,
+            correlation_id,
+            1,
+            "EV_DL_WRQ_LUR",
+        ),
+        _PublicJournalEvent(
+            session_id,
+            correlation_id,
+            2,
+            "EV_TH_ACK_LUR",
+        ),
+    )
+    disconnected_order_with_data_journal = disconnected_order_journal + (
+        _PublicJournalEvent(
+            session_id,
+            correlation_id,
+            3,
+            "EV_DL_DATA_LUR",
+        ),
+    )
+    replaced_retained_event_journal = (
+        _PublicJournalEvent(
+            session_id,
+            correlation_id,
+            1,
+            "EV_DL_OFFER_LIST",
+        ),
+        # Existing vocabulary and a complete receipt are not enough when the
+        # formerly retained LUS-0001 event has been substituted.
+        _PublicJournalEvent(
+            session_id,
+            correlation_id,
+            2,
+            "EV_TH_ACK_LUR",
+        ),
+        _PublicJournalEvent(
+            session_id,
+            correlation_id,
+            3,
+            "EV_DL_WRQ_LUR",
+        ),
+        _PublicJournalEvent(
+            session_id,
+            correlation_id,
+            4,
+            "EV_TH_ACK_LUR",
+        ),
+    )
+    reordered_retained_event_journal = (
+        _PublicJournalEvent(
+            session_id,
+            correlation_id,
+            1,
+            "EV_TH_LUS0001",
+        ),
+        _PublicJournalEvent(
+            session_id,
+            correlation_id,
+            2,
+            "EV_DL_OFFER_LIST",
+        ),
+        _PublicJournalEvent(
+            session_id,
+            correlation_id,
+            3,
+            "EV_DL_WRQ_LUR",
+        ),
+        _PublicJournalEvent(
+            session_id,
+            correlation_id,
+            4,
+            "EV_TH_ACK_LUR",
+        ),
+    )
     for case_id, incomplete_materials in (
         (
             "missing-order-material",
@@ -1580,6 +1723,57 @@ def test_a12d_unconfirmed_complete_order_prefix_is_retained_and_controls_recover
                     ORDER_TEST_ACTION_ID,
                     no_data_journal,
                     completed=False,
+                ),
+            ),
+        ),
+        # This prefix is structurally complete and current-session scoped, but
+        # it replaces rather than extends the actual LIST/READY checkpoint.
+        # It must fail closed just like malformed current material; otherwise
+        # a later readback could make the replacement history look confirmed.
+        (
+            "disconnected-order-prefix",
+            _replace_material(
+                materials,
+                action_material(
+                    base_order,
+                    ORDER_TEST_ACTION_ID,
+                    disconnected_order_journal,
+                ),
+            ),
+        ),
+        # The same replacement with DATA would otherwise look like a normal
+        # order.  Continuity must therefore gate semantic projection as well
+        # as checkpoint retention.
+        (
+            "disconnected-order-prefix-with-data",
+            _replace_material(
+                materials,
+                action_material(
+                    base_order,
+                    ORDER_TEST_ACTION_ID,
+                    disconnected_order_with_data_journal,
+                ),
+            ),
+        ),
+        (
+            "replaced-retained-event",
+            _replace_material(
+                materials,
+                action_material(
+                    base_order,
+                    ORDER_TEST_ACTION_ID,
+                    replaced_retained_event_journal,
+                ),
+            ),
+        ),
+        (
+            "reordered-retained-event",
+            _replace_material(
+                materials,
+                action_material(
+                    base_order,
+                    ORDER_TEST_ACTION_ID,
+                    reordered_retained_event_journal,
                 ),
             ),
         ),
@@ -1630,7 +1824,9 @@ def test_a12d_unconfirmed_complete_order_prefix_is_retained_and_controls_recover
         # its current operation correlation remains the same controlled one.
         invalid_evidence = invalid_unknown.state.evidence[-1]
         assert invalid_evidence.snapshot.action_id == ORDER_TEST_ACTION_ID
+        assert invalid_evidence.committed is False
         assert invalid_evidence.resolution_code == "UNKNOWN-EFFECT"
+        assert invalid_evidence.execution.observable is None
         assert invalid_unknown.state.context.q_status == "UNKNOWN"
         assert invalid_unknown.state.context.current_summary is None
         assert invalid_unknown.state.history.hypotheses == frozenset({"NORMAL", "EARLY-DATA"})
@@ -1681,6 +1877,67 @@ def test_a12d_unconfirmed_complete_order_prefix_is_retained_and_controls_recover
         assert failed_old_anchor.environment.retained_public_journal == old_prefix
         assert failed_old_anchor.environment.unresolved_public_action_id == ORDER_TEST_ACTION_ID
         assert failed_old_anchor.environment.loader_state != "LOADER-READY-RECONFIRMED"
+
+        if case_id in {
+            "disconnected-order-prefix",
+            "disconnected-order-prefix-with-data",
+            "replaced-retained-event",
+            "reordered-retained-event",
+        }:
+            # A replacement prefix must not repair itself merely by gaining a
+            # readback.  This additionally proves that the DATA-bearing form
+            # above cannot first commit a normal observable then recover.
+            disconnected_order = next(
+                item
+                for item in invalid_materials
+                if item.action_id == ORDER_TEST_ACTION_ID
+            )
+            disconnected_anchor_recover = _ActionPublicMaterial(
+                RECOVER_ACTION_ID,
+                disconnected_order.journal + (
+                    _PublicJournalEvent(
+                        invalid_session_id,
+                        correlation_id,
+                        len(disconnected_order.journal) + 1,
+                        "RECOVER-READY-READBACK",
+                    ),
+                ),
+                replace(
+                    invalid_base_recover.receipt,
+                    prefix_start=1,
+                    prefix_end=len(disconnected_order.journal) + 1,
+                ),
+            )
+            failed_disconnected_anchor = invalid_session.step(
+                invalid_unknown.state,
+                replace(
+                    invalid_unknown.environment,
+                    public_materials=_replace_material(
+                        invalid_unknown.environment.public_materials,
+                        disconnected_anchor_recover,
+                    ),
+                ),
+            )
+            disconnected_evidence = failed_disconnected_anchor.state.evidence[-1]
+            assert disconnected_evidence.snapshot.action_id == RECOVER_ACTION_ID
+            assert disconnected_evidence.committed is False
+            assert disconnected_evidence.resolution_code == "RECOVER-TARGET-UNCONFIRMED"
+            assert failed_disconnected_anchor.state.context.q_status == "UNKNOWN"
+            assert failed_disconnected_anchor.state.context.current_summary is None
+            assert (
+                failed_disconnected_anchor.state.history.hypotheses
+                == invalid_unknown.state.history.hypotheses
+            )
+            assert type(failed_disconnected_anchor.environment) is _LoaderScenarioEnvironment
+            assert failed_disconnected_anchor.environment.retained_public_journal == old_prefix
+            assert (
+                failed_disconnected_anchor.environment.unresolved_public_action_id
+                == ORDER_TEST_ACTION_ID
+            )
+            assert (
+                failed_disconnected_anchor.environment.loader_state
+                != "LOADER-READY-RECONFIRMED"
+            )
 
 
 def test_a13_actual_package_bound_runtime_binding_keeps_p3_unavailable() -> None:
