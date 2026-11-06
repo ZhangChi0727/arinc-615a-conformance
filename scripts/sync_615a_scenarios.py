@@ -136,6 +136,7 @@ def _render_actions(data: dict[str, Any], *, chinese: bool) -> list[str]:
                 f"- 历史提交：{plain_text(zh['historyDisposition'])}",
                 f"- 检查：{_cell(action['inspection'], chinese=True)}",
                 f"- 摘要来源（公开）：{_cell(action['summaryDerivation']['publicSources'], chinese=True)}；禁止私有来源：{_cell(action['summaryDerivation']['forbiddenPrivateSources'], chinese=True)}",
+                f"- 公开证据投影合同：{_cell(action['summaryDerivation']['publicEvidenceProjection'], chinese=True)}",
                 "- 可能结果：",
             ])
             lines.extend(_table(
@@ -145,6 +146,24 @@ def _render_actions(data: dict[str, Any], *, chinese: bool) -> list[str]:
                 ) for row in action["possibleOutcomes"]),
                 chinese=True,
             ))
+            if action["kind"] == "PREP":
+                branches = action["prepEffectBranches"]
+                lines.extend(["- Prep 效果分支："])
+                lines.extend(_table(
+                    ["分支", "效果类", "目标确认", "摘要确认", "历史处置", "q 处置", "后继处置", "收费", "中文说明"],
+                    ((
+                        branch_id,
+                        branch["effectClass"],
+                        branch["targetConfirmation"],
+                        branch["summaryConfirmation"],
+                        branch["historyDisposition"],
+                        branch["qDisposition"],
+                        branch["successorDisposition"],
+                        branch["chargeDisposition"],
+                        zh["prepEffectBranches"][branch_id],
+                    ) for branch_id, branch in branches.items()),
+                    chinese=True,
+                ))
             lines.extend([
                 f"- 未评估义务：{_cell(action['nonEvaluatedObligations'], chinese=True)}",
                 "",
@@ -160,6 +179,7 @@ def _render_actions(data: dict[str, Any], *, chinese: bool) -> list[str]:
                 f"- History disposition: `{action['historyDisposition']}`",
                 f"- Inspection: {_cell(action['inspection'])}",
                 f"- Public summary sources: {_cell(action['summaryDerivation']['publicSources'])}; prohibited private sources: {_cell(action['summaryDerivation']['forbiddenPrivateSources'])}",
+                f"- Public-evidence projection contract: {_cell(action['summaryDerivation']['publicEvidenceProjection'])}",
                 "- Possible outcomes:",
             ])
             lines.extend(_table(
@@ -168,6 +188,22 @@ def _render_actions(data: dict[str, Any], *, chinese: bool) -> list[str]:
                     row["observable"], row["postSummary"], row["summaryConfirmedWhen"], row["compatibleHypotheses"],
                 ) for row in action["possibleOutcomes"]),
             ))
+            if action["kind"] == "PREP":
+                branches = action["prepEffectBranches"]
+                lines.extend(["- Prep effect branches:"])
+                lines.extend(_table(
+                    ["Branch", "Effect class", "Target confirmation", "Summary confirmation", "History disposition", "q disposition", "Successor disposition", "Charge disposition"],
+                    ((
+                        branch_id,
+                        branch["effectClass"],
+                        branch["targetConfirmation"],
+                        branch["summaryConfirmation"],
+                        branch["historyDisposition"],
+                        branch["qDisposition"],
+                        branch["successorDisposition"],
+                        branch["chargeDisposition"],
+                    ) for branch_id, branch in branches.items()),
+                ))
             lines.extend([
                 f"- Non-evaluated obligations: {_cell(action['nonEvaluatedObligations'])}",
                 "",
@@ -176,7 +212,54 @@ def _render_actions(data: dict[str, Any], *, chinese: bool) -> list[str]:
 
 
 def _render_cases(data: dict[str, Any], *, chinese: bool) -> list[str]:
-    lines = ["## Timelines / 时线" if not chinese else "## 场景时线", ""]
+    contexts = _ordered(_rows(data, "cases"), CASE_ORDER)
+    lines = ["## Scenario entry and continuation contexts" if not chinese else "## 场景入口与续接上下文", ""]
+    context_headers = (
+        ["Case / 案例", "Entry kind", "Session binding", "Correlation binding", "q status", "Current summary", "Compatible hypotheses", "Completed actions", "Retained public prefix"]
+        if not chinese
+        else ["案例", "入口类型", "会话绑定", "关联绑定", "q 状态", "当前摘要", "相容假设", "已完成动作", "保留公开前缀"]
+    )
+    lines.extend(_table(
+        context_headers,
+        ((
+            case["id"],
+            case["initialContext"]["entryKind"],
+            case["initialContext"]["sessionBinding"],
+            case["initialContext"]["correlationBinding"],
+            case["initialContext"]["qStatus"],
+            case["initialContext"]["currentSummary"],
+            case["initialContext"]["compatibleHypotheses"],
+            case["initialContext"]["completedActionIds"],
+            case["initialContext"]["retainedPublicPrefix"],
+        ) for case in contexts),
+        chinese=chinese,
+    ))
+    unknown_case = next((case for case in contexts if case["id"] == "CASE-UNKNOWN-RECOVER-CONTINUATION"), None)
+    if unknown_case is not None:
+        unknown = unknown_case["unknownRecoverContract"]
+        lines.extend(["", "### UNKNOWN to Recover contract" if not chinese else "### UNKNOWN 到 Recover 合同", ""])
+        unknown_headers = (
+            ["Trigger", "Action", "Round", "May-have visible events", "Session disposition", "Recover entry q", "Required public evidence", "Target/summary confirmation", "Rewind rule", "Unconfirmed Recover"]
+            if not chinese
+            else ["触发", "动作", "轮次", "可能已发生的可见事件", "会话处置", "Recover 入口 q", "所需公开证据", "目标／摘要确认", "回退规则", "未确认 Recover"]
+        )
+        lines.extend(_table(
+            unknown_headers,
+            [(
+                unknown["trigger"],
+                unknown["triggerActionId"],
+                unknown["triggerRound"],
+                unknown["mayHaveVisibleEvents"],
+                unknown["sessionDisposition"],
+                unknown["recoverEntryQStatus"],
+                unknown["recoverRequiredPublicEvidence"],
+                unknown["targetAndSummaryConfirmation"],
+                unknown["rewindProhibited"],
+                unknown["unconfirmedRecoveryDisposition"],
+            )],
+            chinese=chinese,
+        ))
+    lines.extend(["", "## Timelines / 时线" if not chinese else "## 场景时线", ""])
     headers = (
         ["Case / 案例", "Purpose", "Round", "Action", "Visible events", "Public summary", "Candidates", "Continue", "Resource admission", "Resource reason", "Resource mode", "Available rounds", "Required rounds", "Cost charged", "Successor disposition"]
         if not chinese

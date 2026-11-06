@@ -191,11 +191,133 @@ REQUIRED_CASE_TIMELINES = {
         ("ACT-TEST-ACK-BEFORE-DATA", ("NO-DISPATCH-INSUFFICIENT-RESOURCE",), "NONE", ("NORMAL", "EARLY-DATA"), False),
     ),
 }
+REQUIRED_CASE_INITIAL_CONTEXTS = {
+    "CASE-NORMAL-CONTROL-TIMELINE": {
+        "entryKind": "FRESH-ATTEMPT",
+        "sessionBinding": "NEW-CURRENT-SESSION",
+        "correlationBinding": "NEW-CURRENT-OPERATION-CORRELATION",
+        "qStatus": "KNOWN",
+        "currentSummary": "SCENE-ENTRY",
+        "compatibleHypotheses": ["NORMAL", "EARLY-WRQ", "EARLY-DATA"],
+        "completedActionIds": [],
+        "retainedPublicPrefix": ["LIST-SUBMISSION-PRECONDITION-RECORDED"],
+    },
+    "CASE-EARLY-WRQ-TIMELINE": {
+        "entryKind": "FRESH-ATTEMPT",
+        "sessionBinding": "NEW-CURRENT-SESSION",
+        "correlationBinding": "NEW-CURRENT-OPERATION-CORRELATION",
+        "qStatus": "KNOWN",
+        "currentSummary": "SCENE-ENTRY",
+        "compatibleHypotheses": ["NORMAL", "EARLY-WRQ", "EARLY-DATA"],
+        "completedActionIds": [],
+        "retainedPublicPrefix": ["LIST-SUBMISSION-PRECONDITION-RECORDED"],
+    },
+    "CASE-EARLY-DATA-TIMELINE": {
+        "entryKind": "FRESH-ATTEMPT",
+        "sessionBinding": "NEW-CURRENT-SESSION",
+        "correlationBinding": "NEW-CURRENT-OPERATION-CORRELATION",
+        "qStatus": "KNOWN",
+        "currentSummary": "SCENE-ENTRY",
+        "compatibleHypotheses": ["NORMAL", "EARLY-WRQ", "EARLY-DATA"],
+        "completedActionIds": [],
+        "retainedPublicPrefix": ["LIST-SUBMISSION-PRECONDITION-RECORDED"],
+    },
+    "CASE-UNKNOWN-RECOVER-CONTINUATION": {
+        "entryKind": "INHERITED-CONTINUATION",
+        "sessionBinding": "CURRENT-SESSION-ONLY",
+        "correlationBinding": "CURRENT-OPERATION-CORRELATION",
+        "qStatus": "KNOWN",
+        "currentSummary": "Q-PRE-READY-NO-WRQ",
+        "compatibleHypotheses": ["NORMAL", "EARLY-DATA"],
+        "completedActionIds": ["ACT-INSPECT-NO-WRQ-BEFORE-READY"],
+        "retainedPublicPrefix": [
+            "LIST-SUBMISSION-PRECONDITION-RECORDED",
+            "INSPECT-NO-WRQ-BEFORE-READY-COMPLETED",
+            "NO-EV_DL_WRQ_LUR-BEFORE-EV_TH_LUS0001",
+        ],
+    },
+    "CASE-RESOURCE-ADMISSION-BLOCK": {
+        "entryKind": "INHERITED-CONTINUATION",
+        "sessionBinding": "CURRENT-SESSION-ONLY",
+        "correlationBinding": "CURRENT-OPERATION-CORRELATION",
+        "qStatus": "KNOWN",
+        "currentSummary": "Q-TARGET-READY",
+        "compatibleHypotheses": ["NORMAL", "EARLY-DATA"],
+        "completedActionIds": [
+            "ACT-INSPECT-NO-WRQ-BEFORE-READY",
+            "ACT-PREP-ENTER-READY-WINDOW",
+        ],
+        "retainedPublicPrefix": [
+            "LIST-SUBMISSION-PRECONDITION-RECORDED",
+            "INSPECT-NO-WRQ-BEFORE-READY-COMPLETED",
+            "EV_TH_LUS0001",
+            "TH-LUS0001-READY-RECEIPT",
+        ],
+    },
+}
+REQUIRED_UNKNOWN_RECOVER_CONTRACT = {
+    "trigger": "POST-DISPATCH-TEST-SUMMARY-CONFIRMATION-FAILURE",
+    "triggerActionId": "ACT-TEST-ACK-BEFORE-DATA",
+    "triggerRound": 2,
+    "mayHaveVisibleEvents": ["EV_DL_WRQ_LUR", "EV_TH_ACK_LUR", "EV_DL_DATA_LUR"],
+    "sessionDisposition": "UNKNOWN-PRESERVE-ACTUAL-SUCCESSOR-AND-POST-DISPATCH-JOURNAL",
+    "recoverEntryQStatus": "UNKNOWN",
+    "recoverRequiredPublicEvidence": [
+        "CURRENT-SESSION-READY-READBACK",
+        "RECOVER-READY-READBACK-COMPLETED",
+        "RETAINED-CURRENT-SESSION-JOURNAL-PREDICATE",
+    ],
+    "targetAndSummaryConfirmation": "SEPARATE-REQUIRED",
+    "rewindProhibited": "NO-REWIND-TO-Q-PRE-READY-NO-WRQ",
+    "unconfirmedRecoveryDisposition": "REMAIN-UNKNOWN",
+}
 REQUIRED_PUBLIC_SUMMARY_SOURCES = {
     "ACT-INSPECT-NO-WRQ-BEFORE-READY": {"VISIBLE-JOURNAL-PREFIX", "INSPECTION-COMPLETION-RECEIPT"},
     "ACT-PREP-ENTER-READY-WINDOW": {"VISIBLE-JOURNAL-PREFIX", "TH-LUS0001-READY-RECEIPT"},
     "ACT-TEST-ACK-BEFORE-DATA": {"VISIBLE-JOURNAL-PREFIX", "LUR-ORDER-CHECK-COMPLETED"},
     "ACT-RECOVER-RECONFIRM-READY": {"VISIBLE-JOURNAL-PREFIX", "RECOVER-READY-READBACK-COMPLETED"},
+}
+REQUIRED_PUBLIC_EVIDENCE_PROJECTIONS = {
+    "ACT-INSPECT-NO-WRQ-BEFORE-READY": {
+        "projectionKind": "CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT",
+        "sessionBinding": "CURRENT-SESSION",
+        "correlationBinding": "CURRENT-OPERATION-CORRELATION",
+        "ordering": "STABLE-SEQUENCE-NUMBER",
+        "inspectedRange": "RECEIPT-BOUNDED-PREFIX",
+        "completionReceipt": "INSPECT-NO-WRQ-BEFORE-READY-COMPLETED",
+        "receiptMustBeCompleted": True,
+        "invalidOrUnconfirmedDisposition": "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER",
+    },
+    "ACT-PREP-ENTER-READY-WINDOW": {
+        "projectionKind": "CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT",
+        "sessionBinding": "CURRENT-SESSION",
+        "correlationBinding": "CURRENT-OPERATION-CORRELATION",
+        "ordering": "STABLE-SEQUENCE-NUMBER",
+        "inspectedRange": "RECEIPT-BOUNDED-PREFIX",
+        "completionReceipt": "TH-LUS0001-READY-RECEIPT",
+        "receiptMustBeCompleted": True,
+        "invalidOrUnconfirmedDisposition": "EXECUTED-UNCONFIRMED-SUMMARY-REQUIRES-UNKNOWN",
+    },
+    "ACT-TEST-ACK-BEFORE-DATA": {
+        "projectionKind": "CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT",
+        "sessionBinding": "CURRENT-SESSION",
+        "correlationBinding": "CURRENT-OPERATION-CORRELATION",
+        "ordering": "STABLE-SEQUENCE-NUMBER",
+        "inspectedRange": "RECEIPT-BOUNDED-PREFIX",
+        "completionReceipt": "LUR-ORDER-CHECK-COMPLETED",
+        "receiptMustBeCompleted": True,
+        "invalidOrUnconfirmedDisposition": "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER",
+    },
+    "ACT-RECOVER-RECONFIRM-READY": {
+        "projectionKind": "CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT",
+        "sessionBinding": "CURRENT-SESSION",
+        "correlationBinding": "CURRENT-OPERATION-CORRELATION",
+        "ordering": "STABLE-SEQUENCE-NUMBER",
+        "inspectedRange": "RECEIPT-BOUNDED-PREFIX",
+        "completionReceipt": "RECOVER-READY-READBACK-COMPLETED",
+        "receiptMustBeCompleted": True,
+        "invalidOrUnconfirmedDisposition": "DO-NOT-MARK-KNOWN",
+    },
 }
 REQUIRED_ACTION_OUTCOME_COUNTS = {
     "ACT-INSPECT-NO-WRQ-BEFORE-READY": 2,
@@ -209,8 +331,8 @@ REQUIRED_ACTION_RETURN_CONTRACTS = {
         "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER",
     ),
     "ACT-PREP-ENTER-READY-WINDOW": (
-        "TARGET-AND-SUMMARY-CONFIRMED-SEPARATELY",
-        "CONFIRMED-NOT-SENT-PRESERVES-HISTORY-AND-KNOWN-SUMMARY",
+        "PREP-SUMMARY-COMMIT-SEPARATE-FROM-TARGET-STATUS",
+        "PREP-EFFECT-BRANCH-TABLE-REQUIRED",
     ),
     "ACT-TEST-ACK-BEFORE-DATA": (
         "PUBLIC-OBSERVATION-SUMMARY-CONFIRMATION",
@@ -220,6 +342,44 @@ REQUIRED_ACTION_RETURN_CONTRACTS = {
         "TARGET-AND-SUMMARY-CONFIRMED-SEPARATELY",
         "DO-NOT-MARK-KNOWN",
     ),
+}
+REQUIRED_PREP_EFFECT_BRANCHES = {
+    "confirmed": {
+        "effectClass": "NONE",
+        "targetConfirmation": "TARGET-CONFIRMED",
+        "summaryConfirmation": "SUMMARY-CONFIRMED",
+        "historyDisposition": "COMMIT-CONFIRMED-HISTORY",
+        "qDisposition": "KNOWN-S9-COMMIT",
+        "successorDisposition": "PRESERVE-RETURNED-SUCCESSOR",
+        "chargeDisposition": "CHARGE-ONCE",
+    },
+    "confirmedNotSent": {
+        "effectClass": "CONFIRMED-NOT-SENT",
+        "targetConfirmation": "NO-DISPATCH-CONFIRMED",
+        "summaryConfirmation": "NO-SUCCESSOR-SUMMARY",
+        "historyDisposition": "PRESERVE-EXISTING-HISTORY",
+        "qDisposition": "PRESERVE-KNOWN-SUMMARY",
+        "successorDisposition": "NO-OBJECT-ADVANCE",
+        "chargeDisposition": "CHARGE-ONCE",
+    },
+    "executedSummaryUnconfirmed": {
+        "effectClass": "UNKNOWN-EFFECT",
+        "targetConfirmation": "ACTUAL-SUCCESSOR-MAY-HAVE-EXECUTED",
+        "summaryConfirmation": "SUCCESSOR-SUMMARY-UNCONFIRMED",
+        "historyDisposition": "PRESERVE-CONSERVATIVE-HISTORY",
+        "qDisposition": "UNKNOWN-REQUIRES-QUALIFIED-RECOVER",
+        "successorDisposition": "PRESERVE-RETURNED-SUCCESSOR",
+        "chargeDisposition": "CHARGE-ONCE",
+    },
+    "targetNotReachedWithConfirmedSuccessor": {
+        "effectClass": "NONE",
+        "targetConfirmation": "TARGET-NOT-REACHED-BUT-SUCCESSOR-CONFIRMED",
+        "summaryConfirmation": "SUMMARY-CONFIRMED",
+        "historyDisposition": "COMMIT-CONFIRMED-HISTORY",
+        "qDisposition": "KNOWN-S9-COMMIT",
+        "successorDisposition": "PRESERVE-RETURNED-SUCCESSOR",
+        "chargeDisposition": "CHARGE-ONCE",
+    },
 }
 REQUIRED_RESOURCE_TEXT = {
     "roundsMeaning": "A positive remaining execution count admits the next bounded action; it is not a monetary budget.",
@@ -1203,6 +1363,12 @@ def _action_and_case_errors(package: dict[str, Any]) -> list[str]:
             errors.append(f"ACTION: {action_id} does not prohibit all private summary sources")
         if not isinstance(public, list) or set(public) != REQUIRED_PUBLIC_SUMMARY_SOURCES.get(action_id, set()):
             errors.append(f"ACTION: {action_id} does not derive confirmation from a public journal")
+        projection = action.get("summaryDerivation", {}).get("publicEvidenceProjection") if isinstance(action.get("summaryDerivation"), dict) else None
+        if projection != REQUIRED_PUBLIC_EVIDENCE_PROJECTIONS.get(action_id):
+            errors.append(f"ACTION: {action_id} public evidence projection differs from the controlled contract")
+        inspection_projection = action.get("inspection") if isinstance(action.get("inspection"), dict) else {}
+        if isinstance(projection, dict) and projection.get("completionReceipt") != inspection_projection.get("completionReceipt"):
+            errors.append(f"ACTION: {action_id} public evidence projection receipt must match its inspection receipt")
         expected_return = REQUIRED_ACTION_RETURN_CONTRACTS.get(action_id)
         if expected_return is not None and (
             action.get("successorConfirmation"), action.get("unconfirmedEffectDisposition")
@@ -1210,6 +1376,9 @@ def _action_and_case_errors(package: dict[str, Any]) -> list[str]:
             errors.append(f"ACTION: {action_id} successor confirmation or unconfirmed-effect contract differs")
         if action.get("historyDisposition") != "SUBMIT-CONFIRMED-SUMMARY-THROUGH-IF-HIST-UPDATE":
             errors.append(f"ACTION: {action_id} must submit only a confirmed summary through IF-HIST-UPDATE")
+        if action_id == "ACT-PREP-ENTER-READY-WINDOW":
+            if action.get("prepEffectBranches") != REQUIRED_PREP_EFFECT_BRANCHES:
+                errors.append("ACTION: Prep effect-branch contract differs from the controlled disposition table")
         detail = REQUIRED_ACTION_DETAILS.get(action_id)
         if detail is not None:
             inspection_detail = action.get("inspection") if isinstance(action.get("inspection"), dict) else {}
@@ -1248,6 +1417,12 @@ def _action_and_case_errors(package: dict[str, Any]) -> list[str]:
         ):
             if not isinstance(localized.get(field), str) or not localized[field].strip():
                 errors.append(f"BILINGUAL: {action_id} requires a nonblank Chinese {field} field")
+        if action_id == "ACT-PREP-ENTER-READY-WINDOW":
+            localized_branches = localized.get("prepEffectBranches")
+            if not isinstance(localized_branches, dict) or set(localized_branches) != set(REQUIRED_PREP_EFFECT_BRANCHES) or any(
+                not isinstance(value, str) or not value.strip() for value in localized_branches.values()
+            ):
+                errors.append("BILINGUAL: Prep effect-branch contract requires all nonblank Chinese branch semantics")
         outcomes: set[tuple[str, str, tuple[str, ...]]] = set()
         declared_outcomes = _row_list(action.get("possibleOutcomes"))
         for outcome in declared_outcomes:
@@ -1302,6 +1477,13 @@ def _action_and_case_errors(package: dict[str, Any]) -> list[str]:
     if set(cases) != REQUIRED_CASE_IDS:
         errors.append("CASE: package must contain exactly the four controlled design witnesses")
     for case_id, case in cases.items():
+        if case.get("initialContext") != REQUIRED_CASE_INITIAL_CONTEXTS.get(case_id):
+            errors.append(f"CASE: {case_id} initial context must retain the controlled H/q/session/prefix boundary")
+        if case_id == "CASE-UNKNOWN-RECOVER-CONTINUATION":
+            if case.get("unknownRecoverContract") != REQUIRED_UNKNOWN_RECOVER_CONTRACT:
+                errors.append("CASE: UNKNOWN Recover contract must retain its trigger, successor, journal and no-rewind boundary")
+        elif "unknownRecoverContract" in case:
+            errors.append(f"CASE: {case_id} must not declare an UNKNOWN Recover contract")
         rounds = _row_list(case.get("rounds"))
         if [round_.get("round") for round_ in rounds] != list(range(1, len(rounds) + 1)):
             errors.append(f"CASE: {case_id} rounds must be sequential beginning at one")
@@ -1527,9 +1709,11 @@ def validate_package(
             schema = _read_json(root / SCHEMA_PATH)
     except (OSError, json.JSONDecodeError) as exc:
         return [f"PACKAGE: unable to load scenario package or schema: {type(exc).__name__}: {exc}"]
-    errors.extend(_schema_errors(schema, package))
+    schema_errors = _schema_errors(schema, package)
+    if schema_errors:
+        return schema_errors
     if not isinstance(package, dict):
-        return sorted(errors + ["PACKAGE: scenario package root must be an object"])
+        return ["PACKAGE: scenario package root must be an object"]
 
     errors.extend(_translation_errors(package))
     errors.extend(_control_authority_errors(root, package))

@@ -59,9 +59,9 @@
     "limitations.1": "不作协议无响应截止、物理计时校准、真实网络、IUT、SIL/HIL 或符合性判定。",
     "limitations.2": "不运行四臂实验、预实验或确认性实验，也不产生独立真值或 C1/C2 科学主张。",
     "feasibilityWitnesses.WIT-FINITE-NO-WRQ-TEST.summary": "无绑定的正常 TEST 可返回非空有限检查观测、公开确认摘要和精确虚拟 tick，而不声称协议无响应语义。",
-    "feasibilityWitnesses.WIT-PUBLIC-SUMMARY.summary": "相同的可见日志和公开回执必须确定地产生相同 postSummary，与仅评估方可见的故障标签无关。",
+    "feasibilityWitnesses.WIT-PUBLIC-SUMMARY.summary": "带类型的当前会话／当前关联有界公开日志前缀与已完成回执必须确定地产生声明的 postSummary；回执身份、范围或完成状态无效时不得确认或缩小 H，且与仅评估方可见的故障标签无关。",
     "feasibilityWitnesses.WIT-P3-UNAVAILABLE.summary": "不评估完整性的控制切片保留 P3-UNAVAILABLE 和已命名的未评估义务，不借用旧适用性夹具。",
-    "feasibilityWitnesses.WIT-SUCCESSOR-AND-RECOVER.summary": "两个后继、待交付日志和执行后错误路径须保留演进后的有类型对象，以支撑 UNKNOWN 与合格 Recover；不得共享可变旧快照。"
+    "feasibilityWitnesses.WIT-SUCCESSOR-AND-RECOVER.summary": "继承的 H／q／前缀、返回后继、待交付日志和执行后 TEST 摘要确认失败路径须保留演进后的有类型对象以进入 UNKNOWN；合格的当前会话 Recover 重新确认独立就绪目标与摘要，但不得回退为就绪前续接状态。"
   },
   "acceptedInputs": [
     {
@@ -670,7 +670,17 @@
           "ACTIVE-FAULT-ID",
           "FAULT-ACTIVATION-RECORD",
           "PRIVATE-LOADER-STATE"
-        ]
+        ],
+        "publicEvidenceProjection": {
+          "projectionKind": "CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT",
+          "sessionBinding": "CURRENT-SESSION",
+          "correlationBinding": "CURRENT-OPERATION-CORRELATION",
+          "ordering": "STABLE-SEQUENCE-NUMBER",
+          "inspectedRange": "RECEIPT-BOUNDED-PREFIX",
+          "completionReceipt": "INSPECT-NO-WRQ-BEFORE-READY-COMPLETED",
+          "receiptMustBeCompleted": true,
+          "invalidOrUnconfirmedDisposition": "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER"
+        }
       },
       "possibleOutcomes": [
         {
@@ -718,8 +728,8 @@
       },
       "publicStimulus": "TH emits the session-local visible EV_TH_LUS0001 ready stimulus.",
       "observationMode": "VISIBLE-PREPARATION-EVENT",
-      "successorConfirmation": "TARGET-AND-SUMMARY-CONFIRMED-SEPARATELY",
-      "unconfirmedEffectDisposition": "CONFIRMED-NOT-SENT-PRESERVES-HISTORY-AND-KNOWN-SUMMARY",
+      "successorConfirmation": "PREP-SUMMARY-COMMIT-SEPARATE-FROM-TARGET-STATUS",
+      "unconfirmedEffectDisposition": "PREP-EFFECT-BRANCH-TABLE-REQUIRED",
       "historyDisposition": "SUBMIT-CONFIRMED-SUMMARY-THROUGH-IF-HIST-UPDATE",
       "inspection": {
         "completionReceipt": "TH-LUS0001-READY-RECEIPT",
@@ -737,7 +747,55 @@
           "ACTIVE-FAULT-ID",
           "FAULT-ACTIVATION-RECORD",
           "PRIVATE-LOADER-STATE"
-        ]
+        ],
+        "publicEvidenceProjection": {
+          "projectionKind": "CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT",
+          "sessionBinding": "CURRENT-SESSION",
+          "correlationBinding": "CURRENT-OPERATION-CORRELATION",
+          "ordering": "STABLE-SEQUENCE-NUMBER",
+          "inspectedRange": "RECEIPT-BOUNDED-PREFIX",
+          "completionReceipt": "TH-LUS0001-READY-RECEIPT",
+          "receiptMustBeCompleted": true,
+          "invalidOrUnconfirmedDisposition": "EXECUTED-UNCONFIRMED-SUMMARY-REQUIRES-UNKNOWN"
+        }
+      },
+      "prepEffectBranches": {
+        "confirmed": {
+          "effectClass": "NONE",
+          "targetConfirmation": "TARGET-CONFIRMED",
+          "summaryConfirmation": "SUMMARY-CONFIRMED",
+          "historyDisposition": "COMMIT-CONFIRMED-HISTORY",
+          "qDisposition": "KNOWN-S9-COMMIT",
+          "successorDisposition": "PRESERVE-RETURNED-SUCCESSOR",
+          "chargeDisposition": "CHARGE-ONCE"
+        },
+        "confirmedNotSent": {
+          "effectClass": "CONFIRMED-NOT-SENT",
+          "targetConfirmation": "NO-DISPATCH-CONFIRMED",
+          "summaryConfirmation": "NO-SUCCESSOR-SUMMARY",
+          "historyDisposition": "PRESERVE-EXISTING-HISTORY",
+          "qDisposition": "PRESERVE-KNOWN-SUMMARY",
+          "successorDisposition": "NO-OBJECT-ADVANCE",
+          "chargeDisposition": "CHARGE-ONCE"
+        },
+        "executedSummaryUnconfirmed": {
+          "effectClass": "UNKNOWN-EFFECT",
+          "targetConfirmation": "ACTUAL-SUCCESSOR-MAY-HAVE-EXECUTED",
+          "summaryConfirmation": "SUCCESSOR-SUMMARY-UNCONFIRMED",
+          "historyDisposition": "PRESERVE-CONSERVATIVE-HISTORY",
+          "qDisposition": "UNKNOWN-REQUIRES-QUALIFIED-RECOVER",
+          "successorDisposition": "PRESERVE-RETURNED-SUCCESSOR",
+          "chargeDisposition": "CHARGE-ONCE"
+        },
+        "targetNotReachedWithConfirmedSuccessor": {
+          "effectClass": "NONE",
+          "targetConfirmation": "TARGET-NOT-REACHED-BUT-SUCCESSOR-CONFIRMED",
+          "summaryConfirmation": "SUMMARY-CONFIRMED",
+          "historyDisposition": "COMMIT-CONFIRMED-HISTORY",
+          "qDisposition": "KNOWN-S9-COMMIT",
+          "successorDisposition": "PRESERVE-RETURNED-SUCCESSOR",
+          "chargeDisposition": "CHARGE-ONCE"
+        }
       },
       "possibleOutcomes": [
         {
@@ -758,9 +816,15 @@
         "eligibility": "Q-PRE-READY-NO-WRQ 已确认，且会话拥有可负担的准备资源。",
         "publicStimulus": "目标硬件发出当前会话可见的 EV_TH_LUS0001 就绪刺激。",
         "observationMode": "可见准备事件。",
-        "successorConfirmation": "准备目标确认与摘要确认必须分别成立。",
-        "unconfirmedEffectDisposition": "确认未发送时保留相容历史和已知摘要，不得清空候选。",
-        "historyDisposition": "仅将已确认摘要经 IF-HIST-UPDATE 提交给后续历史。"
+        "successorConfirmation": "Prep 的摘要提交与目标状态必须分开判定；只有摘要确认控制提交。",
+        "unconfirmedEffectDisposition": "必须按四分支效果表处置，不能把已执行但摘要未确认误作确认未发送。",
+        "historyDisposition": "仅将已确认摘要经 IF-HIST-UPDATE 提交给后续历史。",
+        "prepEffectBranches": {
+          "confirmed": "目标与摘要均确认时，提交已确认历史与 KNOWN 摘要，保留返回后继并只计费一次。",
+          "confirmedNotSent": "明确确认未发送时，保持既有 H 和 KNOWN 摘要，不推进对象，并只计费一次。",
+          "executedSummaryUnconfirmed": "已执行但后继摘要无法公开确认时，保留实际返回后继、把历史保守化并进入 UNKNOWN；只计费一次。",
+          "targetNotReachedWithConfirmedSuccessor": "目标未达但实际后继摘要已确认时，仍按已确认摘要提交 KNOWN，不能误归 UNKNOWN。"
+        }
       }
     },
     {
@@ -794,7 +858,17 @@
           "ACTIVE-FAULT-ID",
           "FAULT-ACTIVATION-RECORD",
           "PRIVATE-LOADER-STATE"
-        ]
+      ],
+      "publicEvidenceProjection": {
+        "projectionKind": "CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT",
+        "sessionBinding": "CURRENT-SESSION",
+        "correlationBinding": "CURRENT-OPERATION-CORRELATION",
+        "ordering": "STABLE-SEQUENCE-NUMBER",
+        "inspectedRange": "RECEIPT-BOUNDED-PREFIX",
+        "completionReceipt": "LUR-ORDER-CHECK-COMPLETED",
+        "receiptMustBeCompleted": true,
+        "invalidOrUnconfirmedDisposition": "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER"
+      }
       },
       "possibleOutcomes": [
         {
@@ -860,7 +934,17 @@
           "ACTIVE-FAULT-ID",
           "FAULT-ACTIVATION-RECORD",
           "PRIVATE-LOADER-STATE"
-        ]
+        ],
+        "publicEvidenceProjection": {
+          "projectionKind": "CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT",
+          "sessionBinding": "CURRENT-SESSION",
+          "correlationBinding": "CURRENT-OPERATION-CORRELATION",
+          "ordering": "STABLE-SEQUENCE-NUMBER",
+          "inspectedRange": "RECEIPT-BOUNDED-PREFIX",
+          "completionReceipt": "RECOVER-READY-READBACK-COMPLETED",
+          "receiptMustBeCompleted": true,
+          "invalidOrUnconfirmedDisposition": "DO-NOT-MARK-KNOWN"
+        }
       },
       "possibleOutcomes": [
         {
@@ -970,6 +1054,22 @@
       "id": "CASE-NORMAL-CONTROL-TIMELINE",
       "purpose": "Hand-audited normal control-slice timeline; not a complete UPLOAD claim.",
       "activeFaultVisibility": "EVALUATOR-ONLY",
+    "initialContext": {
+      "entryKind": "FRESH-ATTEMPT",
+      "sessionBinding": "NEW-CURRENT-SESSION",
+      "correlationBinding": "NEW-CURRENT-OPERATION-CORRELATION",
+      "qStatus": "KNOWN",
+      "currentSummary": "SCENE-ENTRY",
+      "compatibleHypotheses": [
+        "NORMAL",
+        "EARLY-WRQ",
+        "EARLY-DATA"
+      ],
+      "completedActionIds": [],
+      "retainedPublicPrefix": [
+        "LIST-SUBMISSION-PRECONDITION-RECORDED"
+      ]
+    },
       "rounds": [
         {
           "round": 1,
@@ -1019,6 +1119,22 @@
       "id": "CASE-EARLY-WRQ-TIMELINE",
       "purpose": "The object faults by actually emitting LUR WRQ before the session-local ready event.",
       "activeFaultVisibility": "EVALUATOR-ONLY",
+    "initialContext": {
+      "entryKind": "FRESH-ATTEMPT",
+      "sessionBinding": "NEW-CURRENT-SESSION",
+      "correlationBinding": "NEW-CURRENT-OPERATION-CORRELATION",
+      "qStatus": "KNOWN",
+      "currentSummary": "SCENE-ENTRY",
+      "compatibleHypotheses": [
+        "NORMAL",
+        "EARLY-WRQ",
+        "EARLY-DATA"
+      ],
+      "completedActionIds": [],
+      "retainedPublicPrefix": [
+        "LIST-SUBMISSION-PRECONDITION-RECORDED"
+      ]
+    },
       "rounds": [
         {
           "round": 1,
@@ -1040,6 +1156,22 @@
       "id": "CASE-EARLY-DATA-TIMELINE",
       "purpose": "The object faults by actually emitting LUR DATA after WRQ but before the matching TH ACK.",
       "activeFaultVisibility": "EVALUATOR-ONLY",
+    "initialContext": {
+      "entryKind": "FRESH-ATTEMPT",
+      "sessionBinding": "NEW-CURRENT-SESSION",
+      "correlationBinding": "NEW-CURRENT-OPERATION-CORRELATION",
+      "qStatus": "KNOWN",
+      "currentSummary": "SCENE-ENTRY",
+      "compatibleHypotheses": [
+        "NORMAL",
+        "EARLY-WRQ",
+        "EARLY-DATA"
+      ],
+      "completedActionIds": [],
+      "retainedPublicPrefix": [
+        "LIST-SUBMISSION-PRECONDITION-RECORDED"
+      ]
+    },
       "rounds": [
         {
           "round": 1,
@@ -1088,6 +1220,45 @@
       "id": "CASE-UNKNOWN-RECOVER-CONTINUATION",
       "purpose": "A tool-side UNKNOWN-EFFECT witness that continues only after a separate Recover target and public summary confirmation.",
       "activeFaultVisibility": "EVALUATOR-ONLY",
+    "initialContext": {
+      "entryKind": "INHERITED-CONTINUATION",
+      "sessionBinding": "CURRENT-SESSION-ONLY",
+      "correlationBinding": "CURRENT-OPERATION-CORRELATION",
+      "qStatus": "KNOWN",
+      "currentSummary": "Q-PRE-READY-NO-WRQ",
+      "compatibleHypotheses": [
+        "NORMAL",
+        "EARLY-DATA"
+      ],
+      "completedActionIds": [
+        "ACT-INSPECT-NO-WRQ-BEFORE-READY"
+      ],
+      "retainedPublicPrefix": [
+        "LIST-SUBMISSION-PRECONDITION-RECORDED",
+        "INSPECT-NO-WRQ-BEFORE-READY-COMPLETED",
+        "NO-EV_DL_WRQ_LUR-BEFORE-EV_TH_LUS0001"
+      ]
+    },
+    "unknownRecoverContract": {
+      "trigger": "POST-DISPATCH-TEST-SUMMARY-CONFIRMATION-FAILURE",
+      "triggerActionId": "ACT-TEST-ACK-BEFORE-DATA",
+      "triggerRound": 2,
+      "mayHaveVisibleEvents": [
+        "EV_DL_WRQ_LUR",
+        "EV_TH_ACK_LUR",
+        "EV_DL_DATA_LUR"
+      ],
+      "sessionDisposition": "UNKNOWN-PRESERVE-ACTUAL-SUCCESSOR-AND-POST-DISPATCH-JOURNAL",
+      "recoverEntryQStatus": "UNKNOWN",
+      "recoverRequiredPublicEvidence": [
+        "CURRENT-SESSION-READY-READBACK",
+        "RECOVER-READY-READBACK-COMPLETED",
+        "RETAINED-CURRENT-SESSION-JOURNAL-PREDICATE"
+      ],
+      "targetAndSummaryConfirmation": "SEPARATE-REQUIRED",
+      "rewindProhibited": "NO-REWIND-TO-Q-PRE-READY-NO-WRQ",
+      "unconfirmedRecoveryDisposition": "REMAIN-UNKNOWN"
+    },
       "rounds": [
         {
           "round": 1,
@@ -1136,6 +1307,27 @@
       "id": "CASE-RESOURCE-ADMISSION-BLOCK",
       "purpose": "A pre-dispatch insufficient-resource witness: the requested bounded TEST is not sent, no object event is emitted, no action cost is charged, and the pre-dispatch successor is retained.",
       "activeFaultVisibility": "EVALUATOR-ONLY",
+    "initialContext": {
+      "entryKind": "INHERITED-CONTINUATION",
+      "sessionBinding": "CURRENT-SESSION-ONLY",
+      "correlationBinding": "CURRENT-OPERATION-CORRELATION",
+      "qStatus": "KNOWN",
+      "currentSummary": "Q-TARGET-READY",
+      "compatibleHypotheses": [
+        "NORMAL",
+        "EARLY-DATA"
+      ],
+      "completedActionIds": [
+        "ACT-INSPECT-NO-WRQ-BEFORE-READY",
+        "ACT-PREP-ENTER-READY-WINDOW"
+      ],
+      "retainedPublicPrefix": [
+        "LIST-SUBMISSION-PRECONDITION-RECORDED",
+        "INSPECT-NO-WRQ-BEFORE-READY-COMPLETED",
+        "EV_TH_LUS0001",
+        "TH-LUS0001-READY-RECEIPT"
+      ]
+    },
       "rounds": [
         {
           "round": 1,
@@ -1285,7 +1477,7 @@
     {
       "id": "WIT-PUBLIC-SUMMARY",
       "entryPoint": "Scenario adapter public-journal projection",
-      "claim": "The same visible journal and public receipt deterministically derive the same postSummary regardless of evaluator-only active-fault label."
+    "claim": "A typed current-session/current-correlation bounded public journal prefix plus a completed receipt deterministically derives the declared postSummary; invalid receipt identity, range or completion never confirms or shrinks H, regardless of evaluator-only active-fault label."
     },
     {
       "id": "WIT-P3-UNAVAILABLE",
@@ -1295,7 +1487,7 @@
     {
       "id": "WIT-SUCCESSOR-AND-RECOVER",
       "entryPoint": "Restricted SyntheticEnvironment subclass seam",
-      "claim": "Two successors, pending journal delivery and an error-after-execution path preserve the evolved typed object for UNKNOWN and qualified Recover; no mutable prior snapshot is shared."
+    "claim": "An inherited H/q/prefix, returned successor, pending journal delivery and post-dispatch TEST summary-confirmation failure preserve the evolved typed object for UNKNOWN; qualified current-session Recover re-confirms a distinct ready target and summary without rewinding to the pre-ready continuation state."
     }
   ]
 }

@@ -908,7 +908,8 @@
       "additionalProperties": false,
       "required": [
         "publicSources",
-        "forbiddenPrivateSources"
+        "forbiddenPrivateSources",
+        "publicEvidenceProjection"
       ],
       "properties": {
         "publicSources": {
@@ -924,6 +925,133 @@
           "items": {
             "$ref": "#/$defs/identifier"
           }
+        },
+        "publicEvidenceProjection": {
+          "$ref": "#/$defs/publicEvidenceProjection"
+        }
+      }
+    },
+    "publicEvidenceProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projectionKind",
+        "sessionBinding",
+        "correlationBinding",
+        "ordering",
+        "inspectedRange",
+        "completionReceipt",
+        "receiptMustBeCompleted",
+        "invalidOrUnconfirmedDisposition"
+      ],
+      "properties": {
+        "projectionKind": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sessionBinding": {
+          "$ref": "#/$defs/identifier"
+        },
+        "correlationBinding": {
+          "$ref": "#/$defs/identifier"
+        },
+        "ordering": {
+          "$ref": "#/$defs/identifier"
+        },
+        "inspectedRange": {
+          "$ref": "#/$defs/identifier"
+        },
+        "completionReceipt": {
+          "$ref": "#/$defs/identifier"
+        },
+        "receiptMustBeCompleted": {
+          "const": true
+        },
+        "invalidOrUnconfirmedDisposition": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "prepEffectBranch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effectClass",
+        "targetConfirmation",
+        "summaryConfirmation",
+        "historyDisposition",
+        "qDisposition",
+        "successorDisposition",
+        "chargeDisposition"
+      ],
+      "properties": {
+        "effectClass": {
+          "$ref": "#/$defs/identifier"
+        },
+        "targetConfirmation": {
+          "$ref": "#/$defs/identifier"
+        },
+        "summaryConfirmation": {
+          "$ref": "#/$defs/identifier"
+        },
+        "historyDisposition": {
+          "$ref": "#/$defs/identifier"
+        },
+        "qDisposition": {
+          "$ref": "#/$defs/identifier"
+        },
+        "successorDisposition": {
+          "$ref": "#/$defs/identifier"
+        },
+        "chargeDisposition": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "prepEffectBranches": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "confirmed",
+        "confirmedNotSent",
+        "executedSummaryUnconfirmed",
+        "targetNotReachedWithConfirmedSuccessor"
+      ],
+      "properties": {
+        "confirmed": {
+          "$ref": "#/$defs/prepEffectBranch"
+        },
+        "confirmedNotSent": {
+          "$ref": "#/$defs/prepEffectBranch"
+        },
+        "executedSummaryUnconfirmed": {
+          "$ref": "#/$defs/prepEffectBranch"
+        },
+        "targetNotReachedWithConfirmedSuccessor": {
+          "$ref": "#/$defs/prepEffectBranch"
+        }
+      }
+    },
+    "prepEffectBranchesZh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "confirmed",
+        "confirmedNotSent",
+        "executedSummaryUnconfirmed",
+        "targetNotReachedWithConfirmedSuccessor"
+      ],
+      "properties": {
+        "confirmed": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "confirmedNotSent": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "executedSummaryUnconfirmed": {
+          "$ref": "#/$defs/nonBlank"
+        },
+        "targetNotReachedWithConfirmedSuccessor": {
+          "$ref": "#/$defs/nonBlank"
         }
       }
     },
@@ -1016,6 +1144,9 @@
         "summaryDerivation": {
           "$ref": "#/$defs/summaryDerivation"
         },
+        "prepEffectBranches": {
+          "$ref": "#/$defs/prepEffectBranches"
+        },
         "possibleOutcomes": {
           "type": "array",
           "minItems": 1,
@@ -1059,10 +1190,55 @@
             },
             "historyDisposition": {
               "$ref": "#/$defs/nonBlank"
+            },
+            "prepEffectBranches": {
+              "$ref": "#/$defs/prepEffectBranchesZh"
             }
           }
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "PREP"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "prepEffectBranches"
+            ],
+            "properties": {
+              "zh": {
+                "required": [
+                  "prepEffectBranches"
+                ]
+              }
+            }
+          },
+          "else": {
+            "not": {
+              "required": [
+                "prepEffectBranches"
+              ]
+            },
+            "properties": {
+              "zh": {
+                "not": {
+                  "required": [
+                    "prepEffectBranches"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "timeAndObservation": {
       "type": "object",
@@ -1388,6 +1564,117 @@
         }
       }
     },
+    "caseInitialContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entryKind",
+        "sessionBinding",
+        "correlationBinding",
+        "qStatus",
+        "currentSummary",
+        "compatibleHypotheses",
+        "completedActionIds",
+        "retainedPublicPrefix"
+      ],
+      "properties": {
+        "entryKind": {
+          "enum": [
+            "FRESH-ATTEMPT",
+            "INHERITED-CONTINUATION"
+          ]
+        },
+        "sessionBinding": {
+          "$ref": "#/$defs/identifier"
+        },
+        "correlationBinding": {
+          "$ref": "#/$defs/identifier"
+        },
+        "qStatus": {
+          "const": "KNOWN"
+        },
+        "currentSummary": {
+          "$ref": "#/$defs/identifier"
+        },
+        "compatibleHypotheses": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "completedActionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "retainedPublicPrefix": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      }
+    },
+    "unknownRecoverContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trigger",
+        "triggerActionId",
+        "triggerRound",
+        "mayHaveVisibleEvents",
+        "sessionDisposition",
+        "recoverEntryQStatus",
+        "recoverRequiredPublicEvidence",
+        "targetAndSummaryConfirmation",
+        "rewindProhibited",
+        "unconfirmedRecoveryDisposition"
+      ],
+      "properties": {
+        "trigger": {
+          "$ref": "#/$defs/identifier"
+        },
+        "triggerActionId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "triggerRound": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "mayHaveVisibleEvents": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "sessionDisposition": {
+          "$ref": "#/$defs/identifier"
+        },
+        "recoverEntryQStatus": {
+          "const": "UNKNOWN"
+        },
+        "recoverRequiredPublicEvidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "targetAndSummaryConfirmation": {
+          "$ref": "#/$defs/identifier"
+        },
+        "rewindProhibited": {
+          "$ref": "#/$defs/identifier"
+        },
+        "unconfirmedRecoveryDisposition": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
     "case": {
       "type": "object",
       "additionalProperties": false,
@@ -1395,6 +1682,7 @@
         "id",
         "purpose",
         "activeFaultVisibility",
+        "initialContext",
         "rounds",
         "afterStopMayEmitEvents",
         "executionStatus"
@@ -1409,6 +1697,12 @@
         "activeFaultVisibility": {
           "const": "EVALUATOR-ONLY"
         },
+        "initialContext": {
+          "$ref": "#/$defs/caseInitialContext"
+        },
+        "unknownRecoverContract": {
+          "$ref": "#/$defs/unknownRecoverContract"
+        },
         "rounds": {
           "type": "array",
           "minItems": 1,
@@ -1422,7 +1716,33 @@
         "executionStatus": {
           "const": "NOT-EXECUTED-DESIGN-WITNESS"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "CASE-UNKNOWN-RECOVER-CONTINUATION"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "required": [
+              "unknownRecoverContract"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "unknownRecoverContract"
+              ]
+            }
+          }
+        }
+      ]
     },
     "experimentRelation": {
       "type": "object",

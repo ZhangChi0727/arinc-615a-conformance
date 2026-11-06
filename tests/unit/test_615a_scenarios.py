@@ -163,7 +163,10 @@ def test_a05_source_mapping_rejects_forged_crs_m2_endpoint_and_layer_relations()
     assert any("sourceUnitId does not match" in error for error in errors_for(lambda data: data["sourceRelations"][0].update(sourceUnitId="SU-FORGED")))
     assert any("document/PDF page" in error for error in errors_for(lambda data: data["sourceRelations"][1].update(documentPage=999)))
     assert any("document/PDF page" in error for error in errors_for(lambda data: data["sourceRelations"][1].update(pdfPage=999)))
-    assert any(error.startswith("SCOPE:") for error in errors_for(lambda data: data["scope"].update(preparedButNotExecuted=[])))
+    assert any(
+        error.startswith(("SCOPE:", "SCHEMA scope.preparedButNotExecuted:"))
+        for error in errors_for(lambda data: data["scope"].update(preparedButNotExecuted=[]))
+    )
 
 
 def test_a06_finite_no_wrq_public_summary_and_lifecycle_guards_are_not_relaxable() -> None:
@@ -183,7 +186,10 @@ def test_a06_finite_no_wrq_public_summary_and_lifecycle_guards_are_not_relaxable
             row for row in data["cases"] if row["id"] == "CASE-UNKNOWN-RECOVER-CONTINUATION"
         )["rounds"][2]["actionId"] = "ACT-PREP-ENTER-READY-WINDOW"
 
-    assert any("no-WRQ" in error for error in errors_for(protocol_timeout))
+    assert any(
+        "no-WRQ" in error or error.startswith("SCHEMA actionLibrary.0.inspection.isProtocolNoResponseVerdict:")
+        for error in errors_for(protocol_timeout)
+    )
     assert any("private summary" in error for error in errors_for(private_summary))
     assert any("full reset scope" in error for error in errors_for(omit_reset))
     assert any("timeline differs" in error for error in errors_for(stale_recover))
@@ -237,6 +243,7 @@ def test_a06b_object_contract_locator_resource_case_and_revocation_are_closed() 
     )
     assert any(
         "opaque-payload boundary" in error
+        or error.startswith("SCHEMA objectContract.semanticPayloadBoundary.notWirePacketImplementation:")
         for error in errors_for(
             lambda data: data["objectContract"]["semanticPayloadBoundary"].update(
                 notWirePacketImplementation=False
@@ -251,6 +258,7 @@ def test_a06b_object_contract_locator_resource_case_and_revocation_are_closed() 
     )
     assert any(
         "fault revocation" in error
+        or error.startswith("SCHEMA lifecycle.faultInjection.revocationAction:")
         for error in errors_for(
             lambda data: data["lifecycle"]["faultInjection"].update(
                 revocationAction="PERSIST-FAULT-INTO-NEXT-ATTEMPT"
@@ -276,7 +284,11 @@ def test_a06b_object_contract_locator_resource_case_and_revocation_are_closed() 
         "actionCostCharged": True,
         "successorDisposition": "ROLL-BACK-SUCCESSOR",
     }.items():
-        assert any("resource-admission witness" in error for error in resource_errors(field, value))
+        assert any(
+            "resource-admission witness" in error
+            or error.startswith(f"SCHEMA cases.4.rounds.0.resourceExpectation.{field}:")
+            for error in resource_errors(field, value)
+        )
     assert any(
         "resource-admission witness" in error
         for error in resource_errors("expectedVisibleEvents", ["EV_DL_WRQ_LUR"], expectation=False)
@@ -306,7 +318,7 @@ def test_a06c_action_history_and_bilingual_operational_contracts_are_not_decorat
         )
     )
     assert any(
-        "Chinese eligibility" in error
+        "Chinese eligibility" in error or error.startswith("SCHEMA actionLibrary.1.zh.eligibility:")
         for error in errors_for(
             lambda data: next(row for row in data["actionLibrary"] if row["id"] == action_id)["zh"].update(
                 eligibility=" \r\n "
@@ -315,10 +327,50 @@ def test_a06c_action_history_and_bilingual_operational_contracts_are_not_decorat
     )
     assert any(
         "Chinese summary confirmation" in error
+        or error.startswith("SCHEMA actionLibrary.1.possibleOutcomes.0.summaryConfirmedWhenZh:")
         for error in errors_for(
             lambda data: next(row for row in data["actionLibrary"] if row["id"] == action_id)[
                 "possibleOutcomes"
             ][0].update(summaryConfirmedWhenZh=" ")
+        )
+    )
+
+
+def test_a06e_public_projection_prep_branches_and_unknown_recover_context_are_controlled() -> None:
+    def prep(data: dict) -> dict:
+        return next(row for row in data["actionLibrary"] if row["id"] == "ACT-PREP-ENTER-READY-WINDOW")
+
+    def unknown_recover_case(data: dict) -> dict:
+        return next(row for row in data["cases"] if row["id"] == "CASE-UNKNOWN-RECOVER-CONTINUATION")
+
+    assert any(
+        "public evidence projection differs" in error
+        for error in errors_for(
+            lambda data: prep(data)["summaryDerivation"]["publicEvidenceProjection"].update(
+                completionReceipt="FORGED-PUBLIC-RECEIPT"
+            )
+        )
+    )
+    assert any(
+        "Prep effect-branch contract differs" in error
+        for error in errors_for(
+            lambda data: prep(data)["prepEffectBranches"]["confirmed"].update(
+                qDisposition="UNKNOWN-REQUIRES-QUALIFIED-RECOVER"
+            )
+        )
+    )
+    assert any(
+        "initial context must retain" in error
+        for error in errors_for(
+            lambda data: unknown_recover_case(data)["initialContext"].update(currentSummary="Q-FORGED-CONTEXT")
+        )
+    )
+    assert any(
+        "UNKNOWN Recover contract must retain" in error
+        for error in errors_for(
+            lambda data: unknown_recover_case(data)["unknownRecoverContract"].update(
+                targetAndSummaryConfirmation="FORGED-RECOVER-CONFIRMATION"
+            )
         )
     )
 
@@ -418,7 +470,14 @@ def test_a08_traceability_matrix_closes_source_interface_witness_and_nonclaim_bo
     assert any("existingInterfaceIds differs" in error for error in errors_for(lambda data: next(item for item in data["traceabilityMatrix"] if item["id"] == row["id"]).update(existingInterfaceIds=["IF-EQUIV"])))
     assert any("sourceRelationIds differs" in error for error in errors_for(lambda data: next(item for item in data["traceabilityMatrix"] if item["id"] == row["id"]).update(sourceRelationIds=["SRC-LUR-WRQ"])))
     assert any("acceptanceWitnessIds differs" in error for error in errors_for(lambda data: next(item for item in data["traceabilityMatrix"] if item["id"] == row["id"]).update(acceptanceWitnessIds=["WIT-FINITE-NO-WRQ-TEST"])))
-    assert any("non-claim boundary" in error for error in errors_for(lambda data: next(item for item in data["traceabilityMatrix"] if item["id"] == row["id"]).update(notCovered=[])))
+    assert any(
+        "non-claim boundary" in error or error.startswith("SCHEMA traceabilityMatrix.3.notCovered:")
+        for error in errors_for(
+            lambda data: next(item for item in data["traceabilityMatrix"] if item["id"] == row["id"]).update(
+                notCovered=[]
+            )
+        )
+    )
 
 
 def test_a08a_experiment_handoffs_declare_public_evaluator_risk_and_nonadmission_boundaries() -> None:
@@ -429,7 +488,7 @@ def test_a08a_experiment_handoffs_declare_public_evaluator_risk_and_nonadmission
     assert relation["notAdmitted"]
     assert relation["zh"]["sharedComponentRisk"]
     assert any(
-        "sharedComponentRisk" in error
+        "sharedComponentRisk" in error or error.startswith("SCHEMA experimentRelations.2.sharedComponentRisk:")
         for error in errors_for(
             lambda data: next(
                 row for row in data["experimentRelations"] if row["interfaceId"] == "IF-EXP-TRUTH"
@@ -437,7 +496,7 @@ def test_a08a_experiment_handoffs_declare_public_evaluator_risk_and_nonadmission
         )
     )
     assert any(
-        "Chinese notAdmitted" in error
+        "Chinese notAdmitted" in error or error.startswith("SCHEMA experimentRelations.4.zh.notAdmitted:")
         for error in errors_for(
             lambda data: next(
                 row for row in data["experimentRelations"] if row["interfaceId"] == "IF-EXP-RUN"
@@ -448,15 +507,15 @@ def test_a08a_experiment_handoffs_declare_public_evaluator_risk_and_nonadmission
 
 def test_a08b_resource_admission_and_single_fault_contracts_cannot_be_relaxed() -> None:
     assert any(
-        "admission/accounting ownership" in error
+        "admission/accounting ownership" in error or error.startswith("SCHEMA resourceContract.admissionOwner:")
         for error in errors_for(lambda data: data["resourceContract"].update(admissionOwner="IF-EXECUTE-RECORD"))
     )
     assert any(
-        "controlled modes" in error
+        "controlled modes" in error or error.startswith("SCHEMA resourceContract.allowedModes:")
         for error in errors_for(lambda data: data["resourceContract"].update(allowedModes=["ROUNDS"]))
     )
     assert any(
-        "post-dispatch successor boundary" in error
+        "post-dispatch successor boundary" in error or error.startswith("SCHEMA resourceContract.postDispatchError:")
         for error in errors_for(lambda data: data["resourceContract"].update(postDispatchError="ROLL-BACK-ON-ERROR"))
     )
     assert any(
@@ -586,6 +645,57 @@ def test_a09_generated_bilingual_view_renders_controlled_fields_by_section_and_d
     assert reader.render(changed) != rendered
 
 
+def test_a09b_projection_branch_and_unknown_recover_view_fields_are_rendered_in_their_own_sections() -> None:
+    def top_level_section(text: str, heading: str) -> str:
+        start = text.index(heading)
+        next_heading = text.find("\n## ", start + len(heading))
+        return text[start:] if next_heading < 0 else text[start:next_heading]
+
+    rendered = reader.render(PACKAGE)
+    english, chinese = rendered.split("# 中文版", 1)
+    english_actions = top_level_section(english, "## Controlled actions / 受控动作")
+    chinese_actions = top_level_section(chinese, "## 受控动作")
+    english_cases = top_level_section(english, "## Scenario entry and continuation contexts")
+    chinese_cases = top_level_section(chinese, "## 场景入口与续接上下文")
+
+    changed = copy.deepcopy(PACKAGE)
+    prep = next(row for row in changed["actionLibrary"] if row["id"] == "ACT-PREP-ENTER-READY-WINDOW")
+    prep["summaryDerivation"]["publicEvidenceProjection"]["inspectedRange"] = "PROJECTION-VIEW-DRIFT"
+    prep["prepEffectBranches"]["confirmed"]["qDisposition"] = "PREP-BRANCH-VIEW-DRIFT"
+    prep["zh"]["prepEffectBranches"]["confirmed"] = "Prep 中文分支视图漂移。"
+    changed_rendered = reader.render(changed)
+    changed_english, changed_chinese = changed_rendered.split("# 中文版", 1)
+    changed_english_actions = top_level_section(changed_english, "## Controlled actions / 受控动作")
+    changed_chinese_actions = top_level_section(changed_chinese, "## 受控动作")
+    assert "PROJECTION-VIEW-DRIFT" in changed_english_actions
+    assert "PROJECTION-VIEW-DRIFT" in changed_chinese_actions
+    assert "PREP-BRANCH-VIEW-DRIFT" in changed_english_actions
+    assert "PREP-BRANCH-VIEW-DRIFT" in changed_chinese_actions
+    assert "Prep 中文分支视图漂移。" not in changed_english_actions
+    assert "Prep 中文分支视图漂移。" in changed_chinese_actions
+    assert "PROJECTION-VIEW-DRIFT" not in english_cases
+    assert "PREP-BRANCH-VIEW-DRIFT" not in chinese_cases
+    assert changed_english_actions != english_actions
+    assert changed_chinese_actions != chinese_actions
+
+    changed = copy.deepcopy(PACKAGE)
+    unknown = next(row for row in changed["cases"] if row["id"] == "CASE-UNKNOWN-RECOVER-CONTINUATION")
+    unknown["initialContext"]["currentSummary"] = "CASE-CONTEXT-VIEW-DRIFT"
+    unknown["unknownRecoverContract"]["targetAndSummaryConfirmation"] = "RECOVER-CONTRACT-VIEW-DRIFT"
+    changed_rendered = reader.render(changed)
+    changed_english, changed_chinese = changed_rendered.split("# 中文版", 1)
+    changed_english_cases = top_level_section(changed_english, "## Scenario entry and continuation contexts")
+    changed_chinese_cases = top_level_section(changed_chinese, "## 场景入口与续接上下文")
+    assert "CASE-CONTEXT-VIEW-DRIFT" in changed_english_cases
+    assert "CASE-CONTEXT-VIEW-DRIFT" in changed_chinese_cases
+    assert "RECOVER-CONTRACT-VIEW-DRIFT" in changed_english_cases
+    assert "RECOVER-CONTRACT-VIEW-DRIFT" in changed_chinese_cases
+    assert "CASE-CONTEXT-VIEW-DRIFT" not in english_actions
+    assert "RECOVER-CONTRACT-VIEW-DRIFT" not in chinese_actions
+    assert changed_english_cases != english_cases
+    assert changed_chinese_cases != chinese_cases
+
+
 def test_a10_reader_escapes_tables_and_refuses_invalid_package_without_overwrite(
     isolated_snapshot_repo: tuple[Path, dict],
 ) -> None:
@@ -653,3 +763,48 @@ def test_a11_cli_returns_named_failure_and_preserves_reader_on_invalid_package(
     monkeypatch.setattr(sys, "argv", ["sync_615a_scenarios.py", "--root", str(root), "--write"])
     assert reader.main() == 1
     assert view.read_bytes() == before
+
+
+@pytest.mark.parametrize(
+    ("label", "mutate", "expected_error"),
+    [
+        (
+            "accepted-inputs-null",
+            lambda data: data.__setitem__("acceptedInputs", None),
+            "SCHEMA acceptedInputs: None is not of type 'array'",
+        ),
+        (
+            "resource-modes-null",
+            lambda data: data["resourceContract"].__setitem__("allowedModes", None),
+            "SCHEMA resourceContract.allowedModes: None is not of type 'array'",
+        ),
+    ],
+)
+def test_a12_schema_short_circuit_is_named_and_cli_generation_is_transactional(
+    isolated_snapshot_repo: tuple[Path, dict],
+    capsys: pytest.CaptureFixture[str],
+    label: str,
+    mutate,
+    expected_error: str,
+) -> None:
+    root, candidate = isolated_snapshot_repo
+    assert reader.sync(root, write=True)[0], label
+    view = root / reader.VIEW_PATH
+    before = view.read_bytes()
+    mutate(candidate)
+    (root / checker.PACKAGE_PATH).write_text(
+        json.dumps(candidate, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+
+    errors = checker.validate_package(root)
+    assert errors == [expected_error]
+    assert checker.main(["--root", str(root)]) == 1
+    assert expected_error in capsys.readouterr().err
+    assert reader.main(["--root", str(root), "--write"]) == 1
+    assert expected_error in capsys.readouterr().err
+    assert view.read_bytes() == before
+
+    view.unlink()
+    assert reader.main(["--root", str(root), "--write"]) == 1
+    assert expected_error in capsys.readouterr().err
+    assert not view.exists()
