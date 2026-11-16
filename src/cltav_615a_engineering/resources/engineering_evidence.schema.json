@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cltav://615a/engineering-evidence/v1",
+  "title": "CLTAV 615A engineering evidence envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifactType",
+    "producerMode",
+    "schemaId",
+    "cliExitMeaning",
+    "qualityStatus",
+    "algorithmVisible",
+    "evaluatorAudit"
+  ],
+  "properties": {
+    "artifactType": {
+      "const": "CLTAV-615A-ENGINEERING-EVIDENCE-V1"
+    },
+    "producerMode": {
+      "const": "CLTAV-615A-ENGINEERING-CONTROL-SLICE-V1"
+    },
+    "schemaId": {
+      "const": "cltav://615a/engineering-evidence/v1"
+    },
+    "cliExitMeaning": {
+      "const": "ZERO-MEANS-VALID-ENGINEERING-RECORD-NOT-IUT-PASS"
+    },
+    "qualityStatus": {
+      "enum": [
+        "ENGINEERING-RECORD-VALID",
+        "ENGINEERING-RECORD-INCOMPLETE"
+      ]
+    },
+    "algorithmVisible": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identities",
+        "configuration",
+        "journal",
+        "rounds",
+        "stop",
+        "recompute",
+        "unevaluatedObligations",
+        "fingerprintSha256"
+      ],
+      "properties": {
+        "identities": { "type": "object" },
+        "configuration": { "type": "object" },
+        "journal": { "type": "object" },
+        "rounds": { "type": "array" },
+        "stop": { "type": "object" },
+        "recompute": { "type": "object" },
+        "unevaluatedObligations": { "type": "array" },
+        "fingerprintSha256": { "type": "string", "minLength": 64, "maxLength": 64 }
+      }
+    },
+    "evaluatorAudit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "faultPlan",
+        "reset",
+        "injection",
+        "truthLimitations",
+        "deliveryWithhold"
+      ],
+      "properties": {
+        "faultPlan": { "type": "object" },
+        "reset": { "type": "object" },
+        "injection": { "type": "object" },
+        "truthLimitations": { "type": "array" },
+        "deliveryWithhold": { "type": ["object", "null"] }
+      }
+    }
+  }
+}
