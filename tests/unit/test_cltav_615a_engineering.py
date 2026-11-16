@@ -6,6 +6,7 @@ from copy import deepcopy
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import zipfile
@@ -15,7 +16,9 @@ import pytest
 from cltav_615a_engineering.cli import main as engineering_main
 from cltav_615a_engineering.envelope import compute_fingerprint, validate_envelope
 from cltav_615a_engineering.errors import EngineeringError
+from cltav_615a_engineering.jsonutil import canonical_json_bytes
 from cltav_615a_engineering.publish import publish_run, safe_output_directory
+from cltav_615a_engineering.verify import verify_evidence_directory
 from cltav_615a_engineering.runner import (
     CASE_ACCESS_GAP,
     CASE_EARLY_DATA,
@@ -82,53 +85,75 @@ def test_d01_run_verify_replay_semantic_consistency(tmp_path: Path, case_id: str
     assert engineering_main(["replay", *_authority(), "--evidence", str(output)]) == 0
 
 
-def test_d01_six_tamper_classes_fail_after_fingerprint_refresh(tmp_path: Path) -> None:
-    executed = run_case(
-        repository=ROOT,
-        authority_commit=COMMIT,
-        case_id=CASE_EARLY_DATA,
-        resource_mode="ROUNDS",
-        resource_remaining=8,
-    )
+def test_d01_seven_probe_tampers_fail_after_fingerprint_refresh(tmp_path: Path) -> None:
+    """Persistent negatives for the seven RR-009 synergistic tamper classes."""
 
-    def fail(mutator, code: str) -> None:
-        tampered = mutator(deepcopy(executed.document))
-        _refresh(tampered)
+    base = tmp_path / "ENG-CASE-NORMAL"
+    assert engineering_main(["run", *_authority(), "--case-id", CASE_NORMAL, "--output", str(base)]) == 0
+
+    def apply_tamper(label: str, fn, refresh: bool = True) -> Path:
+        target = tmp_path / f"t-{label}"
+        shutil.copytree(base, target)
+        env = json.loads((target / "envelope.json").read_text(encoding="utf-8"))
+        fn(env, target)
+        if refresh:
+            env["algorithmVisible"]["fingerprintSha256"] = compute_fingerprint(env["algorithmVisible"])
+        (target / "envelope.json").write_bytes(canonical_json_bytes(env))
+        return target
+
+    def cost(env, d):
+        r = env["algorithmVisible"]["rounds"][0]
+        r["detailCharges"] = {k: 0 for k in r["detailCharges"]} or {"acquisition": 0}
+        r["projectedCost"] = {k: 0 for k in r["projectedCost"]}
+        for x in env["algorithmVisible"]["rounds"]:
+            x["resourceRemaining"] = 8
+
+    def hyp(env, d):
+        env["algorithmVisible"]["stop"]["hypotheses"] = ["EARLY-DATA"]
+        for x in env["algorithmVisible"]["rounds"]:
+            x["hypotheses"] = ["EARLY-DATA"]
+
+    def action(env, d):
+        env["algorithmVisible"]["rounds"][-1]["actionId"] = "ACT-RECOVER-RECONFIRM-READY"
+
+    def runtime_id(env, d):
+        env["algorithmVisible"]["identities"]["implementation"]["runtimeSession"]["sha256"] = "0" * 64
+
+    def drop_event(env, d):
+        env["algorithmVisible"]["journal"]["events"].pop()
+
+    def split_file(env, d):
+        (d / "algorithm-visible" / "rounds.json").write_text("[]", encoding="utf-8")
+
+    def reset_both(env, d):
+        env["evaluatorAudit"]["reset"]["resetId"] = "forged"
+        for e in env["algorithmVisible"]["journal"]["events"]:
+            e["resetId"] = "forged"
+        env["algorithmVisible"]["journal"]["resetId"] = "forged"
+
+    expected = {
+        "cost": "RESOURCE-RECOMPUTE-MISMATCH",
+        "hypotheses": "HYPOTHESIS-STOP-MISMATCH",
+        "action": "ACTION-KIND-MISMATCH",
+        "runtime-identity": "IMPLEMENTATION-IDENTITY-MISMATCH",
+        "drop-event": "REPLAY-JOURNAL-MISMATCH",
+        "split-file-only": "EVIDENCE-SPLIT-MISMATCH",
+        "reset-coordinated": "RESET-IDENTITY-INCONSISTENT",
+    }
+    for label, fn in (
+        ("cost", cost),
+        ("hypotheses", hyp),
+        ("action", action),
+        ("runtime-identity", runtime_id),
+        ("drop-event", drop_event),
+        ("split-file-only", split_file),
+        ("reset-coordinated", reset_both),
+    ):
+        path = apply_tamper(label, fn)
         with pytest.raises(EngineeringError) as rejected:
-            verify_document(tampered, repository=ROOT, authority_commit=COMMIT)
-        assert rejected.value.code == code
-
-    def direction(document):
-        document["algorithmVisible"]["journal"]["events"][-1]["direction"] = "DL-TO-TH"
-        return document
-
-    def version(document):
-        document["algorithmVisible"]["rounds"][-1]["historyVersion"] = -1
-        return document
-
-    def cost(document):
-        document["algorithmVisible"]["rounds"][-1]["resourceRemaining"] = -3
-        return document
-
-    def identity(document):
-        document["algorithmVisible"]["identities"]["scenario"]["rawSha256"] = "0" * 64
-        return document
-
-    def fault(document):
-        document["evaluatorAudit"]["injection"]["requestedVariant"] = "EARLY-WRQ"
-        document["evaluatorAudit"]["injection"]["confirmed"] = True
-        return document
-
-    def reset(document):
-        document["evaluatorAudit"]["reset"]["resetId"] = "forged-reset"
-        return document
-
-    fail(direction, "EVENT-DIRECTION-MISMATCH")
-    fail(version, "HISTORY-VERSION-ORDER")
-    fail(cost, "RESOURCE-RECOMPUTE-INVALID")
-    fail(identity, "SCENARIO-IDENTITY-MISMATCH")
-    fail(fault, "FAULT-READBACK-MISMATCH")
-    fail(reset, "RESET-EVIDENCE-MISMATCH")
+            verify_evidence_directory(path, repository=ROOT, authority_commit=COMMIT)
+        assert rejected.value.code == expected[label], (label, rejected.value.code)
+        assert engineering_main(["verify", *_authority(), "--evidence", str(path)]) == 1
 
 
 def test_d03_publish_success_and_mid_failure_rollback(tmp_path: Path) -> None:
@@ -256,3 +281,9 @@ def test_d04_noneditable_wheel_runs_all_four_examples(tmp_path: Path) -> None:
             cwd=work, text=True, capture_output=True, env=env,
         )
         assert verified.returncode == 0, verified.stderr
+        replayed = subprocess.run(
+            [str(entrypoint), "replay", "--authority-repository", str(ROOT), "--authority-commit", COMMIT,
+             "--evidence", str(output)],
+            cwd=work, text=True, capture_output=True, env=env,
+        )
+        assert replayed.returncode == 0, replayed.stderr

@@ -14,7 +14,7 @@ from pathlib import Path
 from .errors import EngineeringError
 from .publish import publish_run
 from .runner import CASE_IDS, run_case
-from .verify import compare_semantic, load_evidence_directory, verify_document
+from .verify import compare_semantic, verify_evidence_directory
 
 
 def _add_authority(parser: argparse.ArgumentParser) -> None:
@@ -61,9 +61,8 @@ def main(argv: list[str] | None = None) -> int:
                 "exit 0 is a valid engineering record, not an IUT PASS",
             )
             return 0
-        document = load_evidence_directory(args.evidence)
-        verified = verify_document(
-            document,
+        verified = verify_evidence_directory(
+            args.evidence,
             repository=args.authority_repository,
             authority_commit=args.authority_commit,
         )

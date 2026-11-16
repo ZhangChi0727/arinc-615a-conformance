@@ -55,10 +55,12 @@ inside `algorithm-visible/stop.json`.
   evaluator-audit/           # fault plan, reset, injection, limitations
 ```
 
-`verify` recomputes H-B source identity, loaded object/adapter identity,
-fingerprint, event direction, resource remaining, history-version order, reset
-binding, and public-journal support for a claimed confirmed variant. Refreshing
-fingerprint after synergistic tamper still fails.
+`verify` recomputes H-B source identity, the full implementation identity
+(adapter/object/runtime/engineering files), fingerprint, event
+direction/sequence/tick/session identity, H-B action-library costs and remaining
+resources, monotone H contraction and stop compatibility, split-file/envelope
+closure, and then re-executes the recorded case to compare semantic fields.
+Refreshing fingerprint after synergistic tamper still fails.
 
 `replay` re-executes the same case and compares semantic fields. The named
 exclusion whitelist is only new run/attempt/reset/session/correlation/event IDs

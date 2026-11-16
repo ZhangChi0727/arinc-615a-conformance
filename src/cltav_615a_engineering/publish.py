@@ -9,7 +9,7 @@ from uuid import uuid4
 
 from .errors import EngineeringError
 from .jsonutil import canonical_json_bytes
-from .verify import verify_document
+from .verify import verify_document, verify_evidence_directory
 
 ALGORITHM_DIR = "algorithm-visible"
 EVALUATOR_DIR = "evaluator-audit"
@@ -121,7 +121,11 @@ def publish_run(
     try:
         stage.mkdir(parents=False)
         _write_tree(stage, document)
-        verify_document(document, repository=repository, authority_commit=document["algorithmVisible"]["identities"]["authorityCommit"])
+        verify_evidence_directory(
+            stage,
+            repository=repository,
+            authority_commit=document["algorithmVisible"]["identities"]["authorityCommit"],
+        )
         if target.exists():
             _assert_owned_directory(target, repository=repository)
             mover(target, backup)

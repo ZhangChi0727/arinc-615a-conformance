@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from fractions import Fraction
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 from uuid import uuid4
 
 from cltav_615a.controller import LurStartController
@@ -139,12 +139,18 @@ def _install_variant(controller: LurStartController, case_id: str) -> dict[str, 
     }
 
 
-def _withhold_ack(original: Callable[..., Any]) -> Callable[..., Any]:
-    withheld = {"done": False}
+def _attach_once_ack_withhold(environment: LurStartSessionEnvironment, shared: dict[str, bool]) -> None:
+    """Instance-level one-shot tool failure; successors must be re-wrapped.
 
-    def wrapped(*, controller, request, expected, adapter_identity):
-        if expected.kind == EVENT_TH_ACK_LUR and not withheld["done"]:
-            withheld["done"] = True
+    The C adapter class is not patched.  The named withhold lives on this
+    environment instance and a shared done-flag copied across `_next` results.
+    """
+
+    original = LurStartSessionEnvironment._applied_delivery
+
+    def hooked(*, controller, request, expected, adapter_identity):
+        if expected.kind == EVENT_TH_ACK_LUR and not shared["done"]:
+            shared["done"] = True
             return None
         return original(
             controller=controller,
@@ -153,7 +159,7 @@ def _withhold_ack(original: Callable[..., Any]) -> Callable[..., Any]:
             adapter_identity=adapter_identity,
         )
 
-    return wrapped
+    object.__setattr__(environment, "_applied_delivery", hooked)
 
 
 def run_case(
@@ -186,45 +192,45 @@ def run_case(
         resources=resources,
         retry_cap=4,
     )
-    original_delivery = LurStartSessionEnvironment._applied_delivery
-    withheld = False
-    if case_id == CASE_ACCESS_GAP:
-        LurStartSessionEnvironment._applied_delivery = staticmethod(_withhold_ack(original_delivery))
-        withheld = True
+    withheld = case_id == CASE_ACCESS_GAP
+    withhold_state = {"done": False}
     rounds: list[dict[str, Any]] = []
-    try:
-        state = built.session.initial_state
-        environment = built.environment
-        terminal: SessionResult | None = None
-        for _ in range(32):
-            terminal = built.session.step(state, environment)
-            encoded = _round(terminal)
-            if encoded is not None:
-                rounds.append(encoded)
-            if terminal.stop_reason is not None:
-                break
-            state = terminal.state
-            environment = terminal.environment
-        if terminal is None:
-            raise EngineeringError("SESSION-DID-NOT-RUN", "the C session produced no step")
-        protocol = terminal.environment.protocol_snapshot
-        snapshot = {
-            "resetId": protocol.reset_id,
-            "attemptId": protocol.attempt_id,
-            "sessionId": protocol.session_id,
-            "correlationId": protocol.correlation_id,
-            "events": [_event(item) for item in protocol.events],
-        }
-        if not snapshot["events"]:
-            raise EngineeringError("JOURNAL-EMPTY", "a valid engineering record requires a public event source")
-        stop_reason = terminal.stop_reason
-        if case_id == CASE_ACCESS_GAP and stop_reason != "Stop-Prediction-Gap":
-            raise EngineeringError(
-                "ACCESS-CASE-CONTRACT-MISMATCH",
-                "access-exception case must terminate at Stop-Prediction-Gap under DM-C-R01",
-            )
-        quality = "ENGINEERING-RECORD-VALID"
-        algorithm_visible = {
+    state = built.session.initial_state
+    environment = built.environment
+    if withheld:
+        _attach_once_ack_withhold(environment, withhold_state)
+    terminal: SessionResult | None = None
+    for _ in range(32):
+        terminal = built.session.step(state, environment)
+        encoded = _round(terminal)
+        if encoded is not None:
+            rounds.append(encoded)
+        if terminal.stop_reason is not None:
+            break
+        state = terminal.state
+        environment = terminal.environment
+        if withheld:
+            _attach_once_ack_withhold(environment, withhold_state)
+    if terminal is None:
+        raise EngineeringError("SESSION-DID-NOT-RUN", "the C session produced no step")
+    protocol = terminal.environment.protocol_snapshot
+    snapshot = {
+        "resetId": protocol.reset_id,
+        "attemptId": protocol.attempt_id,
+        "sessionId": protocol.session_id,
+        "correlationId": protocol.correlation_id,
+        "events": [_event(item) for item in protocol.events],
+    }
+    if not snapshot["events"]:
+        raise EngineeringError("JOURNAL-EMPTY", "a valid engineering record requires a public event source")
+    stop_reason = terminal.stop_reason
+    if case_id == CASE_ACCESS_GAP and stop_reason != "Stop-Prediction-Gap":
+        raise EngineeringError(
+            "ACCESS-CASE-CONTRACT-MISMATCH",
+            "access-exception case must terminate at Stop-Prediction-Gap under DM-C-R01",
+        )
+    quality = "ENGINEERING-RECORD-VALID"
+    algorithm_visible = {
             "identities": {
                 "runId": f"eng-run-{uuid4().hex}",
                 "sceneId": "ENG-UPLOAD-LUR-START",
@@ -273,35 +279,32 @@ def run_case(
                     "readbackId", "evidenceRef",
                 }),
             },
-            "unevaluatedObligations": list(UNEVALUATED_OBLIGATIONS),
-        }
-        evaluator_audit = {
-            "faultPlan": {
-                "caseId": case_id,
-                "requestedVariant": injection["requestedVariant"],
-            },
-            "reset": {
-                "resetId": protocol.reset_id,
-                "attemptId": protocol.attempt_id,
-            },
-            "injection": injection,
-            "truthLimitations": [
-                injection["truthLimitation"],
-                "CRC/check-value/naming/complete-integrity remain NOT-ESTABLISHED.",
-                "This is a finite surrogate engineering loop, not IUT detection or four-arm results.",
-                "DM-C-R01: full-session recovery does not promote conservative H or continue diagnosis.",
-            ],
-            "deliveryWithhold": (
-                {"kind": EVENT_TH_ACK_LUR, "once": True, "layer": "engineering-runner"}
-                if withheld else None
-            ),
-        }
-        document = assemble_envelope(
-            algorithm_visible=algorithm_visible,
-            evaluator_audit=evaluator_audit,
-            quality_status=quality,
-        )
-        return EngineeringRun(case_id, repo, commit, document)
-    finally:
-        if withheld:
-            LurStartSessionEnvironment._applied_delivery = original_delivery if isinstance(original_delivery, staticmethod) else staticmethod(original_delivery)
+        "unevaluatedObligations": list(UNEVALUATED_OBLIGATIONS),
+    }
+    evaluator_audit = {
+        "faultPlan": {
+            "caseId": case_id,
+            "requestedVariant": injection["requestedVariant"],
+        },
+        "reset": {
+            "resetId": protocol.reset_id,
+            "attemptId": protocol.attempt_id,
+        },
+        "injection": injection,
+        "truthLimitations": [
+            injection["truthLimitation"],
+            "CRC/check-value/naming/complete-integrity remain NOT-ESTABLISHED.",
+            "This is a finite surrogate engineering loop, not IUT detection or four-arm results.",
+            "DM-C-R01: full-session recovery does not promote conservative H or continue diagnosis.",
+        ],
+        "deliveryWithhold": (
+            {"kind": EVENT_TH_ACK_LUR, "once": True, "layer": "engineering-runner"}
+            if withheld else None
+        ),
+    }
+    document = assemble_envelope(
+        algorithm_visible=algorithm_visible,
+        evaluator_audit=evaluator_audit,
+        quality_status=quality,
+    )
+    return EngineeringRun(case_id, repo, commit, document)
