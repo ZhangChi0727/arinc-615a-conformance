@@ -20,12 +20,14 @@ dev = ["pytest>=7.0", "setuptools>=61"]
 a615a-sim = "a615a_sim.cli:main"
 cltav-offline = "cltav_offline.cli:main"
 cltav-runtime = "cltav_runtime.cli:main"
+cltav-615a-engineering = "cltav_615a_engineering.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
 "cltav_offline.resources" = ["*.json"]
+"cltav_615a_engineering.resources" = ["*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
