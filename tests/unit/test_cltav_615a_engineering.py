@@ -156,6 +156,68 @@ def test_d01_seven_probe_tampers_fail_after_fingerprint_refresh(tmp_path: Path) 
         assert engineering_main(["verify", *_authority(), "--evidence", str(path)]) == 1
 
 
+def test_d01_rr010_journal_and_evaluator_tampers_fail(tmp_path: Path) -> None:
+    """RR-010: tick/actor journal fields and EARLY-WRQ truth relabel must fail verify."""
+
+    split_visible = {
+        "identities": "identities.json",
+        "configuration": "configuration.json",
+        "journal": "journal.json",
+        "rounds": "rounds.json",
+        "stop": "stop.json",
+    }
+
+    def sync_split(target: Path, env: dict) -> None:
+        env["algorithmVisible"]["fingerprintSha256"] = compute_fingerprint(env["algorithmVisible"])
+        (target / "envelope.json").write_bytes(canonical_json_bytes(env))
+        visible = env["algorithmVisible"]
+        for key, name in split_visible.items():
+            (target / "algorithm-visible" / name).write_bytes(canonical_json_bytes(visible[key]))
+        (target / "algorithm-visible" / "fingerprint.json").write_bytes(
+            canonical_json_bytes({"fingerprintSha256": visible["fingerprintSha256"]})
+        )
+        audit = env["evaluatorAudit"]
+        for key, name in (("faultPlan", "fault.json"), ("reset", "reset.json"), ("injection", "injection.json")):
+            (target / "evaluator-audit" / name).write_bytes(canonical_json_bytes(audit[key]))
+
+    normal = tmp_path / CASE_NORMAL
+    early = tmp_path / CASE_EARLY_WRQ
+    assert engineering_main(["run", *_authority(), "--case-id", CASE_NORMAL, "--output", str(normal)]) == 0
+    assert engineering_main(["run", *_authority(), "--case-id", CASE_EARLY_WRQ, "--output", str(early)]) == 0
+
+    def tick_all(env, _d):
+        for event in env["algorithmVisible"]["journal"]["events"]:
+            event["tick"] = event["tick"] + 1
+
+    def tick_one(env, _d):
+        env["algorithmVisible"]["journal"]["events"][0]["tick"] = env["algorithmVisible"]["journal"]["events"][0]["tick"] + 1
+
+    def actor(env, _d):
+        env["algorithmVisible"]["journal"]["events"][0]["actor"] = "FORGED-ACTOR"
+
+    def relabel(env, _d):
+        env["evaluatorAudit"]["injection"]["requestedVariant"] = "NORMAL"
+        env["evaluatorAudit"]["injection"]["confirmed"] = False
+        env["evaluatorAudit"]["faultPlan"]["requestedVariant"] = "NORMAL"
+
+    expected = {
+        "tick-shift": (normal, tick_all, "REPLAY-JOURNAL-MISMATCH"),
+        "tick-one": (normal, tick_one, "REPLAY-JOURNAL-MISMATCH"),
+        "actor": (normal, actor, "REPLAY-JOURNAL-MISMATCH"),
+        "truth-relabel-earlywrq": (early, relabel, "INJECTION-CASE-MISMATCH"),
+    }
+    for label, (base, fn, code) in expected.items():
+        target = tmp_path / f"t-{label}"
+        shutil.copytree(base, target)
+        env = json.loads((target / "envelope.json").read_text(encoding="utf-8"))
+        fn(env, target)
+        sync_split(target, env)
+        with pytest.raises(EngineeringError) as rejected:
+            verify_evidence_directory(target, repository=ROOT, authority_commit=COMMIT)
+        assert rejected.value.code == code, (label, rejected.value.code)
+        assert engineering_main(["verify", *_authority(), "--evidence", str(target)]) == 1
+
+
 def test_d03_publish_success_and_mid_failure_rollback(tmp_path: Path) -> None:
     first = run_case(
         repository=ROOT, authority_commit=COMMIT, case_id=CASE_NORMAL,

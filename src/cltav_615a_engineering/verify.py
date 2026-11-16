@@ -117,6 +117,7 @@ def verify_document(
         raise EngineeringError("RESET-EVIDENCE-MISMATCH", "reset identity does not match the public journal")
     _assert_reset_attempt_binding(visible["journal"], reset)
     _assert_variant_journal(document)
+    _assert_case_injection_expectation(document)
     if rerun:
         _assert_rereun_semantic(document, repository=repo, authority_commit=commit)
     return dict(document)
@@ -326,18 +327,100 @@ def _assert_variant_journal(document: Mapping[str, Any]) -> None:
             raise EngineeringError("FAULT-READBACK-MISMATCH", "EARLY-DATA injection is not supported by the public journal")
 
 
+def _expected_injection(case_id: str) -> tuple[str, bool]:
+    from .runner import CASE_ACCESS_GAP, CASE_EARLY_DATA, CASE_EARLY_WRQ, CASE_NORMAL
+
+    return {
+        CASE_NORMAL: ("NORMAL", False),
+        CASE_EARLY_WRQ: ("EARLY-WRQ", True),
+        CASE_EARLY_DATA: ("EARLY-DATA", True),
+        CASE_ACCESS_GAP: ("NORMAL", False),
+    }[case_id]
+
+
+def _assert_case_injection_expectation(document: Mapping[str, Any]) -> None:
+    case_id = document["algorithmVisible"]["identities"].get("caseId")
+    audit = document.get("evaluatorAudit")
+    if not isinstance(audit, Mapping):
+        raise EngineeringError("EVALUATOR-AUDIT-MISSING", "evaluator audit is required")
+    injection = audit.get("injection")
+    plan = audit.get("faultPlan")
+    if not isinstance(injection, Mapping) or not isinstance(plan, Mapping):
+        raise EngineeringError("INJECTION-EVIDENCE-MISSING", "injection and faultPlan are required")
+    try:
+        variant, confirmed = _expected_injection(str(case_id))
+    except KeyError as exc:
+        raise EngineeringError("CASE-ID-UNKNOWN", f"unknown engineering case {case_id}") from exc
+    if injection.get("requestedVariant") != variant or injection.get("confirmed") is not confirmed:
+        raise EngineeringError(
+            "INJECTION-CASE-MISMATCH",
+            "evaluator injection does not match the caseId variant expectation",
+        )
+    if plan.get("requestedVariant") != variant or plan.get("caseId") != case_id:
+        raise EngineeringError(
+            "INJECTION-CASE-MISMATCH",
+            "faultPlan does not match the caseId variant expectation",
+        )
+
+
+def _journal_with_reply_sequences(journal: Mapping[str, Any]) -> dict[str, Any]:
+    events = journal.get("events") or []
+    by_id = {item.get("eventId"): item.get("sequenceNumber") for item in events if isinstance(item, Mapping)}
+    rewritten = []
+    for item in events:
+        if not isinstance(item, Mapping):
+            rewritten.append(item)
+            continue
+        event = dict(item)
+        reply = event.pop("inReplyToEventId", None)
+        event["inReplyToSequence"] = by_id.get(reply) if reply else None
+        rewritten.append(event)
+    return {**dict(journal), "events": rewritten}
+
+
+def _visible_for_compare(document: Mapping[str, Any]) -> object:
+    visible = dict(document["algorithmVisible"])
+    journal = visible.get("journal")
+    if isinstance(journal, Mapping):
+        visible["journal"] = _journal_with_reply_sequences(journal)
+    projected = semantic_projection(visible)
+    if isinstance(projected, dict):
+        projected.pop("fingerprintSha256", None)
+    return projected
+
+
 def compare_semantic(expected: Mapping[str, Any], actual: Mapping[str, Any]) -> None:
-    left = semantic_projection(expected["algorithmVisible"])
-    right = semantic_projection(actual["algorithmVisible"])
-    if left["stop"]["reason"] != right["stop"]["reason"]:
+    left = _visible_for_compare(expected)
+    right = _visible_for_compare(actual)
+    if not isinstance(left, dict) or not isinstance(right, dict):
+        raise EngineeringError("REPLAY-VISIBLE-MISMATCH", "replayed algorithm-visible projection is malformed")
+    if left.get("stop", {}).get("reason") != right.get("stop", {}).get("reason"):
         raise EngineeringError("REPLAY-STOP-MISMATCH", "replayed stop reason differs")
-    if [item.get("actionId") for item in left["rounds"]] != [item.get("actionId") for item in right["rounds"]]:
+    if [item.get("actionId") for item in left.get("rounds") or ()] != [item.get("actionId") for item in right.get("rounds") or ()]:
         raise EngineeringError("REPLAY-ACTION-MISMATCH", "replayed action sequence differs")
-    if [item.get("kind") for item in left["journal"]["events"]] != [item.get("kind") for item in right["journal"]["events"]]:
-        raise EngineeringError("REPLAY-JOURNAL-MISMATCH", "replayed public event kinds differ")
-    if left["stop"]["historyStatuses"] != right["stop"]["historyStatuses"]:
+    if left.get("journal") != right.get("journal"):
+        raise EngineeringError("REPLAY-JOURNAL-MISMATCH", "replayed public journal semantic fields differ")
+    if left.get("stop", {}).get("historyStatuses") != right.get("stop", {}).get("historyStatuses"):
         raise EngineeringError("REPLAY-HISTORY-MISMATCH", "replayed conservative history statuses differ")
-    if set(left["stop"]["hypotheses"]) != set(right["stop"]["hypotheses"]):
+    if set(left.get("stop", {}).get("hypotheses") or ()) != set(right.get("stop", {}).get("hypotheses") or ()):
         raise EngineeringError("REPLAY-HYPOTHESIS-MISMATCH", "replayed hypothesis set differs")
-    if semantic_projection(left["rounds"]) != semantic_projection(right["rounds"]):
+    if left.get("rounds") != right.get("rounds"):
         raise EngineeringError("REPLAY-ROUND-MISMATCH", "replayed semantic round fields differ")
+    if left.get("configuration") != right.get("configuration"):
+        raise EngineeringError("REPLAY-CONFIGURATION-MISMATCH", "replayed configuration semantic fields differ")
+    if left.get("identities") != right.get("identities"):
+        raise EngineeringError("REPLAY-IDENTITY-MISMATCH", "replayed non-whitelist identities differ")
+    if left.get("stop") != right.get("stop"):
+        raise EngineeringError("REPLAY-STOP-MISMATCH", "replayed stop semantic fields differ")
+    if left != right:
+        raise EngineeringError("REPLAY-VISIBLE-MISMATCH", "replayed algorithm-visible semantic fields differ")
+    left_audit = semantic_projection(expected.get("evaluatorAudit") or {})
+    right_audit = semantic_projection(actual.get("evaluatorAudit") or {})
+    if left_audit.get("injection") != right_audit.get("injection"):
+        raise EngineeringError("REPLAY-INJECTION-MISMATCH", "replayed evaluator injection differs")
+    if left_audit.get("faultPlan") != right_audit.get("faultPlan"):
+        raise EngineeringError("REPLAY-FAULT-PLAN-MISMATCH", "replayed evaluator faultPlan differs")
+    if left_audit.get("reset") != right_audit.get("reset"):
+        raise EngineeringError("REPLAY-RESET-AUDIT-MISMATCH", "replayed evaluator reset semantic fields differ")
+    if left_audit != right_audit:
+        raise EngineeringError("REPLAY-EVALUATOR-MISMATCH", "replayed evaluator-audit semantic fields differ")
