@@ -1247,12 +1247,12 @@ evidence, not private state. A stopped session is not extended merely to
 complete a demonstration. Fault records remain type-valid visible events and
 are not filtered as tool errors.
 
-**Status:** G0/A received separate fixed-head stage acceptance before object
-implementation, and the Loader/TH lifecycle received its separate limited
-B-stage fixed-head acceptance. The current C-stage bounded session-integration
-material remains a candidate pending its own fixed-head independent review;
-subsequent D/E stages and whole-PR acceptance remain separate. This decision
-authorizes neither Ready, approval, merge, Configuration/M3,
+**Status:** G0/A, B and C received successive limited fixed-head acceptance.
+DM-C-R01 records that UNKNOWN after Recover keeps conservative H and stops at
+Stop-Prediction-Gap; it is not post-recovery continued diagnosis. The current
+D-stage engineering-delivery material remains a candidate pending its own
+fixed-head independent review; E and whole-PR acceptance remain separate. This
+decision authorizes neither Ready, approval, merge, Configuration/M3,
 capability/conformance/certification nor scientific result claims.
 
 # 中文版
@@ -1907,7 +1907,7 @@ NORMAL、EARLY-WRQ 与 EARLY-DATA 是评价域中的对象变体，而不是协�
 摘要与确认必须由许可的公开 journal／回执证据重算，而不是私有状态。会话停止后不得为完成演示
 而延长运行。故障记录仍是类型合法的可见事件，不得过滤为工具错误。
 
-**状态：** G0/A 已在对象实现前分别以固定 Head 获得阶段接受，Loader／TH 生命周期也已获得
-独立、有限的 B 阶段固定 Head 接受。当前 C 阶段有界会话集成材料仍是等待自身固定 Head 独立
-评审的候选；后续 D/E 阶段和整支 PR 接受仍然独立。本决定不授权 Ready、批准、合并、
-Configuration/M3、能力／符合性／认证或科学结果主张。
+**状态：** G0/A、B 与 C 已依次获得有限固定 Head 接受。DM-C-R01 记录 UNKNOWN 经 Recover
+后保持保守 H 并以 Stop-Prediction-Gap 终止，不是恢复后继续诊断。当前 D 阶段工程交付材料
+仍是等待自身固定 Head 独立评审的候选；E 与整支 PR 接受仍然独立。本决定不授权 Ready、批准、
+合并、Configuration/M3、能力／符合性／认证或科学结果主张。

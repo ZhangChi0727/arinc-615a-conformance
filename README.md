@@ -51,14 +51,14 @@ silently redefine the Core.
 
 ## Current increment
 
-**Draft 615A UPLOAD control-slice C-stage bounded session-integration candidate with accepted B object lifecycle and finite reference-runtime foundation**
+**Draft 615A UPLOAD control-slice D-stage engineering-delivery candidate on limited-accepted C session integration**
 
 - CR-2026-017 / DD-041 delivered the separately owned, read-only offline capture-to-evidence increment merged as eddec443; its bounded evidence scope remains unchanged.
 - CR-2026-018 / DD-042 integrated accepted literature evidence into bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.
 - PR #23 was independently accepted at Head 04b7c56eb70e458cec46e54bd7b37aaa9185cc7f and squash-merged as 868ee3c3e99bee2bcb0a2aedb206fe15d2a4e0e9; main CI 38864201591 passed. CR-2026-019 / DD-043 remains a bounded design authority, not run admission.
 - PR #24 was merged as 4d3b013; CR-2026-020 / DD-044 governs its versioned editable model-figure candidates. The current nine remain DRAFT-REDRAW candidates; semantic review, final-size acceptance, downstream migration, and promotion remain separate pending human decisions.
 - PR #25 was independently accepted and squash-merged as c577f34e. It introduced the bounded finite CL-TAV reference-runtime foundation: verified contract/model/projection identities, one-clock exact-rational propagation, conservative limits, compact content-addressed source records, contract-bound in-process session coordination, and raw observation ownership/timing assessment. It establishes neither runtime integrity, IUT execution, conformance, nor M3 admission.
-- Draft PR #26 received separate G0/A acceptance and fixed-head B limited acceptance. It now contains a bounded C-stage adapter from the accepted source-controlled Loader/TH lifecycle to the finite reference session: real multi-round NORMAL/EARLY-WRQ/EARLY-DATA public traces, explicit READY emission/delivery/application facts, qualified non-emitting Recover readback, and public ownership projection. C remains a candidate pending independent fixed-head review; it does not admit an experiment or establish a protocol capability.
+- Draft PR #26 has limited-accepted C-stage session integration at 7fd917b9 and now contains a D-stage cltav-615a-engineering candidate: independent evidence envelope, run/verify/replay CLI, transactional directory publish, and non-editable-wheel installation. UNKNOWN after Recover keeps conservative H and stops at Stop-Prediction-Gap (DM-C-R01); this is not post-recovery continued diagnosis, complete UPLOAD, IUT evidence, four-arm results, or CRC capability.
 - No confirmatory result, Configuration, expanded capability, conformance, submission, baseline or tag is created.
 
 State changes:
@@ -67,7 +67,7 @@ State changes:
 - The finite experiment design is accepted as a design attachment while all run-admission decisions remain OPEN.
 - The CR-2026-020 / DD-044 redraw workflow remains DRAFT-REDRAW; reader-figure promotion remains blocked pending the separate semantic, size, migration and promotion gates.
 - PR #25 is merged as the bounded finite reference-runtime foundation; it is not a runtime-integrity result or authority for M3, active execution, or capability claims.
-- Draft PR #26 moves from its fixed-head accepted B Loader/TH lifecycle to a C-stage bounded session-integration candidate while retaining the same source boundary. C remains pending independent fixed-head review and establishes no experiment admission.
+- Draft PR #26 moves from limited-accepted C session integration to a D-stage engineering-delivery candidate. D remains pending independent fixed-head review and establishes no experiment admission.
 - currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims.
 
 Unchanged boundaries:
@@ -80,12 +80,12 @@ Unchanged boundaries:
 
 ## Current stop
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3, active protocol execution, runtime-integrity claims and capability claims. RR-CLTAV-2026-097 accepted the first-slice offline UPLOAD/INFORMATION development specification at PR #19 Head c9ca381, squash-merged as 324d832; PR #20 rebounded the M2 input to c5296aed. CR-2026-017 / DD-041 separately authorize only a bounded, read-only offline intake implementation with evidence output. PR #25 is merged as the bounded finite reference-runtime foundation. Draft PR #26 has fixed-head B limited acceptance and a C-stage bounded session-integration candidate pending independent review. None of this is a runtime-integrity result, confirmatory experiment, real protocol-service ownership, physical clock calibration, Project Configuration, expanded-CRS approval or M3 activation. M1-CANDIDATE-25 and its open source dependencies retain their controlled dispositions.
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3, active protocol execution, runtime-integrity claims and capability claims. RR-CLTAV-2026-097 accepted the first-slice offline UPLOAD/INFORMATION development specification at PR #19 Head c9ca381, squash-merged as 324d832; PR #20 rebounded the M2 input to c5296aed. CR-2026-017 / DD-041 separately authorize only a bounded, read-only offline intake implementation with evidence output. PR #25 is merged as the bounded finite reference-runtime foundation. Draft PR #26 has limited-accepted C-stage session integration and a D-stage engineering-delivery candidate pending independent review. UNKNOWN after Recover stops at Stop-Prediction-Gap (DM-C-R01) and is not post-recovery continued diagnosis. None of this is a runtime-integrity result, confirmatory experiment, real protocol-service ownership, physical clock calibration, Project Configuration, expanded-CRS approval or M3 activation. M1-CANDIDATE-25 and its open source dependencies retain their controlled dispositions.
 
 ## Next development steps
 
 - Retain PR #24's controlled model-figure candidates as DRAFT-REDRAW; do not promote reader figures or migrate downstream consumers until the separate semantic, size, migration and promotion gates close.
-- Complete independent C-stage review of Draft PR #26 on one fixed candidate Head before any D-stage evidence/replay work; do not treat its C-stage adapter candidate as authority for M3, controlled IUT execution or runtime-integrity work.
+- Complete independent D-stage review of Draft PR #26 on one fixed candidate Head before E-stage whole-PR gates; do not treat the engineering CLI as authority for M3, controlled IUT execution, post-recovery continued diagnosis, or runtime-integrity work.
 - Keep every experiment run-admission decision OPEN and establish runtime integrity and independent truth before capability or conformance claims; do not start M3 from the accepted design alone.
 - Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth.
 
@@ -111,14 +111,14 @@ Unchanged boundaries:
 
 ## 本次集成增量
 
-**Draft 615A UPLOAD 控制片段 C 阶段有界会话集成候选、已接受 B 对象生命周期与有限参考运行时基础**
+**Draft 615A UPLOAD 控制片段 D 阶段工程交付候选（C 阶段有限接受之上）**
 
 - CR-2026-017／DD-041 交付了以 eddec443 合并的只读“捕获到证据”增量；其有界证据范围保持不变。
 - CR-2026-018／DD-042 在不改变算法、接口和实验臂的前提下，把已接受文献证据融入有界 C1／C2 措辞与评价记账。
 - PR #23 已在 Head 04b7c56eb70e458cec46e54bd7b37aaa9185cc7f 获独立接受，并压缩合并为 868ee3c3e99bee2bcb0a2aedb206fe15d2a4e0e9；main CI 38864201591 通过。CR-2026-019／DD-043 仍只是有界设计权威，不是运行准入。
 - PR #24 已合并为 4d3b013；CR-2026-020／DD-044 管理其中版本化、可编辑的模型图候选。当前九图仍为 DRAFT-REDRAW 候选；语义评审、最终尺寸验收、下游迁移与晋级仍是独立的待定人工决定。
 - PR #25 已获独立接受并压缩合并为 c577f34e。它引入有界有限的 CL-TAV 参考运行时基础：经验证的合同／模型／投影身份、单时钟精确有理数传播、保守限额、紧凑的内容寻址来源记录、受合同约束的进程内会话协调，以及原始观测所有权／时序评估。它既不建立运行完整性、IUT 执行、符合性，也不构成 M3 准入。
-- Draft PR #26 已获得独立 G0/A 接受及固定 Head 的 B 有限接受。当前包含一个从已接受受控源码 Loader／TH 生命周期到有限参考会话的有界 C 阶段适配器：真实多轮 NORMAL／EARLY-WRQ／EARLY-DATA 公开迹、明确的 READY 发射／投递／应用事实、合格且不发射协议事件的 Recover 回读，以及公开归属投影。C 仍是等待独立固定 Head 评审的候选；不准入实验，也不建立协议能力。
+- Draft PR #26 已在 7fd917b9 获得 C 阶段有限接受，并新增 D 阶段 cltav-615a-engineering 候选：独立证据 envelope、run/verify/replay CLI、事务目录发布与 non-editable wheel 安装。UNKNOWN 经 Recover 后保持保守 H 并以 Stop-Prediction-Gap 终止（DM-C-R01）；这不是恢复后继续诊断、完整 UPLOAD、IUT 证据、四臂结果或 CRC 能力。
 - 本增量不产生确认性结果、Configuration、扩大能力、符合性、投稿、baseline 或 tag。
 
 状态变化：
@@ -127,7 +127,7 @@ Unchanged boundaries:
 - 有限实验设计已作为设计附件接受，但所有运行准入决定保持 OPEN。
 - CR-2026-020／DD-044 重绘工作流保持 DRAFT-REDRAW；在独立的语义、尺寸、迁移和晋级门关闭前，reader 图晋级仍被阻塞。
 - PR #25 已作为有界有限参考运行时基础合并；这不是运行完整性结果，也不授权 M3、主动执行或能力主张。
-- Draft PR #26 从固定 Head 已接受的 B 阶段 Loader／TH 生命周期进入 C 阶段有界会话集成候选，同时保持相同来源边界。C 仍等待独立固定 Head 评审，且不建立实验准入。
+- Draft PR #26 从有限接受的 C 阶段会话接入进入 D 阶段工程交付候选。D 仍等待独立固定 Head 评审，且不建立实验准入。
 - 对 M3、主动执行和能力主张而言，currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。
 
 保持不变的边界：
@@ -140,12 +140,12 @@ Unchanged boundaries:
 
 ## 当前停点
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3、主动协议执行、运行完整性主张和能力主张。RR-CLTAV-2026-097 接受了 PR #19 Head c9ca381 的首轮离线 UPLOAD／INFORMATION 开发规格，随后以 324d832 压缩合并；PR #20 将 M2 输入重钉至 c5296aed。CR-2026-017／DD-041 仅单独授权一个输出证据的有界、只读离线接入实现。PR #25 已作为有界有限参考运行时基础合并。Draft PR #26 已获得固定 Head 的 B 有限接受，目前有一个等待独立评审的 C 阶段有界会话集成候选。这些都不等于运行完整性结果、确认性实验、真实协议服务所有权、物理时钟校准、Project Configuration、扩大 CRS 批准或 M3 激活。M1-CANDIDATE-25 及其开放来源依赖保持受控处置。
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3、主动协议执行、运行完整性主张和能力主张。RR-CLTAV-2026-097 接受了 PR #19 Head c9ca381 的首轮离线 UPLOAD／INFORMATION 开发规格，随后以 324d832 压缩合并；PR #20 将 M2 输入重钉至 c5296aed。CR-2026-017／DD-041 仅单独授权一个输出证据的有界、只读离线接入实现。PR #25 已作为有界有限参考运行时基础合并。Draft PR #26 已获得 C 阶段有限接受，目前有一个等待独立评审的 D 阶段工程交付候选。UNKNOWN 经 Recover 后以 Stop-Prediction-Gap 终止（DM-C-R01），不是恢复后继续诊断。这些都不等于运行完整性结果、确认性实验、真实协议服务所有权、物理时钟校准、Project Configuration、扩大 CRS 批准或 M3 激活。M1-CANDIDATE-25 及其开放来源依赖保持受控处置。
 
 ## 下一步开发计划
 
 - 将 PR #24 的受控模型图候选保持为 DRAFT-REDRAW；在独立的语义、尺寸、迁移和晋级门关闭前，不得晋级 reader 图或迁移下游使用者。
-- 在任何 D 阶段证据／重放工作前，在一个固定候选 Head 上完成 Draft PR #26 的独立 C 阶段评审；不得把 C 阶段适配器候选当作 M3、受控 IUT 执行或运行完整性工作的授权。
+- 在 E 阶段整支门禁前，在一个固定候选 Head 上完成 Draft PR #26 的独立 D 阶段评审；不得把工程 CLI 当作 M3、受控 IUT 执行、恢复后继续诊断或运行完整性工作的授权。
 - 所有实验运行准入决定保持 OPEN；建立运行完整性与独立真值后方可提出能力或符合性主张，不得仅凭已接受设计启动 M3。
 - 保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。
 <!-- project-status:end -->

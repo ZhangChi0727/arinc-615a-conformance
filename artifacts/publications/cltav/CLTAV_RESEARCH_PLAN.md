@@ -54,24 +54,23 @@ SysML 1.6 notation-based PlantUML sources: [`../../../docs/research/publication/
 
 Four arms CL-T, CL-A, CL-TA, CL-LOOP; detection, localization and ablation families in `docs/research/EXPERIMENT_PLAN.md`. Top-level algorithm source: [`../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex`](../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex). Typeset reader PDF: [`ALG-CLTAV-01.pdf`](ALG-CLTAV-01.pdf). Register before confirmatory runs. No Configuration and no live load in this increment. No filled result numbers here.
 
-## 615A UPLOAD scenario-prototype status (B candidate; not a result)
+## 615A UPLOAD scenario-prototype status (D candidate; not a result)
 
-After separate G0/A stage acceptance, PR #26 contains a source-bound LUR-start
-control-slice package and a direct B-stage Loader/TH lifecycle candidate in
-`src/cltav_615a/`.  The process-local surrogate drives NORMAL, EARLY-WRQ and
-EARLY-DATA semantic branches through real guards, append-only public journal
-events, deterministic virtual ticks, full-reset epochs and evaluator-only
-installation/activation readbacks.  It is not a network or IUT execution,
-complete UPLOAD transfer, `ReferenceSession` closure, history/q commitment,
-parser, solver, integrity capability or experiment runner.  The B candidate
-awaits its own fixed-head independent review.  The four-arm runner, valid
+C-stage session integration is limited-accepted. DM-C-R01: UNKNOWN after
+Recover keeps conservative H and the full session stops at
+`Stop-Prediction-Gap`; this is not post-recovery continued diagnosis. PR #26
+now also contains a D-stage `cltav-615a-engineering` candidate
+(`run`/`verify`/`replay`, closed envelope, transactional publish, wheel).
+It is a finite in-process surrogate loop, not a network or IUT execution,
+complete UPLOAD transfer, integrity capability or experiment runner. D awaits
+its own fixed-head independent review. The four-arm runner, valid
 pre-experiment, independent clock/truth, integrity capability and independent
-mathematical review remain uncompleted.  No result, performance, conformance,
-or C1/C2 claim follows from this material.  See the
+mathematical review remain uncompleted. No result, performance, conformance,
+or C1/C2 claim follows from this material. See the
 [`615A scenario prototype`](../../../docs/engineering/CLTAV_615A_SCENARIO_PROTOTYPE.md),
-its [controlled package](../../../configs/engineering/cltav_615a_scenarios.json),
-and the [object lifecycle boundary](../../../docs/engineering/CLTAV_615A_OBJECT_LIFECYCLE.md).
-The PR remains Draft; this status text does not record B-stage acceptance.
+[`engineering delivery`](../../../docs/engineering/CLTAV_615A_ENGINEERING_DELIVERY.md),
+and the [controlled package](../../../configs/engineering/cltav_615a_scenarios.json).
+The PR remains Draft; this status text does not record D-stage acceptance.
 
 ## Expanded CRS index and audit
 
@@ -123,19 +122,18 @@ SysML 1.6 记法 PlantUML 源：[`../../../docs/research/publication/models/`](.
 
 四臂 CL-T、CL-A、CL-TA、CL-LOOP；检测、定位、消融。总体算法源：[`../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex`](../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex)。排版读者 PDF：[`ALG-CLTAV-01.pdf`](ALG-CLTAV-01.pdf)。确认性运行前登记。本增量无 Configuration、无实网加载。此处不填结果数字。
 
-## 615A UPLOAD 场景原型状态（B 候选；不是结果）
+## 615A UPLOAD 场景原型状态（D 候选；不是结果）
 
-在 G0/A 分别获得阶段接受后，PR #26 包含一个具有来源绑定的 LUR 起始控制切片包，以及
-`src/cltav_615a/` 中的直接 B 阶段 Loader／TH 生命周期候选。这个进程内替身通过实际守卫、
-只追加的公开 journal 事件、确定性虚拟 tick、全量复位 epoch 与仅评估方可见的安装／激活读回，
-驱动 NORMAL、EARLY-WRQ 和 EARLY-DATA 语义分支。它不是网络或 IUT 执行、完整 UPLOAD
-传输、`ReferenceSession` 闭环、历史／q 提交、解析器、求解器、完整性能力或实验 runner。
-B 候选等待自身固定 Head 的独立评审。四臂 runner、有效预实验、独立时钟／真值、完整性能力
+C 阶段会话接入已有限接受。DM-C-R01：UNKNOWN 经 Recover 后保持保守 H，完整会话以
+`Stop-Prediction-Gap` 终止；这不是恢复后继续诊断。PR #26 现另有 D 阶段
+`cltav-615a-engineering` 候选（`run`/`verify`/`replay`、封闭 envelope、事务发布、wheel）。
+它是有限进程内替身闭环，不是网络或 IUT 执行、完整 UPLOAD、完整性能力或实验 runner。
+D 等待自身固定 Head 独立评审。四臂 runner、有效预实验、独立时钟／真值、完整性能力
 和独立数学审查均仍未完成。该材料不产生结果、性能、符合性或 C1／C2 主张。参见
 [`615A 场景原型`](../../../docs/engineering/CLTAV_615A_SCENARIO_PROTOTYPE.md)、
-[受控场景包](../../../configs/engineering/cltav_615a_scenarios.json)及
-[对象生命周期边界](../../../docs/engineering/CLTAV_615A_OBJECT_LIFECYCLE.md)。PR 仍为 Draft；
-本状态文字不记录 B 阶段接受。
+[`工程交付`](../../../docs/engineering/CLTAV_615A_ENGINEERING_DELIVERY.md) 及
+[受控场景包](../../../configs/engineering/cltav_615a_scenarios.json)。PR 仍为 Draft；
+本状态文字不记录 D 阶段接受。
 
 ## 扩大 CRS 索引与审计
 
