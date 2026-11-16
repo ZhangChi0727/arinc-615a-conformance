@@ -3,13 +3,13 @@
   "artifactId": "CLTAV-615A-SCENARIO-PACKAGE",
   "identity": {
     "scenarioFamilyId": "ENG-UPLOAD-LUR-START",
-    "version": "0.2.0-b-candidate",
+    "version": "0.3.0-c-candidate",
     "engineeringPurpose": "ENGINEERING-SUBSCENE-ONLY",
     "acceptedAuthorityCommit": "c577f34e98b91083a69f0a731a990c01aa7fa08b",
     "changeRequest": "CR-2026-022",
     "decision": "DD-046",
     "runClassification": "SYNTHETIC-ENGINEERING-VALIDATION",
-    "stageStatus": "B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
+    "stageStatus": "C-SESSION-INTEGRATION-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
   },
   "controlBinding": {
     "controlCommit": "331abdf26b550111df56226a88ca5a6a989c1d76",
@@ -34,10 +34,15 @@
     "hypotheses.NORMAL.summary": "正常分支：等待会话本地 LUS-0001，再依次出现 LUR WRQ、匹配 ACK 与 LUR DATA。",
     "hypotheses.EARLY-WRQ.summary": "单故障分支：实际绕过就绪守卫，在 LUS-0001 前发出 LUR WRQ。",
     "hypotheses.EARLY-DATA.summary": "单故障分支：实际绕过匹配 ACK 守卫，在 ACK 前发出 LUR DATA。",
-    "actions.ACT-INSPECT-NO-WRQ-BEFORE-READY.summary": "有限工程日志检查：区分就绪前无 WRQ 与提前 WRQ；它不是协议无响应判定，也不伪造协议响应。",
-    "actions.ACT-PREP-ENTER-READY-WINDOW.summary": "准备动作：由目标硬件发出当前会话可见的 LUS-0001，并以公开回执确认就绪摘要。",
-    "actions.ACT-TEST-ACK-BEFORE-DATA.summary": "有限顺序检查：观察 LUR WRQ、匹配 ACK 与 DATA 的公开顺序，区分正常与提前 DATA。",
-    "actions.ACT-RECOVER-RECONFIRM-READY.summary": "恢复动作：仅在 UNKNOWN 效果后，用独立的公开就绪回读重新确认目标与摘要；失败不得标记为已知。",
+  "actions.ACT-INSPECT-NO-WRQ-BEFORE-READY.summary": "有限工程日志检查：列表交付后、READY 前必须给一次共同 Loader 推进机会，再区分无 WRQ 与提前 WRQ；它不是协议无响应判定，也不伪造协议响应。",
+  "actions.ACT-PREP-ENTER-READY-WINDOW.summary": "准备动作：目标硬件发出当前会话可见的 LUS-0001；只有同一后继上的成功 FIFO 应用证据及当前公开回执共同成立，才确认就绪摘要。",
+  "actions.ACT-TEST-ACK-BEFORE-DATA.summary": "有限顺序检查：按声明的 WRQ 交付、ACK 前 Loader 机会、TH/ACK 交付、ACK 后 Loader 机会的有限微步序列观察公开顺序，区分正常与提前 DATA。",
+  "actions.ACT-RECOVER-RECONFIRM-READY.summary": "恢复动作：仅在 UNKNOWN 效果后，以独立类型化工具回读绑定当前协议前缀和先前成功应用的 READY 证据，重新确认目标与摘要；不产生第六协议事件，失败不得标记为已知。",
+    "sessionIntegration.summary": "C 阶段将真实进程内 Loader／TH 对象以受控输入身份接入既有有限会话；它仍是有限工程闭环，不建立 IUT、实验或协议符合性主张。",
+    "sessionIntegration.boundary": "算法仅接收公开协议事件、快照、完成回执和类型化投影；控制结果、故障激活、私有状态和评估方回读均不得进入会话更新。",
+    "sessionIntegration.microsteps": "首轮检查和顺序 TEST 均使用预先声明的硬上限真实微步；微步与虚拟 tick 不等价，同 tick 依稳定序号排序。",
+    "sessionIntegration.recover": "Recover 是不改变协议日志的类型化工具回读；仅同一存续对象上的已成功 READY 应用与当前完整前缀可确认目标和摘要。",
+    "sessionIntegration.acceptance": "C 阶段候选须逐项满足 C-01 至 C-16 的生产入口回归，之后才可独立复审；不是 Ready、合并或后续 D/E 授权。",
     "timeAndObservation.summary": "时钟为精确的虚拟工程调度 tick；同 tick 用稳定序号排序。有限观察窗口只界定模拟对象检查，绝不证明协议超时或无响应 FAIL。",
     "lifecycle.fullReset.summary": "每次全量复位同时清理装载器、目标硬件、虚拟时钟、日志、待交付、关联编号和故障安装状态；它不是协议中止。",
     "lifecycle.faultInjection.summary": "故障安装、控制器回读和独立日志激活是不同证据；未确认的尝试保留为未确认，不得改写为正常。",
@@ -666,7 +671,7 @@
         "preparation": 0,
         "retry": 0
       },
-      "publicStimulus": "Complete one bounded inspection of the current visible journal prefix.",
+      "publicStimulus": "After list-precondition delivery and before any READY stimulus, give one shared Loader advance opportunity, then complete one bounded inspection of the current visible journal prefix.",
       "observationMode": "FINITE-ENGINEERING-LOG-CHECK",
       "successorConfirmation": "PUBLIC-OBSERVATION-SUMMARY-CONFIRMATION",
       "unconfirmedEffectDisposition": "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER",
@@ -726,7 +731,7 @@
       ],
       "zh": {
         "eligibility": "已记录清单提交前提，且当前会话日志中尚无 LUS-0001。",
-        "publicStimulus": "完成一次对当前可见日志前缀的有界检查。",
+        "publicStimulus": "在清单前置交付后、任何 READY 刺激前，给予一次共同的加载器推进机会，再完成对当前可见日志前缀的有界检查。",
         "observationMode": "有限工程日志检查。",
         "successorConfirmation": "通过公开观测与公开摘要确认实际后继。",
         "unconfirmedEffectDisposition": "未确认效果进入 UNKNOWN，且只能经合格 Recover 继续。",
@@ -743,7 +748,7 @@
         "preparation": 1,
         "retry": 0
       },
-      "publicStimulus": "TH emits the session-local visible EV_TH_LUS0001 ready stimulus.",
+      "publicStimulus": "TH emits the session-local visible EV_TH_LUS0001 ready stimulus; confirmation additionally requires its successful current FIFO application by the Loader.",
       "observationMode": "VISIBLE-PREPARATION-EVENT",
       "successorConfirmation": "PREP-SUMMARY-COMMIT-SEPARATE-FROM-TARGET-STATUS",
       "unconfirmedEffectDisposition": "PREP-EFFECT-BRANCH-TABLE-REQUIRED",
@@ -758,7 +763,8 @@
       "summaryDerivation": {
         "publicSources": [
           "VISIBLE-JOURNAL-PREFIX",
-          "TH-LUS0001-READY-RECEIPT"
+          "TH-LUS0001-READY-RECEIPT",
+          "APPLIED-READY-DELIVERY-EVIDENCE"
         ],
         "forbiddenPrivateSources": [
           "ACTIVE-FAULT-ID",
@@ -818,8 +824,8 @@
         {
           "observable": "EV_TH_LUS0001",
           "postSummary": "Q-TARGET-READY",
-          "summaryConfirmedWhen": "The public ready receipt is bound to the current session and is present in the visible journal.",
-          "summaryConfirmedWhenZh": "公开就绪回执绑定当前会话且位于可见日志中时，才确认摘要。",
+        "summaryConfirmedWhen": "The public ready receipt is current and the exact emitted READY event has a same-successor successful FIFO application evidence; emission or journal presence alone is insufficient.",
+        "summaryConfirmedWhenZh": "公开就绪回执为当前回执，且精确 READY 事件在同一后继上具有成功 FIFO 应用证据时，才确认摘要；仅发射或位于日志中均不足够。",
           "compatibleHypotheses": [
             "NORMAL",
             "EARLY-DATA"
@@ -831,7 +837,7 @@
       ],
       "zh": {
         "eligibility": "Q-PRE-READY-NO-WRQ 已确认，且会话拥有可负担的准备资源。",
-        "publicStimulus": "目标硬件发出当前会话可见的 EV_TH_LUS0001 就绪刺激。",
+        "publicStimulus": "目标硬件发出当前会话可见的 EV_TH_LUS0001 就绪刺激；确认还要求加载器成功 FIFO 应用该当前事件。",
         "observationMode": "可见准备事件。",
         "successorConfirmation": "Prep 的摘要提交与目标状态必须分开判定；只有摘要确认控制提交。",
         "unconfirmedEffectDisposition": "必须按四分支效果表处置，不能把已执行但摘要未确认误作确认未发送。",
@@ -854,7 +860,7 @@
         "preparation": 0,
         "retry": 0
       },
-      "publicStimulus": "Drive one bounded loader control step and inspect the visible LUR WRQ, TH ACK and loader DATA event order.",
+      "publicStimulus": "Execute one declared bounded sequence: emit and FIFO-deliver WRQ, give the Loader one pre-ACK advance opportunity, advance TH and FIFO-deliver ACK, then give the Loader one post-ACK advance opportunity and deliver any DATA before inspecting the visible order.",
       "observationMode": "FINITE-JOURNAL-ORDER-CHECK",
       "successorConfirmation": "PUBLIC-OBSERVATION-SUMMARY-CONFIRMATION",
       "unconfirmedEffectDisposition": "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER",
@@ -913,7 +919,7 @@
       ],
       "zh": {
         "eligibility": "Q-TARGET-READY 已确认，且会话拥有可负担的 TEST 资源。",
-        "publicStimulus": "驱动一个有界加载器控制步，并检查当前关联的完整前缀中 LUR WRQ、TH ACK 和加载器 DATA 的顺序。",
+        "publicStimulus": "执行一段声明的有界序列：发出并 FIFO 交付 WRQ，给予加载器一次 ACK 前推进机会，推进目标硬件并 FIFO 交付 ACK，再给予加载器一次 ACK 后推进机会并交付任何 DATA，最后检查可见顺序。",
         "observationMode": "有限日志顺序检查。",
         "successorConfirmation": "通过公开观测与公开摘要确认实际后继。",
         "unconfirmedEffectDisposition": "未确认效果进入 UNKNOWN，且只能经合格 Recover 继续。",
@@ -930,14 +936,14 @@
         "preparation": 1,
         "retry": 0
       },
-      "publicStimulus": "Request the controlled TH ready read-back and retain its visible journal receipt.",
-      "observationMode": "VISIBLE-RECOVER-READBACK",
+      "publicStimulus": "Request one typed C-layer tool readback over the current retained public protocol prefix and a prior successfully applied READY evidence; it emits no protocol event and does not replay READY.",
+      "observationMode": "TYPED-TOOL-READBACK-OVER-PUBLIC-PROTOCOL-PREFIX",
       "successorConfirmation": "TARGET-AND-SUMMARY-CONFIRMED-SEPARATELY",
       "unconfirmedEffectDisposition": "DO-NOT-MARK-KNOWN",
       "historyDisposition": "SUBMIT-CONFIRMED-SUMMARY-THROUGH-IF-HIST-UPDATE",
       "inspection": {
         "completionReceipt": "RECOVER-READY-READBACK-COMPLETED",
-        "journalPredicate": "EXACT-RETAINED-POST-DISPATCH-PREFIX-EXTENDED-BY-CURRENT-SESSION-READY-READBACK",
+        "journalPredicate": "EXACT-CURRENT-PROTOCOL-PREFIX-PLUS-FRESH-TYPED-TOOL-READBACK-WITH-NO-PROTOCOL-JOURNAL-MUTATION",
         "finiteHorizonTicks": 1,
         "isProtocolNoResponseVerdict": false,
         "fabricatedProtocolResponse": false
@@ -945,7 +951,9 @@
       "summaryDerivation": {
         "publicSources": [
           "VISIBLE-JOURNAL-PREFIX",
-          "RECOVER-READY-READBACK-COMPLETED"
+          "RECOVER-READY-READBACK-COMPLETED",
+          "APPLIED-READY-DELIVERY-EVIDENCE",
+          "TYPED-TOOL-READBACK-EVIDENCE"
         ],
         "forbiddenPrivateSources": [
           "ACTIVE-FAULT-ID",
@@ -953,11 +961,11 @@
           "PRIVATE-LOADER-STATE"
         ],
         "publicEvidenceProjection": {
-          "projectionKind": "CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT",
+          "projectionKind": "CURRENT-SESSION-TYPED-TOOL-READBACK-OVER-PROTOCOL-PREFIX",
           "sessionBinding": "CURRENT-SESSION",
           "correlationBinding": "CURRENT-OPERATION-CORRELATION",
           "ordering": "STABLE-SEQUENCE-NUMBER",
-          "inspectedRange": "RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX",
+          "inspectedRange": "EXACT-RETAINED-PROTOCOL-PREFIX-NO-PROTOCOL-EVENT-EXTENSION",
           "completionReceipt": "RECOVER-READY-READBACK-COMPLETED",
           "receiptMustBeCompleted": true,
           "invalidOrUnconfirmedDisposition": "DO-NOT-MARK-KNOWN"
@@ -967,8 +975,8 @@
         {
           "observable": "RECOVER-READY-READBACK",
           "postSummary": "Q-TARGET-READY",
-          "summaryConfirmedWhen": "The public recover receipt extends the exact retained post-dispatch public prefix only by the current-session ready read-back; it re-confirms ready without replaying or rewinding an earlier action.",
-          "summaryConfirmedWhenZh": "公开 Recover 回执仅以当前会话就绪回读扩展精确保留的调度后公开前缀；它重新确认就绪，但不得重放或回退先前动作时，才确认摘要。",
+        "summaryConfirmedWhen": "A fresh typed tool readback binds the exact current protocol prefix and a prior successfully applied READY evidence for the same live object identity; it re-confirms ready without a sixth protocol event, replay or rewind.",
+        "summaryConfirmedWhenZh": "新鲜的类型化工具回读将精确当前协议前缀与同一存续对象上先前成功应用的 READY 证据绑定；它重新确认就绪，但不得产生第六类协议事件、重放或回退。",
           "compatibleHypotheses": [
             "NORMAL",
             "EARLY-DATA"
@@ -980,8 +988,8 @@
       ],
       "zh": {
         "eligibility": "SessionContext 为 UNKNOWN，且可在有限对象边界内公开重新确认具名就绪目标。",
-        "publicStimulus": "请求受控的目标硬件就绪回读，并以该回读仅扩展保留的调度后公开前缀。",
-        "observationMode": "可见 Recover 回读。",
+        "publicStimulus": "请求一项类型化 C 层工具回读，读取当前保留的公开协议前缀及先前成功应用的 READY 证据；它不发射协议事件，也不重发 READY。",
+        "observationMode": "通过公开协议前缀进行的类型化工具回读。",
         "successorConfirmation": "Recover 目标确认与摘要确认必须分别成立。",
         "unconfirmedEffectDisposition": "确认失败不得标记为 KNOWN。",
         "historyDisposition": "仅将已确认摘要经 IF-HIST-UPDATE 提交给后续历史。"
@@ -1064,6 +1072,324 @@
       "requires": "UNKNOWN-EFFECT",
       "targetAndSummaryAreDistinct": true,
       "confirmationFailureDisposition": "DO-NOT-MARK-KNOWN"
+    }
+  },
+  "sessionIntegration": {
+    "stage": "C-SESSION-INTEGRATION-CANDIDATE-PENDING-INDEPENDENT-REVIEW",
+    "baseObjectAcceptance": {
+      "head": "d0c674f9fdb165b6ff8c2a40565d4deb7226d2a0",
+      "tree": "b5d828e0a14d3c2df93fceba4f96857d83aad646",
+      "status": "B-ACCEPTED-LIMITED-APPROVE"
+    },
+    "scenarioInput": {
+      "role": "ACCEPTED-HB-SCENARIO",
+      "commit": "d0c674f9fdb165b6ff8c2a40565d4deb7226d2a0",
+      "path": "configs/engineering/cltav_615a_scenarios.json",
+      "gitBlobOid": "c620beb8c84d296df191b8d9af3648c9b3664017",
+      "rawSha256": "9c86da50596cbae4f53b23de9ddff8ceed0bad65efe251033c2e1b13e1505d16"
+    },
+    "adapter": {
+      "sourceRoot": "src/cltav_615a_adapter",
+      "entryPoint": "cltav_615a_adapter.session.build_lur_start_session",
+      "identityScheme": "CLTAV-615A-C-ADAPTER-LOADED-SOURCE-SHA256-LF-V1",
+      "sourceFiles": [
+        "src/cltav_615a_adapter/__init__.py",
+        "src/cltav_615a_adapter/identity.py",
+        "src/cltav_615a_adapter/contract.py",
+        "src/cltav_615a_adapter/session.py"
+      ],
+      "continuationPolicy": "COPY-ON-WRITE-CONTROLLER-SUCCESSOR-NO-FRESH-OBJECT"
+    },
+    "publicProjectionBoundary": {
+      "allowedDtos": [
+        "PublicEvent",
+        "JournalSnapshot",
+        "CompletionReceipt",
+        "FiniteCheckResult",
+        "AppliedDeliveryEvidence",
+        "ToolReadbackEvidence",
+        "OwnershipProjection"
+      ],
+      "forbiddenDtos": [
+        "OperationResult",
+        "DeliveryResult",
+        "FaultInstallationRecord",
+        "ActivationRecord",
+        "RuntimeReadback",
+        "FaultLifecycleReadback",
+        "PRIVATE-LOADER-STATE",
+        "ACTIVE-FAULT-ID"
+      ],
+      "sessionMutationOwner": "REFERENCE-SESSION-S7-S8-S9",
+      "successorOwner": "ADAPTER-COPY-ON-WRITE-CONTINUATION"
+    },
+    "microstepPlans": [
+      {
+        "actionId": "ACT-INSPECT-NO-WRQ-BEFORE-READY",
+        "maxControllerCalls": 2,
+        "maxDeliveries": 2,
+        "tickPolicy": "LIST and the common pre-READY Loader opportunity may share tick zero; the finite inspection closes at engineering horizon tick one and tick is never a protocol deadline.",
+        "steps": [
+          "RECORD-LIST-PRECONDITION",
+          "FIFO-DELIVER-LIST",
+          "COMMON-LOADER-ADVANCE-BEFORE-READY",
+          "FIFO-DELIVER-EMITTED-WRQ-WHEN-PRESENT",
+          "COMPLETE-CURRENT-PREFIX-RECEIPT"
+        ],
+        "failureDisposition": "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER",
+        "completionPredicate": "CURRENT-SESSION-CONTIGUOUS-PREFIX-RECEIPT-COMPLETED-AFTER-COMMON-PRE-READY-LOADER-OPPORTUNITY",
+        "zh": "LIST 的记录与投递以及 READY 前共同的 Loader 推进可同处 tick 0；有限检查在工程视界 tick 1 闭合，tick 绝非协议期限。"
+      },
+      {
+        "actionId": "ACT-TEST-ACK-BEFORE-DATA",
+        "maxControllerCalls": 4,
+        "maxDeliveries": 4,
+        "tickPolicy": "The declared order microsteps may share a virtual tick; stable public sequence numbers determine same-tick order and the finite engineering horizon is tick three, not a protocol timeout.",
+        "steps": [
+          "LOADER-EMIT-WRQ-WHEN-ABSENT",
+          "FIFO-DELIVER-WRQ",
+          "COMMON-LOADER-ADVANCE-BEFORE-ACK",
+          "FIFO-DELIVER-EMITTED-DATA-WHEN-PRESENT",
+          "TH-EMIT-ACK-WHEN-ABSENT",
+          "FIFO-DELIVER-ACK",
+          "LOADER-ADVANCE-DATA-WHEN-ABSENT",
+          "FIFO-DELIVER-DATA-WHEN-EMITTED",
+          "COMPLETE-CURRENT-PREFIX-RECEIPT"
+        ],
+        "failureDisposition": "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER",
+        "completionPredicate": "CURRENT-CORRELATION-HAS-WRQ-AND-DATA-WITH-ORDER-DETERMINED-BY-STABLE-SEQUENCE",
+        "zh": "声明的顺序微步可同处一个虚拟 tick；同 tick 顺序由稳定公开序号决定，有限工程视界为 tick 3，绝不表示协议超时。"
+      }
+    ],
+    "readyApplication": {
+      "emissionFact": "READY-EMITTED-ONLY",
+      "deliveryFact": "READY-FIFO-DELIVERED",
+      "applicationFact": "READY-FIFO-DELIVERED-AND-ACCEPTED-SAME-SUCCESSOR",
+      "confirmationPredicate": "Only a typed same-successor FIFO delivery projection with delivered and accepted true, exact READY event identity, and a current completed public-prefix receipt may confirm the target and post-summary.",
+      "rejectionDisposition": "EXECUTED-UNCONFIRMED-SUMMARY-REQUIRES-UNKNOWN",
+      "zh": "READY 发射、FIFO 投递与被对象成功应用是三个不同事实；只有同一后继的类型化成功投递、精确 READY 身份和当前完整公开前缀回执共同成立，才能确认目标和后继摘要。"
+    },
+    "recoverToolReadback": {
+      "kind": "C-TYPED-TOOL-READBACK",
+      "protocolJournalMutation": "NONE",
+      "identityBindings": [
+        "RUN-ID",
+        "RESET-ID",
+        "ATTEMPT-ID",
+        "SESSION-ID",
+        "CORRELATION-ID",
+        "EXECUTION-ATTEMPT-ID",
+        "PROTOCOL-PREFIX-DIGEST",
+        "PROTOCOL-EVENT-IDS",
+        "SAMPLED-TICK",
+        "SAMPLED-SEQUENCE",
+        "PROJECTION-VERSION",
+        "COMPLETED"
+      ],
+      "freshness": "A Recover readback must be newly minted for the current unconsumed successor and bind the retained successfully applied READY evidence to the exact current public prefix.",
+      "currentReadyPredicate": "The retained READY application must have the same run, reset, attempt, session, correlation, exact event identity, and current prefix digest; a stale, duplicate, rejected, emitted-only, or delivered-only fact never confirms known state.",
+      "failureDisposition": "DO-NOT-MARK-KNOWN",
+      "zh": "Recover 必须为当前未消费后继重新生成类型化回读，并把既有成功 READY 应用证据绑定到完全相同的当前公开前缀；陈旧、重复、拒绝、仅发射或仅投递的事实均不得确认已知状态。"
+    },
+    "ownershipProjection": {
+      "policy": "UNIQUE-KEY",
+      "trigger": "CURRENT-CORRELATION-WRQ-PUBLIC-EVENT-AS-REQUEST",
+      "response": "MATCHING-ACK-REPLY-TO-CURRENT-WRQ-AS-RESPONSE",
+      "key": "CURRENT-SESSION-AND-CORRELATION-AND-WRQ-EVENT-ID",
+      "unsupportedDisposition": "ERROR-NO-OWNERSHIP-REWRITE",
+      "zh": "以当前关联的 WRQ 公开事件作为请求、以精确回复该 WRQ 的 ACK 作为响应；唯一键由当前会话、关联和 WRQ 事件身份组成，任何不支持的归属不得重写。受控解释器还验证取消、替代和跨观察持续的 ACTIVE 请求，但 C 不把这些归属控制事实伪造为额外 B 协议事件。"
+    },
+    "productionAcceptance": {
+      "status": "C-CANDIDATE-PENDING-INDEPENDENT-REVIEW",
+      "criteria": [
+        "C-01",
+        "C-02",
+        "C-03",
+        "C-04",
+        "C-05",
+        "C-06",
+        "C-07",
+        "C-08",
+        "C-09",
+        "C-10",
+        "C-11",
+        "C-12",
+        "C-13",
+        "C-14",
+        "C-15",
+        "C-16"
+      ],
+      "witnesses": [
+        {
+          "id": "C-01",
+          "productionEntryPoint": "cltav_runtime.session.ReferenceSession.step",
+          "inputs": "Independent NORMAL, EARLY-WRQ, and EARLY-DATA real-controller runs from the same finite session entry boundary.",
+          "inputsZh": "从同一有限会话入口边界出发的独立 NORMAL、EARLY-WRQ 与 EARLY-DATA 真实控制器运行。",
+          "actualPublicPrefix": "Normal LIST->READY->WRQ->ACK->DATA; early WRQ LIST->WRQ; early DATA LIST->READY->WRQ->DATA->ACK.",
+          "expectedStateOrDiagnostic": "The independently written expected public sequences match the production logs for all three first-slice variants.",
+          "expectedStateOrDiagnosticZh": "独立编写的预期公开序列与三个首轮变体的生产日志一致。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c15_real_public_timelines_match_independent_expected_sequences"
+        },
+        {
+          "id": "C-02",
+          "productionEntryPoint": "cltav_runtime.session.ReferenceSession.step",
+          "inputs": "Two fresh real Loader/TH controllers receiving the same accepted Inspect, Prep, then order action sequence without predictor or evaluator ingress.",
+          "inputsZh": "两个新建的真实 Loader／TH 控制器在不接收预测器或评估方输入的条件下，执行相同的检查、准备、顺序动作序列。",
+          "actualPublicPrefix": "LIST-SUBMISSION-PRECONDITION-RECORDED -> EV_TH_LUS0001 -> EV_DL_WRQ_LUR -> EV_TH_ACK_LUR -> EV_DL_DATA_LUR.",
+          "expectedStateOrDiagnostic": "The two runs have the same public log, selected action, H, history status, q, resources, and stop result without predictor or evaluator ingress.",
+          "expectedStateOrDiagnosticZh": "两个运行具有相同的公开日志、已选动作、H、历史状态、q、资源和停止结果，且不存在预测器或评估方输入。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c02_public_adapter_is_deterministic_without_predictor_or_evaluator_ingress"
+        },
+        {
+          "id": "C-03",
+          "productionEntryPoint": "cltav_runtime.session.ReferenceSession.step",
+          "inputs": "A fresh real Loader/TH controller, default four ROUNDS, and the accepted Inspect, Prep, then order action sequence.",
+          "inputsZh": "一个新建的真实 Loader／TH 控制器、默认四个 ROUNDS，以及已接受的检查、准备、顺序动作序列。",
+          "actualPublicPrefix": "LIST-SUBMISSION-PRECONDITION-RECORDED -> EV_TH_LUS0001 -> EV_DL_WRQ_LUR -> EV_TH_ACK_LUR -> EV_DL_DATA_LUR.",
+          "expectedStateOrDiagnostic": "The session retains plural H after Inspect and Prep, advances history once per confirmed action, then stops singleton NORMAL after the real order observation.",
+          "expectedStateOrDiagnosticZh": "会话在检查和准备后保留多个 H，每个已确认动作仅推进一次历史，随后在真实顺序观测后以单一 NORMAL 停止。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c02_normal_real_multiround_loop_preserves_plural_h_then_selects_order"
+        },
+        {
+          "id": "C-04",
+          "productionEntryPoint": "cltav_runtime.session.ReferenceSession.step",
+          "inputs": "A real finite pre-READY TEST with its completion receipt suppressed after the controller has produced the visible prefix.",
+          "inputsZh": "一个真实有限的 READY 前 TEST；控制器已产生可见前缀后，其完成回执被抑制。",
+          "actualPublicPrefix": "LIST-SUBMISSION-PRECONDITION-RECORDED remains observable, but the current completion receipt is absent.",
+          "expectedStateOrDiagnostic": "The typed finite observation cannot become a confirmed summary; the session enters UNKNOWN without S9 history submission.",
+          "expectedStateOrDiagnosticZh": "类型化有限观测不得变为已确认摘要；会话进入 UNKNOWN，且不得执行 S9 历史提交。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c04_missing_completion_receipt_is_unknown_not_a_confirmed_observation"
+        },
+        {
+          "id": "C-05",
+          "productionEntryPoint": "cltav_615a_adapter.session.LurStartSessionEnvironment.execute",
+          "inputs": "A real Prep action whose typed READY application projection is made unavailable after dispatch.",
+          "inputsZh": "一次真实 Prep 动作；派发后其类型化 READY 应用投影被置为不可用。",
+          "actualPublicPrefix": "LIST-SUBMISSION-PRECONDITION-RECORDED -> EV_TH_LUS0001, without a successful READY application evidence.",
+          "expectedStateOrDiagnostic": "The sent Prep clears prior KNOWN q and summary, preserves conservative H, and records PREP-SUMMARY-UNCONFIRMED.",
+          "expectedStateOrDiagnosticZh": "已发送的 Prep 清除先前 KNOWN 的 q 与摘要，保守保留 H，并记录 PREP-SUMMARY-UNCONFIRMED。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c05_session_clears_known_state_when_ready_application_is_unconfirmed"
+        },
+        {
+          "id": "C-06",
+          "productionEntryPoint": "cltav_615a_adapter.session.LurStartSessionEnvironment.execute",
+          "inputs": "An UNKNOWN successor produced by an unconfirmed real Prep, with a prior successfully applied READY evidence and a current completed public prefix.",
+          "inputsZh": "一个由未确认真实 Prep 产生的 UNKNOWN 后继，具有先前成功应用的 READY 证据和当前已完成的公开前缀。",
+          "actualPublicPrefix": "Recover samples the retained prefix without appending a sixth protocol event.",
+          "expectedStateOrDiagnostic": "Typed tool readback re-confirms the target only from the current prefix and then the remaining order phase may continue.",
+          "expectedStateOrDiagnosticZh": "类型化工具回读仅依据当前前缀重新确认目标，之后才可继续剩余顺序阶段。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c06_unknown_session_admits_only_qualified_current_recover"
+        },
+        {
+          "id": "C-07",
+          "productionEntryPoint": "cltav_615a_adapter.session.LurStartSessionEnvironment.execute",
+          "inputs": "A stale preflight request and a separately issued TEST whose public summary cannot be confirmed after dispatch.",
+          "inputsZh": "一个陈旧的派发前请求，以及一次派发后其公开摘要无法确认的独立 TEST。",
+          "actualPublicPrefix": "The stale request appends no event; the issued TEST retains its actual LIST prefix.",
+          "expectedStateOrDiagnostic": "CONFIRMED-NOT-SENT preserves KNOWN and history, whereas an issued UNKNOWN-EFFECT preserves the evolved object and makes H conservative.",
+          "expectedStateOrDiagnosticZh": "CONFIRMED-NOT-SENT 保持 KNOWN 与历史；而已执行的 UNKNOWN-EFFECT 保留演进对象并使 H 保守。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c07_confirmed_not_sent_and_issued_unknown_have_distinct_causal_outcomes"
+        },
+        {
+          "id": "C-08",
+          "productionEntryPoint": "cltav_runtime.session.ReferenceSession.step",
+          "inputs": "A real TEST record with its frozen virtual tick, exact uncertainty identity, and a tampered visible uncertainty identity negative case.",
+          "inputsZh": "一条具有冻结虚拟 tick、精确不确定性身份的真实 TEST 记录，以及篡改可见不确定性身份的负例。",
+          "actualPublicPrefix": "The same current public journal prefix is evaluated with the selected action's frozen measurement basis.",
+          "expectedStateOrDiagnostic": "A tampered observation basis is rejected rather than submitted to history under a different U.",
+          "expectedStateOrDiagnosticZh": "被篡改的观测依据会被拒绝，而不会以不同 U 提交到历史。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c08_frozen_uncertainty_identity_rejects_a_tampered_visible_record"
+        },
+        {
+          "id": "C-09",
+          "productionEntryPoint": "cltav_615a_adapter.session.LurStartSessionEnvironment.execute",
+          "inputs": "An actual current public WRQ/ACK pair plus controlled interpreter-only cancellation, supersession, and retained-ACTIVE continuation deltas under the same fixed contract.",
+          "inputsZh": "同一固定合同下的一对实际当前公开 WRQ／ACK，以及仅由受控解释器处理的取消、替代和保留 ACTIVE 续接增量。",
+          "actualPublicPrefix": "B journal: EV_DL_WRQ_LUR -> EV_TH_ACK_LUR; cancellation and supersession are ownership facts only and are never fabricated as a sixth B protocol event.",
+          "expectedStateOrDiagnostic": "The exact ACK resolves uniquely; cancellation prevents later response ownership, supersession terminates the old ACTIVE request, and a retained ACTIVE request remains ownable in the next finite observation.",
+          "expectedStateOrDiagnosticZh": "精确 ACK 唯一归属；取消阻止后续响应归属，替代终止旧 ACTIVE 请求，保留的 ACTIVE 请求在下一次有限观测中仍可被正确归属。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c09_controlled_interpreter_handles_termination_and_retained_active_continuation"
+        },
+        {
+          "id": "C-10",
+          "productionEntryPoint": "cltav_615a_adapter.session.LurStartSessionEnvironment.execute",
+          "inputs": "A real EARLY-DATA order run in which DATA and its matching ACK share a virtual tick but retain stable public sequence numbers.",
+          "inputsZh": "一次真实 EARLY-DATA 顺序运行，其中 DATA 与匹配 ACK 共享虚拟 tick 但保留稳定公开序号。",
+          "actualPublicPrefix": "EV_DL_WRQ_LUR -> EV_DL_DATA_LUR -> EV_TH_ACK_LUR with DATA sequence number lower than ACK at the same tick.",
+          "expectedStateOrDiagnostic": "The typed ownership projection and order observation use stable sequence order, not a fabricated protocol time deadline.",
+          "expectedStateOrDiagnosticZh": "类型化归属投影和顺序观测使用稳定序号，而非虚构的协议时间期限。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c09_same_tick_protocol_order_remains_a_stable_sequence_and_public_projection"
+        },
+        {
+          "id": "C-11",
+          "productionEntryPoint": "cltav_runtime.session.ReferenceSession.step",
+          "inputs": "A three-ROUNDS session whose real Inspect and unconfirmed Prep lead to exactly one qualified current Recover.",
+          "inputsZh": "一个三 ROUNDS 会话：真实检查与未确认 Prep 后，恰好进入一次合格的当前 Recover。",
+          "actualPublicPrefix": "LIST-SUBMISSION-PRECONDITION-RECORDED -> EV_TH_LUS0001; Recover retains that prefix and appends no protocol event.",
+          "expectedStateOrDiagnostic": "Recover is charged once with its declared cost projection, reducing ROUNDS from one to zero without being relabelled as a free retry.",
+          "expectedStateOrDiagnosticZh": "Recover 按其声明的成本投影仅计费一次，使 ROUNDS 从一变为零，不得重新标记为免费重试。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c11_recover_is_charged_once_with_its_declared_cost_projection"
+        },
+        {
+          "id": "C-12",
+          "productionEntryPoint": "cltav_runtime.session.ReferenceSession.step",
+          "inputs": "A terminal singleton state and a later attempted session action on its returned real object successor.",
+          "inputsZh": "一个终止的单一候选状态，以及随后对其返回的真实对象后继尝试执行会话动作。",
+          "actualPublicPrefix": "The terminal public prefix is retained exactly after Stop-Singleton.",
+          "expectedStateOrDiagnostic": "No post-stop controller drive or public event is permitted.",
+          "expectedStateOrDiagnosticZh": "停止后不允许再驱动控制器或追加公开事件。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c12_terminal_stop_does_not_drive_the_real_object_again"
+        },
+        {
+          "id": "C-13",
+          "productionEntryPoint": "cltav_615a_adapter.session.build_lur_start_session",
+          "inputs": "A completed C continuation, an explicit controller full reset, and a new factory setup on the reset object.",
+          "inputsZh": "一个完成的 C 续接、一次显式控制器全量复位，以及在已复位对象上的新工厂设置。",
+          "actualPublicPrefix": "The old prefix remains tied to its old reset identity; the new setup begins a new prefix.",
+          "expectedStateOrDiagnostic": "Recover never resets or replays; only explicit setup after full reset creates a new attempt.",
+          "expectedStateOrDiagnosticZh": "Recover 绝不复位或重放；只有全量复位后的显式设置才创建新尝试。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c13_explicit_full_reset_is_a_new_setup_not_recover_or_replay"
+        },
+        {
+          "id": "C-14",
+          "productionEntryPoint": "cltav_615a_adapter.contract.load_hb_session_contract",
+          "inputs": "The four fixed accepted C action identifiers and the C non-claim boundary.",
+          "inputsZh": "四个固定已接受的 C 动作标识以及 C 的非主张边界。",
+          "actualPublicPrefix": "Only the bounded LUR-start public event vocabulary is available to the finite adapter.",
+          "expectedStateOrDiagnostic": "No full UPLOAD, payload-integrity, IUT, protocol-conformance, network, or experiment result is established.",
+          "expectedStateOrDiagnosticZh": "不建立完整 UPLOAD、负载完整性、IUT、协议符合性、网络或实验结果。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c14_adapter_keeps_the_declared_non_integrity_boundary"
+        },
+        {
+          "id": "C-15",
+          "productionEntryPoint": "cltav_runtime.session.ReferenceSession.step",
+          "inputs": "An UNKNOWN continuation formed by a real unconfirmed Prep and then a qualified current Recover.",
+          "inputsZh": "一个由真实未确认 Prep 形成的 UNKNOWN 续接，随后执行合格的当前 Recover。",
+          "actualPublicPrefix": "LIST-SUBMISSION-PRECONDITION-RECORDED -> EV_TH_LUS0001 before and after Recover, with no replayed protocol event.",
+          "expectedStateOrDiagnostic": "The independent UNKNOWN timeline retains the exact public prefix and adds only a typed tool readback.",
+          "expectedStateOrDiagnosticZh": "独立的 UNKNOWN 时线保留精确公开前缀，只增加类型化工具回读。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c15_unknown_recover_timeline_is_nonemitting_and_retains_current_prefix"
+        },
+        {
+          "id": "C-16",
+          "productionEntryPoint": "cltav_615a_adapter.contract.load_hb_session_contract",
+          "inputs": "A stale pre-driven B object and a forged visible record with the wrong declared action at the production session entry.",
+          "inputsZh": "一个陈旧的预驱动 B 对象，以及生产会话入口中动作声明错误的伪造可见记录。",
+          "actualPublicPrefix": "No new event is appended to the stale current public prefix when either production boundary check fails.",
+          "expectedStateOrDiagnostic": "The production entry rejects stale checkpoint or wrong visible action carriers without consuming a current worktree substitute.",
+          "expectedStateOrDiagnosticZh": "生产入口拒绝陈旧检查点或动作声明错误的可见载体，且不消费当前工作树替代物。",
+          "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c16_stale_checkpoint_or_wrong_visible_action_cannot_be_consumed"
+        }
+      ],
+      "notEstablished": "No IUT result, protocol-conformance result, full UPLOAD result, real-network result, or experimental result is established by this finite C adapter.",
+      "zh": "有限 C 适配器不建立 IUT、协议符合性、完整 UPLOAD、真实网络或实验结果。"
+    },
+    "zh": {
+      "summary": "C 阶段将真实进程内 Loader／TH 对象以受控输入身份接入既有有限会话；它仍是有限工程闭环，不建立 IUT、实验或协议符合性主张。",
+      "boundary": "算法仅接收公开协议事件、快照、完成回执和类型化投影；控制结果、故障激活、私有状态和评估方回读均不得进入会话更新。",
+      "microsteps": "首轮检查和顺序 TEST 均使用预先声明的硬上限真实微步；微步与虚拟 tick 不等价，同 tick 依稳定序号排序。",
+      "recover": "Recover 是不改变协议日志的类型化工具回读；仅同一存续对象上的已成功 READY 应用与当前完整前缀可确认目标和摘要。",
+      "acceptance": "C 阶段候选须逐项满足 C-01 至 C-16 的生产入口回归，之后才可独立复审；不是 Ready、合并或后续 D/E 授权。"
     }
   },
   "cases": [
@@ -1268,10 +1594,10 @@
       "sessionDisposition": "UNKNOWN-PRESERVE-ACTUAL-SUCCESSOR-AND-POST-DISPATCH-JOURNAL",
       "recoverEntryQStatus": "UNKNOWN",
       "recoverRequiredPublicEvidence": [
-        "CURRENT-SESSION-READY-READBACK",
+        "APPLIED-READY-DELIVERY-EVIDENCE",
         "RECOVER-READY-READBACK-COMPLETED",
-        "EXACT-RETAINED-POST-DISPATCH-PUBLIC-PREFIX",
-        "RECOVER-READY-READBACK-ONLY-EXTENSION"
+        "EXACT-RETAINED-CURRENT-PROTOCOL-PREFIX",
+        "TYPED-TOOL-READBACK-EVIDENCE-NO-PROTOCOL-JOURNAL-MUTATION"
       ],
       "targetAndSummaryConfirmation": "SEPARATE-REQUIRED-NO-REWIND-OR-REPLAY",
       "rewindProhibited": "NO-REWIND-TO-Q-PRE-READY-NO-WRQ",

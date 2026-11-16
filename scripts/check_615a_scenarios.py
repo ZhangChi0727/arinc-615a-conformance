@@ -265,10 +265,10 @@ REQUIRED_UNKNOWN_RECOVER_CONTRACT = {
     "sessionDisposition": "UNKNOWN-PRESERVE-ACTUAL-SUCCESSOR-AND-POST-DISPATCH-JOURNAL",
     "recoverEntryQStatus": "UNKNOWN",
     "recoverRequiredPublicEvidence": [
-        "CURRENT-SESSION-READY-READBACK",
+        "APPLIED-READY-DELIVERY-EVIDENCE",
         "RECOVER-READY-READBACK-COMPLETED",
-        "EXACT-RETAINED-POST-DISPATCH-PUBLIC-PREFIX",
-        "RECOVER-READY-READBACK-ONLY-EXTENSION",
+        "EXACT-RETAINED-CURRENT-PROTOCOL-PREFIX",
+        "TYPED-TOOL-READBACK-EVIDENCE-NO-PROTOCOL-JOURNAL-MUTATION",
     ],
     "targetAndSummaryConfirmation": "SEPARATE-REQUIRED-NO-REWIND-OR-REPLAY",
     "rewindProhibited": "NO-REWIND-TO-Q-PRE-READY-NO-WRQ",
@@ -276,9 +276,14 @@ REQUIRED_UNKNOWN_RECOVER_CONTRACT = {
 }
 REQUIRED_PUBLIC_SUMMARY_SOURCES = {
     "ACT-INSPECT-NO-WRQ-BEFORE-READY": {"VISIBLE-JOURNAL-PREFIX", "INSPECTION-COMPLETION-RECEIPT"},
-    "ACT-PREP-ENTER-READY-WINDOW": {"VISIBLE-JOURNAL-PREFIX", "TH-LUS0001-READY-RECEIPT"},
+    "ACT-PREP-ENTER-READY-WINDOW": {"VISIBLE-JOURNAL-PREFIX", "TH-LUS0001-READY-RECEIPT", "APPLIED-READY-DELIVERY-EVIDENCE"},
     "ACT-TEST-ACK-BEFORE-DATA": {"VISIBLE-JOURNAL-PREFIX", "LUR-ORDER-CHECK-COMPLETED"},
-    "ACT-RECOVER-RECONFIRM-READY": {"VISIBLE-JOURNAL-PREFIX", "RECOVER-READY-READBACK-COMPLETED"},
+    "ACT-RECOVER-RECONFIRM-READY": {
+        "VISIBLE-JOURNAL-PREFIX",
+        "RECOVER-READY-READBACK-COMPLETED",
+        "APPLIED-READY-DELIVERY-EVIDENCE",
+        "TYPED-TOOL-READBACK-EVIDENCE",
+    },
 }
 REQUIRED_PUBLIC_EVIDENCE_PROJECTIONS = {
     "ACT-INSPECT-NO-WRQ-BEFORE-READY": {
@@ -312,11 +317,11 @@ REQUIRED_PUBLIC_EVIDENCE_PROJECTIONS = {
         "invalidOrUnconfirmedDisposition": "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER",
     },
     "ACT-RECOVER-RECONFIRM-READY": {
-        "projectionKind": "CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT",
+        "projectionKind": "CURRENT-SESSION-TYPED-TOOL-READBACK-OVER-PROTOCOL-PREFIX",
         "sessionBinding": "CURRENT-SESSION",
         "correlationBinding": "CURRENT-OPERATION-CORRELATION",
         "ordering": "STABLE-SEQUENCE-NUMBER",
-        "inspectedRange": "RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX",
+        "inspectedRange": "EXACT-RETAINED-PROTOCOL-PREFIX-NO-PROTOCOL-EVENT-EXTENSION",
         "completionReceipt": "RECOVER-READY-READBACK-COMPLETED",
         "receiptMustBeCompleted": True,
         "invalidOrUnconfirmedDisposition": "DO-NOT-MARK-KNOWN",
@@ -461,7 +466,7 @@ REQUIRED_ACTION_DETAILS = {
     "ACT-INSPECT-NO-WRQ-BEFORE-READY": {
         "eligibility": "LIST-SUBMISSION-PRECONDITION-RECORDED and no session-local LUS-0001 journal event",
         "cost": (1, 1, 0, 0),
-        "publicStimulus": "Complete one bounded inspection of the current visible journal prefix.",
+        "publicStimulus": "After list-precondition delivery and before any READY stimulus, give one shared Loader advance opportunity, then complete one bounded inspection of the current visible journal prefix.",
         "observationMode": "FINITE-ENGINEERING-LOG-CHECK",
         "inspection": (
             "INSPECT-NO-WRQ-BEFORE-READY-COMPLETED",
@@ -489,7 +494,7 @@ REQUIRED_ACTION_DETAILS = {
     "ACT-PREP-ENTER-READY-WINDOW": {
         "eligibility": "Q-PRE-READY-NO-WRQ is confirmed and the session has affordable preparation resource",
         "cost": (0, 1, 1, 0),
-        "publicStimulus": "TH emits the session-local visible EV_TH_LUS0001 ready stimulus.",
+        "publicStimulus": "TH emits the session-local visible EV_TH_LUS0001 ready stimulus; confirmation additionally requires its successful current FIFO application by the Loader.",
         "observationMode": "VISIBLE-PREPARATION-EVENT",
         "inspection": (
             "TH-LUS0001-READY-RECEIPT",
@@ -502,7 +507,7 @@ REQUIRED_ACTION_DETAILS = {
             (
                 "EV_TH_LUS0001",
                 "Q-TARGET-READY",
-                "The public ready receipt is bound to the current session and is present in the visible journal.",
+                "The public ready receipt is current and the exact emitted READY event has a same-successor successful FIFO application evidence; emission or journal presence alone is insufficient.",
                 ("NORMAL", "EARLY-DATA"),
             ),
         ),
@@ -511,7 +516,7 @@ REQUIRED_ACTION_DETAILS = {
     "ACT-TEST-ACK-BEFORE-DATA": {
         "eligibility": "Q-TARGET-READY is confirmed and the session has an affordable TEST",
         "cost": (1, 1, 0, 0),
-        "publicStimulus": "Drive one bounded loader control step and inspect the visible LUR WRQ, TH ACK and loader DATA event order.",
+        "publicStimulus": "Execute one declared bounded sequence: emit and FIFO-deliver WRQ, give the Loader one pre-ACK advance opportunity, advance TH and FIFO-deliver ACK, then give the Loader one post-ACK advance opportunity and deliver any DATA before inspecting the visible order.",
         "observationMode": "FINITE-JOURNAL-ORDER-CHECK",
         "inspection": (
             "LUR-ORDER-CHECK-COMPLETED",
@@ -539,11 +544,11 @@ REQUIRED_ACTION_DETAILS = {
     "ACT-RECOVER-RECONFIRM-READY": {
         "eligibility": "SessionContext is UNKNOWN and a declared ready target can be publicly re-confirmed within the finite object boundary",
         "cost": (0, 1, 1, 0),
-        "publicStimulus": "Request the controlled TH ready read-back and retain its visible journal receipt.",
-        "observationMode": "VISIBLE-RECOVER-READBACK",
+        "publicStimulus": "Request one typed C-layer tool readback over the current retained public protocol prefix and a prior successfully applied READY evidence; it emits no protocol event and does not replay READY.",
+        "observationMode": "TYPED-TOOL-READBACK-OVER-PUBLIC-PROTOCOL-PREFIX",
         "inspection": (
             "RECOVER-READY-READBACK-COMPLETED",
-            "EXACT-RETAINED-POST-DISPATCH-PREFIX-EXTENDED-BY-CURRENT-SESSION-READY-READBACK",
+            "EXACT-CURRENT-PROTOCOL-PREFIX-PLUS-FRESH-TYPED-TOOL-READBACK-WITH-NO-PROTOCOL-JOURNAL-MUTATION",
             1,
             False,
             False,
@@ -552,7 +557,7 @@ REQUIRED_ACTION_DETAILS = {
             (
                 "RECOVER-READY-READBACK",
                 "Q-TARGET-READY",
-                "The public recover receipt extends the exact retained post-dispatch public prefix only by the current-session ready read-back; it re-confirms ready without replaying or rewinding an earlier action.",
+                "A fresh typed tool readback binds the exact current protocol prefix and a prior successfully applied READY evidence for the same live object identity; it re-confirms ready without a sixth protocol event, replay or rewind.",
                 ("NORMAL", "EARLY-DATA"),
             ),
         ),
@@ -797,6 +802,11 @@ REQUIRED_TRANSLATION_KEYS = {
     "actions.ACT-PREP-ENTER-READY-WINDOW.summary",
     "actions.ACT-TEST-ACK-BEFORE-DATA.summary",
     "actions.ACT-RECOVER-RECONFIRM-READY.summary",
+    "sessionIntegration.summary",
+    "sessionIntegration.boundary",
+    "sessionIntegration.microsteps",
+    "sessionIntegration.recover",
+    "sessionIntegration.acceptance",
     "timeAndObservation.summary",
     "resourceContract.summary",
     "lifecycle.fullReset.summary",
@@ -821,6 +831,204 @@ REQUIRED_TRANSLATION_KEYS = {
     "feasibilityWitnesses.WIT-PUBLIC-SUMMARY.summary",
     "feasibilityWitnesses.WIT-P3-UNAVAILABLE.summary",
     "feasibilityWitnesses.WIT-SUCCESSOR-AND-RECOVER.summary",
+}
+
+# C-stage integration deliberately has an identity and authority boundary of
+# its own.  In particular, it must not be folded into the closed B-object
+# five-file source identity above.  The accepted B object is anchored by the
+# first introduction of B's source-identity module, which is immutable Git
+# history rather than a duplicated lifecycle SHA in executable governance
+# code.  C's adapter constants are checked *against* that anchor; they do not
+# get to define it.
+C_STAGE = "C-SESSION-INTEGRATION-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
+C_HB_HISTORY_ANCHOR_PATH = "src/cltav_615a/source_identity.py"
+C_HB_SCENARIO_PATH = "configs/engineering/cltav_615a_scenarios.json"
+
+
+def _c_hb_authority_from_history(
+    root: Path = ROOT,
+) -> tuple[dict[str, str], dict[str, str], str]:
+    """Derive C's immutable H-B authority from the protected B introduction.
+
+    ``source_identity.py`` first appears in the accepted B closure.  Its first
+    Git introduction therefore supplies an independently derived commit; the
+    fixed scenario path, blob OID, raw hash and tree are all read from that
+    exact object.  A simultaneous edit of C's adapter constants and package
+    cannot move this anchor to another otherwise valid B-like object.
+    """
+
+    try:
+        introductions = subprocess.check_output(
+            [
+                "git", "log", "--diff-filter=A", "--format=%H", "--reverse",
+                "--", C_HB_HISTORY_ANCHOR_PATH,
+            ],
+            cwd=root,
+            text=True,
+            encoding="ascii",
+        ).splitlines()
+        if len(introductions) != 1 or not re.fullmatch(r"[0-9a-f]{40}", introductions[0]):
+            raise ValueError("C H-B history anchor is absent or ambiguous")
+        anchor = introductions[0]
+        listing = subprocess.check_output(
+            ["git", "ls-tree", anchor, "--", C_HB_SCENARIO_PATH],
+            cwd=root,
+            text=True,
+            encoding="utf-8",
+        ).strip()
+        if not listing:
+            raise ValueError("C H-B scenario is absent from the history anchor")
+        mode, _kind, _name = listing.partition("\t")[0].split(maxsplit=2)
+        if mode not in {"100644", "100755"}:
+            raise ValueError("C H-B scenario is not an ordinary tracked file")
+        blob_oid = subprocess.check_output(
+            ["git", "rev-parse", f"{anchor}:{C_HB_SCENARIO_PATH}"],
+            cwd=root,
+            text=True,
+            encoding="ascii",
+        ).strip()
+        if not re.fullmatch(r"[0-9a-f]{40}", blob_oid):
+            raise ValueError("C H-B scenario blob OID is malformed")
+        blob = subprocess.check_output(
+            ["git", "cat-file", "blob", blob_oid], cwd=root,
+        )
+        resolved_tree = subprocess.check_output(
+            ["git", "rev-parse", f"{anchor}^{{tree}}"],
+            cwd=root,
+            text=True,
+            encoding="ascii",
+        ).strip()
+        if not re.fullmatch(r"[0-9a-f]{40}", resolved_tree):
+            raise ValueError("C H-B history-anchor tree is malformed")
+    except (OSError, SyntaxError, ValueError, subprocess.CalledProcessError) as exc:
+        raise RuntimeError("C history-derived fixed H-B authority is unavailable") from exc
+    return (
+        {
+            "commit": anchor,
+            "path": C_HB_SCENARIO_PATH,
+            "gitBlobOid": blob_oid,
+            "rawSha256": hashlib.sha256(blob).hexdigest(),
+            "role": "ACCEPTED-HB-SCENARIO",
+        },
+        {
+            "head": anchor,
+            "tree": resolved_tree,
+            "status": "B-ACCEPTED-LIMITED-APPROVE",
+        },
+        anchor,
+    )
+
+
+C_HB_SCENARIO_INPUT, C_BASE_OBJECT_ACCEPTANCE, C_HB_HISTORY_ANCHOR_COMMIT = _c_hb_authority_from_history()
+C_ADAPTER_SOURCE_ROOT = "src/cltav_615a_adapter"
+C_ADAPTER_ENTRY_POINT = "cltav_615a_adapter.session.build_lur_start_session"
+C_ADAPTER_IDENTITY_SCHEME = "CLTAV-615A-C-ADAPTER-LOADED-SOURCE-SHA256-LF-V1"
+C_ADAPTER_SOURCE_FILES = tuple(
+    f"src/cltav_615a_adapter/{name}"
+    for name in ("__init__.py", "identity.py", "contract.py", "session.py")
+)
+C_ALLOWED_PUBLIC_DTOS = {
+    "PublicEvent",
+    "JournalSnapshot",
+    "CompletionReceipt",
+    "FiniteCheckResult",
+    "AppliedDeliveryEvidence",
+    "ToolReadbackEvidence",
+    "OwnershipProjection",
+}
+C_FORBIDDEN_PRIVATE_DTOS = {
+    "OperationResult",
+    "DeliveryResult",
+    "FaultInstallationRecord",
+    "ActivationRecord",
+    "RuntimeReadback",
+    "FaultLifecycleReadback",
+    "PRIVATE-LOADER-STATE",
+    "ACTIVE-FAULT-ID",
+}
+C_REQUIRED_CRITERIA = {f"C-{index:02d}" for index in range(1, 17)}
+C_REQUIRED_MICROSTEPS = {
+    "ACT-INSPECT-NO-WRQ-BEFORE-READY": {
+        "maxControllerCalls": 2,
+        "maxDeliveries": 2,
+        "tickPolicy": "LIST and the common pre-READY Loader opportunity may share tick zero; the finite inspection closes at engineering horizon tick one and tick is never a protocol deadline.",
+        "steps": (
+            "RECORD-LIST-PRECONDITION",
+            "FIFO-DELIVER-LIST",
+            "COMMON-LOADER-ADVANCE-BEFORE-READY",
+            "FIFO-DELIVER-EMITTED-WRQ-WHEN-PRESENT",
+            "COMPLETE-CURRENT-PREFIX-RECEIPT",
+        ),
+        "failureDisposition": "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER",
+        "completionPredicate": "CURRENT-SESSION-CONTIGUOUS-PREFIX-RECEIPT-COMPLETED-AFTER-COMMON-PRE-READY-LOADER-OPPORTUNITY",
+    },
+    "ACT-TEST-ACK-BEFORE-DATA": {
+        "maxControllerCalls": 4,
+        "maxDeliveries": 4,
+        "tickPolicy": "The declared order microsteps may share a virtual tick; stable public sequence numbers determine same-tick order and the finite engineering horizon is tick three, not a protocol timeout.",
+        "steps": (
+            "LOADER-EMIT-WRQ-WHEN-ABSENT",
+            "FIFO-DELIVER-WRQ",
+            "COMMON-LOADER-ADVANCE-BEFORE-ACK",
+            "FIFO-DELIVER-EMITTED-DATA-WHEN-PRESENT",
+            "TH-EMIT-ACK-WHEN-ABSENT",
+            "FIFO-DELIVER-ACK",
+            "LOADER-ADVANCE-DATA-WHEN-ABSENT",
+            "FIFO-DELIVER-DATA-WHEN-EMITTED",
+            "COMPLETE-CURRENT-PREFIX-RECEIPT",
+        ),
+        "failureDisposition": "UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER",
+        "completionPredicate": "CURRENT-CORRELATION-HAS-WRQ-AND-DATA-WITH-ORDER-DETERMINED-BY-STABLE-SEQUENCE",
+    },
+}
+C_REQUIRED_READY_APPLICATION = {
+    "emissionFact": "READY-EMITTED-ONLY",
+    "deliveryFact": "READY-FIFO-DELIVERED",
+    "applicationFact": "READY-FIFO-DELIVERED-AND-ACCEPTED-SAME-SUCCESSOR",
+    "confirmationPredicate": "Only a typed same-successor FIFO delivery projection with delivered and accepted true, exact READY event identity, and a current completed public-prefix receipt may confirm the target and post-summary.",
+    "rejectionDisposition": "EXECUTED-UNCONFIRMED-SUMMARY-REQUIRES-UNKNOWN",
+}
+C_REQUIRED_RECOVER_READBACK = {
+    "kind": "C-TYPED-TOOL-READBACK",
+    "protocolJournalMutation": "NONE",
+    "freshness": "A Recover readback must be newly minted for the current unconsumed successor and bind the retained successfully applied READY evidence to the exact current public prefix.",
+    "currentReadyPredicate": "The retained READY application must have the same run, reset, attempt, session, correlation, exact event identity, and current prefix digest; a stale, duplicate, rejected, emitted-only, or delivered-only fact never confirms known state.",
+    "failureDisposition": "DO-NOT-MARK-KNOWN",
+}
+C_REQUIRED_C_NONCLAIM = (
+    "No IUT result, protocol-conformance result, full UPLOAD result, real-network result, "
+    "or experimental result is established by this finite C adapter."
+)
+C_REQUIRED_RECOVER_BINDINGS = {
+    "RUN-ID",
+    "RESET-ID",
+    "ATTEMPT-ID",
+    "SESSION-ID",
+    "CORRELATION-ID",
+    "EXECUTION-ATTEMPT-ID",
+    "PROTOCOL-PREFIX-DIGEST",
+    "PROTOCOL-EVENT-IDS",
+    "SAMPLED-TICK",
+    "SAMPLED-SEQUENCE",
+    "PROJECTION-VERSION",
+    "COMPLETED",
+}
+C_REQUIRED_OWNERSHIP = {
+    "policy": "UNIQUE-KEY",
+    "trigger": "CURRENT-CORRELATION-WRQ-PUBLIC-EVENT-AS-REQUEST",
+    "response": "MATCHING-ACK-REPLY-TO-CURRENT-WRQ-AS-RESPONSE",
+    "key": "CURRENT-SESSION-AND-CORRELATION-AND-WRQ-EVENT-ID",
+    "unsupportedDisposition": "ERROR-NO-OWNERSHIP-REWRITE",
+}
+C_PRODUCTION_WITNESS_TEST_PATH = "tests/unit/test_cltav_615a_session_adapter.py"
+C_ALLOWED_PRODUCTION_ENTRY_POINTS = {
+    "cltav_615a_adapter.contract.load_hb_session_contract",
+    "cltav_615a_adapter.session.build_lur_start_session",
+    "cltav_615a_adapter.session.LurStartSessionEnvironment.execute",
+    "cltav_runtime.session.ReferenceSession.step",
+    "cltav_runtime.session.ReferenceSession.run",
+    "scripts.check_615a_scenarios.validate_package",
+    "scripts.sync_615a_scenarios.sync",
 }
 SHA1_RE = re.compile(r"^[0-9a-f]{40}$")
 CONTROL_BASE_ROW_RE = re.compile(
@@ -1282,6 +1490,375 @@ def _object_source_file_errors(root: Path) -> list[str]:
                 errors.append("OBJECT-SOURCE: declared controller entry point is absent")
         except (OSError, SyntaxError, ValueError) as exc:
             errors.append(f"OBJECT-SOURCE: source unavailable or invalid: {relative}: {type(exc).__name__}")
+    return errors
+
+
+def _adapter_source_file_errors(root: Path) -> list[str]:
+    """Verify the separate C adapter source closure without changing B identity."""
+
+    errors: list[str] = []
+    try:
+        entries = _git_bytes(root, "ls-files", "--stage", "-z", "--", *C_ADAPTER_SOURCE_FILES)
+        tracked: dict[str, tuple[str, str]] = {}
+        for entry in entries.decode("utf-8").split("\0"):
+            if entry:
+                metadata, path = entry.split("\t", 1)
+                mode, _, stage = metadata.split()
+                tracked[path] = (mode, stage)
+    except (OSError, subprocess.CalledProcessError, UnicodeError, ValueError) as exc:
+        return [f"C-ADAPTER-SOURCE: unable to verify source Git tracking: {type(exc).__name__}"]
+
+    parsed: dict[str, ast.Module] = {}
+    for relative in C_ADAPTER_SOURCE_FILES:
+        if tracked.get(relative) not in {("100644", "0"), ("100755", "0")}:
+            errors.append(f"C-ADAPTER-SOURCE: source must be a tracked ordinary file: {relative}")
+            continue
+        path = root / relative
+        try:
+            parts = Path(relative).parts
+            components = [root.joinpath(*parts[:index]) for index in range(1, len(parts) + 1)]
+            if any(
+                part.is_symlink()
+                or getattr(part.lstat(), "st_file_attributes", 0)
+                & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+                for part in components
+            ) or not path.resolve().is_relative_to(root.resolve()) or not stat.S_ISREG(path.lstat().st_mode):
+                errors.append(f"C-ADAPTER-SOURCE: unsafe or nonordinary source path: {relative}")
+                continue
+            tree = ast.parse(path.read_bytes(), filename=relative)
+            parsed[relative] = tree
+            last = tree.body[-1] if tree.body else None
+            expected_args = [
+                ast.dump(ast.Name(id=name, ctx=ast.Load()))
+                for name in ("__name__", "__file__")
+            ]
+            if not (
+                isinstance(last, ast.Expr)
+                and isinstance(last.value, ast.Call)
+                and isinstance(last.value.func, ast.Name)
+                and last.value.func.id == "register_loaded_module"
+                and [ast.dump(arg) for arg in last.value.args] == expected_args
+                and not last.value.keywords
+            ):
+                errors.append(f"C-ADAPTER-SOURCE: source must register its executing module frame: {relative}")
+        except (OSError, SyntaxError, ValueError) as exc:
+            errors.append(f"C-ADAPTER-SOURCE: source unavailable or invalid: {relative}: {type(exc).__name__}")
+
+    session_tree = parsed.get("src/cltav_615a_adapter/session.py")
+    if session_tree is not None:
+        names = {node.name for node in session_tree.body if isinstance(node, (ast.ClassDef, ast.FunctionDef))}
+        if not {"LurStartSessionEnvironment", "build_lur_start_session"} <= names:
+            errors.append("C-ADAPTER-SOURCE: declared session environment or factory is absent")
+
+    identity_tree = parsed.get("src/cltav_615a_adapter/identity.py")
+    if identity_tree is not None:
+        module_files: object | None = None
+        for node in identity_tree.body:
+            if isinstance(node, ast.Assign) and any(
+                isinstance(target, ast.Name) and target.id == "MODULE_FILES" for target in node.targets
+            ):
+                try:
+                    module_files = ast.literal_eval(node.value)
+                except (ValueError, TypeError):
+                    module_files = None
+                break
+        if module_files != {
+            "cltav_615a_adapter": "__init__.py",
+            "cltav_615a_adapter.identity": "identity.py",
+            "cltav_615a_adapter.contract": "contract.py",
+            "cltav_615a_adapter.session": "session.py",
+        }:
+            errors.append("C-ADAPTER-SOURCE: loaded module map must close exactly the four C adapter modules")
+
+    contract_tree = parsed.get("src/cltav_615a_adapter/contract.py")
+    if contract_tree is not None:
+        literals: dict[str, object] = {}
+        expected_names = {
+            "H_B_COMMIT": C_HB_SCENARIO_INPUT["commit"],
+            "SCENARIO_PATH": C_HB_SCENARIO_INPUT["path"],
+            "H_B_SCENARIO_GIT_BLOB_OID": C_HB_SCENARIO_INPUT["gitBlobOid"],
+            "H_B_SCENARIO_RAW_SHA256": C_HB_SCENARIO_INPUT["rawSha256"],
+        }
+        for node in contract_tree.body:
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name) and target.id in expected_names:
+                        try:
+                            literals[target.id] = ast.literal_eval(node.value)
+                        except (ValueError, TypeError):
+                            literals[target.id] = None
+        if literals != expected_names:
+            errors.append("C-ADAPTER-SOURCE: fixed H-B source constants differ from the controlled C input")
+    return errors
+
+
+def _checked_git_blob(
+    root: Path,
+    *,
+    commit: object,
+    path: object,
+    git_blob_oid: object,
+    raw_sha256: object,
+    label: str,
+    errors: list[str],
+) -> bytes | None:
+    """Read one declared immutable ordinary Git blob, or name the failure."""
+
+    if (
+        not isinstance(commit, str)
+        or not SHA1_RE.fullmatch(commit)
+        or not _safe_relative(path)
+        or not isinstance(git_blob_oid, str)
+        or not SHA1_RE.fullmatch(git_blob_oid)
+        or not isinstance(raw_sha256, str)
+        or not re.fullmatch(r"[0-9a-f]{64}", raw_sha256)
+    ):
+        errors.append(f"{label}: malformed fixed Git input identity")
+        return None
+    assert isinstance(path, str)
+    try:
+        listing = _git_bytes(root, "ls-tree", commit, "--", path).decode("utf-8", "strict").strip()
+        if not listing:
+            errors.append(f"{label}: fixed input is not tracked at its declared commit")
+            return None
+        mode, _kind, _name = listing.partition("\t")[0].split(maxsplit=2)
+        if mode not in {"100644", "100755"}:
+            errors.append(f"{label}: fixed input is not an ordinary Git file")
+            return None
+        resolved = _git_bytes(root, "rev-parse", f"{commit}:{path}").decode("ascii", "strict").strip()
+        if resolved != git_blob_oid:
+            errors.append(f"{label}: Git blob OID does not match declared immutable object")
+            return None
+        blob = _git_bytes(root, "cat-file", "blob", resolved)
+    except (OSError, subprocess.CalledProcessError, UnicodeDecodeError, ValueError) as exc:
+        errors.append(f"{label}: unable to load fixed Git input: {type(exc).__name__}")
+        return None
+    if hashlib.sha256(blob).hexdigest() != raw_sha256:
+        errors.append(f"{label}: SHA-256 does not match declared immutable bytes")
+        return None
+    return blob
+
+
+def _c_production_test_nodes(root: Path, errors: list[str]) -> set[str]:
+    """Return real module-level pytest nodes used as C acceptance witnesses."""
+
+    path = root / C_PRODUCTION_WITNESS_TEST_PATH
+    try:
+        if path.is_symlink() or not path.resolve().is_relative_to(root.resolve()) or not stat.S_ISREG(path.lstat().st_mode):
+            errors.append("C-INTEGRATION: production witness test module is unsafe or unavailable")
+            return set()
+        tree = ast.parse(path.read_bytes(), filename=C_PRODUCTION_WITNESS_TEST_PATH)
+    except (OSError, SyntaxError, ValueError) as exc:
+        errors.append(f"C-INTEGRATION: production witness test module is unreadable: {type(exc).__name__}")
+        return set()
+    return {
+        f"{C_PRODUCTION_WITNESS_TEST_PATH}::{node.name}"
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef) and node.name.startswith("test_")
+    }
+
+
+def _session_integration_errors(root: Path, package: dict[str, Any]) -> list[str]:
+    """Validate C's independent source/authority and public-session boundary."""
+
+    errors: list[str] = []
+    integration = package.get("sessionIntegration")
+    if not isinstance(integration, dict):
+        return ["C-INTEGRATION: sessionIntegration must be a controlled object"]
+    if integration.get("stage") != C_STAGE:
+        errors.append("C-INTEGRATION: stage must remain a C candidate pending independent review")
+    if (
+        C_HB_SCENARIO_INPUT.get("commit") != C_HB_HISTORY_ANCHOR_COMMIT
+        or C_BASE_OBJECT_ACCEPTANCE.get("head") != C_HB_HISTORY_ANCHOR_COMMIT
+    ):
+        errors.append(
+            "C-INTEGRATION: C adapter authority must agree with the independent H-B history anchor"
+        )
+    try:
+        changed_b_sources = _git_bytes(
+            root,
+            "diff",
+            "--name-only",
+            C_HB_HISTORY_ANCHOR_COMMIT,
+            "--",
+            *REQUIRED_OBJECT_SOURCE_FILES,
+        ).decode("utf-8", "strict").splitlines()
+    except (OSError, subprocess.CalledProcessError, UnicodeDecodeError):
+        errors.append("C-INTEGRATION: unable to verify the protected accepted B source closure")
+    else:
+        if changed_b_sources:
+            errors.append(
+                "C-INTEGRATION: protected accepted B source closure changed after its H-B anchor"
+            )
+    if integration.get("baseObjectAcceptance") != C_BASE_OBJECT_ACCEPTANCE:
+        errors.append("C-INTEGRATION: baseObjectAcceptance must bind the accepted H-B head and tree")
+    else:
+        try:
+            resolved_tree = _git_bytes(
+                root, "rev-parse", f"{C_BASE_OBJECT_ACCEPTANCE['head']}^{{tree}}"
+            ).decode("ascii", "strict").strip()
+        except (OSError, subprocess.CalledProcessError, UnicodeDecodeError):
+            errors.append("C-INTEGRATION: unable to resolve accepted H-B tree")
+        else:
+            if resolved_tree != C_BASE_OBJECT_ACCEPTANCE["tree"]:
+                errors.append("C-INTEGRATION: accepted H-B tree does not match the bound head")
+
+    scenario_input = integration.get("scenarioInput")
+    if scenario_input != C_HB_SCENARIO_INPUT:
+        errors.append("C-INTEGRATION: scenarioInput must bind the fixed accepted H-B scenario identity")
+    else:
+        blob = _checked_git_blob(
+            root,
+            commit=scenario_input.get("commit"),
+            path=scenario_input.get("path"),
+            git_blob_oid=scenario_input.get("gitBlobOid"),
+            raw_sha256=scenario_input.get("rawSha256"),
+            label="C-INTEGRATION",
+            errors=errors,
+        )
+        if blob is not None:
+            try:
+                source_package = json.loads(blob.decode("utf-8-sig"))
+            except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+                errors.append(f"C-INTEGRATION: fixed H-B scenario JSON is unreadable: {type(exc).__name__}")
+            else:
+                source_identity = source_package.get("identity") if isinstance(source_package, dict) else None
+                source_actions = source_package.get("actionLibrary") if isinstance(source_package, dict) else None
+                if not isinstance(source_identity, dict) or source_identity.get("stageStatus") != REQUIRED_OBJECT_STAGE:
+                    errors.append("C-INTEGRATION: fixed source must be the accepted B package, not current C worktree")
+                action_ids = {row.get("id") for row in _row_list(source_actions) if isinstance(row.get("id"), str)}
+                if action_ids != set(REQUIRED_ACTION_KINDS):
+                    errors.append("C-INTEGRATION: fixed H-B source must retain exactly the four accepted action IDs")
+
+    adapter = integration.get("adapter") if isinstance(integration.get("adapter"), dict) else {}
+    if (
+        adapter.get("sourceRoot") != C_ADAPTER_SOURCE_ROOT
+        or adapter.get("entryPoint") != C_ADAPTER_ENTRY_POINT
+        or adapter.get("identityScheme") != C_ADAPTER_IDENTITY_SCHEME
+        or adapter.get("continuationPolicy") != "COPY-ON-WRITE-CONTROLLER-SUCCESSOR-NO-FRESH-OBJECT"
+        or tuple(adapter.get("sourceFiles", ())) != C_ADAPTER_SOURCE_FILES
+    ):
+        errors.append("C-INTEGRATION: adapter identity, source closure, entry point or continuation policy differs")
+
+    boundary = integration.get("publicProjectionBoundary") if isinstance(integration.get("publicProjectionBoundary"), dict) else {}
+    allowed = boundary.get("allowedDtos")
+    forbidden = boundary.get("forbiddenDtos")
+    if not isinstance(allowed, list) or set(allowed) != C_ALLOWED_PUBLIC_DTOS or len(allowed) != len(C_ALLOWED_PUBLIC_DTOS):
+        errors.append("C-INTEGRATION: allowed public DTO set is incomplete or broadened")
+    if not isinstance(forbidden, list) or set(forbidden) != C_FORBIDDEN_PRIVATE_DTOS or len(forbidden) != len(C_FORBIDDEN_PRIVATE_DTOS):
+        errors.append("C-INTEGRATION: forbidden private/control DTO set is incomplete or changed")
+    if set(allowed or []) & set(forbidden or []):
+        errors.append("C-INTEGRATION: public and forbidden DTO boundaries must be disjoint")
+    if boundary.get("sessionMutationOwner") != "REFERENCE-SESSION-S7-S8-S9":
+        errors.append("C-INTEGRATION: only ReferenceSession S7/S8/S9 may mutate session state")
+    if boundary.get("successorOwner") != "ADAPTER-COPY-ON-WRITE-CONTINUATION":
+        errors.append("C-INTEGRATION: successor must be an adapter copy-on-write continuation")
+
+    plans: dict[str, dict[str, Any]] = {}
+    for row in _row_list(integration.get("microstepPlans")):
+        action_id = row.get("actionId")
+        if not isinstance(action_id, str) or not action_id:
+            errors.append("C-INTEGRATION: microstep plan lacks an actionId")
+        elif action_id in plans:
+            errors.append(f"C-INTEGRATION: duplicate microstep plan for {action_id}")
+        else:
+            plans[action_id] = row
+    if set(plans) != set(C_REQUIRED_MICROSTEPS):
+        errors.append("C-INTEGRATION: microstep plans must cover exactly the first Test and order Test")
+    for action_id, expected in C_REQUIRED_MICROSTEPS.items():
+        plan = plans.get(action_id)
+        if plan is None:
+            continue
+        for field in ("maxControllerCalls", "maxDeliveries", "tickPolicy", "failureDisposition", "completionPredicate"):
+            if plan.get(field) != expected[field]:
+                errors.append(f"C-INTEGRATION: {action_id} {field} differs from the bounded C plan")
+        if tuple(plan.get("steps", ())) != expected["steps"]:
+            errors.append(f"C-INTEGRATION: {action_id} microstep order differs from the shared public plan")
+        if not isinstance(plan.get("zh"), str) or not plan["zh"].strip():
+            errors.append(f"C-INTEGRATION: {action_id} requires Chinese microstep semantics")
+
+    ready = integration.get("readyApplication") if isinstance(integration.get("readyApplication"), dict) else {}
+    for field, expected in C_REQUIRED_READY_APPLICATION.items():
+        if ready.get(field) != expected:
+            errors.append(f"C-INTEGRATION: READY {field} must retain emission/delivery/application separation")
+    if not isinstance(ready.get("zh"), str) or not ready["zh"].strip():
+        errors.append("C-INTEGRATION: READY application contract requires Chinese semantics")
+
+    recover = integration.get("recoverToolReadback") if isinstance(integration.get("recoverToolReadback"), dict) else {}
+    for field, expected in C_REQUIRED_RECOVER_READBACK.items():
+        if recover.get(field) != expected:
+            errors.append(f"C-INTEGRATION: Recover {field} differs from the controlled non-protocol readback")
+    identity_bindings = recover.get("identityBindings")
+    if not isinstance(identity_bindings, list) or set(identity_bindings) != C_REQUIRED_RECOVER_BINDINGS or len(identity_bindings) != len(C_REQUIRED_RECOVER_BINDINGS):
+        errors.append("C-INTEGRATION: Recover readback must bind complete current identity/prefix evidence")
+    if not isinstance(recover.get("zh"), str) or not recover["zh"].strip():
+        errors.append("C-INTEGRATION: Recover requires Chinese semantics")
+
+    ownership = integration.get("ownershipProjection") if isinstance(integration.get("ownershipProjection"), dict) else {}
+    for field, expected in C_REQUIRED_OWNERSHIP.items():
+        if ownership.get(field) != expected:
+            errors.append(f"C-INTEGRATION: ownership {field} differs from the UNIQUE-KEY public mapping")
+    if not isinstance(ownership.get("zh"), str) or not ownership["zh"].strip():
+        errors.append("C-INTEGRATION: ownership projection requires Chinese semantics")
+
+    acceptance = integration.get("productionAcceptance") if isinstance(integration.get("productionAcceptance"), dict) else {}
+    if acceptance.get("status") != "C-CANDIDATE-PENDING-INDEPENDENT-REVIEW":
+        errors.append("C-INTEGRATION: production acceptance cannot claim Ready, merge, or approval")
+    criteria = acceptance.get("criteria")
+    if not isinstance(criteria, list) or set(criteria) != C_REQUIRED_CRITERIA or len(criteria) != len(C_REQUIRED_CRITERIA):
+        errors.append("C-INTEGRATION: production acceptance must retain exactly C-01 through C-16")
+    for field in ("notEstablished", "zh"):
+        value = acceptance.get(field)
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"C-INTEGRATION: production acceptance requires nonblank {field}")
+    if acceptance.get("notEstablished") != C_REQUIRED_C_NONCLAIM:
+        errors.append("C-INTEGRATION: acceptance must retain the controlled C non-claim boundary")
+    witnesses: dict[str, dict[str, Any]] = {}
+    for row in _row_list(acceptance.get("witnesses")):
+        witness_id = row.get("id")
+        if not isinstance(witness_id, str) or not witness_id:
+            errors.append("C-INTEGRATION: production acceptance witness lacks an id")
+        elif witness_id in witnesses:
+            errors.append(f"C-INTEGRATION: duplicate production acceptance witness {witness_id}")
+        else:
+            witnesses[witness_id] = row
+    if set(witnesses) != C_REQUIRED_CRITERIA:
+        errors.append("C-INTEGRATION: witnesses must cover exactly C-01 through C-16")
+    test_nodes = _c_production_test_nodes(root, errors)
+    private_markers = {"ACTIVE-FAULT", "PRIVATE-LOADER", "DELIVERYRESULT", "OPERATIONRESULT", "RUNTIME-READBACK"}
+    for witness_id, row in witnesses.items():
+        for field in (
+            "productionEntryPoint", "inputs", "inputsZh", "actualPublicPrefix",
+            "expectedStateOrDiagnostic", "expectedStateOrDiagnosticZh", "testNodeId",
+        ):
+            value = row.get(field)
+            if not isinstance(value, str) or not value.strip():
+                errors.append(f"C-INTEGRATION: {witness_id} requires nonblank {field}")
+        entry_point = row.get("productionEntryPoint")
+        if entry_point not in C_ALLOWED_PRODUCTION_ENTRY_POINTS:
+            errors.append(f"C-INTEGRATION: {witness_id} names an uncontrolled production entry point")
+        node_id = row.get("testNodeId")
+        if not isinstance(node_id, str) or node_id not in test_nodes:
+            errors.append(f"C-INTEGRATION: {witness_id} testNodeId must resolve to a real C production test")
+        for english, chinese, label in (
+            (row.get("inputs"), row.get("inputsZh"), "inputs"),
+            (row.get("expectedStateOrDiagnostic"), row.get("expectedStateOrDiagnosticZh"), "expected state/diagnostic"),
+        ):
+            if isinstance(english, str) and isinstance(chinese, str) and english == chinese:
+                errors.append(f"C-INTEGRATION: {witness_id} Chinese {label} must be independently controlled")
+        public_prefix = row.get("actualPublicPrefix")
+        if isinstance(public_prefix, str) and any(marker in public_prefix.upper() for marker in private_markers):
+            errors.append(f"C-INTEGRATION: {witness_id} actualPublicPrefix leaks a forbidden private/control value")
+
+    zh = integration.get("zh") if isinstance(integration.get("zh"), dict) else {}
+    translations = package.get("translationsZh") if isinstance(package.get("translationsZh"), dict) else {}
+    for field in ("summary", "boundary", "microsteps", "recover", "acceptance"):
+        value = zh.get(field)
+        translation = translations.get(f"sessionIntegration.{field}")
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"C-INTEGRATION: Chinese {field} is blank")
+        elif value != translation:
+            errors.append(f"C-INTEGRATION: Chinese {field} must match controlled bilingual view source")
     return errors
 
 
@@ -1806,6 +2383,8 @@ def validate_package(
     errors.extend(_boundary_errors(package))
     errors.extend(_object_contract_errors(package))
     errors.extend(_object_source_file_errors(root))
+    errors.extend(_session_integration_errors(root, package))
+    errors.extend(_adapter_source_file_errors(root))
     errors.extend(_action_and_case_errors(package))
     if snapshot:
         errors.extend(_traceability_errors(package, snapshot))

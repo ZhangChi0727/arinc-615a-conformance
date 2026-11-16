@@ -415,6 +415,202 @@ def _render_object_contract(data: dict[str, Any], *, chinese: bool) -> list[str]
     return lines
 
 
+def _render_session_integration(data: dict[str, Any], *, chinese: bool) -> list[str]:
+    """Render the C-stage adapter contract without exposing controller internals.
+
+    The JSON package remains the authority.  This deliberately renders all of
+    the C-stage fields that determine what the adapter may consume, how it
+    advances the bounded controller, and what it may return to the reference
+    session.  In particular, the READY emission/delivery/application facts
+    are separate rows: a journaled protocol event is not by itself proof that
+    the target accepted it.
+    """
+
+    integration = data.get("sessionIntegration")
+    if not isinstance(integration, dict):
+        return []
+
+    base = integration["baseObjectAcceptance"]
+    source = integration["scenarioInput"]
+    adapter = integration["adapter"]
+    boundary = integration["publicProjectionBoundary"]
+    ready = integration["readyApplication"]
+    recover = integration["recoverToolReadback"]
+    ownership = integration["ownershipProjection"]
+    acceptance = integration["productionAcceptance"]
+    witnesses = acceptance.get("witnesses")
+    if not isinstance(witnesses, list):
+        witnesses = []
+
+    if chinese:
+        zh = integration["zh"]
+        lines = [
+            "## C 阶段会话集成合同", "",
+            f"- 阶段：`{integration['stage']}`。{plain_text(zh['summary'])}",
+            f"- {plain_text(zh['boundary'])}",
+            f"- {plain_text(zh['microsteps'])}",
+            "", "### 基础对象接受与固定场景输入", "",
+        ]
+        lines.extend(_table(
+            ["基础对象 Head", "基础对象树", "基础对象状态", "输入路径", "输入角色", "固定提交", "Git blob", "SHA-256"],
+            [(
+                base["head"], base["tree"], base["status"], source["path"], source["role"],
+                source["commit"], source["gitBlobOid"], source["rawSha256"],
+            )],
+            chinese=True,
+        ))
+        lines.extend(["", "### 适配器身份与公开投影边界", ""])
+        lines.extend(_table(
+            ["源码根", "直接入口", "身份方案", "连续执行策略", "受控源码"],
+            [(
+                adapter["sourceRoot"], adapter["entryPoint"], adapter["identityScheme"],
+                adapter["continuationPolicy"], sorted(adapter["sourceFiles"]),
+            )],
+            chinese=True,
+        ))
+        lines.extend(_table(
+            ["允许的类型化投影", "禁止泄露的私有对象／状态", "会话写入所有者", "后继对象所有者"],
+            [(
+                boundary["allowedDtos"], boundary["forbiddenDtos"], boundary["sessionMutationOwner"],
+                boundary["successorOwner"],
+            )],
+            chinese=True,
+        ))
+        lines.extend(["", "### 有界微步计划", ""])
+        lines.extend(_table(
+            ["动作", "最大控制器调用", "最大 FIFO 投递", "tick 策略", "公开步骤", "失败处置", "完成谓词"],
+            ((
+                plan["actionId"], plan["maxControllerCalls"], plan["maxDeliveries"], plan["zh"],
+                plan["steps"], plan["failureDisposition"], plan["completionPredicate"],
+            ) for plan in integration["microstepPlans"]),
+            chinese=True,
+        ))
+        lines.extend(["", "### READY 的发射、投递与成功应用", ""])
+        lines.extend(_table(
+            ["发射事实", "投递事实", "成功应用事实", "确认原则", "拒绝处置"],
+            [(
+                ready["emissionFact"], ready["deliveryFact"], ready["applicationFact"],
+                ready["zh"], ready["rejectionDisposition"],
+            )],
+            chinese=True,
+        ))
+        lines.extend([
+            "", "### Recover 工具回读与所有权投影", "",
+            f"- {plain_text(zh['recover'])}",
+        ])
+        lines.extend(_table(
+            ["回读类型", "协议日志修改", "身份绑定", "新鲜性与当前性合同", "失败处置"],
+            [(
+                recover["kind"], recover["protocolJournalMutation"], recover["identityBindings"],
+                recover["zh"], recover["failureDisposition"],
+            )],
+            chinese=True,
+        ))
+        lines.extend(_table(
+            ["策略", "触发", "响应", "唯一键", "不支持处置", "中文说明"],
+            [(
+                ownership["policy"], ownership["trigger"], ownership["response"], ownership["key"],
+                ownership["unsupportedDisposition"], ownership["zh"],
+            )],
+            chinese=True,
+        ))
+        lines.extend(["", "### C 阶段生产验收边界", ""])
+        lines.extend(_table(
+            ["状态", "验收准则", "尚未建立的主张"],
+            [(
+                acceptance["status"], acceptance["criteria"], acceptance["zh"],
+            )],
+            chinese=True,
+        ))
+        lines.extend(["", "### C-01 至 C-16 的生产见证矩阵", ""])
+        lines.extend(_table(
+            ["准则", "生产入口", "输入", "实际公开前缀", "预期状态或诊断", "测试节点"],
+            ((
+                witness["id"], witness["productionEntryPoint"], witness["inputsZh"],
+                witness["actualPublicPrefix"], witness["expectedStateOrDiagnosticZh"], witness["testNodeId"],
+            ) for witness in witnesses if isinstance(witness, dict)),
+            chinese=True,
+        ))
+        lines.extend([f"- {plain_text(zh['acceptance'])}", ""])
+        return lines
+
+    lines = [
+        "## C-stage session-integration contract", "",
+        f"- Stage: `{integration['stage']}`.",
+        "", "### Accepted base object and pinned scenario input", "",
+    ]
+    lines.extend(_table(
+        ["Base object head", "Base object tree", "Base object status", "Input path", "Input role", "Pinned commit", "Git blob", "SHA-256"],
+        [(
+            base["head"], base["tree"], base["status"], source["path"], source["role"],
+            source["commit"], source["gitBlobOid"], source["rawSha256"],
+        )],
+    ))
+    lines.extend(["", "### Adapter identity and public-projection boundary", ""])
+    lines.extend(_table(
+        ["Source root", "Direct entry point", "Identity scheme", "Continuation policy", "Bound source files"],
+        [(
+            adapter["sourceRoot"], adapter["entryPoint"], adapter["identityScheme"],
+            adapter["continuationPolicy"], sorted(adapter["sourceFiles"]),
+        )],
+    ))
+    lines.extend(_table(
+        ["Allowed typed projections", "Prohibited private objects/state", "Session mutation owner", "Successor owner"],
+        [(
+            boundary["allowedDtos"], boundary["forbiddenDtos"], boundary["sessionMutationOwner"],
+            boundary["successorOwner"],
+        )],
+    ))
+    lines.extend(["", "### Bounded microstep plans", ""])
+    lines.extend(_table(
+        ["Action", "Maximum controller calls", "Maximum FIFO deliveries", "Tick policy", "Public steps", "Failure disposition", "Completion predicate"],
+        ((
+            plan["actionId"], plan["maxControllerCalls"], plan["maxDeliveries"], plan["tickPolicy"],
+            plan["steps"], plan["failureDisposition"], plan["completionPredicate"],
+        ) for plan in integration["microstepPlans"]),
+    ))
+    lines.extend(["", "### READY emission, delivery, and successful application", ""])
+    lines.extend(_table(
+        ["Emission fact", "Delivery fact", "Successful-application fact", "Confirmation predicate", "Rejection disposition"],
+        [(
+            ready["emissionFact"], ready["deliveryFact"], ready["applicationFact"],
+            ready["confirmationPredicate"], ready["rejectionDisposition"],
+        )],
+    ))
+    lines.extend(["", "### Recover tool readback and ownership projection", ""])
+    lines.extend(_table(
+        ["Readback kind", "Protocol-journal mutation", "Identity bindings", "Freshness", "Current READY predicate", "Failure disposition"],
+        [(
+            recover["kind"], recover["protocolJournalMutation"], recover["identityBindings"],
+            recover["freshness"], recover["currentReadyPredicate"], recover["failureDisposition"],
+        )],
+    ))
+    lines.extend(_table(
+        ["Policy", "Trigger", "Response", "Key", "Unsupported disposition"],
+        [(
+            ownership["policy"], ownership["trigger"], ownership["response"], ownership["key"],
+            ownership["unsupportedDisposition"],
+        )],
+    ))
+    lines.extend(["", "### C-stage production-acceptance boundary", ""])
+    lines.extend(_table(
+        ["Status", "Acceptance criteria", "Not established"],
+        [(
+            acceptance["status"], acceptance["criteria"], acceptance["notEstablished"],
+        )],
+    ))
+    lines.extend(["", "### C-01 to C-16 production-witness matrix", ""])
+    lines.extend(_table(
+        ["Criterion", "Production entry point", "Inputs", "Actual public prefix", "Expected state or diagnostic", "Test node"],
+        ((
+            witness["id"], witness["productionEntryPoint"], witness["inputs"],
+            witness["actualPublicPrefix"], witness["expectedStateOrDiagnostic"], witness["testNodeId"],
+        ) for witness in witnesses if isinstance(witness, dict)),
+    ))
+    lines.append("")
+    return lines
+
+
 def render(data: dict[str, Any]) -> str:
     """Render a deterministic, bilingual reader view from one package."""
 
@@ -457,6 +653,7 @@ def render(data: dict[str, Any]) -> str:
         f"- Experiment relation: `{scope['relationshipToExperimentScenario']['scenarioId']}` / `{scope['relationshipToExperimentScenario']['relation']}` — {plain_text(scope['relationshipToExperimentScenario']['reason'])}",
     ])
     lines.extend(_render_object_contract(data, chinese=False))
+    lines.extend(_render_session_integration(data, chinese=False))
     lines.extend(["## Source-to-model control relations", ""])
     lines.extend(_table(
         ["Relation", "CRS / source unit", "Source locator", "Semantic opcode class", "File role", "M2 transition / event / direction", "CRS actor → receiver", "Use", "State boundary", "Controlled source assertions", "Scenario rationale"],
@@ -554,6 +751,7 @@ def render(data: dict[str, Any]) -> str:
         f"- 实验关系：`{scope['relationshipToExperimentScenario']['scenarioId']}` / `{scope['relationshipToExperimentScenario']['relation']}` — {plain_text(_zh(data, 'scope.relationship.reason'))}",
     ])
     lines.extend(_render_object_contract(data, chinese=True))
+    lines.extend(_render_session_integration(data, chinese=True))
     lines.extend(["## 来源到模型的控制关系", ""])
     lines.extend(_table(
         ["关系", "CRS／来源单元", "来源定位", "语义 opcode 类", "文件角色", "M2 迁移／事件／方向", "CRS 参与方", "场景用途", "状态边界", "场景理由", "中文控制说明"],

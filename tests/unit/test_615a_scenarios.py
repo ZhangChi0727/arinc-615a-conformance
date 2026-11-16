@@ -34,7 +34,14 @@ def _git(root: Path, *args: str) -> str:
 
 @pytest.fixture()
 def isolated_snapshot_repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path, dict]:
-    """Build a base snapshot and its separately introduced G0 control record."""
+    """Build a real H-B -> C-adapter -> G0 topology in an isolated Git repo.
+
+    Production fixes C to the accepted H-B object, so a throwaway repository
+    cannot simply pretend that production's object exists.  This fixture
+    creates an equivalent immutable topology and monkeypatches only the
+    checker constants for its lifetime; production validation remains pinned
+    to the real reviewed H-B Git object.
+    """
 
     root = tmp_path / "scenario-snapshot"
     root.mkdir()
@@ -51,9 +58,55 @@ def isolated_snapshot_repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> t
         target = root / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / relative, target)
+    # The accepted source is the real B package, not the C package being
+    # validated from the isolated worktree later in this fixture.
+    h_b_path = checker.C_HB_SCENARIO_INPUT["path"]
+    target = root / h_b_path
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(subprocess.check_output(
+        ["git", "show", f"{checker.C_HB_SCENARIO_INPUT['commit']}:{h_b_path}"], cwd=ROOT,
+    ))
     subprocess.run(["git", "add", "."], cwd=root, check=True)
-    subprocess.run(["git", "commit", "-qm", "accepted authority"], cwd=root, check=True)
+    subprocess.run(["git", "commit", "-qm", "accepted H-B authority"], cwd=root, check=True)
     base_commit = _git(root, "rev-parse", "HEAD")
+    base_tree = _git(root, "rev-parse", "HEAD^{tree}")
+
+    h_b_blob = subprocess.check_output(["git", "cat-file", "blob", f"{base_commit}:{h_b_path}"], cwd=root)
+    synthetic_c_input = {
+        "role": "ACCEPTED-HB-SCENARIO",
+        "commit": base_commit,
+        "path": h_b_path,
+        "gitBlobOid": _git(root, "rev-parse", f"{base_commit}:{h_b_path}"),
+        "rawSha256": hashlib.sha256(h_b_blob).hexdigest(),
+    }
+
+    # C source is committed *after* H-B, and its fixed source constants point
+    # back to that earlier snapshot.  This proves the fixture is exercising
+    # the same anti-self-certification topology as production.
+    for relative in checker.C_ADAPTER_SOURCE_FILES:
+        target = root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / relative, target)
+    witness_test = root / checker.C_PRODUCTION_WITNESS_TEST_PATH
+    witness_test.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(ROOT / checker.C_PRODUCTION_WITNESS_TEST_PATH, witness_test)
+    contract_path = root / "src/cltav_615a_adapter/contract.py"
+    contract_text = contract_path.read_text(encoding="utf-8")
+    replacements = {
+        checker.C_HB_SCENARIO_INPUT["commit"]: synthetic_c_input["commit"],
+        checker.C_HB_SCENARIO_INPUT["gitBlobOid"]: synthetic_c_input["gitBlobOid"],
+        checker.C_HB_SCENARIO_INPUT["rawSha256"]: synthetic_c_input["rawSha256"],
+    }
+    for old, new in replacements.items():
+        assert contract_text.count(old) == 1
+        contract_text = contract_text.replace(old, new)
+    contract_path.write_text(contract_text, encoding="utf-8", newline="\n")
+    subprocess.run(
+        ["git", "add", *checker.C_ADAPTER_SOURCE_FILES, checker.C_PRODUCTION_WITNESS_TEST_PATH],
+        cwd=root,
+        check=True,
+    )
+    subprocess.run(["git", "commit", "-qm", "C adapter bound to H-B"], cwd=root, check=True)
 
     # The production checker derives the allowed authority base from the Git
     # commit that first adds CR-2026-022.  Make the fixture reproduce that
@@ -86,6 +139,15 @@ def isolated_snapshot_repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> t
         gitBlobOid=_git(root, "rev-parse", f"{control_commit}:{checker.CONTROL_CHANGE_PATH.as_posix()}"),
         rawSha256=hashlib.sha256(control_bytes).hexdigest(),
     )
+    candidate["sessionIntegration"]["baseObjectAcceptance"] = {
+        "head": base_commit,
+        "tree": base_tree,
+        "status": "B-ACCEPTED-LIMITED-APPROVE",
+    }
+    candidate["sessionIntegration"]["scenarioInput"] = synthetic_c_input
+    monkeypatch.setattr(checker, "C_HB_SCENARIO_INPUT", synthetic_c_input)
+    monkeypatch.setattr(checker, "C_BASE_OBJECT_ACCEPTANCE", candidate["sessionIntegration"]["baseObjectAcceptance"])
+    monkeypatch.setattr(checker, "C_HB_HISTORY_ANCHOR_COMMIT", base_commit)
     package_path = root / checker.PACKAGE_PATH
     schema_path = root / checker.SCHEMA_PATH
     package_path.parent.mkdir(parents=True, exist_ok=True)
@@ -908,6 +970,181 @@ def test_a09b_projection_branch_and_unknown_recover_view_fields_are_rendered_in_
     assert changed_chinese_cases != chinese_cases
 
 
+def test_a09c_session_integration_view_is_complete_bilingual_and_escapes_controlled_text() -> None:
+    """C-stage review fields must not be silently omitted from either view."""
+
+    integration = PACKAGE["sessionIntegration"]
+    rendered = reader.render(PACKAGE)
+    english, chinese = rendered.split("# 中文版", 1)
+
+    def section(text: str, heading: str, next_heading: str) -> str:
+        start = text.index(heading)
+        end = text.index(next_heading, start + len(heading))
+        return text[start:end]
+
+    english_contract = section(
+        english,
+        "## C-stage session-integration contract",
+        "## Source-to-model control relations",
+    )
+    chinese_contract = section(
+        chinese,
+        "## C 阶段会话集成合同",
+        "## 来源到模型的控制关系",
+    )
+
+    base = integration["baseObjectAcceptance"]
+    source = integration["scenarioInput"]
+    adapter = integration["adapter"]
+    boundary = integration["publicProjectionBoundary"]
+    ready = integration["readyApplication"]
+    recover = integration["recoverToolReadback"]
+    ownership = integration["ownershipProjection"]
+    acceptance = integration["productionAcceptance"]
+    for value in [
+        integration["stage"], *base.values(), *source.values(), *adapter.values(),
+        *boundary["allowedDtos"], *boundary["forbiddenDtos"],
+        boundary["sessionMutationOwner"], boundary["successorOwner"],
+        ready["emissionFact"], ready["deliveryFact"], ready["applicationFact"], ready["rejectionDisposition"],
+        recover["kind"], recover["protocolJournalMutation"], recover["identityBindings"], recover["failureDisposition"],
+        ownership["policy"], ownership["trigger"], ownership["response"], ownership["key"], ownership["unsupportedDisposition"],
+        acceptance["status"], acceptance["criteria"],
+    ]:
+        if isinstance(value, str):
+            assert value in english_contract
+            assert value in chinese_contract
+        elif isinstance(value, list):
+            for item in value:
+                assert item in english_contract
+                assert item in chinese_contract
+
+    for plan in integration["microstepPlans"]:
+        for field in (
+            "actionId", "maxControllerCalls", "maxDeliveries", "steps",
+            "failureDisposition", "completionPredicate",
+        ):
+            value = plan[field]
+            if isinstance(value, list):
+                for item in value:
+                    assert item in english_contract
+                    assert item in chinese_contract
+            else:
+                assert str(value) in english_contract
+                assert str(value) in chinese_contract
+        assert plan["zh"] not in english_contract
+        assert plan["zh"] in chinese_contract
+
+        assert plan["tickPolicy"] in english_contract
+        assert plan["tickPolicy"] not in chinese_contract
+
+    for value in integration["zh"].values():
+        assert value not in english_contract
+        assert value in chinese_contract
+    for value in (ready["zh"], recover["zh"], ownership["zh"], acceptance["zh"]):
+        assert value not in english_contract
+        assert value in chinese_contract
+    for value in (ready["confirmationPredicate"], recover["freshness"], recover["currentReadyPredicate"], acceptance["notEstablished"]):
+        assert value in english_contract
+        assert value not in chinese_contract
+
+    changed = copy.deepcopy(PACKAGE)
+    changed_integration = changed["sessionIntegration"]
+    changed_integration["microstepPlans"][0]["tickPolicy"] = "C-VIEW-ENGLISH-DRIFT"
+    changed_integration["microstepPlans"][0]["zh"] = "C 阶段中文视图漂移。"
+    changed_integration["readyApplication"]["confirmationPredicate"] = "line one\r\nline two | `literal`"
+    changed_integration["readyApplication"]["zh"] = "中文一行\r\n中文二行 | `字面量`"
+    changed_rendered = reader.render(changed)
+    changed_english, changed_chinese = changed_rendered.split("# 中文版", 1)
+    changed_english_contract = section(
+        changed_english,
+        "## C-stage session-integration contract",
+        "## Source-to-model control relations",
+    )
+    changed_chinese_contract = section(
+        changed_chinese,
+        "## C 阶段会话集成合同",
+        "## 来源到模型的控制关系",
+    )
+    assert "C-VIEW-ENGLISH-DRIFT" in changed_english_contract
+    assert "C-VIEW-ENGLISH-DRIFT" not in changed_chinese_contract
+    assert "C 阶段中文视图漂移。" not in changed_english_contract
+    assert "C 阶段中文视图漂移。" in changed_chinese_contract
+    assert r"line one<br>line two \| \`literal\`" in changed_english_contract
+    assert r"line one<br>line two \| \`literal\`" not in changed_chinese_contract
+    assert r"中文一行<br>中文二行 \| \`字面量\`" not in changed_english_contract
+    assert r"中文一行<br>中文二行 \| \`字面量\`" in changed_chinese_contract
+
+
+def test_a09d_c_production_acceptance_witnesses_are_bilingual_complete_and_escaped() -> None:
+    """Each C criterion needs a concrete, reviewable production witness row."""
+
+    acceptance = PACKAGE["sessionIntegration"]["productionAcceptance"]
+    witnesses = acceptance["witnesses"]
+    assert [row["id"] for row in witnesses] == acceptance["criteria"]
+    assert len(witnesses) == 16
+    assert len({row["testNodeId"] for row in witnesses}) == len(witnesses)
+
+    rendered = reader.render(PACKAGE)
+    english, chinese = rendered.split("# 中文版", 1)
+
+    def section(text: str, heading: str, next_heading: str) -> str:
+        start = text.index(heading)
+        end = text.index(next_heading, start + len(heading))
+        return text[start:end]
+
+    english_contract = section(
+        english,
+        "## C-stage session-integration contract",
+        "## Source-to-model control relations",
+    )
+    chinese_contract = section(
+        chinese,
+        "## C 阶段会话集成合同",
+        "## 来源到模型的控制关系",
+    )
+
+    for witness in witnesses:
+        for key in ("id", "productionEntryPoint", "actualPublicPrefix", "testNodeId"):
+            rendered_value = reader.plain_text(witness[key])
+            assert rendered_value in english_contract
+            assert rendered_value in chinese_contract
+        for key in ("inputs", "expectedStateOrDiagnostic"):
+            rendered_value = reader.plain_text(witness[key])
+            assert rendered_value in english_contract
+            assert rendered_value not in chinese_contract
+        for key in ("inputsZh", "expectedStateOrDiagnosticZh"):
+            rendered_value = reader.plain_text(witness[key])
+            assert rendered_value not in english_contract
+            assert rendered_value in chinese_contract
+
+    changed = copy.deepcopy(PACKAGE)
+    witness = changed["sessionIntegration"]["productionAcceptance"]["witnesses"][0]
+    witness["inputs"] = "English input one\r\nEnglish input two | `literal`"
+    witness["inputsZh"] = "中文输入一行\r\n中文输入二行 | `字面量`"
+    witness["expectedStateOrDiagnostic"] = "EN-WITNESS-EXPECTED-DRIFT"
+    witness["expectedStateOrDiagnosticZh"] = "中文见证预期漂移。"
+    changed_rendered = reader.render(changed)
+    changed_english, changed_chinese = changed_rendered.split("# 中文版", 1)
+    changed_english_contract = section(
+        changed_english,
+        "## C-stage session-integration contract",
+        "## Source-to-model control relations",
+    )
+    changed_chinese_contract = section(
+        changed_chinese,
+        "## C 阶段会话集成合同",
+        "## 来源到模型的控制关系",
+    )
+    assert r"English input one<br>English input two \| \`literal\`" in changed_english_contract
+    assert r"English input one<br>English input two \| \`literal\`" not in changed_chinese_contract
+    assert r"中文输入一行<br>中文输入二行 \| \`字面量\`" not in changed_english_contract
+    assert r"中文输入一行<br>中文输入二行 \| \`字面量\`" in changed_chinese_contract
+    assert "EN-WITNESS-EXPECTED-DRIFT" in changed_english_contract
+    assert "EN-WITNESS-EXPECTED-DRIFT" not in changed_chinese_contract
+    assert "中文见证预期漂移。" not in changed_english_contract
+    assert "中文见证预期漂移。" in changed_chinese_contract
+
+
 def test_a10_reader_escapes_tables_and_refuses_invalid_package_without_overwrite(
     isolated_snapshot_repo: tuple[Path, dict],
 ) -> None:
@@ -1020,3 +1257,130 @@ def test_a12_schema_short_circuit_is_named_and_cli_generation_is_transactional(
     assert reader.main(["--root", str(root), "--write"]) == 1
     assert expected_error in capsys.readouterr().err
     assert not view.exists()
+
+
+def test_c01_session_integration_contract_rejects_authority_boundary_and_d01_d02_drift() -> None:
+    """C cannot silently rebind H-B, weaken READY, or turn Recover into replay."""
+
+    def c_errors(mutator) -> list[str]:
+        candidate = copy.deepcopy(PACKAGE)
+        mutator(candidate)
+        return checker.validate_package(ROOT, candidate, SCHEMA)
+
+    mutations = [
+        lambda data: data["sessionIntegration"]["scenarioInput"].update(commit="0" * 40),
+        lambda data: data["sessionIntegration"]["adapter"]["sourceFiles"].pop(),
+        lambda data: data["sessionIntegration"]["publicProjectionBoundary"]["allowedDtos"].append("DeliveryResult"),
+        lambda data: data["sessionIntegration"]["publicProjectionBoundary"]["allowedDtos"].remove("OwnershipProjection"),
+        lambda data: data["sessionIntegration"]["microstepPlans"][0]["steps"].__setitem__(2, "SKIP-COMMON-PRE-READY-LOADER-OPPORTUNITY"),
+        lambda data: data["sessionIntegration"]["microstepPlans"][1].update(tickPolicy="same words, different order"),
+        lambda data: data["sessionIntegration"]["readyApplication"].update(applicationFact="READY-EMITTED-ONLY"),
+        lambda data: data["sessionIntegration"]["readyApplication"].update(confirmationPredicate="accepted READY prefix, but no same-successor proof"),
+        lambda data: data["sessionIntegration"]["recoverToolReadback"].update(protocolJournalMutation="REPLAY-READY"),
+        lambda data: data["sessionIntegration"]["recoverToolReadback"]["identityBindings"].remove("PROTOCOL-PREFIX-DIGEST"),
+        lambda data: data["sessionIntegration"]["recoverToolReadback"].update(freshness="Freshness text with no retained proof"),
+        lambda data: data["sessionIntegration"]["ownershipProjection"].update(policy="FIFO"),
+        lambda data: data["sessionIntegration"]["productionAcceptance"]["criteria"].pop(),
+        lambda data: data["sessionIntegration"]["productionAcceptance"]["witnesses"][0].update(testNodeId="tests/unit/test_cltav_615a_session_adapter.py::test_missing"),
+        lambda data: data["sessionIntegration"]["productionAcceptance"]["witnesses"][1].update(inputsZh=data["sessionIntegration"]["productionAcceptance"]["witnesses"][1]["inputs"]),
+        lambda data: data["sessionIntegration"]["productionAcceptance"]["witnesses"][2].update(actualPublicPrefix="PRIVATE-LOADER-STATE"),
+    ]
+    for mutate in mutations:
+        errors = c_errors(mutate)
+        assert any(error.startswith(("C-INTEGRATION:", "SCHEMA sessionIntegration")) for error in errors)
+
+
+def test_c02_isolated_snapshot_uses_a_real_hb_object_and_c_source_closure(
+    isolated_snapshot_repo: tuple[Path, dict],
+) -> None:
+    """The test fixture proves C's pin is a real earlier Git object, not HEAD."""
+
+    root, candidate = isolated_snapshot_repo
+    assert checker.validate_package(root, candidate) == []
+
+    # The C package is deliberately untracked in the H-B commit and only
+    # appears in the later adapter commit.  Replacing its contract constants
+    # with a current/worktree value must therefore be caught by source closure.
+    contract = root / "src/cltav_615a_adapter/contract.py"
+    text = contract.read_text(encoding="utf-8")
+    contract.write_text(text.replace("H_B_COMMIT = ", "H_B_COMMIT = \"0\" * 40 # ", 1), encoding="utf-8")
+    errors = checker.validate_package(root, candidate)
+    assert any(error.startswith("C-ADAPTER-SOURCE: fixed H-B source constants") for error in errors)
+
+
+def test_c02b_history_anchor_rejects_a_coordinated_adapter_and_package_rebind(
+    isolated_snapshot_repo: tuple[Path, dict], monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A valid later blob cannot replace the historically accepted H-B object.
+
+    This models the dangerous coordinated edit: the adapter constants and the
+    package are changed together, so comparisons between only those two files
+    would self-certify.  The independent first-introduction anchor must still
+    reject the rebound object.
+    """
+
+    root, candidate = isolated_snapshot_repo
+    original = checker.C_HB_SCENARIO_INPUT
+    source_path = root / original["path"]
+    # The fixture worktree currently contains the C candidate package.  Build
+    # the later object from the original H-B bytes instead, so this is a real
+    # alternate *B-stage* blob rather than an invalid current-C source.
+    original_hb_bytes = subprocess.check_output(
+        ["git", "cat-file", "blob", f"{original['commit']}:{original['path']}"], cwd=root,
+    )
+    source_path.write_bytes(original_hb_bytes + b"\n")
+    subprocess.run(["git", "add", original["path"]], cwd=root, check=True)
+    subprocess.run(["git", "commit", "-qm", "later B-like scenario object"], cwd=root, check=True)
+    rebound_commit = _git(root, "rev-parse", "HEAD")
+    rebound_blob = subprocess.check_output(
+        ["git", "cat-file", "blob", f"{rebound_commit}:{original['path']}"], cwd=root,
+    )
+    rebound_input = {
+        "role": "ACCEPTED-HB-SCENARIO",
+        "commit": rebound_commit,
+        "path": original["path"],
+        "gitBlobOid": _git(root, "rev-parse", f"{rebound_commit}:{original['path']}"),
+        "rawSha256": hashlib.sha256(rebound_blob).hexdigest(),
+    }
+    rebound_base = {
+        "head": rebound_commit,
+        "tree": _git(root, "rev-parse", f"{rebound_commit}^{{tree}}"),
+        "status": "B-ACCEPTED-LIMITED-APPROVE",
+    }
+
+    # Simulate a coordinated source edit, not merely a package-only mismatch.
+    contract = root / "src/cltav_615a_adapter/contract.py"
+    contract_text = contract.read_text(encoding="utf-8")
+    for old, new in (
+        (original["commit"], rebound_input["commit"]),
+        (original["gitBlobOid"], rebound_input["gitBlobOid"]),
+        (original["rawSha256"], rebound_input["rawSha256"]),
+    ):
+        assert contract_text.count(old) == 1
+        contract_text = contract_text.replace(old, new)
+    contract.write_text(contract_text, encoding="utf-8", newline="\n")
+
+    rebound = copy.deepcopy(candidate)
+    rebound["sessionIntegration"]["scenarioInput"] = rebound_input
+    rebound["sessionIntegration"]["baseObjectAcceptance"] = rebound_base
+    monkeypatch.setattr(checker, "C_HB_SCENARIO_INPUT", rebound_input)
+    monkeypatch.setattr(checker, "C_BASE_OBJECT_ACCEPTANCE", rebound_base)
+    errors = checker.validate_package(root, rebound)
+    assert not any("fixed source must be the accepted B package" in error for error in errors)
+    assert "C-INTEGRATION: C adapter authority must agree with the independent H-B history anchor" in errors
+
+
+def test_c02c_history_anchor_rejects_a_protected_b_source_mutation(
+    isolated_snapshot_repo: tuple[Path, dict],
+) -> None:
+    """The history anchor cannot be moved by editing the B closure in C scope."""
+
+    root, candidate = isolated_snapshot_repo
+    protected = root / "src/cltav_615a/source_identity.py"
+    protected.write_text(
+        protected.read_text(encoding="utf-8") + "\n# C-scope mutation must be rejected\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    errors = checker.validate_package(root, candidate)
+    assert "C-INTEGRATION: protected accepted B source closure changed after its H-B anchor" in errors

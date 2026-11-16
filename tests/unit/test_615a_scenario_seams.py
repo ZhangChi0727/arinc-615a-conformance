@@ -2177,10 +2177,10 @@ def test_a15_explicit_continuation_preserves_post_dispatch_state_then_recovers_w
     recover_receipt_id = _require_mapping(recover_action["inspection"])["completionReceipt"]
     assert isinstance(recover_receipt_id, str)
     assert set(unknown_contract["recoverRequiredPublicEvidence"]) == {
-        "CURRENT-SESSION-READY-READBACK",
+        "APPLIED-READY-DELIVERY-EVIDENCE",
         recover_receipt_id,
-        "EXACT-RETAINED-POST-DISPATCH-PUBLIC-PREFIX",
-        "RECOVER-READY-READBACK-ONLY-EXTENSION",
+        "EXACT-RETAINED-CURRENT-PROTOCOL-PREFIX",
+        "TYPED-TOOL-READBACK-EVIDENCE-NO-PROTOCOL-JOURNAL-MUTATION",
     }
     assert unknown_contract["targetAndSummaryConfirmation"] == (
         "SEPARATE-REQUIRED-NO-REWIND-OR-REPLAY"

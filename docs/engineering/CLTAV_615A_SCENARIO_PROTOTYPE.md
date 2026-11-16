@@ -2,10 +2,10 @@
 
 > Generated from `configs/engineering/cltav_615a_scenarios.json`; do not edit this view directly. It is a bounded engineering specification, not a protocol conformance verdict, experiment result, or capability claim.
 
-- Artifact: `CLTAV-615A-SCENARIO-PACKAGE`; family: `ENG-UPLOAD-LUR-START`; version: `0.2.0-b-candidate`
+- Artifact: `CLTAV-615A-SCENARIO-PACKAGE`; family: `ENG-UPLOAD-LUR-START`; version: `0.3.0-c-candidate`
 - Control: `CR-2026-022` / `DD-046`; accepted authority commit: `c577f34e98b91083a69f0a731a990c01aa7fa08b`
 - Immutable G0 control record: `docs/control/changes/CR-2026-022.md` @ `331abdf26b550111df56226a88ca5a6a989c1d76`; Git blob `e031045720207218bbc24c810e7f4d33d5d76791`; SHA-256 `d4db86a0eb6e2d9d81504865126d91728a3463ecf9090bf169b8180e26448719`
-- Classification: `SYNTHETIC-ENGINEERING-VALIDATION`; stage: `B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW`
+- Classification: `SYNTHETIC-ENGINEERING-VALIDATION`; stage: `C-SESSION-INTEGRATION-CANDIDATE-PENDING-INDEPENDENT-REVIEW`
 
 ## Accepted authority snapshot
 
@@ -77,6 +77,74 @@
 - B binds the five tracked ordinary source files to the executing module code, freezes their LF-normalized content hashes, and rejects missing or changed source before construction. Reset, installation, activation and attempt audit reference that manifest identity. A caller run label is evaluator-only and cannot replace it; public events contain neither label nor source identity. This is controlled normal-load provenance, not a malicious-code sandbox. C adapter and D distribution binding remain unestablished; a review commit pin complements, not replaces, the B content binding.
 - Not established: The bounded source-controlled Loader/TH surrogate is available only for direct synthetic engineering validation; no real-IUT identity, CL-TAV adapter, experiment execution, or protocol conformance behavior is established.
 
+## C-stage session-integration contract
+
+- Stage: `C-SESSION-INTEGRATION-CANDIDATE-PENDING-INDEPENDENT-REVIEW`.
+
+### Accepted base object and pinned scenario input
+
+| Base object head | Base object tree | Base object status | Input path | Input role | Pinned commit | Git blob | SHA-256 |
+|---|---|---|---|---|---|---|---|
+| d0c674f9fdb165b6ff8c2a40565d4deb7226d2a0 | b5d828e0a14d3c2df93fceba4f96857d83aad646 | B-ACCEPTED-LIMITED-APPROVE | configs/engineering/cltav_615a_scenarios.json | ACCEPTED-HB-SCENARIO | d0c674f9fdb165b6ff8c2a40565d4deb7226d2a0 | c620beb8c84d296df191b8d9af3648c9b3664017 | 9c86da50596cbae4f53b23de9ddff8ceed0bad65efe251033c2e1b13e1505d16 |
+
+### Adapter identity and public-projection boundary
+
+| Source root | Direct entry point | Identity scheme | Continuation policy | Bound source files |
+|---|---|---|---|---|
+| src/cltav_615a_adapter | cltav_615a_adapter.session.build_lur_start_session | CLTAV-615A-C-ADAPTER-LOADED-SOURCE-SHA256-LF-V1 | COPY-ON-WRITE-CONTROLLER-SUCCESSOR-NO-FRESH-OBJECT | src/cltav_615a_adapter/__init__.py<br>src/cltav_615a_adapter/contract.py<br>src/cltav_615a_adapter/identity.py<br>src/cltav_615a_adapter/session.py |
+| Allowed typed projections | Prohibited private objects/state | Session mutation owner | Successor owner |
+|---|---|---|---|
+| PublicEvent<br>JournalSnapshot<br>CompletionReceipt<br>FiniteCheckResult<br>AppliedDeliveryEvidence<br>ToolReadbackEvidence<br>OwnershipProjection | OperationResult<br>DeliveryResult<br>FaultInstallationRecord<br>ActivationRecord<br>RuntimeReadback<br>FaultLifecycleReadback<br>PRIVATE-LOADER-STATE<br>ACTIVE-FAULT-ID | REFERENCE-SESSION-S7-S8-S9 | ADAPTER-COPY-ON-WRITE-CONTINUATION |
+
+### Bounded microstep plans
+
+| Action | Maximum controller calls | Maximum FIFO deliveries | Tick policy | Public steps | Failure disposition | Completion predicate |
+|---|---|---|---|---|---|---|
+| ACT-INSPECT-NO-WRQ-BEFORE-READY | 2 | 2 | LIST and the common pre-READY Loader opportunity may share tick zero; the finite inspection closes at engineering horizon tick one and tick is never a protocol deadline. | RECORD-LIST-PRECONDITION<br>FIFO-DELIVER-LIST<br>COMMON-LOADER-ADVANCE-BEFORE-READY<br>FIFO-DELIVER-EMITTED-WRQ-WHEN-PRESENT<br>COMPLETE-CURRENT-PREFIX-RECEIPT | UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER | CURRENT-SESSION-CONTIGUOUS-PREFIX-RECEIPT-COMPLETED-AFTER-COMMON-PRE-READY-LOADER-OPPORTUNITY |
+| ACT-TEST-ACK-BEFORE-DATA | 4 | 4 | The declared order microsteps may share a virtual tick; stable public sequence numbers determine same-tick order and the finite engineering horizon is tick three, not a protocol timeout. | LOADER-EMIT-WRQ-WHEN-ABSENT<br>FIFO-DELIVER-WRQ<br>COMMON-LOADER-ADVANCE-BEFORE-ACK<br>FIFO-DELIVER-EMITTED-DATA-WHEN-PRESENT<br>TH-EMIT-ACK-WHEN-ABSENT<br>FIFO-DELIVER-ACK<br>LOADER-ADVANCE-DATA-WHEN-ABSENT<br>FIFO-DELIVER-DATA-WHEN-EMITTED<br>COMPLETE-CURRENT-PREFIX-RECEIPT | UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER | CURRENT-CORRELATION-HAS-WRQ-AND-DATA-WITH-ORDER-DETERMINED-BY-STABLE-SEQUENCE |
+
+### READY emission, delivery, and successful application
+
+| Emission fact | Delivery fact | Successful-application fact | Confirmation predicate | Rejection disposition |
+|---|---|---|---|---|
+| READY-EMITTED-ONLY | READY-FIFO-DELIVERED | READY-FIFO-DELIVERED-AND-ACCEPTED-SAME-SUCCESSOR | Only a typed same-successor FIFO delivery projection with delivered and accepted true, exact READY event identity, and a current completed public-prefix receipt may confirm the target and post-summary. | EXECUTED-UNCONFIRMED-SUMMARY-REQUIRES-UNKNOWN |
+
+### Recover tool readback and ownership projection
+
+| Readback kind | Protocol-journal mutation | Identity bindings | Freshness | Current READY predicate | Failure disposition |
+|---|---|---|---|---|---|
+| C-TYPED-TOOL-READBACK | NONE | RUN-ID<br>RESET-ID<br>ATTEMPT-ID<br>SESSION-ID<br>CORRELATION-ID<br>EXECUTION-ATTEMPT-ID<br>PROTOCOL-PREFIX-DIGEST<br>PROTOCOL-EVENT-IDS<br>SAMPLED-TICK<br>SAMPLED-SEQUENCE<br>PROJECTION-VERSION<br>COMPLETED | A Recover readback must be newly minted for the current unconsumed successor and bind the retained successfully applied READY evidence to the exact current public prefix. | The retained READY application must have the same run, reset, attempt, session, correlation, exact event identity, and current prefix digest; a stale, duplicate, rejected, emitted-only, or delivered-only fact never confirms known state. | DO-NOT-MARK-KNOWN |
+| Policy | Trigger | Response | Key | Unsupported disposition |
+|---|---|---|---|---|
+| UNIQUE-KEY | CURRENT-CORRELATION-WRQ-PUBLIC-EVENT-AS-REQUEST | MATCHING-ACK-REPLY-TO-CURRENT-WRQ-AS-RESPONSE | CURRENT-SESSION-AND-CORRELATION-AND-WRQ-EVENT-ID | ERROR-NO-OWNERSHIP-REWRITE |
+
+### C-stage production-acceptance boundary
+
+| Status | Acceptance criteria | Not established |
+|---|---|---|
+| C-CANDIDATE-PENDING-INDEPENDENT-REVIEW | C-01<br>C-02<br>C-03<br>C-04<br>C-05<br>C-06<br>C-07<br>C-08<br>C-09<br>C-10<br>C-11<br>C-12<br>C-13<br>C-14<br>C-15<br>C-16 | No IUT result, protocol-conformance result, full UPLOAD result, real-network result, or experimental result is established by this finite C adapter. |
+
+### C-01 to C-16 production-witness matrix
+
+| Criterion | Production entry point | Inputs | Actual public prefix | Expected state or diagnostic | Test node |
+|---|---|---|---|---|---|
+| C-01 | cltav_runtime.session.ReferenceSession.step | Independent NORMAL, EARLY-WRQ, and EARLY-DATA real-controller runs from the same finite session entry boundary. | Normal LIST-&gt;READY-&gt;WRQ-&gt;ACK-&gt;DATA; early WRQ LIST-&gt;WRQ; early DATA LIST-&gt;READY-&gt;WRQ-&gt;DATA-&gt;ACK. | The independently written expected public sequences match the production logs for all three first-slice variants. | tests/unit/test_cltav_615a_session_adapter.py::test_c15_real_public_timelines_match_independent_expected_sequences |
+| C-02 | cltav_runtime.session.ReferenceSession.step | Two fresh real Loader/TH controllers receiving the same accepted Inspect, Prep, then order action sequence without predictor or evaluator ingress. | LIST-SUBMISSION-PRECONDITION-RECORDED -&gt; EV_TH_LUS0001 -&gt; EV_DL_WRQ_LUR -&gt; EV_TH_ACK_LUR -&gt; EV_DL_DATA_LUR. | The two runs have the same public log, selected action, H, history status, q, resources, and stop result without predictor or evaluator ingress. | tests/unit/test_cltav_615a_session_adapter.py::test_c02_public_adapter_is_deterministic_without_predictor_or_evaluator_ingress |
+| C-03 | cltav_runtime.session.ReferenceSession.step | A fresh real Loader/TH controller, default four ROUNDS, and the accepted Inspect, Prep, then order action sequence. | LIST-SUBMISSION-PRECONDITION-RECORDED -&gt; EV_TH_LUS0001 -&gt; EV_DL_WRQ_LUR -&gt; EV_TH_ACK_LUR -&gt; EV_DL_DATA_LUR. | The session retains plural H after Inspect and Prep, advances history once per confirmed action, then stops singleton NORMAL after the real order observation. | tests/unit/test_cltav_615a_session_adapter.py::test_c02_normal_real_multiround_loop_preserves_plural_h_then_selects_order |
+| C-04 | cltav_runtime.session.ReferenceSession.step | A real finite pre-READY TEST with its completion receipt suppressed after the controller has produced the visible prefix. | LIST-SUBMISSION-PRECONDITION-RECORDED remains observable, but the current completion receipt is absent. | The typed finite observation cannot become a confirmed summary; the session enters UNKNOWN without S9 history submission. | tests/unit/test_cltav_615a_session_adapter.py::test_c04_missing_completion_receipt_is_unknown_not_a_confirmed_observation |
+| C-05 | cltav_615a_adapter.session.LurStartSessionEnvironment.execute | A real Prep action whose typed READY application projection is made unavailable after dispatch. | LIST-SUBMISSION-PRECONDITION-RECORDED -&gt; EV_TH_LUS0001, without a successful READY application evidence. | The sent Prep clears prior KNOWN q and summary, preserves conservative H, and records PREP-SUMMARY-UNCONFIRMED. | tests/unit/test_cltav_615a_session_adapter.py::test_c05_session_clears_known_state_when_ready_application_is_unconfirmed |
+| C-06 | cltav_615a_adapter.session.LurStartSessionEnvironment.execute | An UNKNOWN successor produced by an unconfirmed real Prep, with a prior successfully applied READY evidence and a current completed public prefix. | Recover samples the retained prefix without appending a sixth protocol event. | Typed tool readback re-confirms the target only from the current prefix and then the remaining order phase may continue. | tests/unit/test_cltav_615a_session_adapter.py::test_c06_unknown_session_admits_only_qualified_current_recover |
+| C-07 | cltav_615a_adapter.session.LurStartSessionEnvironment.execute | A stale preflight request and a separately issued TEST whose public summary cannot be confirmed after dispatch. | The stale request appends no event; the issued TEST retains its actual LIST prefix. | CONFIRMED-NOT-SENT preserves KNOWN and history, whereas an issued UNKNOWN-EFFECT preserves the evolved object and makes H conservative. | tests/unit/test_cltav_615a_session_adapter.py::test_c07_confirmed_not_sent_and_issued_unknown_have_distinct_causal_outcomes |
+| C-08 | cltav_runtime.session.ReferenceSession.step | A real TEST record with its frozen virtual tick, exact uncertainty identity, and a tampered visible uncertainty identity negative case. | The same current public journal prefix is evaluated with the selected action's frozen measurement basis. | A tampered observation basis is rejected rather than submitted to history under a different U. | tests/unit/test_cltav_615a_session_adapter.py::test_c08_frozen_uncertainty_identity_rejects_a_tampered_visible_record |
+| C-09 | cltav_615a_adapter.session.LurStartSessionEnvironment.execute | An actual current public WRQ/ACK pair plus controlled interpreter-only cancellation, supersession, and retained-ACTIVE continuation deltas under the same fixed contract. | B journal: EV_DL_WRQ_LUR -&gt; EV_TH_ACK_LUR; cancellation and supersession are ownership facts only and are never fabricated as a sixth B protocol event. | The exact ACK resolves uniquely; cancellation prevents later response ownership, supersession terminates the old ACTIVE request, and a retained ACTIVE request remains ownable in the next finite observation. | tests/unit/test_cltav_615a_session_adapter.py::test_c09_controlled_interpreter_handles_termination_and_retained_active_continuation |
+| C-10 | cltav_615a_adapter.session.LurStartSessionEnvironment.execute | A real EARLY-DATA order run in which DATA and its matching ACK share a virtual tick but retain stable public sequence numbers. | EV_DL_WRQ_LUR -&gt; EV_DL_DATA_LUR -&gt; EV_TH_ACK_LUR with DATA sequence number lower than ACK at the same tick. | The typed ownership projection and order observation use stable sequence order, not a fabricated protocol time deadline. | tests/unit/test_cltav_615a_session_adapter.py::test_c09_same_tick_protocol_order_remains_a_stable_sequence_and_public_projection |
+| C-11 | cltav_runtime.session.ReferenceSession.step | A three-ROUNDS session whose real Inspect and unconfirmed Prep lead to exactly one qualified current Recover. | LIST-SUBMISSION-PRECONDITION-RECORDED -&gt; EV_TH_LUS0001; Recover retains that prefix and appends no protocol event. | Recover is charged once with its declared cost projection, reducing ROUNDS from one to zero without being relabelled as a free retry. | tests/unit/test_cltav_615a_session_adapter.py::test_c11_recover_is_charged_once_with_its_declared_cost_projection |
+| C-12 | cltav_runtime.session.ReferenceSession.step | A terminal singleton state and a later attempted session action on its returned real object successor. | The terminal public prefix is retained exactly after Stop-Singleton. | No post-stop controller drive or public event is permitted. | tests/unit/test_cltav_615a_session_adapter.py::test_c12_terminal_stop_does_not_drive_the_real_object_again |
+| C-13 | cltav_615a_adapter.session.build_lur_start_session | A completed C continuation, an explicit controller full reset, and a new factory setup on the reset object. | The old prefix remains tied to its old reset identity; the new setup begins a new prefix. | Recover never resets or replays; only explicit setup after full reset creates a new attempt. | tests/unit/test_cltav_615a_session_adapter.py::test_c13_explicit_full_reset_is_a_new_setup_not_recover_or_replay |
+| C-14 | cltav_615a_adapter.contract.load_hb_session_contract | The four fixed accepted C action identifiers and the C non-claim boundary. | Only the bounded LUR-start public event vocabulary is available to the finite adapter. | No full UPLOAD, payload-integrity, IUT, protocol-conformance, network, or experiment result is established. | tests/unit/test_cltav_615a_session_adapter.py::test_c14_adapter_keeps_the_declared_non_integrity_boundary |
+| C-15 | cltav_runtime.session.ReferenceSession.step | An UNKNOWN continuation formed by a real unconfirmed Prep and then a qualified current Recover. | LIST-SUBMISSION-PRECONDITION-RECORDED -&gt; EV_TH_LUS0001 before and after Recover, with no replayed protocol event. | The independent UNKNOWN timeline retains the exact public prefix and adds only a typed tool readback. | tests/unit/test_cltav_615a_session_adapter.py::test_c15_unknown_recover_timeline_is_nonemitting_and_retains_current_prefix |
+| C-16 | cltav_615a_adapter.contract.load_hb_session_contract | A stale pre-driven B object and a forged visible record with the wrong declared action at the production session entry. | No new event is appended to the stale current public prefix when either production boundary check fails. | The production entry rejects stale checkpoint or wrong visible action carriers without consuming a current worktree substitute. | tests/unit/test_cltav_615a_session_adapter.py::test_c16_stale_checkpoint_or_wrong_visible_action_cannot_be_consumed |
+
 ## Source-to-model control relations
 
 | Relation | CRS / source unit | Source locator | Semantic opcode class | File role | M2 transition / event / direction | CRS actor → receiver | Use | State boundary | Controlled source assertions | Scenario rationale |
@@ -113,7 +181,7 @@
 
 ### `ACT-INSPECT-NO-WRQ-BEFORE-READY` — TEST
 - Eligibility: LIST-SUBMISSION-PRECONDITION-RECORDED and no session-local LUS-0001 journal event
-- Public stimulus: Complete one bounded inspection of the current visible journal prefix.
+- Public stimulus: After list-precondition delivery and before any READY stimulus, give one shared Loader advance opportunity, then complete one bounded inspection of the current visible journal prefix.
 - Observation mode: `FINITE-ENGINEERING-LOG-CHECK`; cost: acquisition=1; computation=1; preparation=0; retry=0
 - Successor confirmation: `PUBLIC-OBSERVATION-SUMMARY-CONFIRMATION`
 - Unconfirmed-effect disposition: `UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER`
@@ -130,18 +198,18 @@
 
 ### `ACT-PREP-ENTER-READY-WINDOW` — PREP
 - Eligibility: Q-PRE-READY-NO-WRQ is confirmed and the session has affordable preparation resource
-- Public stimulus: TH emits the session-local visible EV_TH_LUS0001 ready stimulus.
+- Public stimulus: TH emits the session-local visible EV_TH_LUS0001 ready stimulus; confirmation additionally requires its successful current FIFO application by the Loader.
 - Observation mode: `VISIBLE-PREPARATION-EVENT`; cost: acquisition=0; computation=1; preparation=1; retry=0
 - Successor confirmation: `PREP-SUMMARY-COMMIT-SEPARATE-FROM-TARGET-STATUS`
 - Unconfirmed-effect disposition: `PREP-EFFECT-BRANCH-TABLE-REQUIRED`
 - History disposition: `SUBMIT-CONFIRMED-SUMMARY-THROUGH-IF-HIST-UPDATE`
 - Inspection: completionReceipt=TH-LUS0001-READY-RECEIPT; fabricatedProtocolResponse=no; finiteHorizonTicks=1; isProtocolNoResponseVerdict=no; journalPredicate=EV_TH_LUS0001-RECORDED-FOR-CURRENT-SESSION
-- Public summary sources: VISIBLE-JOURNAL-PREFIX<br>TH-LUS0001-READY-RECEIPT; prohibited private sources: ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
+- Public summary sources: VISIBLE-JOURNAL-PREFIX<br>TH-LUS0001-READY-RECEIPT<br>APPLIED-READY-DELIVERY-EVIDENCE; prohibited private sources: ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
 - Public-evidence projection contract: completionReceipt=TH-LUS0001-READY-RECEIPT; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX; invalidOrUnconfirmedDisposition=EXECUTED-UNCONFIRMED-SUMMARY-REQUIRES-UNKNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=yes; sessionBinding=CURRENT-SESSION
 - Possible outcomes:
 | Observable | Post-summary | Summary confirmed when | Compatible hypotheses |
 |---|---|---|---|
-| EV_TH_LUS0001 | Q-TARGET-READY | The public ready receipt is bound to the current session and is present in the visible journal. | NORMAL<br>EARLY-DATA |
+| EV_TH_LUS0001 | Q-TARGET-READY | The public ready receipt is current and the exact emitted READY event has a same-successor successful FIFO application evidence; emission or journal presence alone is insufficient. | NORMAL<br>EARLY-DATA |
 - Prep effect branches:
 | Branch | Effect class | Target confirmation | Summary confirmation | History disposition | q disposition | Successor disposition | Charge disposition |
 |---|---|---|---|---|---|---|---|
@@ -153,7 +221,7 @@
 
 ### `ACT-TEST-ACK-BEFORE-DATA` — TEST
 - Eligibility: Q-TARGET-READY is confirmed and the session has an affordable TEST
-- Public stimulus: Drive one bounded loader control step and inspect the visible LUR WRQ, TH ACK and loader DATA event order.
+- Public stimulus: Execute one declared bounded sequence: emit and FIFO-deliver WRQ, give the Loader one pre-ACK advance opportunity, advance TH and FIFO-deliver ACK, then give the Loader one post-ACK advance opportunity and deliver any DATA before inspecting the visible order.
 - Observation mode: `FINITE-JOURNAL-ORDER-CHECK`; cost: acquisition=1; computation=1; preparation=0; retry=0
 - Successor confirmation: `PUBLIC-OBSERVATION-SUMMARY-CONFIRMATION`
 - Unconfirmed-effect disposition: `UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER`
@@ -170,18 +238,18 @@
 
 ### `ACT-RECOVER-RECONFIRM-READY` — RECOVER
 - Eligibility: SessionContext is UNKNOWN and a declared ready target can be publicly re-confirmed within the finite object boundary
-- Public stimulus: Request the controlled TH ready read-back and retain its visible journal receipt.
-- Observation mode: `VISIBLE-RECOVER-READBACK`; cost: acquisition=0; computation=1; preparation=1; retry=0
+- Public stimulus: Request one typed C-layer tool readback over the current retained public protocol prefix and a prior successfully applied READY evidence; it emits no protocol event and does not replay READY.
+- Observation mode: `TYPED-TOOL-READBACK-OVER-PUBLIC-PROTOCOL-PREFIX`; cost: acquisition=0; computation=1; preparation=1; retry=0
 - Successor confirmation: `TARGET-AND-SUMMARY-CONFIRMED-SEPARATELY`
 - Unconfirmed-effect disposition: `DO-NOT-MARK-KNOWN`
 - History disposition: `SUBMIT-CONFIRMED-SUMMARY-THROUGH-IF-HIST-UPDATE`
-- Inspection: completionReceipt=RECOVER-READY-READBACK-COMPLETED; fabricatedProtocolResponse=no; finiteHorizonTicks=1; isProtocolNoResponseVerdict=no; journalPredicate=EXACT-RETAINED-POST-DISPATCH-PREFIX-EXTENDED-BY-CURRENT-SESSION-READY-READBACK
-- Public summary sources: VISIBLE-JOURNAL-PREFIX<br>RECOVER-READY-READBACK-COMPLETED; prohibited private sources: ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
-- Public-evidence projection contract: completionReceipt=RECOVER-READY-READBACK-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX; invalidOrUnconfirmedDisposition=DO-NOT-MARK-KNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=yes; sessionBinding=CURRENT-SESSION
+- Inspection: completionReceipt=RECOVER-READY-READBACK-COMPLETED; fabricatedProtocolResponse=no; finiteHorizonTicks=1; isProtocolNoResponseVerdict=no; journalPredicate=EXACT-CURRENT-PROTOCOL-PREFIX-PLUS-FRESH-TYPED-TOOL-READBACK-WITH-NO-PROTOCOL-JOURNAL-MUTATION
+- Public summary sources: VISIBLE-JOURNAL-PREFIX<br>RECOVER-READY-READBACK-COMPLETED<br>APPLIED-READY-DELIVERY-EVIDENCE<br>TYPED-TOOL-READBACK-EVIDENCE; prohibited private sources: ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
+- Public-evidence projection contract: completionReceipt=RECOVER-READY-READBACK-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=EXACT-RETAINED-PROTOCOL-PREFIX-NO-PROTOCOL-EVENT-EXTENSION; invalidOrUnconfirmedDisposition=DO-NOT-MARK-KNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-TYPED-TOOL-READBACK-OVER-PROTOCOL-PREFIX; receiptMustBeCompleted=yes; sessionBinding=CURRENT-SESSION
 - Possible outcomes:
 | Observable | Post-summary | Summary confirmed when | Compatible hypotheses |
 |---|---|---|---|
-| RECOVER-READY-READBACK | Q-TARGET-READY | The public recover receipt extends the exact retained post-dispatch public prefix only by the current-session ready read-back; it re-confirms ready without replaying or rewinding an earlier action. | NORMAL<br>EARLY-DATA |
+| RECOVER-READY-READBACK | Q-TARGET-READY | A fresh typed tool readback binds the exact current protocol prefix and a prior successfully applied READY evidence for the same live object identity; it re-confirms ready without a sixth protocol event, replay or rewind. | NORMAL<br>EARLY-DATA |
 - Non-evaluated obligations: PHYSICAL-DEVICE-RECOVERY
 
 ## Clock, observation, reset and recovery
@@ -224,7 +292,7 @@
 
 | Trigger | Action | Round | May-have visible events | Session disposition | Recover entry q | Required public evidence | Target/summary confirmation | Rewind rule | Unconfirmed Recover |
 |---|---|---|---|---|---|---|---|---|---|
-| POST-DISPATCH-TEST-SUMMARY-CONFIRMATION-FAILURE | ACT-TEST-ACK-BEFORE-DATA | 2 | EV_DL_WRQ_LUR<br>EV_TH_ACK_LUR<br>EV_DL_DATA_LUR | UNKNOWN-PRESERVE-ACTUAL-SUCCESSOR-AND-POST-DISPATCH-JOURNAL | UNKNOWN | CURRENT-SESSION-READY-READBACK<br>RECOVER-READY-READBACK-COMPLETED<br>EXACT-RETAINED-POST-DISPATCH-PUBLIC-PREFIX<br>RECOVER-READY-READBACK-ONLY-EXTENSION | SEPARATE-REQUIRED-NO-REWIND-OR-REPLAY | NO-REWIND-TO-Q-PRE-READY-NO-WRQ | REMAIN-UNKNOWN |
+| POST-DISPATCH-TEST-SUMMARY-CONFIRMATION-FAILURE | ACT-TEST-ACK-BEFORE-DATA | 2 | EV_DL_WRQ_LUR<br>EV_TH_ACK_LUR<br>EV_DL_DATA_LUR | UNKNOWN-PRESERVE-ACTUAL-SUCCESSOR-AND-POST-DISPATCH-JOURNAL | UNKNOWN | APPLIED-READY-DELIVERY-EVIDENCE<br>RECOVER-READY-READBACK-COMPLETED<br>EXACT-RETAINED-CURRENT-PROTOCOL-PREFIX<br>TYPED-TOOL-READBACK-EVIDENCE-NO-PROTOCOL-JOURNAL-MUTATION | SEPARATE-REQUIRED-NO-REWIND-OR-REPLAY | NO-REWIND-TO-Q-PRE-READY-NO-WRQ | REMAIN-UNKNOWN |
 
 ## Timelines / 时线
 
@@ -278,7 +346,7 @@
 - ARINC 615A UPLOAD 的 LUR 起始控制切片工程场景包；仅用于受控合成工程对象和规格走查。
 - 控制：`CR-2026-022` / `DD-046`；已接受权威提交：`c577f34e98b91083a69f0a731a990c01aa7fa08b`
 - 不可变 G0 控制记录：`docs/control/changes/CR-2026-022.md` @ `331abdf26b550111df56226a88ca5a6a989c1d76`；Git blob `e031045720207218bbc24c810e7f4d33d5d76791`；SHA-256 `d4db86a0eb6e2d9d81504865126d91728a3463ecf9090bf169b8180e26448719`
-- 分类：`SYNTHETIC-ENGINEERING-VALIDATION`；阶段：`B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW`
+- 分类：`SYNTHETIC-ENGINEERING-VALIDATION`；阶段：`C-SESSION-INTEGRATION-CANDIDATE-PENDING-INDEPENDENT-REVIEW`
 
 ## 已接受权威快照
 
@@ -355,6 +423,78 @@
 - B 将五个受跟踪普通源码文件与实际执行的模块代码核对，冻结 LF 规范化内容散列，构造前拒绝源码缺失或漂移。复位、安装、激活和尝试审计共同引用该清单身份。调用者运行标签仅限评估方，不能替代源码身份；公开事件不含标签或源码身份。这是受控正常加载的来源核验，不是恶意代码沙箱。C 适配器与 D 分发身份仍未建立；评审提交定位补充而不替代 B 内容绑定。
 - 尚未建立：该受控源码 Loader／TH 替身仅用于直接合成工程验证；尚未建立真实 IUT 身份、CL-TAV 适配器、实验执行或协议符合性行为。
 
+## C 阶段会话集成合同
+
+- 阶段：`C-SESSION-INTEGRATION-CANDIDATE-PENDING-INDEPENDENT-REVIEW`。C 阶段将真实进程内 Loader／TH 对象以受控输入身份接入既有有限会话；它仍是有限工程闭环，不建立 IUT、实验或协议符合性主张。
+- 算法仅接收公开协议事件、快照、完成回执和类型化投影；控制结果、故障激活、私有状态和评估方回读均不得进入会话更新。
+- 首轮检查和顺序 TEST 均使用预先声明的硬上限真实微步；微步与虚拟 tick 不等价，同 tick 依稳定序号排序。
+
+### 基础对象接受与固定场景输入
+
+| 基础对象 Head | 基础对象树 | 基础对象状态 | 输入路径 | 输入角色 | 固定提交 | Git blob | SHA-256 |
+|---|---|---|---|---|---|---|---|
+| d0c674f9fdb165b6ff8c2a40565d4deb7226d2a0 | b5d828e0a14d3c2df93fceba4f96857d83aad646 | B-ACCEPTED-LIMITED-APPROVE | configs/engineering/cltav_615a_scenarios.json | ACCEPTED-HB-SCENARIO | d0c674f9fdb165b6ff8c2a40565d4deb7226d2a0 | c620beb8c84d296df191b8d9af3648c9b3664017 | 9c86da50596cbae4f53b23de9ddff8ceed0bad65efe251033c2e1b13e1505d16 |
+
+### 适配器身份与公开投影边界
+
+| 源码根 | 直接入口 | 身份方案 | 连续执行策略 | 受控源码 |
+|---|---|---|---|---|
+| src/cltav_615a_adapter | cltav_615a_adapter.session.build_lur_start_session | CLTAV-615A-C-ADAPTER-LOADED-SOURCE-SHA256-LF-V1 | COPY-ON-WRITE-CONTROLLER-SUCCESSOR-NO-FRESH-OBJECT | src/cltav_615a_adapter/__init__.py<br>src/cltav_615a_adapter/contract.py<br>src/cltav_615a_adapter/identity.py<br>src/cltav_615a_adapter/session.py |
+| 允许的类型化投影 | 禁止泄露的私有对象／状态 | 会话写入所有者 | 后继对象所有者 |
+|---|---|---|---|
+| PublicEvent<br>JournalSnapshot<br>CompletionReceipt<br>FiniteCheckResult<br>AppliedDeliveryEvidence<br>ToolReadbackEvidence<br>OwnershipProjection | OperationResult<br>DeliveryResult<br>FaultInstallationRecord<br>ActivationRecord<br>RuntimeReadback<br>FaultLifecycleReadback<br>PRIVATE-LOADER-STATE<br>ACTIVE-FAULT-ID | REFERENCE-SESSION-S7-S8-S9 | ADAPTER-COPY-ON-WRITE-CONTINUATION |
+
+### 有界微步计划
+
+| 动作 | 最大控制器调用 | 最大 FIFO 投递 | tick 策略 | 公开步骤 | 失败处置 | 完成谓词 |
+|---|---|---|---|---|---|---|
+| ACT-INSPECT-NO-WRQ-BEFORE-READY | 2 | 2 | LIST 的记录与投递以及 READY 前共同的 Loader 推进可同处 tick 0；有限检查在工程视界 tick 1 闭合，tick 绝非协议期限。 | RECORD-LIST-PRECONDITION<br>FIFO-DELIVER-LIST<br>COMMON-LOADER-ADVANCE-BEFORE-READY<br>FIFO-DELIVER-EMITTED-WRQ-WHEN-PRESENT<br>COMPLETE-CURRENT-PREFIX-RECEIPT | UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER | CURRENT-SESSION-CONTIGUOUS-PREFIX-RECEIPT-COMPLETED-AFTER-COMMON-PRE-READY-LOADER-OPPORTUNITY |
+| ACT-TEST-ACK-BEFORE-DATA | 4 | 4 | 声明的顺序微步可同处一个虚拟 tick；同 tick 顺序由稳定公开序号决定，有限工程视界为 tick 3，绝不表示协议超时。 | LOADER-EMIT-WRQ-WHEN-ABSENT<br>FIFO-DELIVER-WRQ<br>COMMON-LOADER-ADVANCE-BEFORE-ACK<br>FIFO-DELIVER-EMITTED-DATA-WHEN-PRESENT<br>TH-EMIT-ACK-WHEN-ABSENT<br>FIFO-DELIVER-ACK<br>LOADER-ADVANCE-DATA-WHEN-ABSENT<br>FIFO-DELIVER-DATA-WHEN-EMITTED<br>COMPLETE-CURRENT-PREFIX-RECEIPT | UNKNOWN-EFFECT-REQUIRES-QUALIFIED-RECOVER | CURRENT-CORRELATION-HAS-WRQ-AND-DATA-WITH-ORDER-DETERMINED-BY-STABLE-SEQUENCE |
+
+### READY 的发射、投递与成功应用
+
+| 发射事实 | 投递事实 | 成功应用事实 | 确认原则 | 拒绝处置 |
+|---|---|---|---|---|
+| READY-EMITTED-ONLY | READY-FIFO-DELIVERED | READY-FIFO-DELIVERED-AND-ACCEPTED-SAME-SUCCESSOR | READY 发射、FIFO 投递与被对象成功应用是三个不同事实；只有同一后继的类型化成功投递、精确 READY 身份和当前完整公开前缀回执共同成立，才能确认目标和后继摘要。 | EXECUTED-UNCONFIRMED-SUMMARY-REQUIRES-UNKNOWN |
+
+### Recover 工具回读与所有权投影
+
+- Recover 是不改变协议日志的类型化工具回读；仅同一存续对象上的已成功 READY 应用与当前完整前缀可确认目标和摘要。
+| 回读类型 | 协议日志修改 | 身份绑定 | 新鲜性与当前性合同 | 失败处置 |
+|---|---|---|---|---|
+| C-TYPED-TOOL-READBACK | NONE | RUN-ID<br>RESET-ID<br>ATTEMPT-ID<br>SESSION-ID<br>CORRELATION-ID<br>EXECUTION-ATTEMPT-ID<br>PROTOCOL-PREFIX-DIGEST<br>PROTOCOL-EVENT-IDS<br>SAMPLED-TICK<br>SAMPLED-SEQUENCE<br>PROJECTION-VERSION<br>COMPLETED | Recover 必须为当前未消费后继重新生成类型化回读，并把既有成功 READY 应用证据绑定到完全相同的当前公开前缀；陈旧、重复、拒绝、仅发射或仅投递的事实均不得确认已知状态。 | DO-NOT-MARK-KNOWN |
+| 策略 | 触发 | 响应 | 唯一键 | 不支持处置 | 中文说明 |
+|---|---|---|---|---|---|
+| UNIQUE-KEY | CURRENT-CORRELATION-WRQ-PUBLIC-EVENT-AS-REQUEST | MATCHING-ACK-REPLY-TO-CURRENT-WRQ-AS-RESPONSE | CURRENT-SESSION-AND-CORRELATION-AND-WRQ-EVENT-ID | ERROR-NO-OWNERSHIP-REWRITE | 以当前关联的 WRQ 公开事件作为请求、以精确回复该 WRQ 的 ACK 作为响应；唯一键由当前会话、关联和 WRQ 事件身份组成，任何不支持的归属不得重写。受控解释器还验证取消、替代和跨观察持续的 ACTIVE 请求，但 C 不把这些归属控制事实伪造为额外 B 协议事件。 |
+
+### C 阶段生产验收边界
+
+| 状态 | 验收准则 | 尚未建立的主张 |
+|---|---|---|
+| C-CANDIDATE-PENDING-INDEPENDENT-REVIEW | C-01<br>C-02<br>C-03<br>C-04<br>C-05<br>C-06<br>C-07<br>C-08<br>C-09<br>C-10<br>C-11<br>C-12<br>C-13<br>C-14<br>C-15<br>C-16 | 有限 C 适配器不建立 IUT、协议符合性、完整 UPLOAD、真实网络或实验结果。 |
+
+### C-01 至 C-16 的生产见证矩阵
+
+| 准则 | 生产入口 | 输入 | 实际公开前缀 | 预期状态或诊断 | 测试节点 |
+|---|---|---|---|---|---|
+| C-01 | cltav_runtime.session.ReferenceSession.step | 从同一有限会话入口边界出发的独立 NORMAL、EARLY-WRQ 与 EARLY-DATA 真实控制器运行。 | Normal LIST-&gt;READY-&gt;WRQ-&gt;ACK-&gt;DATA; early WRQ LIST-&gt;WRQ; early DATA LIST-&gt;READY-&gt;WRQ-&gt;DATA-&gt;ACK. | 独立编写的预期公开序列与三个首轮变体的生产日志一致。 | tests/unit/test_cltav_615a_session_adapter.py::test_c15_real_public_timelines_match_independent_expected_sequences |
+| C-02 | cltav_runtime.session.ReferenceSession.step | 两个新建的真实 Loader／TH 控制器在不接收预测器或评估方输入的条件下，执行相同的检查、准备、顺序动作序列。 | LIST-SUBMISSION-PRECONDITION-RECORDED -&gt; EV_TH_LUS0001 -&gt; EV_DL_WRQ_LUR -&gt; EV_TH_ACK_LUR -&gt; EV_DL_DATA_LUR. | 两个运行具有相同的公开日志、已选动作、H、历史状态、q、资源和停止结果，且不存在预测器或评估方输入。 | tests/unit/test_cltav_615a_session_adapter.py::test_c02_public_adapter_is_deterministic_without_predictor_or_evaluator_ingress |
+| C-03 | cltav_runtime.session.ReferenceSession.step | 一个新建的真实 Loader／TH 控制器、默认四个 ROUNDS，以及已接受的检查、准备、顺序动作序列。 | LIST-SUBMISSION-PRECONDITION-RECORDED -&gt; EV_TH_LUS0001 -&gt; EV_DL_WRQ_LUR -&gt; EV_TH_ACK_LUR -&gt; EV_DL_DATA_LUR. | 会话在检查和准备后保留多个 H，每个已确认动作仅推进一次历史，随后在真实顺序观测后以单一 NORMAL 停止。 | tests/unit/test_cltav_615a_session_adapter.py::test_c02_normal_real_multiround_loop_preserves_plural_h_then_selects_order |
+| C-04 | cltav_runtime.session.ReferenceSession.step | 一个真实有限的 READY 前 TEST；控制器已产生可见前缀后，其完成回执被抑制。 | LIST-SUBMISSION-PRECONDITION-RECORDED remains observable, but the current completion receipt is absent. | 类型化有限观测不得变为已确认摘要；会话进入 UNKNOWN，且不得执行 S9 历史提交。 | tests/unit/test_cltav_615a_session_adapter.py::test_c04_missing_completion_receipt_is_unknown_not_a_confirmed_observation |
+| C-05 | cltav_615a_adapter.session.LurStartSessionEnvironment.execute | 一次真实 Prep 动作；派发后其类型化 READY 应用投影被置为不可用。 | LIST-SUBMISSION-PRECONDITION-RECORDED -&gt; EV_TH_LUS0001, without a successful READY application evidence. | 已发送的 Prep 清除先前 KNOWN 的 q 与摘要，保守保留 H，并记录 PREP-SUMMARY-UNCONFIRMED。 | tests/unit/test_cltav_615a_session_adapter.py::test_c05_session_clears_known_state_when_ready_application_is_unconfirmed |
+| C-06 | cltav_615a_adapter.session.LurStartSessionEnvironment.execute | 一个由未确认真实 Prep 产生的 UNKNOWN 后继，具有先前成功应用的 READY 证据和当前已完成的公开前缀。 | Recover samples the retained prefix without appending a sixth protocol event. | 类型化工具回读仅依据当前前缀重新确认目标，之后才可继续剩余顺序阶段。 | tests/unit/test_cltav_615a_session_adapter.py::test_c06_unknown_session_admits_only_qualified_current_recover |
+| C-07 | cltav_615a_adapter.session.LurStartSessionEnvironment.execute | 一个陈旧的派发前请求，以及一次派发后其公开摘要无法确认的独立 TEST。 | The stale request appends no event; the issued TEST retains its actual LIST prefix. | CONFIRMED-NOT-SENT 保持 KNOWN 与历史；而已执行的 UNKNOWN-EFFECT 保留演进对象并使 H 保守。 | tests/unit/test_cltav_615a_session_adapter.py::test_c07_confirmed_not_sent_and_issued_unknown_have_distinct_causal_outcomes |
+| C-08 | cltav_runtime.session.ReferenceSession.step | 一条具有冻结虚拟 tick、精确不确定性身份的真实 TEST 记录，以及篡改可见不确定性身份的负例。 | The same current public journal prefix is evaluated with the selected action's frozen measurement basis. | 被篡改的观测依据会被拒绝，而不会以不同 U 提交到历史。 | tests/unit/test_cltav_615a_session_adapter.py::test_c08_frozen_uncertainty_identity_rejects_a_tampered_visible_record |
+| C-09 | cltav_615a_adapter.session.LurStartSessionEnvironment.execute | 同一固定合同下的一对实际当前公开 WRQ／ACK，以及仅由受控解释器处理的取消、替代和保留 ACTIVE 续接增量。 | B journal: EV_DL_WRQ_LUR -&gt; EV_TH_ACK_LUR; cancellation and supersession are ownership facts only and are never fabricated as a sixth B protocol event. | 精确 ACK 唯一归属；取消阻止后续响应归属，替代终止旧 ACTIVE 请求，保留的 ACTIVE 请求在下一次有限观测中仍可被正确归属。 | tests/unit/test_cltav_615a_session_adapter.py::test_c09_controlled_interpreter_handles_termination_and_retained_active_continuation |
+| C-10 | cltav_615a_adapter.session.LurStartSessionEnvironment.execute | 一次真实 EARLY-DATA 顺序运行，其中 DATA 与匹配 ACK 共享虚拟 tick 但保留稳定公开序号。 | EV_DL_WRQ_LUR -&gt; EV_DL_DATA_LUR -&gt; EV_TH_ACK_LUR with DATA sequence number lower than ACK at the same tick. | 类型化归属投影和顺序观测使用稳定序号，而非虚构的协议时间期限。 | tests/unit/test_cltav_615a_session_adapter.py::test_c09_same_tick_protocol_order_remains_a_stable_sequence_and_public_projection |
+| C-11 | cltav_runtime.session.ReferenceSession.step | 一个三 ROUNDS 会话：真实检查与未确认 Prep 后，恰好进入一次合格的当前 Recover。 | LIST-SUBMISSION-PRECONDITION-RECORDED -&gt; EV_TH_LUS0001; Recover retains that prefix and appends no protocol event. | Recover 按其声明的成本投影仅计费一次，使 ROUNDS 从一变为零，不得重新标记为免费重试。 | tests/unit/test_cltav_615a_session_adapter.py::test_c11_recover_is_charged_once_with_its_declared_cost_projection |
+| C-12 | cltav_runtime.session.ReferenceSession.step | 一个终止的单一候选状态，以及随后对其返回的真实对象后继尝试执行会话动作。 | The terminal public prefix is retained exactly after Stop-Singleton. | 停止后不允许再驱动控制器或追加公开事件。 | tests/unit/test_cltav_615a_session_adapter.py::test_c12_terminal_stop_does_not_drive_the_real_object_again |
+| C-13 | cltav_615a_adapter.session.build_lur_start_session | 一个完成的 C 续接、一次显式控制器全量复位，以及在已复位对象上的新工厂设置。 | The old prefix remains tied to its old reset identity; the new setup begins a new prefix. | Recover 绝不复位或重放；只有全量复位后的显式设置才创建新尝试。 | tests/unit/test_cltav_615a_session_adapter.py::test_c13_explicit_full_reset_is_a_new_setup_not_recover_or_replay |
+| C-14 | cltav_615a_adapter.contract.load_hb_session_contract | 四个固定已接受的 C 动作标识以及 C 的非主张边界。 | Only the bounded LUR-start public event vocabulary is available to the finite adapter. | 不建立完整 UPLOAD、负载完整性、IUT、协议符合性、网络或实验结果。 | tests/unit/test_cltav_615a_session_adapter.py::test_c14_adapter_keeps_the_declared_non_integrity_boundary |
+| C-15 | cltav_runtime.session.ReferenceSession.step | 一个由真实未确认 Prep 形成的 UNKNOWN 续接，随后执行合格的当前 Recover。 | LIST-SUBMISSION-PRECONDITION-RECORDED -&gt; EV_TH_LUS0001 before and after Recover, with no replayed protocol event. | 独立的 UNKNOWN 时线保留精确公开前缀，只增加类型化工具回读。 | tests/unit/test_cltav_615a_session_adapter.py::test_c15_unknown_recover_timeline_is_nonemitting_and_retains_current_prefix |
+| C-16 | cltav_615a_adapter.contract.load_hb_session_contract | 一个陈旧的预驱动 B 对象，以及生产会话入口中动作声明错误的伪造可见记录。 | No new event is appended to the stale current public prefix when either production boundary check fails. | 生产入口拒绝陈旧检查点或动作声明错误的可见载体，且不消费当前工作树替代物。 | tests/unit/test_cltav_615a_session_adapter.py::test_c16_stale_checkpoint_or_wrong_visible_action_cannot_be_consumed |
+- C 阶段候选须逐项满足 C-01 至 C-16 的生产入口回归，之后才可独立复审；不是 Ready、合并或后续 D/E 授权。
+
 ## 来源到模型的控制关系
 
 | 关系 | CRS／来源单元 | 来源定位 | 语义 opcode 类 | 文件角色 | M2 迁移／事件／方向 | CRS 参与方 | 场景用途 | 状态边界 | 场景理由 | 中文控制说明 |
@@ -389,9 +529,9 @@
 
 ## 受控动作
 
-### `ACT-INSPECT-NO-WRQ-BEFORE-READY` — 有限工程日志检查：区分就绪前无 WRQ 与提前 WRQ；它不是协议无响应判定，也不伪造协议响应。
+### `ACT-INSPECT-NO-WRQ-BEFORE-READY` — 有限工程日志检查：列表交付后、READY 前必须给一次共同 Loader 推进机会，再区分无 WRQ 与提前 WRQ；它不是协议无响应判定，也不伪造协议响应。
 - 类别：`TEST`；资格：已记录清单提交前提，且当前会话日志中尚无 LUS-0001。
-- 公开刺激：完成一次对当前可见日志前缀的有界检查。
+- 公开刺激：在清单前置交付后、任何 READY 刺激前，给予一次共同的加载器推进机会，再完成对当前可见日志前缀的有界检查。
 - 观测模式：有限工程日志检查。；成本：acquisition=1; computation=1; preparation=0; retry=0
 - 后继确认：通过公开观测与公开摘要确认实际后继。
 - 未确认效果：未确认效果进入 UNKNOWN，且只能经合格 Recover 继续。
@@ -406,20 +546,20 @@
 | EV_DL_WRQ_LUR-BEFORE-EV_TH_LUS0001 | Q-EARLY-WRQ-OBSERVED | 公开检查完成回执与当前日志事件顺序绑定时，才确认摘要。 | EARLY-WRQ |
 - 未评估义务：PROTOCOL-NO-RESPONSE-DEADLINE<br>PHYSICAL-CLOCK-CALIBRATION
 
-### `ACT-PREP-ENTER-READY-WINDOW` — 准备动作：由目标硬件发出当前会话可见的 LUS-0001，并以公开回执确认就绪摘要。
+### `ACT-PREP-ENTER-READY-WINDOW` — 准备动作：目标硬件发出当前会话可见的 LUS-0001；只有同一后继上的成功 FIFO 应用证据及当前公开回执共同成立，才确认就绪摘要。
 - 类别：`PREP`；资格：Q-PRE-READY-NO-WRQ 已确认，且会话拥有可负担的准备资源。
-- 公开刺激：目标硬件发出当前会话可见的 EV_TH_LUS0001 就绪刺激。
+- 公开刺激：目标硬件发出当前会话可见的 EV_TH_LUS0001 就绪刺激；确认还要求加载器成功 FIFO 应用该当前事件。
 - 观测模式：可见准备事件。；成本：acquisition=0; computation=1; preparation=1; retry=0
 - 后继确认：Prep 的摘要提交与目标状态必须分开判定；只有摘要确认控制提交。
 - 未确认效果：必须按四分支效果表处置，不能把已执行但摘要未确认误作确认未发送。
 - 历史提交：仅将已确认摘要经 IF-HIST-UPDATE 提交给后续历史。
 - 检查：completionReceipt=TH-LUS0001-READY-RECEIPT; fabricatedProtocolResponse=否; finiteHorizonTicks=1; isProtocolNoResponseVerdict=否; journalPredicate=EV_TH_LUS0001-RECORDED-FOR-CURRENT-SESSION
-- 摘要来源（公开）：VISIBLE-JOURNAL-PREFIX<br>TH-LUS0001-READY-RECEIPT；禁止私有来源：ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
+- 摘要来源（公开）：VISIBLE-JOURNAL-PREFIX<br>TH-LUS0001-READY-RECEIPT<br>APPLIED-READY-DELIVERY-EVIDENCE；禁止私有来源：ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
 - 公开证据投影合同：completionReceipt=TH-LUS0001-READY-RECEIPT; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX; invalidOrUnconfirmedDisposition=EXECUTED-UNCONFIRMED-SUMMARY-REQUIRES-UNKNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=是; sessionBinding=CURRENT-SESSION
 - 可能结果：
 | 可见量 | 后继摘要 | 摘要确认条件 | 相容假设 |
 |---|---|---|---|
-| EV_TH_LUS0001 | Q-TARGET-READY | 公开就绪回执绑定当前会话且位于可见日志中时，才确认摘要。 | NORMAL<br>EARLY-DATA |
+| EV_TH_LUS0001 | Q-TARGET-READY | 公开就绪回执为当前回执，且精确 READY 事件在同一后继上具有成功 FIFO 应用证据时，才确认摘要；仅发射或位于日志中均不足够。 | NORMAL<br>EARLY-DATA |
 - Prep 效果分支：
 | 分支 | 效果类 | 目标确认 | 摘要确认 | 历史处置 | q 处置 | 后继处置 | 收费 | 中文说明 |
 |---|---|---|---|---|---|---|---|---|
@@ -429,9 +569,9 @@
 | targetNotReachedWithConfirmedSuccessor | NONE | TARGET-NOT-REACHED-BUT-SUCCESSOR-CONFIRMED | SUMMARY-CONFIRMED | COMMIT-CONFIRMED-HISTORY | KNOWN-S9-COMMIT | PRESERVE-RETURNED-SUCCESSOR | CHARGE-ONCE | 目标未达但实际后继摘要已确认时，仍按已确认摘要提交 KNOWN，不能误归 UNKNOWN。 |
 - 未评估义务：FULL-UPLOAD-COMPLETION
 
-### `ACT-TEST-ACK-BEFORE-DATA` — 有限顺序检查：观察 LUR WRQ、匹配 ACK 与 DATA 的公开顺序，区分正常与提前 DATA。
+### `ACT-TEST-ACK-BEFORE-DATA` — 有限顺序检查：按声明的 WRQ 交付、ACK 前 Loader 机会、TH/ACK 交付、ACK 后 Loader 机会的有限微步序列观察公开顺序，区分正常与提前 DATA。
 - 类别：`TEST`；资格：Q-TARGET-READY 已确认，且会话拥有可负担的 TEST 资源。
-- 公开刺激：驱动一个有界加载器控制步，并检查当前关联的完整前缀中 LUR WRQ、TH ACK 和加载器 DATA 的顺序。
+- 公开刺激：执行一段声明的有界序列：发出并 FIFO 交付 WRQ，给予加载器一次 ACK 前推进机会，推进目标硬件并 FIFO 交付 ACK，再给予加载器一次 ACK 后推进机会并交付任何 DATA，最后检查可见顺序。
 - 观测模式：有限日志顺序检查。；成本：acquisition=1; computation=1; preparation=0; retry=0
 - 后继确认：通过公开观测与公开摘要确认实际后继。
 - 未确认效果：未确认效果进入 UNKNOWN，且只能经合格 Recover 继续。
@@ -446,20 +586,20 @@
 | DATA-BEFORE-MATCHING-ACK | Q-LUR-ORDER-ASSESSED | 已完成的当前操作关联前缀中，WRQ 后的首个 DATA 先于任何匹配 ACK；后续 ACK 不得改变这一已观测顺序时，才确认摘要。 | EARLY-DATA |
 - 未评估义务：LUR-PAYLOAD-INTEGRITY<br>FULL-UPLOAD-COMPLETION
 
-### `ACT-RECOVER-RECONFIRM-READY` — 恢复动作：仅在 UNKNOWN 效果后，用独立的公开就绪回读重新确认目标与摘要；失败不得标记为已知。
+### `ACT-RECOVER-RECONFIRM-READY` — 恢复动作：仅在 UNKNOWN 效果后，以独立类型化工具回读绑定当前协议前缀和先前成功应用的 READY 证据，重新确认目标与摘要；不产生第六协议事件，失败不得标记为已知。
 - 类别：`RECOVER`；资格：SessionContext 为 UNKNOWN，且可在有限对象边界内公开重新确认具名就绪目标。
-- 公开刺激：请求受控的目标硬件就绪回读，并以该回读仅扩展保留的调度后公开前缀。
-- 观测模式：可见 Recover 回读。；成本：acquisition=0; computation=1; preparation=1; retry=0
+- 公开刺激：请求一项类型化 C 层工具回读，读取当前保留的公开协议前缀及先前成功应用的 READY 证据；它不发射协议事件，也不重发 READY。
+- 观测模式：通过公开协议前缀进行的类型化工具回读。；成本：acquisition=0; computation=1; preparation=1; retry=0
 - 后继确认：Recover 目标确认与摘要确认必须分别成立。
 - 未确认效果：确认失败不得标记为 KNOWN。
 - 历史提交：仅将已确认摘要经 IF-HIST-UPDATE 提交给后续历史。
-- 检查：completionReceipt=RECOVER-READY-READBACK-COMPLETED; fabricatedProtocolResponse=否; finiteHorizonTicks=1; isProtocolNoResponseVerdict=否; journalPredicate=EXACT-RETAINED-POST-DISPATCH-PREFIX-EXTENDED-BY-CURRENT-SESSION-READY-READBACK
-- 摘要来源（公开）：VISIBLE-JOURNAL-PREFIX<br>RECOVER-READY-READBACK-COMPLETED；禁止私有来源：ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
-- 公开证据投影合同：completionReceipt=RECOVER-READY-READBACK-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=RECEIPT-BOUNDED-CONTIGUOUS-CLOSED-PREFIX; invalidOrUnconfirmedDisposition=DO-NOT-MARK-KNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-BOUNDED-JOURNAL-RECEIPT; receiptMustBeCompleted=是; sessionBinding=CURRENT-SESSION
+- 检查：completionReceipt=RECOVER-READY-READBACK-COMPLETED; fabricatedProtocolResponse=否; finiteHorizonTicks=1; isProtocolNoResponseVerdict=否; journalPredicate=EXACT-CURRENT-PROTOCOL-PREFIX-PLUS-FRESH-TYPED-TOOL-READBACK-WITH-NO-PROTOCOL-JOURNAL-MUTATION
+- 摘要来源（公开）：VISIBLE-JOURNAL-PREFIX<br>RECOVER-READY-READBACK-COMPLETED<br>APPLIED-READY-DELIVERY-EVIDENCE<br>TYPED-TOOL-READBACK-EVIDENCE；禁止私有来源：ACTIVE-FAULT-ID<br>FAULT-ACTIVATION-RECORD<br>PRIVATE-LOADER-STATE
+- 公开证据投影合同：completionReceipt=RECOVER-READY-READBACK-COMPLETED; correlationBinding=CURRENT-OPERATION-CORRELATION; inspectedRange=EXACT-RETAINED-PROTOCOL-PREFIX-NO-PROTOCOL-EVENT-EXTENSION; invalidOrUnconfirmedDisposition=DO-NOT-MARK-KNOWN; ordering=STABLE-SEQUENCE-NUMBER; projectionKind=CURRENT-SESSION-TYPED-TOOL-READBACK-OVER-PROTOCOL-PREFIX; receiptMustBeCompleted=是; sessionBinding=CURRENT-SESSION
 - 可能结果：
 | 可见量 | 后继摘要 | 摘要确认条件 | 相容假设 |
 |---|---|---|---|
-| RECOVER-READY-READBACK | Q-TARGET-READY | 公开 Recover 回执仅以当前会话就绪回读扩展精确保留的调度后公开前缀；它重新确认就绪，但不得重放或回退先前动作时，才确认摘要。 | NORMAL<br>EARLY-DATA |
+| RECOVER-READY-READBACK | Q-TARGET-READY | 新鲜的类型化工具回读将精确当前协议前缀与同一存续对象上先前成功应用的 READY 证据绑定；它重新确认就绪，但不得产生第六类协议事件、重放或回退。 | NORMAL<br>EARLY-DATA |
 - 未评估义务：PHYSICAL-DEVICE-RECOVERY
 
 ## 时钟、观测、复位和恢复
@@ -502,7 +642,7 @@
 
 | 触发 | 动作 | 轮次 | 可能已发生的可见事件 | 会话处置 | Recover 入口 q | 所需公开证据 | 目标／摘要确认 | 回退规则 | 未确认 Recover |
 |---|---|---|---|---|---|---|---|---|---|
-| POST-DISPATCH-TEST-SUMMARY-CONFIRMATION-FAILURE | ACT-TEST-ACK-BEFORE-DATA | 2 | EV_DL_WRQ_LUR<br>EV_TH_ACK_LUR<br>EV_DL_DATA_LUR | UNKNOWN-PRESERVE-ACTUAL-SUCCESSOR-AND-POST-DISPATCH-JOURNAL | UNKNOWN | CURRENT-SESSION-READY-READBACK<br>RECOVER-READY-READBACK-COMPLETED<br>EXACT-RETAINED-POST-DISPATCH-PUBLIC-PREFIX<br>RECOVER-READY-READBACK-ONLY-EXTENSION | SEPARATE-REQUIRED-NO-REWIND-OR-REPLAY | NO-REWIND-TO-Q-PRE-READY-NO-WRQ | REMAIN-UNKNOWN |
+| POST-DISPATCH-TEST-SUMMARY-CONFIRMATION-FAILURE | ACT-TEST-ACK-BEFORE-DATA | 2 | EV_DL_WRQ_LUR<br>EV_TH_ACK_LUR<br>EV_DL_DATA_LUR | UNKNOWN-PRESERVE-ACTUAL-SUCCESSOR-AND-POST-DISPATCH-JOURNAL | UNKNOWN | APPLIED-READY-DELIVERY-EVIDENCE<br>RECOVER-READY-READBACK-COMPLETED<br>EXACT-RETAINED-CURRENT-PROTOCOL-PREFIX<br>TYPED-TOOL-READBACK-EVIDENCE-NO-PROTOCOL-JOURNAL-MUTATION | SEPARATE-REQUIRED-NO-REWIND-OR-REPLAY | NO-REWIND-TO-Q-PRE-READY-NO-WRQ | REMAIN-UNKNOWN |
 
 ## 场景时线
 

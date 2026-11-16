@@ -19,6 +19,7 @@
     "timeAndObservation",
     "resourceContract",
     "lifecycle",
+    "sessionIntegration",
     "cases",
     "experimentRelations",
     "limitations",
@@ -85,6 +86,9 @@
     },
     "lifecycle": {
       "$ref": "#/$defs/lifecycle"
+    },
+    "sessionIntegration": {
+      "$ref": "#/$defs/sessionIntegration"
     },
     "cases": {
       "type": "array",
@@ -175,7 +179,7 @@
           "const": "SYNTHETIC-ENGINEERING-VALIDATION"
         },
         "stageStatus": {
-          "const": "B-OBJECT-LIFECYCLE-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
+          "const": "C-SESSION-INTEGRATION-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
         }
       }
     },
@@ -1832,6 +1836,209 @@
             }
           }
         }
+      }
+    },
+    "sessionIntegration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stage",
+        "baseObjectAcceptance",
+        "scenarioInput",
+        "adapter",
+        "publicProjectionBoundary",
+        "microstepPlans",
+        "readyApplication",
+        "recoverToolReadback",
+        "ownershipProjection",
+        "productionAcceptance",
+        "zh"
+      ],
+      "properties": {
+        "stage": {
+          "const": "C-SESSION-INTEGRATION-CANDIDATE-PENDING-INDEPENDENT-REVIEW"
+        },
+        "baseObjectAcceptance": {
+          "$ref": "#/$defs/baseObjectAcceptance"
+        },
+        "scenarioInput": {
+          "$ref": "#/$defs/inputBinding"
+        },
+        "adapter": {
+          "$ref": "#/$defs/sessionAdapter"
+        },
+        "publicProjectionBoundary": {
+          "$ref": "#/$defs/publicProjectionBoundary"
+        },
+        "microstepPlans": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/microstepPlan"
+          }
+        },
+        "readyApplication": {
+          "$ref": "#/$defs/readyApplication"
+        },
+        "recoverToolReadback": {
+          "$ref": "#/$defs/recoverToolReadback"
+        },
+        "ownershipProjection": {
+          "$ref": "#/$defs/ownershipProjection"
+        },
+        "productionAcceptance": {
+          "$ref": "#/$defs/productionAcceptance"
+        },
+        "zh": {
+          "$ref": "#/$defs/sessionIntegrationZh"
+        }
+      }
+    },
+    "baseObjectAcceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["head", "tree", "status"],
+      "properties": {
+        "head": {"$ref": "#/$defs/sha1"},
+        "tree": {"$ref": "#/$defs/sha1"},
+        "status": {"const": "B-ACCEPTED-LIMITED-APPROVE"}
+      }
+    },
+    "sessionAdapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceRoot", "entryPoint", "identityScheme", "sourceFiles", "continuationPolicy"],
+      "properties": {
+        "sourceRoot": {"const": "src/cltav_615a_adapter"},
+        "entryPoint": {"const": "cltav_615a_adapter.session.build_lur_start_session"},
+        "identityScheme": {"const": "CLTAV-615A-C-ADAPTER-LOADED-SOURCE-SHA256-LF-V1"},
+        "sourceFiles": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^src/cltav_615a_adapter/[^\\\\/]+\\.py$"}
+        },
+        "continuationPolicy": {"const": "COPY-ON-WRITE-CONTROLLER-SUCCESSOR-NO-FRESH-OBJECT"}
+      }
+    },
+    "publicProjectionBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowedDtos", "forbiddenDtos", "sessionMutationOwner", "successorOwner"],
+      "properties": {
+        "allowedDtos": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/nonBlank"}},
+        "forbiddenDtos": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/nonBlank"}},
+        "sessionMutationOwner": {"const": "REFERENCE-SESSION-S7-S8-S9"},
+        "successorOwner": {"const": "ADAPTER-COPY-ON-WRITE-CONTINUATION"}
+      }
+    },
+    "microstepPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actionId", "maxControllerCalls", "maxDeliveries", "tickPolicy", "steps", "failureDisposition", "completionPredicate", "zh"],
+      "properties": {
+        "actionId": {"$ref": "#/$defs/identifier"},
+        "maxControllerCalls": {"type": "integer", "minimum": 1},
+        "maxDeliveries": {"type": "integer", "minimum": 0},
+        "tickPolicy": {"$ref": "#/$defs/nonBlank"},
+        "steps": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonBlank"}},
+        "failureDisposition": {"$ref": "#/$defs/identifier"},
+        "completionPredicate": {"$ref": "#/$defs/nonBlank"},
+        "zh": {"$ref": "#/$defs/nonBlank"}
+      }
+    },
+    "readyApplication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["emissionFact", "deliveryFact", "applicationFact", "confirmationPredicate", "rejectionDisposition", "zh"],
+      "properties": {
+        "emissionFact": {"$ref": "#/$defs/identifier"},
+        "deliveryFact": {"$ref": "#/$defs/identifier"},
+        "applicationFact": {"$ref": "#/$defs/identifier"},
+        "confirmationPredicate": {"$ref": "#/$defs/nonBlank"},
+        "rejectionDisposition": {"$ref": "#/$defs/identifier"},
+        "zh": {"$ref": "#/$defs/nonBlank"}
+      }
+    },
+    "recoverToolReadback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "protocolJournalMutation", "identityBindings", "freshness", "currentReadyPredicate", "failureDisposition", "zh"],
+      "properties": {
+        "kind": {"const": "C-TYPED-TOOL-READBACK"},
+        "protocolJournalMutation": {"const": "NONE"},
+        "identityBindings": {"type": "array", "minItems": 8, "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "freshness": {"$ref": "#/$defs/nonBlank"},
+        "currentReadyPredicate": {"$ref": "#/$defs/nonBlank"},
+        "failureDisposition": {"const": "DO-NOT-MARK-KNOWN"},
+        "zh": {"$ref": "#/$defs/nonBlank"}
+      }
+    },
+    "ownershipProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy", "trigger", "response", "key", "unsupportedDisposition", "zh"],
+      "properties": {
+        "policy": {"enum": ["UNIQUE-KEY", "FIFO", "MOST-RECENT"]},
+        "trigger": {"$ref": "#/$defs/nonBlank"},
+        "response": {"$ref": "#/$defs/nonBlank"},
+        "key": {"$ref": "#/$defs/nonBlank"},
+        "unsupportedDisposition": {"$ref": "#/$defs/identifier"},
+        "zh": {"$ref": "#/$defs/nonBlank"}
+      }
+    },
+    "productionAcceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "criteria", "witnesses", "notEstablished", "zh"],
+      "properties": {
+        "status": {"const": "C-CANDIDATE-PENDING-INDEPENDENT-REVIEW"},
+        "criteria": {"type": "array", "minItems": 16, "maxItems": 16, "uniqueItems": true, "items": {"pattern": "^C-[0-9]{2}$", "type": "string"}},
+        "witnesses": {
+          "type": "array",
+          "minItems": 16,
+          "maxItems": 16,
+          "items": {"$ref": "#/$defs/productionAcceptanceWitness"}
+        },
+        "notEstablished": {"$ref": "#/$defs/nonBlank"},
+        "zh": {"$ref": "#/$defs/nonBlank"}
+      }
+    },
+    "productionAcceptanceWitness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "productionEntryPoint",
+        "inputs",
+        "inputsZh",
+        "actualPublicPrefix",
+        "expectedStateOrDiagnostic",
+        "expectedStateOrDiagnosticZh",
+        "testNodeId"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^C-[0-9]{2}$"},
+        "productionEntryPoint": {"$ref": "#/$defs/nonBlank"},
+        "inputs": {"$ref": "#/$defs/nonBlank"},
+        "inputsZh": {"$ref": "#/$defs/nonBlank"},
+        "actualPublicPrefix": {"$ref": "#/$defs/nonBlank"},
+        "expectedStateOrDiagnostic": {"$ref": "#/$defs/nonBlank"},
+        "expectedStateOrDiagnosticZh": {"$ref": "#/$defs/nonBlank"},
+        "testNodeId": {"$ref": "#/$defs/nonBlank"}
+      }
+    },
+    "sessionIntegrationZh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "boundary", "microsteps", "recover", "acceptance"],
+      "properties": {
+        "summary": {"$ref": "#/$defs/nonBlank"},
+        "boundary": {"$ref": "#/$defs/nonBlank"},
+        "microsteps": {"$ref": "#/$defs/nonBlank"},
+        "recover": {"$ref": "#/$defs/nonBlank"},
+        "acceptance": {"$ref": "#/$defs/nonBlank"}
       }
     },
     "witness": {
