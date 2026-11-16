@@ -551,6 +551,81 @@ class LurStartSessionEnvironment(SyntheticEnvironment):
             projection_version=f"{PROJECTION_VERSION}:{adapter_identity.digest}",
         )
 
+    def _retained_application_for(
+        self,
+        *,
+        controller: LurStartController,
+        current: JournalSnapshot,
+        event: PublicEvent,
+        added: tuple[AppliedDeliveryEvidence, ...] = (),
+    ) -> AppliedDeliveryEvidence | None:
+        """Return a still-valid public application proof for ``event``.
+
+        Presence in the immutable B journal proves that an event was emitted,
+        not that its peer accepted FIFO delivery.  A later C action may use a
+        previously emitted event only when its retained C projection proves
+        successful application on the current public-prefix lineage.  If a
+        pending event lacks such a proof, the caller may try to deliver that
+        exact existing event; it must never mint or re-emit a replacement.
+        """
+
+        expected_projection = f"{PROJECTION_VERSION}:{self.adapter_source_identity.digest}"
+        for evidence in reversed(self.applied_deliveries + added):
+            if (
+                evidence.event_id != event.event_id
+                or evidence.event_kind != event.kind
+                or evidence.reset_id != event.reset_id
+                or evidence.attempt_id != event.attempt_id
+                or evidence.session_id != event.session_id
+                or evidence.correlation_id != event.correlation_id
+                or evidence.sequence_number != event.sequence_number
+                or evidence.tick != event.tick
+                or evidence.projection_version != expected_projection
+            ):
+                continue
+            if (
+                _event_by_id(current, event.event_id) != event
+                or _event_by_id(evidence.protocol_snapshot, event.event_id) != event
+                or evidence.protocol_prefix_digest != _snapshot_digest(evidence.protocol_snapshot)
+            ):
+                continue
+            retained = controller.validate_retained_prefix(evidence.protocol_snapshot)
+            if retained.complete:
+                return evidence
+        return None
+
+    def _ensure_event_application(
+        self,
+        *,
+        controller: LurStartController,
+        request: ExecutionRequest,
+        event: PublicEvent,
+        added: tuple[AppliedDeliveryEvidence, ...],
+    ) -> tuple[bool, AppliedDeliveryEvidence | None]:
+        """Require an existing event's current FIFO application proof.
+
+        The boolean separates a verified pre-existing proof from an attempted
+        delivery that did not yield a proof.  The latter is deliberately not
+        collapsed into "already delivered": a public journal record describes
+        emission only.  Callers retain the evolved successor on failure.
+        """
+
+        current = controller.public_snapshot()
+        if self._retained_application_for(
+            controller=controller,
+            current=current,
+            event=event,
+            added=added,
+        ) is not None:
+            return True, None
+        application = self._applied_delivery(
+            controller=controller,
+            request=request,
+            expected=event,
+            adapter_identity=self.adapter_source_identity,
+        )
+        return application is not None, application
+
     @staticmethod
     def _latest_event_from(
         before: JournalSnapshot,
@@ -736,12 +811,10 @@ class LurStartSessionEnvironment(SyntheticEnvironment):
         applications: tuple[AppliedDeliveryEvidence, ...] = ()
         snapshot = controller.public_snapshot()
         wrq = _first_event(snapshot, EVENT_DL_WRQ_LUR)
-        data = _first_event(snapshot, EVENT_DL_DATA_LUR)
-        ack = _matching_ack(snapshot, wrq) if wrq is not None else None
 
-        # Fresh order check: Loader emits/delivers WRQ, then every variant gets
-        # its common before-ACK Loader opportunity.  NORMAL naturally waits;
-        # EARLY-DATA naturally emits a public DATA event.
+        # First establish (or resume) the actual WRQ.  A retained journal item
+        # still needs its own successful C application proof: emission alone
+        # does not establish the peer state that permits the matching ACK.
         if wrq is None:
             before = snapshot
             emitted = controller.advance_loader()
@@ -749,17 +822,30 @@ class LurStartSessionEnvironment(SyntheticEnvironment):
             wrq = self._latest_event_from(before, snapshot, required_kind=EVENT_DL_WRQ_LUR)
             if not emitted.accepted or wrq is None:
                 return self._unknown(request, successor=self._next(controller=controller, checkpoint=snapshot))
-            wrq_application = self._applied_delivery(
-                controller=controller,
-                request=request,
-                expected=wrq,
-                adapter_identity=self.adapter_source_identity,
-            )
-            if wrq_application is None:
-                snapshot = controller.public_snapshot()
-                return self._unknown(request, successor=self._next(controller=controller, checkpoint=snapshot))
-            applications += (wrq_application,)
+
+        wrq_applied, wrq_application = self._ensure_event_application(
+            controller=controller,
+            request=request,
+            event=wrq,
+            added=applications,
+        )
+        if not wrq_applied:
             snapshot = controller.public_snapshot()
+            return self._unknown(request, successor=self._next(
+                controller=controller, checkpoint=snapshot, applied=applications,
+            ))
+        if wrq_application is not None:
+            applications += (wrq_application,)
+
+        snapshot = controller.public_snapshot()
+        ack = _matching_ack(snapshot, wrq)
+        data = _first_event(snapshot, EVENT_DL_DATA_LUR)
+
+        # Every variant gets exactly one public Loader opportunity before an
+        # ACK has been emitted.  NORMAL waits; EARLY-DATA emits its named
+        # event.  A resumption after a failed WRQ delivery gets the same
+        # opportunity only after the original WRQ is successfully applied.
+        if ack is None and data is None:
             before = snapshot
             early_data_step = controller.advance_loader()
             snapshot = controller.public_snapshot()
@@ -769,30 +855,41 @@ class LurStartSessionEnvironment(SyntheticEnvironment):
                     return self._unknown(request, successor=self._next(
                         controller=controller, checkpoint=snapshot, applied=applications,
                     ))
-                data_application = self._applied_delivery(
-                    controller=controller,
-                    request=request,
-                    expected=data,
-                    adapter_identity=self.adapter_source_identity,
-                )
-                if data_application is None:
-                    snapshot = controller.public_snapshot()
-                    return self._unknown(request, successor=self._next(
-                        controller=controller, checkpoint=snapshot, applied=applications,
-                    ))
-                applications += (data_application,)
             elif data is not None:
                 return self._unknown(request, successor=self._next(
                     controller=controller, checkpoint=snapshot, applied=applications,
                 ))
-            snapshot = controller.public_snapshot()
-            ack = _matching_ack(snapshot, wrq)
 
-        # A previously retained WRQ/ACK continuation (after Recover) follows
-        # only the remaining public phase.  It never repeats WRQ/ACK and does
-        # not inspect private Loader state to decide this.
+        snapshot = controller.public_snapshot()
+        ack = _matching_ack(snapshot, wrq)
+        data = _first_event(snapshot, EVENT_DL_DATA_LUR)
+
+        # A named EARLY-DATA event precedes its later matching ACK in the
+        # public journal and therefore must be delivered first.  Do not infer
+        # that an event was applied merely because it was recorded.
+        if data is not None and (ack is None or data.sequence_number < ack.sequence_number):
+            data_applied, data_application = self._ensure_event_application(
+                controller=controller,
+                request=request,
+                event=data,
+                added=applications,
+            )
+            if not data_applied:
+                snapshot = controller.public_snapshot()
+                return self._unknown(request, successor=self._next(
+                    controller=controller, checkpoint=snapshot, applied=applications,
+                ))
+            if data_application is not None:
+                applications += (data_application,)
+
+        # An ACK may already be journaled by an interrupted predecessor.  If
+        # it lacks a retained success proof, deliver that exact pending FIFO
+        # event once.  No C path emits a replacement ACK or reads B's private
+        # pending queue to decide the phase.
+        snapshot = controller.public_snapshot()
+        ack = _matching_ack(snapshot, wrq)
         if ack is None:
-            before = controller.public_snapshot()
+            before = snapshot
             emitted_ack = controller.advance_target_hardware()
             snapshot = controller.public_snapshot()
             ack = self._latest_event_from(before, snapshot, required_kind=EVENT_TH_ACK_LUR)
@@ -800,18 +897,21 @@ class LurStartSessionEnvironment(SyntheticEnvironment):
                 return self._unknown(request, successor=self._next(
                     controller=controller, checkpoint=snapshot, applied=applications,
                 ))
-            ack_application = self._applied_delivery(
-                controller=controller,
-                request=request,
-                expected=ack,
-                adapter_identity=self.adapter_source_identity,
-            )
-            if ack_application is None:
-                snapshot = controller.public_snapshot()
-                return self._unknown(request, successor=self._next(
-                    controller=controller, checkpoint=snapshot, applied=applications,
-                ))
+
+        ack_applied, ack_application = self._ensure_event_application(
+            controller=controller,
+            request=request,
+            event=ack,
+            added=applications,
+        )
+        if not ack_applied:
+            snapshot = controller.public_snapshot()
+            return self._unknown(request, successor=self._next(
+                controller=controller, checkpoint=snapshot, applied=applications,
+            ))
+        if ack_application is not None:
             applications += (ack_application,)
+
         snapshot = controller.public_snapshot()
         data = _first_event(snapshot, EVENT_DL_DATA_LUR)
         if data is None:
@@ -823,17 +923,22 @@ class LurStartSessionEnvironment(SyntheticEnvironment):
                 return self._unknown(request, successor=self._next(
                     controller=controller, checkpoint=snapshot, applied=applications,
                 ))
-            data_application = self._applied_delivery(
-                controller=controller,
-                request=request,
-                expected=data,
-                adapter_identity=self.adapter_source_identity,
-            )
-            if data_application is None:
-                snapshot = controller.public_snapshot()
-                return self._unknown(request, successor=self._next(
-                    controller=controller, checkpoint=snapshot, applied=applications,
-                ))
+
+        # The final DATA phase is likewise accepted only on an exact retained
+        # FIFO application proof.  When it was a pre-ACK EARLY-DATA event the
+        # earlier branch has already produced that proof and this is a no-op.
+        data_applied, data_application = self._ensure_event_application(
+            controller=controller,
+            request=request,
+            event=data,
+            added=applications,
+        )
+        if not data_applied:
+            snapshot = controller.public_snapshot()
+            return self._unknown(request, successor=self._next(
+                controller=controller, checkpoint=snapshot, applied=applications,
+            ))
+        if data_application is not None:
             applications += (data_application,)
         # The order action's declared three-tick finite horizon is reached at
         # an action boundary.  Its same-tick protocol events remain ordered by

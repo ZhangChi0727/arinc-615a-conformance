@@ -90,6 +90,28 @@ def test_c01_fixed_hb_source_identity_and_closed_adapter_identity() -> None:
     }
 
 
+def test_c01_nested_hb_contract_cannot_mutate_a_real_list_only_successor() -> None:
+    """The Git-bound contract must not expose a writable nested JSON alias."""
+
+    contract = load_hb_session_contract(ROOT)
+    outcomes = contract.action(INSPECT_ACTION_ID)["possibleOutcomes"]
+    assert isinstance(outcomes, tuple)
+    with pytest.raises(TypeError):
+        outcomes[0]["postSummary"] = "Q-TARGET-READY"
+    with pytest.raises(TypeError):
+        contract.package["actionLibrary"][0]["possibleOutcomes"][0]["postSummary"] = "Q-TARGET-READY"
+
+    # This is the actual C production path, not a synthetic outcome lookup:
+    # one LIST-only finite inspection must retain its declared pre-READY
+    # successor and cannot be escalated to the later READY summary.
+    built = build_lur_start_session(repository=ROOT, controller=LurStartController())
+    first = built.session.step(built.session.initial_state, built.environment)
+    assert first.state.context.current_summary == "Q-PRE-READY-NO-WRQ"
+    assert [event.kind for event in first.environment.protocol_snapshot.events] == [
+        "LIST-SUBMISSION-PRECONDITION-RECORDED",
+    ]
+
+
 def test_c02_normal_real_multiround_loop_preserves_plural_h_then_selects_order() -> None:
     built = build_lur_start_session(repository=ROOT, controller=LurStartController())
     first = built.session.step(built.session.initial_state, built.environment)
@@ -329,6 +351,149 @@ def test_c06_recover_is_non_emitting_and_order_continues_only_with_data() -> Non
     ]
 
 
+@pytest.mark.parametrize("withheld_kind", [
+    "EV_DL_WRQ_LUR",
+    "EV_TH_ACK_LUR",
+    "EV_DL_DATA_LUR",
+])
+@pytest.mark.parametrize(
+    ("variant", "expected_observable", "expected_order", "resumed_delivery_expectations"),
+    [
+        (
+            "NORMAL",
+            "WRQ-ACK-DATA-IN-ORDER",
+            ["EV_DL_WRQ_LUR", "EV_TH_ACK_LUR", "EV_DL_DATA_LUR"],
+            {
+                "EV_DL_WRQ_LUR": ["EV_DL_WRQ_LUR", "EV_TH_ACK_LUR", "EV_DL_DATA_LUR"],
+                "EV_TH_ACK_LUR": ["EV_TH_ACK_LUR", "EV_DL_DATA_LUR"],
+                "EV_DL_DATA_LUR": ["EV_DL_DATA_LUR"],
+            },
+        ),
+        (
+            "EARLY-DATA",
+            "DATA-BEFORE-MATCHING-ACK",
+            ["EV_DL_WRQ_LUR", "EV_DL_DATA_LUR", "EV_TH_ACK_LUR"],
+            {
+                "EV_DL_WRQ_LUR": ["EV_DL_WRQ_LUR", "EV_DL_DATA_LUR", "EV_TH_ACK_LUR"],
+                "EV_TH_ACK_LUR": ["EV_TH_ACK_LUR"],
+                "EV_DL_DATA_LUR": ["EV_DL_DATA_LUR", "EV_TH_ACK_LUR"],
+            },
+        ),
+    ],
+)
+def test_c06_recover_continuation_delivers_each_original_pending_order_event(
+    monkeypatch: pytest.MonkeyPatch,
+    withheld_kind: str,
+    variant: str,
+    expected_observable: str,
+    expected_order: list[str],
+    resumed_delivery_expectations: dict[str, list[str]],
+) -> None:
+    """Each recorded WRQ/ACK/DATA event needs its own FIFO application proof."""
+
+    original_delivery = LurStartSessionEnvironment._applied_delivery
+    withheld = False
+
+    def withhold_once_before_application(*, controller, request, expected, adapter_identity):
+        nonlocal withheld
+        if expected.kind == withheld_kind and not withheld:
+            withheld = True
+            # Do not call the B delivery operation: the actual event remains
+            # at its original FIFO position, while its journal record proves
+            # only emission.  This is a real boundary failure, not a replay.
+            return None
+        return original_delivery(
+            controller=controller,
+            request=request,
+            expected=expected,
+            adapter_identity=adapter_identity,
+        )
+
+    monkeypatch.setattr(
+        LurStartSessionEnvironment,
+        "_applied_delivery",
+        staticmethod(withhold_once_before_application),
+    )
+    controller = LurStartController()
+    if variant == "EARLY-DATA":
+        assert controller.install_fault(FaultVariant.EARLY_DATA).status.name == "INSTALLED"
+    built = build_lur_start_session(
+        repository=ROOT,
+        controller=controller,
+        resources=ResourceState.rounds(8),
+        retry_cap=4,
+    )
+    first = built.session.step(built.session.initial_state, built.environment)
+    second = built.session.step(first.state, first.environment)
+    unknown = built.session.step(second.state, second.environment)
+    assert withheld is True
+    assert unknown.state.context.q_status == "UNKNOWN"
+    assert unknown.state.evidence[-1].execution.effect_class == "UNKNOWN-EFFECT"
+    emitted = next(
+        event for event in unknown.environment.protocol_snapshot.events
+        if event.kind == withheld_kind
+    )
+    assert not any(item.event_id == emitted.event_id for item in unknown.environment.applied_deliveries)
+
+    # Recover is deliberately non-emitting and re-establishes only the typed
+    # READY basis.  The next actual TEST must therefore FIFO-deliver the
+    # original pending event, not mint/replay it or treat emission as proof.
+    monkeypatch.setattr(
+        LurStartSessionEnvironment,
+        "_applied_delivery",
+        staticmethod(original_delivery),
+    )
+    recovered = built.session.step(unknown.state, unknown.environment)
+    assert recovered.state.context.q_status == "KNOWN"
+    assert recovered.state.context.current_summary == "Q-TARGET-READY"
+    before_resume = recovered.environment.protocol_snapshot
+    assert emitted in before_resume.events
+
+    resumed_delivery_kinds: list[str] = []
+
+    def record_resumed_delivery(*, controller, request, expected, adapter_identity):
+        resumed_delivery_kinds.append(expected.kind)
+        return original_delivery(
+            controller=controller,
+            request=request,
+            expected=expected,
+            adapter_identity=adapter_identity,
+        )
+
+    monkeypatch.setattr(
+        LurStartSessionEnvironment,
+        "_applied_delivery",
+        staticmethod(record_resumed_delivery),
+    )
+    resumed = recovered.environment.execute(_request(
+        recovered.environment, ORDER_ACTION_ID, "TEST", f"resume-{variant}-{withheld_kind}",
+    ))
+    assert resumed.record.effect_class == "NONE"
+    assert resumed.record.observable == expected_observable
+    assert resumed.record.summary_confirmed is True
+    events = resumed.successor.protocol_snapshot.events
+    assert [event for event in events if event.kind == withheld_kind] == [emitted]
+    assert any(item.event_id == emitted.event_id for item in resumed.successor.applied_deliveries)
+    assert [event.kind for event in events][-3:] == expected_order
+    assert resumed_delivery_kinds == resumed_delivery_expectations[withheld_kind]
+
+    # Recover truthfully re-confirms q from its qualified public basis but
+    # must not promote the S7-conservative H.  With ample remaining ROUNDS,
+    # the full coordinator therefore reports its named prediction gap without
+    # dispatching/replaying any event.  The direct adapter continuation above
+    # separately proves that the real FIFO successor itself is available.
+    assert set(recovered.state.history.status_by_hypothesis.values()) == {
+        "CONSERVATIVE-UNKNOWN",
+    }
+    terminal = built.session.step(recovered.state, recovered.environment)
+    assert terminal.stop_reason == "Stop-Prediction-Gap"
+    assert terminal.environment.protocol_snapshot == before_resume
+    assert terminal.state.resources.remaining > 0
+    assert {item.code for item in terminal.diagnostics} >= {
+        "CONSERVATIVE-PREDICTION-GAP", "PREDICTION-GAP",
+    }
+
+
 def test_c06_unknown_session_admits_only_qualified_current_recover(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -361,6 +526,23 @@ def test_c06_unknown_session_admits_only_qualified_current_recover(
     assert recovered.state.evidence[-1].execution.prep_recover.summary_confirmed is True
     assert recovered.state.context.q_status == "KNOWN"
     assert recovered.state.context.current_summary == "Q-TARGET-READY"
+
+    # Recover itself remains non-emitting.  Its returned adapter can drive the
+    # remaining declared FIFO order phase, but S7's conservative H is never
+    # silently promoted merely because q was re-confirmed.
+    continued = recovered.environment.execute(_request(
+        recovered.environment, ORDER_ACTION_ID, "TEST", "recover-known-order-continuation",
+    ))
+    assert continued.record.effect_class == "NONE"
+    assert continued.record.observable == "WRQ-ACK-DATA-IN-ORDER"
+    assert [event.kind for event in continued.successor.protocol_snapshot.events][-3:] == [
+        "EV_DL_WRQ_LUR", "EV_TH_ACK_LUR", "EV_DL_DATA_LUR",
+    ]
+    terminal = built.session.step(recovered.state, recovered.environment)
+    assert terminal.stop_reason == "Stop-Prediction-Gap"
+    assert set(terminal.state.history.status_by_hypothesis.values()) == {
+        "CONSERVATIVE-UNKNOWN",
+    }
 
 
 def test_c07_recover_rejects_missing_or_duplicate_public_tool_basis() -> None:

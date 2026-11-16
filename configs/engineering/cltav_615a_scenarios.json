@@ -1276,8 +1276,8 @@
           "inputs": "An UNKNOWN successor produced by an unconfirmed real Prep, with a prior successfully applied READY evidence and a current completed public prefix.",
           "inputsZh": "一个由未确认真实 Prep 产生的 UNKNOWN 后继，具有先前成功应用的 READY 证据和当前已完成的公开前缀。",
           "actualPublicPrefix": "Recover samples the retained prefix without appending a sixth protocol event.",
-          "expectedStateOrDiagnostic": "Typed tool readback re-confirms the target only from the current prefix and then the remaining order phase may continue.",
-          "expectedStateOrDiagnosticZh": "类型化工具回读仅依据当前前缀重新确认目标，之后才可继续剩余顺序阶段。",
+          "expectedStateOrDiagnostic": "Typed tool readback re-confirms the target and q summary only from the current prefix; it does not promote conservative H. A direct adapter continuation may consume the remaining original FIFO phase, while the coordinator retains a named prediction gap until an admissible observation exists.",
+          "expectedStateOrDiagnosticZh": "类型化工具回读仅依据当前前缀重新确认目标与 q 摘要，不得提升保守 H。直接适配器续接可消费原有 FIFO 的剩余阶段；在存在可接纳观测前，协调器保留具名预测缺口。",
           "testNodeId": "tests/unit/test_cltav_615a_session_adapter.py::test_c06_unknown_session_admits_only_qualified_current_recover"
         },
         {

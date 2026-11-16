@@ -152,9 +152,33 @@ def _mapping(value: object, *, label: str) -> Mapping[str, Any]:
 
 
 def _rows(value: object, *, label: str) -> tuple[Mapping[str, Any], ...]:
-    if not isinstance(value, list) or not value:
+    # The loader initially receives JSON lists, while C-facing contract access
+    # sees recursively frozen tuples.  They have the same source meaning.
+    if not isinstance(value, (list, tuple)) or not value:
         raise ScenarioContractError(f"C-ADAPTER-{label}-MALFORMED")
     return tuple(_mapping(item, label=label) for item in value)
+
+
+def _freeze_json(value: object) -> object:
+    """Recursively freeze a parsed H-B JSON value for C-facing use.
+
+    A top-level ``MappingProxyType`` alone leaves nested ``possibleOutcomes``
+    lists and mappings writable.  That would let a caller alter a declared
+    successor summary after the fixed Git source passed its identity checks.
+    """
+
+    if isinstance(value, Mapping):
+        frozen: dict[str, object] = {}
+        for key, nested in value.items():
+            if type(key) is not str:
+                raise ScenarioContractError("C-ADAPTER-SCENARIO-PACKAGE-MALFORMED")
+            frozen[key] = _freeze_json(nested)
+        return MappingProxyType(frozen)
+    if isinstance(value, list):
+        return tuple(_freeze_json(item) for item in value)
+    if value is None or type(value) in {bool, int, float, str}:
+        return value
+    raise ScenarioContractError("C-ADAPTER-SCENARIO-PACKAGE-MALFORMED")
 
 
 def _exact_string(value: object, *, label: str) -> str:
@@ -369,16 +393,19 @@ def load_hb_session_contract(repository: Path | str) -> ScenarioSessionContract:
         contract_path=development_path,
     )
     model = _package_model(package, development=development)
+    frozen_package = _freeze_json(package)
+    if not isinstance(frozen_package, Mapping):
+        raise ScenarioContractError("C-ADAPTER-SCENARIO-PACKAGE-MALFORMED")
     action_by_id = {
-        _exact_string(row.get("id"), label="ACTION-ID"): MappingProxyType(dict(row))
-        for row in _rows(package.get("actionLibrary"), label="ACTIONS")
+        _exact_string(row.get("id"), label="ACTION-ID"): row
+        for row in _rows(frozen_package.get("actionLibrary"), label="ACTIONS")
     }
     return ScenarioSessionContract(
         ScenarioInputIdentity(H_B_COMMIT, SCENARIO_PATH, git_blob_oid, raw_sha256),
         snapshot,
         binding,
         model,
-        MappingProxyType(dict(package)),
+        frozen_package,
         MappingProxyType(action_by_id),
     )
 
