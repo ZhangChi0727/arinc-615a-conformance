@@ -29,6 +29,42 @@ ALG-CLTAV-02, 03, 04, 05, 06 and 07. S9 in the main text calls
 \textsc{CommitCompatibleUpdate} (S6 / ALG-CLTAV-07), not a bare
 \IFhist{} invocation.
 
+\section{Identifier traceability}
+Main-text prose uses architecture and experiment names. Table~\ref{tab:trace}
+records the repository identifiers that those names correspond to. It is a
+traceability aid, not additional scientific evidence.
+
+\begin{table}[h]
+\centering
+\caption{Traceability from main-text names to repository identifiers.}
+\label{tab:trace}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}p{0.40\textwidth}X@{}}
+\hline
+Main-text name & Repository id & Role \\
+\hline
+Architecture Fig.~1 & FIG-CL-TAV-01 & notation view \\
+Closed-loop Fig.~2 & FIG-CL-TAV-05 v4 & \(q\) vs.\ \(H\) \\
+Experiment Fig.~3 & FIG-CL-TAV-09 v3 & E0--E6 register \\
+Algorithm~1 & ALG-CLTAV-01 & top-level session \\
+Predict / admit / update wrappers & ALG-CLTAV-02/05/07 & S2, S3, S9 \\
+Interpret / resolve / timing & ALG-CLTAV-03/04/06 & S6--S8 \\
+Prediction contract & IF-PRED-OBS & named kernel contract \\
+History-update contract & IF-HIST-UPDATE & named kernel contract \\
+Observation contract & IF-OBS-INTERPRET & named kernel contract \\
+Selection contract & IF-SELECT-ADMIT & named kernel contract \\
+Execute-record contract & IF-EXECUTE-RECORD & raw-record return \\
+Prep/Recover contract & IF-PREP-RECOVER & exclusive alternative \\
+Equivalence contract & IF-EQUIV & named stop helper \\
+Resource-stop contract & IF-RESOURCE-STOP & named stop helper \\
+UPLOAD/INFORMATION bound & SU-ARINC-615A-3-\allowbreak SECTION-6-3-2-\allowbreak UPLOAD-INFORMATION & protocol bound \\
+No-response FIND scoring & CRS-M1-00101 & timeout, not abort waiver \\
+Lock / write-order leaves & CRS-M1-00365/00366/00367 & F-LAS context only \\
+DETECT / LOCATE / ABLATION & EXP-CLTAV-DETECT/\allowbreak LOCATE/\allowbreak ABLATION & planned families \\
+\hline
+\end{tabularx}
+\end{table}
+
 \section{S0--S10 duty map}
 \begin{center}
 \small

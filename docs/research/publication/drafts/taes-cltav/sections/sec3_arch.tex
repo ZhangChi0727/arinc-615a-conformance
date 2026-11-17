@@ -1,55 +1,49 @@
 \section{System Engineering and Verification Architecture}
 \label{sec:arch}
 
-Protocol CRS, tool requirements and experiment requirements stay in separate
-layers. Row count does not prove a method. A concrete owned trace is source
-unit \texttt{SU-ARINC-615A-3-SECTION-6-3-2-}\allowbreak
-\texttt{SEQUENCE-CHART-A-E007-7726A816FFE7}
-\(\to\) CRS-M1-00365/00366/00367 \(\to\) LUR write-order constraint \(\to\)
-planned Test/Analysis verification case \(\to\) later tool module. The IDs are
-real bound-M1 identifiers. \texttt{satisfy}/\texttt{verify} in the SysML view
-are model relations, not executed verification. No standard figure is reprinted.
-
-The layering responds to two aviation lessons without importing their authority.
-F-LAS shows the usefulness of explicit requirements-to-procedure traceability
-for loading identity, integrity, interrupted loading and version conflict, but
-its procedures were proposed rather than executed~\cite{marques2021}. Avionics
-MBT also makes configuration, model preparation, simulator and oracle boundaries
-part of the test problem~\cite{efkemann2011,sartaj2021}. Accordingly, the CRS
-constrains legal protocol evidence, the tool realizes method contracts, and the
-evaluator owns independent truth; none can silently stand in for another.
-
-Two machines must not be merged. \(M_{\mathrm{sess}}\) selects from
-\(S\subseteq A(q)\), charges once, updates \(H\) and returns a named stop.
-\(M_{\mathrm{prot}}\) is the UPLOAD/INFORMATION black box. Execute issues a
-stimulus and obtains a raw execution record. Interpretation, not the network
-port, produces the compatible class \(I_z\) and hypothesis survivors.
+Figure~\ref{fig:arch} is the architecture used in this paper. Protocol and
+uncertainty objects sit above a kernel that owns the candidate set \(H\), the
+resource context \(\Gamma\) and the observation map \(\eta\). Prediction,
+history update, observation interpretation, selection, execution, preparation
+and exclusive stop are named contracts on that kernel; the figure labels them
+in place. The supplement maps those labels to repository identifiers. Only a
+raw record, with its declared completeness, returns from execution into
+history update. Evaluator truth never enters the session.
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=\textwidth]{FIG-CL-TAV-01-context.pdf}
-\caption{Context from FIG-CL-TAV-01 v2 (SysML 1.6 notation-based view;
-executable or metamodel conformance is not claimed). The operator addresses the
-session; action and observation share the adapter; the clock is \(t_k\pm\varepsilon\).
-Stimulus and raw records share ports. Truth enters only the evaluator filter,
-never select, predict, history or execute. No full 615A behaviour, real IUT,
-645 capability, or experimental result is claimed.}
+\caption{CL-TAV architecture (notation view derived from the controlled
+drawing). Named contracts in the figure are prediction, history-update,
+observation-interpretation, selection-admission, execute-record,
+prep/recover, equivalence and resource-stop. Only a raw record returns to
+history update. Evaluator truth is not an input. No full 615A behaviour or
+IUT execution is claimed.}
 \label{fig:arch}
 \end{figure*}
 
-Expanded CRS leaves do not add FIND or DOWNLOAD transitions to
-\(M_{\mathrm{prot}}\).
-The development contract now binds eight algorithm interfaces and seven
-experiment interfaces to typed inputs, outputs, ownership, failure, resource,
-acceptance, and successor implementation locations.  The first slice also
-preserves six CRC-bearing protocol obligations and their ARINC~645 parameter
-leaves.  The six contracts remain distinct: INFORMATION and UPLOAD receiver
-support, final-image/LSP check value, optional old/new-file comparison,
-equal CRC values for two distinct files sharing one part number, and
-status-file continuation after the final DATA
-while integrity calculation remains in progress.  This closes their
-specification dependency only: the runtime
-integrity capability remains \emph{not established} until implementation,
-project configuration, controlled-vector execution, and an independent gate
-record exist.  Missing evidence therefore yields \texttt{NOT-EVALUATED}, not a
-protocol verdict.
+The motivating incomplete observation sits on this figure. A missed FIND
+acknowledgement or a lock timeout is an incomplete raw record, not a licence
+to issue an unconstrained next action. Marques \textit{et al.} propose
+traceable loading requirements and procedures for a future loadable airborne
+system, including an exclusive file-system lock and write-then-commit
+order~\cite{marques2021}. That survey is engineering context; it is not
+executed 615A evidence, and this paper does not execute it.
+
+\paragraph{Bound objects.}
+The operational bound remains ARINC~615A-3 UPLOAD and INFORMATION, with
+FIND/SEND/ABORT as UPLOAD operations~\cite{arinc615a3}. ARINC~645-1
+SOURCE/SEMANTIC identity is bound only for triggered leaves; runtime 645
+capability is not established~\cite{arinc6451}. Hypothesis space \(H_0\) is
+finite and single-fault: \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\).
+A singleton \(\{h_{\mathrm{normal}}\}\) is not protocol PASS. Tests, Prep and
+Recover are exclusive alternatives. Counted actions consume \(\Gamma\) once.
+Observation map \(\eta\) and uncertainty reference \(U\) are owned inside the
+kernel. The implementation status of each named contract is not re-argued
+here.
+
+\paragraph{Scope.}
+C1 is specified consistency under conservative observation and exclusive
+ownership, not a general theorem for loss, drift or reordering. C2 is the
+named one-step rule, not a globally optimal policy. The manuscript does not
+claim a full 615A IUT, certification, or confirmatory measurements.

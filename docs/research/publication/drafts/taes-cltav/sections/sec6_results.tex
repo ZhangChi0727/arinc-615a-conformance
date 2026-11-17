@@ -1,79 +1,94 @@
 \section{Results}
 \label{sec:results}
 
-No effect direction, percentage or superiority is reported.
+No confirmatory run has been admitted. The cells below are planned analyses
+with frozen denominators. Empty cells are not zeros, not ``no effect'', and
+not synthetic data. Effect direction is not stated.
 
-Every future cell is derived from unique \texttt{attemptId} records. Its
-completion record must identify the claim/RQ, target subset, numerator,
-denominator, filtering, metric-specific zero-denominator rule, missingness,
-budget censoring, source
-fields, unit and charged cost projection. Overlapping flow labels are not
-summed as an exclusive partition. The synthetic design ledger validates these
-rules only and is excluded from all result panels.
-
-Coverage metrics retain the finite all-attempt denominator: zero answered
-attempts among \(N>0\) are reported as \(0/N\). Metrics conditional on the
-answered subset, such as conditional detection error, are N/A when that subset
-is empty. Truth-dependent cells use explicit truth-scorable subsets: a
-truth-missing answered or localization attempt remains in coverage, appears in a
-named missing-truth flow, and leaves only the corresponding truth-scored
-denominator. Every localization panel first reports decision coverage; truth
-retention/exclusion and singleton correctness do not silently discard eligible
-attempts that ended without a decision or lack evaluator truth.
-
-\subsection{CL-RQ2: verdict reliability}
+\paragraph{DETECT.}
+Planned cells are all-attempt flow, \(0/N\) answered coverage when no answers
+exist, explicit truth-scorable coverage, missing-truth flow, truth-scorable
+conditional error, and the four-component charged projection. Abstain is not
+PASS/FAIL. FIND abort does not waive T5.
+\begin{table}[!t]
+\centering
+\caption{Reserved DETECT table. Empty cells are not zeros.}
+\label{tab:res-detect}
+\footnotesize
+\begin{tabular}{@{}lcc@{}}
+\hline
+Arm & Answered coverage & Truth-scorable error \\
+\hline
+CL-T & --- & --- \\
+CL-A & --- & --- \\
+CL-TA & --- & --- \\
+CL-LOOP & --- & --- \\
+\hline
+\end{tabular}
+\end{table}
 \begin{figure}[!t]
 \centering
 \phboxhigh{PH-RES-DETECT}{EXPERIMENT-RESULT}{Separate cells, not one shared
-denominator: (i) the all-attempt ledger and attempt coverage; (ii) named
-unconfirmed, invalid, equivalent, undecided, ERROR, abstain and unconcluded
-flows; (iii) refusal among attempts; (iv) conditional error on the detection
-answered truth-scorable subset, with truth-scorable coverage and missing-truth
-flow shown alongside; and (v) miss and false-FAIL on the registered valid detection
-denominator. Abstain is not PASS/FAIL. Source: EXP-CLTAV-DETECT.}
-\caption{Reserved detection panel. Not a result.}
+percentage: all-attempt flow; \(0/N\) answered coverage when no answers exist;
+explicit truth-scorable coverage and missing-truth flow; truth-scorable
+conditional error. Filtering, unit and four-component charged projection
+remain named. Empty cells are not zeros. Abstain is not PASS/FAIL.}
+\caption{Reserved DETECT result figure. The panel is a planned-analysis
+reservation, not a curve or a significance test.}
 \label{fig:res-detect}
 \end{figure}
 
-\subsection{CL-RQ2: isolation}
+\paragraph{LOCATE.}
+Planned cells are eligible-attempt decision coverage, missing-truth flow,
+true-fault retention/exclusion, singleton correctness and final \(|H|\).
+Singleton \(h_{\mathrm{normal}}\) is not protocol PASS.
+\begin{table}[!t]
+\centering
+\caption{Reserved LOCATE table. Empty cells are not zeros.}
+\label{tab:res-locate}
+\footnotesize
+\begin{tabular}{@{}lcc@{}}
+\hline
+Arm & Final \(|H|\) & True-fault excluded \\
+\hline
+CL-T & --- & --- \\
+CL-A & --- & --- \\
+CL-TA & --- & --- \\
+CL-LOOP & --- & --- \\
+\hline
+\end{tabular}
+\end{table}
 \begin{figure}[!t]
 \centering
 \phboxhigh{PH-RES-LOCATE}{EXPERIMENT-RESULT}{Cells: final \(|H|\), true-fault
-retention/exclusion on the truth-scorable subset, truth-missing flow, decision issued, singleton correctness, refusal and charged
-resource. Denominator: confirmed in-domain injections, reported separately from
-the detection answered subset. A valid FAIL with a nonsingleton \(H\) is not
-completed localization. Out-of-domain faults are separate; singleton
-\(h_{\mathrm{normal}}\) is not protocol PASS. Source: EXP-CLTAV-LOCATE.}
-\caption{Reserved localization panel. Not a result.}
+exclusion, singleton correctness, eligible-attempt decision coverage and
+missing-truth flow. Update status, not a mutable stop tag, determines
+preservation. Singleton \(h_{\mathrm{normal}}\) is not protocol PASS.}
+\caption{Reserved LOCATE result figure. The panel is a planned-analysis
+reservation, not a curve or a significance test.}
 \label{fig:res-locate}
 \end{figure}
 
-\subsection{CL-RQ3: cost and sensitivity}
+\paragraph{ABLATION.}
+Each parent metric has its own paired denominator. Unmatched and censored rows
+are retained. Cost pairs are preserved even when truth scoring is unavailable.
 \begin{table}[!t]
-\caption{Reserved ablation cells. CL-A is computation-only; N/A cells are not
-silent omissions. FIND-abort waiver is a forbidden control.}
-\label{tab:res-ablation}
 \centering
-\scriptsize
-\begin{tabular}{@{}lcccc@{}}
+\caption{Reserved ABLATION table. Empty cells are not zeros.}
+\label{tab:res-ablation}
+\footnotesize
+\begin{tabular}{@{}lcc@{}}
 \hline
-Cell & CL-T & CL-A & CL-TA & CL-LOOP \\
+Factor & Parent metric & Paired contrast \\
 \hline
-Charged projection & \(c_{\mathrm{acq}}\) & \(c_{\mathrm{comp}}\) & split & actual \\
-No-feedback contrast & yes & N/A & yes & reference \\
-Prep/Recover uncharged & if run & N/A & if run & contrast \\
-Interval vs point stamp & --- & --- & --- & contrast \\
-FIND-abort waiver & forbidden & forbidden & forbidden & forbidden \\
+No feedback & --- & --- \\
+Prep/Recover uncharged & --- & --- \\
+Interval vs.\ point timestamp & --- & --- \\
+FIND-abort waiver (forbidden) & --- & --- \\
 \hline
 \end{tabular}
 \end{table}
 \phbox{PH-RES-ABLATION}{EXPERIMENT-RESULT}{Table~\ref{tab:res-ablation} uses the
-registered ablation factors, not a generic ``disable cost accounting.'' Complete
-when each named parent metric independently yields a pair on the same registered
-base scene, seed, construction and contrast, with distinct confirmed resets,
-disclosed common components and actual cost fields. A missing truth parent does
-not erase an otherwise eligible cost pair.}
-Recovery may remain a runtime detail, but the evaluator folds it into
-preparation once and never reports or charges it again as a fifth coordinate.
-Pre-run review/setup effort is retained in a separate audit total and never
-charged to an unissued arm action.
+same scene, seed, construction and registered contrast, with distinct confirmed
+resets. Common-error risks remain disclosed. Unmatched and censored rows are
+retained.}

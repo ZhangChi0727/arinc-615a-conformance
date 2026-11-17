@@ -32,22 +32,21 @@ No AI system is an author.}
 \markboth{Author et al.}{CL-TAV}
 
 \begin{abstract}
-Airborne software loading is judged from protocol events whose identity,
-ordering and timing may be only conservatively observed. This paper specifies
-Closed-Loop Test--Analysis Verification (CL-TAV) for ARINC 615A: a charged
-session that predicts observation classes, interprets a raw record under one
-uncertainty reference, updates a finite single-fault candidate set from the
-whole compatible history, and selects one exclusive TEST, Prep, Recover or
-Admit action. The contribution sought is deliberately bounded. C1 is
-consistency and conditional true-hypothesis retention under the declared model,
-ownership and conservative-observation assumptions, not a new general theorem
-for loss, drift or reordering. C2 is a prior-free one-step minimax choice over
-currently feasible and affordable tests with explicit error and stop semantics,
-not a globally optimal policy. The bound protocol model remains UPLOAD and
-INFORMATION; ARINC 645 identity is bound for triggered leaves, while runtime
-integrity remains unestablished. Four comparison arms and three experiment
-families are registered. Confirmatory measurements are not yet available, so
-no improvement, implementation-completeness or certification claim is made.
+Airborne software loading over ARINC~615A-3 is judged from timed
+acknowledgements, exclusive file-system locks, and a write-then-commit order.
+A missed acknowledgement or a lock timeout can leave the tester with an
+incomplete observation, after which an unconstrained follow-up action can
+violate the protocol lifecycle. This paper specifies Closed-Loop
+Test--Analysis Verification (CL-TAV): a charged session that keeps a
+history-compatible candidate set, selects one admissible TEST, Prep, Recover
+or Admit action by a one-step minimax rule, and stops under exclusive named
+classes. Under conservative observation and exclusive ownership, a
+history-compatible update never reintroduces a previously eliminated
+candidate (C1). The same one-step rule is specified for a named cost (C2). A
+protocol-bound evaluation design records DETECT, LOCATE and ABLATION analyses
+with declared denominators. Confirmatory measurements have not yet been
+obtained; this manuscript does not claim measured improvement or
+certification.
 \end{abstract}
 
 \begin{IEEEkeywords}
