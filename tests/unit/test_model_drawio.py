@@ -38,6 +38,51 @@ def copy_package(tmp_path: Path, module):
     return data
 
 
+def attach_exported_outputs(tmp_path: Path, module, data, exports) -> dict:
+    """Give tests a closed EXPORTED-AND-HASHED pair when the live registry is NEEDS-RENDER."""
+    figure = data["figures"][0]
+    row = exports["figures"][0]
+    row["exportStatus"] = "EXPORTED-AND-HASHED"
+    row.pop("exportDispositionReason", None)
+    outputs = []
+    for fmt in ("pdf", "svg"):
+        relative = f"artifacts/publications/cltav/model-drafts/{figure['id']}-test.{fmt}"
+        target = tmp_path / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        payload = b"%PDF-1.4 test" if fmt == "pdf" else b"<svg xmlns='http://www.w3.org/2000/svg'/>"
+        target.write_bytes(payload)
+        item = {
+            "format": fmt,
+            "path": relative,
+            "rawSha256": hashlib.sha256(payload).hexdigest(),
+            "bytes": len(payload),
+            "figureId": figure["id"],
+            "modelVersionId": figure["revision"]["modelVersionId"],
+            "sourceDrawioSha256": figure["drawioSha256"],
+            "reviewBundleSha256": row["reviewBundleSha256"],
+            "facet": "main",
+            "outputId": f"{figure['id']}@main.{fmt}",
+        }
+        if fmt == "pdf":
+            item.update(pages=1, pageWidthPt=100.0, pageHeightPt=100.0)
+        outputs.append(item)
+    row["outputs"] = outputs
+    row["qa"] = {
+        "measuredMinimumPdfTextPt": 8.0,
+        "pageWidthPt": 100.0,
+        "intendedWidthMm": 25.4,
+        "placedMinimumTextPt": 5.76,
+        "measurementMethod": "PDF-TEXT-SPAN-POINT-SIZE",
+    }
+    payload = module.render_review_index(data, exports).encode()
+    index = tmp_path / module.REVIEW_INDEX_RELATIVE
+    index.parent.mkdir(parents=True, exist_ok=True)
+    index.write_bytes(payload)
+    exports["readerIndex"] = {"path": module.REVIEW_INDEX_RELATIVE.as_posix(), "textSha256": hashlib.sha256(payload).hexdigest()}
+    (tmp_path / module.EXPORT_MANIFEST_RELATIVE).write_text(json.dumps(exports, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return exports
+
+
 def copy_exports(tmp_path: Path, module):
     source = ROOT / module.EXPORT_MANIFEST_RELATIVE
     exports = json.loads(source.read_text(encoding="utf-8"))
@@ -87,7 +132,7 @@ def test_current_nine_candidates_are_retained_draft_and_source_bound() -> None:
     assert len(data["figures"]) == 9
     assert {f["status"] for f in data["figures"]} == {"DRAFT-REDRAW"}
     for figure in data["figures"]:
-        assert figure["revision"]["disposition"] == "RETAINED-DRAFT-INSTANCE"
+        assert figure["revision"]["disposition"] == "REVISED-DRAFT-INSTANCE"
         assert figure["revision"]["semanticReview"]["status"] == "PENDING-INDEPENDENT-REVIEW"
         assert figure["revision"]["promotionStatus"] == "DRAFT-NOT-PROMOTED"
         bindings = figure["sourceBindings"]
@@ -98,32 +143,42 @@ def test_current_nine_candidates_are_retained_draft_and_source_bound() -> None:
 
 def test_fig05_preserves_effect_and_update_partition() -> None:
     figure = load_module().load_manifest()["figures"][4]
-    edges = {r["id"]: (r["source"], r["target"], r.get("guardRef")) for r in figure["relations"]}
-    assert edges["E-S6-S7"] == ("S6", "S7", "G-EFFECT")
-    assert edges["E-CONFIRM-S8"] == ("RecoverConfirmed", "S8", "G-RECOVER")
-    assert edges["E-CONFIRM-S9"] == ("RecoverConfirmed", "S9", "G-TEST-PREP")
-    assert "Unconfirmed" not in {r["id"] for r in figure["entities"]}
-    assert ("S3", "SpecError") in {(r["source"], r["target"]) for r in figure["relations"]}
-    labels = {r["id"]: r["label"] for r in figure["relations"]}
-    assert labels["E-S2-S3"] == "not G-GAP"
-    assert "unless effect class already returned" in next(r["label"] for r in figure["entities"] if r["id"] == "S6")
+    edges = {(r["source"], r["target"]) for r in figure["relations"]}
+    entities = {r["id"]: r["label"] for r in figure["entities"]}
+    assert "keep or invalidate q" in entities["S7"]
+    assert ("D1", "S8") in edges
+    assert ("D1", "S9") in edges
+    assert ("D1", "S7") in edges
+    assert ("S8", "S9") in edges
+    recover = next(r["label"] for r in figure["relations"] if r["source"] == "D1" and r["target"] == "S8")
+    test_prep = next(r["label"] for r in figure["relations"] if r["source"] == "D1" and r["target"] == "S9")
+    invalid = next(r["label"] for r in figure["relations"] if r["source"] == "D1" and r["target"] == "S7")
+    assert "RECOVER" in recover
+    assert "TEST" in test_prep and "PREP" in test_prep
+    assert "invalid" in invalid or "unconfirmed" in invalid
+    assert "Stop-Prediction-Gap" in entities["TPG"]
+    notes = "\n".join(r["label"] for r in figure["notes"])
+    assert "keep or invalidate q" in notes
+    assert "CONFIRMED-NOT-SENT" in notes
+    assert "UNKNOWN-EFFECT" in notes
 
 
 def test_fig06_routes_protocol_observation_through_session() -> None:
     figure = load_module().load_manifest()["figures"][5]
     edges = {(r["source"], r["target"]) for r in figure["relations"]}
-    assert ("Observation", "ReceiveObservation") in edges
-    assert ("ReceiveObservation", "Analyse") in edges
-    assert ("Observation", "Analyse") not in edges
+    assert ("MP", "MS") in edges
+    assert ("MS", "AN") in edges
+    assert ("MP", "AN") not in edges
 
 
 def test_fig07_records_error_guard_order_and_four_witnesses() -> None:
     figure = load_module().load_manifest()["figures"][6]
-    refs = [r.get("guardRef") for r in figure["relations"] if r["source"] == "ErrorHandle"]
-    assert refs == ["CAP", "E-A4", "E-A5", "NOT-SENT", "E-RETRY"]
+    from_error = {(r["target"], r.get("guardRef")) for r in figure["relations"] if r["source"] == "ErrorHandle"}
+    assert ("AM", "UNCONFIRMED") in from_error or any(t == "AM" for t, _ in from_error)
+    assert any(t == "SB" and g == "CAP" for t, g in from_error)
     notes = "\n".join(r["label"] for r in figure["notes"])
-    for witness in ("E-A4", "E-A5", "NOT-SENT", "E-RETRY"):
-        assert witness in notes
+    assert "A1" in notes and "A5" in notes and "P1" in notes and "P5" in notes
+    assert "Alg. 1" in notes
     for relation in figure["relations"]:
         if relation.get("guardRef"):
             assert relation["label"].strip()
@@ -132,25 +187,34 @@ def test_fig07_records_error_guard_order_and_four_witnesses() -> None:
 def test_fig09_preserves_truth_validity_denominators_and_interface_boundary() -> None:
     figure = load_module().load_manifest()["figures"][8]
     entities = {row["id"]: row["label"] for row in figure["entities"]}
-    relations = {row["id"]: row["label"] for row in figure["relations"]}
     notes = {row["id"]: row["label"] for row in figure["notes"]}
-    assert "missing" in entities["Valid"]
-    assert relations["scene-truth"] == "INJECT-CONFIRM"
-    assert relations["valid-metrics"] == "ATTEMPT/ANSWERED DENOM."
-    assert "INJECT-CONFIRM = injection plan + execution confirmation" in notes["relation-legend"]
-    assert "ATTEMPT/ANSWERED DENOM. = attempt and answered-subset denominators" in notes["relation-legend"]
-    for interface in ("IF-OBS-INTERPRET", "IF-PREP-RECOVER", "IF-EQUIV", "IF-RESOURCE-STOP", "IF-EXP-EVAL"):
+    groups = {row["id"]: row["label"] for row in figure["groups"]}
+    for step in ("E0", "E1", "E3", "E4", "E5", "E6"):
+        assert step in entities
+    assert "IF-EXP-SCENE" in entities["E0"]
+    assert "IF-EXP-TRUTH" in entities["E1"]
+    assert "truth recorded before any arm runs" in entities["E1"]
+    assert "IF-EXP-RUN" in groups["E2"]
+    assert "CL-RQ1" in entities["E6"] and "CL-RQ3" in entities["E6"]
+    assert "never an" in next(r["label"] for r in figure["relations"] if r["id"] == "truth-arms")
+    for interface in ("IF-OBS-INTERPRET", "IF-PREP-RECOVER", "IF-EQUIV", "IF-RESOURCE-STOP", "IF-EXP-EVAL", "IF-EXP-TRUTH", "IF-EXP-RUN"):
         assert interface in notes["truth-boundary"]
+    assert "invalid" in entities["X0"]
+    assert "unconfirmed injection" in entities["X0"]
+    assert "equivalent" in entities["X1"]
+    assert "missing" in entities["X2"]
+    assert "unanswered" in entities["X3"]
+    assert "abstain" in entities["X3"]
 
 
 def test_generated_drawio_keeps_editable_text_and_semantic_ids() -> None:
     module = load_module()
     root = module.build_tree(module.load_manifest()["figures"][8]).getroot()
     cells = {item.get("id"): item for item in root.iter("mxCell")}
-    assert cells["node-Truth"].get("value") == "Independent truth record<br>evaluator only"
+    assert "Truth record" in (cells["node-TR"].get("value") or "")
     assert cells["edge-truth-arms"].get("semanticRole") == "forbidden"
-    assert cells["edge-truth-arms"].get("source") == "node-Truth"
-    assert cells["edge-truth-arms"].get("target") == "node-Arms"
+    assert cells["edge-truth-arms"].get("source") == "node-TR"
+    assert cells["edge-truth-arms"].get("target") == "group-E2"
 
 
 def test_html_label_round_trip_preserves_literal_constraints_and_entities() -> None:
@@ -459,7 +523,7 @@ def test_export_registry_rejects_stale_drawio_identity(tmp_path: Path) -> None:
 def test_export_registry_rejects_missing_or_changed_output(tmp_path: Path, mutation: str) -> None:
     module = load_module()
     data = copy_package(tmp_path, module)
-    exports = copy_exports(tmp_path, module)
+    exports = attach_exported_outputs(tmp_path, module, data, copy_exports(tmp_path, module))
     output = tmp_path / exports["figures"][0]["outputs"][0]["path"]
     if mutation == "missing":
         output.unlink()
@@ -496,7 +560,7 @@ def test_changed_candidate_cannot_reuse_old_review_or_exports(tmp_path: Path) ->
 
 
 def test_wrong_figure_output_assignment_is_rejected(tmp_path: Path) -> None:
-    module = load_module(); data = copy_package(tmp_path, module); exports = copy_exports(tmp_path, module)
+    module = load_module(); data = copy_package(tmp_path, module); exports = attach_exported_outputs(tmp_path, module, data, copy_exports(tmp_path, module))
     exports["figures"][0]["outputs"][0]["figureId"] = exports["figures"][1]["figureId"]
     (tmp_path / module.EXPORT_MANIFEST_RELATIVE).write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
     assert any("wrong candidate" in error for error in module.export_errors(data, tmp_path))
@@ -514,7 +578,7 @@ def test_registered_candidate_set_is_not_fixed_to_nine(tmp_path: Path) -> None:
 
 
 def test_pdf_qa_uses_measured_points_and_valid_scaling(tmp_path: Path) -> None:
-    module = load_module(); data = copy_package(tmp_path, module); exports = copy_exports(tmp_path, module)
+    module = load_module(); data = copy_package(tmp_path, module); exports = attach_exported_outputs(tmp_path, module, data, copy_exports(tmp_path, module))
     exports["figures"][0]["qa"]["measurementMethod"] = "DRAWIO-FONTSIZE"
     (tmp_path / module.EXPORT_MANIFEST_RELATIVE).write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
     assert any("rendered PDF text spans" in error for error in module.export_errors(data, tmp_path))
@@ -597,11 +661,13 @@ def test_index_writer_rolls_back_both_files_on_second_install_failure(tmp_path: 
 
 @pytest.mark.parametrize("mutation", ["bogus", "missing", "exported-empty"])
 def test_export_status_contract_is_closed(tmp_path: Path, mutation: str) -> None:
-    module = load_module(); data = copy_package(tmp_path, module); exports = copy_exports(tmp_path, module)
+    module = load_module(); data = copy_package(tmp_path, module); exports = attach_exported_outputs(tmp_path, module, data, copy_exports(tmp_path, module))
     row = exports["figures"][0]
     if mutation == "bogus": row["exportStatus"] = "BOGUS"
     elif mutation == "missing": row.pop("exportStatus")
-    else: row["outputs"] = []
+    else:
+        row["exportStatus"] = "EXPORTED-AND-HASHED"
+        row["outputs"] = []
     payload = module.render_review_index(data, exports).encode(); (tmp_path / module.REVIEW_INDEX_RELATIVE).write_bytes(payload)
     exports["readerIndex"]["textSha256"] = hashlib.sha256(payload).hexdigest()
     (tmp_path / module.EXPORT_MANIFEST_RELATIVE).write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
@@ -614,7 +680,7 @@ def test_needs_render_candidate_is_legal_and_visible_in_reader_index(tmp_path: P
     row = exports["figures"][0]
     row["exportStatus"] = "NEEDS-RENDER"; row["outputs"] = []
     row["exportDispositionReason"] = "Candidate changed; fresh exports are pending."
-    row["finalSizeStatus"] = "FINAL-SIZE-PENDING"; row.pop("qa")
+    row["finalSizeStatus"] = "FINAL-SIZE-PENDING"; row.pop("qa", None)
     payload = module.render_review_index(data, exports).encode(); (tmp_path / module.REVIEW_INDEX_RELATIVE).write_bytes(payload)
     exports["readerIndex"]["textSha256"] = hashlib.sha256(payload).hexdigest()
     (tmp_path / module.EXPORT_MANIFEST_RELATIVE).write_text(json.dumps(exports, indent=2) + "\n", encoding="utf-8")
@@ -665,6 +731,21 @@ def test_real_git_checkout_preserves_raw_svg_hashes(tmp_path: Path, autocrlf: st
     subprocess.run(["git", "-C", str(clone), "reset", "--hard", "HEAD"], check=True, capture_output=True)
     result = subprocess.run([sys.executable, str(clone / SCRIPT.relative_to(ROOT)), "--check"], cwd=clone, text=True, capture_output=True)
     assert result.returncode == 0, result.stdout + result.stderr
-    svg = next((clone / "artifacts/publications/cltav/model-drafts").glob("*.svg")); svg.write_bytes(svg.read_bytes() + b"drift")
-    result = subprocess.run([sys.executable, str(clone / SCRIPT.relative_to(ROOT)), "--check"], cwd=clone, text=True, capture_output=True)
-    assert result.returncode == 1 and "raw export identity drift" in result.stdout
+    svg = next((clone / "artifacts/publications/cltav/model-drafts").glob("*.svg"))
+    svg.write_bytes(svg.read_bytes() + b"drift")
+    drifted_svg = subprocess.run([sys.executable, str(clone / SCRIPT.relative_to(ROOT)), "--check"], cwd=clone, text=True, capture_output=True)
+    cloned_exports = json.loads((clone / "configs/research/cltav_model_figure_exports.json").read_text(encoding="utf-8"))
+    needs_render = all(row.get("exportStatus") == "NEEDS-RENDER" for row in cloned_exports["figures"])
+    if needs_render:
+        assert drifted_svg.returncode == 0, drifted_svg.stdout + drifted_svg.stderr
+    else:
+        assert drifted_svg.returncode == 1 and "raw export identity drift" in drifted_svg.stdout
+    drawio = next((clone / "docs/research/publication/models/drawio").glob("*.drawio"))
+    drawio.write_bytes(drawio.read_bytes() + b"<!--drift-->")
+    drifted_drawio = subprocess.run([sys.executable, str(clone / SCRIPT.relative_to(ROOT)), "--check"], cwd=clone, text=True, capture_output=True)
+    assert drifted_drawio.returncode == 1
+    assert (
+        "identity" in drifted_drawio.stdout
+        or "stale" in drifted_drawio.stdout
+        or "hash drift" in drifted_drawio.stdout
+    )

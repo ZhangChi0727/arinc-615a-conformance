@@ -245,7 +245,7 @@ def source_closure(root: Path | None = None, draft: Path | None = None) -> list[
         if tex.suffix != ".tex" or not tex.is_file():
             continue
         for raw in re.findall(r"\\includegraphics(?:\[[^]]*\])?\{([^}]+)\}", _strip_comments(tex.read_text(encoding="utf-8"))):
-            for candidate in _graphic_candidates(raw, tex.parent, draft):
+            for candidate in _graphic_candidates(raw, tex.parent, draft, root):
                 if candidate.is_file():
                     files.append(candidate)
                     break
@@ -337,22 +337,25 @@ def _duty_errors(compact: str) -> list[str]:
     return errors
 
 
-def _graphic_errors(blob: str, draft: Path | None = None) -> list[str]:
+def _graphic_errors(blob: str, draft: Path | None = None, root: Path | None = None) -> list[str]:
     errors: list[str] = []
     for raw in re.findall(r"\\includegraphics(?:\[[^]]*\])?\{([^}]+)\}", blob):
         _safe_rel(raw, errors, f"graphic {raw}")
         if draft is not None:
-            candidates = _graphic_candidates(raw, draft, draft)
+            candidates = _graphic_candidates(raw, draft, draft, root)
             if not any(candidate.is_file() for candidate in candidates):
                 errors.append(f"graphic is missing: {raw}")
     return errors
 
 
-def _graphic_candidates(raw: str, parent: Path, draft: Path) -> list[Path]:
-    candidates = [parent / raw, draft / raw]
+def _graphic_candidates(raw: str, parent: Path, draft: Path, root: Path | None = None) -> list[Path]:
+    root = ROOT if root is None else root
+    model_drafts = root / "artifacts/publications/cltav/model-drafts"
+    name = Path(raw).name
+    candidates = [parent / raw, draft / raw, model_drafts / name]
     if not Path(raw).suffix:
-        candidates.extend(parent / f"{raw}{suffix}" for suffix in (".pdf", ".png", ".jpg", ".jpeg"))
-        candidates.extend(draft / f"{raw}{suffix}" for suffix in (".pdf", ".png", ".jpg", ".jpeg"))
+        for suffix in (".pdf", ".png", ".jpg", ".jpeg"):
+            candidates.extend((parent / f"{raw}{suffix}", draft / f"{raw}{suffix}", model_drafts / f"{name}{suffix}"))
     return list(dict.fromkeys(candidates))
 
 
@@ -544,7 +547,7 @@ def manuscript_errors(
         for item in (label for label in used_labels if label.startswith(prefix)):
             if item not in declared:
                 errors.append(f"used {kind[:-1]} label is not registered: {item}")
-    errors.extend(_graphic_errors(blob, draft))
+    errors.extend(_graphic_errors(blob, draft, root))
     s2_path = draft / "supp_alg03_display.tex"
     s6_path = draft / "supp_alg07_display.tex"
     if not s2_path.is_file() or not s6_path.is_file():

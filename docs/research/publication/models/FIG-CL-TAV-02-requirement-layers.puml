@@ -1,50 +1,62 @@
 @startuml FIG-CL-TAV-02
 skinparam shadowing false
-title FIG-CL-TAV-02 Requirement layers and representative trace\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nmethod goals, protocol CRS and tool requirements stay distinct
-
-package "Method goals" as MG {
-  [CL-RQ1 loop consistency]
-  [CL-RQ2 comparative effect]
-  [CL-RQ3 uncertainty and stopping]
-}
-
-package "Protocol CRS" as PCRS {
-  [INFORMATION]
-  [UPLOAD]
-  [Media Defined DOWNLOAD]
-  [Operator Defined DOWNLOAD]
-  [FIND]
-  [abort / reject / exception / retry]
-}
-
-package "Tool requirements" as TR {
-  [later development-ready PR]
-  [not this increment]
-}
-
-MG ..> PCRS : method uses protocol obligations
-PCRS ..> TR : tool may later implement
-
-package "Representative trace E1 subset" as TRACE {
-  [SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E007-7726A816FFE7] as SRC
-  [CRS-M1-00365] as CRS365
-  [CRS-M1-00366] as CRS366
-  [CRS-M1-00367] as CRS367
-  [constraint: LUR write order] as CON
-  [Test / Analysis planned VC] as TA
-  [tool module later PR] as TOOL
-  [Evidence not executed] as EV
-}
-
-SRC --> CRS365 : source unit to requirement
-CRS365 --> CRS366
-CRS366 --> CRS367
-CRS367 --> CON
-CON --> TA
-TA ..> TOOL : planned
-TOOL ..> EV : planned; satisfy/verify are model relations,\nnot executed verification
-note bottom of TRACE
-  Real bound-M1 IDs. DOWNLOAD/FIND traces wait for source-unit audit.
-  No executed verify is claimed.
+title FIG-CL-TAV-02 v2. SysML 1.6 notation-based views; executable/metamodel conformance is not claimed
+' Approved figlib candidate v2 mapped to controlled ids. Not a proof of equivalence.
+rectangle MG
+' group MG: Method goals
+rectangle PCRS
+' group PCRS: Protocol CRS
+rectangle L3
+' group L3: Tool requirements
+rectangle FT
+' group FT: Representative trace / E1 subset
+component G0
+' entity G0: CL-RQ1  loop consistency
+component G1
+' entity G1: CL-RQ2  comparative effect
+component G2
+' entity G2: CL-RQ3  uncertainty and stopping
+component C0
+' entity C0: INFORMATION
+component C1
+' entity C1: UPLOAD
+component C2
+' entity C2: Media-defined DOWNLOAD
+component C3
+' entity C3: Operator-defined DOWNLOAD
+component C4
+' entity C4: FIND
+component C5
+' entity C5: abort / reject / retry
+component TR
+' entity TR: deferred to a later development-ready PR
+component SU
+' entity SU: Source unit: 615A-3 §6.3.2, chart A, E007
+component R1
+' entity R1: CRS-M1-00365
+component R2
+' entity R2: CRS-M1-00366
+component R3
+' entity R3: CRS-M1-00367
+component CO
+' entity CO: Constraint: LUR write order
+component VC
+' entity VC: Test / Analysis verification case
+component TM
+' entity TM: Tool module (later PR)
+component EV
+' entity EV: Evidence (not executed)
+MG ..> PCRS : goals-to-crs uses protocol obligations
+PCRS ..> L3 : d2 may later implement
+SU --> R1 : t0
+R1 --> R2 : t1
+R2 --> R3 : t2
+R3 --> CO : t3
+CO ..> VC : t4
+VC ..> TM : t5
+TM ..> EV : t6
+C1 ..> SU : x traced / example
+note as NT
+  Bound M1 identifiers. DOWNLOAD and FIND traces await source-unit audit; satisfy/verify are model relations, no executed verification is claimed.
 end note
 @enduml

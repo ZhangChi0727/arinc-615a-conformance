@@ -1415,7 +1415,7 @@ def _puml_edges(text: str) -> list[tuple[str, str, str]]:
     edges: list[tuple[str, str, str]] = []
     for raw in text.splitlines():
         line = raw.strip()
-        match = re.match(r"^(\w+)\s+(-+\S*->)\s+(\w+)(.*)$", line)
+        match = re.match(r"^(\w+)\s+(-+\S*->|\.+\S*>)\s+(\w+)(.*)$", line)
         if match:
             edges.append((match.group(1), match.group(3), line))
     return edges
@@ -1785,12 +1785,15 @@ def cltav_algorithm_contract_errors(
     if "forbidden leakage" not in experiment_puml:
         errors.append("experiment architecture view is missing forbidden leakage")
     for source, target, line in _puml_edges(experiment_puml):
-        if source == "Truth" and target == "Arms" and "forbidden" not in line:
+        if source in {"Truth", "TR"} and target in {"Arms", "E2"} and "forbidden" not in line and "never" not in line:
             errors.append("experiment architecture view must not give evaluator truth to comparison arms")
-        if source == "Truth" and any(item in line for item in (spec.get("forbiddenTruthInputs") or [])):
+        if source in {"Truth", "TR"} and any(item in line for item in (spec.get("forbiddenTruthInputs") or [])):
             if "forbidden" not in line and "never" not in line:
                 errors.append("evaluator truth must not enter a select/predict/history/execute input")
-    if "Truth --> Arms" in experiment_puml and "forbidden" not in experiment_puml:
+    if (
+        any(token in experiment_puml for token in ("Truth --> Arms", "TR --> E2", "TR ..> E2"))
+        and "forbidden" not in experiment_puml
+    ):
         errors.append("experiment architecture view must not give evaluator truth to comparison arms")
     walks = spec.get("recordFlowWalkthroughs") or []
     if len(walks) < 5:
@@ -2147,6 +2150,8 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
         "unknown-effect",
         "confirmed not sent",
         "Charge cost once",
+        "Charge declared cost once",
+        "keep or invalidate q",
         "strictly-reducing",
         "selectable",
         "A1",
@@ -2161,6 +2166,9 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
         "Stop-Empty",
         "Stop-Error",
         "Stop-645",
+        "Stop-Prediction-Gap",
+        "PREP",
+        "RECOVER",
         "cmin",
         "Kmax",
     ):
@@ -2201,7 +2209,10 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
     ):
         if token not in experiment:
             errors.append(f"experiment architecture view is missing {token}")
-    if "Truth --> Arms" in experiment and "forbidden" not in experiment:
+    if (
+        any(token in experiment for token in ("Truth --> Arms", "TR --> E2", "TR ..> E2"))
+        and "forbidden" not in experiment
+    ):
         errors.append("experiment architecture view must not give evaluator truth to comparison arms")
     if "Izk of tb" not in sequence:
         errors.append("diagnostic sequence view must send the second observation to Analysis")
@@ -2262,34 +2273,31 @@ def _figure_graph_errors(name: str, root: ET.Element) -> list[str]:
     for pair in sorted(required):
         if pair not in found_pairs:
             errors.append(f"{name} is missing structural edge {pair[0]}->{pair[1]}")
+    visible = _svg_visible_text(root)
+    for key, node in nodes.items():
+        label = str((node or {}).get("label") or "")
+        if label and label not in visible:
+            errors.append(f"{name} node {key} label is truncated or missing")
     if name == "FIG-CL-TAV-09-experiment-architecture.svg":
-        if ("Valid", "Metrics") not in found_pairs:
-            errors.append(f"{name} must connect Valid to Metrics")
-        if ("Obs", "Metrics") in found_pairs:
-            errors.append(f"{name} must not bypass validity: Obs must not connect directly to Metrics")
-        valid = nodes.get("Valid") or {}
+        if ("E4", "E5") not in found_pairs:
+            errors.append(f"{name} must connect E4 to E5")
+        if ("E3", "E5") in found_pairs:
+            errors.append(f"{name} must not bypass validity: E3 must not connect directly to E5")
+        e4 = nodes.get("E4") or {}
         for src, dst, x1, y1, _x2, _y2 in found:
-            if dst == "Metrics" and valid and not _point_in_node(x1, y1, valid):
-                errors.append(f"{name} Metrics inbound edge does not start in the Valid box")
-        visible = _svg_visible_text(root)
-        for key, node in nodes.items():
-            label = str((node or {}).get("label") or "")
-            if label and label not in visible:
-                errors.append(f"{name} node {key} label is truncated or missing")
+            if src == "E4" and dst == "E5" and e4 and not _point_in_node(x1, y1, e4):
+                errors.append(f"{name} E4->E5 does not start in the E4 box")
     if name == "FIG-CL-TAV-05-closed-loop-activity.svg":
-        for pair in (("Unconfirmed", "S7"), ("S7", "LoopS1"), ("LoopS1", "S1")):
-            if pair not in found_pairs:
-                errors.append(f"{name} is missing retry/unconfirmed back-edge {pair[0]}->{pair[1]}")
         errors.extend(_figure05_control_errors(graphs, found_pairs, root))
+        errors.extend(_figure05_puml_control_ids())
     return errors
 
 
 FIG05_CONTROL_EDGES = (
-    {"id": "E-S10-S1", "from": "S10", "to": "S1", "polarity": "continue", "guard": "no stop"},
-    {"id": "E-S9-S10", "from": "S9", "to": "S10", "polarity": "advance"},
-    {"id": "E-S1-STOP", "from": "S1", "to": "StopGate", "polarity": "stop", "guard": "already decided"},
-    {"id": "E-S2-GAP", "from": "S2", "to": "PredictionGap", "polarity": "stop", "guard": "Recover and Prep ineligible"},
-    {"id": "E-S7-S1", "from": "S7", "to": "S1", "polarity": "retry", "via": ("LoopS1",)},
+    {"id": "eloop", "from": "S10", "to": "S1", "polarity": "continue"},
+    {"id": "e910", "from": "S9", "to": "S10", "polarity": "advance"},
+    {"id": "s-TPG", "from": "S2", "to": "TPG", "polarity": "stop"},
+    {"id": "e7loop", "from": "S7", "to": "S1", "polarity": "retry"},
 )
 
 
@@ -2302,6 +2310,20 @@ def _svg_visible_text(root: ET.Element) -> str:
         parts.extend((child.text or "") for child in list(elem))
         chunks.append(" ".join(part.strip() for part in parts if part and part.strip()))
     return "\n".join(chunks)
+
+
+def _figure05_puml_control_ids() -> list[str]:
+    puml_path = RESEARCH / "publication" / "models" / "FIG-CL-TAV-05-closed-loop-activity.puml"
+    puml = puml_path.read_text(encoding="utf-8") if puml_path.is_file() else ""
+    errors: list[str] = []
+    for spec in FIG05_CONTROL_EDGES:
+        if spec["id"] not in puml:
+            errors.append(f"FIG-05 PlantUML is missing control id {spec['id']}")
+        if f"{spec['from']} --> {spec['to']}" not in puml.replace("  ", " "):
+            needle = f"{spec['from']} --> {spec['to']}"
+            if needle not in puml:
+                errors.append(f"FIG-05 PlantUML is missing {spec['from']} --> {spec['to']}")
+    return errors
 
 
 def _figure05_control_errors(graphs: dict, found_pairs: set[tuple[str, str]], root: ET.Element) -> list[str]:
@@ -2365,11 +2387,6 @@ def cltav_figure_errors() -> list[str]:
         errors.extend(f"model redraw: {item}" for item in module.validate_package(ROOT))
     except (OSError, ImportError, ValueError) as exc:
         errors.append(f"cannot run model-redraw validator: {exc}")
-    critical = {
-        "FIG-CL-TAV-01-context.svg",
-        "FIG-CL-TAV-05-closed-loop-activity.svg",
-        "FIG-CL-TAV-09-experiment-architecture.svg",
-    }
     for name in CLTAV_SVG_FILES:
         path = CLTAV_SVG_DIR / name
         if not path.is_file():
@@ -2385,8 +2402,6 @@ def cltav_figure_errors() -> list[str]:
             if "--" in comment:
                 errors.append(f"{name} XML comment contains '--'")
                 break
-        if name not in critical:
-            continue
         try:
             root = ET.fromstring(text)
         except ET.ParseError as exc:

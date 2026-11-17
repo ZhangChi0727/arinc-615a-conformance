@@ -5,6 +5,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{tikz}
 \usetikzlibrary{positioning}
+\usepackage{graphicx}
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 \usepackage[T1]{fontenc}
 \usepackage{textcomp}
@@ -31,22 +32,21 @@ No AI system is an author.}
 \markboth{Author et al.}{CL-TAV}
 
 \begin{abstract}
-Airborne software loading is judged from protocol events whose identity,
-ordering and timing may be only conservatively observed. This paper specifies
-Closed-Loop Test--Analysis Verification (CL-TAV) for ARINC 615A: a charged
-session that predicts observation classes, interprets a raw record under one
-uncertainty reference, updates a finite single-fault candidate set from the
-whole compatible history, and selects one exclusive TEST, Prep, Recover or
-Admit action. The contribution sought is deliberately bounded. C1 is
-consistency and conditional true-hypothesis retention under the declared model,
-ownership and conservative-observation assumptions, not a new general theorem
-for loss, drift or reordering. C2 is a prior-free one-step minimax choice over
-currently feasible and affordable tests with explicit error and stop semantics,
-not a globally optimal policy. The bound protocol model remains UPLOAD and
-INFORMATION; ARINC 645 identity is bound for triggered leaves, while runtime
-integrity remains unestablished. Four comparison arms and three experiment
-families are registered. Confirmatory measurements are not yet available, so
-no improvement, implementation-completeness or certification claim is made.
+Airborne software loading over ARINC~615A-3 is judged from protocol events
+whose identity, ordering and timing may be only conservatively observed. A
+missed acknowledgement, for example, can leave the tester with an incomplete
+observation rather than a clean protocol FAIL. This paper specifies
+Closed-Loop Test--Analysis Verification (CL-TAV): a charged session that
+keeps a history-compatible candidate set, selects one admissible TEST, Prep,
+Recover or Admit action by a one-step minimax rule on residual class size,
+and stops under exclusive named classes. Under the declared model, ownership
+and conservative-observation hypotheses, the true in-domain fault remains in
+the updated candidate set (C1). The same one-step rule is specified on
+currently feasible affordable tests (C2). A protocol-bound evaluation design
+records DETECT, LOCATE and ABLATION analyses against Test-only,
+Analysis-only and fixed Test-then-Analysis arms, with declared denominators.
+Confirmatory measurements have not yet been obtained; this manuscript does
+not claim measured improvement or certification.
 \end{abstract}
 
 \begin{IEEEkeywords}

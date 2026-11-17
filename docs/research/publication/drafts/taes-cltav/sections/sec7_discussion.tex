@@ -1,48 +1,27 @@
 \section{Discussion and Limitations}
 \label{sec:disc}
 
-The first-version domain is a declared single-fault \(H_0\), one-step
-selection, a bound UPLOAD/INFORMATION model, and notation-only architecture
-views. Out-of-domain faults may remain compatible with an in-domain survivor.
-A remaining \(\{h_{\mathrm{normal}}\}\) is not a protocol PASS. Obtaining
-ARINC~645 and binding the six distinct triggered obligations closes only their
-specification contracts; it does not establish any runtime integrity
-capability.
-
-Engineering work that is not done includes the core estimators, an executable
-verification engine, Project Configuration and confirmatory runs. Those
-absences are unfinished work, not method impossibility.
-
-The candidate implementation design is likewise not run admission. Independent
-mathematical review, an interactive IUT and reset contract, injection/truth
-confirmation, equivalent-fault adjudication and a justified sample/precision
-decision remain open. A conforming one-step selector may still show no benefit,
-more abstention or greater computation on the registered task; those outcomes
-must remain reportable with coverage and censored cost.
-
-The 23 inspected captures are a selected exploratory corpus with unknown
-topology, clock qualification, device configuration, software version and
-independent root-cause truth. Repeated sessions and shared parser, model or
-clock components induce dependence and common-error risk. They can exercise
-intake and reconstruction robustness, but cannot support active counterfactual
-comparison among the four experimental arms. The bounded reference kernel
-also abstains rather than treating a frontier limit as incompatibility.
-
-Related work sharpens rather than removes these limits. Passive compatible-run
-diagnosis does not establish the active protocol lifecycle, while active
-diagnosis under different control authority does not validate the CL-TAV
-selector~\cite{koehl2023,hu2020,miao2025}. An aerospace demonstration has shown
-that limited observability and model--prototype mismatch can yield wrong
-localization~\cite{chanthery2019}. In cockpit-display testing, image-derived and
-simulator-data verdicts share OCL constraints, so high extraction precision is
-not independent truth for the oracle or product behaviour~\cite{sartaj2021}.
-The confirmatory design must therefore disclose shared parsers, models,
-constraints, clocks and truth-generation components and retain discrepancy
-classes rather than relabel them as product faults.
+C1 (Proposition~\ref{prop:retain}) is conditional true-fault retention under
+hypotheses R1--R5, not a competitor to full-history timed
+diagnosis~\cite{koehl2023}. Monotonicity (Proposition~\ref{prop:mono}) is a
+separate statement. C2 (Proposition~\ref{prop:c2}) is a one-step operator on
+\((s(t),\mathrm{cost}(t),\mathrm{id})\), not the closed-loop supervisors or
+conditional plans already in the
+literature~\cite{sampath1998,chanthery2009,hu2020,miao2025}. Constraint-solving
+test generation remains a neighbouring generator, not this paper's selection
+rule~\cite{petrenko2016}. Aerospace procedure work remains the engineering
+setting and a localization-risk warning~\cite{chanthery2019}.
 
 \phbox{PH-RES-INTERPRET}{EXPERIMENT-RESULT}{Discussion of measured gains or
-losses waits for the reserved result panels. No placeholder may be read as a
-neutral or negative experimental outcome.}
+losses waits for the DETECT, LOCATE and ABLATION cells.}
 
-Transfer beyond Ethernet laboratory loaders, and any certification argument,
-remain open (historical RQ6).
+\paragraph{Limitations.}
+The observation model is conservative: missing, reordered or time-skewed
+events are not reconstructed, so C1 does not extend to a general loss, drift
+or reordering theorem. R1--R5, exclusive ownership and the exclusive resource
+mode are hypotheses of the specification, not measured platform properties.
+Runtime ARINC~645 capability is not established. Equivalence among mutants and
+among protocol traces can leave distinguishable faults unresolved. Clock and
+error budgets remain publication decisions~\cite{jcgm100,jcgm106}.
+Confirmatory measurements have not yet been obtained; this manuscript does
+not claim measured improvement, implementation completeness, or certification.

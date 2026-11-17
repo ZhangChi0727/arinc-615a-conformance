@@ -73,7 +73,7 @@ def test_rejects_duplicate_section_and_placeholder() -> None:
     bad["sections"] = list(bad["sections"]) + [bad["sections"][0]]
     errors = taes.manuscript_errors(bad)
     assert any("duplicate section" in item for item in errors)
-    text = (ROOT / "docs/research/publication/drafts/taes-cltav/sections/sec1_intro.tex").read_text(
+    text = (ROOT / "docs/research/publication/drafts/taes-cltav/sections/sec8_conclusion.tex").read_text(
         encoding="utf-8"
     )
     doubled = text + text

@@ -1257,6 +1257,31 @@ not claimed; CRC/integrity remains NOT-ESTABLISHED. This
 decision authorizes neither Ready, approval, merge, Configuration/M3,
 capability/conformance/certification nor scientific result claims.
 
+## DD-047 — CL-TAV model-figure semantic revision v2
+
+**Decision:** Under CR-2026-023, revise the nine retained `FIG-CL-TAV-*`
+candidates to the approved DM geometry: FIG-01..04 and 06..08 at v2, FIG-05 at
+v4 (two columns: left S0–S3 and S10 aligned with Terminal; right S4–S9), and
+FIG-09 at v3. FIG-05 S7 is drawn as "keep or invalidate q"; CONFIRMED-NOT-SENT
+keeps `q` and UNKNOWN-EFFECT invalidates `q` remain method and Algorithm 1
+wording. Insert FIG-01, FIG-05 and FIG-09 into the TAES first draft with
+`figure*`. User gate-8 acceptance of meaning and visual hierarchy is recorded;
+independent DM review of the PR Head remains required.
+
+**Why:** The 2026-10-17 DD-044 addendum already treats model figures as
+versioned candidates. This decision names the first semantic revision of those
+instances and the manuscript consumers, without creating a second algorithm or
+experiment authority.
+
+**Scope:** PlantUML inputs, Draw.io sources, manifests, reader SVGs, CR/DD
+records, and the three manuscript figures. Algorithms, interfaces, runtime,
+CRS/M2, experiment contracts and `src/` are unchanged.
+
+**Status:** Candidate under CR-2026-023. Review exports may remain
+`NEEDS-RENDER` until Draw.io CLI hashes the controlled Draw.io bytes. This
+decision authorizes neither Ready, merge, experiment results nor scientific
+approval.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -1914,3 +1939,21 @@ DM-C-R01 记录 UNKNOWN 经合格 Recover 后完整会话保守停于 Stop-Predi
 不继续诊断；继续诊断属后续方法项。E 收尾待 DM 整支复审。不主张完整 UPLOAD、真实 IUT／网络、
 四臂或实验结果；CRC／完整性保持 NOT-ESTABLISHED。本决定不授权 Ready、批准、
 合并、Configuration/M3、能力／符合性／认证或科学结果主张。
+
+## DD-047——CL-TAV 模型图语义修订 v2
+
+**决定：** 在 CR-2026-023 下，将九张保留的 `FIG-CL-TAV-*` 候选修订为已批准的 DM
+几何：01–04 与 06–08 为 v2，FIG-05 为 v4（两列：左列 S0–S3、S10 与 Terminal
+对齐；右列 S4–S9），FIG-09 为 v3。FIG-05 的 S7 图中写 “keep or invalidate q”；
+CONFIRMED-NOT-SENT 保留 `q`、UNKNOWN-EFFECT 使 `q` 失效仍写在方法与算法 1 中。
+用 `figure*` 把 FIG-01、FIG-05、FIG-09 插入 TAES 初稿。记录用户第 8 道验收门；
+DM 对 PR Head 的独立审查仍为必需。
+
+**理由：** DD-044 的 2026-10-17 补充已把模型图视为版本化候选。本决定命名这些
+实例的首次语义修订及其稿件消费者，不另立算法或实验权威。
+
+**范围：** PlantUML 输入、Draw.io 来源、清单、读者 SVG、CR/DD 记录以及三张稿件
+插图。算法、接口、运行时、CRS/M2、实验合同和 `src/` 不变。
+
+**状态：** 在 CR-2026-023 下为候选。在 Draw.io CLI 对受控 Draw.io 字节做哈希之前，
+评审导出可以保持 `NEEDS-RENDER`。本决定不授权 Ready、合并、实验结果或科学批准。

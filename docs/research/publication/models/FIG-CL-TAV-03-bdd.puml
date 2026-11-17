@@ -1,43 +1,31 @@
 @startuml FIG-CL-TAV-03
 skinparam shadowing false
-title FIG-CL-TAV-03 BDD\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nTest, Observation, Analysis, Diagnosis, Selection, Evidence as separate blocks
-
-class Test {
-  t in T(qk)
-  cost(t) >= cmin
-}
-class Observation {
-  Izk
-  qk observable summary
-  ERROR if instrument invalid
-}
-class Analysis {
-  constraint verdict
-  same partitions as scoring
-}
-class Diagnosis {
-  Hk candidate set
-  compatibility update
-}
-class Selection {
-  one-step minimax s(t)
-  Prep action
-}
-class Evidence {
-  traces
-  stop class
-  budget remainder
-}
-
-Test --> Observation : execute
-Observation --> Analysis : Izk
-Analysis --> Diagnosis : compatible / inconsistent
-Diagnosis --> Selection : remaining Hk
-Selection --> Test : next test or stop
-Evidence ..> Observation
-Evidence ..> Diagnosis
-Evidence ..> Selection
-note bottom
-  Blocks are logical SysML classifiers, not implemented modules.
+title FIG-CL-TAV-03 v2. SysML 1.6 notation-based views; executable/metamodel conformance is not claimed
+' Approved figlib candidate v2 mapped to controlled ids. Not a proof of equivalence.
+component TE
+' entity TE: «block» / Test / t ∈ T(q_k);  cost(t) ≥ c_{min}
+component OB
+' entity OB: «block» / Observation / I_k, observable summary q_k; / ERROR if instrument invalid
+component AN
+' entity AN: «block» / Analysis / constraint verdict; / same partitions as scoring
+component DI
+' entity DI: «block» / Diagnosis / candidate set H_k; / compatibility update
+component SE
+' entity SE: «block» / Selection / one-step min-max s(t); / PREP / RECOVER actions
+component EV
+' entity EV: «block» / Evidence / traces, stop class, / resource remainder
+TE --> OB : a1 execute
+OB --> AN : a2 I_k
+AN --> DI : a3 compatible / / inconsistent
+DI --> SE : a4 remaining H_k
+SE --> TE : a5 next TEST, / PREP or stop
+EV ..> OB : d1
+EV ..> SE : d2
+EV ..> DI : d3
+note as NT
+  Blocks are logical classifiers, not implemented modules.
+end note
+note as legend
+  Legend: directed association; «trace» dependency; analysis core
 end note
 @enduml

@@ -2,7 +2,11 @@
 % This is an abstraction of the accepted module, not a second loop.
 % Mapping: paper Alg.~1 $\leftrightarrow$ ALG-CLTAV-01; wrappers in the supplement.
 \begin{algorithm}[t]
-\caption{CL-TAV top-level session (paper Alg.~1 $=$ ALG-CLTAV-01)}
+\caption{CL-TAV top-level session. Named contracts \IFres, \IFeq\ and
+\IFexec\ denote the resource-stop, equivalence and execute-record
+interfaces; \IFpred, \IFsel\ and \IFobs\ are the prediction, selection and
+observation contracts of Fig.~\ref{fig:loop}. Repository identifiers are in
+the supplement.}
 \label{alg:cltav-01}
 \SetAlgoLined
 \SetKwInput{KwIn}{Require}

@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pytest
@@ -723,43 +724,48 @@ def test_r31_cross_path_acceptance_matrix() -> None:
     assert _summary_path("RECOVER", "NONE", "q0", prep_evaluated=True, prep_summary="q1", target_confirmed=True) == ("KNOWN", "q1", 0, "snapshot-history")
 
 
-def _fig05():
-    graphs = json.loads((ROOT / "configs/research/cltav_figure_graphs.json").read_text(encoding="utf-8"))
-    figure = graphs["figures"]["FIG-CL-TAV-05-closed-loop-activity.svg"]
-    svg = (ROOT / "artifacts/publications/cltav/figures/FIG-CL-TAV-05-closed-loop-activity.svg").read_text(encoding="utf-8")
-    import xml.etree.ElementTree as ET
-    root = ET.fromstring(svg)
-    pairs = {(src, dst) for src, dst, *_ in baseline._svg_labeled_edges(root)}
-    return figure, pairs, root
+def _fig05_graphs_and_svg():
+    graphs = copy.deepcopy(
+        baseline._load_figure_graphs()["figures"]["FIG-CL-TAV-05-closed-loop-activity.svg"]
+    )
+    path = baseline.CLTAV_SVG_DIR / "FIG-CL-TAV-05-closed-loop-activity.svg"
+    root = ET.fromstring(path.read_text(encoding="utf-8"))
+    found_pairs = {(src, dst) for src, dst, *_ in baseline._svg_labeled_edges(root)}
+    return graphs, found_pairs, root
 
 
 def test_fig05_normal_continue_reaches_next_s1() -> None:
-    figure, pairs, root = _fig05()
-    assert baseline._figure05_control_errors(figure, pairs, root) == []
-    assert ("S9", "S10") in pairs and ("S10", "S1") in pairs
-    assert ("S7", "LoopS1") in pairs
+    graphs, found_pairs, root = _fig05_graphs_and_svg()
+    assert ("S10", "S1") in found_pairs
+    assert ("S9", "S10") in found_pairs
+    assert ("S7", "S1") in found_pairs
+    assert baseline._figure05_control_errors(graphs, found_pairs, root) == []
+    assert baseline._figure05_puml_control_ids() == []
 
 
 def test_fig05_rejects_missing_continue_changed_endpoint_and_inverted_guard() -> None:
-    figure, pairs, root = _fig05()
-    missing = copy.deepcopy(figure)
-    missing["edges"] = [row for row in missing["edges"] if row.get("id") != "E-S10-S1"]
-    missing_pairs = pairs - {("S10", "S1")}
+    graphs, found_pairs, root = _fig05_graphs_and_svg()
+    missing = copy.deepcopy(graphs)
+    missing["edges"] = [row for row in missing["edges"] if row.get("id") != "eloop"]
+    missing_pairs = found_pairs - {("S10", "S1")}
     errors = baseline._figure05_control_errors(missing, missing_pairs, root)
-    assert any("S10->S1" in item or "S10" in item and "S1" in item for item in errors)
-    moved = copy.deepcopy(figure)
+    assert any("continue" in item or "S10->S1" in item for item in errors)
+
+    moved = copy.deepcopy(graphs)
     for row in moved["edges"]:
-        if row.get("id") == "E-S10-S1":
+        if row.get("id") == "eloop":
             row["to"] = "S2"
-    moved_pairs = (pairs - {("S10", "S1")}) | {("S10", "S2")}
+    moved_pairs = (found_pairs - {("S10", "S1")}) | {("S10", "S2")}
     errors = baseline._figure05_control_errors(moved, moved_pairs, root)
-    assert any("S10->S1" in item for item in errors)
-    inverted = copy.deepcopy(figure)
+    assert any("must be S10->S1" in item for item in errors)
+
+    inverted = copy.deepcopy(graphs)
     for row in inverted["edges"]:
-        if row.get("id") == "E-S10-S1":
+        if row.get("id") == "eloop":
             row["polarity"] = "stop"
-    errors = baseline._figure05_control_errors(inverted, pairs, root)
+    errors = baseline._figure05_control_errors(inverted, found_pairs, root)
     assert any("polarity inverted" in item for item in errors)
+    assert baseline._figure05_puml_control_ids() == []
 
 
 def _owned_row(path: str, sources: list[str]) -> dict:

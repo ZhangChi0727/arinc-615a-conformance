@@ -1,39 +1,65 @@
 \section{CL-TAV Method}
 \label{sec:method}
 
-\subsection{Notation and assumptions}
 S0--S10 are logical duties, not line numbers. The decision index \(k\), the
-billed charge count and the retry counter are distinct. SessionContext
-\(\Gamma\) is the unique session state. HistoryHandle \(\eta\) carries
-whole-history compatibility. The select-time snapshot \(\xi\) freezes
-\texttt{actionId}, \texttt{actionKind}, \(q_{\mathrm{used}}\), history version,
-classes used at select, and uncertainty reference \(U\). A later confirmed
-successor summary is a different field. Effect classes are
-\texttt{CONFIRMED-NOT-SENT} and \texttt{UNKNOWN-EFFECT}. PredictionGapError is
-TEST-scoped.
-
-\subsection{Overall closed loop}
-Algorithm~\ref{alg:cltav-01} is a typed abstraction of ALG-CLTAV-01. Wrappers
-\textsc{PredictCurrent}, \textsc{InterpretOutcome} and
-\textsc{ResolveOutcome} are ALG-CLTAV-02/03/04 in the supplement. S9 calls
-\textsc{CommitCompatibleUpdate} (ALG-CLTAV-07), with
-\(\chi=(\Gamma,\eta,H)\), which validates the history
-version, applies \IFhist{} from \(\xi\), returns
-\((\textit{status},\eta,H,\Gamma)\) and commits a confirmed successor summary.
-A bare \IFhist{} call is not that wrapper. Resolution is branched on
-\(\delta.\mathrm{control}\) after adopting \(\delta.\Gamma\), \(\delta.\eta\)
-and \(\delta.\mathrm{outcome}\).
+billed charge count and the retry counter are distinct. Algorithm~\ref{alg:cltav-01}
+is the top-level session. Wrappers and typed records are in the supplement.
+Figure~\ref{fig:loop} shows the same control path: the S7 box keeps or
+invalidates \(q\); \texttt{CONFIRMED-NOT-SENT} retains \(q\) and
+\texttt{UNKNOWN-EFFECT} invalidates \(q\). Those labels act on \(q\), not on
+\(H\).
 
 \input{alg_compact_01}
 
-\subsection{Interpretation, compatibility and selection}
-Prediction and interpretation share \(U\). Let \(O(h,t,q)\) be the conservative
-outer set of feasible observations of hypothesis \(h\), and let \(Z_k\) be the
-measured feasible-observation set after timing, ownership and pairing checks.
-The interpretation/whole-history bridge induces the compatible hypothesis
-class \(C_k\) (the accepted interface field \(z.I_z\)); \(C_k\) is not a
-measurement set. A currently valid class is the nonempty projection
-\(H\cap C_k\). Compatible update on a valid class is
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{FIG-CL-TAV-05-closed-loop-activity.pdf}
+\caption{Closed-loop activity from FIG-CL-TAV-05 v4 (SysML 1.6 notation-based
+view; executable or metamodel conformance is not claimed). Two columns: left
+S0--S3 with S10 aligned to Terminal; right S4--S9. Figure labels
+\IFres, \IFpred, \IFsel, \IFexec, \IFobs\ and \IFeq\ are the named
+resource-stop, prediction, selection-admission, execute-record,
+observation-interpretation and equivalence contracts; the supplement maps them
+to repository identifiers. The S7 box is drawn as ``keep or invalidate \(q\)'';
+\texttt{CONFIRMED-NOT-SENT} retains \(q\) and \texttt{UNKNOWN-EFFECT}
+invalidates \(q\) remain the method and Algorithm~\ref{alg:cltav-01} wording.
+Terminal stops include Stop-Prediction-Gap. No full 615A behaviour, real IUT,
+645 capability, or experimental result is claimed.}
+\label{fig:loop}
+\end{figure*}
+
+\subsection{Definitions and assumptions}
+
+\begin{definition}[Conservative outer set]
+\label{def:cons-obs}
+For hypothesis \(h\), action \(t\) and summary \(q\), \(O(h,t,q)\) is a
+conservative outer set of feasible observations. \(Z_k\) is the measured
+feasible-observation set after timing, ownership and pairing checks.
+\end{definition}
+
+\begin{definition}[Compatible class]
+\label{def:compat}
+Prediction and interpretation share one uncertainty reference \(U\). The
+interpretation/whole-history bridge induces the compatible hypothesis class
+\(C_k\) (accepted field \(z.I_z\)); \(C_k\) is not a measurement set. A
+currently valid class is the nonempty projection \(H\cap C_k\).
+\end{definition}
+
+\begin{assumption}[Exclusive resource mode]
+\label{ass:budget}
+A session is in exactly one mode, \(\mathrm{BUDGET}(c_{\min},B)\) or
+\(\mathrm{ROUNDS}(K_{\max})\), never both:
+\begin{equation}
+\label{eq:budget}
+\bigl(\mathrm{BUDGET}(c_{\min},B)\ \mathrm{xor}\ \mathrm{ROUNDS}(K_{\max})\bigr)=1.
+\end{equation}
+Every charged TEST, Prep, Recover and \texttt{ERROR} spends that mode. Retry
+caps are not a second budget.
+\end{assumption}
+
+\subsection{Update and selection}
+
+Compatible update on a valid class is
 \begin{equation}
 \label{eq:update}
 H_{k+1}=H_k\cap C_k,\qquad H_{k+1}\subseteq H_k.
@@ -45,94 +71,97 @@ TEST \(t\) is
 \label{eq:score}
 s(t)=\max_{C\in\mathcal{C}_t}\lvert C\rvert.
 \end{equation}
-Empty \(S\) is never \(\arg\min\). Timing uses T5~\cite{jcgm106}:
-\(I_{\mathrm{obs}}\subseteq I_r\) is PASS; \(I_{\mathrm{obs}}\cap I_r=\varnothing\)
-is FAIL; otherwise INCONCLUSIVE. An ambiguous pair is \texttt{ERROR}, not IUT
-FAIL.
+Empty \(S\) is never \(\arg\min\). On nonempty finite \(T_{\mathrm{cur}}\),
+\(t^{\star}\) is a least element of \((s(t),\mathrm{cost}(t),\mathrm{id})\).
+Timing uses T5~\cite{jcgm106}: \(I_{\mathrm{obs}}\subseteq I_r\) is PASS;
+\(I_{\mathrm{obs}}\cap I_r=\varnothing\) is FAIL; otherwise INCONCLUSIVE. An
+ambiguous pair is \texttt{ERROR}, not IUT FAIL.
 
-\subsection{Bounded reference-kernel contract}
-The first implementation target is a finite explicit-path kernel, not a
-general solver. Each frontier entry contains a stable hypothesis ID, control
-state, canonical exact-rational difference constraints, finite typed store, path length,
-whole-history provenance, and a known/conservative-unknown status. It accepts
-only TRUE, conjunction, state equality, typed-field equality and rational
-interval guards, with simultaneous finite assignment and exact zero-clock-reset
-updates. OR, NOT and calls are outside this first domain and are rejected as
-SPEC-ERROR before expansion; no normalization is left to an implementer.
-The sole normative numeric form is a numerator and strictly positive
-denominator pair; interval bounds carry explicit open/closed flags, and any
-fraction printed in a review view is display-only.  A typed adapter either
-maps the supported M2 subset into this AST or rejects the model before
-expansion, so M2 expressions are not a second authoritative encoding.
-Propagation validates the select-time snapshot, expands enabled transitions,
-intersects observation and timing constraints, and retains every feasible
-successor. Entries merge only when hypothesis, control state, clock
-constraint, store and history provenance are identical.
-
-Configured bounds cover hypotheses, actions, observation classes, path length
-and per-hypothesis frontier size. Unsupported syntax or an exhausted path or
-frontier bound returns the interface's named GAP, SPEC-ERROR, or conservative
-unknown result without deleting a hypothesis. Only prediction, selection,
-history update, equivalence and stop selection consume kernel results;
-execute, interpretation and Prep/Recover do not. Feasibility alone never
-establishes equivalence. Unsupported syntax, computation unknown and limits
-preserve \(H\), the summary and charge state, irrespective of a later stop label.
-A valid successor equals the registered compatibility intersection and is a
-subset of \(H\). Its empty result forces Stop-Empty and its singleton result
-forces Stop-Singleton before 645, equivalence or budget exits. Stop-Empty thus
-requires an empty history proved by complete in-domain intersection. This contract maps every
-reachable result and marks every other interface/result pair unreachable; it does not claim
-completeness, polynomial complexity, or deployed code.
+\begin{table}[!t]
+\caption{Exclusive named stop classes of the method (FIG-CL-TAV-05 v4). At most
+one class is returned; Admit A2--A5 and post-update P1--P5 are tabulated in the
+supplement.}
+\label{tab:stops}
+\centering
+\footnotesize
+\begin{tabular}{@{}p{0.36\columnwidth}p{0.56\columnwidth}@{}}
+\hline
+Class & Meaning in this paper \\
+\hline
+Stop-Empty & valid empty in-domain intersection (P1) \\
+Stop-Singleton & valid singleton update (P2); \(h_{\mathrm{normal}}\) is not protocol PASS \\
+Stop-645 & remaining 645-dependent obligation (P3) \\
+Stop-Equivalent & equivalence class (P4) \\
+Stop-Budget & selected mode in~\eqref{eq:budget} exhausted (A2/A5, P5); not Stop-Error \\
+Stop-Error & named error, including unconfirmed Recover with \(R_{\max}=1\) and remaining budget \\
+Stop-NoDistinguisher & no distinguishing TEST and no eligible Prep (A3) \\
+Stop-Prediction-Gap & TEST-scoped prediction gap; UNKNOWN after Recover does not continue diagnosis \\
+Stop-SpecError & specification error (unsupported syntax or S9 status) \\
+\hline
+\end{tabular}
+\end{table}
 
 This contract is intentionally weaker than a universal uncertain-observation
-diagnosis theorem. Existing work already supplies possible-run semantics and
-an exact incremental passive diagnoser for bounded latency, drift/offset and
-out-of-order observation under exact-once and timed-automaton assumptions
-\cite{koehl2023}, as well as exact monitoring/testing for a different bounded
-communication-delay model~\cite{fraenzle2026}. CL-TAV claims only the consistency
-and retention property below under R1--R5. Detected capture inadequacy or
-invalid evidence, ambiguous ownership or pairing, unsupported syntax and
-exhausted bounds retain their existing named uncertain, error or resource
-outcomes and do not establish an IUT failure. This does not claim that every
-missing, duplicate or spurious event is detectable: undetected out-of-domain
-pollution may remain compatible with an in-domain candidate. Conversely, with
-qualified evidence and a valid still-active obligation, expiry at the declared
-timing boundary retains the existing no-response FAIL; a legal observation
-class whose complete in-domain intersection is empty retains Stop-Empty. No
-source theorem is transplanted.
+diagnosis theorem~\cite{koehl2023}. CL-TAV claims only the consistency and
+retention property below under R1--R5.
 
-\subsection{Conditional properties}
-\textbf{Monotonicity.} Equation~\eqref{eq:update} gives
-\(H_{k+1}\subseteq H_k\). Without a valid class there is no add or delete. An
-in-domain singleton is not protocol PASS.
+\subsection{Propositions}
 
-\textbf{Retention.} Assume (R1) \(h^\star\in H_0\); (R2) one state path is
-consistent with the executed history; (R3) \(O(h^\star,t_k,q_k)\) is a
-conservative outer set; (R4) the true observation belongs to both
-\(O(h^\star,t_k,q_k)\) and \(Z_k\); and (R5) ownership and pairing are valid.
+\begin{proposition}[Monotonicity]
+\label{prop:mono}
+Equation~\eqref{eq:update} gives \(H_{k+1}\subseteq H_k\). Without a valid class
+there is no add or delete. An in-domain singleton is not protocol PASS.
+\end{proposition}
+\begin{IEEEproof}
+On a valid class, \(H_{k+1}=H_k\cap C_k\subseteq H_k\). \texttt{ERROR} and
+identity Prep/Recover leave \(H\) unchanged, so \(H_{k+1}=H_k\subseteq H_k\).
+\end{IEEEproof}
+
+\begin{proposition}[True-fault retention]
+\label{prop:retain}
+Assume (R1) \(h^{\star}\in H_0\); (R2) one state path is consistent with the
+executed history; (R3) \(O(h^{\star},t_k,q_k)\) is a conservative outer set;
+(R4) the true observation belongs to both \(O(h^{\star},t_k,q_k)\) and \(Z_k\);
+and (R5) ownership and pairing are valid. Then \(h^{\star}\in H_{k+1}\).
+\end{proposition}
+\begin{IEEEproof}
 The declared interpretation and whole-history compatibility contract therefore
-places \(h^\star\) in \(C_k\). Thus \(h^\star\in H_k\cap C_k\), and induction
+places \(h^{\star}\) in \(C_k\). Thus \(h^{\star}\in H_k\cap C_k\), and induction
 retains it in \(H_{k+1}\). Out-of-domain faults may still mimic an in-domain
 survivor.
+\end{IEEEproof}
 
-\textbf{One-step minimax.} On nonempty finite \(T_{\mathrm{cur}}\), \(t^\star\)
-is a least element of \((s(t),\mathrm{cost}(t),\mathrm{id})\). Diagnostic-state
-feedback and timed active control already exist~\cite{hu2020,miao2025}; this
-statement concerns only the declared current choice. It is not a global policy,
-does not prove future distinguishability, and does not guarantee shrinkage for
-every observation class.
+\begin{proposition}[One-step minimax]
+\label{prop:c2}
+On nonempty finite \(T_{\mathrm{cur}}\), \(t^{\star}\) is a least element of
+\((s(t),\mathrm{cost}(t),\mathrm{id})\). Empty \(S\) is never \(\arg\min\).
+This is not a global policy, does not prove future distinguishability, and
+does not guarantee shrinkage for every observation class.
+\end{proposition}
+\begin{IEEEproof}
+\(\mathcal{C}_t\) is a finite family of currently valid nonempty classes of an
+affordable distinguishing TEST, so \(s(t)\) in~\eqref{eq:score} is a well-defined
+nonnegative integer. The lexicographic order on
+\((s(t),\mathrm{cost}(t),\mathrm{id})\) is a total order on finite nonempty
+\(T_{\mathrm{cur}}\), hence a least element exists. If \(S=\emptyset\), the
+session classifies Admit A2--A5 rather than minimizing over an empty set.
+\end{IEEEproof}
 
-\textbf{Termination.} Every charged TEST, Prep, Recover and \texttt{ERROR}
-spends the selected mode, hence at most \(\lfloor B/c_{\min}\rfloor\) or
-\(K_{\max}\) billed executions. Wall-clock waits still need their own timeouts;
-those timeouts are not claimed implemented.
+\begin{proposition}[Termination]
+\label{prop:term}
+Under Assumption~\ref{ass:budget} every charged TEST, Prep, Recover and
+\texttt{ERROR} spends the selected mode, hence at most
+\(\lfloor B/c_{\min}\rfloor\) or \(K_{\max}\) billed executions.
+\end{proposition}
+\begin{IEEEproof}
+Each billed execution consumes a strictly positive quantum or one round, so
+the remaining resource is a nonnegative integer that strictly decreases.
+Named stops in Table~\ref{tab:stops} are the only exits. Wall-clock waits still
+need their own timeouts; those timeouts are not claimed implemented.
+\end{IEEEproof}
 
-Exclusive named stops are Empty, Singleton, 645, Equivalent, Budget,
-Stop-Error and Stop-NoDistinguisher. Stop-Error is not Stop-Budget.
-Admit reasons A2--A5 and post-update P1--P5 are tabulated in the supplement.
-CONFIRMED-NOT-SENT does not assign UNKNOWN. UNKNOWN-EFFECT must not be read
-back as the previous KNOWN summary. Unconfirmed Recover with \(R_{\max}=1\)
-and remaining budget is Stop-Error. The update disposition is evaluated before
-the mutable stop label: a rejected/error update preserves \(H\), while a valid
-empty or singleton update forces Stop-Empty or Stop-Singleton, respectively.
-Kernels remain unimplemented interfaces.
+The update disposition is evaluated before the mutable stop label: a rejected
+or \texttt{ERROR} update preserves \(H\), while a valid empty or singleton
+update forces Stop-Empty or Stop-Singleton. \texttt{CONFIRMED-NOT-SENT} does
+not assign UNKNOWN. \texttt{UNKNOWN-EFFECT} must not be read back as the
+previous KNOWN summary.

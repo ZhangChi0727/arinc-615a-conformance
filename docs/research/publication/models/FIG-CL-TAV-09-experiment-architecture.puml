@@ -1,41 +1,68 @@
 @startuml FIG-CL-TAV-09
 skinparam shadowing false
-title FIG-CL-TAV-09 Experiment architecture\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nevaluator-only truth is never an algorithm input
-
-rectangle "Controlled scene / config\n(IUT, fault plan, resource mode)" as Scene
-rectangle "Independent truth record\n(evaluator only)" as Truth
-rectangle "Comparison arms\nCL-T / CL-A / CL-TA / CL-LOOP" as Arms
-rectangle "Observations and resource log\n(algorithm-visible)" as Obs
-rectangle "Validity check\n(invalid, equivalent, missing)" as Valid
-rectangle "Metrics with denominators\nEXP-CLTAV-DETECT / LOCATE / ABLATION" as Metrics
-rectangle "RQ / claims\n(no unrun numbers)" as Claims
-
-Scene --> Arms : same declared pool and action library
-Scene --> Truth : injection plan + execution confirmation
-Truth -[#red,dashed]-> Arms : forbidden leakage
-Arms --> Obs : algorithm-visible Izk, q, cost
-Obs --> Valid
-Truth --> Valid : evaluator-only confirmation
-Valid --> Metrics : attempt and answered-subset denominators
-Metrics --> Claims : comparable projections only
-
-note right of Truth
-  Evaluator truth must not enter
-  IF-SELECT-ADMIT, IF-PRED-OBS,
-  IF-HIST-UPDATE or IF-EXECUTE-RECORD.
-  IF-OBS-INTERPRET, IF-PREP-RECOVER,
-  IF-EQUIV and IF-RESOURCE-STOP stay
-  algorithm-visible only.
-  Experiment I/O: IF-EXP-SCENE,
-  IF-EXP-INJECT, IF-EXP-TRUTH,
-  IF-EXP-COLLECT, IF-EXP-RUN,
-  IF-EXP-FILTER, IF-EXP-EVAL.
+title FIG-CL-TAV-09 v3. SysML 1.6 notation-based views; executable/metamodel conformance is not claimed
+' Approved figlib candidate v3 mapped to controlled ids. Not a proof of equivalence.
+rectangle EV
+' group EV: Evaluator only
+rectangle AV
+' group AV: Algorithm visible
+rectangle XO
+' group XO: Excluded, still counted
+rectangle E2
+' group E2: E2  Run arms / same pool and action library  (IF-EXP-RUN)
+component E0
+' entity E0: E0  Declare scenario pool / IUT configuration, fault plan, resource mode; / fixed before any run  (IF-EXP-SCENE)
+component E1
+' entity E1: E1  Inject fault, confirm execution / truth recorded before any arm runs / (IF-EXP-INJECT, IF-EXP-TRUTH)
+component A0
+' entity A0: CL-T / test / only
+component A1
+' entity A1: CL-A / analysis / only
+component A2
+' entity A2: CL-TA / test + / analysis
+component A3
+' entity A3: CL-LOOP / closed / loop
+component E3
+' entity E3: E3  Collect records / I_k, q, cost, resource log  (IF-EXP-COLLECT)
+component E4
+' entity E4: E4  Validity filter / invalid, equivalent or missing runs leave / the answered subset  (IF-EXP-FILTER)
+component E5
+' entity E5: E5  Evaluate against truth / DETECT / LOCATE / ABLATION with attempt / and answered-subset denominators  (IF-EXP-EVAL)
+component E6
+' entity E6: E6  Answer CL-RQ1–CL-RQ3 / reporting step only; comparable / projections, no unrun numbers
+component TR
+' entity TR: Truth record / injection plan and / execution confirmation / (IF-EXP-TRUTH)
+component X0
+' entity X0: invalid run / unconfirmed injection / or setup fault
+component X1
+' entity X1: equivalent fault / observationally / indistinguishable
+component X2
+' entity X2: missing record / collection gap
+component X3
+' entity X3: unanswered / abstain; still counted
+E0 --> E1 : m0
+E1 --> E2 : m1
+E2 --> E3 : m2
+E3 --> E4 : m3
+E4 --> E5 : m4
+E5 --> E6 : m5
+E1 --> TR : t1 truth first
+TR --> E4 : t2 evaluator-only check
+TR --> E5 : t3 ground truth
+TR ..> E2 : truth-arms never an / algorithm input
+E3 --> E1 : lp next scenario / × arm
+E4 --> XO : ex excluded
+note as TN
+  Truth is never an
+  algorithm input.
 end note
-note bottom of Arms
-  Same pool is not a gift of later CL-LOOP
-  records to other arms, and not a fictional
-  sampling charge to CL-A.
-  Groups: EXP-CLTAV-DETECT, EXP-CLTAV-LOCATE,
-  EXP-CLTAV-ABLATION.
+note as NT
+  Shared pool: no arm sees CL-LOOP records; excluded runs stay in the attempt denominator.
+end note
+note as legend
+  Legend: experiment flow; repeat; forbidden leakage; exclusion; method under test
+end note
+note as truth-boundary
+  Registered interfaces remain constraints on this view. Algorithm calls: IF-PRED-OBS, IF-SELECT-ADMIT, IF-EXECUTE-RECORD, IF-OBS-INTERPRET, IF-PREP-RECOVER, IF-HIST-UPDATE, IF-EQUIV, IF-RESOURCE-STOP. Experiment I/O: IF-EXP-SCENE, IF-EXP-INJECT, IF-EXP-TRUTH, IF-EXP-COLLECT, IF-EXP-RUN, IF-EXP-FILTER, IF-EXP-EVAL. Campaigns: EXP-CLTAV-DETECT, EXP-CLTAV-LOCATE, EXP-CLTAV-ABLATION. Arms: CL-T / CL-A / CL-TA / CL-LOOP. Truth is evaluator-only and is never an algorithm input. The truth-to-run edge is forbidden leakage. This note records the interface boundary; it is not a measured result.
 end note
 @enduml

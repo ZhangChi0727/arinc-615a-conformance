@@ -101,6 +101,7 @@ def _final_layout_errors(cwd: Path, jobs: tuple[str, ...]) -> list[str]:
 
 def _stage_closure(stage: Path) -> None:
     """Copy the checker-resolved closure using the paths TeX resolves in stage."""
+    model_drafts = ROOT / "artifacts/publications/cltav/model-drafts"
     for source in CHECK.source_closure():
         try:
             relative = source.relative_to(DRAFT)
@@ -110,7 +111,11 @@ def _stage_closure(stage: Path) -> None:
                 source.relative_to(ALG_DIR)
                 target = stage / source.name
             except ValueError:
-                continue  # build-control files are hashed but not TeX inputs
+                try:
+                    source.relative_to(model_drafts)
+                    target = stage / source.name
+                except ValueError:
+                    continue  # build-control files are hashed but not TeX inputs
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
 
