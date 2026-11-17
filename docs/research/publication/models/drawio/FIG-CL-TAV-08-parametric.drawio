@@ -1,50 +1,60 @@
 <?xml version='1.0' encoding='utf-8'?>
 <mxfile host="app.diagrams.net" agent="cltav-model-figures/1.1" version="24.7.17" type="device" compressed="false">
   <diagram id="fig-cl-tav-08" name="FIG-CL-TAV-08">
-    <mxGraphModel dx="0" dy="0" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="760" math="1" shadow="0">
+    <mxGraphModel dx="0" dy="0" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="780" pageHeight="428" math="1" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="node-I_allow" value="I_allow &amp;lt;&amp;lt;constraint&amp;gt;&amp;gt;&lt;br&gt;I: allowed timing interval" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=22;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="I_allow">
-          <mxGeometry as="geometry" x="60" y="120" width="250" height="80" />
+        <mxCell id="node-IA" value="«constraint»&lt;br&gt;Allowed interval&lt;br&gt;I: allowed timing interval" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="IA">
+          <mxGeometry as="geometry" x="30" y="40" width="180" height="72" />
         </mxCell>
-        <mxCell id="node-eps" value="eps &amp;lt;&amp;lt;constraint&amp;gt;&amp;gt;&lt;br&gt;epsilon: measurement error bound" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=22;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="eps">
-          <mxGeometry as="geometry" x="60" y="280" width="250" height="80" />
+        <mxCell id="node-EP" value="«constraint»&lt;br&gt;Error bound&lt;br&gt;ε: measurement error" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="EP">
+          <mxGeometry as="geometry" x="30" y="150" width="180" height="72" />
         </mxCell>
-        <mxCell id="node-J_meas" value="J_meas &amp;lt;&amp;lt;constraint&amp;gt;&amp;gt;&lt;br&gt;J: feasible interval from measurement" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=22;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="J_meas">
-          <mxGeometry as="geometry" x="420" y="200" width="280" height="80" />
+        <mxCell id="node-JM" value="«constraint»&lt;br&gt;Measured interval&lt;br&gt;J: feasible interval from&lt;br&gt;measurement and ε" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="JM">
+          <mxGeometry as="geometry" x="270" y="95" width="190" height="72" />
         </mxCell>
-        <mxCell id="node-cmin_b" value="cmin_b &amp;lt;&amp;lt;constraint&amp;gt;&amp;gt;&lt;br&gt;cmin &amp;gt; 0; cost(t) &amp;gt;= cmin&lt;br&gt;cost(ERROR) &amp;gt;= cmin" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=22;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="cmin_b">
-          <mxGeometry as="geometry" x="60" y="490" width="280" height="94" />
+        <mxCell id="node-UP" value="«constraint»&lt;br&gt;History update&lt;br&gt;H_{k+1} = {h ∈ H_k |&lt;br&gt;O(h, t, q_k) ∩ I_k ≠ ∅}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="UP">
+          <mxGeometry as="geometry" x="540" y="95" width="220" height="72" />
         </mxCell>
-        <mxCell id="node-budget" value="budget &amp;lt;&amp;lt;constraint&amp;gt;&amp;gt;&lt;br&gt;B finite XOR Kmax finite" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=22;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="budget">
-          <mxGeometry as="geometry" x="440" y="500" width="250" height="76" />
+        <mxCell id="node-CM" value="«constraint»&lt;br&gt;Positive cost&lt;br&gt;c_{min} &amp;gt; 0; cost(t) ≥ c_{min};&lt;br&gt;cost(ERROR) ≥ c_{min}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="CM">
+          <mxGeometry as="geometry" x="30" y="290" width="200" height="72" />
         </mxCell>
-        <mxCell id="node-score" value="score &amp;lt;&amp;lt;constraint&amp;gt;&amp;gt;&lt;br&gt;s(t) = worst remaining |Hk|&lt;br&gt;over Obs(t,qk)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=22;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="score">
-          <mxGeometry as="geometry" x="820" y="500" width="280" height="92" />
+        <mxCell id="node-BU" value="«constraint»&lt;br&gt;Resource mode&lt;br&gt;B finite ⊕ K_{max} finite" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="BU">
+          <mxGeometry as="geometry" x="270" y="290" width="190" height="72" />
         </mxCell>
-        <mxCell id="node-update" value="update &amp;lt;&amp;lt;constraint&amp;gt;&amp;gt;&lt;br&gt;Hk+1 = {h in Hk | O(h,t,qk) intersects Izk}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=22;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="update">
-          <mxGeometry as="geometry" x="1040" y="210" width="380" height="92" />
+        <mxCell id="node-SC" value="«constraint»&lt;br&gt;Selection score&lt;br&gt;s(t) = worst remaining |H_k|&lt;br&gt;over Obs(t, q_k)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EDF3;strokeColor=#486581;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="constraint" authorityAlias="SC">
+          <mxGeometry as="geometry" x="540" y="290" width="220" height="72" />
         </mxCell>
-        <mxCell id="note-unsolved" value="Constraints are displayed, not claimed solved. Positive-but-vanishing costs are not a termination proof. ERROR uses the selected constraint. Mode is BUDGET XOR ROUNDS." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#8C8C8C;strokeWidth=1;fontFamily=Helvetica;fontSize=18;fontColor=#333333;align=left;verticalAlign=middle;spacing=8;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="note" semanticRole="interpretation-boundary" sourceNote="unsolved">
-          <mxGeometry as="geometry" x="260" y="650" width="980" height="58" />
+        <mxCell id="note-NT" value="Constraints are displayed, not claimed solved; vanishing positive costs do not prove termination." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#8C8C8C;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#333333;align=left;verticalAlign=middle;spacing=8;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="note" semanticRole="interpretation-boundary" sourceNote="NT">
+          <mxGeometry as="geometry" x="30" y="384" width="730" height="30" />
         </mxCell>
-        <mxCell id="edge-allow-meas" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=none;strokeColor=#486581;" edge="1" parent="1" source="node-I_allow" target="node-J_meas" semanticKind="relation" semanticRole="constraint-link">
+        <mxCell id="edge-b1" value="I" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=none;strokeColor=#486581;exitX=1;exitY=0.5;entryX=0;entryY=0.35;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-IA" target="node-JM" semanticKind="relation" semanticRole="constraint-link">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="235" y="76" />
+              <mxPoint x="235" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-b2" value="ε" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=none;strokeColor=#486581;exitX=1;exitY=0.5;entryX=0;entryY=0.65;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-EP" target="node-JM" semanticKind="relation" semanticRole="constraint-link">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="245" y="186" />
+              <mxPoint x="245" y="142" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-b3" value="J" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=none;strokeColor=#486581;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-JM" target="node-UP" semanticKind="relation" semanticRole="constraint-link">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
-        <mxCell id="edge-eps-meas" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=none;strokeColor=#486581;" edge="1" parent="1" source="node-eps" target="node-J_meas" semanticKind="relation" semanticRole="constraint-link">
+        <mxCell id="edge-b4" value="H_k, Obs(t, q_k)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=none;strokeColor=#486581;exitX=0.5;exitY=0;entryX=0.5;entryY=1;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-SC" target="node-UP" semanticKind="relation" semanticRole="constraint-link">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
-        <mxCell id="edge-meas-update" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=none;strokeColor=#486581;" edge="1" parent="1" source="node-J_meas" target="node-update" semanticKind="relation" semanticRole="constraint-link">
+        <mxCell id="edge-b5" value="mode" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=none;strokeColor=#486581;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-BU" target="node-SC" semanticKind="relation" semanticRole="constraint-link">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
-        <mxCell id="edge-cmin-budget" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=none;strokeColor=#486581;" edge="1" parent="1" source="node-cmin_b" target="node-budget" semanticKind="relation" semanticRole="constraint-link">
-          <mxGeometry as="geometry" relative="1" />
-        </mxCell>
-        <mxCell id="edge-score-update" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=none;strokeColor=#486581;" edge="1" parent="1" source="node-score" target="node-update" semanticKind="relation" semanticRole="constraint-link">
-          <mxGeometry as="geometry" relative="1" />
-        </mxCell>
-        <mxCell id="edge-budget-score" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=18;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=none;strokeColor=#486581;" edge="1" parent="1" source="node-budget" target="node-score" semanticKind="relation" semanticRole="constraint-link">
+        <mxCell id="edge-b6" value="c_{min}" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=none;strokeColor=#486581;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-CM" target="node-BU" semanticKind="relation" semanticRole="constraint-link">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
       </root>

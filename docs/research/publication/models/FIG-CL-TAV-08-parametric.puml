@@ -1,43 +1,29 @@
 @startuml FIG-CL-TAV-08
 skinparam shadowing false
-title FIG-CL-TAV-08 Parametric\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nconstraints shown, not claimed solved
-
-class I_allow <<constraint>> {
-  I : allowed timing interval
-}
-class eps <<constraint>> {
-  epsilon : measurement error bound
-}
-class J_meas <<constraint>> {
-  J : feasible interval from measurement
-}
-class cmin_b <<constraint>> {
-  cmin > 0
-  cost(t) >= cmin
-  cost(ERROR) >= cmin
-}
-class budget <<constraint>> {
-  B finite XOR Kmax finite
-}
-class score <<constraint>> {
-  s(t) = worst remaining |Hk|
-  over Obs(t,qk)
-}
-class update <<constraint>> {
-  Hk+1 = {h in Hk | O(h,t,qk) intersects Izk}
-}
-
-I_allow .. J_meas
-eps .. J_meas
-J_meas .. update
-cmin_b .. budget
-score .. update
-budget .. score
-
-note bottom
-  Positive-but-vanishing costs are not a termination proof.
-  ERROR is under the same chosen constraint as ordinary tests.
-  Parametric view displays constraints; it does not claim they are solved.
-  Selected mode is BUDGET XOR ROUNDS.
+title FIG-CL-TAV-08 v2. SysML 1.6 notation-based views; executable/metamodel conformance is not claimed
+' Approved figlib candidate v2 mapped to controlled ids. Not a proof of equivalence.
+' Displayed constraints include cmin, Kmax and Hk.
+component IA
+' entity IA: «constraint» / Allowed interval / I: allowed timing interval
+component EP
+' entity EP: «constraint» / Error bound / ε: measurement error
+component JM
+' entity JM: «constraint» / Measured interval / J: feasible interval from / measurement and ε
+component UP
+' entity UP: «constraint» / History update / H_{k+1} = {h ∈ H_k | / O(h, t, q_k) ∩ I_k ≠ ∅}
+component CM
+' entity CM: «constraint» / Positive cost / c_{min} > 0; cost(t) ≥ c_{min}; / cost(ERROR) ≥ c_{min}
+component BU
+' entity BU: «constraint» / Resource mode / B finite ⊕ K_{max} finite
+component SC
+' entity SC: «constraint» / Selection score / s(t) = worst remaining |H_k| / over Obs(t, q_k)
+IA --> JM : b1 I
+EP --> JM : b2 ε
+JM --> UP : b3 J
+SC --> UP : b4 H_k, Obs(t, q_k)
+BU --> SC : b5 mode
+CM --> BU : b6 c_{min}
+note as NT
+  Constraints are displayed, not claimed solved; vanishing positive costs do not prove termination.
 end note
 @enduml

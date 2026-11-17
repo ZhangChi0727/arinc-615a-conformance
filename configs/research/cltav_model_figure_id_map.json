@@ -1,0 +1,2138 @@
+{
+  "schemaVersion": "1.0",
+  "generator": ".agents/skills/cltav-model-figures/scripts/dm_v2/promote_controlled.py",
+  "selected": {
+    "01-04,06-08": "figlib v2",
+    "05": "FIG-CL-TAV-05-closed-loop-v4 (fig05b, two columns, 800x630)",
+    "09": "FIG-CL-TAV-09-experiment-architecture-v3"
+  },
+  "notSelected": [
+    "FIG-CL-TAV-05-closed-loop-v2",
+    "FIG-CL-TAV-05-closed-loop-v3",
+    "FIG-CL-TAV-05-closed-loop-v4a",
+    "FIG-CL-TAV-05-closed-loop-v4b",
+    "FIG-CL-TAV-09-experiment-architecture-v2"
+  ],
+  "figures": [
+    {
+      "figure": "FIG-CL-TAV-01",
+      "version": "v2",
+      "cells": [
+        {
+          "figlib": "FS",
+          "manifest": "group-FS",
+          "kind": "group",
+          "label": "Msess\nverification session domain"
+        },
+        {
+          "figlib": "FP",
+          "manifest": "group-FP",
+          "kind": "group",
+          "label": "Mprot\nprotocol domain"
+        },
+        {
+          "figlib": "OP",
+          "manifest": "node-Operator",
+          "kind": "entity",
+          "parent": "group-FS",
+          "label": "Operator"
+        },
+        {
+          "figlib": "MS",
+          "manifest": "node-Session",
+          "kind": "entity",
+          "parent": "group-FS",
+          "label": "CL-TAV session\ncandidate set H, resource state;\none admitted action per round"
+        },
+        {
+          "figlib": "AD",
+          "manifest": "node-TestAdapter",
+          "kind": "entity",
+          "parent": "1",
+          "label": "Test adapter\nencodes stimuli;\ncaptures raw records"
+        },
+        {
+          "figlib": "IUT",
+          "manifest": "node-IUT",
+          "kind": "entity",
+          "parent": "group-FP",
+          "label": "IUT\nloader target; protocol\nmessages and operation\nstates live here"
+        },
+        {
+          "figlib": "CLK",
+          "manifest": "node-CLK",
+          "kind": "entity",
+          "parent": "1",
+          "label": "Network clock\ntimestamps, error bound ε"
+        },
+        {
+          "figlib": "IB",
+          "manifest": "node-IB",
+          "kind": "entity",
+          "parent": "1",
+          "label": "645 integrity boundary\nidentity bound; capability\nNOT-ESTABLISHED"
+        },
+        {
+          "figlib": "NT",
+          "manifest": "note-NT",
+          "kind": "note",
+          "label": "Msess sees protocol state only\nthrough the adapter."
+        },
+        {
+          "figlib": "legend",
+          "manifest": "note-legend",
+          "kind": "note",
+          "label": "Legend: information flow; non-evidential dependency"
+        },
+        {
+          "figlib": "e1",
+          "manifest": "edge-request",
+          "kind": "relation",
+          "source": "Operator",
+          "target": "Session",
+          "role": "flow",
+          "label": "test request",
+          "droppedLabelCell": "e1-lbl"
+        },
+        {
+          "figlib": "e2",
+          "manifest": "edge-e2",
+          "kind": "relation",
+          "source": "Session",
+          "target": "TestAdapter",
+          "role": "flow",
+          "label": "action a_k",
+          "droppedLabelCell": "e2-lbl"
+        },
+        {
+          "figlib": "e3",
+          "manifest": "edge-e3",
+          "kind": "relation",
+          "source": "TestAdapter",
+          "target": "Session",
+          "role": "flow",
+          "label": "obs. I_k",
+          "droppedLabelCell": "e3-lbl"
+        },
+        {
+          "figlib": "e4",
+          "manifest": "edge-e4",
+          "kind": "relation",
+          "source": "TestAdapter",
+          "target": "IUT",
+          "role": "flow",
+          "label": "stimulus",
+          "droppedLabelCell": "e4-lbl"
+        },
+        {
+          "figlib": "e5",
+          "manifest": "edge-e5",
+          "kind": "relation",
+          "source": "IUT",
+          "target": "TestAdapter",
+          "role": "flow",
+          "label": "raw records",
+          "droppedLabelCell": "e5-lbl"
+        },
+        {
+          "figlib": "e6",
+          "manifest": "edge-e6",
+          "kind": "relation",
+          "source": "TestAdapter",
+          "target": "CLK",
+          "role": "flow",
+          "label": "t_k ± ε",
+          "droppedLabelCell": "e6-lbl"
+        },
+        {
+          "figlib": "e7",
+          "manifest": "edge-e7",
+          "kind": "relation",
+          "source": "IUT",
+          "target": "IB",
+          "role": "dependency",
+          "label": "call and state only;\nnot algorithm evidence",
+          "droppedLabelCell": "e7-lbl"
+        }
+      ]
+    },
+    {
+      "figure": "FIG-CL-TAV-02",
+      "version": "v2",
+      "cells": [
+        {
+          "figlib": "L1",
+          "manifest": "group-MG",
+          "kind": "group",
+          "label": "Method goals"
+        },
+        {
+          "figlib": "G0",
+          "manifest": "node-G0",
+          "kind": "entity",
+          "parent": "group-MG",
+          "label": "CL-RQ1  loop consistency"
+        },
+        {
+          "figlib": "G1",
+          "manifest": "node-G1",
+          "kind": "entity",
+          "parent": "group-MG",
+          "label": "CL-RQ2  comparative effect"
+        },
+        {
+          "figlib": "G2",
+          "manifest": "node-G2",
+          "kind": "entity",
+          "parent": "group-MG",
+          "label": "CL-RQ3  uncertainty and stopping"
+        },
+        {
+          "figlib": "L2",
+          "manifest": "group-PCRS",
+          "kind": "group",
+          "label": "Protocol CRS"
+        },
+        {
+          "figlib": "C0",
+          "manifest": "node-C0",
+          "kind": "entity",
+          "parent": "group-PCRS",
+          "label": "INFORMATION"
+        },
+        {
+          "figlib": "C1",
+          "manifest": "node-C1",
+          "kind": "entity",
+          "parent": "group-PCRS",
+          "label": "UPLOAD"
+        },
+        {
+          "figlib": "C2",
+          "manifest": "node-C2",
+          "kind": "entity",
+          "parent": "group-PCRS",
+          "label": "Media-defined DOWNLOAD"
+        },
+        {
+          "figlib": "C3",
+          "manifest": "node-C3",
+          "kind": "entity",
+          "parent": "group-PCRS",
+          "label": "Operator-defined DOWNLOAD"
+        },
+        {
+          "figlib": "C4",
+          "manifest": "node-C4",
+          "kind": "entity",
+          "parent": "group-PCRS",
+          "label": "FIND"
+        },
+        {
+          "figlib": "C5",
+          "manifest": "node-C5",
+          "kind": "entity",
+          "parent": "group-PCRS",
+          "label": "abort / reject / retry"
+        },
+        {
+          "figlib": "L3",
+          "manifest": "group-L3",
+          "kind": "group",
+          "label": "Tool requirements"
+        },
+        {
+          "figlib": "TR",
+          "manifest": "node-TR",
+          "kind": "entity",
+          "parent": "group-L3",
+          "label": "deferred to a later development-ready PR"
+        },
+        {
+          "figlib": "FT",
+          "manifest": "group-FT",
+          "kind": "group",
+          "label": "Representative trace\nE1 subset"
+        },
+        {
+          "figlib": "SU",
+          "manifest": "node-SU",
+          "kind": "entity",
+          "parent": "group-FT",
+          "label": "Source unit: 615A-3 §6.3.2, chart A, E007"
+        },
+        {
+          "figlib": "R1",
+          "manifest": "node-R1",
+          "kind": "entity",
+          "parent": "group-FT",
+          "label": "CRS-M1-00365"
+        },
+        {
+          "figlib": "R2",
+          "manifest": "node-R2",
+          "kind": "entity",
+          "parent": "group-FT",
+          "label": "CRS-M1-00366"
+        },
+        {
+          "figlib": "R3",
+          "manifest": "node-R3",
+          "kind": "entity",
+          "parent": "group-FT",
+          "label": "CRS-M1-00367"
+        },
+        {
+          "figlib": "CO",
+          "manifest": "node-CO",
+          "kind": "entity",
+          "parent": "group-FT",
+          "label": "Constraint: LUR write order"
+        },
+        {
+          "figlib": "VC",
+          "manifest": "node-VC",
+          "kind": "entity",
+          "parent": "group-FT",
+          "label": "Test / Analysis verification case"
+        },
+        {
+          "figlib": "TM",
+          "manifest": "node-TM",
+          "kind": "entity",
+          "parent": "group-FT",
+          "label": "Tool module (later PR)"
+        },
+        {
+          "figlib": "EV",
+          "manifest": "node-EV",
+          "kind": "entity",
+          "parent": "group-FT",
+          "label": "Evidence (not executed)"
+        },
+        {
+          "figlib": "NT",
+          "manifest": "note-NT",
+          "kind": "note",
+          "label": "Bound M1 identifiers. DOWNLOAD and FIND traces await source-unit audit; satisfy/verify are model relations, no executed verification is claimed."
+        },
+        {
+          "figlib": "d1",
+          "manifest": "edge-goals-to-crs",
+          "kind": "relation",
+          "source": "MG",
+          "target": "PCRS",
+          "role": "dependency",
+          "label": "uses protocol obligations",
+          "droppedLabelCell": "d1-lbl"
+        },
+        {
+          "figlib": "d2",
+          "manifest": "edge-d2",
+          "kind": "relation",
+          "source": "PCRS",
+          "target": "L3",
+          "role": "dependency",
+          "label": "may later implement",
+          "droppedLabelCell": "d2-lbl"
+        },
+        {
+          "figlib": "t0",
+          "manifest": "edge-t0",
+          "kind": "relation",
+          "source": "SU",
+          "target": "R1",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "t1",
+          "manifest": "edge-t1",
+          "kind": "relation",
+          "source": "R1",
+          "target": "R2",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "t2",
+          "manifest": "edge-t2",
+          "kind": "relation",
+          "source": "R2",
+          "target": "R3",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "t3",
+          "manifest": "edge-t3",
+          "kind": "relation",
+          "source": "R3",
+          "target": "CO",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "t4",
+          "manifest": "edge-t4",
+          "kind": "relation",
+          "source": "CO",
+          "target": "VC",
+          "role": "dependency",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "t5",
+          "manifest": "edge-t5",
+          "kind": "relation",
+          "source": "VC",
+          "target": "TM",
+          "role": "dependency",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "t6",
+          "manifest": "edge-t6",
+          "kind": "relation",
+          "source": "TM",
+          "target": "EV",
+          "role": "dependency",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "x",
+          "manifest": "edge-x",
+          "kind": "relation",
+          "source": "C1",
+          "target": "SU",
+          "role": "dependency",
+          "label": "traced\nexample",
+          "droppedLabelCell": "x-lbl"
+        }
+      ]
+    },
+    {
+      "figure": "FIG-CL-TAV-03",
+      "version": "v2",
+      "cells": [
+        {
+          "figlib": "TE",
+          "manifest": "node-TE",
+          "kind": "entity",
+          "parent": "1",
+          "label": "«block»\nTest\nt ∈ T(q_k);  cost(t) ≥ c_{min}"
+        },
+        {
+          "figlib": "OB",
+          "manifest": "node-OB",
+          "kind": "entity",
+          "parent": "1",
+          "label": "«block»\nObservation\nI_k, observable summary q_k;\nERROR if instrument invalid"
+        },
+        {
+          "figlib": "AN",
+          "manifest": "node-AN",
+          "kind": "entity",
+          "parent": "1",
+          "label": "«block»\nAnalysis\nconstraint verdict;\nsame partitions as scoring"
+        },
+        {
+          "figlib": "DI",
+          "manifest": "node-DI",
+          "kind": "entity",
+          "parent": "1",
+          "label": "«block»\nDiagnosis\ncandidate set H_k;\ncompatibility update"
+        },
+        {
+          "figlib": "SE",
+          "manifest": "node-SE",
+          "kind": "entity",
+          "parent": "1",
+          "label": "«block»\nSelection\none-step min-max s(t);\nPREP / RECOVER actions"
+        },
+        {
+          "figlib": "EV",
+          "manifest": "node-EV",
+          "kind": "entity",
+          "parent": "1",
+          "label": "«block»\nEvidence\ntraces, stop class,\nresource remainder"
+        },
+        {
+          "figlib": "NT",
+          "manifest": "note-NT",
+          "kind": "note",
+          "label": "Blocks are logical classifiers, not implemented modules."
+        },
+        {
+          "figlib": "legend",
+          "manifest": "note-legend",
+          "kind": "note",
+          "label": "Legend: directed association; «trace» dependency; analysis core"
+        },
+        {
+          "figlib": "a1",
+          "manifest": "edge-a1",
+          "kind": "relation",
+          "source": "TE",
+          "target": "OB",
+          "role": "flow",
+          "label": "execute",
+          "droppedLabelCell": "a1-lbl"
+        },
+        {
+          "figlib": "a2",
+          "manifest": "edge-a2",
+          "kind": "relation",
+          "source": "OB",
+          "target": "AN",
+          "role": "flow",
+          "label": "I_k",
+          "droppedLabelCell": "a2-lbl"
+        },
+        {
+          "figlib": "a3",
+          "manifest": "edge-a3",
+          "kind": "relation",
+          "source": "AN",
+          "target": "DI",
+          "role": "flow",
+          "label": "compatible /\ninconsistent",
+          "droppedLabelCell": "a3-lbl"
+        },
+        {
+          "figlib": "a4",
+          "manifest": "edge-a4",
+          "kind": "relation",
+          "source": "DI",
+          "target": "SE",
+          "role": "flow",
+          "label": "remaining H_k",
+          "droppedLabelCell": "a4-lbl"
+        },
+        {
+          "figlib": "a5",
+          "manifest": "edge-a5",
+          "kind": "relation",
+          "source": "SE",
+          "target": "TE",
+          "role": "flow",
+          "label": "next TEST,\nPREP or stop",
+          "droppedLabelCell": "a5-lbl"
+        },
+        {
+          "figlib": "d1",
+          "manifest": "edge-d1",
+          "kind": "relation",
+          "source": "EV",
+          "target": "OB",
+          "role": "dependency",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "d2",
+          "manifest": "edge-d2",
+          "kind": "relation",
+          "source": "EV",
+          "target": "SE",
+          "role": "dependency",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "d3",
+          "manifest": "edge-d3",
+          "kind": "relation",
+          "source": "EV",
+          "target": "DI",
+          "role": "dependency",
+          "label": "",
+          "droppedLabelCell": null
+        }
+      ]
+    },
+    {
+      "figure": "FIG-CL-TAV-04",
+      "version": "v2",
+      "cells": [
+        {
+          "figlib": "C",
+          "manifest": "group-C",
+          "kind": "group",
+          "label": "ibd\ncontroller"
+        },
+        {
+          "figlib": "CT",
+          "manifest": "node-CT",
+          "kind": "entity",
+          "parent": "group-C",
+          "label": "Msess\nholds H, q, journal"
+        },
+        {
+          "figlib": "PT",
+          "manifest": null,
+          "kind": "skipped",
+          "reason": "absorbed or non-semantic port square"
+        },
+        {
+          "figlib": "PTL",
+          "manifest": "node-PTL",
+          "kind": "entity",
+          "parent": "group-C",
+          "label": "trace"
+        },
+        {
+          "figlib": "PC",
+          "manifest": null,
+          "kind": "skipped",
+          "reason": "absorbed or non-semantic port square"
+        },
+        {
+          "figlib": "PCL",
+          "manifest": "node-PCL",
+          "kind": "entity",
+          "parent": "group-C",
+          "label": "constraint"
+        },
+        {
+          "figlib": "PH",
+          "manifest": null,
+          "kind": "skipped",
+          "reason": "absorbed or non-semantic port square"
+        },
+        {
+          "figlib": "PHL",
+          "manifest": "node-PHL",
+          "kind": "entity",
+          "parent": "group-C",
+          "label": "candidate-set"
+        },
+        {
+          "figlib": "PS",
+          "manifest": null,
+          "kind": "skipped",
+          "reason": "absorbed or non-semantic port square"
+        },
+        {
+          "figlib": "PSL",
+          "manifest": "node-PSL",
+          "kind": "entity",
+          "parent": "group-C",
+          "label": "test-selection"
+        },
+        {
+          "figlib": "PB",
+          "manifest": null,
+          "kind": "skipped",
+          "reason": "absorbed or non-semantic port square"
+        },
+        {
+          "figlib": "PBL",
+          "manifest": "node-PBL",
+          "kind": "entity",
+          "parent": "group-C",
+          "label": "budget"
+        },
+        {
+          "figlib": "AD",
+          "manifest": "node-AD",
+          "kind": "entity",
+          "parent": "1",
+          "label": "Protocol adapter\nconnects to Mprot"
+        },
+        {
+          "figlib": "CE",
+          "manifest": "node-CE",
+          "kind": "entity",
+          "parent": "1",
+          "label": "Constraint evaluator"
+        },
+        {
+          "figlib": "CS",
+          "manifest": "node-CS",
+          "kind": "entity",
+          "parent": "1",
+          "label": "Candidate store\nH_k"
+        },
+        {
+          "figlib": "TL",
+          "manifest": "node-TL",
+          "kind": "entity",
+          "parent": "1",
+          "label": "Test library\nT(q_k): TEST, PREP,\nRECOVER"
+        },
+        {
+          "figlib": "BC",
+          "manifest": "node-BC",
+          "kind": "entity",
+          "parent": "1",
+          "label": "Budget / K_{max} clock"
+        },
+        {
+          "figlib": "N1",
+          "manifest": "note-N1",
+          "kind": "note",
+          "label": "Only the adapter talks to Mprot;\nMsess never holds protocol state."
+        },
+        {
+          "figlib": "N2",
+          "manifest": "note-N2",
+          "kind": "note",
+          "label": "Each action or ERROR costs at least\nc_{min} or one K_{max} round."
+        },
+        {
+          "figlib": "c1",
+          "manifest": "edge-c1",
+          "kind": "relation",
+          "source": "AD",
+          "target": "PTL",
+          "role": "association",
+          "label": "I_k, records",
+          "droppedLabelCell": "c1-lbl"
+        },
+        {
+          "figlib": "c2",
+          "manifest": "edge-c2",
+          "kind": "relation",
+          "source": "CE",
+          "target": "PCL",
+          "role": "association",
+          "label": "verdict",
+          "droppedLabelCell": "c2-lbl"
+        },
+        {
+          "figlib": "c3",
+          "manifest": "edge-c3",
+          "kind": "relation",
+          "source": "PHL",
+          "target": "CS",
+          "role": "association",
+          "label": "H_k",
+          "droppedLabelCell": "c3-lbl"
+        },
+        {
+          "figlib": "c4",
+          "manifest": "edge-c4",
+          "kind": "relation",
+          "source": "PSL",
+          "target": "TL",
+          "role": "association",
+          "label": "T(q_k)",
+          "droppedLabelCell": "c4-lbl"
+        },
+        {
+          "figlib": "c5",
+          "manifest": "edge-c5",
+          "kind": "relation",
+          "source": "PBL",
+          "target": "BC",
+          "role": "association",
+          "label": "cost, rounds",
+          "droppedLabelCell": "c5-lbl"
+        }
+      ]
+    },
+    {
+      "figure": "FIG-CL-TAV-05",
+      "version": "v4",
+      "cells": [
+        {
+          "figlib": "S0",
+          "manifest": "node-S0",
+          "kind": "entity",
+          "parent": "1",
+          "label": "S0  Initialise session\nH_0, resource mode,\nretry counter"
+        },
+        {
+          "figlib": "S1",
+          "manifest": "node-S1",
+          "kind": "entity",
+          "parent": "1",
+          "label": "S1  Resource / stop gate\nIF-RESOURCE-STOP"
+        },
+        {
+          "figlib": "S2",
+          "manifest": "node-S2",
+          "kind": "entity",
+          "parent": "1",
+          "label": "S2  Predict observation\nclasses\nIF-PRED-OBS"
+        },
+        {
+          "figlib": "S3",
+          "manifest": "node-S3",
+          "kind": "entity",
+          "parent": "1",
+          "label": "S3  Select and admit\none action\nIF-SELECT-ADMIT:\nTEST | PREP | RECOVER"
+        },
+        {
+          "figlib": "S10",
+          "manifest": "node-S10",
+          "kind": "entity",
+          "parent": "1",
+          "label": "S10  Stop rules P1–P5\nIF-RESOURCE-STOP, IF-EQUIV"
+        },
+        {
+          "figlib": "S4",
+          "manifest": "node-S4",
+          "kind": "entity",
+          "parent": "1",
+          "label": "S4  Charge declared cost once"
+        },
+        {
+          "figlib": "S5",
+          "manifest": "node-S5",
+          "kind": "entity",
+          "parent": "1",
+          "label": "S5  Execute and record effect\nIF-EXECUTE-RECORD"
+        },
+        {
+          "figlib": "S6",
+          "manifest": "node-S6",
+          "kind": "entity",
+          "parent": "1",
+          "label": "S6  Interpret observation\nIF-OBS-INTERPRET"
+        },
+        {
+          "figlib": "D1",
+          "manifest": "node-D1",
+          "kind": "entity",
+          "parent": "1",
+          "label": "record valid?"
+        },
+        {
+          "figlib": "S8",
+          "manifest": "node-S8",
+          "kind": "entity",
+          "parent": "1",
+          "label": "S8  Confirm RECOVER\nsole KNOWN writer"
+        },
+        {
+          "figlib": "S7",
+          "manifest": "node-S7",
+          "kind": "entity",
+          "parent": "1",
+          "label": "S7  Contain effect\nkeep or invalidate q"
+        },
+        {
+          "figlib": "S9",
+          "manifest": "node-S9",
+          "kind": "entity",
+          "parent": "1",
+          "label": "S9  Update history\nH ← H ∩ I_z"
+        },
+        {
+          "figlib": "SE",
+          "manifest": "node-SE",
+          "kind": "entity",
+          "parent": "1",
+          "label": "Stop-Error"
+        },
+        {
+          "figlib": "T",
+          "manifest": "group-T",
+          "kind": "group",
+          "label": "Terminal"
+        },
+        {
+          "figlib": "TA3",
+          "manifest": "node-TA3",
+          "kind": "entity",
+          "parent": "group-T",
+          "label": "Stop-NoDistinguisher"
+        },
+        {
+          "figlib": "TA25",
+          "manifest": "node-TA25",
+          "kind": "entity",
+          "parent": "group-T",
+          "label": "Stop-Budget"
+        },
+        {
+          "figlib": "TA4",
+          "manifest": "node-TA4",
+          "kind": "entity",
+          "parent": "group-T",
+          "label": "Stop-Error"
+        },
+        {
+          "figlib": "TPG",
+          "manifest": "node-TPG",
+          "kind": "entity",
+          "parent": "group-T",
+          "label": "Stop-Prediction-Gap"
+        },
+        {
+          "figlib": "TAD",
+          "manifest": "node-TAD",
+          "kind": "entity",
+          "parent": "group-T",
+          "label": "ADMIT"
+        },
+        {
+          "figlib": "TSE",
+          "manifest": "node-TSE",
+          "kind": "entity",
+          "parent": "group-T",
+          "label": "Spec. error"
+        },
+        {
+          "figlib": "TP1",
+          "manifest": "node-TP1",
+          "kind": "entity",
+          "parent": "group-T",
+          "label": "Stop-Empty"
+        },
+        {
+          "figlib": "TP2",
+          "manifest": "node-TP2",
+          "kind": "entity",
+          "parent": "group-T",
+          "label": "Stop-Singleton"
+        },
+        {
+          "figlib": "TP3",
+          "manifest": "node-TP3",
+          "kind": "entity",
+          "parent": "group-T",
+          "label": "Stop-645"
+        },
+        {
+          "figlib": "TP4",
+          "manifest": "node-TP4",
+          "kind": "entity",
+          "parent": "group-T",
+          "label": "Stop-Equivalent"
+        },
+        {
+          "figlib": "TP5",
+          "manifest": "node-TP5",
+          "kind": "entity",
+          "parent": "group-T",
+          "label": "Stop-Budget"
+        },
+        {
+          "figlib": "LS1",
+          "manifest": "node-LS1",
+          "kind": "entity",
+          "parent": "1",
+          "label": "decided"
+        },
+        {
+          "figlib": "LS2",
+          "manifest": "node-LS2",
+          "kind": "entity",
+          "parent": "1",
+          "label": "gap"
+        },
+        {
+          "figlib": "LS3",
+          "manifest": "node-LS3",
+          "kind": "entity",
+          "parent": "1",
+          "label": "select"
+        },
+        {
+          "figlib": "LS10",
+          "manifest": "node-LS10",
+          "kind": "entity",
+          "parent": "1",
+          "label": "P1–P5"
+        },
+        {
+          "figlib": "legend",
+          "manifest": "note-legend",
+          "kind": "note",
+          "label": "Legend: control flow; next round; error containment; termination; analysis core"
+        },
+        {
+          "figlib": null,
+          "manifest": "note-s7-wording",
+          "kind": "note",
+          "label": "S7 is drawn as keep or invalidate q. CONFIRMED-NOT-SENT keeps q; UNKNOWN-EFFECT invalidates q. Only RECOVER is admissible after unknown-effect. confirmed not sent remains the method and Algorithm 1 wording. Two columns: left S0-S3 and S10 aligned with Terminal; right S4-S9."
+        },
+        {
+          "figlib": "e01",
+          "manifest": "edge-e01",
+          "kind": "relation",
+          "source": "S0",
+          "target": "S1",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "e12",
+          "manifest": "edge-e12",
+          "kind": "relation",
+          "source": "S1",
+          "target": "S2",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "e23",
+          "manifest": "edge-e23",
+          "kind": "relation",
+          "source": "S2",
+          "target": "S3",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "e34",
+          "manifest": "edge-e34",
+          "kind": "relation",
+          "source": "S3",
+          "target": "S4",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "e45",
+          "manifest": "edge-e45",
+          "kind": "relation",
+          "source": "S4",
+          "target": "S5",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "e56",
+          "manifest": "edge-e56",
+          "kind": "relation",
+          "source": "S5",
+          "target": "S6",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "e6d",
+          "manifest": "edge-e6d",
+          "kind": "relation",
+          "source": "S6",
+          "target": "D1",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "ed8",
+          "manifest": "edge-ed8",
+          "kind": "relation",
+          "source": "D1",
+          "target": "S8",
+          "role": "flow",
+          "label": "RECOVER",
+          "droppedLabelCell": "ed8-lbl"
+        },
+        {
+          "figlib": "ed9",
+          "manifest": "edge-ed9",
+          "kind": "relation",
+          "source": "D1",
+          "target": "S9",
+          "role": "flow",
+          "label": "TEST /\nPREP",
+          "droppedLabelCell": "ed9-lbl"
+        },
+        {
+          "figlib": "e89",
+          "manifest": "edge-e89",
+          "kind": "relation",
+          "source": "S8",
+          "target": "S9",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "e910",
+          "manifest": "edge-e910",
+          "kind": "relation",
+          "source": "S9",
+          "target": "S10",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "ed7",
+          "manifest": "edge-ed7",
+          "kind": "relation",
+          "source": "D1",
+          "target": "S7",
+          "role": "risk",
+          "label": "invalid or\nunconfirmed",
+          "droppedLabelCell": "ed7-lbl"
+        },
+        {
+          "figlib": "e7loop",
+          "manifest": "edge-e7loop",
+          "kind": "relation",
+          "source": "S7",
+          "target": "S1",
+          "role": "risk",
+          "label": "retry < cap",
+          "droppedLabelCell": "e7loop-lbl"
+        },
+        {
+          "figlib": "e7stop",
+          "manifest": "edge-e7stop",
+          "kind": "relation",
+          "source": "S7",
+          "target": "SE",
+          "role": "risk",
+          "label": "cap",
+          "droppedLabelCell": "e7stop-lbl"
+        },
+        {
+          "figlib": "eloop",
+          "manifest": "edge-eloop",
+          "kind": "relation",
+          "source": "S10",
+          "target": "S1",
+          "role": "continue",
+          "label": "continue",
+          "droppedLabelCell": "eloop-lbl"
+        },
+        {
+          "figlib": "s-TA3",
+          "manifest": "edge-s-TA3",
+          "kind": "relation",
+          "source": "S1",
+          "target": "TA3",
+          "role": "stop",
+          "label": "A3",
+          "droppedLabelCell": "s-TA3-lbl"
+        },
+        {
+          "figlib": "s-TA25",
+          "manifest": "edge-s-TA25",
+          "kind": "relation",
+          "source": "S1",
+          "target": "TA25",
+          "role": "stop",
+          "label": "A2/5",
+          "droppedLabelCell": "s-TA25-lbl"
+        },
+        {
+          "figlib": "s-TA4",
+          "manifest": "edge-s-TA4",
+          "kind": "relation",
+          "source": "S1",
+          "target": "TA4",
+          "role": "stop",
+          "label": "A4",
+          "droppedLabelCell": "s-TA4-lbl"
+        },
+        {
+          "figlib": "s-TPG",
+          "manifest": "edge-s-TPG",
+          "kind": "relation",
+          "source": "S2",
+          "target": "TPG",
+          "role": "stop",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "s-TAD",
+          "manifest": "edge-s-TAD",
+          "kind": "relation",
+          "source": "S3",
+          "target": "TAD",
+          "role": "stop",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "s-TSE",
+          "manifest": "edge-s-TSE",
+          "kind": "relation",
+          "source": "S3",
+          "target": "TSE",
+          "role": "stop",
+          "label": "S=∅",
+          "droppedLabelCell": "s-TSE-lbl"
+        },
+        {
+          "figlib": "s-TP1",
+          "manifest": "edge-s-TP1",
+          "kind": "relation",
+          "source": "S10",
+          "target": "TP1",
+          "role": "stop",
+          "label": "P1",
+          "droppedLabelCell": "s-TP1-lbl"
+        },
+        {
+          "figlib": "s-TP2",
+          "manifest": "edge-s-TP2",
+          "kind": "relation",
+          "source": "S10",
+          "target": "TP2",
+          "role": "stop",
+          "label": "P2",
+          "droppedLabelCell": "s-TP2-lbl"
+        },
+        {
+          "figlib": "s-TP3",
+          "manifest": "edge-s-TP3",
+          "kind": "relation",
+          "source": "S10",
+          "target": "TP3",
+          "role": "stop",
+          "label": "P3",
+          "droppedLabelCell": "s-TP3-lbl"
+        },
+        {
+          "figlib": "s-TP4",
+          "manifest": "edge-s-TP4",
+          "kind": "relation",
+          "source": "S10",
+          "target": "TP4",
+          "role": "stop",
+          "label": "P4",
+          "droppedLabelCell": "s-TP4-lbl"
+        },
+        {
+          "figlib": "s-TP5",
+          "manifest": "edge-s-TP5",
+          "kind": "relation",
+          "source": "S10",
+          "target": "TP5",
+          "role": "stop",
+          "label": "P5",
+          "droppedLabelCell": "s-TP5-lbl"
+        }
+      ]
+    },
+    {
+      "figure": "FIG-CL-TAV-06",
+      "version": "v2",
+      "cells": [
+        {
+          "figlib": "OP",
+          "manifest": "node-OP",
+          "kind": "entity",
+          "parent": "1",
+          "label": "Operator"
+        },
+        {
+          "figlib": "MS",
+          "manifest": "node-MS",
+          "kind": "entity",
+          "parent": "1",
+          "label": "Msess\nsession"
+        },
+        {
+          "figlib": "MP",
+          "manifest": "node-MP",
+          "kind": "entity",
+          "parent": "1",
+          "label": "Mprot\nprotocol"
+        },
+        {
+          "figlib": "AN",
+          "manifest": "node-AN",
+          "kind": "entity",
+          "parent": "1",
+          "label": "Analysis\nand diagnosis"
+        },
+        {
+          "figlib": "NT",
+          "manifest": "note-NT",
+          "kind": "note",
+          "label": "H_0 = {h_{normal}} ∪ H_{single}; admission, resource and recovery rules as in Alg. 1."
+        },
+        {
+          "figlib": "legend",
+          "manifest": "note-legend",
+          "kind": "note",
+          "label": "Legend: message; reply"
+        },
+        {
+          "figlib": "m1",
+          "manifest": "edge-m1",
+          "kind": "relation",
+          "source": "OP",
+          "target": "MS",
+          "role": "flow",
+          "label": "1  start (H_0)",
+          "droppedLabelCell": "m1-lbl"
+        },
+        {
+          "figlib": "m2",
+          "manifest": "edge-m2",
+          "kind": "relation",
+          "source": "MS",
+          "target": "MS",
+          "role": "flow",
+          "label": "2  Admit: overlapping classes stay strictly reducing",
+          "droppedLabelCell": "m2-lbl"
+        },
+        {
+          "figlib": "m3",
+          "manifest": "edge-m3",
+          "kind": "relation",
+          "source": "MS",
+          "target": "MS",
+          "role": "flow",
+          "label": "3  uninformative TEST is not admitted",
+          "droppedLabelCell": "m3-lbl"
+        },
+        {
+          "figlib": "m4",
+          "manifest": "edge-m4",
+          "kind": "relation",
+          "source": "MS",
+          "target": "MS",
+          "role": "flow",
+          "label": "4  select PREP from A",
+          "droppedLabelCell": "m4-lbl"
+        },
+        {
+          "figlib": "m5",
+          "manifest": "edge-m5",
+          "kind": "relation",
+          "source": "MS",
+          "target": "MP",
+          "role": "flow",
+          "label": "5  PREP action",
+          "droppedLabelCell": "m5-lbl"
+        },
+        {
+          "figlib": "m6",
+          "manifest": "edge-m6",
+          "kind": "relation",
+          "source": "MP",
+          "target": "MS",
+          "role": "dependency",
+          "label": "6  q_{k+1}",
+          "droppedLabelCell": "m6-lbl"
+        },
+        {
+          "figlib": "m7",
+          "manifest": "edge-m7",
+          "kind": "relation",
+          "source": "MS",
+          "target": "MS",
+          "role": "flow",
+          "label": "7  select distinguishing TEST t_b",
+          "droppedLabelCell": "m7-lbl"
+        },
+        {
+          "figlib": "m8",
+          "manifest": "edge-m8",
+          "kind": "relation",
+          "source": "MS",
+          "target": "MP",
+          "role": "flow",
+          "label": "8  execute t_b",
+          "droppedLabelCell": "m8-lbl"
+        },
+        {
+          "figlib": "m9",
+          "manifest": "edge-m9",
+          "kind": "relation",
+          "source": "MP",
+          "target": "MS",
+          "role": "dependency",
+          "label": "9  observation separating h_1 / h_2",
+          "droppedLabelCell": "m9-lbl"
+        },
+        {
+          "figlib": "m10",
+          "manifest": "edge-m10",
+          "kind": "relation",
+          "source": "MS",
+          "target": "AN",
+          "role": "flow",
+          "label": "10  I_k of t_b",
+          "droppedLabelCell": "m10-lbl"
+        },
+        {
+          "figlib": "m11",
+          "manifest": "edge-m11",
+          "kind": "relation",
+          "source": "AN",
+          "target": "MS",
+          "role": "dependency",
+          "label": "11  H_k singleton, or still indistinguishable",
+          "droppedLabelCell": "m11-lbl"
+        }
+      ]
+    },
+    {
+      "figure": "FIG-CL-TAV-07",
+      "version": "v2",
+      "cells": [
+        {
+          "figlib": "FM",
+          "manifest": "group-FM",
+          "kind": "group",
+          "label": "stm Msess"
+        },
+        {
+          "figlib": "SN",
+          "manifest": "node-SN",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "Stop-NoDistinguisher"
+        },
+        {
+          "figlib": "SR",
+          "manifest": "node-SR",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "Stop-Error"
+        },
+        {
+          "figlib": "SB",
+          "manifest": "node-SB",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "Stop-Budget"
+        },
+        {
+          "figlib": "SM",
+          "manifest": "node-SM",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "Stop-Empty"
+        },
+        {
+          "figlib": "SS",
+          "manifest": "node-SS",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "Stop-Singleton"
+        },
+        {
+          "figlib": "S6",
+          "manifest": "node-S6",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "Stop-645"
+        },
+        {
+          "figlib": "SQ",
+          "manifest": "node-SQ",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "Stop-Equivalent"
+        },
+        {
+          "figlib": "I0",
+          "manifest": "node-I0",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "I0"
+        },
+        {
+          "figlib": "ID",
+          "manifest": "node-ID",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "Idle"
+        },
+        {
+          "figlib": "AM",
+          "manifest": "node-AM",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "Admit"
+        },
+        {
+          "figlib": "SL",
+          "manifest": "node-SL",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "Select"
+        },
+        {
+          "figlib": "EX",
+          "manifest": "node-EX",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "Execute"
+        },
+        {
+          "figlib": "UP",
+          "manifest": "node-UP",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "Update"
+        },
+        {
+          "figlib": "EH",
+          "manifest": "node-ErrorHandle",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "ErrorHandle"
+        },
+        {
+          "figlib": "RC",
+          "manifest": "node-RC",
+          "kind": "entity",
+          "parent": "group-FM",
+          "label": "RecoverConfirm"
+        },
+        {
+          "figlib": "FP",
+          "manifest": "group-FP",
+          "kind": "group",
+          "label": "stm Mprot"
+        },
+        {
+          "figlib": "BM",
+          "manifest": "node-BM",
+          "kind": "entity",
+          "parent": "group-FP",
+          "label": "Bound M2\nINFORMATION / UPLOAD;\napproved model identity;\nno new behaviour edges"
+        },
+        {
+          "figlib": "PL",
+          "manifest": "node-PL",
+          "kind": "entity",
+          "parent": "group-FP",
+          "label": "Planned CRS scope\nMedia-defined and\nOperator-defined\nDOWNLOAD, FIND;\nno behaviour edges"
+        },
+        {
+          "figlib": "GT",
+          "manifest": "note-GT",
+          "kind": "note",
+          "label": "Guards A1–A5 and update\npriority P1–P5 as in Alg. 1.\nNo cross-machine transition;\nports of Fig. 4 only."
+        },
+        {
+          "figlib": "legend",
+          "manifest": "note-legend",
+          "kind": "note",
+          "label": "Legend: transition; next round; error path; to final state"
+        },
+        {
+          "figlib": "t0",
+          "manifest": "edge-t0",
+          "kind": "relation",
+          "source": "I0",
+          "target": "ID",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "t1",
+          "manifest": "edge-t1",
+          "kind": "relation",
+          "source": "ID",
+          "target": "AM",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "t2",
+          "manifest": "edge-t2",
+          "kind": "relation",
+          "source": "AM",
+          "target": "SL",
+          "role": "flow",
+          "label": "A1",
+          "droppedLabelCell": "t2-lbl"
+        },
+        {
+          "figlib": "t3",
+          "manifest": "edge-t3",
+          "kind": "relation",
+          "source": "SL",
+          "target": "EX",
+          "role": "flow",
+          "label": "chosen from S",
+          "droppedLabelCell": "t3-lbl"
+        },
+        {
+          "figlib": "t4",
+          "manifest": "edge-t4",
+          "kind": "relation",
+          "source": "EX",
+          "target": "UP",
+          "role": "flow",
+          "label": "TEST / PREP,\nvalid I_k",
+          "droppedLabelCell": "t4-lbl"
+        },
+        {
+          "figlib": "t5",
+          "manifest": "edge-t5",
+          "kind": "relation",
+          "source": "EX",
+          "target": "ErrorHandle",
+          "role": "risk",
+          "label": "ERROR",
+          "droppedLabelCell": "t5-lbl"
+        },
+        {
+          "figlib": "t6",
+          "manifest": "edge-t6",
+          "kind": "relation",
+          "source": "EX",
+          "target": "RC",
+          "role": "flow",
+          "label": "RECOVER\nrecord",
+          "droppedLabelCell": "t6-lbl"
+        },
+        {
+          "figlib": "t7",
+          "manifest": "edge-t7",
+          "kind": "relation",
+          "source": "RC",
+          "target": "UP",
+          "role": "flow",
+          "label": "target\nconfirmed",
+          "droppedLabelCell": "t7-lbl"
+        },
+        {
+          "figlib": "t8",
+          "manifest": "edge-error-recover",
+          "kind": "relation",
+          "source": "RC",
+          "target": "AM",
+          "role": "risk",
+          "label": "unconfirmed;\nq UNKNOWN",
+          "droppedLabelCell": "t8-lbl"
+        },
+        {
+          "figlib": "t9",
+          "manifest": "edge-t9",
+          "kind": "relation",
+          "source": "ErrorHandle",
+          "target": "AM",
+          "role": "risk",
+          "label": "CNS, or\nUNKNOWN with\nRECOVER ∈ S;\nretry left",
+          "droppedLabelCell": "t9-lbl"
+        },
+        {
+          "figlib": "t10",
+          "manifest": "edge-t10",
+          "kind": "relation",
+          "source": "ErrorHandle",
+          "target": "SR",
+          "role": "risk",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "t11",
+          "manifest": "edge-error-cap",
+          "kind": "relation",
+          "source": "ErrorHandle",
+          "target": "SB",
+          "role": "risk",
+          "label": "ErrorHandle: retry cap or A4\n→ Stop-Error;  A5 → Stop-Budget",
+          "droppedLabelCell": "t11-lbl"
+        },
+        {
+          "figlib": "a3",
+          "manifest": "edge-a3",
+          "kind": "relation",
+          "source": "AM",
+          "target": "SN",
+          "role": "stop",
+          "label": "A3",
+          "droppedLabelCell": "a3-lbl"
+        },
+        {
+          "figlib": "a4",
+          "manifest": "edge-a4",
+          "kind": "relation",
+          "source": "AM",
+          "target": "SR",
+          "role": "stop",
+          "label": "A4",
+          "droppedLabelCell": "a4-lbl"
+        },
+        {
+          "figlib": "a25",
+          "manifest": "edge-a25",
+          "kind": "relation",
+          "source": "AM",
+          "target": "SB",
+          "role": "stop",
+          "label": "A2, A5",
+          "droppedLabelCell": "a25-lbl"
+        },
+        {
+          "figlib": "p5",
+          "manifest": "edge-p5",
+          "kind": "relation",
+          "source": "UP",
+          "target": "SB",
+          "role": "stop",
+          "label": "P5",
+          "droppedLabelCell": "p5-lbl"
+        },
+        {
+          "figlib": "p1",
+          "manifest": "edge-p1",
+          "kind": "relation",
+          "source": "UP",
+          "target": "SM",
+          "role": "stop",
+          "label": "P1",
+          "droppedLabelCell": "p1-lbl"
+        },
+        {
+          "figlib": "p2",
+          "manifest": "edge-p2",
+          "kind": "relation",
+          "source": "UP",
+          "target": "SS",
+          "role": "stop",
+          "label": "P2",
+          "droppedLabelCell": "p2-lbl"
+        },
+        {
+          "figlib": "p3",
+          "manifest": "edge-p3",
+          "kind": "relation",
+          "source": "UP",
+          "target": "S6",
+          "role": "stop",
+          "label": "P3",
+          "droppedLabelCell": "p3-lbl"
+        },
+        {
+          "figlib": "p4",
+          "manifest": "edge-p4",
+          "kind": "relation",
+          "source": "UP",
+          "target": "SQ",
+          "role": "stop",
+          "label": "P4",
+          "droppedLabelCell": "p4-lbl"
+        },
+        {
+          "figlib": "lp",
+          "manifest": "edge-lp",
+          "kind": "relation",
+          "source": "UP",
+          "target": "AM",
+          "role": "continue",
+          "label": "else: |H| > 1,\nresource left",
+          "droppedLabelCell": "lp-lbl"
+        }
+      ]
+    },
+    {
+      "figure": "FIG-CL-TAV-08",
+      "version": "v2",
+      "cells": [
+        {
+          "figlib": "IA",
+          "manifest": "node-IA",
+          "kind": "entity",
+          "parent": "1",
+          "label": "«constraint»\nAllowed interval\nI: allowed timing interval"
+        },
+        {
+          "figlib": "EP",
+          "manifest": "node-EP",
+          "kind": "entity",
+          "parent": "1",
+          "label": "«constraint»\nError bound\nε: measurement error"
+        },
+        {
+          "figlib": "JM",
+          "manifest": "node-JM",
+          "kind": "entity",
+          "parent": "1",
+          "label": "«constraint»\nMeasured interval\nJ: feasible interval from\nmeasurement and ε"
+        },
+        {
+          "figlib": "UP",
+          "manifest": "node-UP",
+          "kind": "entity",
+          "parent": "1",
+          "label": "«constraint»\nHistory update\nH_{k+1} = {h ∈ H_k |\nO(h, t, q_k) ∩ I_k ≠ ∅}"
+        },
+        {
+          "figlib": "CM",
+          "manifest": "node-CM",
+          "kind": "entity",
+          "parent": "1",
+          "label": "«constraint»\nPositive cost\nc_{min} > 0; cost(t) ≥ c_{min};\ncost(ERROR) ≥ c_{min}"
+        },
+        {
+          "figlib": "BU",
+          "manifest": "node-BU",
+          "kind": "entity",
+          "parent": "1",
+          "label": "«constraint»\nResource mode\nB finite ⊕ K_{max} finite"
+        },
+        {
+          "figlib": "SC",
+          "manifest": "node-SC",
+          "kind": "entity",
+          "parent": "1",
+          "label": "«constraint»\nSelection score\ns(t) = worst remaining |H_k|\nover Obs(t, q_k)"
+        },
+        {
+          "figlib": "NT",
+          "manifest": "note-NT",
+          "kind": "note",
+          "label": "Constraints are displayed, not claimed solved; vanishing positive costs do not prove termination."
+        },
+        {
+          "figlib": "b1",
+          "manifest": "edge-b1",
+          "kind": "relation",
+          "source": "IA",
+          "target": "JM",
+          "role": "constraint-link",
+          "label": "I",
+          "droppedLabelCell": "b1-lbl"
+        },
+        {
+          "figlib": "b2",
+          "manifest": "edge-b2",
+          "kind": "relation",
+          "source": "EP",
+          "target": "JM",
+          "role": "constraint-link",
+          "label": "ε",
+          "droppedLabelCell": "b2-lbl"
+        },
+        {
+          "figlib": "b3",
+          "manifest": "edge-b3",
+          "kind": "relation",
+          "source": "JM",
+          "target": "UP",
+          "role": "constraint-link",
+          "label": "J",
+          "droppedLabelCell": "b3-lbl"
+        },
+        {
+          "figlib": "b4",
+          "manifest": "edge-b4",
+          "kind": "relation",
+          "source": "SC",
+          "target": "UP",
+          "role": "constraint-link",
+          "label": "H_k, Obs(t, q_k)",
+          "droppedLabelCell": "b4-lbl"
+        },
+        {
+          "figlib": "b5",
+          "manifest": "edge-b5",
+          "kind": "relation",
+          "source": "BU",
+          "target": "SC",
+          "role": "constraint-link",
+          "label": "mode",
+          "droppedLabelCell": "b5-lbl"
+        },
+        {
+          "figlib": "b6",
+          "manifest": "edge-b6",
+          "kind": "relation",
+          "source": "CM",
+          "target": "BU",
+          "role": "constraint-link",
+          "label": "c_{min}",
+          "droppedLabelCell": "b6-lbl"
+        }
+      ]
+    },
+    {
+      "figure": "FIG-CL-TAV-09",
+      "version": "v3",
+      "cells": [
+        {
+          "figlib": "EV",
+          "manifest": "group-EV",
+          "kind": "group",
+          "label": "Evaluator only"
+        },
+        {
+          "figlib": "AV",
+          "manifest": "group-AV",
+          "kind": "group",
+          "label": "Algorithm visible"
+        },
+        {
+          "figlib": "XO",
+          "manifest": "group-XO",
+          "kind": "group",
+          "label": "Excluded, still counted"
+        },
+        {
+          "figlib": "E0",
+          "manifest": "node-E0",
+          "kind": "entity",
+          "parent": "1",
+          "label": "E0  Declare scenario pool\nIUT configuration, fault plan, resource mode;\nfixed before any run  (IF-EXP-SCENE)"
+        },
+        {
+          "figlib": "E1",
+          "manifest": "node-E1",
+          "kind": "entity",
+          "parent": "1",
+          "label": "E1  Inject fault, confirm execution\nper scenario  (IF-EXP-INJECT)"
+        },
+        {
+          "figlib": "E2",
+          "manifest": "group-E2",
+          "kind": "group",
+          "label": "E2  Run arms\nsame pool, same action library"
+        },
+        {
+          "figlib": "A0",
+          "manifest": "node-A0",
+          "kind": "entity",
+          "parent": "group-E2",
+          "label": "CL-T\ntest\nonly"
+        },
+        {
+          "figlib": "A1",
+          "manifest": "node-A1",
+          "kind": "entity",
+          "parent": "group-E2",
+          "label": "CL-A\nanalysis\nonly"
+        },
+        {
+          "figlib": "A2",
+          "manifest": "node-A2",
+          "kind": "entity",
+          "parent": "group-E2",
+          "label": "CL-TA\ntest +\nanalysis"
+        },
+        {
+          "figlib": "A3",
+          "manifest": "node-A3",
+          "kind": "entity",
+          "parent": "group-E2",
+          "label": "CL-LOOP\nclosed\nloop"
+        },
+        {
+          "figlib": "E3",
+          "manifest": "node-E3",
+          "kind": "entity",
+          "parent": "group-AV",
+          "label": "E3  Collect records\nI_k, q, cost, resource log  (IF-EXP-COLLECT)"
+        },
+        {
+          "figlib": "E4",
+          "manifest": "node-E4",
+          "kind": "entity",
+          "parent": "1",
+          "label": "E4  Validity filter\ninvalid, equivalent or missing runs leave\nthe answered subset  (IF-EXP-FILTER)"
+        },
+        {
+          "figlib": "E5",
+          "manifest": "node-E5",
+          "kind": "entity",
+          "parent": "1",
+          "label": "E5  Evaluate against truth\nDETECT / LOCATE / ABLATION with attempt\nand answered-subset denominators  (IF-EXP-EVAL)"
+        },
+        {
+          "figlib": "E6",
+          "manifest": "node-E6",
+          "kind": "entity",
+          "parent": "1",
+          "label": "E6  Answer RQ1–RQ3\ncomparable projections only;\nno unrun numbers"
+        },
+        {
+          "figlib": "TR",
+          "manifest": "node-TR",
+          "kind": "entity",
+          "parent": "group-EV",
+          "label": "Truth record\ninjection plan and\nexecution confirmation\n(IF-EXP-TRUTH)"
+        },
+        {
+          "figlib": "TN",
+          "manifest": "note-TN",
+          "kind": "note",
+          "label": "Truth is never an\nalgorithm input."
+        },
+        {
+          "figlib": "X0",
+          "manifest": "node-X0",
+          "kind": "entity",
+          "parent": "group-XO",
+          "label": "invalid run\ninstrument or setup fault"
+        },
+        {
+          "figlib": "X1",
+          "manifest": "node-X1",
+          "kind": "entity",
+          "parent": "group-XO",
+          "label": "equivalent fault\nobservationally\nindistinguishable"
+        },
+        {
+          "figlib": "X2",
+          "manifest": "node-X2",
+          "kind": "entity",
+          "parent": "group-XO",
+          "label": "missing record\ncollection gap"
+        },
+        {
+          "figlib": "X3",
+          "manifest": "node-X3",
+          "kind": "entity",
+          "parent": "group-XO",
+          "label": "unanswered\nattempt counted,\nnot answered"
+        },
+        {
+          "figlib": "NT",
+          "manifest": "note-NT",
+          "kind": "note",
+          "label": "Shared pool: no arm sees CL-LOOP records; excluded runs stay in the attempt denominator."
+        },
+        {
+          "figlib": "legend",
+          "manifest": "note-legend",
+          "kind": "note",
+          "label": "Legend: experiment flow; repeat; forbidden leakage; exclusion; method under test"
+        },
+        {
+          "figlib": null,
+          "manifest": "note-truth-boundary",
+          "kind": "note",
+          "label": "Registered interfaces remain constraints on this view. Algorithm calls: IF-PRED-OBS, IF-SELECT-ADMIT, IF-EXECUTE-RECORD, IF-OBS-INTERPRET, IF-PREP-RECOVER, IF-HIST-UPDATE, IF-EQUIV, IF-RESOURCE-STOP. Experiment I/O: IF-EXP-SCENE, IF-EXP-INJECT, IF-EXP-TRUTH, IF-EXP-COLLECT, IF-EXP-RUN, IF-EXP-FILTER, IF-EXP-EVAL. Campaigns: EXP-CLTAV-DETECT, EXP-CLTAV-LOCATE, EXP-CLTAV-ABLATION. Arms: CL-T / CL-A / CL-TA / CL-LOOP. Truth is evaluator-only and is never an algorithm input. The truth-to-run edge is forbidden leakage. This note records the interface boundary; it is not a measured result."
+        },
+        {
+          "figlib": "m0",
+          "manifest": "edge-m0",
+          "kind": "relation",
+          "source": "E0",
+          "target": "E1",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "m1",
+          "manifest": "edge-m1",
+          "kind": "relation",
+          "source": "E1",
+          "target": "E2",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "m2",
+          "manifest": "edge-m2",
+          "kind": "relation",
+          "source": "E2",
+          "target": "E3",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "m3",
+          "manifest": "edge-m3",
+          "kind": "relation",
+          "source": "E3",
+          "target": "E4",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "m4",
+          "manifest": "edge-m4",
+          "kind": "relation",
+          "source": "E4",
+          "target": "E5",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "m5",
+          "manifest": "edge-m5",
+          "kind": "relation",
+          "source": "E5",
+          "target": "E6",
+          "role": "flow",
+          "label": "",
+          "droppedLabelCell": null
+        },
+        {
+          "figlib": "t1",
+          "manifest": "edge-t1",
+          "kind": "relation",
+          "source": "E1",
+          "target": "TR",
+          "role": "flow",
+          "label": "confirmation",
+          "droppedLabelCell": "t1-lbl"
+        },
+        {
+          "figlib": "t2",
+          "manifest": "edge-t2",
+          "kind": "relation",
+          "source": "TR",
+          "target": "E4",
+          "role": "flow",
+          "label": "evaluator-only check",
+          "droppedLabelCell": "t2-lbl"
+        },
+        {
+          "figlib": "t3",
+          "manifest": "edge-t3",
+          "kind": "relation",
+          "source": "TR",
+          "target": "E5",
+          "role": "flow",
+          "label": "ground truth",
+          "droppedLabelCell": "t3-lbl"
+        },
+        {
+          "figlib": "x1",
+          "manifest": "edge-truth-arms",
+          "kind": "relation",
+          "source": "TR",
+          "target": "E2",
+          "role": "forbidden",
+          "label": "never an\nalgorithm input",
+          "droppedLabelCell": "x1-lbl"
+        },
+        {
+          "figlib": "lp",
+          "manifest": "edge-lp",
+          "kind": "relation",
+          "source": "E3",
+          "target": "E1",
+          "role": "continue",
+          "label": "next scenario\n× arm",
+          "droppedLabelCell": "lp-lbl"
+        },
+        {
+          "figlib": "ex",
+          "manifest": "edge-ex",
+          "kind": "relation",
+          "source": "E4",
+          "target": "XO",
+          "role": "risk",
+          "label": "excluded",
+          "droppedLabelCell": "ex-lbl"
+        }
+      ]
+    }
+  ]
+}

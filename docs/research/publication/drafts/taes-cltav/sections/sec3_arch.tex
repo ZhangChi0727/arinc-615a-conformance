@@ -25,29 +25,17 @@ Two machines must not be merged. \(M_{\mathrm{sess}}\) selects from
 stimulus and obtains a raw execution record. Interpretation, not the network
 port, produces the compatible class \(I_z\) and hypothesis survivors.
 
-\begin{figure}[!ht]
+\begin{figure*}[!t]
 \centering
-\begin{tikzpicture}[font=\footnotesize,box/.style={draw,align=center,inner sep=3pt,text width=0.92\columnwidth}]
-\node[box] (iut) at (0,4.4) {IUT / \(M_{\mathrm{prot}}\): UPLOAD + INFORMATION};
-\node[box] (adp) at (0,3.3) {adapter / clocks: stimulus out, raw record back};
-\node[box] (sess) at (0,2.2) {\(M_{\mathrm{sess}}\): predict, select, charge, execute};
-\node[box] (interp) at (0,1.1) {interpret: \(I_z\), classes, effect; not a network output};
-\node[box] (filt) at (0,0.0) {evaluator filter: algorithm result + truth};
-\node[box] (truth) at (0,-1.1) {evaluator truth (filter only)};
-\draw[->] (sess) -- (adp);
-\draw[->] ([xshift=-3pt]adp.north) -- ([xshift=-3pt]iut.south) node[midway,left,font=\scriptsize] {stimulus};
-\draw[->] ([xshift=3pt]iut.south) -- ([xshift=3pt]adp.north) node[midway,right,font=\scriptsize] {raw record};
-\draw[->] ([xshift=-3pt]adp.south) -- ([xshift=-3pt]sess.north) node[midway,left,font=\scriptsize] {raw record};
-\draw[->] ([xshift=-3pt]sess.south) -- ([xshift=-3pt]interp.north);
-\draw[->] ([xshift=3pt]interp.north) -- ([xshift=3pt]sess.south) node[midway,right,font=\scriptsize] {update};
-\draw[->] (interp) -- (filt);
-\draw[->] (truth) -- (filt);
-\end{tikzpicture}
-\caption{Context derived from FIG-CL-TAV-01/07. Stimulus and raw records share
-ports. Truth enters only the evaluator filter, never select, predict, history
-or execute.}
+\includegraphics[width=\textwidth]{FIG-CL-TAV-01-context.pdf}
+\caption{Context from FIG-CL-TAV-01 v2 (SysML 1.6 notation-based view;
+executable or metamodel conformance is not claimed). The operator addresses the
+session; action and observation share the adapter; the clock is \(t_k\pm\varepsilon\).
+Stimulus and raw records share ports. Truth enters only the evaluator filter,
+never select, predict, history or execute. No full 615A behaviour, real IUT,
+645 capability, or experimental result is claimed.}
 \label{fig:arch}
-\end{figure}
+\end{figure*}
 
 Expanded CRS leaves do not add FIND or DOWNLOAD transitions to
 \(M_{\mathrm{prot}}\).

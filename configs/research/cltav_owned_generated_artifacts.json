@@ -38,7 +38,10 @@
         "docs/research/publication/drafts/taes-cltav/sections/sec5_setup.tex",
         "docs/research/publication/drafts/taes-cltav/sections/sec6_results.tex",
         "docs/research/publication/drafts/taes-cltav/sections/sec7_discussion.tex",
-        "docs/research/publication/drafts/taes-cltav/sections/sec8_conclusion.tex"
+        "docs/research/publication/drafts/taes-cltav/sections/sec8_conclusion.tex",
+        "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-01-context.svg",
+        "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-05-closed-loop-activity.svg",
+        "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-09-experiment-architecture.svg"
       ],
       "generator": "pdflatex+bibtex via scripts/build_taes_manuscript.py",
       "notProprietarySource": true,
@@ -68,9 +71,10 @@
         "configs/research/cltav_model_figure_manifest.json",
         "docs/research/publication/models/FIG-CL-TAV-01-context.puml",
         "docs/research/publication/models/drawio/FIG-CL-TAV-01-context.drawio",
+        "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-01-context.svg",
         "configs/research/cltav_model_figure_exports.json"
       ],
-      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "generator": "svglib/reportlab from approved figlib SVG; not Draw.io CLI hashed review export",
       "notProprietarySource": true,
       "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
     },
@@ -81,9 +85,10 @@
         "configs/research/cltav_model_figure_manifest.json",
         "docs/research/publication/models/FIG-CL-TAV-02-requirement-layers.puml",
         "docs/research/publication/models/drawio/FIG-CL-TAV-02-requirement-layers.drawio",
+        "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-02-requirement-layers.svg",
         "configs/research/cltav_model_figure_exports.json"
       ],
-      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "generator": "svglib/reportlab from approved figlib SVG; not Draw.io CLI hashed review export",
       "notProprietarySource": true,
       "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
     },
@@ -94,9 +99,10 @@
         "configs/research/cltav_model_figure_manifest.json",
         "docs/research/publication/models/FIG-CL-TAV-03-bdd.puml",
         "docs/research/publication/models/drawio/FIG-CL-TAV-03-bdd.drawio",
+        "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-03-bdd.svg",
         "configs/research/cltav_model_figure_exports.json"
       ],
-      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "generator": "svglib/reportlab from approved figlib SVG; not Draw.io CLI hashed review export",
       "notProprietarySource": true,
       "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
     },
@@ -107,9 +113,10 @@
         "configs/research/cltav_model_figure_manifest.json",
         "docs/research/publication/models/FIG-CL-TAV-04-ibd.puml",
         "docs/research/publication/models/drawio/FIG-CL-TAV-04-ibd.drawio",
+        "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-04-ibd.svg",
         "configs/research/cltav_model_figure_exports.json"
       ],
-      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "generator": "svglib/reportlab from approved figlib SVG; not Draw.io CLI hashed review export",
       "notProprietarySource": true,
       "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
     },
@@ -120,9 +127,10 @@
         "configs/research/cltav_model_figure_manifest.json",
         "docs/research/publication/models/FIG-CL-TAV-05-closed-loop-activity.puml",
         "docs/research/publication/models/drawio/FIG-CL-TAV-05-closed-loop-activity.drawio",
+        "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-05-closed-loop-activity.svg",
         "configs/research/cltav_model_figure_exports.json"
       ],
-      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "generator": "svglib/reportlab from approved figlib SVG; not Draw.io CLI hashed review export",
       "notProprietarySource": true,
       "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
     },
@@ -133,9 +141,10 @@
         "configs/research/cltav_model_figure_manifest.json",
         "docs/research/publication/models/FIG-CL-TAV-06-diagnostic-sequence.puml",
         "docs/research/publication/models/drawio/FIG-CL-TAV-06-diagnostic-sequence.drawio",
+        "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-06-diagnostic-sequence.svg",
         "configs/research/cltav_model_figure_exports.json"
       ],
-      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "generator": "svglib/reportlab from approved figlib SVG; not Draw.io CLI hashed review export",
       "notProprietarySource": true,
       "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
     },
@@ -146,9 +155,10 @@
         "configs/research/cltav_model_figure_manifest.json",
         "docs/research/publication/models/FIG-CL-TAV-07-two-state-machines.puml",
         "docs/research/publication/models/drawio/FIG-CL-TAV-07-two-state-machines.drawio",
+        "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-07-two-state-machines.svg",
         "configs/research/cltav_model_figure_exports.json"
       ],
-      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "generator": "svglib/reportlab from approved figlib SVG; not Draw.io CLI hashed review export",
       "notProprietarySource": true,
       "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
     },
@@ -159,9 +169,10 @@
         "configs/research/cltav_model_figure_manifest.json",
         "docs/research/publication/models/FIG-CL-TAV-08-parametric.puml",
         "docs/research/publication/models/drawio/FIG-CL-TAV-08-parametric.drawio",
+        "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-08-parametric.svg",
         "configs/research/cltav_model_figure_exports.json"
       ],
-      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "generator": "svglib/reportlab from approved figlib SVG; not Draw.io CLI hashed review export",
       "notProprietarySource": true,
       "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
     },
@@ -172,9 +183,10 @@
         "configs/research/cltav_model_figure_manifest.json",
         "docs/research/publication/models/FIG-CL-TAV-09-experiment-architecture.puml",
         "docs/research/publication/models/drawio/FIG-CL-TAV-09-experiment-architecture.drawio",
+        "artifacts/publications/cltav/model-drafts/FIG-CL-TAV-09-experiment-architecture.svg",
         "configs/research/cltav_model_figure_exports.json"
       ],
-      "generator": "Draw.io CLI from the hash-bound DRAFT-REDRAW source",
+      "generator": "svglib/reportlab from approved figlib SVG; not Draw.io CLI hashed review export",
       "notProprietarySource": true,
       "safetyCheck": "draft model-figure review export; no ARINC source-text payload"
     }

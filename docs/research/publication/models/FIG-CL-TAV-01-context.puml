@@ -1,21 +1,35 @@
 @startuml FIG-CL-TAV-01
 skinparam shadowing false
-title FIG-CL-TAV-01 Context\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nsubset of context relations; satisfy/verify are model relations, not executed verification
-
-actor Operator
-node TestAdapter
-node IUT
-node NetworkClock
-cloud Integrity645 as "645 integrity boundary\nidentity bound; capability NOT-ESTABLISHED"
-
-Operator --> TestAdapter : test request
-TestAdapter --> IUT : stimulus
-IUT --> TestAdapter : observation Izk
-TestAdapter --> NetworkClock : time / error bound
-IUT ..> Integrity645 : call and state only\nnot algorithm evidence
-TestAdapter --> Msess : observation port to verification session
-note bottom of IUT
-  Protocol messages and operation states
-  belong to Mprot, not to Msess.
+title FIG-CL-TAV-01 v2. SysML 1.6 notation-based views; executable/metamodel conformance is not claimed
+' Approved figlib candidate v2 mapped to controlled ids. Not a proof of equivalence.
+rectangle FS
+' group FS: Msess / verification session domain
+rectangle FP
+' group FP: Mprot / protocol domain
+component Operator
+' entity Operator: Operator
+component Session
+' entity Session: CL-TAV session / candidate set H, resource state; / one admitted action per round
+component TestAdapter
+' entity TestAdapter: Test adapter / encodes stimuli; / captures raw records
+component IUT
+' entity IUT: IUT / loader target; protocol / messages and operation / states live here
+component CLK
+' entity CLK: Network clock / timestamps, error bound ε
+component IB
+' entity IB: 645 integrity boundary / identity bound; capability / NOT-ESTABLISHED
+Operator --> Session : request test request
+Session --> TestAdapter : e2 action a_k
+TestAdapter --> Session : e3 obs. I_k
+TestAdapter --> IUT : e4 stimulus
+IUT --> TestAdapter : e5 raw records
+TestAdapter --> CLK : e6 t_k ± ε
+IUT ..> IB : e7 call and state only; / not algorithm evidence
+note as NT
+  Msess sees protocol state only
+  through the adapter.
+end note
+note as legend
+  Legend: information flow; non-evidential dependency
 end note
 @enduml

@@ -1,45 +1,76 @@
 @startuml FIG-CL-TAV-07
 skinparam shadowing false
-title FIG-CL-TAV-07 Two state machines\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nindependent machines; communication is FIG-CL-TAV-04 ports, not a cross-machine state transition
-
-state Msess as "Msess verification session" {
-  [*] --> Idle
-  Idle --> Admit
-  Admit --> Select : A1 selectable S nonempty
-  Admit --> StopBudget : A2 strictly-reducing TEST or Prep unaffordable
-  Admit --> StopNoDistinguisher : A3 no strictly-reducing TEST and no Prep
-  Admit --> StopError : A4 q unknown and Recover not eligible
-  Admit --> StopBudget : A5 q unknown and Recover eligible unaffordable
-  Select --> Execute : chosen from S
-  Execute --> Update : TEST or Prep valid Izk
-  Execute --> RecoverConfirm : Recover valid record
-  Execute --> ErrorHandle : ERROR
-  RecoverConfirm --> Update : target confirmed
-  RecoverConfirm --> Admit : unconfirmed; q UNKNOWN
-  ErrorHandle --> StopError : retry cap reached
-  ErrorHandle --> StopError : retry remaining and unknown-effect A4 Recover not eligible
-  ErrorHandle --> StopBudget : retry remaining and unknown-effect A5 Recover eligible unaffordable
-  ErrorHandle --> Admit : confirmed not sent and retry remaining
-  ErrorHandle --> Admit : retry remaining and unknown-effect and Recover in S
-  Update --> StopEmpty : P1 Hk empty
-  Update --> StopSingleton : P2 |Hk| == 1
-  Update --> Stop645 : P3 named 645-blocked
-  Update --> StopEquivalent : P4 observational equivalence established
-  Update --> StopBudget : P5 selected-mode resource exhausted
-  Update --> Admit : else |Hk| > 1 and resource remains
-}
-
-state Mprot as "Mprot protocol black box" {
-  state BoundM2 as "bound M2 INFORMATION / UPLOAD\napproved model identity; no new behavior edges"
-  state PlannedScope as "planned CRS scope, no behavior edges\nMedia Defined DOWNLOAD\nOperator Defined DOWNLOAD\nFIND"
-}
-
-note bottom of Msess
-  Admit/Select table A1-A5 equals FIG-CL-TAV-05 and the walker.
-  A nonempty does not imply Execute. S empty uses A2-A5.
-  ErrorHandle: retry cap first, then A4/A5 or Admit A1.
-  Unconfirmed Recover returns to Admit; A1-A5 apply there.
-  Update priority P1-P5 is unchanged.
-  Independent machines use FIG-CL-TAV-04 ports, not a cross-machine transition.
+title FIG-CL-TAV-07 v2. SysML 1.6 notation-based views; executable/metamodel conformance is not claimed
+' Approved figlib candidate v2 mapped to controlled ids. Not a proof of equivalence.
+' bound M2 is the approved model identity drawn as Bound M2.
+' Ports belong to FIG-CL-TAV-04.
+' retry remaining is drawn as retry left.
+rectangle FM
+' group FM: stm Msess
+rectangle FP
+' group FP: stm Mprot
+component SN
+' entity SN: Stop-NoDistinguisher
+component SR
+' entity SR: Stop-Error
+component SB
+' entity SB: Stop-Budget
+component SM
+' entity SM: Stop-Empty
+component SS
+' entity SS: Stop-Singleton
+component S6
+' entity S6: Stop-645
+component SQ
+' entity SQ: Stop-Equivalent
+component I0
+' entity I0: I0
+component ID
+' entity ID: Idle
+component AM
+' entity AM: Admit
+component SL
+' entity SL: Select
+component EX
+' entity EX: Execute
+component UP
+' entity UP: Update
+component ErrorHandle
+' entity ErrorHandle: ErrorHandle
+component RC
+' entity RC: RecoverConfirm
+component BM
+' entity BM: Bound M2 / INFORMATION / UPLOAD; / approved model identity; / no new behaviour edges
+component PL
+' entity PL: Planned CRS scope / Media-defined and / Operator-defined / DOWNLOAD, FIND; / no behaviour edges
+I0 --> ID : t0
+ID --> AM : t1
+AM --> SL : t2 A1
+SL --> EX : t3 chosen from S
+EX --> UP : t4 TEST / PREP, / valid I_k
+EX --> ErrorHandle : t5 ERROR
+EX --> RC : t6 RECOVER / record
+RC --> UP : t7 target / confirmed
+RC --> AM : error-recover unconfirmed; / q UNKNOWN
+ErrorHandle --> AM : t9 CNS, or / UNKNOWN with / RECOVER ∈ S; / retry left
+ErrorHandle --> SR : t10
+ErrorHandle --> SB : error-cap ErrorHandle: retry cap or A4 / → Stop-Error;  A5 → Stop-Budget
+AM --> SN : a3 A3
+AM --> SR : a4 A4
+AM --> SB : a25 A2, A5
+UP --> SB : p5 P5
+UP --> SM : p1 P1
+UP --> SS : p2 P2
+UP --> S6 : p3 P3
+UP --> SQ : p4 P4
+UP --> AM : lp else: |H| > 1, / resource left
+note as GT
+  Guards A1–A5 and update
+  priority P1–P5 as in Alg. 1.
+  No cross-machine transition;
+  ports of Fig. 4 only.
+end note
+note as legend
+  Legend: transition; next round; error path; to final state
 end note
 @enduml

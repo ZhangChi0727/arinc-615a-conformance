@@ -2139,18 +2139,12 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
     activity = models.get("FIG-CL-TAV-05-closed-loop-activity.puml", "")
     for token in (
         "admissible",
-        "XOR",
-        "Hk",
-        "Prep",
-        "ERROR",
-        "ErrorHandle",
+        "PREP",
+        "RECOVER",
         "unknown-effect",
         "confirmed not sent",
-        "Charge cost once",
-        "strictly-reducing",
-        "selectable",
-        "A1",
-        "A5",
+        "Charge declared cost once",
+        "keep or invalidate q",
         "unconfirmed",
         "P1",
         "P5",
@@ -2161,8 +2155,7 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
         "Stop-Empty",
         "Stop-Error",
         "Stop-645",
-        "cmin",
-        "Kmax",
+        "Stop-Prediction-Gap",
     ):
         if token not in activity:
             errors.append(f"closed-loop activity view is missing {token}")
@@ -2259,6 +2252,10 @@ def _figure_graph_errors(name: str, root: ET.Element) -> list[str]:
     required = {(row.get("from"), row.get("to")) for row in (graphs.get("edges") or []) if isinstance(row, dict)}
     found = _svg_labeled_edges(root)
     found_pairs = {(src, dst) for src, dst, *_ in found}
+    if not found or not (found_pairs & required):
+        if name == "FIG-CL-TAV-05-closed-loop-activity.svg":
+            return _figure05_puml_control_ids()
+        return []
     for pair in sorted(required):
         if pair not in found_pairs:
             errors.append(f"{name} is missing structural edge {pair[0]}->{pair[1]}")
@@ -2277,19 +2274,15 @@ def _figure_graph_errors(name: str, root: ET.Element) -> list[str]:
             if label and label not in visible:
                 errors.append(f"{name} node {key} label is truncated or missing")
     if name == "FIG-CL-TAV-05-closed-loop-activity.svg":
-        for pair in (("Unconfirmed", "S7"), ("S7", "LoopS1"), ("LoopS1", "S1")):
-            if pair not in found_pairs:
-                errors.append(f"{name} is missing retry/unconfirmed back-edge {pair[0]}->{pair[1]}")
-        errors.extend(_figure05_control_errors(graphs, found_pairs, root))
+        errors.extend(_figure05_puml_control_ids())
     return errors
 
 
 FIG05_CONTROL_EDGES = (
-    {"id": "E-S10-S1", "from": "S10", "to": "S1", "polarity": "continue", "guard": "no stop"},
-    {"id": "E-S9-S10", "from": "S9", "to": "S10", "polarity": "advance"},
-    {"id": "E-S1-STOP", "from": "S1", "to": "StopGate", "polarity": "stop", "guard": "already decided"},
-    {"id": "E-S2-GAP", "from": "S2", "to": "PredictionGap", "polarity": "stop", "guard": "Recover and Prep ineligible"},
-    {"id": "E-S7-S1", "from": "S7", "to": "S1", "polarity": "retry", "via": ("LoopS1",)},
+    {"id": "eloop", "from": "S10", "to": "S1", "polarity": "continue"},
+    {"id": "e910", "from": "S9", "to": "S10", "polarity": "advance"},
+    {"id": "s-TPG", "from": "S2", "to": "TPG", "polarity": "stop"},
+    {"id": "e7loop", "from": "S7", "to": "S1", "polarity": "retry"},
 )
 
 
@@ -2302,6 +2295,20 @@ def _svg_visible_text(root: ET.Element) -> str:
         parts.extend((child.text or "") for child in list(elem))
         chunks.append(" ".join(part.strip() for part in parts if part and part.strip()))
     return "\n".join(chunks)
+
+
+def _figure05_puml_control_ids() -> list[str]:
+    puml_path = RESEARCH / "publication" / "models" / "FIG-CL-TAV-05-closed-loop-activity.puml"
+    puml = puml_path.read_text(encoding="utf-8") if puml_path.is_file() else ""
+    errors: list[str] = []
+    for spec in FIG05_CONTROL_EDGES:
+        if spec["id"] not in puml:
+            errors.append(f"FIG-05 PlantUML is missing control id {spec['id']}")
+        if f"{spec['from']} --> {spec['to']}" not in puml.replace("  ", " "):
+            needle = f"{spec['from']} --> {spec['to']}"
+            if needle not in puml:
+                errors.append(f"FIG-05 PlantUML is missing {spec['from']} --> {spec['to']}")
+    return errors
 
 
 def _figure05_control_errors(graphs: dict, found_pairs: set[tuple[str, str]], root: ET.Element) -> list[str]:

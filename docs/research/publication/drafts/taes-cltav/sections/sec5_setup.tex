@@ -55,28 +55,17 @@ manufacture an answered or singleton-localization decision. Rejected updates
 preserve (H) independently of the stop tag; valid empty and singleton updates
 force \texttt{Stop-Empty} and \texttt{Stop-Singleton} before later stops.
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\begin{tikzpicture}[font=\scriptsize,box/.style={draw,align=center,inner sep=2pt}]
-\node[box,text width=2.3cm] (scene) at (0,2.6) {scene / config};
-\node[box,text width=2.3cm] (truth) at (4.0,2.6) {evaluator truth};
-\node[box,text width=3.4cm] (arms) at (0,1.4) {CL-T / CL-A / CL-TA / CL-LOOP};
-\node[box,text width=2.6cm] (raw) at (0,0.3) {raw record};
-\node[box,text width=2.6cm] (iz) at (0,-0.8) {interpreted \(I_z\)};
-\node[box,text width=4.6cm] (filt) at (2.0,-2.0) {filter: unconfirmed / invalid / equivalent / abstain};
-\node[box,text width=4.6cm] (met) at (2.0,-3.1) {DETECT / LOCATE / ABLATION};
-\draw[->] (scene) -- (arms);
-\draw[->] (scene) -- (truth);
-\draw[->] (arms) -- (raw);
-\draw[->] (raw) -- (iz);
-\draw[->] (iz) -- (filt);
-\draw[->] (truth) -- (filt);
-\draw[->] (filt) -- (met);
-\end{tikzpicture}
-\caption{Experiment architecture from FIG-CL-TAV-09. Truth meets algorithm
-output only at the evaluator filter.}
+\includegraphics[width=\textwidth]{FIG-CL-TAV-09-experiment-architecture.pdf}
+\caption{Experiment architecture from FIG-CL-TAV-09 v3 (SysML 1.6
+notation-based view; executable or metamodel conformance is not claimed).
+E0--E6 is a notation view of the registered experiment interfaces. Truth meets
+algorithm output only at the evaluator filter and is never an algorithm input.
+No full 615A behaviour, real IUT, 645 capability, or experimental result is
+claimed.}
 \label{fig:exp}
-\end{figure}
+\end{figure*}
 
 DETECT compares miss and refusal under the same detection budget and the T5
 oracle; FIND abort does not waive the 2\,s / 3\,s clocks. LOCATE compares

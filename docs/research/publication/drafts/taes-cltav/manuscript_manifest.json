@@ -37,8 +37,9 @@
     {"paperLabel": "alg:cltav-07", "stableId": "ALG-CLTAV-07", "source": "docs/research/publication/algorithms/ALG-CLTAV-07-history.tex", "where": "supplement"}
   ],
   "figures": [
-    {"id": "fig:arch", "section": "sec:arch", "derivedFrom": "FIG-CL-TAV-01", "status": "derived-notation"},
-    {"id": "fig:exp", "section": "sec:setup", "derivedFrom": "FIG-CL-TAV-09", "status": "derived-notation"},
+    {"id": "fig:arch", "section": "sec:arch", "derivedFrom": "FIG-CL-TAV-01@v2-1901742", "status": "derived-notation"},
+    {"id": "fig:loop", "section": "sec:method", "derivedFrom": "FIG-CL-TAV-05@v4-1901742", "status": "derived-notation"},
+    {"id": "fig:exp", "section": "sec:setup", "derivedFrom": "FIG-CL-TAV-09@v3-1901742", "status": "derived-notation"},
     {"id": "fig:res-detect", "section": "sec:results", "placeholder": "PH-RES-DETECT"},
     {"id": "fig:res-locate", "section": "sec:results", "placeholder": "PH-RES-LOCATE"}
   ],

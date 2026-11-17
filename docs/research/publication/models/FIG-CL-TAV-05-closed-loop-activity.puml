@@ -1,76 +1,95 @@
 @startuml FIG-CL-TAV-05
 skinparam shadowing false
-title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\npredict before select; exclusive TEST/Prep/Recover/Admit; charge once; effect classes
-
-' E-S1-STOP from=S1 to=StopGate polarity=stop guard=already decided
-' E-S2-GAP from=S2 to=PredictionGap polarity=stop guard=Recover and Prep ineligible
-' E-S7-S1 from=S7 to=S1 polarity=retry via=LoopS1
-' E-S9-S10 from=S9 to=S10 polarity=advance
-' E-S10-S1 from=S10 to=S1 polarity=continue guard=no stop
-
-start
-:S0 Idle; SessionContext unique; HistoryHandle; BUDGET xor ROUNDS; retry=0;
-repeat
-  :S1 IF-RESOURCE-STOP gate;
-  if (already A2-A5 or P1-P5?) then (yes)
-    :E-S1-STOP already decided stop;
-    stop
-  else (no)
-    :S2 IF-PRED-OBS predict classes;
-    if (PredictionGapError and Recover and Prep not eligible?) then (yes)
-      :E-S2-GAP TEST-scoped named prediction-gap; Recover and Prep ineligible;
-      stop
-    else (no)
-      :S3 IF-SELECT-ADMIT final action, then freeze qUsedAtSelect/actionId;
-      if (kind ADMIT?) then (yes)
-        stop
-      elseif (kind TEST and S empty?) then (yes)
-        :named spec error; never argmin empty S;
-        stop
-      elseif (kind PREP or RECOVER?) then (yes)
-        :keep named Prep/Recover; do not enter TEST minimax;
-      else (TEST nonempty)
-        :IF-SELECT-ADMIT returns final one-step minimax on predicted nonempty classes;
-      endif
-      :S4 Charge cost once;
-      :S5 IF-EXECUTE-RECORD effect class;
-      :S6 IF-OBS-INTERPRET unless effect class already returned;
-      if (CONFIRMED-NOT-SENT or UNKNOWN-EFFECT or prepErr or unconfirmed Recover?) then (yes)
-        :S7 classify effect; CONFIRMED-NOT-SENT keeps q; UNKNOWN-EFFECT invalidates q;
-        if (retry cap reached?) then (yes)
-          :Stop-Error; not A5/Stop-Budget;
-          stop
-        else (retry remaining)
-          :E-S7-S1 unconfirmed Recover and effect classes share the retry back-edge to S1;
-        endif
-      else (record valid)
-        if (Recover confirmed?) then (yes)
-          :S8 sole writer of KNOWN(declaredTarget,evidence); IF-PREP-RECOVER does not write Gamma;
-          :E-S9-S10 S9 IF-HIST-UPDATE reads qUsedAtSelect and commits confirmed postSummary;
-        else (TEST or Prep)
-          :E-S9-S10 S9 IF-HIST-UPDATE reads qUsedAtSelect and commits confirmed postSummary;
-        endif
-        :S10 P1-P5 via IF-RESOURCE-STOP and IF-EQUIV;
-        if (P-stop?) then (yes)
-          stop
-        else (no stop)
-          :E-S10-S1 continue to next S1;
-        endif
-      endif
-    endif
-  endif
-repeat while (no stop?) is (continue)
-note right
-  admissible A then selectable S; Admit A1-A5
-  XOR BUDGET(cmin,B) / ROUNDS(Kmax)
-  strictly-reducing TEST else Prep else Recover
-  Charge cost once; Hk update
-  ERROR ErrorHandle unknown-effect
-  confirmed not sent keeps q; CONFIRMED-NOT-SENT is not UNKNOWN
-  unconfirmed Recover joins S7
-  no stop returns S10 to S1
-  P1 P5 Stop-Empty Stop-Singleton Stop-645
-  Stop-Equivalent Stop-Budget Stop-Error Stop-NoDistinguisher
+title FIG-CL-TAV-05 v4. SysML 1.6 notation-based views; executable/metamodel conformance is not claimed
+' Approved figlib candidate v4 mapped to controlled ids. Not a proof of equivalence.
+rectangle T
+' group T: Terminal
+component S0
+' entity S0: S0  Initialise session / H_0, resource mode, / retry counter
+component S1
+' entity S1: S1  Resource / stop gate / IF-RESOURCE-STOP
+component S2
+' entity S2: S2  Predict observation / classes / IF-PRED-OBS
+component S3
+' entity S3: S3  Select and admit / one action / IF-SELECT-ADMIT: / TEST | PREP | RECOVER
+component S10
+' entity S10: S10  Stop rules P1–P5 / IF-RESOURCE-STOP, IF-EQUIV
+component S4
+' entity S4: S4  Charge declared cost once
+component S5
+' entity S5: S5  Execute and record effect / IF-EXECUTE-RECORD
+component S6
+' entity S6: S6  Interpret observation / IF-OBS-INTERPRET
+component D1
+' entity D1: record valid?
+component S8
+' entity S8: S8  Confirm RECOVER / sole KNOWN writer
+component S7
+' entity S7: S7  Contain effect / keep or invalidate q
+component S9
+' entity S9: S9  Update history / H ← H ∩ I_z
+component SE
+' entity SE: Stop-Error
+component TA3
+' entity TA3: Stop-NoDistinguisher
+component TA25
+' entity TA25: Stop-Budget
+component TA4
+' entity TA4: Stop-Error
+component TPG
+' entity TPG: Stop-Prediction-Gap
+component TAD
+' entity TAD: ADMIT
+component TSE
+' entity TSE: Spec. error
+component TP1
+' entity TP1: Stop-Empty
+component TP2
+' entity TP2: Stop-Singleton
+component TP3
+' entity TP3: Stop-645
+component TP4
+' entity TP4: Stop-Equivalent
+component TP5
+' entity TP5: Stop-Budget
+component LS1
+' entity LS1: decided
+component LS2
+' entity LS2: gap
+component LS3
+' entity LS3: select
+component LS10
+' entity LS10: P1–P5
+S0 --> S1 : e01
+S1 --> S2 : e12
+S2 --> S3 : e23
+S3 --> S4 : e34
+S4 --> S5 : e45
+S5 --> S6 : e56
+S6 --> D1 : e6d
+D1 --> S8 : ed8 RECOVER
+D1 --> S9 : ed9 TEST / / PREP
+S8 --> S9 : e89
+S9 --> S10 : e910
+D1 --> S7 : ed7 invalid or / unconfirmed
+S7 --> S1 : e7loop retry < cap
+S7 --> SE : e7stop cap
+S10 --> S1 : eloop continue
+S1 --> TA3 : s-TA3 A3
+S1 --> TA25 : s-TA25 A2/5
+S1 --> TA4 : s-TA4 A4
+S2 --> TPG : s-TPG
+S3 --> TAD : s-TAD
+S3 --> TSE : s-TSE S=∅
+S10 --> TP1 : s-TP1 P1
+S10 --> TP2 : s-TP2 P2
+S10 --> TP3 : s-TP3 P3
+S10 --> TP4 : s-TP4 P4
+S10 --> TP5 : s-TP5 P5
+note as legend
+  Legend: control flow; next round; error containment; termination; analysis core
 end note
-stop
+note as s7-wording
+  S7 is drawn as keep or invalidate q. CONFIRMED-NOT-SENT keeps q; UNKNOWN-EFFECT invalidates q. Only RECOVER is admissible after unknown-effect. confirmed not sent remains the method and Algorithm 1 wording. Two columns: left S0-S3 and S10 aligned with Terminal; right S4-S9.
+end note
 @enduml
