@@ -55,13 +55,18 @@
 <text x="518.0" y="276.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start"><tspan>Each action or ERROR costs at least</tspan></text>
 <text x="518.0" y="289.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start"><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="normal">c</tspan><tspan font-family="Times New Roman" font-style="normal" font-size="8.6" font-weight="normal" dy="3.3">min</tspan><tspan dy="-3.3"> or one </tspan><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="normal">K</tspan><tspan font-family="Times New Roman" font-style="normal" font-size="8.6" font-weight="normal" dy="3.3">max</tspan><tspan dy="-3.3"> round.</tspan></text>
 <polyline points="190.0,60.0 284.0,60.0" fill="none" stroke="#333333" stroke-width="1.2"/>
+<line x1="190.0" y1="60.0" x2="284.0" y2="60.0" data-from="AD" data-to="PTL" stroke="none" fill="none"/>
 <text x="237.0" y="54.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle" font-style="italic"><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="bold">I</tspan><tspan font-family="Times New Roman" font-style="italic" font-size="8.6" font-weight="normal" dy="3.3">k</tspan><tspan dy="-3.3">, records</tspan></text>
 <polyline points="190.0,180.0 284.0,180.0" fill="none" stroke="#333333" stroke-width="1.2"/>
+<line x1="190.0" y1="180.0" x2="284.0" y2="180.0" data-from="CE" data-to="PCL" stroke="none" fill="none"/>
 <text x="237.0" y="174.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle" font-style="italic"><tspan>verdict</tspan></text>
 <polyline points="496.0,60.0 590.0,60.0" fill="none" stroke="#333333" stroke-width="1.2"/>
+<line x1="496.0" y1="60.0" x2="590.0" y2="60.0" data-from="PHL" data-to="CS" stroke="none" fill="none"/>
 <text x="539.0" y="54.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle" font-style="italic"><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="bold">H</tspan><tspan font-family="Times New Roman" font-style="italic" font-size="8.6" font-weight="normal" dy="3.3">k</tspan></text>
 <polyline points="496.0,180.0 590.0,180.0" fill="none" stroke="#333333" stroke-width="1.2"/>
+<line x1="496.0" y1="180.0" x2="590.0" y2="180.0" data-from="PSL" data-to="TL" stroke="none" fill="none"/>
 <text x="539.0" y="174.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle" font-style="italic"><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="bold">T</tspan><tspan>(</tspan><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="normal">q</tspan><tspan font-family="Times New Roman" font-style="italic" font-size="8.6" font-weight="normal" dy="3.3">k</tspan><tspan dy="-3.3">)</tspan></text>
 <polyline points="390.0,241.0 390.0,275.0" fill="none" stroke="#333333" stroke-width="1.2"/>
+<line x1="390.0" y1="241.0" x2="390.0" y2="275.0" data-from="PBL" data-to="BC" stroke="none" fill="none"/>
 <text x="396.0" y="262.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start" font-style="italic"><tspan>cost, rounds</tspan></text>
 </svg>

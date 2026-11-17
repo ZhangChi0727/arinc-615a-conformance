@@ -9,11 +9,11 @@ rectangle AV
 rectangle XO
 ' group XO: Excluded, still counted
 rectangle E2
-' group E2: E2  Run arms / same pool, same action library
+' group E2: E2  Run arms / same pool and action library  (IF-EXP-RUN)
 component E0
 ' entity E0: E0  Declare scenario pool / IUT configuration, fault plan, resource mode; / fixed before any run  (IF-EXP-SCENE)
 component E1
-' entity E1: E1  Inject fault, confirm execution / per scenario  (IF-EXP-INJECT)
+' entity E1: E1  Inject fault, confirm execution / truth recorded before any arm runs / (IF-EXP-INJECT, IF-EXP-TRUTH)
 component A0
 ' entity A0: CL-T / test / only
 component A1
@@ -29,24 +29,24 @@ component E4
 component E5
 ' entity E5: E5  Evaluate against truth / DETECT / LOCATE / ABLATION with attempt / and answered-subset denominators  (IF-EXP-EVAL)
 component E6
-' entity E6: E6  Answer RQ1–RQ3 / comparable projections only; / no unrun numbers
+' entity E6: E6  Answer CL-RQ1–CL-RQ3 / reporting step only; comparable / projections, no unrun numbers
 component TR
 ' entity TR: Truth record / injection plan and / execution confirmation / (IF-EXP-TRUTH)
 component X0
-' entity X0: invalid run / instrument or setup fault
+' entity X0: invalid run / unconfirmed injection / or setup fault
 component X1
 ' entity X1: equivalent fault / observationally / indistinguishable
 component X2
 ' entity X2: missing record / collection gap
 component X3
-' entity X3: unanswered / attempt counted, / not answered
+' entity X3: unanswered / abstain; still counted
 E0 --> E1 : m0
 E1 --> E2 : m1
 E2 --> E3 : m2
 E3 --> E4 : m3
 E4 --> E5 : m4
 E5 --> E6 : m5
-E1 --> TR : t1 confirmation
+E1 --> TR : t1 truth first
 TR --> E4 : t2 evaluator-only check
 TR --> E5 : t3 ground truth
 TR ..> E2 : truth-arms never an / algorithm input

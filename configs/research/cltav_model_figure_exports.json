@@ -18,7 +18,7 @@
       "checkedAt": "2026-11-17",
       "semanticStatus": "PENDING-INDEPENDENT-REVIEW",
       "exportStatus": "NEEDS-RENDER",
-      "exportDispositionReason": "Draw.io CLI is not installed, so this row stays NEEDS-RENDER (not a hashed CLI review bundle). Reader SVG was replaced from the approved figlib file; a svglib PDF exists beside it and is not a Draw.io-CLI identity.",
+      "exportDispositionReason": "Draw.io CLI is not installed. The previous model-draft PDF and SVG are not renders of this revised Draw.io identity and are not current review outputs.",
       "finalSizeStatus": "FINAL-SIZE-PENDING",
       "promotionStatus": "DRAFT-NOT-PROMOTED",
       "modelVersionId": "FIG-CL-TAV-01@v2-1901742",
@@ -40,7 +40,7 @@
       "checkedAt": "2026-11-17",
       "semanticStatus": "PENDING-INDEPENDENT-REVIEW",
       "exportStatus": "NEEDS-RENDER",
-      "exportDispositionReason": "Draw.io CLI is not installed, so this row stays NEEDS-RENDER (not a hashed CLI review bundle). Reader SVG was replaced from the approved figlib file; a svglib PDF exists beside it and is not a Draw.io-CLI identity.",
+      "exportDispositionReason": "Draw.io CLI is not installed. The previous model-draft PDF and SVG are not renders of this revised Draw.io identity and are not current review outputs.",
       "finalSizeStatus": "FINAL-SIZE-PENDING",
       "promotionStatus": "DRAFT-NOT-PROMOTED",
       "modelVersionId": "FIG-CL-TAV-02@v2-1901742",
@@ -62,7 +62,7 @@
       "checkedAt": "2026-11-17",
       "semanticStatus": "PENDING-INDEPENDENT-REVIEW",
       "exportStatus": "NEEDS-RENDER",
-      "exportDispositionReason": "Draw.io CLI is not installed, so this row stays NEEDS-RENDER (not a hashed CLI review bundle). Reader SVG was replaced from the approved figlib file; a svglib PDF exists beside it and is not a Draw.io-CLI identity.",
+      "exportDispositionReason": "Draw.io CLI is not installed. The previous model-draft PDF and SVG are not renders of this revised Draw.io identity and are not current review outputs.",
       "finalSizeStatus": "FINAL-SIZE-PENDING",
       "promotionStatus": "DRAFT-NOT-PROMOTED",
       "modelVersionId": "FIG-CL-TAV-03@v2-1901742",
@@ -84,7 +84,7 @@
       "checkedAt": "2026-11-17",
       "semanticStatus": "PENDING-INDEPENDENT-REVIEW",
       "exportStatus": "NEEDS-RENDER",
-      "exportDispositionReason": "Draw.io CLI is not installed, so this row stays NEEDS-RENDER (not a hashed CLI review bundle). Reader SVG was replaced from the approved figlib file; a svglib PDF exists beside it and is not a Draw.io-CLI identity.",
+      "exportDispositionReason": "Draw.io CLI is not installed. The previous model-draft PDF and SVG are not renders of this revised Draw.io identity and are not current review outputs.",
       "finalSizeStatus": "FINAL-SIZE-PENDING",
       "promotionStatus": "DRAFT-NOT-PROMOTED",
       "modelVersionId": "FIG-CL-TAV-04@v2-1901742",
@@ -106,12 +106,12 @@
       "checkedAt": "2026-11-17",
       "semanticStatus": "PENDING-INDEPENDENT-REVIEW",
       "exportStatus": "NEEDS-RENDER",
-      "exportDispositionReason": "Draw.io CLI is not installed, so this row stays NEEDS-RENDER (not a hashed CLI review bundle). Reader SVG was replaced from the approved figlib file; a svglib PDF exists beside it and is not a Draw.io-CLI identity.",
+      "exportDispositionReason": "Draw.io CLI is not installed. The previous model-draft PDF and SVG are not renders of this revised Draw.io identity and are not current review outputs.",
       "finalSizeStatus": "FINAL-SIZE-PENDING",
       "promotionStatus": "DRAFT-NOT-PROMOTED",
       "modelVersionId": "FIG-CL-TAV-05@v4-1901742",
-      "modelContentSha256": "2df2628d5f3de646d9e5d0b9489f339bb4f9d31e10e8dd2623902a2b18a212f6",
-      "reviewBundleSha256": "15627f749a94393c66093abb581f095806ec3fcfcbde8ab1d0cef32350e45f3c"
+      "modelContentSha256": "42cb0ffad53fb1ba8ccd88c17652ec8bdd10accb1e0f180b0fb3fd39564b7981",
+      "reviewBundleSha256": "ae3cd745286b98f47b0803a7427f451a1baf2d8301705351b1beb145f1e28f29"
     },
     {
       "figureId": "FIG-CL-TAV-06",
@@ -128,7 +128,7 @@
       "checkedAt": "2026-11-17",
       "semanticStatus": "PENDING-INDEPENDENT-REVIEW",
       "exportStatus": "NEEDS-RENDER",
-      "exportDispositionReason": "Draw.io CLI is not installed, so this row stays NEEDS-RENDER (not a hashed CLI review bundle). Reader SVG was replaced from the approved figlib file; a svglib PDF exists beside it and is not a Draw.io-CLI identity.",
+      "exportDispositionReason": "Draw.io CLI is not installed. The previous model-draft PDF and SVG are not renders of this revised Draw.io identity and are not current review outputs.",
       "finalSizeStatus": "FINAL-SIZE-PENDING",
       "promotionStatus": "DRAFT-NOT-PROMOTED",
       "modelVersionId": "FIG-CL-TAV-06@v2-1901742",
@@ -150,7 +150,7 @@
       "checkedAt": "2026-11-17",
       "semanticStatus": "PENDING-INDEPENDENT-REVIEW",
       "exportStatus": "NEEDS-RENDER",
-      "exportDispositionReason": "Draw.io CLI is not installed, so this row stays NEEDS-RENDER (not a hashed CLI review bundle). Reader SVG was replaced from the approved figlib file; a svglib PDF exists beside it and is not a Draw.io-CLI identity.",
+      "exportDispositionReason": "Draw.io CLI is not installed. The previous model-draft PDF and SVG are not renders of this revised Draw.io identity and are not current review outputs.",
       "finalSizeStatus": "FINAL-SIZE-PENDING",
       "promotionStatus": "DRAFT-NOT-PROMOTED",
       "modelVersionId": "FIG-CL-TAV-07@v2-1901742",
@@ -172,7 +172,7 @@
       "checkedAt": "2026-11-17",
       "semanticStatus": "PENDING-INDEPENDENT-REVIEW",
       "exportStatus": "NEEDS-RENDER",
-      "exportDispositionReason": "Draw.io CLI is not installed, so this row stays NEEDS-RENDER (not a hashed CLI review bundle). Reader SVG was replaced from the approved figlib file; a svglib PDF exists beside it and is not a Draw.io-CLI identity.",
+      "exportDispositionReason": "Draw.io CLI is not installed. The previous model-draft PDF and SVG are not renders of this revised Draw.io identity and are not current review outputs.",
       "finalSizeStatus": "FINAL-SIZE-PENDING",
       "promotionStatus": "DRAFT-NOT-PROMOTED",
       "modelVersionId": "FIG-CL-TAV-08@v2-1901742",
@@ -182,7 +182,7 @@
     {
       "figureId": "FIG-CL-TAV-09",
       "drawioPath": "docs/research/publication/models/drawio/FIG-CL-TAV-09-experiment-architecture.drawio",
-      "drawioSha256": "16044e96bb2d227996853e877f7a6a0f1d08bcb8f6c224481b20dff7891017b4",
+      "drawioSha256": "4909a835203c5c50f5ae3d05c5343566aeebf40b868b4d2e4aa4a010c4c80be1",
       "caption": "FIG-CL-TAV-09 v3. SysML 1.6 notation-based views; executable/metamodel conformance is not claimed Current editable candidate; input PlantUML identity is recorded, semantic review of this head is pending, and promotion is not authorized. No full 615A behaviour, real IUT, 645 capability, or experimental result is claimed.",
       "captionSha256": "3f4c7fb64e4b03ed6b6dc06fcedff79a521f4ba526ca5dd69aca4b82a64a7298",
       "exporter": {
@@ -194,16 +194,16 @@
       "checkedAt": "2026-11-17",
       "semanticStatus": "PENDING-INDEPENDENT-REVIEW",
       "exportStatus": "NEEDS-RENDER",
-      "exportDispositionReason": "Draw.io CLI is not installed, so this row stays NEEDS-RENDER (not a hashed CLI review bundle). Reader SVG was replaced from the approved figlib file; a svglib PDF exists beside it and is not a Draw.io-CLI identity.",
+      "exportDispositionReason": "Draw.io CLI is not installed. The previous model-draft PDF and SVG are not renders of this revised Draw.io identity and are not current review outputs.",
       "finalSizeStatus": "FINAL-SIZE-PENDING",
       "promotionStatus": "DRAFT-NOT-PROMOTED",
       "modelVersionId": "FIG-CL-TAV-09@v3-1901742",
-      "modelContentSha256": "3b2384039c5adc7bcaabcb567276b91c13300452b034e4d4800d06af693d60d3",
-      "reviewBundleSha256": "7bb58866210d589e36e22fce639835c65d7565359c87ce11b0f8bb15853720ed"
+      "modelContentSha256": "376923b6ecd40673b8307d021cc41c86decf22bbc46d1034f99d753f5fbb82e5",
+      "reviewBundleSha256": "45622f45641dda1af1c15980d8dd18c4e4ea252a2ebac153cd43eaed7695cd39"
     }
   ],
   "readerIndex": {
     "path": "artifacts/publications/cltav/model-drafts/MODEL_FIGURE_REVIEW_INDEX.md",
-    "textSha256": "0d574136251df26374b98577d2c186d6d900fc9aac036dd8232f26f5377056c4"
+    "textSha256": "ff76b4349b16d6e7be2b873127968b00d2037633a00bb1082790d9ef7c9dff59"
   }
 }

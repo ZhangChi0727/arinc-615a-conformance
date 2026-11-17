@@ -29,13 +29,14 @@
 <text x="400.0" y="37.0" font-family="Helvetica" font-size="12.5" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>E0  Declare scenario pool</tspan></text>
 <text x="400.0" y="52.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>IUT configuration, fault plan, resource mode;</tspan></text>
 <text x="400.0" y="65.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>fixed before any run  (IF-EXP-SCENE)</tspan></text>
-<rect x="250" y="106" width="300" height="50" rx="3" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
-<text x="400.0" y="126.8" font-family="Helvetica" font-size="12.5" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>E1  Inject fault, confirm execution</tspan></text>
-<text x="400.0" y="141.8" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>per scenario  (IF-EXP-INJECT)</tspan></text>
+<rect x="250" y="100" width="300" height="62" rx="3" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
+<text x="400.0" y="120.0" font-family="Helvetica" font-size="12.5" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>E1  Inject fault, confirm execution</tspan></text>
+<text x="400.0" y="135.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>truth recorded before any arm runs</tspan></text>
+<text x="400.0" y="148.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>(IF-EXP-INJECT, IF-EXP-TRUTH)</tspan></text>
 <rect x="250" y="206" width="300" height="112" rx="0" fill="#FFFFFF" stroke="#333333" stroke-width="0.9"/>
 <path d="M250,226 H337.2 L345.2,218 V206" fill="none" stroke="#333333" stroke-width="0.9"/>
 <text x="257.0" y="220.5" font-family="Helvetica" font-size="11" font-weight="bold" fill="#1A1A1A" text-anchor="start"><tspan>E2  Run arms</tspan></text>
-<text x="353.2" y="220.5" font-family="Helvetica" font-size="10.5" font-weight="normal" fill="#555555" text-anchor="start" font-style="italic"><tspan>same pool, same action library</tspan></text>
+<text x="353.2" y="220.5" font-family="Helvetica" font-size="10.5" font-weight="normal" fill="#555555" text-anchor="start" font-style="italic"><tspan>same pool and action library  (IF-EXP-RUN)</tspan></text>
 <rect x="260" y="240" width="66" height="64" rx="3" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
 <text x="293.0" y="260.6" font-family="Helvetica" font-size="11" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>CL-T</tspan></text>
 <text x="293.0" y="274.1" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>test</tspan></text>
@@ -64,9 +65,9 @@
 <text x="400.0" y="537.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>DETECT / LOCATE / ABLATION with attempt</tspan></text>
 <text x="400.0" y="550.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>and answered-subset denominators  (IF-EXP-EVAL)</tspan></text>
 <rect x="250" y="594" width="300" height="56" rx="3" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
-<text x="400.0" y="611.0" font-family="Helvetica" font-size="12.5" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>E6  Answer RQ1–RQ3</tspan></text>
-<text x="400.0" y="626.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>comparable projections only;</tspan></text>
-<text x="400.0" y="639.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>no unrun numbers</tspan></text>
+<text x="400.0" y="611.0" font-family="Helvetica" font-size="12.5" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>E6  Answer CL-RQ1–CL-RQ3</tspan></text>
+<text x="400.0" y="626.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>reporting step only; comparable</tspan></text>
+<text x="400.0" y="639.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>projections, no unrun numbers</tspan></text>
 <rect x="24" y="130" width="176" height="96" rx="3" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
 <text x="112.0" y="160.2" font-family="Helvetica" font-size="12.5" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>Truth record</tspan></text>
 <text x="112.0" y="175.2" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>injection plan and</tspan></text>
@@ -76,43 +77,55 @@
 <path d="M196,596 V606 H206" fill="none" stroke="#555555" stroke-width="0.9"/>
 <text x="26.0" y="612.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start"><tspan>Truth is never an</tspan></text>
 <text x="26.0" y="625.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start"><tspan>algorithm input.</tspan></text>
-<rect x="612" y="432" width="164" height="39.5" rx="8" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
+<rect x="612" y="432" width="164" height="53.0" rx="8" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
 <text x="694.0" y="447.1" font-family="Helvetica" font-size="11" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>invalid run</tspan></text>
-<text x="694.0" y="460.6" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>instrument or setup fault</tspan></text>
-<rect x="612" y="477.5" width="164" height="53.0" rx="8" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
-<text x="694.0" y="492.6" font-family="Helvetica" font-size="11" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>equivalent fault</tspan></text>
-<text x="694.0" y="506.1" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>observationally</tspan></text>
-<text x="694.0" y="519.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>indistinguishable</tspan></text>
-<rect x="612" y="536.5" width="164" height="39.5" rx="8" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
-<text x="694.0" y="551.5" font-family="Helvetica" font-size="11" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>missing record</tspan></text>
-<text x="694.0" y="565.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>collection gap</tspan></text>
-<rect x="612" y="582.0" width="164" height="53.0" rx="8" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
-<text x="694.0" y="597.0" font-family="Helvetica" font-size="11" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>unanswered</tspan></text>
-<text x="694.0" y="610.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>attempt counted,</tspan></text>
-<text x="694.0" y="624.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>not answered</tspan></text>
+<text x="694.0" y="460.6" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>unconfirmed injection</tspan></text>
+<text x="694.0" y="474.1" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>or setup fault</tspan></text>
+<rect x="612" y="491.0" width="164" height="53.0" rx="8" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
+<text x="694.0" y="506.1" font-family="Helvetica" font-size="11" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>equivalent fault</tspan></text>
+<text x="694.0" y="519.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>observationally</tspan></text>
+<text x="694.0" y="533.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>indistinguishable</tspan></text>
+<rect x="612" y="550.0" width="164" height="39.5" rx="8" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
+<text x="694.0" y="565.0" font-family="Helvetica" font-size="11" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>missing record</tspan></text>
+<text x="694.0" y="578.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>collection gap</tspan></text>
+<rect x="612" y="595.5" width="164" height="39.5" rx="8" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
+<text x="694.0" y="610.5" font-family="Helvetica" font-size="11" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>unanswered</tspan></text>
+<text x="694.0" y="624.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>abstain; still counted</tspan></text>
 <path d="M236,666 H778 L788,676 V696 H236 Z" fill="#FFFFFF" stroke="#555555" stroke-width="0.9"/>
 <path d="M778,666 V676 H788" fill="none" stroke="#555555" stroke-width="0.9"/>
 <text x="244.0" y="682.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start"><tspan>Shared pool: no arm sees CL-LOOP records; excluded runs stay in the attempt denominator.</tspan></text>
-<polyline points="400.0,76.0 400.0,106.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
-<polyline points="400.0,156.0 400.0,206.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<polyline points="400.0,76.0 400.0,100.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="400.0" y1="76.0" x2="400.0" y2="100.0" data-from="E0" data-to="E1" stroke="none" fill="none"/>
+<polyline points="400.0,162.0 400.0,206.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="400.0" y1="162.0" x2="400.0" y2="206.0" data-from="E1" data-to="E2" stroke="none" fill="none"/>
 <polyline points="400.0,318.0 400.0,340.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="400.0" y1="318.0" x2="400.0" y2="340.0" data-from="E2" data-to="E3" stroke="none" fill="none"/>
 <polyline points="400.0,384.0 400.0,420.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="400.0" y1="384.0" x2="400.0" y2="420.0" data-from="E3" data-to="E4" stroke="none" fill="none"/>
 <polyline points="400.0,472.0 400.0,502.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="400.0" y1="472.0" x2="400.0" y2="502.0" data-from="E4" data-to="E5" stroke="none" fill="none"/>
 <polyline points="400.0,564.0 400.0,594.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="400.0" y1="564.0" x2="400.0" y2="594.0" data-from="E5" data-to="E6" stroke="none" fill="none"/>
 <polyline points="250.0,131.0 226.0,131.0 200.0,131.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
-<text x="242.0" y="125.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="end" font-style="italic"><tspan>confirmation</tspan></text>
+<line x1="250.0" y1="131.0" x2="200.0" y2="131.0" data-from="E1" data-to="TR" stroke="none" fill="none"/>
+<text x="242.0" y="125.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="end" font-style="italic"><tspan>truth first</tspan></text>
 <polyline points="60.0,226.0 60.0,446.0 250.0,446.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="60.0" y1="226.0" x2="250.0" y2="446.0" data-from="TR" data-to="E4" stroke="none" fill="none"/>
 <text x="126.0" y="440.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start" font-style="italic"><tspan>evaluator-only check</tspan></text>
 <polyline points="120.0,226.0 120.0,533.0 250.0,533.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="120.0" y1="226.0" x2="250.0" y2="533.0" data-from="TR" data-to="E5" stroke="none" fill="none"/>
 <text x="126.0" y="527.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start" font-style="italic"><tspan>ground truth</tspan></text>
 <polyline points="200.0,200.0 226.0,200.0 226.0,262.0 250.0,262.0" fill="none" stroke="#B4541A" stroke-width="1.6" stroke-dasharray="6 3" marker-end="url(#a-forbid)"/>
+<line x1="200.0" y1="200.0" x2="250.0" y2="262.0" data-from="TR" data-to="E2" stroke="none" fill="none"/>
 <path d="M220.0,225.0 L232.0,237.0 M232.0,225.0 L220.0,237.0" stroke="#B4541A" stroke-width="2.2"/>
 <text x="220.0" y="252.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#B4541A" text-anchor="end" font-style="italic"><tspan>never an</tspan></text>
 <text x="220.0" y="265.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#B4541A" text-anchor="end" font-style="italic"><tspan>algorithm input</tspan></text>
 <polyline points="550.0,362.0 580.0,362.0 580.0,131.0 550.0,131.0" fill="none" stroke="#1F5AA6" stroke-width="1.6" marker-end="url(#a-loop)"/>
+<line x1="550.0" y1="362.0" x2="550.0" y2="131.0" data-from="E3" data-to="E1" stroke="none" fill="none"/>
 <text x="586.0" y="240.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1F5AA6" text-anchor="start" font-style="italic"><tspan>next scenario</tspan></text>
 <text x="586.0" y="253.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1F5AA6" text-anchor="start" font-style="italic"><tspan>× arm</tspan></text>
 <polyline points="550.0,446.0 600.0,446.0" fill="none" stroke="#B4541A" stroke-width="1.3" stroke-dasharray="5 3" marker-end="url(#a-err)"/>
+<line x1="550.0" y1="446.0" x2="600.0" y2="446.0" data-from="E4" data-to="XO" stroke="none" fill="none"/>
 <text x="575.0" y="440.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#B4541A" text-anchor="middle" font-style="italic"><tspan>excluded</tspan></text>
 <line x1="24" y1="716" x2="50" y2="716" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
 <text x="56.0" y="720.0" font-family="Helvetica" font-size="10.5" font-weight="normal" fill="#555555" text-anchor="start"><tspan>experiment flow</tspan></text>

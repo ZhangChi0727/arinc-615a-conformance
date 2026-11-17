@@ -67,17 +67,27 @@
 <text x="587.0" y="413.1" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle"><tspan>Evidence (not executed)</tspan></text>
 <text x="24.0" y="478.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start"><tspan>Bound M1 identifiers. DOWNLOAD and FIND traces await source-unit audit; satisfy/verify are model relations, no executed verification is claimed.</tspan></text>
 <polyline points="202.0,132.0 202.0,170.0" fill="none" stroke="#555555" stroke-width="1.0" stroke-dasharray="5 3" marker-end="url(#o-dep)"/>
+<line x1="202.0" y1="132.0" x2="202.0" y2="170.0" data-from="MG" data-to="PCRS" stroke="none" fill="none"/>
 <text x="208.0" y="155.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="start" font-style="italic"><tspan>uses protocol obligations</tspan></text>
 <polyline points="202.0,336.0 202.0,376.0" fill="none" stroke="#555555" stroke-width="1.0" stroke-dasharray="5 3" marker-end="url(#o-dep)"/>
+<line x1="202.0" y1="336.0" x2="202.0" y2="376.0" data-from="PCRS" data-to="L3" stroke="none" fill="none"/>
 <text x="208.0" y="361.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="start" font-style="italic"><tspan>may later implement</tspan></text>
 <polyline points="587.0,76.0 587.0,96.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="587.0" y1="76.0" x2="587.0" y2="96.0" data-from="SU" data-to="R1" stroke="none" fill="none"/>
 <polyline points="587.0,126.0 587.0,146.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="587.0" y1="126.0" x2="587.0" y2="146.0" data-from="R1" data-to="R2" stroke="none" fill="none"/>
 <polyline points="587.0,176.0 587.0,196.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="587.0" y1="176.0" x2="587.0" y2="196.0" data-from="R2" data-to="R3" stroke="none" fill="none"/>
 <polyline points="587.0,226.0 587.0,246.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="587.0" y1="226.0" x2="587.0" y2="246.0" data-from="R3" data-to="CO" stroke="none" fill="none"/>
 <polyline points="587.0,276.0 587.0,296.0" fill="none" stroke="#555555" stroke-width="1.0" stroke-dasharray="5 3" marker-end="url(#o-dep)"/>
+<line x1="587.0" y1="276.0" x2="587.0" y2="296.0" data-from="CO" data-to="VC" stroke="none" fill="none"/>
 <polyline points="587.0,326.0 587.0,346.0" fill="none" stroke="#555555" stroke-width="1.0" stroke-dasharray="5 3" marker-end="url(#o-dep)"/>
+<line x1="587.0" y1="326.0" x2="587.0" y2="346.0" data-from="VC" data-to="TM" stroke="none" fill="none"/>
 <polyline points="587.0,376.0 587.0,396.0" fill="none" stroke="#555555" stroke-width="1.0" stroke-dasharray="5 3" marker-end="url(#o-dep)"/>
+<line x1="587.0" y1="376.0" x2="587.0" y2="396.0" data-from="TM" data-to="EV" stroke="none" fill="none"/>
 <polyline points="378.0,214.0 400.0,214.0 400.0,61.0 432.0,61.0" fill="none" stroke="#555555" stroke-width="1.0" stroke-dasharray="5 3" marker-end="url(#o-dep)"/>
+<line x1="378.0" y1="214.0" x2="432.0" y2="61.0" data-from="C1" data-to="SU" stroke="none" fill="none"/>
 <text x="396.0" y="152.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="end" font-style="italic"><tspan>traced</tspan></text>
 <text x="396.0" y="165.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="end" font-style="italic"><tspan>example</tspan></text>
 </svg>

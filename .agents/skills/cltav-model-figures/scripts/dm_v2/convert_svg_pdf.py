@@ -24,8 +24,6 @@ def main() -> int:
     jobs: list[tuple[Path, Path]] = []
     drafts = ROOT / "artifacts/publications/cltav/model-drafts"
     jobs.extend((p, p.with_suffix(".pdf")) for p in sorted(drafts.glob("FIG-CL-TAV-*.svg")))
-    figures = ROOT / "docs/research/publication/drafts/taes-cltav/figures"
-    jobs.extend((p, p.with_suffix(".pdf")) for p in sorted(figures.glob("*.svg")))
     failed = 0
     for src, dst in jobs:
         try:

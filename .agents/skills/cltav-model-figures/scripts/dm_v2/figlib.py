@@ -246,6 +246,14 @@ def svg(fig: Figure) -> str:
         mk = {"end": f' marker-end="url(#a-{e.style})"', "open": f' marker-end="url(#o-{e.style})"', "none": ""}[e.arrow]
         pts = " ".join(f"{x:.1f},{y:.1f}" for x, y in e.pts)
         p.append(f'<polyline points="{pts}" fill="none" stroke="{c}" stroke-width="{wdt}"{da}{mk}/>')
+        if e.src and e.dst and e.pts:
+            x1, y1 = e.pts[0]
+            x2, y2 = e.pts[-1]
+            p.append(
+                f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
+                f'data-from="{html.escape(e.src, quote=True)}" data-to="{html.escape(e.dst, quote=True)}" '
+                f'stroke="none" fill="none"/>'
+            )
         if e.style == "forbid":
             mx, my = e.pts[len(e.pts) // 2 - 1]
             nx, ny = e.pts[len(e.pts) // 2]

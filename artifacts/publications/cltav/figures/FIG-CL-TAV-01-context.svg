@@ -1,25 +1,79 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="420" viewBox="0 0 980 420" style="background:#FFFFFF"><desc id="plantuml-source"><![CDATA[
-@startuml FIG-CL-TAV-01
-skinparam shadowing false
-title FIG-CL-TAV-01 Context\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nsubset of context relations; satisfy/verify are model relations, not executed verification
-
-actor Operator
-node TestAdapter
-node IUT
-node NetworkClock
-cloud Integrity645 as "645 integrity boundary\nidentity bound; capability NOT-ESTABLISHED"
-
-Operator --> TestAdapter : test request
-TestAdapter --> IUT : stimulus
-IUT --> TestAdapter : observation Izk
-TestAdapter --> NetworkClock : time / error bound
-IUT ..> Integrity645 : call and state only\nnot algorithm evidence
-TestAdapter --> Msess : observation port to verification session
-note bottom of IUT
-  Protocol messages and operation states
-  belong to Mprot, not to Msess.
-end note
-@enduml
-
-]]></desc><defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L10,3.5 L0,7 z" fill="#181818"/></marker></defs><text x="20" y="24" font-size="16" font-family="sans-serif" font-weight="700">FIG-CL-TAV-01-context</text><text x="20" y="44" font-size="12" font-family="sans-serif">SysML 1.6 notation-based views; executable/metamodel conformance is not claimed</text><rect x="40" y="80" width="160" height="56" data-node="Operator" fill="#F7F7F7" stroke="#181818"/><text x="48" y="98" font-size="12" font-family="sans-serif"><tspan x="48" dy="0">Operator</tspan></text><rect x="260" y="80" width="160" height="56" data-node="TestAdapter" fill="#F7F7F7" stroke="#181818"/><text x="268" y="98" font-size="12" font-family="sans-serif"><tspan x="268" dy="0">TestAdapter</tspan></text><rect x="480" y="80" width="160" height="56" data-node="IUT" fill="#F7F7F7" stroke="#181818"/><text x="488" y="98" font-size="12" font-family="sans-serif"><tspan x="488" dy="0">IUT</tspan></text><rect x="700" y="80" width="200" height="56" data-node="NetworkClock" fill="#F7F7F7" stroke="#181818"/><text x="708" y="98" font-size="12" font-family="sans-serif"><tspan x="708" dy="0">NetworkClock</tspan></text><rect x="480" y="200" width="280" height="70" data-node="IntegrityBoundary" fill="#F7F7F7" stroke="#181818"/><text x="488" y="218" font-size="12" font-family="sans-serif"><tspan x="488" dy="0">IntegrityBoundary</tspan></text><rect x="260" y="320" width="280" height="56" data-node="MsessPort" fill="#F7F7F7" stroke="#181818"/><text x="268" y="338" font-size="12" font-family="sans-serif"><tspan x="268" dy="0">MsessPort</tspan></text><line x1="200" y1="108" x2="260" y2="108" data-from="Operator" data-to="TestAdapter" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="420" y1="108" x2="480" y2="108" data-from="TestAdapter" data-to="IUT" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="640" y1="108" x2="700" y2="108" data-from="IUT" data-to="NetworkClock" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="560" y1="136" x2="620" y2="200" data-from="IUT" data-to="IntegrityBoundary" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="340" y1="136" x2="400" y2="320" data-from="TestAdapter" data-to="MsessPort" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="410" viewBox="0 0 780 410">
+<rect width="100%" height="100%" fill="white"/>
+<defs>
+<marker id="a-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333333"/></marker>
+<marker id="o-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#333333" stroke-width="1.4"/></marker>
+<marker id="a-loop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F5AA6"/></marker>
+<marker id="o-loop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#1F5AA6" stroke-width="1.4"/></marker>
+<marker id="a-err" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4541A"/></marker>
+<marker id="o-err" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#B4541A" stroke-width="1.4"/></marker>
+<marker id="a-stop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555555"/></marker>
+<marker id="o-stop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#555555" stroke-width="1.4"/></marker>
+<marker id="a-dep" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555555"/></marker>
+<marker id="o-dep" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#555555" stroke-width="1.4"/></marker>
+<marker id="a-forbid" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4541A"/></marker>
+<marker id="o-forbid" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#B4541A" stroke-width="1.4"/></marker>
+<marker id="a-bind" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333333"/></marker>
+<marker id="o-bind" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#333333" stroke-width="1.4"/></marker>
+</defs>
+<rect x="16" y="16" width="270" height="250" rx="0" fill="none" stroke="#555555" stroke-width="0.9"/>
+<path d="M16,36 H57.0 L65.0,28 V16" fill="none" stroke="#555555" stroke-width="0.9"/>
+<text x="23.0" y="30.5" font-family="Helvetica" font-size="11" font-weight="bold" fill="#1A1A1A" text-anchor="start"><tspan>Msess</tspan></text>
+<text x="73.0" y="30.5" font-family="Helvetica" font-size="10.5" font-weight="normal" fill="#555555" text-anchor="start" font-style="italic"><tspan>verification session domain</tspan></text>
+<rect x="572" y="16" width="196" height="250" rx="0" fill="none" stroke="#555555" stroke-width="0.9"/>
+<path d="M572,36 H613.0 L621.0,28 V16" fill="none" stroke="#555555" stroke-width="0.9"/>
+<text x="579.0" y="30.5" font-family="Helvetica" font-size="11" font-weight="bold" fill="#1A1A1A" text-anchor="start"><tspan>Mprot</tspan></text>
+<text x="629.0" y="30.5" font-family="Helvetica" font-size="10.5" font-weight="normal" fill="#555555" text-anchor="start" font-style="italic"><tspan>protocol domain</tspan></text>
+<rect x="66" y="56" width="170" height="40" rx="16" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
+<text x="151.0" y="78.5" font-family="Helvetica" font-size="12.5" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>Operator</tspan></text>
+<rect x="36" y="140" width="210" height="90" rx="3" fill="#EAF1FB" stroke="#333333" stroke-width="1.2"/>
+<text x="141.0" y="174.0" font-family="Helvetica" font-size="12.5" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>CL-TAV session</tspan></text>
+<text x="141.0" y="189.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>candidate set </tspan><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="bold">H</tspan><tspan>, resource state;</tspan></text>
+<text x="141.0" y="202.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>one admitted action per round</tspan></text>
+<rect x="330" y="140" width="180" height="90" rx="3" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
+<text x="420.0" y="174.0" font-family="Helvetica" font-size="12.5" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>Test adapter</tspan></text>
+<text x="420.0" y="189.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>encodes stimuli;</tspan></text>
+<text x="420.0" y="202.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>captures raw records</tspan></text>
+<rect x="590" y="130" width="160" height="110" rx="3" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
+<text x="670.0" y="167.2" font-family="Helvetica" font-size="12.5" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>IUT</tspan></text>
+<text x="670.0" y="182.2" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>loader target; protocol</tspan></text>
+<text x="670.0" y="195.8" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>messages and operation</tspan></text>
+<text x="670.0" y="209.2" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>states live here</tspan></text>
+<rect x="330" y="290" width="180" height="54" rx="3" fill="#FFFFFF" stroke="#333333" stroke-width="1.2"/>
+<text x="420.0" y="312.8" font-family="Helvetica" font-size="12.5" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>Network clock</tspan></text>
+<text x="420.0" y="327.8" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>timestamps, error bound </tspan><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="normal">ε</tspan></text>
+<rect x="584" y="302" width="172" height="70" rx="8" fill="#F2F2F2" stroke="#333333" stroke-width="1.2" stroke-dasharray="5 3"/>
+<text x="670.0" y="325.7" font-family="Helvetica" font-size="11.5" font-weight="bold" fill="#1A1A1A" text-anchor="middle"><tspan>645 integrity boundary</tspan></text>
+<text x="670.0" y="339.7" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>identity bound; capability</tspan></text>
+<text x="670.0" y="353.2" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="middle"><tspan>NOT-ESTABLISHED</tspan></text>
+<path d="M36,300 H276 L286,310 V344 H36 Z" fill="#FFFFFF" stroke="#555555" stroke-width="0.9"/>
+<path d="M276,300 V310 H286" fill="none" stroke="#555555" stroke-width="0.9"/>
+<text x="44.0" y="316.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start"><tspan>Msess sees protocol state only</tspan></text>
+<text x="44.0" y="329.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start"><tspan>through the adapter.</tspan></text>
+<polyline points="151.0,96.0 141.0,140.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="151.0" y1="96.0" x2="141.0" y2="140.0" data-from="Operator" data-to="Session" stroke="none" fill="none"/>
+<text x="157.0" y="124.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start" font-style="italic"><tspan>test request</tspan></text>
+<polyline points="246.0,168.0 330.0,168.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="246.0" y1="168.0" x2="330.0" y2="168.0" data-from="Session" data-to="TestAdapter" stroke="none" fill="none"/>
+<text x="288.0" y="162.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle" font-style="italic"><tspan>action </tspan><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="normal">a</tspan><tspan font-family="Times New Roman" font-style="italic" font-size="8.6" font-weight="normal" dy="3.3">k</tspan></text>
+<polyline points="330.0,204.0 246.0,204.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="330.0" y1="204.0" x2="246.0" y2="204.0" data-from="TestAdapter" data-to="Session" stroke="none" fill="none"/>
+<text x="288.0" y="222.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle" font-style="italic"><tspan>obs. </tspan><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="bold">I</tspan><tspan font-family="Times New Roman" font-style="italic" font-size="8.6" font-weight="normal" dy="3.3">k</tspan></text>
+<polyline points="510.0,168.0 590.0,168.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="510.0" y1="168.0" x2="590.0" y2="168.0" data-from="TestAdapter" data-to="IUT" stroke="none" fill="none"/>
+<text x="550.0" y="162.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle" font-style="italic"><tspan>stimulus</tspan></text>
+<polyline points="590.0,204.0 510.0,204.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="590.0" y1="204.0" x2="510.0" y2="204.0" data-from="IUT" data-to="TestAdapter" stroke="none" fill="none"/>
+<text x="550.0" y="222.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle" font-style="italic"><tspan>raw records</tspan></text>
+<polyline points="420.0,230.0 420.0,290.0" fill="none" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<line x1="420.0" y1="230.0" x2="420.0" y2="290.0" data-from="TestAdapter" data-to="CLK" stroke="none" fill="none"/>
+<text x="426.0" y="266.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start" font-style="italic"><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="normal">t</tspan><tspan font-family="Times New Roman" font-style="italic" font-size="8.6" font-weight="normal" dy="3.3">k</tspan><tspan dy="-3.3"> ± </tspan><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="normal">ε</tspan></text>
+<polyline points="670.0,240.0 670.0,302.0" fill="none" stroke="#555555" stroke-width="1.0" stroke-dasharray="5 3" marker-end="url(#o-dep)"/>
+<line x1="670.0" y1="240.0" x2="670.0" y2="302.0" data-from="IUT" data-to="IB" stroke="none" fill="none"/>
+<text x="664.0" y="282.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="end" font-style="italic"><tspan>call and state only;</tspan></text>
+<text x="664.0" y="295.5" font-family="Helvetica" font-size="11" font-weight="normal" fill="#555555" text-anchor="end" font-style="italic"><tspan>not algorithm evidence</tspan></text>
+<line x1="20" y1="398" x2="46" y2="398" stroke="#333333" stroke-width="1.2" marker-end="url(#a-main)"/>
+<text x="52.0" y="402.0" font-family="Helvetica" font-size="10.5" font-weight="normal" fill="#555555" text-anchor="start"><tspan>information flow</tspan></text>
+<line x1="163.6" y1="398" x2="189.6" y2="398" stroke="#555555" stroke-width="1.0" stroke-dasharray="5 3" marker-end="url(#a-dep)"/>
+<text x="195.6" y="402.0" font-family="Helvetica" font-size="10.5" font-weight="normal" fill="#555555" text-anchor="start"><tspan>non-evidential dependency</tspan></text>
+</svg>

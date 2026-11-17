@@ -188,16 +188,23 @@ def test_fig09_preserves_truth_validity_denominators_and_interface_boundary() ->
     figure = load_module().load_manifest()["figures"][8]
     entities = {row["id"]: row["label"] for row in figure["entities"]}
     notes = {row["id"]: row["label"] for row in figure["notes"]}
+    groups = {row["id"]: row["label"] for row in figure["groups"]}
     for step in ("E0", "E1", "E3", "E4", "E5", "E6"):
         assert step in entities
     assert "IF-EXP-SCENE" in entities["E0"]
+    assert "IF-EXP-TRUTH" in entities["E1"]
+    assert "truth recorded before any arm runs" in entities["E1"]
+    assert "IF-EXP-RUN" in groups["E2"]
+    assert "CL-RQ1" in entities["E6"] and "CL-RQ3" in entities["E6"]
     assert "never an" in next(r["label"] for r in figure["relations"] if r["id"] == "truth-arms")
-    for interface in ("IF-OBS-INTERPRET", "IF-PREP-RECOVER", "IF-EQUIV", "IF-RESOURCE-STOP", "IF-EXP-EVAL"):
+    for interface in ("IF-OBS-INTERPRET", "IF-PREP-RECOVER", "IF-EQUIV", "IF-RESOURCE-STOP", "IF-EXP-EVAL", "IF-EXP-TRUTH", "IF-EXP-RUN"):
         assert interface in notes["truth-boundary"]
     assert "invalid" in entities["X0"]
+    assert "unconfirmed injection" in entities["X0"]
     assert "equivalent" in entities["X1"]
     assert "missing" in entities["X2"]
     assert "unanswered" in entities["X3"]
+    assert "abstain" in entities["X3"]
 
 
 def test_generated_drawio_keeps_editable_text_and_semantic_ids() -> None:
@@ -737,4 +744,8 @@ def test_real_git_checkout_preserves_raw_svg_hashes(tmp_path: Path, autocrlf: st
     drawio.write_bytes(drawio.read_bytes() + b"<!--drift-->")
     drifted_drawio = subprocess.run([sys.executable, str(clone / SCRIPT.relative_to(ROOT)), "--check"], cwd=clone, text=True, capture_output=True)
     assert drifted_drawio.returncode == 1
-    assert "identity" in drifted_drawio.stdout or "stale" in drifted_drawio.stdout
+    assert (
+        "identity" in drifted_drawio.stdout
+        or "stale" in drifted_drawio.stdout
+        or "hash drift" in drifted_drawio.stdout
+    )

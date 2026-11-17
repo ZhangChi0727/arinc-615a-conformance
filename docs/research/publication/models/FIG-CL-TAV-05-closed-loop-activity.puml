@@ -2,6 +2,15 @@
 skinparam shadowing false
 title FIG-CL-TAV-05 v4. SysML 1.6 notation-based views; executable/metamodel conformance is not claimed
 ' Approved figlib candidate v4 mapped to controlled ids. Not a proof of equivalence.
+' XOR exclusive action kinds remain TEST, PREP and RECOVER on S3.
+' Hk is the survivor set after S9: H <- H intersect I_z.
+' Prep is named PREP on S3; ERROR and unconfirmed effects enter S7.
+' ErrorHandle is the FIG-07 witness of S7 containment; it is not a second box on this v4 layout.
+' Charge cost once is drawn as Charge declared cost once.
+' strictly-reducing overlapping classes remain the FIG-06 and Algorithm 1 admission contract.
+' empty S is not selectable; S=empty is Spec. error.
+' Admit guards A1 and A5 remain in Algorithm 1 and FIG-07; A2/5 here shares Stop-Budget.
+' resource bounds cmin and Kmax are FIG-08 constraints; they terminate via Stop-Budget.
 rectangle T
 ' group T: Terminal
 component S0

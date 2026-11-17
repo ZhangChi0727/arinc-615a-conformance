@@ -52,15 +52,21 @@
 <path d="M750,384 V394 H760" fill="none" stroke="#555555" stroke-width="0.9"/>
 <text x="38.0" y="400.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start"><tspan>Constraints are displayed, not claimed solved; vanishing positive costs do not prove termination.</tspan></text>
 <polyline points="210.0,76.0 235.0,76.0 235.0,120.0 270.0,120.0" fill="none" stroke="#333333" stroke-width="1.0"/>
+<line x1="210.0" y1="76.0" x2="270.0" y2="120.0" data-from="IA" data-to="JM" stroke="none" fill="none"/>
 <text x="220.0" y="71.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle" font-style="italic"><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="bold">I</tspan></text>
 <polyline points="210.0,186.0 245.0,186.0 245.0,142.0 270.0,142.0" fill="none" stroke="#333333" stroke-width="1.0"/>
+<line x1="210.0" y1="186.0" x2="270.0" y2="142.0" data-from="EP" data-to="JM" stroke="none" fill="none"/>
 <text x="225.0" y="181.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle" font-style="italic"><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="normal">ε</tspan></text>
 <polyline points="460.0,131.0 540.0,131.0" fill="none" stroke="#333333" stroke-width="1.0"/>
+<line x1="460.0" y1="131.0" x2="540.0" y2="131.0" data-from="JM" data-to="UP" stroke="none" fill="none"/>
 <text x="500.0" y="126.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle" font-style="italic"><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="bold">J</tspan></text>
 <polyline points="650.0,290.0 650.0,167.0" fill="none" stroke="#333333" stroke-width="1.0"/>
+<line x1="650.0" y1="290.0" x2="650.0" y2="167.0" data-from="SC" data-to="UP" stroke="none" fill="none"/>
 <text x="656.0" y="232.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="start" font-style="italic"><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="bold">H</tspan><tspan font-family="Times New Roman" font-style="italic" font-size="8.6" font-weight="normal" dy="3.3">k</tspan><tspan dy="-3.3">, Obs(</tspan><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="normal">t</tspan><tspan>, </tspan><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="normal">q</tspan><tspan font-family="Times New Roman" font-style="italic" font-size="8.6" font-weight="normal" dy="3.3">k</tspan><tspan dy="-3.3">)</tspan></text>
 <polyline points="460.0,326.0 540.0,326.0" fill="none" stroke="#333333" stroke-width="1.0"/>
+<line x1="460.0" y1="326.0" x2="540.0" y2="326.0" data-from="BU" data-to="SC" stroke="none" fill="none"/>
 <text x="500.0" y="321.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle" font-style="italic"><tspan>mode</tspan></text>
 <polyline points="230.0,326.0 270.0,326.0" fill="none" stroke="#333333" stroke-width="1.0"/>
+<line x1="230.0" y1="326.0" x2="270.0" y2="326.0" data-from="CM" data-to="BU" stroke="none" fill="none"/>
 <text x="250.0" y="321.0" font-family="Helvetica" font-size="11" font-weight="normal" fill="#1A1A1A" text-anchor="middle" font-style="italic"><tspan font-family="Times New Roman" font-style="italic" font-size="12.3" font-weight="normal">c</tspan><tspan font-family="Times New Roman" font-style="normal" font-size="8.6" font-weight="normal" dy="3.3">min</tspan></text>
 </svg>

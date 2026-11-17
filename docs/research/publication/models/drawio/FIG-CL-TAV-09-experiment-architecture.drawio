@@ -14,14 +14,14 @@
         <mxCell id="group-XO" value="Excluded, still counted" style="swimlane;horizontal=1;startSize=30;rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F9FB;swimlaneFillColor=#FFFFFF;strokeColor=#7F8C99;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#1F1F1F;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="group" semanticRole="boundary" authorityAlias="XO">
           <mxGeometry as="geometry" x="600" y="404" width="188" height="246" />
         </mxCell>
-        <mxCell id="group-E2" value="E2  Run arms&lt;br&gt;same pool, same action library" style="swimlane;horizontal=1;startSize=30;rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F9FB;swimlaneFillColor=#FFFFFF;strokeColor=#7F8C99;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#1F1F1F;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="group" semanticRole="boundary" authorityAlias="E2">
+        <mxCell id="group-E2" value="E2  Run arms&lt;br&gt;same pool and action library  (IF-EXP-RUN)" style="swimlane;horizontal=1;startSize=30;rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F9FB;swimlaneFillColor=#FFFFFF;strokeColor=#7F8C99;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#1F1F1F;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="group" semanticRole="boundary" authorityAlias="E2">
           <mxGeometry as="geometry" x="250" y="206" width="300" height="112" />
         </mxCell>
         <mxCell id="node-E0" value="E0  Declare scenario pool&lt;br&gt;IUT configuration, fault plan, resource mode;&lt;br&gt;fixed before any run  (IF-EXP-SCENE)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core" authorityAlias="E0">
           <mxGeometry as="geometry" x="250" y="20" width="300" height="56" />
         </mxCell>
-        <mxCell id="node-E1" value="E1  Inject fault, confirm execution&lt;br&gt;per scenario  (IF-EXP-INJECT)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core" authorityAlias="E1">
-          <mxGeometry as="geometry" x="250" y="106" width="300" height="50" />
+        <mxCell id="node-E1" value="E1  Inject fault, confirm execution&lt;br&gt;truth recorded before any arm runs&lt;br&gt;(IF-EXP-INJECT, IF-EXP-TRUTH)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core" authorityAlias="E1">
+          <mxGeometry as="geometry" x="250" y="100" width="300" height="62" />
         </mxCell>
         <mxCell id="node-A0" value="CL-T&lt;br&gt;test&lt;br&gt;only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-E2" semanticKind="entity" semanticRole="core" authorityAlias="A0">
           <mxGeometry as="geometry" x="10" y="34" width="66" height="64" />
@@ -44,23 +44,23 @@
         <mxCell id="node-E5" value="E5  Evaluate against truth&lt;br&gt;DETECT / LOCATE / ABLATION with attempt&lt;br&gt;and answered-subset denominators  (IF-EXP-EVAL)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core" authorityAlias="E5">
           <mxGeometry as="geometry" x="250" y="502" width="300" height="62" />
         </mxCell>
-        <mxCell id="node-E6" value="E6  Answer RQ1–RQ3&lt;br&gt;comparable projections only;&lt;br&gt;no unrun numbers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core" authorityAlias="E6">
+        <mxCell id="node-E6" value="E6  Answer CL-RQ1–CL-RQ3&lt;br&gt;reporting step only; comparable&lt;br&gt;projections, no unrun numbers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="entity" semanticRole="core" authorityAlias="E6">
           <mxGeometry as="geometry" x="250" y="594" width="300" height="56" />
         </mxCell>
         <mxCell id="node-TR" value="Truth record&lt;br&gt;injection plan and&lt;br&gt;execution confirmation&lt;br&gt;(IF-EXP-TRUTH)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-EV" semanticKind="entity" semanticRole="core" authorityAlias="TR">
           <mxGeometry as="geometry" x="12" y="28" width="176" height="96" />
         </mxCell>
-        <mxCell id="node-X0" value="invalid run&lt;br&gt;instrument or setup fault" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-XO" semanticKind="entity" semanticRole="core" authorityAlias="X0">
-          <mxGeometry as="geometry" x="12" y="28" width="164" height="39.5" />
+        <mxCell id="node-X0" value="invalid run&lt;br&gt;unconfirmed injection&lt;br&gt;or setup fault" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-XO" semanticKind="entity" semanticRole="core" authorityAlias="X0">
+          <mxGeometry as="geometry" x="12" y="28" width="164" height="53" />
         </mxCell>
         <mxCell id="node-X1" value="equivalent fault&lt;br&gt;observationally&lt;br&gt;indistinguishable" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-XO" semanticKind="entity" semanticRole="core" authorityAlias="X1">
-          <mxGeometry as="geometry" x="12" y="73.5" width="164" height="53" />
+          <mxGeometry as="geometry" x="12" y="87" width="164" height="53" />
         </mxCell>
         <mxCell id="node-X2" value="missing record&lt;br&gt;collection gap" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-XO" semanticKind="entity" semanticRole="core" authorityAlias="X2">
-          <mxGeometry as="geometry" x="12" y="132.5" width="164" height="39.5" />
+          <mxGeometry as="geometry" x="12" y="146" width="164" height="39.5" />
         </mxCell>
-        <mxCell id="node-X3" value="unanswered&lt;br&gt;attempt counted,&lt;br&gt;not answered" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-XO" semanticKind="entity" semanticRole="core" authorityAlias="X3">
-          <mxGeometry as="geometry" x="12" y="178" width="164" height="53" />
+        <mxCell id="node-X3" value="unanswered&lt;br&gt;abstain; still counted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCE6F1;strokeColor=#315A7D;strokeWidth=1.25;fontFamily=Helvetica;fontSize=12;fontColor=#1F1F1F;align=center;verticalAlign=middle;spacing=6;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="group-XO" semanticKind="entity" semanticRole="core" authorityAlias="X3">
+          <mxGeometry as="geometry" x="12" y="191.5" width="164" height="39.5" />
         </mxCell>
         <mxCell id="note-TN" value="Truth is never an&lt;br&gt;algorithm input." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#8C8C8C;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#333333;align=left;verticalAlign=middle;spacing=8;shadow=0;glass=0;gradientColor=none;" vertex="1" parent="1" semanticKind="note" semanticRole="interpretation-boundary" sourceNote="TN">
           <mxGeometry as="geometry" x="18" y="596" width="188" height="44" />
@@ -92,7 +92,7 @@
         <mxCell id="edge-m5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-E5" target="node-E6" semanticKind="relation" semanticRole="flow">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
-        <mxCell id="edge-t1" value="confirmation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0;exitY=0.5;entryX=1;entryY=0.01;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-E1" target="node-TR" semanticKind="relation" semanticRole="flow">
+        <mxCell id="edge-t1" value="truth first" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.25;fontFamily=Helvetica;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;endArrow=block;strokeColor=#315A7D;exitX=0;exitY=0.5;entryX=1;entryY=0.01;exitDx=0;exitDy=0;exitPerimeter=1;entryDx=0;entryDy=0;entryPerimeter=1;" edge="1" parent="1" source="node-E1" target="node-TR" semanticKind="relation" semanticRole="flow">
           <mxGeometry as="geometry" relative="1">
             <Array as="points">
               <mxPoint x="226" y="131" />

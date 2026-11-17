@@ -1889,13 +1889,13 @@
           "manifest": "node-E1",
           "kind": "entity",
           "parent": "1",
-          "label": "E1  Inject fault, confirm execution\nper scenario  (IF-EXP-INJECT)"
+          "label": "E1  Inject fault, confirm execution\ntruth recorded before any arm runs\n(IF-EXP-INJECT, IF-EXP-TRUTH)"
         },
         {
           "figlib": "E2",
           "manifest": "group-E2",
           "kind": "group",
-          "label": "E2  Run arms\nsame pool, same action library"
+          "label": "E2  Run arms\nsame pool and action library  (IF-EXP-RUN)"
         },
         {
           "figlib": "A0",
@@ -1951,7 +1951,7 @@
           "manifest": "node-E6",
           "kind": "entity",
           "parent": "1",
-          "label": "E6  Answer RQ1–RQ3\ncomparable projections only;\nno unrun numbers"
+          "label": "E6  Answer CL-RQ1–CL-RQ3\nreporting step only; comparable\nprojections, no unrun numbers"
         },
         {
           "figlib": "TR",
@@ -1971,7 +1971,7 @@
           "manifest": "node-X0",
           "kind": "entity",
           "parent": "group-XO",
-          "label": "invalid run\ninstrument or setup fault"
+          "label": "invalid run\nunconfirmed injection\nor setup fault"
         },
         {
           "figlib": "X1",
@@ -1992,7 +1992,7 @@
           "manifest": "node-X3",
           "kind": "entity",
           "parent": "group-XO",
-          "label": "unanswered\nattempt counted,\nnot answered"
+          "label": "unanswered\nabstain; still counted"
         },
         {
           "figlib": "NT",
@@ -2079,7 +2079,7 @@
           "source": "E1",
           "target": "TR",
           "role": "flow",
-          "label": "confirmation",
+          "label": "truth first",
           "droppedLabelCell": "t1-lbl"
         },
         {

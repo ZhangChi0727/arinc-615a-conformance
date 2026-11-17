@@ -402,20 +402,20 @@ def fig09v3() -> Figure:
     f.n("XO", 600, 404, 188, 246, "Excluded, still counted", "", shape="frame", fill=GREY, stroke=MUTED)
 
     f.n("E0", MX, 20, MW, 56, "E0  Declare scenario pool", "IUT configuration, fault plan, resource mode;\nfixed before any run  (IF-EXP-SCENE)")
-    f.n("E1", MX, 106, MW, 50, "E1  Inject fault, confirm execution", "per scenario  (IF-EXP-INJECT)")
-    f.n("E2", MX, 206, MW, 112, "E2  Run arms", "same pool, same action library", shape="frame", fill=WHITE, stroke="#333333")
+    f.n("E1", MX, 100, MW, 62, "E1  Inject fault, confirm execution", "truth recorded before any arm runs\n(IF-EXP-INJECT, IF-EXP-TRUTH)")
+    f.n("E2", MX, 206, MW, 112, "E2  Run arms", "same pool and action library  (IF-EXP-RUN)", shape="frame", fill=WHITE, stroke="#333333")
     arms = [("CL-T", "test\nonly"), ("CL-A", "analysis\nonly"), ("CL-TA", "test +\nanalysis"), ("CL-LOOP", "closed\nloop")]
     for i, (t, d) in enumerate(arms):
         f.n(f"A{i}", MX + 10 + i * 72, 240, 66, 64, t, d, title_size=11, fill=KEY if t == "CL-LOOP" else WHITE)
     f.n("E3", MX, 340, MW, 44, "E3  Collect records", "$!I_k$, $q$, cost, resource log  (IF-EXP-COLLECT)")
     f.n("E4", MX, 420, MW, 52, "E4  Validity filter", "invalid, equivalent or missing runs leave\nthe answered subset  (IF-EXP-FILTER)")
     f.n("E5", MX, 502, MW, 62, "E5  Evaluate against truth", "DETECT / LOCATE / ABLATION with attempt\nand answered-subset denominators  (IF-EXP-EVAL)", fill=KEY)
-    f.n("E6", MX, 594, MW, 56, "E6  Answer RQ1\u2013RQ3", "comparable projections only;\nno unrun numbers")
+    f.n("E6", MX, 594, MW, 56, "E6  Answer CL-RQ1\u2013CL-RQ3", "reporting step only; comparable\nprojections, no unrun numbers")
 
     f.n("TR", 24, 130, 176, 96, "Truth record", "injection plan and\nexecution confirmation\n(IF-EXP-TRUTH)", fill=WHITE)
     f.n("TN", 18, 596, 188, 44, "", "Truth is never an\nalgorithm input.",
         shape="note", fill=WHITE, stroke=MUTED, align="left", bold=False)
-    outs = [("invalid run", "instrument or setup fault"), ("equivalent fault", "observationally\nindistinguishable"), ("missing record", "collection gap"), ("unanswered", "attempt counted,\nnot answered")]
+    outs = [("invalid run", "unconfirmed injection\nor setup fault"), ("equivalent fault", "observationally\nindistinguishable"), ("missing record", "collection gap"), ("unanswered", "abstain; still counted")]
     y = 432
     for i, (t, d) in enumerate(outs):
         h = 26 + 13.5 * (d.count("\n") + 1)
@@ -428,7 +428,7 @@ def fig09v3() -> Figure:
     f.link("m3", "E3", "b", "E4", "t")
     f.link("m4", "E4", "b", "E5", "t")
     f.link("m5", "E5", "b", "E6", "t")
-    f.link("t1", "E1", "l", "TR", "r@131", via=[(226, 131)], label="confirmation", lpos=(242, 125), lanchor="end")
+    f.link("t1", "E1", "l", "TR", "r@131", via=[(226, 131)], label="truth first", lpos=(242, 125), lanchor="end")
     f.link("t2", "TR", "b@60", "E4", "l", via=[(60, 446)], label="evaluator-only check", lpos=(126, 440))
     f.link("t3", "TR", "b@120", "E5", "l", via=[(120, 533)], label="ground truth", lpos=(126, 527))
     f.link("x1", "TR", "r@200", "E2", "l@262", via=[(226, 200), (226, 262)], style="forbid", label="never an\nalgorithm input", lpos=(220, 252), lanchor="end")

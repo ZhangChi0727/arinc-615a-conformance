@@ -344,7 +344,8 @@
         "relatedContracts": [
           "CR-2026-023",
           "CR-2026-020",
-          "DD-044"
+          "DD-044",
+          "DD-047"
         ],
         "contractImpact": "No algorithm, interface, runtime, CRS/M2 or experiment-contract change is made. This is a semantic figure candidate. Independent review of this head remains pending. User acceptance on 2026-11-17 covers the approved figlib preview, not this commit.",
         "inputIdentity": {
@@ -965,7 +966,8 @@
         "relatedContracts": [
           "CR-2026-023",
           "CR-2026-020",
-          "DD-044"
+          "DD-044",
+          "DD-047"
         ],
         "contractImpact": "No algorithm, interface, runtime, CRS/M2 or experiment-contract change is made. This is a semantic figure candidate. Independent review of this head remains pending. User acceptance on 2026-11-17 covers the approved figlib preview, not this commit.",
         "inputIdentity": {
@@ -1304,7 +1306,8 @@
         "relatedContracts": [
           "CR-2026-023",
           "CR-2026-020",
-          "DD-044"
+          "DD-044",
+          "DD-047"
         ],
         "contractImpact": "No algorithm, interface, runtime, CRS/M2 or experiment-contract change is made. This is a semantic figure candidate. Independent review of this head remains pending. User acceptance on 2026-11-17 covers the approved figlib preview, not this commit.",
         "inputIdentity": {
@@ -1674,7 +1677,8 @@
         "relatedContracts": [
           "CR-2026-023",
           "CR-2026-020",
-          "DD-044"
+          "DD-044",
+          "DD-047"
         ],
         "contractImpact": "No algorithm, interface, runtime, CRS/M2 or experiment-contract change is made. This is a semantic figure candidate. Independent review of this head remains pending. User acceptance on 2026-11-17 covers the approved figlib preview, not this commit.",
         "inputIdentity": {
@@ -1699,7 +1703,7 @@
       "diagramType": "activity",
       "status": "DRAFT-REDRAW",
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-05-closed-loop-activity.puml",
-      "sourceSha256": "180eff9a64187bdd8edc388190a4dfce8431b061bcf0581ccc49014a40e497ef",
+      "sourceSha256": "618e1fd989a2512f3de18daac4337a9c206b5799e7b90b13bcebeb7aaf3f7904",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-05-closed-loop-activity.drawio",
       "drawioSha256": "1cafccd4d068ec744fc284c39cad5d536f15ea2753d90e047c07cf96e9738eeb",
       "canvas": {
@@ -2827,19 +2831,20 @@
         "relatedContracts": [
           "CR-2026-023",
           "CR-2026-020",
-          "DD-044"
+          "DD-044",
+          "DD-047"
         ],
         "contractImpact": "No algorithm, interface, runtime, CRS/M2 or experiment-contract change is made. This is a semantic figure candidate. Independent review of this head remains pending. User acceptance on 2026-11-17 covers the approved figlib preview, not this commit.",
         "inputIdentity": {
           "startingHead": "1901742d9a9f1ddf0ef2868d40d4ca40fd9496bb",
-          "sourceSha256": "180eff9a64187bdd8edc388190a4dfce8431b061bcf0581ccc49014a40e497ef",
+          "sourceSha256": "618e1fd989a2512f3de18daac4337a9c206b5799e7b90b13bcebeb7aaf3f7904",
           "drawioSha256": "1cafccd4d068ec744fc284c39cad5d536f15ea2753d90e047c07cf96e9738eeb"
         },
         "promotionStatus": "DRAFT-NOT-PROMOTED",
-        "modelContentSha256": "2df2628d5f3de646d9e5d0b9489f339bb4f9d31e10e8dd2623902a2b18a212f6",
+        "modelContentSha256": "42cb0ffad53fb1ba8ccd88c17652ec8bdd10accb1e0f180b0fb3fd39564b7981",
         "semanticReview": {
           "status": "PENDING-INDEPENDENT-REVIEW",
-          "modelContentSha256": "2df2628d5f3de646d9e5d0b9489f339bb4f9d31e10e8dd2623902a2b18a212f6",
+          "modelContentSha256": "42cb0ffad53fb1ba8ccd88c17652ec8bdd10accb1e0f180b0fb3fd39564b7981",
           "reviewedBy": null,
           "reviewedAt": null,
           "decision": null
@@ -3218,7 +3223,8 @@
         "relatedContracts": [
           "CR-2026-023",
           "CR-2026-020",
-          "DD-044"
+          "DD-044",
+          "DD-047"
         ],
         "contractImpact": "No algorithm, interface, runtime, CRS/M2 or experiment-contract change is made. This is a semantic figure candidate. Independent review of this head remains pending. User acceptance on 2026-11-17 covers the approved figlib preview, not this commit.",
         "inputIdentity": {
@@ -4130,7 +4136,8 @@
         "relatedContracts": [
           "CR-2026-023",
           "CR-2026-020",
-          "DD-044"
+          "DD-044",
+          "DD-047"
         ],
         "contractImpact": "No algorithm, interface, runtime, CRS/M2 or experiment-contract change is made. This is a semantic figure candidate. Independent review of this head remains pending. User acceptance on 2026-11-17 covers the approved figlib preview, not this commit.",
         "inputIdentity": {
@@ -4445,7 +4452,8 @@
         "relatedContracts": [
           "CR-2026-023",
           "CR-2026-020",
-          "DD-044"
+          "DD-044",
+          "DD-047"
         ],
         "contractImpact": "No algorithm, interface, runtime, CRS/M2 or experiment-contract change is made. This is a semantic figure candidate. Independent review of this head remains pending. User acceptance on 2026-11-17 covers the approved figlib preview, not this commit.",
         "inputIdentity": {
@@ -4470,9 +4478,9 @@
       "diagramType": "experiment-architecture",
       "status": "DRAFT-REDRAW",
       "sourcePuml": "docs/research/publication/models/FIG-CL-TAV-09-experiment-architecture.puml",
-      "sourceSha256": "d1c688d5fd6b06edb2d10a5053a9f1c38697aaa23a9ef988f3be6b95f108ae82",
+      "sourceSha256": "9b5fade64ef6078f92e9d386f2d7f25d565d92fb96bc69d411482c413a0b3c02",
       "drawioSource": "docs/research/publication/models/drawio/FIG-CL-TAV-09-experiment-architecture.drawio",
-      "drawioSha256": "16044e96bb2d227996853e877f7a6a0f1d08bcb8f6c224481b20dff7891017b4",
+      "drawioSha256": "4909a835203c5c50f5ae3d05c5343566aeebf40b868b4d2e4aa4a010c4c80be1",
       "canvas": {
         "width": 800,
         "height": 870,
@@ -4508,7 +4516,7 @@
         },
         {
           "id": "E2",
-          "label": "E2  Run arms\nsame pool, same action library",
+          "label": "E2  Run arms\nsame pool and action library  (IF-EXP-RUN)",
           "role": "boundary",
           "x": 250,
           "y": 206,
@@ -4528,12 +4536,12 @@
         },
         {
           "id": "E1",
-          "label": "E1  Inject fault, confirm execution\nper scenario  (IF-EXP-INJECT)",
+          "label": "E1  Inject fault, confirm execution\ntruth recorded before any arm runs\n(IF-EXP-INJECT, IF-EXP-TRUTH)",
           "role": "core",
           "x": 250,
-          "y": 106,
+          "y": 100,
           "w": 300,
-          "h": 50
+          "h": 62
         },
         {
           "id": "A0",
@@ -4605,7 +4613,7 @@
         },
         {
           "id": "E6",
-          "label": "E6  Answer RQ1–RQ3\ncomparable projections only;\nno unrun numbers",
+          "label": "E6  Answer CL-RQ1–CL-RQ3\nreporting step only; comparable\nprojections, no unrun numbers",
           "role": "core",
           "x": 250,
           "y": 594,
@@ -4624,12 +4632,12 @@
         },
         {
           "id": "X0",
-          "label": "invalid run\ninstrument or setup fault",
+          "label": "invalid run\nunconfirmed injection\nor setup fault",
           "role": "core",
           "x": 12,
           "y": 28,
           "w": 164,
-          "h": 39.5,
+          "h": 53,
           "parent": "XO"
         },
         {
@@ -4637,7 +4645,7 @@
           "label": "equivalent fault\nobservationally\nindistinguishable",
           "role": "core",
           "x": 12,
-          "y": 73.5,
+          "y": 87,
           "w": 164,
           "h": 53,
           "parent": "XO"
@@ -4647,19 +4655,19 @@
           "label": "missing record\ncollection gap",
           "role": "core",
           "x": 12,
-          "y": 132.5,
+          "y": 146,
           "w": 164,
           "h": 39.5,
           "parent": "XO"
         },
         {
           "id": "X3",
-          "label": "unanswered\nattempt counted,\nnot answered",
+          "label": "unanswered\nabstain; still counted",
           "role": "core",
           "x": 12,
-          "y": 178,
+          "y": 191.5,
           "w": 164,
-          "h": 53,
+          "h": 39.5,
           "parent": "XO"
         }
       ],
@@ -4734,7 +4742,7 @@
           "id": "t1",
           "source": "E1",
           "target": "TR",
-          "label": "confirmation",
+          "label": "truth first",
           "role": "flow",
           "exitX": 0,
           "exitY": 0.5,
@@ -5039,7 +5047,7 @@
             "source": "E1",
             "target": "TR",
             "anchors": [
-              "E1 --> TR : t1 confirmation"
+              "E1 --> TR : t1 truth first"
             ]
           },
           "t2": {
@@ -5102,7 +5110,7 @@
         "modelVersionId": "FIG-CL-TAV-09@v3-1901742",
         "disposition": "REVISED-DRAFT-INSTANCE",
         "revisionType": "SEMANTIC-CANDIDATE",
-        "reason": "Adopt experiment architecture v3: E0-E6, evaluator-only and algorithm-visible regions, four arms inside the run step, and exclusions that stay counted. E0-E6 mismatches with the experiment-design narrative are reported, not silently edited.",
+        "reason": "Adopt experiment architecture v3 from the DM 2026-11 redraw source: truth recorded before any arm runs (IF-EXP-TRUTH on E1), IF-EXP-RUN on E2, E6 is the CL-RQ1-CL-RQ3 reporting step, and exclusions include unconfirmed injection and abstain.",
         "affectedScope": [
           "MODEL-FIGURE",
           "FIG-CL-TAV-09",
@@ -5111,19 +5119,20 @@
         "relatedContracts": [
           "CR-2026-023",
           "CR-2026-020",
-          "DD-044"
+          "DD-044",
+          "DD-047"
         ],
         "contractImpact": "No algorithm, interface, runtime, CRS/M2 or experiment-contract change is made. This is a semantic figure candidate. Independent review of this head remains pending. User acceptance on 2026-11-17 covers the approved figlib preview, not this commit.",
         "inputIdentity": {
           "startingHead": "1901742d9a9f1ddf0ef2868d40d4ca40fd9496bb",
-          "sourceSha256": "d1c688d5fd6b06edb2d10a5053a9f1c38697aaa23a9ef988f3be6b95f108ae82",
-          "drawioSha256": "16044e96bb2d227996853e877f7a6a0f1d08bcb8f6c224481b20dff7891017b4"
+          "sourceSha256": "9b5fade64ef6078f92e9d386f2d7f25d565d92fb96bc69d411482c413a0b3c02",
+          "drawioSha256": "4909a835203c5c50f5ae3d05c5343566aeebf40b868b4d2e4aa4a010c4c80be1"
         },
         "promotionStatus": "DRAFT-NOT-PROMOTED",
-        "modelContentSha256": "3b2384039c5adc7bcaabcb567276b91c13300452b034e4d4800d06af693d60d3",
+        "modelContentSha256": "376923b6ecd40673b8307d021cc41c86decf22bbc46d1034f99d753f5fbb82e5",
         "semanticReview": {
           "status": "PENDING-INDEPENDENT-REVIEW",
-          "modelContentSha256": "3b2384039c5adc7bcaabcb567276b91c13300452b034e4d4800d06af693d60d3",
+          "modelContentSha256": "376923b6ecd40673b8307d021cc41c86decf22bbc46d1034f99d753f5fbb82e5",
           "reviewedBy": null,
           "reviewedAt": null,
           "decision": null

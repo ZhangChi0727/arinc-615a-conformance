@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -18,7 +19,7 @@ ROOT = HERE.parents[4]
 sys.path.insert(0, str(HERE))
 
 from build_all import FIGS  # noqa: E402
-from figlib import ERR, ERR_FILL, GREY, KEY  # noqa: E402
+from figlib import ERR, ERR_FILL, GREY, KEY, svg as figlib_svg  # noqa: E402
 
 SPEC = importlib.util.spec_from_file_location(
     "cltav_model_drawio",
@@ -97,7 +98,44 @@ EXTRA_NOTES = {
     }],
 }
 CANVAS_EXTRA = {"05": 90, "09": 140}
+GRAPHS_PATH = ROOT / "configs/research/cltav_figure_graphs.json"
+READER_SVG_DIRS = (
+    ROOT / "artifacts/publications/cltav/model-drafts",
+    ROOT / "artifacts/publications/cltav/figures",
+)
+SVG_NAME = {
+    "01": "FIG-CL-TAV-01-context.svg",
+    "02": "FIG-CL-TAV-02-requirement-layers.svg",
+    "03": "FIG-CL-TAV-03-bdd.svg",
+    "04": "FIG-CL-TAV-04-ibd.svg",
+    "05": "FIG-CL-TAV-05-closed-loop-activity.svg",
+    "06": "FIG-CL-TAV-06-diagnostic-sequence.svg",
+    "07": "FIG-CL-TAV-07-two-state-machines.svg",
+    "08": "FIG-CL-TAV-08-parametric.svg",
+    "09": "FIG-CL-TAV-09-experiment-architecture.svg",
+}
+GRAPH_POLARITY = {
+    "05": {
+        "eloop": "continue",
+        "e910": "advance",
+        "s-TPG": "stop",
+        "e7loop": "retry",
+        "e7stop": "stop",
+    },
+}
+STYLE_POLARITY = {"loop": "continue", "stop": "stop"}
 BRIDGES = {
+    "05": [
+        "XOR exclusive action kinds remain TEST, PREP and RECOVER on S3.",
+        "Hk is the survivor set after S9: H <- H intersect I_z.",
+        "Prep is named PREP on S3; ERROR and unconfirmed effects enter S7.",
+        "ErrorHandle is the FIG-07 witness of S7 containment; it is not a second box on this v4 layout.",
+        "Charge cost once is drawn as Charge declared cost once.",
+        "strictly-reducing overlapping classes remain the FIG-06 and Algorithm 1 admission contract.",
+        "empty S is not selectable; S=empty is Spec. error.",
+        "Admit guards A1 and A5 remain in Algorithm 1 and FIG-07; A2/5 here shares Stop-Budget.",
+        "resource bounds cmin and Kmax are FIG-08 constraints; they terminate via Stop-Budget.",
+    ],
     "06": [
         "Message 10 is Izk of tb, drawn as I_k of t_b.",
         "PREP names the Prep action.",
@@ -120,7 +158,11 @@ REASONS = {
     "06": "Redraw the diagnostic sequence, including overlapping admission and the second observation to analysis.",
     "07": "Show guards A1-A5 and priorities P1-P5, shared Stop-Budget for A2/A5 and P5, and ErrorHandle stop routing. No cross-machine transition.",
     "08": "Redraw the displayed timing, cost and history constraints. They are not claimed solved.",
-    "09": "Adopt experiment architecture v3: E0-E6, evaluator-only and algorithm-visible regions, four arms inside the run step, and exclusions that stay counted. E0-E6 mismatches with the experiment-design narrative are reported, not silently edited.",
+    "09": (
+        "Adopt experiment architecture v3 from the DM 2026-11 redraw source: "
+        "truth recorded before any arm runs (IF-EXP-TRUTH on E1), IF-EXP-RUN on E2, "
+        "E6 is the CL-RQ1-CL-RQ3 reporting step, and exclusions include unconfirmed injection and abstain."
+    ),
 }
 
 
@@ -357,7 +399,7 @@ def build_figure(key: str, previous: dict) -> tuple[dict, list[dict]]:
         "revisionType": "SEMANTIC-CANDIDATE",
         "reason": REASONS[key],
         "affectedScope": ["MODEL-FIGURE", previous["id"]] + (["MANUSCRIPT"] if key in {"01", "05", "09"} else []),
-        "relatedContracts": ["CR-2026-023", "CR-2026-020", "DD-044"],
+        "relatedContracts": ["CR-2026-023", "CR-2026-020", "DD-044", "DD-047"],
         "contractImpact": (
             "No algorithm, interface, runtime, CRS/M2 or experiment-contract change is made. "
             "This is a semantic figure candidate. Independent review of this head remains pending. "
@@ -434,6 +476,100 @@ def bind(figure_id: str, groups, entities, notes, relations) -> dict:
     }
 
 
+def mapped_id(key: str, figlib_id: str | None) -> str | None:
+    if not figlib_id:
+        return figlib_id
+    fid = RETARGET.get(key, {}).get(figlib_id, figlib_id)
+    return RENAME.get(key, {}).get(fid, fid)
+
+
+def remap_svg_endpoints(text: str, key: str) -> str:
+    def replace(match: re.Match[str]) -> str:
+        return f'{match.group(1)}="{mapped_id(key, match.group(2))}"'
+
+    return re.sub(r'(data-from|data-to)="([^"]*)"', replace, text)
+
+
+def graph_label(node) -> str:
+    """Use a contiguous SVG-visible fragment. Math tspans are not reconstructed."""
+    title = node.title or ""
+    if "$" in title:
+        return title.split("$", 1)[0].strip()
+    title = readable(title).strip()
+    if title:
+        return title
+    detail = node.detail or ""
+    if "$" in detail:
+        return detail.split("$", 1)[0].strip()
+    return readable(detail).split("\n")[0].strip()
+
+
+def graph_polarity(key: str, manifest_id: str, edge) -> str | None:
+    override = GRAPH_POLARITY.get(key, {}).get(manifest_id)
+    if override:
+        return override
+    return STYLE_POLARITY.get(edge.style)
+
+
+def graph_entry(key: str, figure) -> dict:
+    skip = set(SKIP.get(key, set()))
+    nodes: dict[str, dict] = {}
+    for node in figure.nodes:
+        if node.id in skip or node.shape == "note":
+            continue
+        mid = mapped_id(key, node.id)
+        if not mid:
+            continue
+        row: dict = {"x": num(node.x), "y": num(node.y), "w": num(node.w), "h": num(node.h)}
+        label = graph_label(node)
+        if label:
+            row["label"] = label
+        nodes[mid] = row
+    edges = []
+    for edge in figure.edges:
+        src = mapped_id(key, edge.src)
+        dst = mapped_id(key, edge.dst)
+        if src in skip or dst in skip:
+            raise SystemExit(f"FIG-{key} graph edge {edge.id} still points at a skipped cell")
+        mid = mapped_id(key, edge.id)
+        row = {"id": mid, "from": src, "to": dst}
+        polarity = graph_polarity(key, mid, edge)
+        if polarity:
+            row["polarity"] = polarity
+        guard = readable(edge.label).replace("\n", " ").strip()
+        if guard:
+            row["guard"] = guard
+        edges.append(row)
+    return {"width": num(figure.w), "height": num(figure.h), "nodes": nodes, "edges": edges}
+
+
+def write_reader_svgs_and_graphs(graphs: dict[str, dict]) -> None:
+    for directory in READER_SVG_DIRS:
+        directory.mkdir(parents=True, exist_ok=True)
+    for key, figure in ((item, FIGS[item]()) for item in SVG_NAME):
+        name = SVG_NAME[key]
+        text = remap_svg_endpoints(figlib_svg(figure), key)
+        if not text.endswith("\n"):
+            text += "\n"
+        payload = text.encode("utf-8")
+        for directory in READER_SVG_DIRS:
+            (directory / name).write_bytes(payload)
+        graphs[name] = graph_entry(key, figure)
+    GRAPHS_PATH.write_text(
+        json.dumps({
+            "schemaVersion": "1.0",
+            "id": "CLTAV-FIGURE-GRAPHS",
+            "authority": (
+                "Bounded control edges for reader SVG reconciliation of the nine revised "
+                "FIG-CL-TAV candidates. ALG-CLTAV-01 and the named PlantUML edge ids are the "
+                "control narrative. This file is not a second algorithm."
+            ),
+            "figures": graphs,
+        }, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
 def caption_for(figure: dict) -> str:
     title = figure["sourceBindings"]["title"].removeprefix("title ")
     return (
@@ -497,6 +633,7 @@ def main() -> int:
         )
     manifest["figures"] = records
     MANIFEST_PATH.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_reader_svgs_and_graphs({})
     loaded = drawio.load_manifest(ROOT)
     code = drawio.build(loaded, missing_only=False, force=True, root=ROOT)
     if code:
