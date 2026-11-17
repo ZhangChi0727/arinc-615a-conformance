@@ -1,157 +1,167 @@
 \section{CL-TAV Method}
 \label{sec:method}
 
-Algorithm~\ref{alg:cltav-01} is the top-level session. Each iteration checks
-named stops, predicts, selects and admits one action, freezes a snapshot
-including \(U\), charges \(\Gamma\) once, interprets the raw record, resolves
-the outcome, and, when the interpreted set is valid, commits a compatible
-update. Wrappers and typed records are in the supplement. Figure~\ref{fig:loop}
-shows the same control path: \texttt{CONFIRMED-NOT-SENT} and
-\texttt{UNKNOWN-EFFECT} act on the observation quality \(q\), not on \(H\).
+S0--S10 are logical duties, not line numbers. The decision index \(k\), the
+billed charge count and the retry counter are distinct. Algorithm~\ref{alg:cltav-01}
+is the top-level session. Wrappers and typed records are in the supplement.
+Figure~\ref{fig:loop} shows the same control path: the S7 box keeps or
+invalidates \(q\); \texttt{CONFIRMED-NOT-SENT} retains \(q\) and
+\texttt{UNKNOWN-EFFECT} invalidates \(q\). Those labels act on \(q\), not on
+\(H\).
 
 \input{alg_compact_01}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=\columnwidth]{FIG-CL-TAV-05-closed-loop-activity.pdf}
-\caption{Closed-loop control and observation quality (notation view).
-\texttt{CONFIRMED-NOT-SENT} and \texttt{UNKNOWN-EFFECT} annotate \(q\), not
-membership in \(H\). No experimental result is claimed.}
+\includegraphics[width=\textwidth]{FIG-CL-TAV-05-closed-loop-activity.pdf}
+\caption{Closed-loop activity from FIG-CL-TAV-05 v4 (SysML 1.6 notation-based
+view; executable or metamodel conformance is not claimed). Two columns: left
+S0--S3 with S10 aligned to Terminal; right S4--S9. Figure labels
+\IFres, \IFpred, \IFsel, \IFexec, \IFobs\ and \IFeq\ are the named
+resource-stop, prediction, selection-admission, execute-record,
+observation-interpretation and equivalence contracts; the supplement maps them
+to repository identifiers. The S7 box is drawn as ``keep or invalidate \(q\)'';
+\texttt{CONFIRMED-NOT-SENT} retains \(q\) and \texttt{UNKNOWN-EFFECT}
+invalidates \(q\) remain the method and Algorithm~\ref{alg:cltav-01} wording.
+Terminal stops include Stop-Prediction-Gap. No full 615A behaviour, real IUT,
+645 capability, or experimental result is claimed.}
 \label{fig:loop}
-\end{figure}
+\end{figure*}
 
-\subsection{Definitions and assumption}
+\subsection{Definitions and assumptions}
 
-\begin{definition}[Conservative observation]
+\begin{definition}[Conservative outer set]
 \label{def:cons-obs}
-An observation is admitted only as a raw record together with a declared
-completeness class. Missing, reordered or time-skewed events are not repaired
-into extra exclusions. An empty interpreted set \(I_z=\emptyset\) leaves \(H\)
-unchanged.
+For hypothesis \(h\), action \(t\) and summary \(q\), \(O(h,t,q)\) is a
+conservative outer set of feasible observations. \(Z_k\) is the measured
+feasible-observation set after timing, ownership and pairing checks.
 \end{definition}
 
-\begin{definition}[Exclusive ownership]
-\label{def:own}
-Only the kernel writes \(H\), \(\Gamma\), \(\eta\) and \(U\). Evaluator truth
-is not a session input. At most one of TEST, Prep or Recover is selected at a
-step. At most one named stop class is returned.
+\begin{definition}[Compatible class]
+\label{def:compat}
+Prediction and interpretation share one uncertainty reference \(U\). The
+interpretation/whole-history bridge induces the compatible hypothesis class
+\(C_k\) (accepted field \(z.I_z\)); \(C_k\) is not a measurement set. A
+currently valid class is the nonempty projection \(H\cap C_k\).
 \end{definition}
 
 \begin{assumption}[Exclusive resource mode]
 \label{ass:budget}
 A session is in exactly one mode, \(\mathrm{BUDGET}(c_{\min},B)\) or
-\(\mathrm{ROUNDS}(K_{\max})\), never both. Every counted action consumes a
-strictly positive resource quantum in BUDGET or exactly one round in ROUNDS.
-Retry caps are not a second budget.
-\end{assumption}
-
-\subsection{Update and selection}
-
-With nonempty interpreted set \(I_z\subseteq H\),
-\begin{equation}
-\label{eq:update}
-H^{+} \;=\; I_z \subseteq H,
-\end{equation}
-and \(H^{+}=H\) when \(I_z=\emptyset\). Selection is the specified one-step
-rule on the current feasible, affordable set \(A(H,\Gamma)\):
-\begin{equation}
-\label{eq:select}
-a^{\star} \in \arg\min_{a\in A(H,\Gamma)} \max_{h\in H} c(a,h;\Gamma).
-\end{equation}
-If \(A(H,\Gamma)=\emptyset\), the session takes the named stop of
-Table~\ref{tab:stops} rather than a silent continue. The exclusive resource
-invariant is
+\(\mathrm{ROUNDS}(K_{\max})\), never both:
 \begin{equation}
 \label{eq:budget}
 \bigl(\mathrm{BUDGET}(c_{\min},B)\ \mathrm{xor}\ \mathrm{ROUNDS}(K_{\max})\bigr)=1.
 \end{equation}
+Every charged TEST, Prep, Recover and \texttt{ERROR} spends that mode. Retry
+caps are not a second budget.
+\end{assumption}
+
+\subsection{Update and selection}
+
+Compatible update on a valid class is
+\begin{equation}
+\label{eq:update}
+H_{k+1}=H_k\cap C_k,\qquad H_{k+1}\subseteq H_k.
+\end{equation}
+\texttt{ERROR} and identity Prep/Recover leave \(H\) unchanged. The one-step
+score on currently valid nonempty classes of an affordable distinguishing
+TEST \(t\) is
+\begin{equation}
+\label{eq:score}
+s(t)=\max_{C\in\mathcal{C}_t}\lvert C\rvert.
+\end{equation}
+Empty \(S\) is never \(\arg\min\). On nonempty finite \(T_{\mathrm{cur}}\),
+\(t^{\star}\) is a least element of \((s(t),\mathrm{cost}(t),\mathrm{id})\).
+Timing uses T5~\cite{jcgm106}: \(I_{\mathrm{obs}}\subseteq I_r\) is PASS;
+\(I_{\mathrm{obs}}\cap I_r=\varnothing\) is FAIL; otherwise INCONCLUSIVE. An
+ambiguous pair is \texttt{ERROR}, not IUT FAIL.
 
 \begin{table}[!t]
-\caption{Exclusive named stop classes. At most one class is returned; there is
-no silent continue.}
+\caption{Exclusive named stop classes of the method (FIG-CL-TAV-05 v4). At most
+one class is returned; Admit A2--A5 and post-update P1--P5 are tabulated in the
+supplement.}
 \label{tab:stops}
 \centering
 \footnotesize
-\begin{tabular}{@{}p{0.34\columnwidth}p{0.58\columnwidth}@{}}
+\begin{tabular}{@{}p{0.36\columnwidth}p{0.56\columnwidth}@{}}
 \hline
 Class & Meaning in this paper \\
 \hline
-Stop-Empty / Stop-Singleton & valid empty / singleton update; singleton \(h_{\mathrm{normal}}\) is not protocol PASS \\
-Stop-Diagnosed & exclusive diagnosed stop when the named singleton rule applies \\
-Stop-Budget / Stop-Resource & selected mode in~\eqref{eq:budget} exhausted \\
-Stop-NoDistinguisher & no distinguishing TEST and no eligible Prep \\
-Stop-645 / Stop-Equivalent & triggered identity / equivalence class \\
-Stop-SpecError / Stop-Error & specification or named error \\
-Stop-Aborted & prescribed fallback; not scored as protocol PASS/FAIL \\
-Stop-Inconclusive & named inconclusive, including T5 partial overlap \\
+Stop-Empty & valid empty in-domain intersection (P1) \\
+Stop-Singleton & valid singleton update (P2); \(h_{\mathrm{normal}}\) is not protocol PASS \\
+Stop-645 & remaining 645-dependent obligation (P3) \\
+Stop-Equivalent & equivalence class (P4) \\
+Stop-Budget & selected mode in~\eqref{eq:budget} exhausted (A2/A5, P5); not Stop-Error \\
+Stop-Error & named error, including unconfirmed Recover with \(R_{\max}=1\) and remaining budget \\
+Stop-NoDistinguisher & no distinguishing TEST and no eligible Prep (A3) \\
+Stop-Prediction-Gap & TEST-scoped prediction gap; UNKNOWN after Recover does not continue diagnosis \\
+Stop-SpecError & specification error (unsupported syntax or S9 status) \\
 \hline
 \end{tabular}
 \end{table}
 
+This contract is intentionally weaker than a universal uncertain-observation
+diagnosis theorem~\cite{koehl2023}. CL-TAV claims only the consistency and
+retention property below under R1--R5.
+
 \subsection{Propositions}
 
-The five retentions below are the accepted method statements R1--R5. They are
-conditional on Definitions~\ref{def:cons-obs}--\ref{def:own} and, for
-termination, Assumption~\ref{ass:budget}. They are not a new general diagnosis
-theorem~\cite{koehl2023}.
-
-\begin{proposition}[Monotonicity, R1]
+\begin{proposition}[Monotonicity]
 \label{prop:mono}
-Every committed update satisfies \(H^{+}\subseteq H\).
+Equation~\eqref{eq:update} gives \(H_{k+1}\subseteq H_k\). Without a valid class
+there is no add or delete. An in-domain singleton is not protocol PASS.
 \end{proposition}
 \begin{IEEEproof}
-Equation~\eqref{eq:update} sets \(H^{+}=I_z\subseteq H\) when \(I_z\) is
-nonempty and \(H^{+}=H\) when \(I_z=\emptyset\). In both cases
-\(H^{+}\subseteq H\).
+On a valid class, \(H_{k+1}=H_k\cap C_k\subseteq H_k\). \texttt{ERROR} and
+identity Prep/Recover leave \(H\) unchanged, so \(H_{k+1}=H_k\subseteq H_k\).
 \end{IEEEproof}
 
-\begin{proposition}[Retention, R2]
+\begin{proposition}[True-fault retention]
 \label{prop:retain}
-A candidate eliminated from \(H\) never re-enters. Hence C1 holds under
-Definitions~\ref{def:cons-obs}--\ref{def:own}.
+Assume (R1) \(h^{\star}\in H_0\); (R2) one state path is consistent with the
+executed history; (R3) \(O(h^{\star},t_k,q_k)\) is a conservative outer set;
+(R4) the true observation belongs to both \(O(h^{\star},t_k,q_k)\) and \(Z_k\);
+and (R5) ownership and pairing are valid. Then \(h^{\star}\in H_{k+1}\).
 \end{proposition}
 \begin{IEEEproof}
-If \(h\notin H\), then every later nonempty \(I_z\) is formed inside the
-then-current \(H\), so \(h\notin I_z=H^{+}\). An empty \(I_z\) does not change
-\(H\). Exclusive ownership forbids any other write to \(H\).
+The declared interpretation and whole-history compatibility contract therefore
+places \(h^{\star}\) in \(C_k\). Thus \(h^{\star}\in H_k\cap C_k\), and induction
+retains it in \(H_{k+1}\). Out-of-domain faults may still mimic an in-domain
+survivor.
 \end{IEEEproof}
 
-\begin{proposition}[Exclusive named stop, R3]
-\label{prop:stop}
-When the session stops, it returns exactly one class from
-Table~\ref{tab:stops}.
-\end{proposition}
-\begin{IEEEproof}
-Resource-stop and equivalence contracts return a single named class or
-\texttt{undecided}. Admit and post-update stops are exclusive by
-Definition~\ref{def:own}. Algorithm~\ref{alg:cltav-01} returns through
-\textsc{Finish} on that class and has no silent-continue branch after a named
-stop.
-\end{IEEEproof}
-
-\begin{proposition}[Finite termination, R4]
-\label{prop:term}
-Under Assumption~\ref{ass:budget} every session reaches a named stop after
-finitely many counted steps.
-\end{proposition}
-\begin{IEEEproof}
-The remaining budget (resp.\ remaining rounds) is a nonnegative integer. Each
-counted action strictly decreases that integer. Named stops are the only
-exits, and Proposition~\ref{prop:stop} forbids silent continuation. A strictly
-decreasing nonnegative integer reaches zero, which is Stop-Budget /
-Stop-Resource, unless an earlier named stop has already fired.
-\end{IEEEproof}
-
-\begin{proposition}[Specified one-step minimax, R5]
+\begin{proposition}[One-step minimax]
 \label{prop:c2}
-Equation~\eqref{eq:select} is a total named operator on the finite set
-\(A(H,\Gamma)\): it returns a least element, or a named stop if the set is
-empty. This is C2 as specified, not a global optimality theorem.
+On nonempty finite \(T_{\mathrm{cur}}\), \(t^{\star}\) is a least element of
+\((s(t),\mathrm{cost}(t),\mathrm{id})\). Empty \(S\) is never \(\arg\min\).
+This is not a global policy, does not prove future distinguishability, and
+does not guarantee shrinkage for every observation class.
 \end{proposition}
 \begin{IEEEproof}
-\(H\) and the action alphabet are finite, so \(A(H,\Gamma)\) is finite. A
-finite nonempty set of real costs has a least element; any tie is broken by
-the accepted deterministic order. The empty-set case is a named stop by
-Table~\ref{tab:stops}. No claim is made about policies that look beyond the
-current step.
+\(\mathcal{C}_t\) is a finite family of currently valid nonempty classes of an
+affordable distinguishing TEST, so \(s(t)\) in~\eqref{eq:score} is a well-defined
+nonnegative integer. The lexicographic order on
+\((s(t),\mathrm{cost}(t),\mathrm{id})\) is a total order on finite nonempty
+\(T_{\mathrm{cur}}\), hence a least element exists. If \(S=\emptyset\), the
+session classifies Admit A2--A5 rather than minimizing over an empty set.
 \end{IEEEproof}
+
+\begin{proposition}[Termination]
+\label{prop:term}
+Under Assumption~\ref{ass:budget} every charged TEST, Prep, Recover and
+\texttt{ERROR} spends the selected mode, hence at most
+\(\lfloor B/c_{\min}\rfloor\) or \(K_{\max}\) billed executions.
+\end{proposition}
+\begin{IEEEproof}
+Each billed execution consumes a strictly positive quantum or one round, so
+the remaining resource is a nonnegative integer that strictly decreases.
+Named stops in Table~\ref{tab:stops} are the only exits. Wall-clock waits still
+need their own timeouts; those timeouts are not claimed implemented.
+\end{IEEEproof}
+
+The update disposition is evaluated before the mutable stop label: a rejected
+or \texttt{ERROR} update preserves \(H\), while a valid empty or singleton
+update forces Stop-Empty or Stop-Singleton. \texttt{CONFIRMED-NOT-SENT} does
+not assign UNKNOWN. \texttt{UNKNOWN-EFFECT} must not be read back as the
+previous KNOWN summary.

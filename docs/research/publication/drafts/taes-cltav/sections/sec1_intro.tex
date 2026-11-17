@@ -1,48 +1,54 @@
 \section{Introduction}
 \label{sec:intro}
 
-Consider an ARINC~615A-3 UPLOAD in which the tester issues a FIND and then
-waits for an acknowledgement. If the acknowledgement is missing, or if a
-file-system lock times out, the observation is incomplete rather than a clean
-protocol FAIL. A follow-up INFORMATION or a second FIND issued without a
-declared observation class can violate the lock and write-then-commit order of
-the loading lifecycle~\cite{arinc615a3,arinc6451}. The engineering problem is
-therefore not only to generate more tests~\cite{tretmans1996,jia2011,yang2025},
-but to keep a candidate set that stays compatible with the observations
-actually obtained, to choose one admissible next action, and to stop under a
-named class instead of continuing silently.
+Airborne software loaders exchange INFORMATION and UPLOAD traffic under declared
+timers, file identities and operator actions~\cite{arinc615a3}. Loading
+frameworks also treat identity, integrity, interrupted loading and version
+conflict as connected engineering concerns~\cite{marques2021}. Consider, as a
+hypothetical scenario rather than a cited protocol theorem, a FIND whose
+acknowledgement is missing or late: the observation may be incomplete rather
+than a clean protocol FAIL, and the tester must still choose a later
+protocol-legal action under a finite resource. The engineering problem is not
+merely to collect more tests, but to decide whether the current evidence is
+usable and which later action is worth its charge.
 
-CL-TAV is specified as that closed loop. Each counted step predicts observation
-classes, interprets a raw record under one uncertainty reference, updates a
-finite single-fault set \(H\) from the whole compatible history, and selects
-one exclusive TEST, Prep, Recover or Admit action. The bound protocol model
-remains UPLOAD and INFORMATION. ARINC~645 identity is bound for triggered
-leaves; runtime integrity is not established here.
-
-The paper asks three questions. CL-RQ1: can the loop be specified so that a
-history-compatible update never restores an eliminated candidate and so that
-the one-step choice is a defined operator on the current feasible set?
-CL-RQ2: can DETECT and LOCATE be scored with declared denominators, including
-unanswered and missing-truth flow, without treating abstention as PASS?
-CL-RQ3: can named ablations isolate feedback, Prep/Recover charging and FIND
-clock non-waiver without a forbidden waiver algorithm?
+This paper studies Closed-Loop Test--Analysis Verification (CL-TAV). Three
+reader questions are used throughout:
+\begin{itemize}
+\item CL-RQ1 (loop consistency): do prediction, interpretation and candidate
+update stay mutually consistent under one uncertainty reference?
+\item CL-RQ2 (comparative effect): under the same budget and denominators, does
+the closed loop change detection or isolation relative to Test-only,
+Analysis-only and fixed Test-then-Analysis arms?
+\item CL-RQ3 (uncertainty and stopping): how do interval timing, \texttt{ERROR},
+Prep/Recover and exclusive stops affect those comparisons?
+\end{itemize}
 
 The contributions map onto those questions.
 \begin{enumerate}
-\item C1 (CL-RQ1): under conservative observation and exclusive ownership, the
-specified update is monotone and retains every previously eliminated
-exclusion. This is a conditional consistency proposition, not a transplanted
-general diagnosis theorem~\cite{koehl2023,fraenzle2026,sampath1998}.
-\item C2 (CL-RQ1): one prior-free minimax step over the currently feasible and
-affordable actions, with explicit error and stop semantics, rather than a
-globally optimal policy~\cite{chanthery2009,hu2020,miao2025}.
-\item Evaluation protocol (CL-RQ2, CL-RQ3): four comparison arms and three
-registered families (DETECT, LOCATE, ABLATION) with finite populations and
-missing/censoring rules. Aviation loading work supplies context, not executed
-615A evidence~\cite{chanthery2019,efkemann2011,sartaj2021,marques2021}.
+\item C1 (CL-RQ1): mutual consistency of uncertainty-aware interpretation,
+timing verdict and whole-history compatible update in the declared finite
+domain. Its true-fault retention statement is conditional on the model,
+ownership, pairing and conservative-observation hypotheses R1--R5, not a
+transplanted general diagnosis theorem~\cite{koehl2023,fraenzle2026,sampath1998}.
+\item C2 (CL-RQ2, CL-RQ3): a prior-free one-step worst-case candidate-set choice
+among feasible affordable tests, with explicit Prep/Recover, \texttt{ERROR},
+resource and stop rules, evaluated against Test-only, Analysis-only and fixed
+Test-then-Analysis arms. C2 is not a global multi-step optimum and need not
+shrink the candidate set on every outcome~\cite{chanthery2009,hu2020,miao2025}.
 \end{enumerate}
-\phbox{PH-ABS-RESULT}{EXPERIMENT-RESULT}{Abstract and conclusion improvement
-sentences stay empty until confirmatory DETECT/LOCATE cells exist.}
+
+Requirements-based generation, conformance testing and mutation adequacy supply
+important test-construction and evaluation
+tools~\cite{tretmans1996,petrenko2016,jia2011,yang2025}. Active diagnosis already
+closes observation--control loops, while real-time diagnosis and testing already
+address uncertain communication timing. The narrower question here is whether
+the declared 615A action, observation, cost and stop contracts form a useful and
+empirically defensible combination. Aviation loading work supplies context, not
+executed 615A evidence~\cite{chanthery2019,efkemann2011,sartaj2021}.
+
+The evaluation uses four arms (CL-T, CL-A, CL-TA, CL-LOOP) and three registered
+families (DETECT, LOCATE, ABLATION). Confirmatory numbers are not available.
 
 Section~\ref{sec:related} reviews neighbours; Section~\ref{sec:arch} the
 architecture; Section~\ref{sec:method} the process and propositions;

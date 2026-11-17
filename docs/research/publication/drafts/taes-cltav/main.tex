@@ -32,21 +32,21 @@ No AI system is an author.}
 \markboth{Author et al.}{CL-TAV}
 
 \begin{abstract}
-Airborne software loading over ARINC~615A-3 is judged from timed
-acknowledgements, exclusive file-system locks, and a write-then-commit order.
-A missed acknowledgement or a lock timeout can leave the tester with an
-incomplete observation, after which an unconstrained follow-up action can
-violate the protocol lifecycle. This paper specifies Closed-Loop
-Test--Analysis Verification (CL-TAV): a charged session that keeps a
-history-compatible candidate set, selects one admissible TEST, Prep, Recover
-or Admit action by a one-step minimax rule, and stops under exclusive named
-classes. Under conservative observation and exclusive ownership, a
-history-compatible update never reintroduces a previously eliminated
-candidate (C1). The same one-step rule is specified for a named cost (C2). A
-protocol-bound evaluation design records DETECT, LOCATE and ABLATION analyses
-with declared denominators. Confirmatory measurements have not yet been
-obtained; this manuscript does not claim measured improvement or
-certification.
+Airborne software loading over ARINC~615A-3 is judged from protocol events
+whose identity, ordering and timing may be only conservatively observed. A
+missed acknowledgement, for example, can leave the tester with an incomplete
+observation rather than a clean protocol FAIL. This paper specifies
+Closed-Loop Test--Analysis Verification (CL-TAV): a charged session that
+keeps a history-compatible candidate set, selects one admissible TEST, Prep,
+Recover or Admit action by a one-step minimax rule on residual class size,
+and stops under exclusive named classes. Under the declared model, ownership
+and conservative-observation hypotheses, the true in-domain fault remains in
+the updated candidate set (C1). The same one-step rule is specified on
+currently feasible affordable tests (C2). A protocol-bound evaluation design
+records DETECT, LOCATE and ABLATION analyses against Test-only,
+Analysis-only and fixed Test-then-Analysis arms, with declared denominators.
+Confirmatory measurements have not yet been obtained; this manuscript does
+not claim measured improvement or certification.
 \end{abstract}
 
 \begin{IEEEkeywords}

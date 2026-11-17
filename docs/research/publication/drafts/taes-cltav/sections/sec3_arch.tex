@@ -3,18 +3,16 @@
 
 Figure~\ref{fig:arch} is the architecture used in this paper. Protocol and
 uncertainty objects sit above a kernel that owns the candidate set \(H\), the
-resource context \(\Gamma\) and the observation map \(\eta\). Prediction,
-history update, observation interpretation, selection, execution, preparation
-and exclusive stop are named contracts on that kernel; the figure labels them
-in place. The supplement maps those labels to repository identifiers. Only a
-raw record, with its declared completeness, returns from execution into
-history update. Evaluator truth never enters the session.
+resource context \(\Gamma\) and the observation map \(\eta\). Named contracts
+on that kernel appear as figure labels; the supplement maps them to repository
+identifiers. Only a raw record, with its declared completeness, returns from
+execution into history update. Evaluator truth never enters the session.
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=\textwidth]{FIG-CL-TAV-01-context.pdf}
-\caption{CL-TAV architecture (notation view derived from the controlled
-drawing). Named contracts in the figure are prediction, history-update,
+\caption{CL-TAV architecture (notation view derived from FIG-CL-TAV-01 v2).
+Named contracts in the figure are prediction, history-update,
 observation-interpretation, selection-admission, execute-record,
 prep/recover, equivalence and resource-stop. Only a raw record returns to
 history update. Evaluator truth is not an input. No full 615A behaviour or
@@ -22,13 +20,21 @@ IUT execution is claimed.}
 \label{fig:arch}
 \end{figure*}
 
-The motivating incomplete observation sits on this figure. A missed FIND
-acknowledgement or a lock timeout is an incomplete raw record, not a licence
-to issue an unconstrained next action. Marques \textit{et al.} propose
-traceable loading requirements and procedures for a future loadable airborne
-system, including an exclusive file-system lock and write-then-commit
-order~\cite{marques2021}. That survey is engineering context; it is not
-executed 615A evidence, and this paper does not execute it.
+The layering responds to two aviation lessons without importing their
+authority. F-LAS shows the usefulness of explicit requirements-to-procedure
+traceability for loading identity, integrity, interrupted loading and version
+conflict, but its procedures were proposed rather than
+executed~\cite{marques2021}. Avionics MBT also makes configuration, model
+preparation, simulator and oracle boundaries part of the test
+problem~\cite{efkemann2011,sartaj2021}. Accordingly, the protocol register
+constrains legal evidence, the tool realizes method contracts, and the
+evaluator owns independent truth; none can silently stand in for another.
+
+Two machines must not be merged. The session machine selects from a legal
+action set, charges once, updates \(H\) and returns a named stop. The protocol
+machine is the UPLOAD/INFORMATION black box. Execute issues a stimulus and
+obtains a raw execution record. Interpretation, not the network port, produces
+the compatible class \(I_z\) and hypothesis survivors.
 
 \paragraph{Bound objects.}
 The operational bound remains ARINC~615A-3 UPLOAD and INFORMATION, with
@@ -38,12 +44,9 @@ capability is not established~\cite{arinc6451}. Hypothesis space \(H_0\) is
 finite and single-fault: \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\).
 A singleton \(\{h_{\mathrm{normal}}\}\) is not protocol PASS. Tests, Prep and
 Recover are exclusive alternatives. Counted actions consume \(\Gamma\) once.
-Observation map \(\eta\) and uncertainty reference \(U\) are owned inside the
-kernel. The implementation status of each named contract is not re-argued
-here.
 
 \paragraph{Scope.}
-C1 is specified consistency under conservative observation and exclusive
-ownership, not a general theorem for loss, drift or reordering. C2 is the
-named one-step rule, not a globally optimal policy. The manuscript does not
-claim a full 615A IUT, certification, or confirmatory measurements.
+C1 is specified consistency and true-fault retention under R1--R5, not a
+general theorem for loss, drift or reordering. C2 is the named one-step rule,
+not a globally optimal policy. The manuscript does not claim a full 615A IUT,
+certification, or confirmatory measurements.

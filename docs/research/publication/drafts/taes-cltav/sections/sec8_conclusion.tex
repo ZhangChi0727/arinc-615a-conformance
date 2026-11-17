@@ -1,12 +1,18 @@
 \section{Conclusion}
 \label{sec:concl}
 
-CL-TAV is specified as a charged closed loop for ARINC~615A-3 UPLOAD and
-INFORMATION under incomplete observation. C1 is the proven monotone,
-retentive update under conservative observation and exclusive ownership. C2
-is the specified one-step minimax rule with exclusive named stops and finite
-termination under the exclusive resource-mode assumption. DETECT, LOCATE and
-ABLATION remain planned analyses with declared denominators.
+CL-TAV specifies a charged observation--update--select session for ARINC~615A
+data loading under declared uncertainty and one resource mode. C1 is proved
+under Definitions~\ref{def:cons-obs}--\ref{def:compat} and hypotheses R1--R5:
+if the true in-domain fault starts in \(H_0\), one consistent path is
+executed, \(O\) is conservative, the true observation lies in \(O\) and
+\(Z_k\), and ownership/pairing are valid, then \(h^{\star}\in H_{k+1}\). C2 is
+the specified one-step least element of \((s(t),\mathrm{cost}(t),\mathrm{id})\)
+on currently feasible affordable tests, with exclusive named stops and finite
+termination under Assumption~\ref{ass:budget}. DETECT, LOCATE and ABLATION
+remain planned analyses with declared denominators.
+\phbox{PH-ABS-RESULT}{EXPERIMENT-RESULT}{Abstract and conclusion improvement
+sentences stay empty until confirmatory DETECT/LOCATE cells exist.}
 \phbox{PH-CONC-RESULT}{EXPERIMENT-RESULT}{The concluding experimental sentence
 stays empty until the DETECT, LOCATE and ABLATION cells are filled from
 registered confirmatory measurements.}

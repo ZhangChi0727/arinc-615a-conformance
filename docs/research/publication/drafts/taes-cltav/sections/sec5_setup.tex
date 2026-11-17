@@ -1,47 +1,62 @@
 \section{Experimental Setup and Evaluation Protocol}
 \label{sec:setup}
 
-No confirmatory execution is reported. This section records the bound, the
-arms and the scoring contract. Figure~\ref{fig:exp} is the experiment
+No confirmatory execution is reported. The comparison contract is the existing
+experiment plan. Four arms share the same information pool, action pool and
+fault domain. Direct numeric comparison is allowed only on the same denominator
+and the same charged projection of
+\(c=(c_{\mathrm{acq}},c_{\mathrm{comp}},c_{\mathrm{prep}},c_{\mathrm{retry}})\).
+Runtime records may retain recovery as a detail, but evaluation folds it into
+\(c_{\mathrm{prep}}\) exactly once. Figure~\ref{fig:exp} is the experiment
 architecture: E0--E6 are registered experiment steps, not execution evidence.
-Truth meets algorithm output only at the evaluator filter.
-
-The protocol bound is UPLOAD and INFORMATION under ARINC~615A-3, with FIND,
-SEND and ABORT as UPLOAD operations. INFORMATION is the load-list / LCL
-operation. ARINC~645 identity is bound only for triggered leaves. T5 uses a
-closed timing interval: containment is PASS, disjointness FAIL, partial
-overlap INCONCLUSIVE. FIND clocks (2\,s / 3\,s) are not waived by abort.
-
-Four arms form a \(2\times 2\) of closed loop and adaptive choice
-(Table~\ref{tab:arms}). CL-T is open-loop fixed order. CL-A is adaptive
-choice without committing feedback to \(H\). CL-TA is the specified loop.
-CL-LOOP is closed-loop execution with a declared non-adaptive choice. All
-arms share the same scene construction, stop classes and T5 oracle.
+CL-LOOP is the closed loop under test.
 
 \begin{table}[!t]
 \centering
-\caption{Four comparison arms. The table is the arm register, not a result.}
+\caption{Four comparison arms. CL-LOOP is the method under test. The table is
+the arm register, not a result.}
 \label{tab:arms}
 \footnotesize
 \begin{tabular}{@{}p{0.18\columnwidth}p{0.72\columnwidth}@{}}
 \hline
-Arm & Closed loop / adaptive choice \\
+Arm & Definition \\
 \hline
-CL-T & open-loop, fixed order \\
-CL-A & adaptive choice, no commit to \(H\) \\
-CL-TA & specified CL-TAV loop \\
-CL-LOOP & closed-loop execution, declared non-adaptive choice \\
+CL-T & Test-only: predetermined tests; projection \(c_{\mathrm{acq}}\) for tests that run \\
+CL-A & Analysis-only: analysis on pre-allowed records; projection \(c_{\mathrm{comp}}\) only; no invented sampling cost \\
+CL-TA & fixed Test-then-Analysis: frozen collect then analyse; \(c_{\mathrm{acq}}\) and \(c_{\mathrm{comp}}\) reported separately \\
+CL-LOOP & the CL-TAV closed loop (method under test); charge the components that actually run \\
 \hline
 \end{tabular}
 \end{table}
 
+Truth is typed evaluator-only. It never enters selection, prediction, history
+update or execute; algorithm-visible references are limited to registered
+initial inputs and records produced by that arm's own actions. The all-attempt
+ledger retains every registered attempt, including unconfirmed injection,
+invalid observation, equivalent or undecided fault, \texttt{ERROR}, abstention
+and unconcluded execution. Detection uses a named valid denominator and a
+separate answered subset for PASS/FAIL error. Localization uses confirmed
+in-domain non-equivalent injections and separately reports
+localization-decision coverage, whether the true fault remains or is excluded,
+whether an issued singleton is correct, and final \(|H|\). If no attempt is
+answered, answered coverage is \(0/N\) for \(N>0\), whereas
+answered-conditional error is not applicable. Mutation scores exclude only
+confirmed equivalents while equivalent and undecided counts remain
+visible~\cite{jia2011,gruen2009}.
+
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=\textwidth]{FIG-CL-TAV-09-experiment-architecture.pdf}
-\caption{Experiment architecture (notation view). E0--E6 are registered
-experiment steps, not execution evidence. Truth meets algorithm output only at
-the evaluator filter and is never a session input. No full 615A behaviour,
-real IUT, 645 capability, or experimental result is claimed.}
+\caption{Experiment architecture from FIG-CL-TAV-09 v3 (SysML 1.6
+notation-based view; executable or metamodel conformance is not claimed).
+E0--E6 is a notation view of the registered experiment interfaces
+(scene, inject/truth, run, collect, filter, eval). Labels \texttt{IF-EXP-*}
+are those experiment I/O contracts; labels \IFpred, \IFsel, \IFexec,
+\IFobs, \IFprep, \IFhist, \IFeq\ and \IFres\ are the algorithm contracts
+named in the figure note, not experiment evidence. CL-T, CL-A and CL-TA are
+comparators; CL-LOOP is the closed loop under test. Truth meets algorithm
+output only at the evaluator filter and is never an algorithm input. No full
+615A behaviour, real IUT, 645 capability, or experimental result is claimed.}
 \label{fig:exp}
 \end{figure*}
 
@@ -57,24 +72,20 @@ method freeze at confirmatory registration, not in this draft.}
 
 An experimental unit is a unique registered attempt on one base scene, arm and
 control/fault construction. Development, pilot and held-out lineages are
-disjoint; paired arms require independent reset evidence. Equivalence work is
-not scored as killed~\cite{gruen2009,jia2011}. When later measurements exist,
-interval and effect reporting follows the registered unit~\cite{arcuri2011}.
-Clock and error budgets, when frozen, follow the declared metrology
-context~\cite{jcgm100,jcgm106}.
+disjoint; paired arms require independent reset evidence. When later
+measurements exist, interval and effect reporting follows the registered
+unit~\cite{arcuri2011}. Clock and error budgets, when frozen, follow the
+declared metrology context~\cite{jcgm100,jcgm106}. T5 uses a closed timing
+interval: containment is PASS, disjointness FAIL, partial overlap
+INCONCLUSIVE.
 
-\paragraph{Accounting contract.}
-Every later cell names a finite population, a missing/censoring rule and the
-empty-denominator behaviour. With registered attempts and no answers, answered
-coverage is \(0/N\) and answered-conditional error is N/A. Abstain is not
-PASS/FAIL. A record without a run identifier is a pre-run exclusion and cannot
-produce PASS, FAIL, a decision, an action, or charged cost. An update rejected
-as ERROR preserves \(H\) regardless of the stop tag; only a valid empty
-(resp.\ singleton) update yields Stop-Empty (resp.\ Stop-Singleton).
-Evaluator truth is not a session input.
+Rejected updates preserve \(H\) independently of the stop tag; valid empty and
+singleton updates force Stop-Empty and Stop-Singleton before later stops. An
+\texttt{ERROR}, Stop-Empty, Stop-645, or budget stop cannot manufacture an
+answered or singleton-localization decision.
 
-For the registered no-response FIND scenario, the scored trigger is the FIND
-timeout under T5, not a later abort. A prescribed abort after that timeout is
-not scored against the no-response obligation; the abort is a fallback, not a
-waiver of the 2\,s / 3\,s clocks. The supplement lists the corresponding
-repository identifiers.
+For the registered no-response scenario, the scored trigger is the data loader
+receiving a status file that carries an exception delay for the active
+operation. A prescribed abort after expiry is a fallback, not a cancellation
+waiver of the FIND clocks. Generic request/response suppression remains a
+method-only case and is not scored as that scenario.

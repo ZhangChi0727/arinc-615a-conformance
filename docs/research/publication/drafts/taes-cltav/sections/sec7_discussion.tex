@@ -1,16 +1,16 @@
 \section{Discussion and Limitations}
 \label{sec:disc}
 
-C1 (Propositions~\ref{prop:mono}--\ref{prop:retain}) is conditional
-consistency under Definitions~\ref{def:cons-obs}--\ref{def:own}, not a
-competitor to full-history timed diagnosis~\cite{koehl2023}. C2
-(Proposition~\ref{prop:c2}) is a one-step operator, not the closed-loop
-supervisors or conditional plans already in the
+C1 (Proposition~\ref{prop:retain}) is conditional true-fault retention under
+hypotheses R1--R5, not a competitor to full-history timed
+diagnosis~\cite{koehl2023}. Monotonicity (Proposition~\ref{prop:mono}) is a
+separate statement. C2 (Proposition~\ref{prop:c2}) is a one-step operator on
+\((s(t),\mathrm{cost}(t),\mathrm{id})\), not the closed-loop supervisors or
+conditional plans already in the
 literature~\cite{sampath1998,chanthery2009,hu2020,miao2025}. Constraint-solving
 test generation remains a neighbouring generator, not this paper's selection
 rule~\cite{petrenko2016}. Aerospace procedure work remains the engineering
-setting and a localization-risk
-warning~\cite{chanthery2019}.
+setting and a localization-risk warning~\cite{chanthery2019}.
 
 \phbox{PH-RES-INTERPRET}{EXPERIMENT-RESULT}{Discussion of measured gains or
 losses waits for the DETECT, LOCATE and ABLATION cells.}
@@ -18,10 +18,10 @@ losses waits for the DETECT, LOCATE and ABLATION cells.}
 \paragraph{Limitations.}
 The observation model is conservative: missing, reordered or time-skewed
 events are not reconstructed, so C1 does not extend to a general loss, drift
-or reordering theorem. Exclusive ownership and the exclusive resource mode are
-assumptions of the specification, not measured platform properties. Runtime
-ARINC~645 capability is not established. Equivalence among mutants and among
-protocol traces can leave distinguishable faults unresolved. Clock and error
-budgets remain publication decisions~\cite{jcgm100,jcgm106}. Confirmatory
-measurements have not yet been obtained; this manuscript does not claim
-measured improvement, implementation completeness, or certification.
+or reordering theorem. R1--R5, exclusive ownership and the exclusive resource
+mode are hypotheses of the specification, not measured platform properties.
+Runtime ARINC~645 capability is not established. Equivalence among mutants and
+among protocol traces can leave distinguishable faults unresolved. Clock and
+error budgets remain publication decisions~\cite{jcgm100,jcgm106}.
+Confirmatory measurements have not yet been obtained; this manuscript does
+not claim measured improvement, implementation completeness, or certification.

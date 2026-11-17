@@ -47,8 +47,6 @@
     {"id": "tab:related", "section": "sec:related"},
     {"id": "tab:stops", "section": "sec:method"},
     {"id": "tab:arms", "section": "sec:setup"},
-    {"id": "tab:res-detect", "section": "sec:results", "placeholder": "PH-RES-DETECT"},
-    {"id": "tab:res-locate", "section": "sec:results", "placeholder": "PH-RES-LOCATE"},
     {"id": "tab:res-ablation", "section": "sec:results", "placeholder": "PH-RES-ABLATION"},
     {"id": "tab:trace", "section": "supplement"}
   ],
@@ -56,7 +54,7 @@
     {
       "id": "PH-ABS-RESULT",
       "category": "EXPERIMENT-RESULT",
-      "section": "sec:intro",
+      "section": "sec:concl",
       "clrq": ["CL-RQ2"],
       "dependsOn": ["EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE"],
       "completion": "Registered confirmatory cells exist; no percentage is written before that."

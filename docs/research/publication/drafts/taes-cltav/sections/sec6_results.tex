@@ -1,94 +1,61 @@
 \section{Results}
 \label{sec:results}
 
-No confirmatory run has been admitted. The cells below are planned analyses
-with frozen denominators. Empty cells are not zeros, not ``no effect'', and
-not synthetic data. Effect direction is not stated.
+No confirmatory run has been admitted. No effect direction, percentage or
+superiority is reported. Empty cells are not zeros and not synthetic data.
+
+Every later cell names a finite population, a missing/censoring rule and the
+empty-denominator behaviour. With registered attempts and no answers, answered
+coverage is \(0/N\) and answered-conditional error is N/A. Abstain is not
+PASS/FAIL.
 
 \paragraph{DETECT.}
-Planned cells are all-attempt flow, \(0/N\) answered coverage when no answers
-exist, explicit truth-scorable coverage, missing-truth flow, truth-scorable
-conditional error, and the four-component charged projection. Abstain is not
-PASS/FAIL. FIND abort does not waive T5.
-\begin{table}[!t]
-\centering
-\caption{Reserved DETECT table. Empty cells are not zeros.}
-\label{tab:res-detect}
-\footnotesize
-\begin{tabular}{@{}lcc@{}}
-\hline
-Arm & Answered coverage & Truth-scorable error \\
-\hline
-CL-T & --- & --- \\
-CL-A & --- & --- \\
-CL-TA & --- & --- \\
-CL-LOOP & --- & --- \\
-\hline
-\end{tabular}
-\end{table}
 \begin{figure}[!t]
 \centering
 \phboxhigh{PH-RES-DETECT}{EXPERIMENT-RESULT}{Separate cells, not one shared
-percentage: all-attempt flow; \(0/N\) answered coverage when no answers exist;
+denominator: all-attempt flow; \(0/N\) answered coverage when no answers exist;
 explicit truth-scorable coverage and missing-truth flow; truth-scorable
-conditional error. Filtering, unit and four-component charged projection
-remain named. Empty cells are not zeros. Abstain is not PASS/FAIL.}
-\caption{Reserved DETECT result figure. The panel is a planned-analysis
-reservation, not a curve or a significance test.}
+conditional error; miss and false-FAIL on the registered valid detection
+denominator. Abstain is not PASS/FAIL.}
+\caption{Reserved DETECT panel. The panel is a planned-analysis reservation,
+not a curve or a significance test.}
 \label{fig:res-detect}
 \end{figure}
 
 \paragraph{LOCATE.}
-Planned cells are eligible-attempt decision coverage, missing-truth flow,
-true-fault retention/exclusion, singleton correctness and final \(|H|\).
-Singleton \(h_{\mathrm{normal}}\) is not protocol PASS.
-\begin{table}[!t]
-\centering
-\caption{Reserved LOCATE table. Empty cells are not zeros.}
-\label{tab:res-locate}
-\footnotesize
-\begin{tabular}{@{}lcc@{}}
-\hline
-Arm & Final \(|H|\) & True-fault excluded \\
-\hline
-CL-T & --- & --- \\
-CL-A & --- & --- \\
-CL-TA & --- & --- \\
-CL-LOOP & --- & --- \\
-\hline
-\end{tabular}
-\end{table}
 \begin{figure}[!t]
 \centering
 \phboxhigh{PH-RES-LOCATE}{EXPERIMENT-RESULT}{Cells: final \(|H|\), true-fault
-exclusion, singleton correctness, eligible-attempt decision coverage and
-missing-truth flow. Update status, not a mutable stop tag, determines
-preservation. Singleton \(h_{\mathrm{normal}}\) is not protocol PASS.}
-\caption{Reserved LOCATE result figure. The panel is a planned-analysis
-reservation, not a curve or a significance test.}
+retention/exclusion on the truth-scorable subset, missing-truth flow, decision
+coverage, singleton correctness and charged resource. A valid FAIL with a
+nonsingleton \(H\) is not completed localization. Singleton
+\(h_{\mathrm{normal}}\) is not protocol PASS.}
+\caption{Reserved LOCATE panel. The panel is a planned-analysis reservation,
+not a curve or a significance test.}
 \label{fig:res-locate}
 \end{figure}
 
 \paragraph{ABLATION.}
-Each parent metric has its own paired denominator. Unmatched and censored rows
-are retained. Cost pairs are preserved even when truth scoring is unavailable.
 \begin{table}[!t]
 \centering
-\caption{Reserved ABLATION table. Empty cells are not zeros.}
+\caption{Reserved ABLATION cells. CL-A is computation-only; N/A cells are not
+silent omissions. FIND-abort waiver is a forbidden control. Empty cells are
+not zeros.}
 \label{tab:res-ablation}
-\footnotesize
-\begin{tabular}{@{}lcc@{}}
+\scriptsize
+\begin{tabular}{@{}lcccc@{}}
 \hline
-Factor & Parent metric & Paired contrast \\
+Cell & CL-T & CL-A & CL-TA & CL-LOOP \\
 \hline
-No feedback & --- & --- \\
-Prep/Recover uncharged & --- & --- \\
-Interval vs.\ point timestamp & --- & --- \\
-FIND-abort waiver (forbidden) & --- & --- \\
+Charged projection & \(c_{\mathrm{acq}}\) & \(c_{\mathrm{comp}}\) & split & actual \\
+No-feedback contrast & yes & N/A & yes & reference \\
+Prep/Recover uncharged & if run & N/A & if run & contrast \\
+Interval vs point stamp & --- & --- & --- & contrast \\
+FIND-abort waiver & forbidden & forbidden & forbidden & forbidden \\
 \hline
 \end{tabular}
 \end{table}
 \phbox{PH-RES-ABLATION}{EXPERIMENT-RESULT}{Table~\ref{tab:res-ablation} uses the
 same scene, seed, construction and registered contrast, with distinct confirmed
 resets. Common-error risks remain disclosed. Unmatched and censored rows are
-retained.}
+retained. A missing truth parent does not erase an otherwise eligible cost pair.}
