@@ -28,6 +28,7 @@ where = ["src"]
 [tool.setuptools.package-data]
 "cltav_offline.resources" = ["*.json"]
 "cltav_615a_engineering.resources" = ["*.json"]
+"a615a_sim.resources" = ["*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

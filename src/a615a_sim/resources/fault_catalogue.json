@@ -1,0 +1,120 @@
+{
+  "identity": {
+    "catalogueId": "CLTAV-H-SINGLE-SIMULATED-2026-010-A",
+    "domain": "H0 = {h_normal} union H_single",
+    "iutClass": "SIMULATED-IUT",
+    "boundModel": "UPLOAD FIND/SEND/ABORT and INFORMATION only; no DOWNLOAD/AFDX",
+    "claimStatus": "non-confirmatory; DEC-IUT and DEC-EQUIV remain OPEN"
+  },
+  "normal": {
+    "id": "H-NORMAL",
+    "hypothesisId": "h_normal",
+    "inHSingle": false,
+    "sceneId": "SC-NORMAL-UPLOAD",
+    "serviceScope": "UPLOAD",
+    "faultClass": "NORMAL-CONTROL",
+    "mechanism": "no perturbation; complete FIND then SEND under a fresh reset",
+    "observableSignature": "terminal-status COMPLETED with owned FIND and SEND records",
+    "confirmationToken": "COMPLETED",
+    "faultDomainClass": "normal",
+    "injectionStatusIfConfirmed": "normal",
+    "notes": "A normal singleton is not protocol PASS."
+  },
+  "hSingle": [
+    {
+      "id": "H-WAIT-CONTINUE",
+      "hypothesisId": "h_wait_continue",
+      "inHSingle": true,
+      "sceneId": "SC-WAIT-CONTINUE",
+      "serviceScope": "UPLOAD",
+      "faultClass": "CONFIGURATION-OR-PROTOCOL",
+      "mechanism": "emit WAIT then a delayed CONTINUE while the upload obligation remains active",
+      "observableSignature": "WAIT status observed before CONTINUE; obligation not cancelled",
+      "confirmationToken": "WAIT+CONTINUE",
+      "faultDomainClass": "in-domain-non-equivalent",
+      "injectionStatusIfConfirmed": "confirmed"
+    },
+    {
+      "id": "H-NO-RESPONSE",
+      "hypothesisId": "h_no_response",
+      "inHSingle": true,
+      "sceneId": "SC-NO-RESPONSE",
+      "serviceScope": "INFORMATION",
+      "faultClass": "PROTOCOL-FAULT",
+      "mechanism": "after a status file carrying exceptionDelaySeconds, suppress the next status and the data-loader abort fallback",
+      "observableSignature": "status-with-delay observed; neither timely new status nor abort fallback before the finite observation end",
+      "confirmationToken": "NO-RESPONSE",
+      "faultDomainClass": "in-domain-non-equivalent",
+      "injectionStatusIfConfirmed": "confirmed"
+    },
+    {
+      "id": "H-ABORT",
+      "hypothesisId": "h_abort",
+      "inHSingle": true,
+      "sceneId": "SC-ABORT",
+      "serviceScope": "UPLOAD",
+      "faultClass": "CONFIGURATION-OR-PROTOCOL",
+      "mechanism": "deliver an owned ABORT for the active SEND correlation during transfer",
+      "observableSignature": "ABORT event with the same correlation key as the active SEND",
+      "confirmationToken": "ABORT",
+      "faultDomainClass": "in-domain-non-equivalent",
+      "injectionStatusIfConfirmed": "confirmed"
+    },
+    {
+      "id": "H-SAME-KEY",
+      "hypothesisId": "h_same_key",
+      "inHSingle": true,
+      "sceneId": "SC-SAME-KEY",
+      "serviceScope": "INFORMATION",
+      "faultClass": "CONFIGURATION-OR-PROTOCOL",
+      "mechanism": "issue a second INFORMATION request that reuses the live correlation key",
+      "observableSignature": "two INFORMATION requests share one correlation key while both are outstanding",
+      "confirmationToken": "REUSED-KEY",
+      "faultDomainClass": "in-domain-non-equivalent",
+      "injectionStatusIfConfirmed": "confirmed"
+    },
+    {
+      "id": "H-SINGLE-BATCH",
+      "hypothesisId": "h_single_batch",
+      "inHSingle": true,
+      "sceneId": "SC-SINGLE-BATCH",
+      "serviceScope": "UPLOAD",
+      "faultClass": "CONFIGURATION-DIFFERENCE",
+      "mechanism": "select the registered batch policy instead of the single-file policy on an otherwise identical reset target",
+      "observableSignature": "publicConfigurationRef equals BATCH while pairing identity is shared",
+      "confirmationToken": "BATCH",
+      "faultDomainClass": "in-domain-non-equivalent",
+      "injectionStatusIfConfirmed": "confirmed"
+    }
+  ],
+  "evaluatorConstructionsNotInHSingle": [
+    {
+      "id": "H-INVALID-OBS",
+      "hypothesisId": null,
+      "inHSingle": false,
+      "sceneId": "SC-INVALID-OBS",
+      "serviceScope": "INFORMATION",
+      "faultClass": "OBSERVATION-ANOMALY",
+      "mechanism": "evaluator corrupts capture timestamp or ownership evidence; not an IUT-fault label",
+      "observableSignature": "observation record missing correlation id or invalid timestamp",
+      "confirmationToken": "MISSING-CORRELATION",
+      "faultDomainClass": "unknown",
+      "injectionStatusIfConfirmed": "unresolved",
+      "notes": "Retained in attempt accounting; excluded from IUT PASS/FAIL denominators."
+    },
+    {
+      "id": "H-RESOURCE-ERROR",
+      "hypothesisId": null,
+      "inHSingle": false,
+      "sceneId": "SC-RESOURCE-ERROR",
+      "serviceScope": "INFORMATION",
+      "faultClass": "TOOL-OR-RESOURCE-ERROR",
+      "mechanism": "resource controller raises a named tool error without IUT nonconformance",
+      "observableSignature": "resourceStatus RESOURCE-ERROR with spent cost retained",
+      "confirmationToken": "RESOURCE-ERROR",
+      "faultDomainClass": "unknown",
+      "injectionStatusIfConfirmed": "unresolved",
+      "notes": "Not scored as IUT nonconformance."
+    }
+  ]
+}

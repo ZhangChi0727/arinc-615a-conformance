@@ -1257,6 +1257,33 @@ not claimed; CRC/integrity remains NOT-ESTABLISHED. This
 decision authorizes neither Ready, approval, merge, Configuration/M3,
 capability/conformance/certification nor scientific result claims.
 
+## DD-048 — Simulated-IUT Phase A experiment instrument
+
+**Decision:** Under CR-2026-024, permit a Draft, non-confirmatory SIMULATED-IUT
+instrument: bound-model FIND/SEND/ABORT/INFORMATION, declared `H_single` injection
+with confirmation, an evaluator-only truth store that fails closed to algorithm
+and arm code, per-attempt reset evidence, and a simulated clock with declared ε
+for T5 intervals. DEC-IUT, DEC-TRUTH, DEC-CLOCK, DEC-EQUIV and DEC-SAMPLE remain
+OPEN. CR-2026-023 / DD-047 remain the Draft PR #27 figure increment and are not
+reused.
+
+**Why:** EXP-PLAN-2026-001 and the experiment implementation spec require
+injection confirmation, independent truth, reset evidence and a named clock
+error bound before arms run. Phase A implements those instruments only.
+
+**Scope:** `src/a615a_sim/` bound IUT, fault catalogue, injector, evaluator
+store/guard, simulated clock, and unit tests. Four-arm adapters, E0–E6 pipeline,
+pilot execution, manuscript results, runtime semantics, CRS/M2 and real IUT or
+network evidence remain out of scope.
+
+**Guardrails:** Planned injection is not confirmed injection. Unconfirmed
+injection is not valid truth. Algorithm-visible APIs must not import or read
+evaluator truth. A missing allowed caller fails closed. Simulated ε is not
+laboratory calibration. A normal singleton is not protocol PASS.
+
+**Status:** Candidate under CR-2026-024. Draft PR review required. Not run
+admission, not confirmatory, not Ready/merge.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -1914,3 +1941,23 @@ DM-C-R01 记录 UNKNOWN 经合格 Recover 后完整会话保守停于 Stop-Predi
 不继续诊断；继续诊断属后续方法项。E 收尾待 DM 整支复审。不主张完整 UPLOAD、真实 IUT／网络、
 四臂或实验结果；CRC／完整性保持 NOT-ESTABLISHED。本决定不授权 Ready、批准、
 合并、Configuration/M3、能力／符合性／认证或科学结果主张。
+
+## DD-048——模拟 IUT Phase A 实验仪器
+
+**决定：** 在 CR-2026-024 下，许可一份 Draft、非确认性的 SIMULATED-IUT 仪器：有界模型
+FIND／SEND／ABORT／INFORMATION、带确认的声明 `H_single` 注入、对算法／臂失败即关闭的
+仅评价者真值存储、每次尝试复位证据，以及带声明 ε 的模拟时钟供 T5 区间使用。DEC-IUT、
+DEC-TRUTH、DEC-CLOCK、DEC-EQUIV 与 DEC-SAMPLE 保持 OPEN。CR-2026-023／DD-047 仍属
+Draft PR #27 的图增量，本决定不复用。
+
+**理由：** 实验方案与实施规格要求在对照臂运行前具备注入确认、独立真值、复位证据和具名
+时钟误差界。Phase A 只实现这些仪器。
+
+**范围：** `src/a615a_sim/` 有界 IUT、故障目录、注入器、评价者存储／守卫、模拟时钟与单元
+测试。四臂适配器、E0–E6 流水线、试点执行、稿件结果、运行时语义、CRS／M2 以及真实 IUT 或
+网络证据仍不在范围。
+
+**护栏：** 计划注入不是确认注入。未确认注入不是有效真值。算法可见 API 不得导入或读取评价者
+真值。缺少允许的调用者即失败关闭。模拟 ε 不是实验室校准。正常单例不是协议 PASS。
+
+**状态：** 在 CR-2026-024 下为候选。须 Draft PR 审查。不是运行准入、确认性实验或 Ready／合并。
