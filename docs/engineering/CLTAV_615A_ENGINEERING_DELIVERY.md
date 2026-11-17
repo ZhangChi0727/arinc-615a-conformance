@@ -66,13 +66,19 @@ Refreshing fingerprint after synergistic tamper still fails.
 exclusion whitelist is only new run/attempt/reset/session/correlation/event IDs
 and wall-clock time.
 
+## Status
+
+C is limited-accepted at `7fd917b9c0cc7422e463e918c1ee1fc350a20868` and D at
+`1012f6734bf26367e1bc7050850217e130e89452`. E closeout awaits DM whole-branch
+review.
+
 ## DM-C-R01
 
 After UNKNOWN, a qualified Recover reconfirms q/target from current public
 readback and does not emit protocol events. The full `ReferenceSession`
 retains conservative H members and stops at `Stop-Prediction-Gap`. That
 conservative stop is the accepted C/D behaviour. It is **not** post-recovery
-continued diagnosis. Direct adapter FIFO continuation remains a C fact and is
+continued diagnosis, which is a later method item. Direct adapter FIFO continuation remains a C fact and is
 not a restored discriminator.
 
 `ENG-CASE-ACCESS-UNKNOWN-RECOVER-GAP` records that stop honestly.

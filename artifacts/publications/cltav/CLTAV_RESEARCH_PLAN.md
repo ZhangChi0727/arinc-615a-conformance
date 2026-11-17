@@ -54,16 +54,18 @@ SysML 1.6 notation-based PlantUML sources: [`../../../docs/research/publication/
 
 Four arms CL-T, CL-A, CL-TA, CL-LOOP; detection, localization and ablation families in `docs/research/EXPERIMENT_PLAN.md`. Top-level algorithm source: [`../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex`](../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex). Typeset reader PDF: [`ALG-CLTAV-01.pdf`](ALG-CLTAV-01.pdf). Register before confirmatory runs. No Configuration and no live load in this increment. No filled result numbers here.
 
-## 615A UPLOAD scenario-prototype status (D candidate; not a result)
+## 615A UPLOAD scenario-prototype status (C/D limited-accepted; not a result)
 
-C-stage session integration is limited-accepted. DM-C-R01: UNKNOWN after
-Recover keeps conservative H and the full session stops at
-`Stop-Prediction-Gap`; this is not post-recovery continued diagnosis. PR #26
-now also contains a D-stage `cltav-615a-engineering` candidate
-(`run`/`verify`/`replay`, closed envelope, transactional publish, wheel).
+C-stage session integration (`7fd917b9`) and D-stage `cltav-615a-engineering`
+delivery (`1012f673`; `run`/`verify`/`replay`, closed envelope,
+transactional publish, wheel) are limited-accepted. DM-C-R01: after UNKNOWN
+and an admissible Recover, the full session conservatively stops at
+`Stop-Prediction-Gap` without promoting conservative H or continuing
+diagnosis; continued diagnosis is a later method item.
 It is a finite in-process surrogate loop, not a network or IUT execution,
-complete UPLOAD transfer, integrity capability or experiment runner. D awaits
-its own fixed-head independent review. The four-arm runner, valid
+complete UPLOAD transfer, integrity capability (CRC/integrity remains
+NOT-ESTABLISHED) or experiment runner. E closeout awaits DM whole-branch
+review. The four-arm runner, valid
 pre-experiment, independent clock/truth, integrity capability and independent
 mathematical review remain uncompleted. No result, performance, conformance,
 or C1/C2 claim follows from this material. See the
@@ -122,13 +124,13 @@ SysML 1.6 记法 PlantUML 源：[`../../../docs/research/publication/models/`](.
 
 四臂 CL-T、CL-A、CL-TA、CL-LOOP；检测、定位、消融。总体算法源：[`../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex`](../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex)。排版读者 PDF：[`ALG-CLTAV-01.pdf`](ALG-CLTAV-01.pdf)。确认性运行前登记。本增量无 Configuration、无实网加载。此处不填结果数字。
 
-## 615A UPLOAD 场景原型状态（D 候选；不是结果）
+## 615A UPLOAD 场景原型状态（C／D 有限接受；不是结果）
 
-C 阶段会话接入已有限接受。DM-C-R01：UNKNOWN 经 Recover 后保持保守 H，完整会话以
-`Stop-Prediction-Gap` 终止；这不是恢复后继续诊断。PR #26 现另有 D 阶段
-`cltav-615a-engineering` 候选（`run`/`verify`/`replay`、封闭 envelope、事务发布、wheel）。
-它是有限进程内替身闭环，不是网络或 IUT 执行、完整 UPLOAD、完整性能力或实验 runner。
-D 等待自身固定 Head 独立评审。四臂 runner、有效预实验、独立时钟／真值、完整性能力
+C 阶段会话接入（`7fd917b9`）与 D 阶段 `cltav-615a-engineering` 交付（`1012f673`；
+`run`/`verify`/`replay`、封闭 envelope、事务发布、wheel）已有限接受。DM-C-R01：UNKNOWN
+经合格 Recover 后，完整会话保守停于 `Stop-Prediction-Gap`，不提升保守 H、不继续诊断；
+继续诊断属后续方法项。它是有限进程内替身闭环，不是网络或 IUT 执行、完整 UPLOAD、完整性
+能力（CRC／完整性保持 NOT-ESTABLISHED）或实验 runner。E 收尾待 DM 整支复审。四臂 runner、有效预实验、独立时钟／真值、完整性能力
 和独立数学审查均仍未完成。该材料不产生结果、性能、符合性或 C1／C2 主张。参见
 [`615A 场景原型`](../../../docs/engineering/CLTAV_615A_SCENARIO_PROTOTYPE.md)、
 [`工程交付`](../../../docs/engineering/CLTAV_615A_ENGINEERING_DELIVERY.md) 及

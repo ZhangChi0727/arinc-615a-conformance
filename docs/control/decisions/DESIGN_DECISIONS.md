@@ -1247,11 +1247,13 @@ evidence, not private state. A stopped session is not extended merely to
 complete a demonstration. Fault records remain type-valid visible events and
 are not filtered as tool errors.
 
-**Status:** G0/A, B and C received successive limited fixed-head acceptance.
-DM-C-R01 records that UNKNOWN after Recover keeps conservative H and stops at
-Stop-Prediction-Gap; it is not post-recovery continued diagnosis. The current
-D-stage engineering-delivery material remains a candidate pending its own
-fixed-head independent review; E and whole-PR acceptance remain separate. This
+**Status:** G0/A, B, C (`7fd917b9`) and D (`1012f673`) received successive
+limited fixed-head acceptance. DM-C-R01 records that after UNKNOWN and an
+admissible Recover the full session conservatively stops at
+Stop-Prediction-Gap without promoting conservative H or continuing diagnosis;
+continued diagnosis is a later method item. E closeout awaits DM whole-branch
+review. Complete UPLOAD, real IUT/network, four-arm and experiment results are
+not claimed; CRC/integrity remains NOT-ESTABLISHED. This
 decision authorizes neither Ready, approval, merge, Configuration/M3,
 capability/conformance/certification nor scientific result claims.
 
@@ -1907,7 +1909,8 @@ NORMAL、EARLY-WRQ 与 EARLY-DATA 是评价域中的对象变体，而不是协�
 摘要与确认必须由许可的公开 journal／回执证据重算，而不是私有状态。会话停止后不得为完成演示
 而延长运行。故障记录仍是类型合法的可见事件，不得过滤为工具错误。
 
-**状态：** G0/A、B 与 C 已依次获得有限固定 Head 接受。DM-C-R01 记录 UNKNOWN 经 Recover
-后保持保守 H 并以 Stop-Prediction-Gap 终止，不是恢复后继续诊断。当前 D 阶段工程交付材料
-仍是等待自身固定 Head 独立评审的候选；E 与整支 PR 接受仍然独立。本决定不授权 Ready、批准、
+**状态：** G0/A、B、C（`7fd917b9`）与 D（`1012f673`）已依次获得有限固定 Head 接受。
+DM-C-R01 记录 UNKNOWN 经合格 Recover 后完整会话保守停于 Stop-Prediction-Gap，不提升保守 H、
+不继续诊断；继续诊断属后续方法项。E 收尾待 DM 整支复审。不主张完整 UPLOAD、真实 IUT／网络、
+四臂或实验结果；CRC／完整性保持 NOT-ESTABLISHED。本决定不授权 Ready、批准、
 合并、Configuration/M3、能力／符合性／认证或科学结果主张。

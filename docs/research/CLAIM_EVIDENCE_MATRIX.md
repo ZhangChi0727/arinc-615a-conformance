@@ -38,7 +38,7 @@ Passing tests is not Result, Evidence, or a superiority Claim.
 | CL-ABLATION | Feedback, FIND-clock non-waiver and Prep/Recover cost change outcomes | EXP-CLTAV-ABLATION, including the forbidden abort-waiver negative control | To be verified |
 | CL-CRS | Expanded protocol CRS is reviewable for INFORMATION, UPLOAD, both DOWNLOAD modes, FIND, bounded 665/664/RFC support and 615A-triggered 645 semantic leaves | M1 package, source audit, bilingual review view | Specified as candidate; 645 SOURCE/SEMANTIC bound; capabilities NOT-ESTABLISHED; not independently approved |
 | CL-ALG | Top-level CL-TAV process and abstract interfaces are specified | ALG-CLTAV-01, method §3.9.2, DD-033 | Specified; not implemented; independent math review open |
-| CL-DEV | A bounded finite-path kernel, eight algorithm bindings, seven experiment bindings, and synthetic contract witnesses are development-specified; PR #26 additionally has a limited-accepted C-stage 615A LUR-start session loop and a D-stage installable engineering-delivery candidate | `CLTAV-DEVELOPMENT-CONTRACTS`, `configs/engineering/cltav_615a_scenarios.json`, `src/cltav_615a/`, `src/cltav_615a_adapter/`, `src/cltav_615a_engineering/`, generated bilingual review views | D-stage candidate only; finite surrogate loop with UNKNOWN→Recover→Stop-Prediction-Gap (DM-C-R01). Not complete UPLOAD, IUT, integrity capability, four-arm results, protocol verdict or post-recovery continued diagnosis |
+| CL-DEV | A bounded finite-path kernel, eight algorithm bindings, seven experiment bindings, and synthetic contract witnesses are development-specified; PR #26 additionally has a limited-accepted C-stage 615A LUR-start session loop and limited-accepted D-stage installable engineering delivery (E closeout pending DM review) | `CLTAV-DEVELOPMENT-CONTRACTS`, `configs/engineering/cltav_615a_scenarios.json`, `src/cltav_615a/`, `src/cltav_615a_adapter/`, `src/cltav_615a_engineering/`, generated bilingual review views | C/D limited-accepted engineering only; finite surrogate loop with UNKNOWN→Recover→Stop-Prediction-Gap (DM-C-R01). Not complete UPLOAD, IUT, integrity capability, four-arm results, protocol verdict or post-recovery continued diagnosis |
 
 Observation → Result → Evidence → Argument/Decision → Claim stays the control
 boundary. ARINC 645-1 2021 is identity-bound for 615A-triggered CRC, check-value
@@ -47,14 +47,15 @@ not established.
 
 ### PR #26 D-stage engineering-status boundary
 
-C-stage session integration is limited-accepted at `7fd917b9`. DM-C-R01: after
-UNKNOWN, qualified Recover does not promote conservative H; the full session
-stops at `Stop-Prediction-Gap` and does not continue diagnosis. The current D
-candidate adds `cltav-615a-engineering` run/verify/replay, a closed envelope
+C-stage session integration is limited-accepted at `7fd917b9` and D-stage
+engineering delivery at `1012f673`; E closeout awaits DM whole-branch review.
+DM-C-R01: after UNKNOWN and an admissible Recover, the full session
+conservatively stops at `Stop-Prediction-Gap` without promoting conservative H
+or continuing diagnosis; continued diagnosis is a later method item. D adds `cltav-615a-engineering` run/verify/replay, a closed envelope
 with algorithm-visible / evaluator-audit split, transactional publish and
 wheel installation. It remains a finite surrogate engineering loop: not
-complete UPLOAD, IUT, four-arm results, CRC capability or experiment
-admission. This status note does not change any `A-*`, `R-*`, or `CL-*`
+complete UPLOAD, real IUT/network, four-arm or experiment results, or
+experiment admission; CRC/integrity remains NOT-ESTABLISHED. This status note does not change any `A-*`, `R-*`, or `CL-*`
 maturity or assurance state.
 
 ## Engineering claims
@@ -199,17 +200,18 @@ interval candidate. These remain design obligations, not observed evidence.
 | CL-ABLATION | 反馈、FIND 时钟不豁免与 Prep／Recover 成本改变结局 | EXP-CLTAV-ABLATION，含禁止的中止豁免反例对照 | To be verified |
 | CL-CRS | 扩大协议 CRS 对 INFORMATION、UPLOAD、两种 DOWNLOAD、FIND、有界 665／664／RFC 支持及 615A 触发的 645 语义叶可评审 | M1 包、来源审计、双语评审视图 | Specified 为候选；645 来源／语义已绑定；能力未建立；未经独立批准 |
 | CL-ALG | CL-TAV 总体过程与抽象接口已规格化 | ALG-CLTAV-01、方法报告 §3.9.2、DD-033 | Specified；未实现；独立数学评审仍开放 |
-| CL-DEV | 有界有限路径内核、八个算法绑定、七个实验绑定和合成合同见证已进入开发规格；PR #26 另有有限接受的 C 阶段 615A LUR 起始会话闭环，以及可安装的 D 阶段工程交付候选 | `CLTAV-DEVELOPMENT-CONTRACTS`、`configs/engineering/cltav_615a_scenarios.json`、`src/cltav_615a/`、`src/cltav_615a_adapter/`、`src/cltav_615a_engineering/`、生成的双语评审视图 | 仅为 D 阶段候选；有限替身闭环在 UNKNOWN→Recover→Stop-Prediction-Gap（DM-C-R01）。不是完整 UPLOAD、IUT、完整性能力、四臂结果、协议判定或恢复后继续诊断 |
+| CL-DEV | 有界有限路径内核、八个算法绑定、七个实验绑定和合成合同见证已进入开发规格；PR #26 另有有限接受的 C 阶段 615A LUR 起始会话闭环，以及有限接受的可安装 D 阶段工程交付（E 收尾待 DM 复审） | `CLTAV-DEVELOPMENT-CONTRACTS`、`configs/engineering/cltav_615a_scenarios.json`、`src/cltav_615a/`、`src/cltav_615a_adapter/`、`src/cltav_615a_engineering/`、生成的双语评审视图 | 仅为 C／D 有限接受的工程事实；有限替身闭环在 UNKNOWN→Recover→Stop-Prediction-Gap（DM-C-R01）。不是完整 UPLOAD、IUT、完整性能力、四臂结果、协议判定或恢复后继续诊断 |
 
 观察→结果→证据→论证／决策→主张边界保持。ARINC 645-1 2021 已按 615A 触发的 CRC、校验值与命名叶完成身份绑定；CRC／校验值／命名／完整完整性能力仍未建立。
 
 ### PR #26 D 阶段工程状态边界
 
-C 阶段会话接入已在 `7fd917b9` 有限接受。DM-C-R01：UNKNOWN 后合格 Recover 不提升保守 H；
-完整会话以 `Stop-Prediction-Gap` 终止，不继续诊断。当前 D 候选增加
+C 阶段会话接入已在 `7fd917b9`、D 阶段工程交付已在 `1012f673` 有限接受；E 收尾待 DM
+整支复审。DM-C-R01：UNKNOWN 经合格 Recover 后，完整会话保守停于 `Stop-Prediction-Gap`，
+不提升保守 H、不继续诊断；继续诊断属后续方法项。D 增加
 `cltav-615a-engineering` 的 run/verify/replay、algorithm-visible／evaluator-audit
 分离的封闭 envelope、事务发布与 wheel 安装。它仍是有限替身工程闭环：不是完整 UPLOAD、
-IUT、四臂结果、CRC 能力或实验准入。本状态说明不改变任何 `A-*`、`R-*` 或 `CL-*`
+真实 IUT／网络、四臂或实验结果，也不是实验准入；CRC／完整性保持 NOT-ESTABLISHED。本状态说明不改变任何 `A-*`、`R-*` 或 `CL-*`
 成熟度或保证状态。
 
 ## ARINC/Profile 面向认证候选主张
