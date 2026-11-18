@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from a615a_sim.algorithm.hypothesis_model import map_to_parent_hypotheses
 from a615a_sim.algorithm.library import EMPTY_DETAIL, project_cost
 from a615a_sim.evaluator.guard import deny_algorithm_truth_access
 from a615a_sim.evaluator.pipeline.timing import interval_outcome
@@ -102,6 +103,7 @@ def derive_outcome(
         return "NOT-ANSWERED"
     if validity == "INVALID":
         return "ERROR"
+    final_hypotheses = list(map_to_parent_hypotheses(final_hypotheses))
     timed = interval_outcome(observation_interval, requirement_interval)
     if timed:
         return timed

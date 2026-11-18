@@ -102,6 +102,17 @@ def expand_independent_units() -> tuple[dict[str, Any], ...]:
                     "harderCaseId": None,
                 }
             )
+        for value in _axis("AX-FIND-NORMAL-NEAR-BOUNDARY")["values"]:
+            units.append(
+                {
+                    "unitId": f"{scene}/H-NORMAL/{value['id']}",
+                    "sceneId": scene,
+                    "faultId": "H-NORMAL",
+                    "parameters": {"findAnswerAtS": value["findAnswerAtS"]},
+                    "axisIds": ["AX-BASE-SCENE", "AX-FIND-NORMAL-NEAR-BOUNDARY"],
+                    "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+                }
+            )
 
     for scene in STATUS_SCENES:
         for value in silence:

@@ -47,6 +47,7 @@ def test_parameter_axes_and_harder_cases_are_declared() -> None:
     assert axis_ids == {
         "AX-BASE-SCENE",
         "AX-FIND-ANSWER-TICK",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY",
         "AX-STATUS-SILENCE-UNTIL",
         "AX-LUR-ACK-TICK",
         "AX-OBS-JITTER",

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from fractions import Fraction
 from typing import Any, Mapping
 from uuid import uuid4
 
@@ -22,7 +23,7 @@ from a615a_sim.faults.catalogue import (
 )
 
 ALLOWED_PARAMETER_KEYS = {
-    "H-NORMAL": frozenset({"lurAckAtS", "observationJitterS"}),
+    "H-NORMAL": frozenset({"lurAckAtS", "observationJitterS", "findAnswerAtS"}),
     "F-FIND-ANSWER-LATE": frozenset({"findAnswerAtS", "observationJitterS"}),
     "F-FIND-ANSWER-ABSENT": frozenset({"findObservationEndS", "observationJitterS"}),
     "F-STATUS-SILENCE": frozenset({"statusSilenceUntilS", "observationJitterS"}),
@@ -47,6 +48,12 @@ def require_matching_parameters(
         raise ValueError(
             f"parameter keys {sorted(extra)} do not match fault {canonical}"
         )
+    if canonical == "H-NORMAL" and parameters and parameters.get("findAnswerAtS") is not None:
+        tick = Fraction(str(parameters["findAnswerAtS"]))
+        if tick > FIND_HOST_ANSWER_S:
+            raise ValueError(
+                f"parameter keys ['findAnswerAtS'] do not match fault {canonical}"
+            )
 
 
 @dataclass(frozen=True)

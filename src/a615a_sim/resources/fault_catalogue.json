@@ -260,6 +260,25 @@
       ]
     },
     {
+      "axisId": "AX-FIND-NORMAL-NEAR-BOUNDARY",
+      "kind": "timing",
+      "parentFaultId": "H-NORMAL",
+      "parameterKey": "findAnswerAtS",
+      "unit": "second",
+      "requirementInterval": {
+        "id": "CRS-M1-00391",
+        "closed": "[0, 2]",
+        "note": "In-window FIND-ANSWER whose observationInterval overlaps the closed endpoint 2 s. U3 harder case; not a new protocol event."
+      },
+      "observationEnd": {
+        "family": "FIND",
+        "endS": "2201/1000"
+      },
+      "values": [
+        {"id": "FIND-TICK-NORMAL-NEAR-BOUNDARY", "findAnswerAtS": "3999/2000", "role": "in-window-overlap-endpoint"}
+      ]
+    },
+    {
       "axisId": "AX-STATUS-SILENCE-UNTIL",
       "kind": "timing",
       "parentFaultId": "F-STATUS-SILENCE",
@@ -348,6 +367,20 @@
         "CL-A": "analysis-only candidate sets are hypothesized to remain mixed without a T5 interval and therefore INCONCLUSIVE under the retained R1 rule",
         "CL-TA": "frozen TEST then analysis is hypothesized to inherit the TEST interval verdict",
         "CL-LOOP": "loop updates are hypothesized to keep both h_normal and h_find_answer_late until a later distinguishing event"
+      },
+      "statementClass": "HYPOTHESIS-NOT-RESULT"
+    },
+    {
+      "id": "HC-NORMAL-NEAR-BOUNDARY",
+      "parentFaultId": "H-NORMAL",
+      "parameters": {"findAnswerAtS": "3999/2000"},
+      "pairWith": "HC-FIND-ENDPOINT",
+      "visibleThrough": "FIND-ANSWER observationInterval overlapping 2 s from inside the requirement; exact tick is evaluator-only",
+      "hypothesisStress": {
+        "CL-T": "hypothesized T5 overlap / FIND-ANSWER-BOUNDARY, mixed with late@boundary after parent mapping, therefore INCONCLUSIVE under R1 rather than Stop-Empty",
+        "CL-A": "hypothesized mixed parent set containing h_normal without a distinguishing T5 interval, INCONCLUSIVE under R1",
+        "CL-TA": "hypothesized to inherit the TEST interval class FIND-ANSWER-BOUNDARY",
+        "CL-LOOP": "hypothesized to retain h_normal@near-boundary and h_find_answer_late@boundary until a later distinguishing event"
       },
       "statementClass": "HYPOTHESIS-NOT-RESULT"
     },

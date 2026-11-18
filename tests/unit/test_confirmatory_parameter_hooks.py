@@ -33,6 +33,7 @@ def test_catalogue_declares_parameter_axes_and_harder_cases() -> None:
     assert axes == {
         "AX-BASE-SCENE",
         "AX-FIND-ANSWER-TICK",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY",
         "AX-STATUS-SILENCE-UNTIL",
         "AX-LUR-ACK-TICK",
         "AX-OBS-JITTER",
