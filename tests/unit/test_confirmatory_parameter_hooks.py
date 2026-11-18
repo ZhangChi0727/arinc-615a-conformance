@@ -78,10 +78,49 @@ def test_observation_jitter_shifts_interval_only() -> None:
     visible = target.algorithm_visible_records()
     assert {row["kind"] for row in visible} <= PROTOCOL_EVENT_WHITELIST
     answer = next(row for row in visible if row["kind"] == "FIND-ANSWER")
-    interval = target.clock.observation_interval(Fraction(answer["tick"]))
+    assert "tick" not in answer
+    raw = next(event for event in target.events if event.kind == "FIND-ANSWER")
+    interval = target.clock.observation_interval(raw.tick)
     assert answer["observationInterval"]["lower"] == str(interval.lower + Fraction(1, 500))
     assert answer["observationInterval"]["upper"] == str(interval.upper + Fraction(1, 500))
     assert answer["kind"] == "FIND-ANSWER"
+
+
+def test_visible_records_omit_exact_tick() -> None:
+    target = _target()
+    reset_target(target)
+    inject(target, scene_id="SC-NORMAL-UPLOAD", fault_id="H-NORMAL")
+    for record in target.algorithm_visible_records():
+        assert "tick" not in record
+        assert "observationInterval" in record
+    timed = target.evaluator_timed_records()
+    assert timed
+    assert all("tick" in row for row in timed)
+
+
+def test_jitter_changes_arm_visible_interval() -> None:
+    def _answer_interval(jitter: str) -> tuple[str, str]:
+        target = _target()
+        reset_target(target)
+        inject(
+            target,
+            scene_id="SC-NORMAL-UPLOAD",
+            fault_id="F-FIND-ANSWER-LATE",
+            parameters={"observationJitterS": jitter},
+        )
+        answer = next(
+            row for row in target.algorithm_visible_records() if row["kind"] == "FIND-ANSWER"
+        )
+        assert "tick" not in answer
+        interval = answer["observationInterval"]
+        return interval["lower"], interval["upper"]
+
+    minus = _answer_interval("-1/500")
+    plus = _answer_interval("1/500")
+    none = _answer_interval("0")
+    assert minus != plus
+    assert minus != none
+    assert plus != none
 
 
 def test_absent_short_window_omits_find_answer_without_new_kind() -> None:

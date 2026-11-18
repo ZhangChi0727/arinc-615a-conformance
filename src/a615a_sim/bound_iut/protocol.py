@@ -253,19 +253,33 @@ class SimulatedTarget:
     def algorithm_visible_records(self) -> list[dict[str, Any]]:
         return [self._visible_dict(event) for event in self._events]
 
+    def evaluator_timed_records(self) -> list[dict[str, Any]]:
+        """Exact ticks for the evaluator store.  Not algorithm-visible."""
+
+        return [
+            {
+                "kind": event.kind,
+                "correlationId": event.correlation_id,
+                "tick": str(event.tick),
+                "payload": dict(event.payload),
+                "label": "EVALUATOR-ONLY",
+            }
+            for event in self._events
+        ]
+
     def _visible(self, event: ProtocolEvent) -> dict[str, Any]:
         record = self._visible_dict(event)
         self._last_visible = record
         return record
 
     def _visible_dict(self, event: ProtocolEvent) -> dict[str, Any]:
+        interval = self.clock.observation_interval(event.tick)
         return {
             "kind": event.kind,
             "correlationId": None if self._corrupt_observation else event.correlation_id,
-            "tick": str(event.tick),
             "observationInterval": {
-                "lower": str(self.clock.observation_interval(event.tick).lower + self._observation_jitter),
-                "upper": str(self.clock.observation_interval(event.tick).upper + self._observation_jitter),
+                "lower": str(interval.lower + self._observation_jitter),
+                "upper": str(interval.upper + self._observation_jitter),
                 "unit": self.clock.unit,
             },
             "payload": dict(event.payload),
