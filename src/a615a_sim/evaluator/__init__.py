@@ -9,6 +9,7 @@ from a615a_sim.evaluator.guard import (
 deny_algorithm_import(operation="import-evaluator")
 
 from a615a_sim.evaluator.fault_view import evaluator_fault_record
+from a615a_sim.evaluator.harness import run_registered_arms
 from a615a_sim.evaluator.reset import reset_target
 from a615a_sim.evaluator.truth import IndependentTruthStore, TruthCapability
 from a615a_sim.faults.injector import InjectionAttempt
@@ -25,6 +26,7 @@ __all__ = [
     "issue_truth_capability",
     "new_independent_truth_store",
     "reset_target",
+    "run_registered_arms",
     "write_confirmed_truth",
 ]
 
