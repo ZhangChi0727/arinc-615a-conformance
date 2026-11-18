@@ -63,21 +63,20 @@ def filter_attempt(
             "variant": "run-completed",
             "producer": "IF-EXP-FILTER",
         }
-    if stage == "PRE-ACTION" and action_issued is False:
+    if stop_class == "Stop-Budget" and action_issued is False:
         return {
             "validityClass": "INCOMPLETE",
             "filterReason": "pre-action-budget",
             "variant": "run-completed",
             "producer": "IF-EXP-FILTER",
         }
-    if resource_status == "BUDGET-EXHAUSTED" and stop_class == "Stop-Budget" and stage == "TERMINAL":
-        if variant == "budget-incomplete":
-            return {
-                "validityClass": "INCOMPLETE",
-                "filterReason": "budget-exhausted",
-                "variant": "run-completed",
-                "producer": "IF-EXP-FILTER",
-            }
+    if stop_class == "Stop-Budget" or resource_status == "BUDGET-EXHAUSTED":
+        return {
+            "validityClass": "INCOMPLETE",
+            "filterReason": "budget-exhausted",
+            "variant": "run-completed",
+            "producer": "IF-EXP-FILTER",
+        }
     del run_id
     return {
         "validityClass": "VALID",

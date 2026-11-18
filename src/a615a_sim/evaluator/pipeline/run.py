@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from typing import Any, Mapping
-from uuid import uuid4
 
 from a615a_sim.algorithm.adapter import run_arm
 from a615a_sim.algorithm.library import ArmRun
@@ -40,11 +39,18 @@ def run_registered_arm(
         "Stop-Budget",
     }
     singleton = localization and len(hypotheses) == 1 and arm_run.stop_class == "Stop-Singleton"
+    if not issued and arm_run.stop_class == "Stop-Budget":
+        stage = "PRE-ACTION"
+    elif arm_run.stop_class in {"Stop-Empty", "Stop-645"}:
+        stage = "POST-UPDATE"
+    else:
+        stage = "TERMINAL"
     return {
-        "runId": run_id or f"RUN-{uuid4().hex[:8]}",
+        "runId": run_id or f"RUN-{correlation_id}",
         "sceneId": scene_id,
         "armId": arm_id,
         "stopClass": arm_run.stop_class,
+        "stage": stage,
         "traceRef": mapping,
         "finalHypotheses": hypotheses,
         "localizationDecisionIssued": localization,

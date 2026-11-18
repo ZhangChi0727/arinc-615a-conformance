@@ -22,8 +22,8 @@ from a615a_sim.clock import FIND_HOST_ANSWER_S, FIND_OBSERVATION_END_S
 
 _ROOT = Path(__file__).resolve().parents[3]
 MODEL_PATH = _ROOT / "configs/research/cltav_pilot_hypothesis_model_v1.json"
-IDENTIFICATION_STOP = "Stop-Singleton"
-SCENE_TERMINAL_SEND = frozenset({"COMPLETED", "WAIT", "CONTINUE", "ABORT"})
+IDENTIFICATION_STOP = "Stop-Singleton"  # RR-006 N5.5: identification stop; no alias.
+SCENE_TERMINAL_SEND = frozenset({"COMPLETED", "WAIT", "CONTINUE", "ABORT"})  # N5.1 LUR-COMPLETE.
 
 
 @lru_cache(maxsize=1)

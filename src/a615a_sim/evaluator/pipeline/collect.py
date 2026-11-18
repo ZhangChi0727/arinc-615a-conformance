@@ -27,6 +27,17 @@ def collect_from_run(run_record: Mapping[str, Any], *, resource_mode: str) -> di
     status = "NORMAL"
     if not run_record.get("runId"):
         status = "NOT-RUN"
+    elif run_record.get("stopClass") == "Stop-Budget":
+        status = "BUDGET-EXHAUSTED"
+    elif observations:
+        last = observations[-1]
+        payload = last.get("payload") if isinstance(last, Mapping) else None
+        if (
+            isinstance(last, Mapping)
+            and last.get("kind") == "STATUS"
+            and not (payload or {}).get("exceptionDelaySeconds")
+        ):
+            status = "RESOURCE-ERROR"
     return {
         "observationLog": observations,
         "resourceLog": {
@@ -42,10 +53,16 @@ def collect_from_run(run_record: Mapping[str, Any], *, resource_mode: str) -> di
 
 
 def collect_from_fixture(row: Mapping[str, Any]) -> dict[str, Any]:
-    """Collect declared walkthrough resource/observation fields.  No truth read."""
+    """Schema-only fixture collect.  Not walkthrough evidence.  No truth read."""
 
     charged = dict(row.get("chargedCost") or EMPTY_DETAIL)
-    missing = row.get("scenarioId") == "SC-INVALID-OBS"
+    log = list(row.get("observationLog") or [])
+    missing = any(
+        isinstance(item, Mapping) and item.get("correlationId") in {None, ""}
+        for item in log
+    )
+    if not log:
+        missing = False
     return {
         "observationLog": [
             {
