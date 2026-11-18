@@ -1315,7 +1315,12 @@ admission, not confirmatory, not Ready/merge.
 **Decision:** Under CR-2026-026, permit a Draft E0–E6 pipeline that implements
 `IF-EXP-SCENE` through `IF-EXP-EVAL` for the simulated IUT, with executable
 WF-NORMAL, WF-UNCONFIRMED-INJECT, WF-INVALID-OBS, WF-ABSTAIN and WF-EQUIVALENT
-tests compared to SYN-* accounting rows. Metrics use the declared dictionary and
+tests compared to SYN-* accounting rows through a registered mismatch table.
+A VALID candidate set that contains `h_normal` together with other hypotheses
+and has no T5 interval is `INCONCLUSIVE`: it counts in MET-INCONCLUSIVE, stays
+outside POP-ANSWERED, and is never PASS or FAIL. WF-ABSTAIN and WF-EQUIVALENT
+are ACCOUNTING-REPLAY (SYN feeds RUN/COLLECT inputs only; FILTER and EVAL
+compute). Metrics use the declared dictionary and
 denominators. Truth is readable only in EVAL via `TruthCapability`. A
 registration-shaped pilot config is recorded with N and seeds left
 `PENDING-PHASE-D`. DEC-IUT, DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and
@@ -1329,7 +1334,9 @@ record flows, and denominator-preserving evaluation before any pilot census.
 `src/cltav_runtime/` semantic change, no manuscript result cells, no confirmatory
 registration, no Phase D runs.
 
-**Guardrails:** Abstain is not PASS or FAIL. Excluded attempts remain in the
+**Guardrails:** Abstain is not PASS or FAIL. Mixed VALID sets that still contain
+`h_normal` without a T5 interval are INCONCLUSIVE, not false FAIL. Excluded
+attempts remain in the
 attempt denominator. RUN and COLLECT cannot read truth. SYN-* rows remain
 synthetic design witnesses, not observed results. Simulated ε is not laboratory
 calibration.
@@ -2038,7 +2045,11 @@ Phase C／D 流水线与试点执行仍不在范围。
 
 **决定：** 在 CR-2026-026 下，许可一份 Draft E0–E6 流水线，在模拟 IUT 上实现
 `IF-EXP-SCENE` 至 `IF-EXP-EVAL`，并以可执行测试把 WF-NORMAL、WF-UNCONFIRMED-INJECT、
-WF-INVALID-OBS、WF-ABSTAIN 与 WF-EQUIVALENT 对照 SYN-* 记账行。指标使用已声明字典
+WF-INVALID-OBS、WF-ABSTAIN 与 WF-EQUIVALENT 对照 SYN-* 记账行，差异写入已登记表。
+含 `h_normal` 及其他假设、且无 T5 区间的 VALID 候选集为 `INCONCLUSIVE`（计入
+MET-INCONCLUSIVE，不进入 POP-ANSWERED，不是 PASS 或 FAIL）。WF-ABSTAIN 与
+WF-EQUIVALENT 为 ACCOUNTING-REPLAY（SYN 只提供 RUN／COLLECT 输入；FILTER 与 EVAL
+自行计算）。指标使用已声明字典
 与分母。真值仅在 EVAL 经 `TruthCapability` 可读。记录登记形状的试点配置，N 与种子
 保持 `PENDING-PHASE-D`。DEC-IUT、DEC-TRUTH、DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE 与
 DEC-RESOURCE 保持 OPEN。Phase D 执行仍不在范围。
@@ -2050,7 +2061,8 @@ DEC-RESOURCE 保持 OPEN。Phase D 执行仍不在范围。
 `configs/research/cltav_pilot_registration_shape_v1.json`。不改变
 `src/cltav_runtime/` 语义，不填写稿件结果格，不做确认性登记，不跑 Phase D。
 
-**护栏：** 弃权不是 PASS 或 FAIL。被排除尝试仍留在尝试分母。RUN 与 COLLECT 不能读
+**护栏：** 弃权不是 PASS 或 FAIL。仍含 `h_normal` 且无 T5 区间的混合 VALID 集为
+INCONCLUSIVE，不是假 FAIL。被排除尝试仍留在尝试分母。RUN 与 COLLECT 不能读
 真值。SYN-* 行仍是合成设计见证，不是观测结果。模拟 ε 不是实验室校准。
 
 **状态：** 在 CR-2026-026 下为候选。须 Draft PR 审查。不是运行准入、确认性实验或 Ready／合并。

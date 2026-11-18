@@ -25,10 +25,16 @@ def collect_from_run(run_record: Mapping[str, Any], *, resource_mode: str) -> di
                 for item in extra
             )
     status = "NORMAL"
+    tester_log = run_record.get("testerResourceLog")
+    tester_status = None
+    if isinstance(tester_log, Mapping):
+        tester_status = tester_log.get("statusClass")
     if not run_record.get("runId"):
         status = "NOT-RUN"
     elif run_record.get("stopClass") == "Stop-Budget":
         status = "BUDGET-EXHAUSTED"
+    elif tester_status:
+        status = str(tester_status)
     elif observations:
         last = observations[-1]
         payload = last.get("payload") if isinstance(last, Mapping) else None
@@ -37,7 +43,7 @@ def collect_from_run(run_record: Mapping[str, Any], *, resource_mode: str) -> di
             and last.get("kind") == "STATUS"
             and not (payload or {}).get("exceptionDelaySeconds")
         ):
-            status = "RESOURCE-ERROR"
+            status = "UNCLASSIFIED-STATUS"
     return {
         "observationLog": observations,
         "resourceLog": {

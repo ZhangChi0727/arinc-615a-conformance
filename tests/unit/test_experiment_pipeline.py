@@ -16,15 +16,17 @@ from a615a_sim.evaluator import issue_truth_capability, new_independent_truth_st
 from a615a_sim.evaluator.guard import TruthLeakageError
 from a615a_sim.evaluator.pipeline.collect import collect_from_fixture
 from a615a_sim.evaluator.pipeline.design import WF_TO_SYN, load_synthetic_walkthrough
+from a615a_sim.evaluator.pipeline.collect import collect_from_run
 from a615a_sim.evaluator.pipeline.evaluate import (
-    UndefinedDetectionOutcome,
     derive_outcome,
     metric_cells,
     population_sets,
 )
 from a615a_sim.evaluator.pipeline.filter import filter_attempt, filter_from_fixture
 from a615a_sim.evaluator.pipeline.orchestrator import (
+    WF_PATH_KIND,
     WF_PATHS,
+    execute_accounting_replay,
     execute_live_attempt,
     execute_synthetic_walkthrough,
     load_experiment_design,
@@ -37,45 +39,216 @@ ROOT = Path(__file__).resolve().parents[2]
 SRC = ROOT / "src"
 PIPE = SRC / "a615a_sim" / "evaluator" / "pipeline"
 
+EXPECTED_SYN_MISMATCHES = {
+    "WF-NORMAL": [
+        {
+            "field": "finalHypotheses",
+            "expected": ["h-normal"],
+            "actual": ["h_normal"],
+            "reason": "live catalogue hypothesisId uses underscore; SYN-NORMAL uses hyphen",
+        },
+        {
+            "field": "runId",
+            "expected": "RUN-001",
+            "actual": "RUN-CL-LOOP-A-WF-NORMAL",
+            "reason": "deterministic live runId scheme differs from SYN-NORMAL runId",
+        },
+        {
+            "field": "attemptId",
+            "expected": "ATT-001",
+            "actual": "A-WF-NORMAL",
+            "reason": "live attemptId is A-WF-*; SYN-NORMAL uses ATT-001",
+        },
+        {
+            "field": "truthReference.truthHypothesis",
+            "expected": "h-normal",
+            "actual": "h_normal",
+            "reason": "live catalogue hypothesisId uses underscore; SYN-NORMAL uses hyphen",
+        },
+    ],
+    "WF-UNCONFIRMED-INJECT": [
+        {
+            "field": "injectionStatus",
+            "expected": "UNCONFIRMED",
+            "actual": None,
+            "reason": "unconfirmed live path writes no IF-EXP-TRUTH; SYN-UNCONFIRMED stores UNCONFIRMED",
+        },
+        {
+            "field": "faultDomain",
+            "expected": "UNKNOWN",
+            "actual": None,
+            "reason": "unconfirmed live path writes no IF-EXP-TRUTH; SYN-UNCONFIRMED stores UNKNOWN",
+        },
+        {
+            "field": "resourcePolicy",
+            "expected": "NOT-RUN",
+            "actual": "ROUNDS",
+            "reason": "live scene still binds a resource mode; SYN-UNCONFIRMED is NOT-RUN",
+        },
+        {
+            "field": "resourceStatus",
+            "expected": "NOT-RUN",
+            "actual": None,
+            "reason": "no live collect/run; SYN-UNCONFIRMED records NOT-RUN",
+        },
+        {
+            "field": "attemptId",
+            "expected": "ATT-004",
+            "actual": "A-WF-UNCONFIRMED-INJECT",
+            "reason": "live attemptId is A-WF-*; SYN-UNCONFIRMED uses ATT-004",
+        },
+    ],
+    "WF-INVALID-OBS": [
+        {
+            "field": "stopClass",
+            "expected": "Stop-Error",
+            "actual": "Stop-Singleton",
+            "reason": "live CL-LOOP stop is Stop-Singleton; SYN-INVALID-OBS accounts Stop-Error",
+        },
+        {
+            "field": "finalHypotheses",
+            "expected": ["h-normal", "h1"],
+            "actual": ["h_normal"],
+            "reason": "live catalogue retains {h_normal}; SYN-INVALID-OBS accounts {h-normal, h1}",
+        },
+        {
+            "field": "injectionStatus",
+            "expected": "NORMAL",
+            "actual": "UNRESOLVED",
+            "reason": "live H-INVALID-OBS catalogue is unresolved; SYN-INVALID-OBS stores NORMAL",
+        },
+        {
+            "field": "faultDomain",
+            "expected": "OUT-OF-DOMAIN",
+            "actual": "UNKNOWN",
+            "reason": "live H-INVALID-OBS catalogue is unknown; SYN-INVALID-OBS stores OUT-OF-DOMAIN",
+        },
+        {
+            "field": "localizationDecisionIssued",
+            "expected": False,
+            "actual": True,
+            "reason": "live singleton stop issues localization; SYN-INVALID-OBS does not",
+        },
+        {
+            "field": "singletonDecisionIssued",
+            "expected": False,
+            "actual": True,
+            "reason": "live singleton stop issues singleton; SYN-INVALID-OBS does not",
+        },
+        {
+            "field": "resourceStatus",
+            "expected": "RESOURCE-ERROR",
+            "actual": "NORMAL",
+            "reason": "tester resource log is NORMAL; SYN-INVALID-OBS accounts RESOURCE-ERROR",
+        },
+        {
+            "field": "runId",
+            "expected": "RUN-005",
+            "actual": "RUN-CL-LOOP-A-WF-INVALID-OBS",
+            "reason": "deterministic live runId scheme differs from SYN-INVALID-OBS runId",
+        },
+        {
+            "field": "attemptId",
+            "expected": "ATT-005",
+            "actual": "A-WF-INVALID-OBS",
+            "reason": "live attemptId is A-WF-*; SYN-INVALID-OBS uses ATT-005",
+        },
+    ],
+    "WF-ABSTAIN": [
+        {
+            "field": "injectionStatus",
+            "expected": "CONFIRMED",
+            "actual": "UNRESOLVED",
+            "reason": "catalogue H-RESOURCE-ERROR is unresolved; SYN-STOP-645 stores CONFIRMED",
+        },
+        {
+            "field": "faultDomain",
+            "expected": "IN-DOMAIN-NON-EQUIVALENT",
+            "actual": "UNKNOWN",
+            "reason": "catalogue H-RESOURCE-ERROR is unknown; SYN-STOP-645 stores IN-DOMAIN-NON-EQUIVALENT",
+        },
+        {
+            "field": "truthReference.truthHypothesis",
+            "expected": "h645",
+            "actual": None,
+            "reason": "catalogue H-RESOURCE-ERROR hypothesisId is null; SYN-STOP-645 stores h645",
+        },
+    ],
+    "WF-EQUIVALENT": [
+        {
+            "field": "injectionStatus",
+            "expected": "EQUIVALENT",
+            "actual": None,
+            "reason": "EVAL reads IF-EXP-TRUTH only; equivalent accounting replay writes no truth",
+        },
+        {
+            "field": "faultDomain",
+            "expected": "OUT-OF-DOMAIN",
+            "actual": None,
+            "reason": "EVAL reads IF-EXP-TRUTH only; equivalent accounting replay writes no truth",
+        },
+        {
+            "field": "resourceStatus",
+            "expected": "NOT-RUN",
+            "actual": None,
+            "reason": "no RUN/COLLECT on equivalent replay; SYN-EQUIVALENT records NOT-RUN",
+        },
+    ],
+}
+
 
 @pytest.mark.parametrize("workflow_id", list(WF_PATHS))
 def test_walkthrough_executes_live_pipeline_and_compares_syn(workflow_id: str) -> None:
     result = execute_synthetic_walkthrough(workflow_id)
     expected_path = WF_PATHS[workflow_id]
     assert result["registeredPath"] == expected_path
+    assert result["pathKind"] == WF_PATH_KIND[workflow_id]
     assert result["sceneRecord"]["producer"] == "IF-EXP-SCENE"
     assert result["injectionAttempt"]["producer"] == "IF-EXP-INJECT"
-    expected = load_synthetic_walkthrough(WF_TO_SYN[workflow_id])
-    comparison = result["synComparison"]
-    assert isinstance(comparison, list)
-    if "IF-EXP-RUN" in expected_path:
+    assert result["synComparison"] == EXPECTED_SYN_MISMATCHES[workflow_id]
+    actual = result["attemptRow"]
+    cells = metric_cells([actual])
+    if WF_PATH_KIND[workflow_id] == "LIVE" and "IF-EXP-RUN" in expected_path:
         assert result["runRecord"] is not None
         assert result["runRecord"]["producer"] == "IF-EXP-RUN"
         assert result["collectRecord"]["producer"] == "IF-EXP-COLLECT"
         source = inspect.getsource(execute_synthetic_walkthrough)
         assert "replay_run_fixture" not in source
         assert "collect_from_fixture" not in source
+    if workflow_id == "WF-NORMAL":
+        assert actual["outcome"] == "PASS"
+        assert actual["finalHypotheses"] == ["h_normal"]
+        assert actual["stopClass"] == "Stop-Singleton"
+        assert actual["armId"] == "CL-LOOP"
+        assert actual["validity"] == "VALID"
     if workflow_id == "WF-UNCONFIRMED-INJECT":
-        actual = result["attemptRow"]
         assert actual["runId"] is None
         assert result["filterRecord"]["validityClass"] == "PRE-RUN-EXCLUDED"
         assert actual["outcome"] == "NOT-ANSWERED"
-        assert actual["attemptId"] in metric_cells([actual])["populations"]["POP-ATTEMPTS"]
-        assert actual["attemptId"] not in metric_cells([actual])["populations"]["POP-ANSWERED"]
+        assert actual["attemptId"] in cells["populations"]["POP-ATTEMPTS"]
+        assert actual["attemptId"] not in cells["populations"]["POP-ANSWERED"]
     if workflow_id == "WF-INVALID-OBS":
         assert result["collectRecord"]["missingCorrelation"] is True
         assert result["filterRecord"]["validityClass"] == "INVALID"
-        assert result["attemptRow"]["outcome"] == "ERROR"
+        assert actual["outcome"] == "ERROR"
     if workflow_id == "WF-ABSTAIN":
-        assert result["attemptRow"]["resourceErrorSilenceCollision"] is True
-        assert result["attemptRow"]["detectFamilyOnly"] is True
-        assert result["attemptRow"]["truthReference"]["truthHypothesis"] is None
-        cells = result["metricCells"]
-        assert result["attemptRow"]["attemptId"] in cells["resourceErrorSilenceCollisionAttemptIds"]
-        assert result["attemptRow"]["attemptId"] not in cells["populations"]["POP-LOCALIZATION-TRUTH-SCORABLE"]
+        replay_source = inspect.getsource(execute_accounting_replay)
+        assert "fixture[\"validity\"]" not in replay_source
+        assert "fixture[\"outcome\"]" not in replay_source
+        assert result["filterRecord"]["validityClass"] == "ABSTAIN"
+        assert actual["validity"] == "ABSTAIN"
+        assert actual["outcome"] not in {"PASS", "FAIL"}
+        assert actual["outcome"] == "NOT-ANSWERED"
+        assert actual["attemptId"] in cells["populations"]["POP-ATTEMPTS"]
+        assert actual["attemptId"] in cells["populations"]["POP-ABSTAIN"]
+        assert actual["attemptId"] not in cells["populations"]["POP-ANSWERED"]
     if workflow_id == "WF-EQUIVALENT":
-        assert expected["injectionStatus"] == "EQUIVALENT"
-        assert result.get("undefinedDetectionOutcome") or result["attemptRow"]["validity"] != expected["validity"] or result["synComparison"]
+        assert result["runRecord"] is None
+        assert result["filterRecord"]["validityClass"] == "PRE-RUN-EXCLUDED"
+        assert actual["runId"] is None
+        assert actual["outcome"] == "NOT-ANSWERED"
+        assert actual["attemptId"] in cells["populations"]["POP-ATTEMPTS"]
+        assert actual["attemptId"] not in cells["populations"]["POP-ANSWERED"]
 
 
 def test_design_ledger_syn_rows_remain_in_attempt_denominator() -> None:
@@ -147,7 +320,7 @@ def test_eval_reads_truth_via_capability_live() -> None:
     assert "TruthCapability" not in blob
 
 
-def test_cl_t_normal_mixed_set_is_undefined_not_false_fail() -> None:
+def test_cl_t_normal_mixed_set_is_inconclusive_not_pass_or_fail() -> None:
     capability = issue_truth_capability()
     store = new_independent_truth_store()
     result = execute_live_attempt(
@@ -160,10 +333,15 @@ def test_cl_t_normal_mixed_set_is_undefined_not_false_fail() -> None:
         store=store,
         confirm=True,
     )
-    assert result["attemptRow"] is None
+    row = result["attemptRow"]
+    assert row is not None
     assert result["runRecord"]["finalHypotheses"] == ["h_normal", "h_status_silence"]
-    assert "design JSON does not define" in result["undefinedDetectionOutcome"]
-    with pytest.raises(UndefinedDetectionOutcome):
+    assert row["outcome"] == "INCONCLUSIVE"
+    assert row["outcome"] not in {"PASS", "FAIL"}
+    cells = result["metricCells"]
+    assert row["attemptId"] in cells["populations"]["POP-INCONCLUSIVE"]
+    assert row["attemptId"] not in cells["populations"]["POP-ANSWERED"]
+    assert (
         derive_outcome(
             validity="VALID",
             stop_class="Stop-NoDistinguisher",
@@ -171,6 +349,8 @@ def test_cl_t_normal_mixed_set_is_undefined_not_false_fail() -> None:
             requirement_interval=None,
             final_hypotheses=["h_normal", "h_status_silence"],
         )
+        == "INCONCLUSIVE"
+    )
 
 
 def test_derive_outcome_nonsingleton_without_normal_is_fail() -> None:
@@ -235,6 +415,61 @@ def test_live_unconfirmed_stays_in_attempt_denominator() -> None:
     cells = result["metricCells"]
     assert row["attemptId"] in cells["populations"]["POP-ATTEMPTS"]
     assert row["attemptId"] not in cells["populations"]["POP-ANSWERED"]
+
+
+def test_resource_error_silence_collision_is_separate_from_abstain_walkthrough() -> None:
+    capability = issue_truth_capability()
+    store = new_independent_truth_store()
+    result = execute_live_attempt(
+        scene_id="SC-RESOURCE-ERROR",
+        fault_id="H-RESOURCE-ERROR",
+        arm_id="CL-LOOP",
+        resource_mode="BUDGET",
+        remaining=8,
+        capability=capability,
+        store=store,
+        confirm=True,
+    )
+    row = result["attemptRow"]
+    assert row["resourceErrorSilenceCollision"] is True
+    assert row["detectFamilyOnly"] is True
+    assert row["truthReference"]["truthHypothesis"] is None
+    cells = result["metricCells"]
+    assert row["attemptId"] in cells["resourceErrorSilenceCollisionAttemptIds"]
+    assert row["attemptId"] not in cells["populations"]["POP-LOCALIZATION-TRUTH-SCORABLE"]
+    abstain = execute_synthetic_walkthrough("WF-ABSTAIN")
+    assert abstain["pathKind"] == "ACCOUNTING-REPLAY"
+    assert abstain["attemptRow"]["validity"] == "ABSTAIN"
+
+
+def test_collect_same_key_status_is_not_resource_error() -> None:
+    capability = issue_truth_capability()
+    store = new_independent_truth_store()
+    result = execute_live_attempt(
+        scene_id="SC-SAME-KEY",
+        fault_id="H-SAME-KEY",
+        arm_id="CL-LOOP",
+        resource_mode="ROUNDS",
+        remaining=8,
+        capability=capability,
+        store=store,
+        confirm=True,
+    )
+    status = result["collectRecord"]["resourceLog"]["statusClass"]
+    assert status != "RESOURCE-ERROR"
+    observations = result["collectRecord"]["observationLog"]
+    assert any(
+        isinstance(item, dict) and item.get("kind") == "STATUS" for item in observations
+    )
+    replay = collect_from_run(
+        {
+            "runId": "RUN-SAME-KEY",
+            "stopClass": "Stop-Singleton",
+            "observationLog": [{"kind": "STATUS", "payload": {}}],
+        },
+        resource_mode="ROUNDS",
+    )
+    assert replay["resourceLog"]["statusClass"] == "UNCLASSIFIED-STATUS"
 
 
 def test_live_invalid_observation_is_error_not_iut_fail() -> None:

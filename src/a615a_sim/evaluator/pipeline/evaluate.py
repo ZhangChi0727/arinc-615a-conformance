@@ -92,10 +92,10 @@ def derive_outcome(
     - syntheticWalkthroughs.SYN-NORMAL: singleton {h_normal} → PASS.
     - syntheticWalkthroughs.SYN-FAIL-NONSINGLETON and EXPERIMENT_PLAN: a valid
       detection FAIL may be a non-singleton set that does not retain h_normal.
-    - Mixed sets that still contain h_normal, with no T5 interval, are not
-      defined (SYN-T5-OVERLAP is interval INCONCLUSIVE; SYN-PRE-ACTION is
-      INCOMPLETE).  Do not treat them as FAIL (that would be a false fail on a
-      qualified normal, POP-FALSE-FAILS / MET-FALSE-FAIL).
+    - CR-2026-026 / DD-050 (RR-PR28-2026-008 R1): a VALID candidate set that
+      still contains h_normal together with other hypotheses, with no T5
+      interval, is INCONCLUSIVE.  It counts in MET-INCONCLUSIVE, stays outside
+      POP-ANSWERED, and is never FAIL or PASS.
     """
 
     if validity in NOT_ANSWERED_VALIDITY:
@@ -115,13 +115,7 @@ def derive_outcome(
     if final_hypotheses and not retained_normal:
         return "FAIL"
     if final_hypotheses:
-        raise UndefinedDetectionOutcome(
-            "design JSON does not define detection PASS/FAIL for a VALID "
-            "candidate set that still contains h_normal together with other "
-            "hypotheses when no T5 observation/requirement interval is present "
-            "(metricFieldContracts.outcome; POP-FALSE-FAILS; SYN-T5-OVERLAP is "
-            "interval-only INCONCLUSIVE)"
-        )
+        return "INCONCLUSIVE"
     return "NOT-ANSWERED"
 
 

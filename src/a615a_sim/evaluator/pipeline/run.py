@@ -45,6 +45,7 @@ def run_registered_arm(
         stage = "POST-UPDATE"
     else:
         stage = "TERMINAL"
+    tester_status = "RESOURCE-ERROR" if getattr(target, "_resource_error", False) else "NORMAL"
     return {
         "runId": run_id or f"RUN-{correlation_id}",
         "sceneId": scene_id,
@@ -62,6 +63,10 @@ def run_registered_arm(
         "detailCharges": dict(arm_run.detail_charges),
         "chargedCost": arm_run.projected_cost(),
         "resourceMode": arm_run.resource_mode,
+        "testerResourceLog": {
+            "statusClass": tester_status,
+            "producer": "TESTER-RESOURCE-CONTROLLER",
+        },
         "producer": "IF-EXP-RUN",
         "label": "SIMULATED-IUT",
     }
@@ -87,6 +92,12 @@ def replay_run_fixture(row: Mapping[str, Any]) -> dict[str, Any]:
         "historyBefore": list(row.get("historyBefore") or []),
         "compatibleState": list(row.get("compatibleState") or []),
         "stage": row.get("stage"),
+        "observationLog": list(row.get("observationLog") or []),
+        "detailCharges": dict(row.get("chargedCost") or {}),
+        "testerResourceLog": {
+            "statusClass": row.get("resourceStatus"),
+            "source": "SYN-COLLECT-INPUT",
+        },
         "producer": "IF-EXP-RUN",
         "label": "SIMULATED-IUT",
     }

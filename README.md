@@ -61,7 +61,7 @@ silently redefine the Core.
 - Draft PR #26 has limited-accepted C-stage session integration at 7fd917b9 and limited-accepted D-stage cltav-615a-engineering delivery at 1012f673 (independent evidence envelope, run/verify/replay CLI, transactional directory publish, non-editable-wheel installation); E closeout awaits DM whole-branch review. DM-C-R01: after UNKNOWN and an admissible Recover, the full session conservatively stops at Stop-Prediction-Gap without promoting conservative H or continuing diagnosis; that is a later method item. This is not complete UPLOAD, real IUT/network evidence, four-arm or experiment results; CRC/integrity remains NOT-ESTABLISHED.
 - CR-2026-024 / DD-048 adds a Draft SIMULATED-IUT Phase A instrument: bound-model FIND/SEND/ABORT/INFORMATION, declared H_single injection with confirmation, fail-closed evaluator truth, reset evidence, and a simulated clock with declared epsilon. It is labelled SIMULATED-IUT / non-confirmatory; it does not fill manuscript results, close DEC-IUT/DEC-TRUTH/DEC-CLOCK.
 - CR-2026-025 / DD-049 adds the Draft Phase B four-arm adapter: CL-T predetermined TEST, CL-A analysis-only, CL-TA frozen test-then-analysis, and CL-LOOP via existing ReferenceSession. Arms never see truth, fault plans, or other-arm records. It does not fill manuscript results or start Phase C/D.
-- CR-2026-026 / DD-050 adds the Draft Phase C E0-E6 pipeline (SCENE, INJECT, TRUTH, RUN, COLLECT, FILTER, EVAL), SYN-* walkthrough tests, and a registration-shaped pilot config with N and seeds pending Phase D. Truth is EVAL-only. It does not fill manuscript results or start Phase D.
+- CR-2026-026 / DD-050 adds the Draft Phase C E0-E6 pipeline (SCENE, INJECT, TRUTH, RUN, COLLECT, FILTER, EVAL), SYN-* walkthrough tests with registered mismatch tables, mixed VALID {h_normal,...} → INCONCLUSIVE, and a registration-shaped pilot config with N and seeds pending Phase D. Truth is EVAL-only. It does not fill manuscript results or start Phase D.
 - No confirmatory result, Configuration, expanded capability, conformance, submission, baseline or tag is created.
 
 State changes:
@@ -126,7 +126,7 @@ Unchanged boundaries:
 - Draft PR #26 已在 7fd917b9 获得 C 阶段有限接受，并在 1012f673 获得 D 阶段 cltav-615a-engineering 交付有限接受（独立证据 envelope、run/verify/replay CLI、事务目录发布与 non-editable wheel 安装）；E 收尾待 DM 整支复审。DM-C-R01：UNKNOWN 经合格 Recover 后，完整会话保守停于 Stop-Prediction-Gap，不提升保守 H、不继续诊断，属后续方法项。这不是完整 UPLOAD、真实 IUT／网络证据、四臂或实验结果；CRC／完整性保持 NOT-ESTABLISHED。
 - CR-2026-024／DD-048 增加 Draft 模拟 IUT Phase A 仪器：有界 FIND／SEND／ABORT／INFORMATION、带确认的声明 H_single 注入、失败即关闭的评价者真值、复位证据，以及带声明 epsilon 的模拟时钟。标注为 SIMULATED-IUT／非确认性；不填写稿件结果，不关闭 DEC-IUT／DEC-TRUTH／DEC-CLOCK。
 - CR-2026-025／DD-049 增加 Draft Phase B 四臂适配器：CL-T 预定 TEST、CL-A 仅分析、CL-TA 冻结先测后析、CL-LOOP 经现有 ReferenceSession。臂看不见真值、故障计划或其他臂记录。不填写稿件结果，不启动 Phase C／D。
-- CR-2026-026／DD-050 增加 Draft Phase C E0–E6 流水线（SCENE、INJECT、TRUTH、RUN、COLLECT、FILTER、EVAL）、SYN-* 走查测试，以及 N 与种子待 Phase D 的登记形状试点配置。真值仅 EVAL 可读。不填写稿件结果，不启动 Phase D。
+- CR-2026-026／DD-050 增加 Draft Phase C E0–E6 流水线（SCENE、INJECT、TRUTH、RUN、COLLECT、FILTER、EVAL）、带已登记差异表的 SYN-* 走查测试、混合 VALID {h_normal,...}→INCONCLUSIVE，以及 N 与种子待 Phase D 的登记形状试点配置。真值仅 EVAL 可读。不填写稿件结果，不启动 Phase D。
 - 本增量不产生确认性结果、Configuration、扩大能力、符合性、投稿、baseline 或 tag。
 
 状态变化：
