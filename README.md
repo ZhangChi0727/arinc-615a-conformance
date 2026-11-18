@@ -62,7 +62,8 @@ silently redefine the Core.
 - CR-2026-024 / DD-048 adds a Draft SIMULATED-IUT Phase A instrument: bound-model FIND/SEND/ABORT/INFORMATION, declared H_single injection with confirmation, fail-closed evaluator truth, reset evidence, and a simulated clock with declared epsilon. It is labelled SIMULATED-IUT / non-confirmatory; it does not fill manuscript results, close DEC-IUT/DEC-TRUTH/DEC-CLOCK.
 - CR-2026-025 / DD-049 adds the Draft Phase B four-arm adapter: CL-T predetermined TEST, CL-A analysis-only, CL-TA frozen test-then-analysis, and CL-LOOP via existing ReferenceSession. Arms never see truth, fault plans, or other-arm records. It does not fill manuscript results or start Phase C/D.
 - CR-2026-026 / DD-050 adds the Draft Phase C E0-E6 pipeline (SCENE, INJECT, TRUTH, RUN, COLLECT, FILTER, EVAL), SYN-* walkthrough tests with registered mismatch tables, mixed VALID {h_normal,...} → INCONCLUSIVE, and a registration-shaped pilot config with N and seeds pending Phase D. Truth is EVAL-only.
-- CR-2026-027 / DD-051 closes DEC-IUT as the local simulated 615A environment (TH / FIND-HOST). Results remain labelled SIMULATED-IUT. DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and DEC-RESOURCE stay OPEN. This CR does not run the pilot or fill manuscript results.
+- CR-2026-027 / DD-051 closes DEC-IUT as the local simulated 615A environment (TH / FIND-HOST). Results remain labelled SIMULATED-IUT. DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and DEC-RESOURCE stay OPEN.
+- configs/research/cltav_pilot_config_v1.json pre-declares 120 cells (catalogue applicable (scene, fault) x 4 arms), N=3, seeds [1001,1002,1003], ROUNDS remaining=8, and descriptive-only analysis. The census is a later commit; the config must not change after that run.
 - No confirmatory result, Configuration, expanded capability, conformance, submission, baseline or tag is created.
 
 State changes:
@@ -91,7 +92,7 @@ Unchanged boundaries:
 
 - Retain PR #24's controlled model-figure candidates as DRAFT-REDRAW; do not promote reader figures or migrate downstream consumers until the separate semantic, size, migration and promotion gates close.
 - Complete independent D-stage review of Draft PR #26 on one fixed candidate Head before E-stage whole-PR gates; do not treat the engineering CLI as authority for M3, controlled IUT execution, post-recovery continued diagnosis, or runtime-integrity work.
-- Declare the Phase D pilot cell list, N and seeds in a committed config before any census; keep DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and DEC-RESOURCE OPEN; DEC-IUT is closed as SIMULATED-IUT.
+- Execute the Phase D census only after the committed cltav_pilot_config_v1.json; do not edit that config after the run; keep DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and DEC-RESOURCE OPEN.
 - Keep every experiment run-admission decision OPEN and establish runtime integrity and independent truth before capability or conformance claims; do not start M3 from the accepted design alone.
 - Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth.
 
@@ -128,7 +129,8 @@ Unchanged boundaries:
 - CR-2026-024／DD-048 增加 Draft 模拟 IUT Phase A 仪器：有界 FIND／SEND／ABORT／INFORMATION、带确认的声明 H_single 注入、失败即关闭的评价者真值、复位证据，以及带声明 epsilon 的模拟时钟。标注为 SIMULATED-IUT／非确认性；不填写稿件结果，不关闭 DEC-IUT／DEC-TRUTH／DEC-CLOCK。
 - CR-2026-025／DD-049 增加 Draft Phase B 四臂适配器：CL-T 预定 TEST、CL-A 仅分析、CL-TA 冻结先测后析、CL-LOOP 经现有 ReferenceSession。臂看不见真值、故障计划或其他臂记录。不填写稿件结果，不启动 Phase C／D。
 - CR-2026-026／DD-050 增加 Draft Phase C E0–E6 流水线（SCENE、INJECT、TRUTH、RUN、COLLECT、FILTER、EVAL）、带已登记差异表的 SYN-* 走查测试、混合 VALID {h_normal,...}→INCONCLUSIVE，以及 N 与种子待 Phase D 的登记形状试点配置。真值仅 EVAL 可读。
-- CR-2026-027／DD-051 关闭 DEC-IUT：本地模拟 615A 环境（TH／FIND-HOST）。结果仍标注 SIMULATED-IUT。DEC-TRUTH、DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN。本 CR 不运行试点、不填写稿件结果。
+- CR-2026-027／DD-051 关闭 DEC-IUT：本地模拟 615A 环境（TH／FIND-HOST）。结果仍标注 SIMULATED-IUT。DEC-TRUTH、DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN。
+- configs/research/cltav_pilot_config_v1.json 预先声明 120 个单元格（目录 applicable (scene, fault) × 4 臂）、N=3、种子 [1001,1002,1003]、ROUNDS remaining=8，以及仅描述性分析。普查在后续提交；运行后不得改配置。
 - 本增量不产生确认性结果、Configuration、扩大能力、符合性、投稿、baseline 或 tag。
 
 状态变化：
@@ -157,7 +159,7 @@ Unchanged boundaries:
 
 - 将 PR #24 的受控模型图候选保持为 DRAFT-REDRAW；在独立的语义、尺寸、迁移和晋级门关闭前，不得晋级 reader 图或迁移下游使用者。
 - 在 E 阶段整支门禁前，在一个固定候选 Head 上完成 Draft PR #26 的独立 D 阶段评审；不得把工程 CLI 当作 M3、受控 IUT 执行、恢复后继续诊断或运行完整性工作的授权。
-- 在任何普查前把 Phase D 试点单元格、N 与种子写入已提交配置；DEC-TRUTH、DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN；DEC-IUT 已作为 SIMULATED-IUT 关闭。
+- 仅在已提交的 cltav_pilot_config_v1.json 之后执行 Phase D 普查；运行后不得改该配置；DEC-TRUTH、DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN。
 - 所有实验运行准入决定保持 OPEN；建立运行完整性与独立真值后方可提出能力或符合性主张，不得仅凭已接受设计启动 M3。
 - 保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。
 <!-- project-status:end -->
