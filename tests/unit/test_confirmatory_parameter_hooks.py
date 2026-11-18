@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 from fractions import Fraction
+from pathlib import Path
 
 from a615a_sim.bound_iut.protocol import PROTOCOL_EVENT_WHITELIST, SimulatedTarget
 from a615a_sim.clock import FIND_ANSWER_LATE_AT_S, FIND_HOST_ANSWER_S, SimulatedClock
@@ -14,7 +16,10 @@ from a615a_sim.evaluator import (
 from a615a_sim.evaluator.reset import reset_target
 from a615a_sim.faults.catalogue import harder_cases, parameter_axes
 from a615a_sim.faults.injector import inject
-from a615a_sim.faults.parameters import expand_independent_units
+from a615a_sim.faults.parameters import expand_arm_cells, expand_independent_units
+
+ROOT = Path(__file__).resolve().parents[2]
+DRAFT_CONFIG = ROOT / "configs/research/cltav_confirmatory_design_draft_v1.json"
 
 
 def _target() -> SimulatedTarget:
@@ -133,3 +138,22 @@ def test_draft_units_are_labelled_and_do_not_run() -> None:
     assert units
     assert all(unit["label"].startswith("DRAFT") for unit in units)
     assert all("/CL-" not in unit["unitId"] for unit in units)
+
+
+def test_draft_config_is_marked_draft_and_matches_expander() -> None:
+    payload = json.loads(DRAFT_CONFIG.read_text(encoding="utf-8"))
+    assert payload["identity"]["status"] == "DRAFT"
+    assert payload["identity"]["confirmatoryRegistration"] is False
+    assert payload["identity"]["registrationYaml"] is False
+    assert payload["sample"]["decSample"] == "OPEN"
+    assert payload["openDecisions"] == [
+        "DEC-TRUTH",
+        "DEC-CLOCK",
+        "DEC-EQUIV",
+        "DEC-SAMPLE",
+        "DEC-RESOURCE",
+    ]
+    cells = expand_arm_cells()
+    assert payload["cellCount"] == len(cells) == len(payload["cells"])
+    assert payload["unitCount"] == len(expand_independent_units())
+    assert payload["cells"][0]["label"].startswith("DRAFT")
