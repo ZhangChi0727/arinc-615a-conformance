@@ -237,6 +237,8 @@ class ArmRun:
     resource_remaining: int = 0
     t5_verdicts: list[str] = field(default_factory=list)
     runtime_session_type: str | None = None
+    runtime_binding_sha: str | None = None
+    candidate_hypotheses: list[str] = field(default_factory=list)
     analysis_notes: dict[str, Any] = field(default_factory=dict)
 
     def charge_action(self, action_id: str) -> None:
@@ -261,6 +263,8 @@ class ArmRun:
             "resourceRemaining": self.resource_remaining,
             "t5Verdicts": list(self.t5_verdicts),
             "runtimeSessionType": self.runtime_session_type,
+            "runtimeBindingSha": self.runtime_binding_sha,
+            "candidateHypotheses": list(self.candidate_hypotheses),
             "analysisNotes": dict(self.analysis_notes),
             "label": "SIMULATED-IUT",
         }

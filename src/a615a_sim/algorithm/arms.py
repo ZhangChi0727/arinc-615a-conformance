@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from a615a_sim.algorithm.execute import issue
+from a615a_sim.algorithm.hypothesis_model import declare_arm_result
 from a615a_sim.algorithm.library import (
     ACTION_ANALYSIS,
     ArmRun,
@@ -25,9 +26,10 @@ def run_cl_t(
     for action_id in predetermined_test_sequence(initial):
         issued = issue(target, run, resource, action_id, correlation_id=correlation_id, initial=initial)
         if issued is None and run.stop_class == "Stop-Budget":
+            declare_arm_result(run)
             return run
-    run.stop_class = "Stop-NoDistinguisher"
     run.resource_remaining = resource.remaining
+    declare_arm_result(run)
     return run
 
 
@@ -51,10 +53,11 @@ def run_cl_a(
         initial=initial,
     )
     if issued is None and run.stop_class == "Stop-Budget":
+        declare_arm_result(run)
         return run
-    run.stop_class = "Stop-NoDistinguisher"
     run.resource_remaining = resource.remaining
     run.analysis_notes["usedOwnObservationCount"] = 0
+    declare_arm_result(run)
     return run
 
 
@@ -71,10 +74,12 @@ def run_cl_ta(
     for action_id in predetermined_test_sequence(initial):
         issued = issue(target, run, resource, action_id, correlation_id=correlation_id, initial=initial)
         if issued is None and run.stop_class == "Stop-Budget":
+            declare_arm_result(run)
             return run
     issued = issue(target, run, resource, ACTION_ANALYSIS, correlation_id=correlation_id, initial=initial)
     if issued is None and run.stop_class == "Stop-Budget":
+        declare_arm_result(run)
         return run
-    run.stop_class = "Stop-NoDistinguisher"
     run.resource_remaining = resource.remaining
+    declare_arm_result(run)
     return run

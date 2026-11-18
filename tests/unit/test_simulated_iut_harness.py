@@ -26,6 +26,8 @@ from a615a_sim.clock import (
     find_host_requirement,
     t5_interval_verdict,
 )
+from a615a_sim.algorithm.hypothesis_model import public_hypothesis_ids
+from a615a_sim.algorithm.library import STOP_CLASSES
 from a615a_sim.evaluator import (
     evaluator_fault_record,
     get_truth,
@@ -34,9 +36,11 @@ from a615a_sim.evaluator import (
     new_independent_truth_store,
     write_confirmed_truth,
 )
+from a615a_sim.evaluator.harness import confirm_then_overlay, run_registered_arms
 from a615a_sim.evaluator.guard import TruthLeakageError
 from a615a_sim.evaluator.reset import reset_target
 from a615a_sim.faults.catalogue import (
+    entry_by_id,
     evaluator_fault_plan,
     h_single_entries,
     in_domain_hypotheses_for_scene,
@@ -541,3 +545,81 @@ def test_normal_find_answer_tick_differs_from_late_only() -> None:
     assert normal_answer.tick == FIND_ANSWER_NORMAL_AT_S
     assert late_answer.tick == FIND_ANSWER_LATE_AT_S
     assert normal_answer.tick < FIND_HOST_ANSWER_S < late_answer.tick
+
+
+def test_confirmation_traces_never_reach_algorithm_visible_records() -> None:
+    target = _target()
+    capability = issue_truth_capability()
+    store = new_independent_truth_store()
+    confirm_then_overlay(
+        target,
+        scene_id="SC-NORMAL-UPLOAD",
+        fault_id="F-FIND-ANSWER-LATE",
+        truth_store=store,
+        capability=capability,
+        pairing_id="PAIR-TRACE",
+    )
+    assert target.algorithm_visible_records() == []
+    assert target.events == ()
+    ledgers = run_registered_arms(
+        target,
+        scene_id="SC-NORMAL-UPLOAD",
+        fault_id="F-FIND-ANSWER-LATE",
+        truth_store=store,
+        capability=capability,
+        pairing_id="PAIR-TRACE-RUN",
+    )
+    for run in ledgers.values():
+        blob = repr(run.as_mapping())
+        assert "corr-" not in blob
+        for record in run.observation_log:
+            correlation = record.get("correlationId") or ""
+            assert not str(correlation).startswith("corr-")
+
+
+def _in_domain_plan() -> list[tuple[str, str, str]]:
+    rows = []
+    for scene_id, fault_id in evaluator_fault_plan():
+        hypothesis = entry_by_id(fault_id).get("hypothesisId")
+        if hypothesis in public_hypothesis_ids():
+            rows.append((scene_id, fault_id, str(hypothesis)))
+    return rows
+
+
+@pytest.mark.parametrize(("scene_id", "fault_id", "truth_hypothesis"), _in_domain_plan())
+def test_cl_loop_and_cl_ta_retain_evaluator_truth(scene_id: str, fault_id: str, truth_hypothesis: str) -> None:
+    target = _target()
+    capability = issue_truth_capability()
+    store = new_independent_truth_store()
+    ledgers = run_registered_arms(
+        target,
+        scene_id=scene_id,
+        fault_id=fault_id,
+        truth_store=store,
+        capability=capability,
+        resource_mode="ROUNDS",
+        remaining=8,
+    )
+    for arm_id in ("CL-LOOP", "CL-TA"):
+        run = ledgers[arm_id]
+        assert truth_hypothesis in run.candidate_hypotheses
+        assert run.stop_class in STOP_CLASSES
+        assert "faultId" not in repr(run.as_mapping())
+
+
+def test_cl_loop_shrinks_candidate_set_on_h_single() -> None:
+    target = _target()
+    capability = issue_truth_capability()
+    store = new_independent_truth_store()
+    ledgers = run_registered_arms(
+        target,
+        scene_id="SC-NORMAL-UPLOAD",
+        fault_id="F-FIND-ANSWER-LATE",
+        truth_store=store,
+        capability=capability,
+    )
+    initial = public_hypothesis_ids()
+    loop = ledgers["CL-LOOP"].candidate_hypotheses
+    assert "h_find_answer_late" in loop
+    assert len(loop) < len(initial)
+    assert set(loop) < set(initial)

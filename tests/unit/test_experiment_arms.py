@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 
 from a615a_sim.algorithm.adapter import REGISTERED_ARMS, run_arm
+from a615a_sim.algorithm.hypothesis_model import public_hypothesis_ids
 from a615a_sim.algorithm.library import (
     ACTION_ANALYSIS,
     ACTION_LIBRARY,
@@ -72,6 +73,20 @@ def test_cl_loop_source_constructs_reference_session() -> None:
     source = (ARM_ROOT / "loop.py").read_text(encoding="utf-8")
     assert "from cltav_runtime.session import ReferenceSession" in source
     assert "ReferenceSession(" in source
+    model = (ARM_ROOT / "hypothesis_model.py").read_text(encoding="utf-8")
+    assert "h_normal" in model
+    assert "h_find_answer_late" in model
+    assert "h_find_answer_absent" in model
+
+
+def test_arm_modules_never_access_inner_target() -> None:
+    offenders: list[str] = []
+    for path in ARM_ROOT.rglob("*.py"):
+        if path.name == "target_view.py":
+            continue
+        if "._target" in path.read_text(encoding="utf-8"):
+            offenders.append(path.relative_to(SRC).as_posix())
+    assert offenders == []
 
 
 @pytest.mark.parametrize(("scene_id", "fault_id"), [("SC-NORMAL-UPLOAD", "H-NORMAL"), ("SC-NO-RESPONSE", "F-STATUS-SILENCE")])
@@ -92,6 +107,8 @@ def test_four_arms_run_on_same_scene_fault(scene_id: str, fault_id: str) -> None
     for arm_id, run in ledgers.items():
         assert run.arm_id == arm_id
         assert run.stop_class in STOP_CLASSES
+        assert run.candidate_hypotheses
+        assert set(run.candidate_hypotheses) <= set(public_hypothesis_ids())
         assert run.resource_mode == "ROUNDS"
         assert set(run.issued_actions) <= set(ACTION_LIBRARY)
         blob = repr(run.as_mapping())
@@ -180,6 +197,8 @@ def test_cl_loop_uses_reference_session() -> None:
     )
     assert run.runtime_session_type == "ReferenceSession"
     assert run.runtime_session_type == ReferenceSession.__qualname__
+    assert run.runtime_binding_sha
+    assert len(run.runtime_binding_sha) == 40
     assert inspect.isclass(ReferenceSession)
     assert any(action in ACTION_LIBRARY for action in run.issued_actions) or run.stop_class in STOP_CLASSES
     assert run.stop_class in STOP_CLASSES
@@ -269,3 +288,11 @@ def test_algorithm_arm_cannot_import_evaluator_at_runtime() -> None:
     finally:
         sys.modules.update(saved)
         del sys.modules[probe.__name__]
+
+
+def test_late_and_absent_remain_two_hypotheses() -> None:
+    ids = public_hypothesis_ids()
+    assert ids.count("h_find_answer_late") == 1
+    assert ids.count("h_find_answer_absent") == 1
+    assert ids[0] == "h_normal"
+    assert len(ids) == 6
