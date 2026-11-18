@@ -21,6 +21,33 @@ from a615a_sim.faults.catalogue import (
     require_applicable,
 )
 
+ALLOWED_PARAMETER_KEYS = {
+    "H-NORMAL": frozenset({"lurAckAtS", "observationJitterS"}),
+    "F-FIND-ANSWER-LATE": frozenset({"findAnswerAtS", "observationJitterS"}),
+    "F-FIND-ANSWER-ABSENT": frozenset({"findObservationEndS", "observationJitterS"}),
+    "F-STATUS-SILENCE": frozenset({"statusSilenceUntilS", "observationJitterS"}),
+    "F-LUR-ACK-MISSING": frozenset({"observationJitterS"}),
+    "F-LUR-ACK-WITHOUT-WRQ": frozenset({"observationJitterS"}),
+    "H-SAME-KEY": frozenset({"observationJitterS"}),
+    "H-INVALID-OBS": frozenset({"observationJitterS"}),
+    "H-RESOURCE-ERROR": frozenset({"observationJitterS"}),
+}
+
+
+def require_matching_parameters(
+    fault_id: str, parameters: Mapping[str, Any] | None
+) -> None:
+    """Reject parameter keys that do not belong to this fault overlay."""
+
+    canonical = canonical_fault_id(fault_id)
+    keys = {str(key) for key in dict(parameters or {})}
+    allowed = ALLOWED_PARAMETER_KEYS.get(canonical, frozenset())
+    extra = keys - allowed
+    if extra:
+        raise ValueError(
+            f"parameter keys {sorted(extra)} do not match fault {canonical}"
+        )
+
 
 @dataclass(frozen=True)
 class InjectionAttempt:
@@ -175,6 +202,7 @@ def overlay_declared_fault(
 
     canonical = canonical_fault_id(fault_id)
     require_applicable(scene_id, canonical)
+    require_matching_parameters(canonical, parameters)
     overlay = None if canonical == "H-NORMAL" else canonical
     target.install_scene(scene_id)
     target.install_fault(overlay)

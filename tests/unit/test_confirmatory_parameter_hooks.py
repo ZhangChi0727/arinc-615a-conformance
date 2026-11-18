@@ -6,6 +6,8 @@ import json
 from fractions import Fraction
 from pathlib import Path
 
+import pytest
+
 from a615a_sim.bound_iut.protocol import PROTOCOL_EVENT_WHITELIST, SimulatedTarget
 from a615a_sim.clock import FIND_ANSWER_LATE_AT_S, FIND_HOST_ANSWER_S, SimulatedClock
 from a615a_sim.evaluator import (
@@ -170,6 +172,18 @@ def test_truth_access_unchanged_with_parameters() -> None:
     record = get_truth(store, attempt.attempt_id, capability)
     assert record.attempt_id == attempt.attempt_id
     assert record.confirmation_ref == f"INJ-{attempt.attempt_id}"
+
+
+def test_injector_rejects_parameters_that_do_not_match_fault() -> None:
+    target = _target()
+    reset_target(target)
+    with pytest.raises(ValueError, match="do not match fault H-NORMAL"):
+        inject(
+            target,
+            scene_id="SC-NORMAL-UPLOAD",
+            fault_id="H-NORMAL",
+            parameters={"findAnswerAtS": "41/20"},
+        )
 
 
 def test_draft_units_are_labelled_and_do_not_run() -> None:
