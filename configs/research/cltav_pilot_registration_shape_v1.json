@@ -1,0 +1,69 @@
+{
+  "identity": {
+    "artifactId": "CLTAV-PILOT-REGISTRATION-SHAPE-V1",
+    "kind": "registration-shape",
+    "confirmatoryRegistration": false,
+    "registrationYaml": false,
+    "label": "PILOT / SIMULATED-IUT",
+    "phase": "C",
+    "authority": "WO-CLTAV-EXP-HARNESS-2026-010 Phase C; EXP-PLAN-2026-001",
+    "changeRequest": "CR-2026-026",
+    "notes": "Shape only. N and seeds are not declared here; Phase D must write them before any pilot run. This file is not confirmatory registration.yaml."
+  },
+  "iut": {
+    "class": "SIMULATED-IUT",
+    "boundModel": "UPLOAD FIND/SEND/ABORT and INFORMATION; no DOWNLOAD/AFDX",
+    "decIut": "OPEN"
+  },
+  "arms": ["CL-T", "CL-A", "CL-TA", "CL-LOOP"],
+  "scenes": [
+    "SC-NORMAL-UPLOAD",
+    "SC-WAIT-CONTINUE",
+    "SC-NO-RESPONSE",
+    "SC-ABORT",
+    "SC-SAME-KEY",
+    "SC-SINGLE-BATCH",
+    "SC-RESOURCE-ERROR",
+    "SC-INVALID-OBS"
+  ],
+  "families": ["EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE", "EXP-CLTAV-ABLATION"],
+  "pipeline": ["E0-SCENE", "E1-INJECT", "E2-TRUTH", "E3-RUN", "E4-COLLECT", "E5-FILTER", "E6-EVAL"],
+  "metrics": [
+    "MET-ATTEMPTS",
+    "MET-ANSWERED-COVERAGE",
+    "MET-CONDITIONAL-DETECTION-ERROR",
+    "MET-TRUTH-SCORABLE-COVERAGE",
+    "MET-TRUTH-MISSING",
+    "MET-MISS",
+    "MET-FALSE-FAIL",
+    "MET-ABSTAIN",
+    "MET-INCONCLUSIVE",
+    "MET-ERROR",
+    "MET-INCOMPLETE",
+    "MET-LOCALIZATION-COVERAGE",
+    "MET-TRUE-RETAINED",
+    "MET-TRUE-EXCLUDED",
+    "MET-SINGLETON-CORRECT",
+    "MET-FINAL-CANDIDATES",
+    "MET-COST-VECTOR",
+    "MET-ROUNDS",
+    "MET-ABLATION-DELTA"
+  ],
+  "sample": {
+    "N": "PENDING-PHASE-D",
+    "seeds": "PENDING-PHASE-D",
+    "decSample": "OPEN"
+  },
+  "resourceMode": {
+    "perSession": "exactly one of ROUNDS or BUDGET",
+    "decResource": "OPEN"
+  },
+  "openDecisions": [
+    "DEC-IUT",
+    "DEC-TRUTH",
+    "DEC-CLOCK",
+    "DEC-EQUIV",
+    "DEC-SAMPLE",
+    "DEC-RESOURCE"
+  ]
+}

@@ -17,6 +17,8 @@ ALGORITHM_PREFIXES = (
     "a615a_sim.bound_iut",
     "a615a_sim.algorithm",
     "experiment_arms",
+    "a615a_sim.evaluator.pipeline.run",
+    "a615a_sim.evaluator.pipeline.collect",
 )
 
 ALLOWED_PREFIXES = (
