@@ -27,6 +27,7 @@ from a615a_sim.clock import (
     t5_interval_verdict,
 )
 from a615a_sim.evaluator import (
+    evaluator_fault_record,
     get_truth,
     invoke_callable,
     issue_truth_capability,
@@ -303,6 +304,25 @@ def test_unlisted_module_called_from_evaluator_frame_is_denied() -> None:
         del sys.modules["experiment_arms.fake"]
 
 
+def test_arm_holding_target_cannot_call_evaluator_fault_record() -> None:
+    target = _target()
+    reset_target(target)
+    inject(target, scene_id="SC-NORMAL-UPLOAD", fault_id="F-FIND-ANSWER-LATE")
+    capability = issue_truth_capability()
+    probe = types.ModuleType("a615a_sim.algorithm.fake_arm")
+    probe.__name__ = "a615a_sim.algorithm.fake_arm"
+    exec(
+        "def steal(fn, target, capability):\n    return fn(target, capability)\n",
+        probe.__dict__,
+    )
+    sys.modules["a615a_sim.algorithm.fake_arm"] = probe
+    try:
+        with pytest.raises(TruthLeakageError, match="algorithm/arm"):
+            invoke_callable(probe.steal, evaluator_fault_record, target, capability)
+    finally:
+        del sys.modules["a615a_sim.algorithm.fake_arm"]
+
+
 def test_access_without_capability_is_denied() -> None:
     store = new_independent_truth_store()
     with pytest.raises(TruthLeakageError, match="capability"):
@@ -312,6 +332,8 @@ def test_access_without_capability_is_denied() -> None:
     attempt = inject(target, scene_id="SC-NORMAL-UPLOAD", fault_id="F-LUR-ACK-MISSING")
     with pytest.raises(TruthLeakageError, match="capability"):
         write_confirmed_truth(store, attempt)
+    with pytest.raises(TruthLeakageError, match="capability"):
+        evaluator_fault_record(target)
 
 
 def test_locate_scenes_have_at_least_two_in_domain_hypotheses() -> None:
@@ -458,11 +480,14 @@ def test_algorithm_visible_stream_has_no_truth_or_verdict_fields(scene_id: str, 
     for forbidden in FAULT_OR_HYPOTHESIS_IDS:
         assert forbidden not in blob
     for record in records:
+        assert "state" not in record
         assert not (VERDICT_FIELD_DENYLIST & set(record.keys()))
         assert not (VERDICT_FIELD_DENYLIST & set(record["payload"].keys()))
-    evaluator = target.evaluator_fault_record()
+    capability = issue_truth_capability()
+    evaluator = evaluator_fault_record(target, capability)
     if fault_id not in {"H-NORMAL", "h_normal"}:
         assert evaluator["faultId"] == fault_id
+    assert not hasattr(target, "evaluator_fault_record")
 
 
 def test_two_faults_in_one_scene_differ_only_by_timing_presence_or_order() -> None:

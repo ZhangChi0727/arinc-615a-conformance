@@ -89,15 +89,6 @@ class SimulatedTarget:
             "clockTick": str(self.clock.now),
         }
 
-    def evaluator_fault_record(self) -> dict[str, Any]:
-        """Fault identity for the evaluator only; not algorithm-visible."""
-
-        return {
-            "faultId": self._fault_id,
-            "sceneId": self._scene_id,
-            "label": "EVALUATOR-ONLY",
-        }
-
     def install_scene(self, scene_id: str | None) -> None:
         self._scene_id = scene_id
         self._scene_wait = scene_id == "SC-WAIT-CONTINUE"
@@ -251,6 +242,5 @@ class SimulatedTarget:
                 "unit": self.clock.unit,
             },
             "payload": dict(event.payload),
-            "state": self._state,
             "label": "SIMULATED-IUT",
         }

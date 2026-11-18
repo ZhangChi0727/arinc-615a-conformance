@@ -153,6 +153,18 @@ def _drive_for_confirmation(
     raise KeyError(canonical)
 
 
+def overlay_declared_fault(
+    target: SimulatedTarget, *, scene_id: str, fault_id: str
+) -> None:
+    """Install scene and fault overlay without driving confirmation traces."""
+
+    canonical = canonical_fault_id(fault_id)
+    require_applicable(scene_id, canonical)
+    overlay = None if canonical == "H-NORMAL" else canonical
+    target.install_scene(scene_id)
+    target.install_fault(overlay)
+
+
 def inject(
     target: SimulatedTarget,
     *,
@@ -168,9 +180,7 @@ def inject(
     require_applicable(scene_id, fault_id)
     canonical = canonical_fault_id(fault_id)
     attempt = attempt_id or f"A-{uuid4().hex[:12]}"
-    overlay = None if canonical == "H-NORMAL" else canonical
-    target.install_scene(scene_id)
-    target.install_fault(overlay)
+    overlay_declared_fault(target, scene_id=scene_id, fault_id=canonical)
     observed = None
     if confirm:
         _drive_for_confirmation(

@@ -8,6 +8,7 @@ from a615a_sim.evaluator.guard import (
 
 deny_algorithm_import(operation="import-evaluator")
 
+from a615a_sim.evaluator.fault_view import evaluator_fault_record
 from a615a_sim.evaluator.reset import reset_target
 from a615a_sim.evaluator.truth import IndependentTruthStore, TruthCapability
 from a615a_sim.faults.injector import InjectionAttempt
@@ -18,6 +19,7 @@ __all__ = [
     "TruthLeakageError",
     "deny_algorithm_import",
     "deny_algorithm_truth_access",
+    "evaluator_fault_record",
     "get_truth",
     "invoke_callable",
     "issue_truth_capability",

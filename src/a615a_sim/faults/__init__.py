@@ -4,7 +4,7 @@ from a615a_sim.faults.catalogue import (
     in_domain_hypotheses_for_scene,
     load_catalogue,
 )
-from a615a_sim.faults.injector import inject
+from a615a_sim.faults.injector import inject, overlay_declared_fault
 
 __all__ = [
     "evaluator_fault_plan",
@@ -12,4 +12,5 @@ __all__ = [
     "in_domain_hypotheses_for_scene",
     "inject",
     "load_catalogue",
+    "overlay_declared_fault",
 ]

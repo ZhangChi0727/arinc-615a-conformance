@@ -16,6 +16,7 @@ ALGORITHM_PREFIXES = (
     "cltav_offline",
     "a615a_sim.bound_iut",
     "a615a_sim.algorithm",
+    "experiment_arms",
 )
 
 ALLOWED_PREFIXES = (
