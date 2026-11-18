@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from fractions import Fraction
-from typing import Any
+from typing import Any, Mapping
 
 from a615a_sim.clock import (
     FIND_ANSWER_LATE_AT_S,
@@ -71,6 +71,11 @@ class SimulatedTarget:
     _scene_abort: bool = False
     _scene_batch: bool = False
     _last_visible: dict[str, Any] | None = None
+    _find_answer_at: Fraction | None = None
+    _status_until: Fraction | None = None
+    _lur_ack_at: Fraction | None = None
+    _observation_jitter: Fraction = Fraction(0, 1)
+    _find_observation_end: Fraction | None = None
 
     @property
     def state(self) -> str:
@@ -102,6 +107,25 @@ class SimulatedTarget:
         self._corrupt_observation = fault_id == "H-INVALID-OBS"
         self._reuse_key = fault_id == "H-SAME-KEY"
         self._resource_error = fault_id == "H-RESOURCE-ERROR"
+        self.install_parameters(None)
+
+    def install_parameters(self, parameters: Mapping[str, Any] | None) -> None:
+        """Timing/presence/order hooks only.  No new protocol event names."""
+
+        params = dict(parameters or {})
+
+        def _frac(key: str) -> Fraction | None:
+            if key not in params or params[key] is None:
+                return None
+            value = params[key]
+            return value if isinstance(value, Fraction) else Fraction(str(value))
+
+        self._find_answer_at = _frac("findAnswerAtS")
+        self._status_until = _frac("statusSilenceUntilS")
+        self._lur_ack_at = _frac("lurAckAtS")
+        self._find_observation_end = _frac("findObservationEndS")
+        jitter = _frac("observationJitterS")
+        self._observation_jitter = jitter if jitter is not None else Fraction(0, 1)
 
     def reset(self) -> dict[str, Any]:
         self._generation += 1
@@ -141,14 +165,15 @@ class SimulatedTarget:
         self._correlation = correlation_id
         received = self._record("FIND-REQUEST-RECEIVED", correlation_id)
         if self._fault_id == H_SINGLE_FIND_ABSENT:
-            self._advance_to(FIND_OBSERVATION_END_S)
+            self._advance_to(self._find_observation_end or FIND_OBSERVATION_END_S)
             self._state = "FIND_ACTIVE"
             return self._visible(received)
-        answer_at = (
-            FIND_ANSWER_LATE_AT_S
-            if self._fault_id == H_SINGLE_FIND_LATE
-            else FIND_ANSWER_NORMAL_AT_S
-        )
+        if self._find_answer_at is not None:
+            answer_at = self._find_answer_at
+        elif self._fault_id == H_SINGLE_FIND_LATE:
+            answer_at = FIND_ANSWER_LATE_AT_S
+        else:
+            answer_at = FIND_ANSWER_NORMAL_AT_S
         self._advance_to(answer_at)
         event = self._record("FIND-ANSWER", correlation_id)
         return self._visible(event)
@@ -165,6 +190,8 @@ class SimulatedTarget:
             self._state = "UPLOAD_ACTIVE"
             return self._visible(wrq)
         self._record("LUR-WRQ", correlation_id)
+        if self._lur_ack_at is not None:
+            self._advance_to(max(self.clock.now, self._lur_ack_at))
         self._record("LUR-ACK", correlation_id)
         if self._scene_abort:
             self._state = "ABORTED"
@@ -218,7 +245,7 @@ class SimulatedTarget:
         self._state = "INFORMATION_ACTIVE"
         self._correlation = correlation_id
         if self._fault_id == H_SINGLE_STATUS_SILENCE:
-            self._advance_to(INFORMATION_OBSERVATION_END_S)
+            self._advance_to(self._status_until or INFORMATION_OBSERVATION_END_S)
             return self._visible(delay)
         event = self._record("COMPLETED", correlation_id)
         return self._visible(event)
@@ -237,8 +264,8 @@ class SimulatedTarget:
             "correlationId": None if self._corrupt_observation else event.correlation_id,
             "tick": str(event.tick),
             "observationInterval": {
-                "lower": str(self.clock.observation_interval(event.tick).lower),
-                "upper": str(self.clock.observation_interval(event.tick).upper),
+                "lower": str(self.clock.observation_interval(event.tick).lower + self._observation_jitter),
+                "upper": str(self.clock.observation_interval(event.tick).upper + self._observation_jitter),
                 "unit": self.clock.unit,
             },
             "payload": dict(event.payload),

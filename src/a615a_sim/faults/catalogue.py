@@ -84,6 +84,16 @@ def evaluator_fault_plan() -> tuple[tuple[str, str], ...]:
     return tuple(rows)
 
 
+def parameter_axes() -> tuple[Mapping[str, Any], ...]:
+    axes = load_catalogue().get("parameterAxes") or []
+    return tuple(axes)
+
+
+def harder_cases() -> tuple[Mapping[str, Any], ...]:
+    cases = load_catalogue().get("harderCases") or []
+    return tuple(cases)
+
+
 def require_applicable(scene_id: str, fault_id: str) -> Mapping[str, Any]:
     entry = entry_by_id(fault_id)
     if not is_applicable(scene_id, fault_id):

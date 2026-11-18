@@ -217,5 +217,207 @@
       "injectionStatusIfConfirmed": "unresolved",
       "notes": "Pilot LOCATE unused (CR-2026-024 deviation)."
     }
+  ],
+  "parameterAxes": [
+    {
+      "axisId": "AX-BASE-SCENE",
+      "kind": "base-scene",
+      "publicRationale": "Pilot cells already apply each H_single member to a declared scene subset. Confirmatory variation uses the same public scene identities rather than N repeats.",
+      "requirementInterval": null,
+      "observationEnd": null,
+      "values": [
+        "SC-NORMAL-UPLOAD",
+        "SC-WAIT-CONTINUE",
+        "SC-ABORT",
+        "SC-SINGLE-BATCH",
+        "SC-NO-RESPONSE",
+        "SC-SAME-KEY",
+        "SC-RESOURCE-ERROR",
+        "SC-INVALID-OBS"
+      ]
+    },
+    {
+      "axisId": "AX-FIND-ANSWER-TICK",
+      "kind": "timing",
+      "parentFaultId": "F-FIND-ANSWER-LATE",
+      "parameterKey": "findAnswerAtS",
+      "unit": "second",
+      "requirementInterval": {
+        "id": "CRS-M1-00391",
+        "closed": "[0, 2]",
+        "note": "FIND host-answer closed interval. Endpoint inclusivity remains DEC-CLOCK."
+      },
+      "observationEnd": {
+        "family": "FIND",
+        "endS": "2201/1000",
+        "justification": "greater than 2 s + SIMULATED_EPSILON + margin so a late FIND-ANSWER in (2, end) stays a FIND-ANSWER event, not a missing answer at window end"
+      },
+      "values": [
+        {"id": "FIND-TICK-FAIL-2EPS", "findAnswerAtS": "2002/1000", "role": "just-outside-disjoint-candidate"},
+        {"id": "FIND-TICK-FAIL-PILOT", "findAnswerAtS": "41/20", "role": "pilot-default-late"},
+        {"id": "FIND-TICK-FAIL-MID", "findAnswerAtS": "21/10", "role": "mid-window-late"},
+        {"id": "FIND-TICK-FAIL-NEAR-END", "findAnswerAtS": "11/5", "role": "near-observation-end"}
+      ]
+    },
+    {
+      "axisId": "AX-STATUS-SILENCE-UNTIL",
+      "kind": "timing",
+      "parentFaultId": "F-STATUS-SILENCE",
+      "parameterKey": "statusSilenceUntilS",
+      "unit": "second",
+      "requirementInterval": {
+        "id": "CRS-M1-00106",
+        "closed": "exceptionDelaySeconds=10",
+        "note": "INFORMATION follow-on STATUS obligation; endpoint inclusivity remains DEC-CLOCK."
+      },
+      "observationEnd": {
+        "family": "INFORMATION",
+        "endS": "10201/1000",
+        "justification": "greater than 10 s + SIMULATED_EPSILON + margin so omitted follow-on STATUS is observed at window end without a new event name"
+      },
+      "values": [
+        {"id": "STATUS-UNTIL-10", "statusSilenceUntilS": "10", "role": "endpoint-candidate"},
+        {"id": "STATUS-UNTIL-2EPS", "statusSilenceUntilS": "10002/1000", "role": "just-outside-candidate"},
+        {"id": "STATUS-UNTIL-PILOT", "statusSilenceUntilS": "10201/1000", "role": "pilot-default-end"}
+      ]
+    },
+    {
+      "axisId": "AX-LUR-ACK-TICK",
+      "kind": "timing",
+      "parentFaultId": "H-NORMAL",
+      "parameterKey": "lurAckAtS",
+      "unit": "second",
+      "requirementInterval": {
+        "id": "CRS-M1-00366",
+        "closed": "matching-ACK presence after LUR WRQ",
+        "note": "Numeric ACK deadline is not frozen here; delayed ACK still uses event LUR-ACK (no new names)."
+      },
+      "observationEnd": null,
+      "values": [
+        {"id": "LUR-ACK-DEFAULT", "lurAckAtS": "1/50", "role": "presence-preserving-default"},
+        {"id": "LUR-ACK-DELAYED", "lurAckAtS": "1/5", "role": "delayed-but-present"},
+        {"id": "LUR-ACK-FAR", "lurAckAtS": "1", "role": "far-delay-present"}
+      ]
+    },
+    {
+      "axisId": "AX-OBS-JITTER",
+      "kind": "observation-perturbation",
+      "parentFaultId": null,
+      "parameterKey": "observationJitterS",
+      "unit": "second",
+      "requirementInterval": {
+        "id": "SIMULATED_EPSILON",
+        "closed": "declared simulated epsilon 1/1000 s",
+        "note": "Shifts algorithm-visible observationInterval only; event kind and payload names unchanged."
+      },
+      "observationEnd": null,
+      "values": [
+        {"id": "JITTER-MINUS-2EPS", "observationJitterS": "-1/500", "role": "minus-two-epsilon"},
+        {"id": "JITTER-PLUS-2EPS", "observationJitterS": "1/500", "role": "plus-two-epsilon"}
+      ]
+    },
+    {
+      "axisId": "AX-FIND-OBS-END",
+      "kind": "observation-end",
+      "parentFaultId": "F-FIND-ANSWER-ABSENT",
+      "parameterKey": "findObservationEndS",
+      "unit": "second",
+      "requirementInterval": {
+        "id": "CRS-M1-00391",
+        "closed": "[0, 2]"
+      },
+      "observationEnd": {
+        "family": "FIND",
+        "endS": "grid",
+        "justification": "Short ends at the requirement deadline are a DEC-EQUIV candidate; the default end keeps LATE vs ABSENT as distinct FIND-ANSWER presence versus window-end absence."
+      },
+      "values": [
+        {"id": "FIND-END-DEADLINE", "findObservationEndS": "2", "role": "short-window-equiv-candidate"},
+        {"id": "FIND-END-DEFAULT", "findObservationEndS": "2201/1000", "role": "pilot-default-end"}
+      ]
+    }
+  ],
+  "harderCases": [
+    {
+      "id": "HC-FIND-ENDPOINT",
+      "parentFaultId": "F-FIND-ANSWER-LATE",
+      "parameters": {"findAnswerAtS": "2"},
+      "visibleThrough": "FIND-ANSWER tick and observationInterval only",
+      "hypothesisStress": {
+        "CL-T": "T5 interval overlap at the CRS-M1-00391 endpoint is hypothesized to yield INCONCLUSIVE rather than FAIL",
+        "CL-A": "analysis-only candidate sets are hypothesized to remain mixed without a T5 interval and therefore INCONCLUSIVE under the retained R1 rule",
+        "CL-TA": "frozen TEST then analysis is hypothesized to inherit the TEST interval verdict",
+        "CL-LOOP": "loop updates are hypothesized to keep both h_normal and h_find_answer_late until a later distinguishing event"
+      },
+      "statementClass": "HYPOTHESIS-NOT-RESULT"
+    },
+    {
+      "id": "HC-FIND-NEAR-EQUIV",
+      "parentFaultId": "F-FIND-ANSWER-LATE",
+      "parameters": {"findAnswerAtS": "11/5"},
+      "pairWith": "F-FIND-ANSWER-ABSENT",
+      "visibleThrough": "FIND-ANSWER presence near FIND observation end versus no FIND-ANSWER at the same end",
+      "hypothesisStress": {
+        "CL-T": "coarse interval tests are hypothesized to confuse late-near-end with absence",
+        "CL-A": "order/presence features are hypothesized to still separate the pair",
+        "CL-TA": "hypothesized to follow the TEST member",
+        "CL-LOOP": "hypothesized to retain both LATE and ABSENT until stop"
+      },
+      "statementClass": "HYPOTHESIS-NOT-RESULT"
+    },
+    {
+      "id": "HC-LATE-ABSENT-SHORT-WINDOW",
+      "parentFaultId": "F-FIND-ANSWER-ABSENT",
+      "parameters": {"findObservationEndS": "2"},
+      "pairWith": "F-FIND-ANSWER-LATE",
+      "visibleThrough": "window-end absence at the 2 s deadline; no new event name",
+      "hypothesisStress": {
+        "CL-T": "hypothesized observationally equivalent to LATE when the observation end is at or before 2 s",
+        "CL-A": "hypothesized equivalent on the public FIND-ANSWER presence bit",
+        "CL-TA": "hypothesized equivalent",
+        "CL-LOOP": "hypothesized equivalent; DEC-EQUIV remains OPEN"
+      },
+      "statementClass": "HYPOTHESIS-NOT-RESULT"
+    },
+    {
+      "id": "HC-OBS-PERTURB-EPS",
+      "parentFaultId": "F-FIND-ANSWER-LATE",
+      "parameters": {"observationJitterS": "1/500"},
+      "visibleThrough": "observationInterval lower/upper only",
+      "hypothesisStress": {
+        "CL-T": "hypothesized more sensitive to interval shift of 2ε",
+        "CL-A": "hypothesized insensitive if it ignores interval endpoints",
+        "CL-TA": "hypothesized to inherit TEST sensitivity",
+        "CL-LOOP": "hypothesized partial sensitivity through T5 members"
+      },
+      "statementClass": "HYPOTHESIS-NOT-RESULT"
+    },
+    {
+      "id": "HC-LUR-ACK-DELAY-VS-MISSING",
+      "parentFaultId": "H-NORMAL",
+      "parameters": {"lurAckAtS": "1"},
+      "pairWith": "F-LUR-ACK-MISSING",
+      "visibleThrough": "LUR-ACK timing versus omitted LUR-ACK; both use existing LUR-WRQ/LUR-ACK kinds",
+      "hypothesisStress": {
+        "CL-T": "if no numeric ACK interval is frozen, delayed ACK is hypothesized indistinguishable from H-NORMAL on T5",
+        "CL-A": "presence of LUR-ACK is hypothesized to separate delay from missing",
+        "CL-TA": "hypothesized to follow presence",
+        "CL-LOOP": "hypothesized to drop h_lur_ack_missing once LUR-ACK is observed"
+      },
+      "statementClass": "HYPOTHESIS-NOT-RESULT"
+    },
+    {
+      "id": "HC-INVALID-OBS-JITTER",
+      "parentFaultId": "H-INVALID-OBS",
+      "parameters": {"observationJitterS": "-1/500"},
+      "visibleThrough": "missing correlationId plus shifted observationInterval; still not an IUT-fault label",
+      "hypothesisStress": {
+        "CL-T": "hypothesized ERROR/INVALID-OBS rather than IUT FAIL",
+        "CL-A": "hypothesized ERROR",
+        "CL-TA": "hypothesized ERROR",
+        "CL-LOOP": "hypothesized ERROR; DETECT/ABLATION accounting only"
+      },
+      "statementClass": "HYPOTHESIS-NOT-RESULT"
+    }
   ]
 }

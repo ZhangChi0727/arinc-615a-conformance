@@ -1,0 +1,135 @@
+"""Feasibility of parameterized faults: timing/presence/order only."""
+
+from __future__ import annotations
+
+from fractions import Fraction
+
+from a615a_sim.bound_iut.protocol import PROTOCOL_EVENT_WHITELIST, SimulatedTarget
+from a615a_sim.clock import FIND_ANSWER_LATE_AT_S, FIND_HOST_ANSWER_S, SimulatedClock
+from a615a_sim.evaluator import (
+    get_truth,
+    issue_truth_capability,
+    new_independent_truth_store,
+)
+from a615a_sim.evaluator.reset import reset_target
+from a615a_sim.faults.catalogue import harder_cases, parameter_axes
+from a615a_sim.faults.injector import inject
+from a615a_sim.faults.parameters import expand_independent_units
+
+
+def _target() -> SimulatedTarget:
+    return SimulatedTarget(SimulatedClock())
+
+
+def test_catalogue_declares_parameter_axes_and_harder_cases() -> None:
+    axes = {axis["axisId"] for axis in parameter_axes()}
+    assert axes == {
+        "AX-BASE-SCENE",
+        "AX-FIND-ANSWER-TICK",
+        "AX-STATUS-SILENCE-UNTIL",
+        "AX-LUR-ACK-TICK",
+        "AX-OBS-JITTER",
+        "AX-FIND-OBS-END",
+    }
+    cases = {case["id"] for case in harder_cases()}
+    assert "HC-FIND-ENDPOINT" in cases
+    assert "HC-OBS-PERTURB-EPS" in cases
+    for case in harder_cases():
+        assert case["statementClass"] == "HYPOTHESIS-NOT-RESULT"
+        assert case["visibleThrough"]
+
+
+def test_parameterized_late_find_keeps_event_names_and_changes_tick() -> None:
+    default = _target()
+    reset_target(default)
+    inject(default, scene_id="SC-NORMAL-UPLOAD", fault_id="F-FIND-ANSWER-LATE")
+    parameterized = _target()
+    reset_target(parameterized)
+    inject(
+        parameterized,
+        scene_id="SC-NORMAL-UPLOAD",
+        fault_id="F-FIND-ANSWER-LATE",
+        parameters={"findAnswerAtS": "2002/1000"},
+    )
+    default_kinds = {event.kind for event in default.events}
+    param_kinds = {event.kind for event in parameterized.events}
+    assert default_kinds == param_kinds <= PROTOCOL_EVENT_WHITELIST
+    default_answer = next(event for event in default.events if event.kind == "FIND-ANSWER")
+    param_answer = next(event for event in parameterized.events if event.kind == "FIND-ANSWER")
+    assert default_answer.tick == FIND_ANSWER_LATE_AT_S
+    assert param_answer.tick == Fraction("2002/1000")
+    assert param_answer.tick > FIND_HOST_ANSWER_S
+
+
+def test_observation_jitter_shifts_interval_only() -> None:
+    target = _target()
+    reset_target(target)
+    inject(
+        target,
+        scene_id="SC-NORMAL-UPLOAD",
+        fault_id="F-FIND-ANSWER-LATE",
+        parameters={"observationJitterS": "1/500"},
+    )
+    visible = target.algorithm_visible_records()
+    assert {row["kind"] for row in visible} <= PROTOCOL_EVENT_WHITELIST
+    answer = next(row for row in visible if row["kind"] == "FIND-ANSWER")
+    interval = target.clock.observation_interval(Fraction(answer["tick"]))
+    assert answer["observationInterval"]["lower"] == str(interval.lower + Fraction(1, 500))
+    assert answer["observationInterval"]["upper"] == str(interval.upper + Fraction(1, 500))
+    assert answer["kind"] == "FIND-ANSWER"
+
+
+def test_absent_short_window_omits_find_answer_without_new_kind() -> None:
+    target = _target()
+    reset_target(target)
+    attempt = inject(
+        target,
+        scene_id="SC-NORMAL-UPLOAD",
+        fault_id="F-FIND-ANSWER-ABSENT",
+        parameters={"findObservationEndS": "2"},
+    )
+    kinds = [event.kind for event in target.events]
+    assert kinds == ["FIND-REQUEST-RECEIVED"]
+    assert "FIND-ANSWER-ABSENT" not in kinds
+    assert attempt.injection_confirmed is True
+
+
+def test_delayed_lur_ack_remains_present() -> None:
+    target = _target()
+    reset_target(target)
+    inject(
+        target,
+        scene_id="SC-NORMAL-UPLOAD",
+        fault_id="H-NORMAL",
+        parameters={"lurAckAtS": "1"},
+    )
+    kinds = [event.kind for event in target.events]
+    assert "LUR-WRQ" in kinds and "LUR-ACK" in kinds
+    ack = next(event for event in target.events if event.kind == "LUR-ACK")
+    assert ack.tick == Fraction(1)
+
+
+def test_truth_access_unchanged_with_parameters() -> None:
+    capability = issue_truth_capability()
+    store = new_independent_truth_store()
+    target = _target()
+    reset_target(target)
+    attempt = inject(
+        target,
+        scene_id="SC-NORMAL-UPLOAD",
+        fault_id="F-FIND-ANSWER-LATE",
+        parameters={"findAnswerAtS": "41/20"},
+        truth_store=store,
+        truth_capability=capability,
+    )
+    assert attempt.injection_confirmed is True
+    record = get_truth(store, attempt.attempt_id, capability)
+    assert record.attempt_id == attempt.attempt_id
+    assert record.confirmation_ref == f"INJ-{attempt.attempt_id}"
+
+
+def test_draft_units_are_labelled_and_do_not_run() -> None:
+    units = expand_independent_units()
+    assert units
+    assert all(unit["label"].startswith("DRAFT") for unit in units)
+    assert all("/CL-" not in unit["unitId"] for unit in units)
