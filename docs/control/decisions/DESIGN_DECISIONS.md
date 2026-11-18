@@ -1344,6 +1344,30 @@ calibration.
 **Status:** Candidate under CR-2026-026. Draft PR review required. Not run
 admission, not confirmatory, not Ready/merge.
 
+## DD-051 — Close DEC-IUT as the local simulated environment
+
+**Decision:** Under CR-2026-027 and the 2026-11-18 user ruling, close DEC-IUT:
+the IUT for this study is the repository local simulated 615A environment
+(fault-injectable bound-model IUT, TH / FIND-HOST side). No real-target
+experiment is planned. All experimental products are labelled SIMULATED-IUT.
+DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and DEC-RESOURCE remain OPEN.
+This decision does not declare confirmatory N, freeze `registration.yaml`,
+or authorize manuscript result cells.
+
+**Why:** The experiment owner selected the simulated IUT already present in
+this repository. The ruling must be recorded before any Phase D census so
+that every row is labelled against a closed IUT identity.
+
+**Scope:** Control record only (this DD and CR-2026-027). No
+`src/cltav_runtime/` semantic change.
+
+**Guardrails:** Simulated-IUT results are not real-target behaviour,
+conformance or certification. The simulation-to-real gap remains a threat
+to validity. Closing DEC-IUT does not close other DEC-* items.
+
+**Status:** Candidate under CR-2026-027. Draft PR review required. Not
+confirmatory, not Ready/merge.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -2066,3 +2090,22 @@ INCONCLUSIVE，不是假 FAIL。被排除尝试仍留在尝试分母。RUN 与 C
 真值。SYN-* 行仍是合成设计见证，不是观测结果。模拟 ε 不是实验室校准。
 
 **状态：** 在 CR-2026-026 下为候选。须 Draft PR 审查。不是运行准入、确认性实验或 Ready／合并。
+
+## DD-051——关闭 DEC-IUT 为本地模拟环境
+
+**决定：** 在 CR-2026-027 与 2026-11-18 用户裁决下，关闭 DEC-IUT：本研究的 IUT
+为仓库本地模拟 615A 环境（可注入故障的有界模型 IUT，TH／FIND-HOST 侧）。不
+计划真实目标实验。所有实验产物标注 SIMULATED-IUT。DEC-TRUTH、DEC-CLOCK、
+DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN。本决定不声明确认性 N、不
+冻结 `registration.yaml`、不授权填写稿件结果格。
+
+**理由：** 实验所有者选择本仓库已有的模拟 IUT。须在任何 Phase D 普查前记录，
+使每一行都对照已关闭的 IUT 身份标注。
+
+**范围：** 仅控制记录（本 DD 与 CR-2026-027）。不改变 `src/cltav_runtime/`
+语义。
+
+**护栏：** 模拟 IUT 结果不是真实目标行为、符合性或认证。模拟到真实的差距
+仍是效度威胁。关闭 DEC-IUT 并不关闭其他 DEC-*。
+
+**状态：** 在 CR-2026-027 下为候选。须 Draft PR 审查。不是确认性实验或 Ready／合并。
