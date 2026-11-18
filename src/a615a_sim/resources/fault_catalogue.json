@@ -6,8 +6,20 @@
     "iutRole": "target side (TH / FIND-HOST); data-loader side is tester infrastructure (R1)",
     "boundModel": "UPLOAD FIND/SEND/ABORT and INFORMATION only; no DOWNLOAD/AFDX",
     "claimStatus": "non-confirmatory; DEC-IUT and DEC-EQUIV remain OPEN",
-    "declaredObservationEndS": "11/5",
-    "declaredObservationEndNote": "greater than FIND host-answer 2 s + SIMULATED_EPSILON + margin so LATE and ABSENT are distinguishable; (LATE, ABSENT) remains a DEC-EQUIV candidate"
+    "declaredObservationEndS": "2201/1000",
+    "declaredObservationEndNote": "FIND-family default; see observationEnds",
+    "observationEnds": {
+      "FIND": {
+        "endS": "2201/1000",
+        "governingDeadlineS": "2",
+        "justification": "greater than FIND host-answer 2 s + SIMULATED_EPSILON + margin so a late FIND-ANSWER tick in (2, end) is distinct from a missing FIND-ANSWER observed only when the window ends; (LATE, ABSENT) remains a DEC-EQUIV candidate"
+      },
+      "INFORMATION": {
+        "endS": "10201/1000",
+        "governingDeadlineS": "10",
+        "justification": "greater than STATUS exceptionDelaySeconds 10 s + SIMULATED_EPSILON + margin so omitted follow-on STATUS is observed as window end, not as a named silence event"
+      }
+    }
   },
   "locateScenes": [
     "SC-NORMAL-UPLOAD",
@@ -48,7 +60,7 @@
     "faultClass": "NORMAL-CONTROL",
     "basisIds": [],
     "mechanism": "no IUT overlay; WAIT/CONTINUE, owned ABORT, and BATCH remain legal h_normal scene trajectories",
-    "observableSignature": "scene trajectory without an H_single overlay; FIND host answer in [0,2] when FIND occurs",
+    "observableSignature": "scene trajectory without an H_single overlay; FIND-REQUEST-RECEIVED then FIND-ANSWER at the declared in-window tick when FIND occurs",
     "expectedT5OrHalt": "FIND host-answer observation contained in CRS-M1-00391 [0,2] when FIND occurs; no halt from an H_single overlay",
     "confirmationToken": "H-NORMAL",
     "faultDomainClass": "normal",
@@ -70,7 +82,7 @@
       "faultClass": "PROTOCOL-FAULT",
       "basisIds": ["CRS-M1-00391"],
       "mechanism": "TH FIND-HOST answer is emitted after the 2 s host-answer closed interval and before the declared observation end",
-      "observableSignature": "FIND-ANSWER-LATE event with host-answer tick strictly after 2 s and strictly before declaredObservationEndS",
+      "observableSignature": "FIND-REQUEST-RECEIVED then FIND-ANSWER whose tick is strictly after 2 s and strictly before FIND observation end",
       "expectedT5OrHalt": "T5 FAIL against CRS-M1-00391 [0,2] (observation disjoint from the host-answer interval); session continues until observation end",
       "confirmationToken": "FIND-ANSWER-LATE",
       "faultDomainClass": "in-domain-non-equivalent",
@@ -90,7 +102,7 @@
       "faultClass": "PROTOCOL-FAULT",
       "basisIds": ["CRS-M1-00391"],
       "mechanism": "TH emits no FIND-HOST answer through the declared observation end",
-      "observableSignature": "FIND-ANSWER-ABSENT at declaredObservationEndS with no host-answer event",
+      "observableSignature": "FIND-REQUEST-RECEIVED and no FIND-ANSWER through FIND observation end",
       "expectedT5OrHalt": "T5 FAIL against CRS-M1-00391 [0,2]; halt at declared observation end without a host answer",
       "confirmationToken": "FIND-ANSWER-ABSENT",
       "faultDomainClass": "in-domain-non-equivalent",
@@ -130,7 +142,7 @@
       "faultClass": "PROTOCOL-FAULT",
       "basisIds": ["CRS-M1-00366", "TH-MATCHING-LUR-WRQ-RECEIVED"],
       "mechanism": "TH emits a LUR ACK while TH-MATCHING-LUR-WRQ-RECEIVED is false (no matching LUR WRQ)",
-      "observableSignature": "TH LUR-ACK-WITHOUT-WRQ with matchingWrqReceived=false",
+      "observableSignature": "LUR-ACK present and no preceding LUR-WRQ",
       "expectedT5OrHalt": "invariant TH-MATCHING-LUR-WRQ-RECEIVED violated; halt after unmatched ACK",
       "confirmationToken": "LUR-ACK-WITHOUT-WRQ",
       "faultDomainClass": "in-domain-non-equivalent",
@@ -148,9 +160,9 @@
       "serviceScope": "INFORMATION/UPLOAD status",
       "faultClass": "PROTOCOL-FAULT",
       "basisIds": ["CRS-M1-00106"],
-      "mechanism": "TH omits the next timed status; data-loader abort fallback is not suppressed",
-      "observableSignature": "STATUS-WITH-DELAY then STATUS-SILENCE with abortFallback=AVAILABLE",
-      "expectedT5OrHalt": "TH status obligation unmet; DL abort fallback remains available (not suppressed)",
+      "mechanism": "TH omits the next timed STATUS; data-loader abort fallback, if executed, is a tester-issued ABORT",
+      "observableSignature": "STATUS with exceptionDelaySeconds=10 and no follow-on STATUS through INFORMATION observation end; tester ABORT if fallback runs",
+      "expectedT5OrHalt": "TH status obligation unmet; tester may emit ABORT after the observation window",
       "confirmationToken": "STATUS-SILENCE",
       "faultDomainClass": "in-domain-non-equivalent",
       "injectionStatusIfConfirmed": "confirmed"

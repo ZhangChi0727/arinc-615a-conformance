@@ -16,10 +16,37 @@ CLOCK_UNIT = "second"
 # calibrated laboratory budget.
 SIMULATED_EPSILON = Fraction(1, 1000)
 FIND_HOST_ANSWER_S = Fraction(2, 1)
-# Observation end > 2 s + epsilon + margin so LATE versus ABSENT differ.
+STATUS_EXCEPTION_DELAY_S = Fraction(10, 1)
+# Observation end > governing deadline + epsilon + margin so presence versus
+# absence (and late versus absent FIND answers) remain distinguishable.
 OBSERVATION_END_MARGIN_S = Fraction(1, 10)
-DECLARED_OBSERVATION_END_S = FIND_HOST_ANSWER_S + SIMULATED_EPSILON + OBSERVATION_END_MARGIN_S + Fraction(1, 10)
+OBSERVATION_END_EXTRA_S = Fraction(1, 10)
+FIND_OBSERVATION_END_S = (
+    FIND_HOST_ANSWER_S + SIMULATED_EPSILON + OBSERVATION_END_MARGIN_S + OBSERVATION_END_EXTRA_S
+)
+INFORMATION_OBSERVATION_END_S = (
+    STATUS_EXCEPTION_DELAY_S
+    + SIMULATED_EPSILON
+    + OBSERVATION_END_MARGIN_S
+    + OBSERVATION_END_EXTRA_S
+)
+# Alias retained for FIND-family callers.
+DECLARED_OBSERVATION_END_S = FIND_OBSERVATION_END_S
+FIND_ANSWER_NORMAL_AT_S = Fraction(1, 100)
 FIND_ANSWER_LATE_AT_S = FIND_HOST_ANSWER_S + Fraction(5, 100)
+SCENE_FAMILY_FIND = "FIND"
+SCENE_FAMILY_INFORMATION = "INFORMATION"
+
+FIND_OBSERVATION_END_JUSTIFICATION = (
+    "FIND-family observation end is strictly greater than CRS-M1-00391 host-answer "
+    "deadline 2 s plus SIMULATED_EPSILON plus margin so a late FIND-ANSWER tick in "
+    "(2, end) is distinct from a missing FIND-ANSWER observed only when the window ends."
+)
+INFORMATION_OBSERVATION_END_JUSTIFICATION = (
+    "INFORMATION-family observation end is strictly greater than the STATUS "
+    "exceptionDelaySeconds=10 s obligation plus SIMULATED_EPSILON plus margin so "
+    "omitted follow-on STATUS is observed as window end rather than as a named silence event."
+)
 
 
 @dataclass(frozen=True)
@@ -92,10 +119,17 @@ def find_host_requirement() -> ClosedInterval:
     return ClosedInterval(Fraction(0, 1), FIND_HOST_ANSWER_S)
 
 
-def declared_observation_end() -> Fraction:
-    """Evaluator observation end; strictly after 2 s + epsilon + margin."""
+def declared_observation_end(family: str = SCENE_FAMILY_FIND) -> Fraction:
+    """Evaluator observation end for a scene family; each exceeds deadline + ε + margin."""
 
+    if family == SCENE_FAMILY_INFORMATION:
+        minimum = STATUS_EXCEPTION_DELAY_S + SIMULATED_EPSILON + OBSERVATION_END_MARGIN_S
+        if INFORMATION_OBSERVATION_END_S <= minimum:
+            raise ValueError("INFORMATION observation end must exceed 10 s + epsilon + margin")
+        return INFORMATION_OBSERVATION_END_S
+    if family != SCENE_FAMILY_FIND:
+        raise ValueError(f"unknown scene family {family}")
     minimum = FIND_HOST_ANSWER_S + SIMULATED_EPSILON + OBSERVATION_END_MARGIN_S
-    if DECLARED_OBSERVATION_END_S <= minimum:
-        raise ValueError("declared observation end must exceed 2 s + epsilon + margin")
-    return DECLARED_OBSERVATION_END_S
+    if FIND_OBSERVATION_END_S <= minimum:
+        raise ValueError("FIND observation end must exceed 2 s + epsilon + margin")
+    return FIND_OBSERVATION_END_S

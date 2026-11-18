@@ -7,6 +7,13 @@ from typing import Any, Mapping
 from uuid import uuid4
 
 from a615a_sim.bound_iut.protocol import SimulatedTarget
+from a615a_sim.clock import (
+    FIND_ANSWER_LATE_AT_S,
+    FIND_HOST_ANSWER_S,
+    FIND_OBSERVATION_END_S,
+    INFORMATION_OBSERVATION_END_S,
+    declared_observation_end,
+)
 from a615a_sim.faults.catalogue import (
     canonical_fault_id,
     declared_signature,
@@ -40,58 +47,68 @@ class InjectionAttempt:
         }
 
 
-_H_SINGLE_TOKENS = frozenset(
-    {
-        "FIND-ANSWER-LATE",
-        "FIND-ANSWER-ABSENT",
-        "LUR-ACK-MISSING",
-        "LUR-ACK-WITHOUT-WRQ",
-        "STATUS-SILENCE",
-    }
-)
+def _kinds(target: SimulatedTarget) -> set[str]:
+    return {event.kind for event in target.events}
 
 
 def _observe_signature(target: SimulatedTarget, fault_id: str) -> str | None:
-    kinds = {event.kind for event in target.events}
+    kinds = _kinds(target)
     visible = target._last_visible or {}
     canonical = canonical_fault_id(fault_id)
+    answers = [event for event in target.events if event.kind == "FIND-ANSWER"]
+    wrq = any(event.kind == "LUR-WRQ" for event in target.events)
+    ack = any(event.kind == "LUR-ACK" for event in target.events)
+    statuses = [event for event in target.events if event.kind == "STATUS"]
     if canonical in {"H-NORMAL"}:
-        if kinds & _H_SINGLE_TOKENS:
+        late_answer = any(
+            event.tick > FIND_HOST_ANSWER_S for event in answers
+        )
+        silence = (
+            statuses
+            and target.clock.now >= INFORMATION_OBSERVATION_END_S
+            and not any(event.kind == "COMPLETED" for event in target.events)
+        )
+        if late_answer or (not answers and any(event.kind == "FIND-REQUEST-RECEIVED" for event in target.events) and target.clock.now >= FIND_OBSERVATION_END_S):
+            return None
+        if wrq and not ack:
+            return None
+        if ack and not wrq:
+            return None
+        if silence:
             return None
         return "H-NORMAL"
     if canonical == "F-FIND-ANSWER-LATE":
-        late = [event for event in target.events if event.kind == "FIND-ANSWER-LATE"]
+        late = [
+            event
+            for event in answers
+            if FIND_HOST_ANSWER_S < event.tick < FIND_OBSERVATION_END_S
+            and event.tick == FIND_ANSWER_LATE_AT_S
+        ]
         return "FIND-ANSWER-LATE" if late else None
     if canonical == "F-FIND-ANSWER-ABSENT":
-        absent = [event for event in target.events if event.kind == "FIND-ANSWER-ABSENT"]
-        host = [event for event in target.events if event.kind in {"FIND", "FIND-ANSWER-LATE"}]
-        return "FIND-ANSWER-ABSENT" if absent and not host else None
+        requested = any(event.kind == "FIND-REQUEST-RECEIVED" for event in target.events)
+        halted = target.clock.now == declared_observation_end("FIND")
+        return "FIND-ANSWER-ABSENT" if requested and not answers and halted else None
     if canonical == "F-LUR-ACK-MISSING":
-        wrq = any(event.kind == "LUR-WRQ" for event in target.events)
-        ack = any(event.kind in {"LUR-ACK", "LUR-ACK-WITHOUT-WRQ"} for event in target.events)
-        return "LUR-ACK-MISSING" if wrq and not ack and "LUR-ACK-MISSING" in kinds else None
+        return "LUR-ACK-MISSING" if wrq and not ack else None
     if canonical == "F-LUR-ACK-WITHOUT-WRQ":
-        wrq = any(event.kind == "LUR-WRQ" for event in target.events)
-        unmatched = any(event.kind == "LUR-ACK-WITHOUT-WRQ" for event in target.events)
-        return "LUR-ACK-WITHOUT-WRQ" if unmatched and not wrq else None
+        return "LUR-ACK-WITHOUT-WRQ" if ack and not wrq else None
     if canonical == "F-STATUS-SILENCE":
-        silenced = [
-            event
-            for event in target.events
-            if event.kind == "STATUS-SILENCE" and event.payload.get("abortFallback") == "AVAILABLE"
-        ]
-        delayed = "STATUS-WITH-DELAY" in kinds
-        suppressed = any(
-            event.payload.get("abortFallback") == "SUPPRESSED" for event in target.events
-        )
-        return "STATUS-SILENCE" if silenced and delayed and not suppressed else None
+        delayed = any(event.payload.get("exceptionDelaySeconds") == "10" for event in statuses)
+        follow_on_status = len(statuses) > 1
+        tester_abort = any(event.kind == "ABORT" for event in target.events)
+        at_end = target.clock.now >= INFORMATION_OBSERVATION_END_S
+        return "STATUS-SILENCE" if delayed and not follow_on_status and tester_abort and at_end else None
     if canonical == "H-SAME-KEY":
-        reused = [event for event in target.events if event.payload.get("reusedKey")]
-        return "REUSED-KEY" if reused else None
+        ids = [event.correlation_id for event in target.events if event.kind == "STATUS"]
+        return "REUSED-KEY" if len(ids) >= 2 and len(set(ids)) == 1 else None
     if canonical == "H-INVALID-OBS":
         return "MISSING-CORRELATION" if visible.get("correlationId") is None else None
     if canonical == "H-RESOURCE-ERROR":
-        return "RESOURCE-ERROR" if "RESOURCE-ERROR" in kinds else None
+        only_status = kinds <= {"STATUS"} and "STATUS" in kinds
+        return "RESOURCE-ERROR" if only_status and not any(
+            event.payload.get("exceptionDelaySeconds") for event in statuses
+        ) else None
     return None
 
 
@@ -124,6 +141,7 @@ def _drive_for_confirmation(
         return
     if canonical == "F-STATUS-SILENCE":
         target.information(correlation_id)
+        target.tester_abort(correlation_id)
         return
     if canonical == "H-SAME-KEY":
         target.information(correlation_id)

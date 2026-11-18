@@ -10,13 +10,17 @@ from pathlib import Path
 
 import pytest
 
-from a615a_sim.bound_iut.protocol import SimulatedTarget
+from a615a_sim.bound_iut.protocol import PROTOCOL_EVENT_WHITELIST, SimulatedTarget
 from a615a_sim.clock import (
     ClosedInterval,
     DECLARED_OBSERVATION_END_S,
     FIND_ANSWER_LATE_AT_S,
+    FIND_ANSWER_NORMAL_AT_S,
     FIND_HOST_ANSWER_S,
+    FIND_OBSERVATION_END_S,
+    INFORMATION_OBSERVATION_END_S,
     SIMULATED_EPSILON,
+    STATUS_EXCEPTION_DELAY_S,
     SimulatedClock,
     declared_observation_end,
     find_host_requirement,
@@ -59,10 +63,11 @@ def test_bound_model_find_send_abort_and_information() -> None:
     sent = target.send("c-find")
     aborted = _target().abort("c-abort")
     info = _target().information("c-info")
-    assert found["kind"] == "FIND" and found["label"] == "SIMULATED-IUT"
-    assert sent["kind"] == "SEND"
+    assert found["kind"] == "FIND-ANSWER" and found["label"] == "SIMULATED-IUT"
+    assert found["tick"] == str(FIND_ANSWER_NORMAL_AT_S)
+    assert sent["kind"] == "COMPLETED"
     assert aborted["kind"] == "ABORT"
-    assert info["kind"] == "INFORMATION"
+    assert info["kind"] == "COMPLETED"
     assert found["observationInterval"]["unit"] == "second"
 
 
@@ -142,7 +147,7 @@ def test_reset_evidence_is_distinct_per_attempt() -> None:
     assert first.reset_evidence_ref != second.reset_evidence_ref
     assert second.confirmed
     assert second.snapshot["state"] == "IDLE"
-    assert second.snapshot["faultId"] is None
+    assert "faultId" not in second.snapshot
 
 
 def test_simulated_clock_t5_matches_experiment_plan_examples() -> None:
@@ -162,8 +167,11 @@ def test_simulated_clock_t5_matches_experiment_plan_examples() -> None:
     assert host.upper == FIND_HOST_ANSWER_S == Fraction(2)
     assert t5_interval_verdict(ClosedInterval(Fraction(0), Fraction(2)), host) == "PASS"
     end = declared_observation_end()
-    assert end == DECLARED_OBSERVATION_END_S
+    assert end == DECLARED_OBSERVATION_END_S == FIND_OBSERVATION_END_S
     assert end > FIND_HOST_ANSWER_S + SIMULATED_EPSILON
+    info_end = declared_observation_end("INFORMATION")
+    assert info_end == INFORMATION_OBSERVATION_END_S
+    assert info_end > STATUS_EXCEPTION_DELAY_S + SIMULATED_EPSILON
     import a615a_sim.clock as clock_mod
 
     assert not hasattr(clock_mod, "find_registration_requirement")
@@ -359,13 +367,13 @@ def test_late_and_absent_signatures_differ_under_declared_observation_window() -
     assert late.observed_signature != absent.observed_signature
     late_target = _target()
     inject(late_target, scene_id="SC-WAIT-CONTINUE", fault_id="F-FIND-ANSWER-LATE")
-    late_event = next(event for event in late_target.events if event.kind == "FIND-ANSWER-LATE")
+    late_event = next(event for event in late_target.events if event.kind == "FIND-ANSWER")
     late_obs = late_target.clock.observation_interval(late_event.tick)
     assert t5_interval_verdict(late_obs, find_host_requirement()) == "FAIL"
     absent_target = _target()
     inject(absent_target, scene_id="SC-ABORT", fault_id="F-FIND-ANSWER-ABSENT")
-    assert all(event.kind != "FIND-ANSWER-LATE" for event in absent_target.events)
-    assert absent_target.clock.now == declared_observation_end()
+    assert all(event.kind != "FIND-ANSWER" for event in absent_target.events)
+    assert absent_target.clock.now == declared_observation_end("FIND")
 
 
 def test_wait_abort_and_batch_are_h_normal_trajectories() -> None:
@@ -375,7 +383,7 @@ def test_wait_abort_and_batch_are_h_normal_trajectories() -> None:
     assert {"WAIT", "CONTINUE"} <= kinds
     abort = _target()
     inject(abort, scene_id="SC-ABORT", fault_id="h_normal")
-    assert any(event.kind == "ABORT" and event.payload.get("owned") for event in abort.events)
+    assert any(event.kind == "ABORT" for event in abort.events)
     batch = _target()
     inject(batch, scene_id="SC-SINGLE-BATCH", fault_id="H-NORMAL")
     assert batch.configuration == "BATCH"
@@ -384,5 +392,127 @@ def test_wait_abort_and_batch_are_h_normal_trajectories() -> None:
 def test_status_silence_does_not_suppress_abort_fallback() -> None:
     target = _target()
     inject(target, scene_id="SC-NO-RESPONSE", fault_id="F-STATUS-SILENCE")
-    silence = next(event for event in target.events if event.kind == "STATUS-SILENCE")
-    assert silence.payload["abortFallback"] == "AVAILABLE"
+    kinds = [event.kind for event in target.events]
+    assert "STATUS" in kinds
+    assert "STATUS-SILENCE" not in kinds
+    assert kinds[-1] == "ABORT"
+    assert all("abortFallback" not in event.payload for event in target.events)
+    assert target.clock.now >= INFORMATION_OBSERVATION_END_S
+
+
+VERDICT_FIELD_DENYLIST = frozenset(
+    {
+        "afterHostDeadline",
+        "hostAnswerInWindow",
+        "thAck",
+        "matchingWrqReceived",
+        "invariant",
+        "haltedAtObservationEnd",
+        "abortFallback",
+        "faultId",
+        "hostAnswer",
+        "beforeObservationEnd",
+        "owned",
+    }
+)
+
+FAULT_OR_HYPOTHESIS_IDS = frozenset(
+    {
+        "F-FIND-ANSWER-LATE",
+        "F-FIND-ANSWER-ABSENT",
+        "F-LUR-ACK-MISSING",
+        "F-LUR-ACK-WITHOUT-WRQ",
+        "F-STATUS-SILENCE",
+        "H-NORMAL",
+        "h_normal",
+        "h_find_answer_late",
+        "h_find_answer_absent",
+        "h_lur_ack_missing",
+        "h_lur_ack_without_wrq",
+        "h_status_silence",
+        "FIND-ANSWER-LATE",
+        "FIND-ANSWER-ABSENT",
+        "LUR-ACK-MISSING",
+        "LUR-ACK-WITHOUT-WRQ",
+        "STATUS-SILENCE",
+        "STATUS-WITH-DELAY",
+    }
+)
+
+
+def _flatten(value: object) -> str:
+    return repr(value)
+
+
+@pytest.mark.parametrize(("scene_id", "fault_id"), list(evaluator_fault_plan()))
+def test_algorithm_visible_stream_has_no_truth_or_verdict_fields(scene_id: str, fault_id: str) -> None:
+    target = _target()
+    reset_target(target)
+    inject(target, scene_id=scene_id, fault_id=fault_id)
+    records = target.algorithm_visible_records()
+    snapshot = target.snapshot()
+    assert "faultId" not in snapshot
+    kinds = {record["kind"] for record in records}
+    assert kinds <= PROTOCOL_EVENT_WHITELIST
+    blob = _flatten(records) + _flatten(snapshot)
+    for forbidden in FAULT_OR_HYPOTHESIS_IDS:
+        assert forbidden not in blob
+    for record in records:
+        assert not (VERDICT_FIELD_DENYLIST & set(record.keys()))
+        assert not (VERDICT_FIELD_DENYLIST & set(record["payload"].keys()))
+    evaluator = target.evaluator_fault_record()
+    if fault_id not in {"H-NORMAL", "h_normal"}:
+        assert evaluator["faultId"] == fault_id
+
+
+def test_two_faults_in_one_scene_differ_only_by_timing_presence_or_order() -> None:
+    scene_id = "SC-NORMAL-UPLOAD"
+    streams: dict[str, list[tuple[str, str]]] = {}
+    payloads: dict[str, list[frozenset[str]]] = {}
+    for fault_id in ("H-NORMAL", "F-FIND-ANSWER-LATE", "F-FIND-ANSWER-ABSENT"):
+        target = _target()
+        reset_target(target)
+        inject(target, scene_id=scene_id, fault_id=fault_id)
+        records = target.algorithm_visible_records()
+        streams[fault_id] = [(record["kind"], record["tick"]) for record in records]
+        payloads[fault_id] = [frozenset(record["payload"].keys()) for record in records]
+        assert {kind for kind, _tick in streams[fault_id]} <= PROTOCOL_EVENT_WHITELIST
+    assert streams["H-NORMAL"] != streams["F-FIND-ANSWER-LATE"]
+    assert streams["F-FIND-ANSWER-LATE"] != streams["F-FIND-ANSWER-ABSENT"]
+    normal_kinds = [kind for kind, _tick in streams["H-NORMAL"] if kind.startswith("FIND")]
+    late_kinds = [kind for kind, _tick in streams["F-FIND-ANSWER-LATE"] if kind.startswith("FIND")]
+    assert normal_kinds == late_kinds == ["FIND-REQUEST-RECEIVED", "FIND-ANSWER"]
+    normal_answer = next(tick for kind, tick in streams["H-NORMAL"] if kind == "FIND-ANSWER")
+    late_answer = next(tick for kind, tick in streams["F-FIND-ANSWER-LATE"] if kind == "FIND-ANSWER")
+    assert normal_answer != late_answer
+    assert "FIND-ANSWER" not in {kind for kind, _tick in streams["F-FIND-ANSWER-ABSENT"]}
+    lur_missing = _target()
+    lur_unmatched = _target()
+    inject(lur_missing, scene_id=scene_id, fault_id="F-LUR-ACK-MISSING")
+    inject(lur_unmatched, scene_id=scene_id, fault_id="F-LUR-ACK-WITHOUT-WRQ")
+    missing_kinds = [event.kind for event in lur_missing.events]
+    unmatched_kinds = [event.kind for event in lur_unmatched.events]
+    assert "LUR-WRQ" in missing_kinds and "LUR-ACK" not in missing_kinds
+    assert "LUR-ACK" in unmatched_kinds and "LUR-WRQ" not in unmatched_kinds
+
+
+def test_catalogue_declares_observation_ends_per_scene_family() -> None:
+    catalogue = load_catalogue()
+    find_end = catalogue["identity"]["observationEnds"]["FIND"]
+    info_end = catalogue["identity"]["observationEnds"]["INFORMATION"]
+    assert find_end["endS"] == str(FIND_OBSERVATION_END_S)
+    assert info_end["endS"] == str(INFORMATION_OBSERVATION_END_S)
+    assert "2 s" in find_end["justification"]
+    assert "10 s" in info_end["justification"]
+
+
+def test_normal_find_answer_tick_differs_from_late_only() -> None:
+    normal = _target()
+    late = _target()
+    inject(normal, scene_id="SC-NORMAL-UPLOAD", fault_id="H-NORMAL")
+    inject(late, scene_id="SC-NORMAL-UPLOAD", fault_id="F-FIND-ANSWER-LATE")
+    normal_answer = next(event for event in normal.events if event.kind == "FIND-ANSWER")
+    late_answer = next(event for event in late.events if event.kind == "FIND-ANSWER")
+    assert normal_answer.tick == FIND_ANSWER_NORMAL_AT_S
+    assert late_answer.tick == FIND_ANSWER_LATE_AT_S
+    assert normal_answer.tick < FIND_HOST_ANSWER_S < late_answer.tick

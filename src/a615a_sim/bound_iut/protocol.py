@@ -2,7 +2,7 @@
 
 DOWNLOAD and AFDX behaviour are refused.  This object is a SIMULATED-IUT, not a
 conformance oracle or a real target.  IUT = TH / FIND-HOST; data-loader paths
-are tester infrastructure.
+are tester infrastructure.  Algorithm-visible events are protocol-layer only.
 """
 
 from __future__ import annotations
@@ -12,13 +12,30 @@ from fractions import Fraction
 from typing import Any
 
 from a615a_sim.clock import (
-    DECLARED_OBSERVATION_END_S,
     FIND_ANSWER_LATE_AT_S,
+    FIND_ANSWER_NORMAL_AT_S,
+    FIND_OBSERVATION_END_S,
+    INFORMATION_OBSERVATION_END_S,
+    STATUS_EXCEPTION_DELAY_S,
     SimulatedClock,
 )
 
 ALLOWED_OPERATIONS = frozenset({"FIND", "SEND", "ABORT", "INFORMATION"})
 FORBIDDEN_OPERATIONS = frozenset({"DOWNLOAD", "AFDX"})
+
+PROTOCOL_EVENT_WHITELIST = frozenset(
+    {
+        "FIND-REQUEST-RECEIVED",
+        "FIND-ANSWER",
+        "LUR-WRQ",
+        "LUR-ACK",
+        "STATUS",
+        "WAIT",
+        "CONTINUE",
+        "ABORT",
+        "COMPLETED",
+    }
+)
 
 H_SINGLE_FIND_LATE = "F-FIND-ANSWER-LATE"
 H_SINGLE_FIND_ABSENT = "F-FIND-ANSWER-ABSENT"
@@ -69,9 +86,16 @@ class SimulatedTarget:
             "state": self._state,
             "correlation": self._correlation,
             "configuration": "BATCH" if self._scene_batch else self.configuration,
+            "clockTick": str(self.clock.now),
+        }
+
+    def evaluator_fault_record(self) -> dict[str, Any]:
+        """Fault identity for the evaluator only; not algorithm-visible."""
+
+        return {
             "faultId": self._fault_id,
             "sceneId": self._scene_id,
-            "clockTick": str(self.clock.now),
+            "label": "EVALUATOR-ONLY",
         }
 
     def install_scene(self, scene_id: str | None) -> None:
@@ -101,6 +125,8 @@ class SimulatedTarget:
         return self.snapshot()
 
     def _record(self, kind: str, correlation_id: str, **payload: Any) -> ProtocolEvent:
+        if kind not in PROTOCOL_EVENT_WHITELIST:
+            raise ValueError(f"non-protocol event kind {kind}")
         event = ProtocolEvent(kind, correlation_id, self.clock.now, payload)
         self._events.append(event)
         return event
@@ -122,121 +148,100 @@ class SimulatedTarget:
         self._require_bound("FIND")
         self._state = "FIND_ACTIVE"
         self._correlation = correlation_id
-        if self._fault_id == H_SINGLE_FIND_LATE:
-            self._advance_to(FIND_ANSWER_LATE_AT_S)
-            event = self._record(
-                "FIND-ANSWER-LATE",
-                correlation_id,
-                hostAnswerInWindow=False,
-                afterHostDeadline=True,
-                beforeObservationEnd=FIND_ANSWER_LATE_AT_S < DECLARED_OBSERVATION_END_S,
-            )
-            return self._visible(event)
+        received = self._record("FIND-REQUEST-RECEIVED", correlation_id)
         if self._fault_id == H_SINGLE_FIND_ABSENT:
-            self._advance_to(DECLARED_OBSERVATION_END_S)
-            event = self._record(
-                "FIND-ANSWER-ABSENT",
-                correlation_id,
-                hostAnswer=False,
-                haltedAtObservationEnd=True,
-            )
-            self._state = "HALTED"
-            return self._visible(event)
-        self.clock.advance(Fraction(1, 100))
-        event = self._record(
-            "FIND",
-            correlation_id,
-            hostAnswerInWindow=True,
-            hostAnswerS="2",
+            self._advance_to(FIND_OBSERVATION_END_S)
+            self._state = "FIND_ACTIVE"
+            return self._visible(received)
+        answer_at = (
+            FIND_ANSWER_LATE_AT_S
+            if self._fault_id == H_SINGLE_FIND_LATE
+            else FIND_ANSWER_NORMAL_AT_S
         )
+        self._advance_to(answer_at)
+        event = self._record("FIND-ANSWER", correlation_id)
         return self._visible(event)
 
     def send(self, correlation_id: str) -> dict[str, Any]:
         self._require_bound("SEND")
         self.clock.advance(Fraction(1, 50))
         if self._fault_id == H_SINGLE_LUR_WITHOUT_WRQ:
-            self._state = "HALTED"
-            event = self._record(
-                "LUR-ACK-WITHOUT-WRQ",
-                correlation_id,
-                matchingWrqReceived=False,
-                invariant="TH-MATCHING-LUR-WRQ-RECEIVED",
-            )
+            self._state = "UPLOAD_ACTIVE"
+            event = self._record("LUR-ACK", correlation_id)
             return self._visible(event)
         if self._fault_id == H_SINGLE_LUR_MISSING:
-            wrq = self._record("LUR-WRQ", correlation_id, matchingWrqReceived=True)
-            self._state = "HALTED"
-            event = self._record(
-                "LUR-ACK-MISSING",
-                correlation_id,
-                afterWrq=wrq.kind,
-                thAck=False,
-            )
-            return self._visible(event)
-        self._record("LUR-WRQ", correlation_id, matchingWrqReceived=True)
-        self._record("LUR-ACK", correlation_id, matchingWrqReceived=True)
+            wrq = self._record("LUR-WRQ", correlation_id)
+            self._state = "UPLOAD_ACTIVE"
+            return self._visible(wrq)
+        self._record("LUR-WRQ", correlation_id)
+        self._record("LUR-ACK", correlation_id)
         if self._scene_abort:
             self._state = "ABORTED"
-            event = self._record("ABORT", correlation_id, owned=True, during="SEND")
+            event = self._record("ABORT", correlation_id)
             return self._visible(event)
         if self._scene_wait:
             self._state = "WAIT"
-            wait = self._record("WAIT", correlation_id)
+            self._record("WAIT", correlation_id)
             self.clock.advance(Fraction(1, 10))
             self._state = "UPLOAD_ACTIVE"
-            cont = self._record("CONTINUE", correlation_id, after=str(wait.tick))
+            cont = self._record("CONTINUE", correlation_id)
             return self._visible(cont)
         self._state = "UPLOAD_ACTIVE"
         self._correlation = correlation_id
-        event = self._record("SEND", correlation_id)
         self._state = "COMPLETED"
-        self._record("COMPLETED", correlation_id)
+        event = self._record("COMPLETED", correlation_id)
         return self._visible(event)
 
     def abort(self, correlation_id: str) -> dict[str, Any]:
         self._require_bound("ABORT")
         self.clock.advance(Fraction(1, 100))
         self._state = "ABORTED"
-        event = self._record("ABORT", correlation_id, owned=True)
+        event = self._record("ABORT", correlation_id)
+        return self._visible(event)
+
+    def tester_abort(self, correlation_id: str) -> dict[str, Any]:
+        """Data-loader abort fallback as a tester-issued ABORT event (R1)."""
+
+        self._advance_to(max(self.clock.now, INFORMATION_OBSERVATION_END_S))
+        self._state = "ABORTED"
+        event = self._record("ABORT", correlation_id)
         return self._visible(event)
 
     def information(self, correlation_id: str) -> dict[str, Any]:
         self._require_bound("INFORMATION")
         if self._resource_error:
             self.clock.advance(Fraction(1, 100))
-            event = self._record("RESOURCE-ERROR", correlation_id, resourceStatus="RESOURCE-ERROR")
+            event = self._record("STATUS", correlation_id)
             return self._visible(event)
         key = self._correlation if (self._reuse_key and self._correlation) else correlation_id
         if self._reuse_key and self._correlation and key == self._correlation:
             self.clock.advance(Fraction(1, 100))
-            event = self._record("INFORMATION", key, reusedKey=True, secondRequest=True)
+            event = self._record("STATUS", key)
             return self._visible(event)
         self.clock.advance(Fraction(1, 100))
         delay = self._record(
-            "STATUS-WITH-DELAY",
+            "STATUS",
             correlation_id,
-            exceptionDelaySeconds="10",
-            operationKey=correlation_id,
+            exceptionDelaySeconds=str(STATUS_EXCEPTION_DELAY_S),
         )
-        if self._fault_id == H_SINGLE_STATUS_SILENCE:
-            self.clock.advance(Fraction(11, 1))
-            event = self._record(
-                "STATUS-SILENCE",
-                correlation_id,
-                afterDelay=True,
-                abortFallback="AVAILABLE",
-                trigger=delay.kind,
-            )
-            self._state = "INFORMATION_ACTIVE"
-            self._correlation = correlation_id
-            return self._visible(event)
         self._state = "INFORMATION_ACTIVE"
         self._correlation = correlation_id
-        event = self._record("INFORMATION", correlation_id, afterDelay=True, abortFallback="AVAILABLE")
+        if self._fault_id == H_SINGLE_STATUS_SILENCE:
+            self._advance_to(INFORMATION_OBSERVATION_END_S)
+            return self._visible(delay)
+        event = self._record("COMPLETED", correlation_id)
         return self._visible(event)
 
+    def algorithm_visible_records(self) -> list[dict[str, Any]]:
+        return [self._visible_dict(event) for event in self._events]
+
     def _visible(self, event: ProtocolEvent) -> dict[str, Any]:
-        record = {
+        record = self._visible_dict(event)
+        self._last_visible = record
+        return record
+
+    def _visible_dict(self, event: ProtocolEvent) -> dict[str, Any]:
+        return {
             "kind": event.kind,
             "correlationId": None if self._corrupt_observation else event.correlation_id,
             "tick": str(event.tick),
@@ -249,5 +254,3 @@ class SimulatedTarget:
             "state": self._state,
             "label": "SIMULATED-IUT",
         }
-        self._last_visible = record
-        return record

@@ -39,6 +39,10 @@ def reset_target(target: SimulatedTarget, *, pairing_id: str | None = None) -> R
         pairing_id=pairing_id or f"PAIR-{uuid4().hex[:8]}",
         reset_id=reset_id,
         reset_evidence_ref=f"sha256:{digest}",
-        confirmed=snapshot["state"] == "IDLE" and snapshot["faultId"] is None,
+        confirmed=(
+            snapshot["state"] == "IDLE"
+            and snapshot.get("correlation") is None
+            and "faultId" not in snapshot
+        ),
         snapshot=snapshot,
     )
