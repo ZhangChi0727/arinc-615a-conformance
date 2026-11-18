@@ -18,12 +18,26 @@ from a615a_sim.algorithm.library import (
     TEST_ACTIONS,
     ArmRun,
 )
-from a615a_sim.clock import FIND_HOST_ANSWER_S, FIND_OBSERVATION_END_S
+from a615a_sim.clock import (
+    ClosedInterval,
+    find_host_requirement,
+    t5_interval_verdict,
+)
 
 _ROOT = Path(__file__).resolve().parents[3]
 MODEL_PATH = _ROOT / "configs/research/cltav_pilot_hypothesis_model_v1.json"
+MODEL_V2_PATH = _ROOT / "configs/research/cltav_confirmatory_hypothesis_model_v2.json"
 IDENTIFICATION_STOP = "Stop-Singleton"  # RR-006 N5.5: identification stop; no alias.
 SCENE_TERMINAL_SEND = frozenset({"COMPLETED", "WAIT", "CONTINUE", "ABORT"})  # N5.1 LUR-COMPLETE.
+FIND_ANSWER_BOUNDARY = "FIND-ANSWER-BOUNDARY"
+
+
+def _require_hypothesis_ids(payload: Mapping[str, Any]) -> None:
+    ids = tuple(payload["hypothesisIds"])
+    if ids[0] != "h_normal":
+        raise ValueError("h_normal must be the first registered hypothesis")
+    if "h_find_answer_late" not in ids or "h_find_answer_absent" not in ids:
+        raise ValueError("LATE and ABSENT must remain two hypotheses")
 
 
 @lru_cache(maxsize=1)
@@ -31,11 +45,16 @@ def load_pilot_hypothesis_model() -> Mapping[str, Any]:
     payload = json.loads(MODEL_PATH.read_text(encoding="utf-8"))
     if payload["identity"]["version"] != "1":
         raise ValueError("pilot hypothesis model version is not 1")
-    ids = tuple(payload["hypothesisIds"])
-    if ids[0] != "h_normal":
-        raise ValueError("h_normal must be the first registered hypothesis")
-    if "h_find_answer_late" not in ids or "h_find_answer_absent" not in ids:
-        raise ValueError("LATE and ABSENT must remain two hypotheses")
+    _require_hypothesis_ids(payload)
+    return payload
+
+
+@lru_cache(maxsize=1)
+def load_confirmatory_hypothesis_model_v2() -> Mapping[str, Any]:
+    payload = json.loads(MODEL_V2_PATH.read_text(encoding="utf-8"))
+    if payload["identity"]["version"] != "2":
+        raise ValueError("confirmatory hypothesis model version is not 2")
+    _require_hypothesis_ids(payload)
     return payload
 
 
@@ -43,15 +62,27 @@ def public_hypothesis_ids() -> tuple[str, ...]:
     return tuple(load_pilot_hypothesis_model()["hypothesisIds"])
 
 
+def _observation_interval(record: Mapping[str, Any]) -> ClosedInterval:
+    interval = record["observationInterval"]
+    return ClosedInterval(Fraction(str(interval["lower"])), Fraction(str(interval["upper"])))
+
+
 def classify_observable(action_id: str, record: Mapping[str, Any]) -> str:
-    """Map one algorithm-visible record onto a registered observation class."""
+    """Map one algorithm-visible record onto a registered observation class.
+
+    FIND-ANSWER uses the T5 interval rule on the visible observationInterval
+    versus CRS-M1-00391 [0, 2].  FIND-ANSWER-BOUNDARY is an observation class,
+    not a protocol event name.
+    """
 
     kind = str(record["kind"])
-    tick = Fraction(str(record["tick"]))
-    if action_id == ACTION_TEST_FIND:
-        if kind == "FIND-ANSWER" and FIND_HOST_ANSWER_S < tick < FIND_OBSERVATION_END_S:
+    if action_id == ACTION_TEST_FIND and kind == "FIND-ANSWER":
+        verdict = t5_interval_verdict(_observation_interval(record), find_host_requirement())
+        if verdict == "PASS":
+            return "FIND-ANSWER"
+        if verdict == "FAIL":
             return "FIND-ANSWER-LATE"
-        return kind
+        return FIND_ANSWER_BOUNDARY
     if action_id == ACTION_TEST_SEND:
         if kind in SCENE_TERMINAL_SEND:
             return "LUR-COMPLETE"
@@ -65,7 +96,7 @@ def consistent_hypotheses(
 ) -> tuple[str, ...]:
     """Retain hypotheses compatible with this arm's visible TEST records only."""
 
-    model = load_pilot_hypothesis_model()
+    model = load_confirmatory_hypothesis_model_v2()
     remaining = list(model["hypothesisIds"])
     records = iter(observation_log)
     table = model["actions"]
@@ -142,7 +173,7 @@ def _test_action(action_id: str, emissions: dict[str, str], ticks: dict[str, Map
 
 
 def experiment_session_model() -> dict[str, object]:
-    payload = load_pilot_hypothesis_model()
+    payload = load_confirmatory_hypothesis_model_v2()
     hyps = tuple(payload["hypothesisIds"])
     actions = []
     for action_id in (
@@ -168,7 +199,7 @@ def experiment_session_model() -> dict[str, object]:
             "frontierStates": 8,
             "hypotheses": len(hyps),
             "actions": 4,
-            "observationClasses": 8,
+            "observationClasses": 10,
         },
         "uncertainty": {
             "id": "sim-iut-u-1",

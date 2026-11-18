@@ -77,7 +77,7 @@ class SimulatedIutEnvironment(SyntheticEnvironment):
             observable=classify_observable(request.action_id, visible),
             summary_confirmed=True,
             post_summary="q0",
-            measurement_tick=Fraction(visible["tick"]),
+            measurement_tick=Fraction(str(visible["observationInterval"]["upper"])),
             uncertainty_identity="sim-iut-u-1",
             evidence_ref=f"sim-iut:{request.execution_attempt_id}",
         )

@@ -4,12 +4,19 @@ from __future__ import annotations
 
 import ast
 import inspect
+from fractions import Fraction
 from pathlib import Path
 
 import pytest
 
 from a615a_sim.algorithm.adapter import REGISTERED_ARMS, run_arm
-from a615a_sim.algorithm.hypothesis_model import public_hypothesis_ids
+from a615a_sim.algorithm.hypothesis_model import (
+    FIND_ANSWER_BOUNDARY,
+    classify_observable,
+    load_confirmatory_hypothesis_model_v2,
+    load_pilot_hypothesis_model,
+    public_hypothesis_ids,
+)
 from a615a_sim.algorithm.library import (
     ACTION_ANALYSIS,
     ACTION_LIBRARY,
@@ -19,7 +26,7 @@ from a615a_sim.algorithm.library import (
     STOP_CLASSES,
     predetermined_test_sequence,
 )
-from a615a_sim.bound_iut.protocol import SimulatedTarget
+from a615a_sim.bound_iut.protocol import PROTOCOL_EVENT_WHITELIST, SimulatedTarget
 from a615a_sim.clock import SimulatedClock
 from a615a_sim.evaluator import (
     issue_truth_capability,
@@ -29,7 +36,7 @@ from a615a_sim.evaluator import (
 from a615a_sim.evaluator.guard import TruthLeakageError
 from a615a_sim.evaluator.reset import reset_target
 from a615a_sim.faults.catalogue import evaluator_fault_plan
-from a615a_sim.faults.injector import overlay_declared_fault
+from a615a_sim.faults.injector import inject, overlay_declared_fault
 from cltav_runtime.session import ReferenceSession
 
 
@@ -296,3 +303,70 @@ def test_late_and_absent_remain_two_hypotheses() -> None:
     assert ids.count("h_find_answer_absent") == 1
     assert ids[0] == "h_normal"
     assert len(ids) == 6
+
+
+def test_find_answer_classifies_by_interval_not_tick() -> None:
+    contained = {
+        "kind": "FIND-ANSWER",
+        "observationInterval": {"lower": "0", "upper": "2", "unit": "second"},
+    }
+    disjoint = {
+        "kind": "FIND-ANSWER",
+        "observationInterval": {"lower": "2001/1000", "upper": "2003/1000", "unit": "second"},
+    }
+    overlap = {
+        "kind": "FIND-ANSWER",
+        "observationInterval": {"lower": "1999/1000", "upper": "2001/1000", "unit": "second"},
+    }
+    assert classify_observable(ACTION_TEST_FIND, contained) == "FIND-ANSWER"
+    assert classify_observable(ACTION_TEST_FIND, disjoint) == "FIND-ANSWER-LATE"
+    assert classify_observable(ACTION_TEST_FIND, overlap) == FIND_ANSWER_BOUNDARY
+    assert FIND_ANSWER_BOUNDARY not in PROTOCOL_EVENT_WHITELIST
+
+
+def test_v2_model_matches_interval_classes_on_grid_defaults() -> None:
+    from a615a_sim.clock import ClosedInterval, SIMULATED_EPSILON, find_host_requirement, t5_interval_verdict
+
+    v1 = load_pilot_hypothesis_model()
+    v2 = load_confirmatory_hypothesis_model_v2()
+    assert v1["identity"]["version"] == "1"
+    assert v2["identity"]["version"] == "2"
+    assert v1["actions"]["TEST-FIND"]["h_find_answer_late"]["observable"] == "FIND-ANSWER-LATE"
+    find_table = v2["actions"]["TEST-FIND"]
+    requirement = find_host_requirement()
+
+    def _class_for(tick_map: dict[str, int]) -> str:
+        tick = Fraction(tick_map["numerator"], tick_map["positiveDenominator"])
+        interval = ClosedInterval(tick - SIMULATED_EPSILON, tick + SIMULATED_EPSILON)
+        verdict = t5_interval_verdict(interval, requirement)
+        if verdict == "PASS":
+            return "FIND-ANSWER"
+        if verdict == "FAIL":
+            return "FIND-ANSWER-LATE"
+        return FIND_ANSWER_BOUNDARY
+
+    for _hypothesis, row in find_table.items():
+        if not row["present"]:
+            assert row["observable"] == "FIND-REQUEST-RECEIVED"
+            continue
+        assert row["observable"] == _class_for(row["measurementTick"])
+
+
+def test_jitter_changes_find_observation_class_at_endpoint() -> None:
+    def _class(jitter: str) -> str:
+        target = _target()
+        inject(
+            target,
+            scene_id="SC-NORMAL-UPLOAD",
+            fault_id="F-FIND-ANSWER-LATE",
+            parameters={"findAnswerAtS": "2", "observationJitterS": jitter},
+        )
+        answer = next(
+            row for row in target.algorithm_visible_records() if row["kind"] == "FIND-ANSWER"
+        )
+        assert "tick" not in answer
+        return classify_observable(ACTION_TEST_FIND, answer)
+
+    assert _class("0") == FIND_ANSWER_BOUNDARY
+    assert _class("1/500") == "FIND-ANSWER-LATE"
+    assert _class("-1/500") == "FIND-ANSWER"

@@ -1,0 +1,183 @@
+{
+  "identity": {
+    "artifactId": "CLTAV-CONFIRMATORY-HYPOTHESIS-MODEL",
+    "version": "2",
+    "status": "DRAFT",
+    "changeRequest": "CR-2026-028",
+    "authority": "User decision S1 (RR-PR29-2026-001): algorithm-visible records expose observationInterval only; LATE / in-window / INCONCLUSIVE follow the T5 interval rule. Pilot v1 is unchanged. DEC-CLOCK remains OPEN; this table implements C1 subset/disjoint/overlap on closed CRS intervals.",
+    "catalogueId": "CLTAV-H-SINGLE-SIMULATED-2026-010-B1",
+    "label": "SIMULATED-IUT",
+    "pilotInterfaceNote": "Pilot census artefacts were produced against the v1 tick-classified interface and are not regenerated here."
+  },
+  "hypothesisIds": [
+    "h_normal",
+    "h_find_answer_late",
+    "h_find_answer_absent",
+    "h_lur_ack_missing",
+    "h_lur_ack_without_wrq",
+    "h_status_silence"
+  ],
+  "observationClasses": [
+    "FIND-ANSWER",
+    "FIND-ANSWER-LATE",
+    "FIND-ANSWER-BOUNDARY",
+    "FIND-REQUEST-RECEIVED",
+    "LUR-COMPLETE",
+    "LUR-WRQ",
+    "LUR-ACK",
+    "ABORT",
+    "COMPLETED",
+    "STATUS"
+  ],
+  "intervalRule": {
+    "source": "EXP-PLAN-2026-001 T5; clock.t5_interval_verdict; CRS-M1-00391 closed [0, 2]",
+    "contained": "FIND-ANSWER (in window)",
+    "disjoint": "FIND-ANSWER-LATE",
+    "partialOverlap": "FIND-ANSWER-BOUNDARY",
+    "note": "FIND-ANSWER-BOUNDARY is an observation class, not a protocol event name."
+  },
+  "actions": {
+    "TEST-FIND": {
+      "h_normal": {
+        "observable": "FIND-ANSWER",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100},
+        "gridIntervalClass": "contained in [0, 2] at default FIND-ANSWER 1/100 s plus declared epsilon"
+      },
+      "h_find_answer_late": {
+        "observable": "FIND-ANSWER-LATE",
+        "present": true,
+        "measurementTick": {"numerator": 41, "positiveDenominator": 20},
+        "gridIntervalClass": "disjoint from [0, 2] for AX-FIND-ANSWER-TICK values 2002/1000, 41/20, 21/10, 11/5 at jitter 0"
+      },
+      "h_find_answer_absent": {
+        "observable": "FIND-REQUEST-RECEIVED",
+        "present": false,
+        "measurementTick": {"numerator": 0, "positiveDenominator": 1},
+        "gridIntervalClass": "no FIND-ANSWER interval"
+      },
+      "h_lur_ack_missing": {
+        "observable": "FIND-ANSWER",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100},
+        "gridIntervalClass": "same FIND interval class as h_normal"
+      },
+      "h_lur_ack_without_wrq": {
+        "observable": "FIND-ANSWER",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100},
+        "gridIntervalClass": "same FIND interval class as h_normal"
+      },
+      "h_status_silence": {
+        "observable": "FIND-ANSWER",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100},
+        "gridIntervalClass": "same FIND interval class as h_normal"
+      }
+    },
+    "TEST-SEND": {
+      "h_normal": {
+        "observable": "LUR-COMPLETE",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 50}
+      },
+      "h_find_answer_late": {
+        "observable": "LUR-COMPLETE",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 50}
+      },
+      "h_find_answer_absent": {
+        "observable": "LUR-COMPLETE",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 50}
+      },
+      "h_lur_ack_missing": {
+        "observable": "LUR-WRQ",
+        "present": false,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 50}
+      },
+      "h_lur_ack_without_wrq": {
+        "observable": "LUR-ACK",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 50}
+      },
+      "h_status_silence": {
+        "observable": "LUR-COMPLETE",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 50}
+      }
+    },
+    "TEST-ABORT": {
+      "h_normal": {
+        "observable": "ABORT",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100}
+      },
+      "h_find_answer_late": {
+        "observable": "ABORT",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100}
+      },
+      "h_find_answer_absent": {
+        "observable": "ABORT",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100}
+      },
+      "h_lur_ack_missing": {
+        "observable": "ABORT",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100}
+      },
+      "h_lur_ack_without_wrq": {
+        "observable": "ABORT",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100}
+      },
+      "h_status_silence": {
+        "observable": "ABORT",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100}
+      }
+    },
+    "TEST-INFORMATION": {
+      "h_normal": {
+        "observable": "COMPLETED",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100}
+      },
+      "h_find_answer_late": {
+        "observable": "COMPLETED",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100}
+      },
+      "h_find_answer_absent": {
+        "observable": "COMPLETED",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100}
+      },
+      "h_lur_ack_missing": {
+        "observable": "COMPLETED",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100}
+      },
+      "h_lur_ack_without_wrq": {
+        "observable": "COMPLETED",
+        "present": true,
+        "measurementTick": {"numerator": 1, "positiveDenominator": 100}
+      },
+      "h_status_silence": {
+        "observable": "STATUS",
+        "present": false,
+        "measurementTick": {"numerator": 10201, "positiveDenominator": 1000}
+      }
+    }
+  },
+  "notes": [
+    "Pilot hypothesis model v1 is unmodified and still classifies on exact ticks. v2 classifies FIND-ANSWER on the algorithm-visible observationInterval.",
+    "Grid LATE ticks 2002/1000, 41/20, 21/10 and 11/5 with jitter 0 yield disjoint intervals versus [0, 2], so h_find_answer_late remains FIND-ANSWER-LATE.",
+    "FIND-ANSWER-BOUNDARY is the T5 overlap-not-subset class. No registered hypothesis lists it as its grid default observable; mixed VALID sets that still contain h_normal and have no T5 interval remain INCONCLUSIVE under R1.",
+    "N4 timing metrics still use evaluator exact ticks or the observation-interval endpoint; they are not algorithm-visible ticks.",
+    "LUR-COMPLETE groups scene-terminal SEND kinds COMPLETED, WAIT, CONTINUE and ABORT.",
+    "LATE and ABSENT remain two hypotheses (DEC-EQUIV OPEN)."
+  ]
+}
