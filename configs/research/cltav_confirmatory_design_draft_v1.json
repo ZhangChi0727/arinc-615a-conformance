@@ -6,8 +6,19 @@
     "confirmatoryRegistration": false,
     "registrationYaml": false,
     "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
-    "authority": "WO-CLTAV-CONFIRMATORY-DESIGN-2026-011; user rulings U2-U4",
-    "notes": "Machine-readable cells and grids only. Not a census, not a confirmatory run, not registration.yaml. Effect statements elsewhere are hypotheses."
+    "authority": "WO-CLTAV-CONFIRMATORY-DESIGN-2026-011; user rulings U2-U4; user decision S1 (RR-PR29-2026-001)",
+    "notes": "Machine-readable cells and grids only. Not a census, not a confirmatory run, not registration.yaml. Effect statements elsewhere are hypotheses. Pilot census artefacts used the pre-S1 exact-tick visible interface and are not regenerated.",
+    "hypothesisModelV1": "configs/research/cltav_pilot_hypothesis_model_v1.json",
+    "hypothesisModelV2": "configs/research/cltav_confirmatory_hypothesis_model_v2.json",
+    "userDecisionS1": {
+      "id": "S1",
+      "source": "RR-PR29-2026-001",
+      "algorithmVisible": "observationInterval only; exact tick is evaluator-only",
+      "classification": "T5 C1: contained=in-window, disjoint=LATE, overlap=INCONCLUSIVE/FIND-ANSWER-BOUNDARY",
+      "decClock": "OPEN",
+      "implements": "C1 subset/disjoint/overlap on closed CRS intervals; C2 and C3 remain listed",
+      "pilotArtefacts": "produced under the pre-S1 tick-visible interface; not regenerated"
+    }
   },
   "iut": {
     "class": "SIMULATED-IUT",
@@ -228,7 +239,7 @@
       "parameters": {
         "findAnswerAtS": "2"
       },
-      "visibleThrough": "FIND-ANSWER tick and observationInterval only",
+      "visibleThrough": "FIND-ANSWER observationInterval only; exact tick is evaluator-only",
       "hypothesisStress": {
         "CL-T": "T5 interval overlap at the CRS-M1-00391 endpoint is hypothesized to yield INCONCLUSIVE rather than FAIL",
         "CL-A": "analysis-only candidate sets are hypothesized to remain mixed without a T5 interval and therefore INCONCLUSIVE under the retained R1 rule",

@@ -342,7 +342,7 @@
       "id": "HC-FIND-ENDPOINT",
       "parentFaultId": "F-FIND-ANSWER-LATE",
       "parameters": {"findAnswerAtS": "2"},
-      "visibleThrough": "FIND-ANSWER tick and observationInterval only",
+      "visibleThrough": "FIND-ANSWER observationInterval only; exact tick is evaluator-only",
       "hypothesisStress": {
         "CL-T": "T5 interval overlap at the CRS-M1-00391 endpoint is hypothesized to yield INCONCLUSIVE rather than FAIL",
         "CL-A": "analysis-only candidate sets are hypothesized to remain mixed without a T5 interval and therefore INCONCLUSIVE under the retained R1 rule",

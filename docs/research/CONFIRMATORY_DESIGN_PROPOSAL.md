@@ -5,14 +5,37 @@
 | Artifact | CONFIRMATORY_DESIGN_PROPOSAL |
 | Status | DRAFT / HYPOTHETICAL-NOT-RESULT |
 | IUT | local simulated 615A bound model (DEC-IUT closed, CR-2026-027 / DD-051) |
-| Authority | WO-CLTAV-CONFIRMATORY-DESIGN-2026-011; user rulings U2–U4 (2026-11-18) |
+| Authority | WO-CLTAV-CONFIRMATORY-DESIGN-2026-011; user rulings U2–U4 (2026-11-18); user decision S1 (RR-PR29-2026-001) |
 | Machine grid | `configs/research/cltav_confirmatory_design_draft_v1.json` |
+| Hypothesis model | v1 unchanged; confirmatory matching uses `configs/research/cltav_confirmatory_hypothesis_model_v2.json` |
 | Not | census, confirmatory run, `registration.yaml` freeze, manuscript fill |
 
 This document proposes a confirmatory *design*. No cell in this file is an
 observed result. Every statement about discrimination, error rates, cost, or
 arm ranking is a **hypothesis**. The R1 rule is retained: a mixed VALID set
 that still contains `h_normal` and has no T5 interval is `INCONCLUSIVE`.
+
+## User decision S1 (visible intervals)
+
+S1 is a user decision on the algorithm-visible interface. It does **not**
+close DEC-CLOCK. The proposal implements option **C1** as a subset rule on
+the already-accepted simulated T5 instrument:
+
+- Arms see only the measured `observationInterval` (`tick ± ε`, plus
+  `observationJitterS`). Exact simulator ticks are evaluator-only.
+- LATE / in-window / INCONCLUSIVE follow T5 (`clock.t5_interval_verdict`,
+  EXP-PLAN-2026-001): `I_obs ⊆ I_r` is in-window; disjoint is LATE;
+  overlap-not-subset is INCONCLUSIVE.
+- For FIND-ANSWER versus CRS-M1-00391 closed `[0, 2]`, those three T5
+  topologies map to observation classes `FIND-ANSWER`, `FIND-ANSWER-LATE`,
+  and `FIND-ANSWER-BOUNDARY`. The last is **not** a protocol event name.
+- N4 timing metrics still use evaluator exact ticks or the observation
+  endpoint.
+- Pilot census artefacts were produced under the pre-S1 tick-visible
+  interface and are **not** regenerated here.
+
+DEC-CLOCK remains OPEN. C2 and C3 stay listed. Simulated `ε` is still not a
+laboratory error budget.
 
 Variation is **not** N identity repeats and **not** unseeded randomness. The
 pilot census (PR #28, Head `cd0ca25c28adfe42eb22622116af66ab2a0e9010`) showed
@@ -45,10 +68,10 @@ protocol events.
 
 | Id | Construction | Hypothesized stress |
 |---|---|---|
-| HC-FIND-ENDPOINT | LATE with `findAnswerAtS = 2` (requirement endpoint) | CL-T: T5 overlap at the closed endpoint is hypothesized to yield INCONCLUSIVE rather than FAIL. CL-A: mixed candidate set without a T5 interval is hypothesized INCONCLUSIVE under retained R1. CL-TA: hypothesized to inherit the TEST interval verdict. CL-LOOP: hypothesized to keep both `h_normal` and `h_find_answer_late` until a later distinguishing event. |
+| HC-FIND-ENDPOINT | LATE with `findAnswerAtS = 2` (requirement endpoint) | Under S1/C1 it is **hypothesized** that the unshifted interval overlaps `[0, 2]` and classifies as `FIND-ANSWER-BOUNDARY` / T5 INCONCLUSIVE, not FAIL. CL-A: mixed candidate set without a T5 interval is hypothesized INCONCLUSIVE under retained R1. CL-TA: hypothesized to inherit the TEST interval verdict. CL-LOOP: hypothesized not to match `h_find_answer_late` (grid default LATE) nor a unique in-window singleton until a later distinguishing event. |
 | HC-FIND-NEAR-EQUIV | LATE near FIND observation end (`11/5`) paired with ABSENT | CL-T: hypothesized to confuse late-near-end with absence. CL-A: order/presence features are hypothesized to still separate the pair. CL-TA: hypothesized to follow TEST. CL-LOOP: hypothesized to retain both LATE and ABSENT until stop. |
 | HC-LATE-ABSENT-SHORT-WINDOW | ABSENT with observation end at `2` s, paired with LATE | All arms: hypothesized observationally equivalent when the window ends at or before the deadline; DEC-EQUIV remains OPEN. |
-| HC-OBS-PERTURB-EPS | LATE plus `+2ε` observationInterval shift | CL-T: hypothesized more sensitive to interval shift. CL-A: hypothesized insensitive if it ignores endpoints. CL-TA: hypothesized to inherit TEST. CL-LOOP: hypothesized partial sensitivity through T5 members. |
+| HC-OBS-PERTURB-EPS | LATE plus `+2ε` observationInterval shift | It is **hypothesized** that jitter now changes the arm-visible interval and, near endpoints, the observation class. CL-T: hypothesized more sensitive to interval shift. CL-A: hypothesized insensitive if it ignores endpoints. CL-TA: hypothesized to inherit TEST. CL-LOOP: hypothesized partial sensitivity through T5 members. |
 | HC-LUR-ACK-DELAY-VS-MISSING | delayed but present LUR-ACK versus F-LUR-ACK-MISSING | CL-T: if no numeric ACK interval is frozen, delay is hypothesized indistinguishable from H-NORMAL on T5. CL-A: presence is hypothesized to separate delay from missing. CL-TA: hypothesized to follow presence. CL-LOOP: hypothesized to drop `h_lur_ack_missing` once LUR-ACK is observed. |
 | HC-INVALID-OBS-JITTER | H-INVALID-OBS plus `−2ε` interval shift | All arms: hypothesized ERROR / INVALID-OBS rather than IUT FAIL; DETECT/ABLATION accounting only. |
 
@@ -72,7 +95,8 @@ DEC-IUT is already closed. The items below stay OPEN.
   so `t = 2` is strictly outside or inside by definition.
 - **Recommendation (not a close):** C1 for this simulated design, because it
   matches the already-accepted instrument; C2 remains available for any future
-  physical clock. Simulated `ε` is not calibration.
+  physical clock. Simulated `ε` is not calibration. S1 implements C1 on the
+  visible interface only; DEC-CLOCK stays OPEN.
 
 ### DEC-EQUIV
 
@@ -163,7 +187,7 @@ DEC-IUT is already closed. The items below stay OPEN.
 - **LOCATE unused in pilot.** Confirmatory design still lists locate scenes;
   whether they enter the scored locate population is DEC-SAMPLE / plan
   registration.
-- **Observation jitter** is an evaluator-visible interval shift, not a
+- **Observation jitter** is an algorithm-visible interval shift, not a
   physical timestamp attack. It tests algorithm sensitivity, not metrology.
 
 ## Design ambiguities (not resolved here)
@@ -171,7 +195,9 @@ DEC-IUT is already closed. The items below stay OPEN.
 1. Numeric LUR-ACK deadline is unnamed; delayed ACK may be scoring-identical
    to H-NORMAL on T5 (HC-LUR-ACK-DELAY-VS-MISSING).
 2. Whether `findAnswerAtS = 2` is LATE, in-interval normal, or INCONCLUSIVE
-   depends on DEC-CLOCK inclusivity.
+   still depends on DEC-CLOCK inclusivity. S1/C1 **hypothesizes** overlap
+   INCONCLUSIVE / `FIND-ANSWER-BOUNDARY` on the unshifted simulated interval;
+   that is not a close of DEC-CLOCK.
 3. Whether a FIND observation end at `2` s makes LATE and ABSENT equivalent
    depends on DEC-EQUIV (HC-LATE-ABSENT-SHORT-WINDOW).
 4. Cartesian expansion vs harder-case subsample is a DEC-SAMPLE / DEC-RESOURCE
@@ -183,6 +209,9 @@ DEC-IUT is already closed. The items below stay OPEN.
 本文件是确认性**设计提案**，不是普查或确认性运行。IUT 为已关闭 DEC-IUT 的
 本地模拟 615A。变异轴为参数化故障与多基准场景（U2），不是 N 次重复或无种子
 随机。困难情形见目录 `harderCases`，仅通过既有协议事件对臂可见（U3）。保留
-R1：含 `h_normal` 且无 T5 区间的混合 VALID 集为 INCONCLUSIVE（U4）。DEC-CLOCK、
-DEC-EQUIV、DEC-SAMPLE、DEC-RESOURCE、DEC-TRUTH 均给出选项与建议，一律不关闭。
-关于臂间可分性、错误率或成本的陈述均为假设。
+R1：含 `h_normal` 且无 T5 区间的混合 VALID 集为 INCONCLUSIVE（U4）。用户裁决
+S1：臂只见 `observationInterval`，按 T5／C1 子集规则判定在窗内／迟到／
+INCONCLUSIVE；`FIND-ANSWER-BOUNDARY` 是观测类而非协议事件名。DEC-CLOCK 仍
+OPEN；本提案按 C1 实现可见接口，不关闭该决策。试点产物在旧（精确 tick）
+接口下产生，本次不重跑。DEC-EQUIV、DEC-SAMPLE、DEC-RESOURCE、DEC-TRUTH 均
+给出选项与建议，一律不关闭。关于臂间可分性、错误率或成本的陈述均为假设。
