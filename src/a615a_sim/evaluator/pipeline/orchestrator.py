@@ -116,12 +116,6 @@ COMPARISON_REASONS = {
     ("WF-NORMAL", "truthReference.truthHypothesis"): (
         "live catalogue hypothesisId uses underscore; SYN-NORMAL uses hyphen"
     ),
-    ("WF-UNCONFIRMED-INJECT", "injectionStatus"): (
-        "unconfirmed live path writes no IF-EXP-TRUTH; SYN-UNCONFIRMED stores UNCONFIRMED"
-    ),
-    ("WF-UNCONFIRMED-INJECT", "faultDomain"): (
-        "unconfirmed live path writes no IF-EXP-TRUTH; SYN-UNCONFIRMED stores UNKNOWN"
-    ),
     ("WF-UNCONFIRMED-INJECT", "resourcePolicy"): (
         "live scene still binds a resource mode; SYN-UNCONFIRMED is NOT-RUN"
     ),
@@ -403,6 +397,7 @@ def execute_live_attempt(
         resource_mode=resource_mode,
         remaining=remaining,
         correlation_id=f"{arm_id}-{attempt.attempt_id}",
+        tester_resource_log=injection.get("testerResourceLog"),
     )
     collect = collect_from_run(run, resource_mode=resource_mode)
     filtered = filter_attempt(

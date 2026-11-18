@@ -130,6 +130,13 @@ def assemble_attempt_row(
 ) -> dict[str, Any]:
     deny_algorithm_truth_access(operation="e6-eval")
     truth_fields = _truth_fields(truth)
+    if truth is None:
+        inj_status = injection.get("injectionStatus")
+        inj_domain = injection.get("faultDomain")
+        if inj_status is not None:
+            truth_fields["injectionStatus"] = _map_enum(inj_status, INJECTION_STATUS_ENUM)
+        if inj_domain is not None:
+            truth_fields["faultDomain"] = _map_enum(inj_domain, FAULT_DOMAIN_ENUM)
     validity = filtered["validityClass"]
     hypotheses = list((run or {}).get("finalHypotheses") or [])
     observation_interval = (run or {}).get("observationInterval")

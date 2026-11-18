@@ -18,6 +18,7 @@ def run_registered_arm(
     remaining: int,
     correlation_id: str,
     run_id: str | None = None,
+    tester_resource_log: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Execute one arm.  Evaluator truth tokens are not parameters."""
 
@@ -45,7 +46,10 @@ def run_registered_arm(
         stage = "POST-UPDATE"
     else:
         stage = "TERMINAL"
-    tester_status = "RESOURCE-ERROR" if getattr(target, "_resource_error", False) else "NORMAL"
+    tester_log = dict(tester_resource_log) if tester_resource_log else {
+        "statusClass": "NORMAL",
+        "producer": "TESTER-RESOURCE-CONTROLLER",
+    }
     return {
         "runId": run_id or f"RUN-{correlation_id}",
         "sceneId": scene_id,
@@ -63,10 +67,7 @@ def run_registered_arm(
         "detailCharges": dict(arm_run.detail_charges),
         "chargedCost": arm_run.projected_cost(),
         "resourceMode": arm_run.resource_mode,
-        "testerResourceLog": {
-            "statusClass": tester_status,
-            "producer": "TESTER-RESOURCE-CONTROLLER",
-        },
+        "testerResourceLog": tester_log,
         "producer": "IF-EXP-RUN",
         "label": "SIMULATED-IUT",
     }

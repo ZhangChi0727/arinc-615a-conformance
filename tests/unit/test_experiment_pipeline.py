@@ -68,18 +68,6 @@ EXPECTED_SYN_MISMATCHES = {
     ],
     "WF-UNCONFIRMED-INJECT": [
         {
-            "field": "injectionStatus",
-            "expected": "UNCONFIRMED",
-            "actual": None,
-            "reason": "unconfirmed live path writes no IF-EXP-TRUTH; SYN-UNCONFIRMED stores UNCONFIRMED",
-        },
-        {
-            "field": "faultDomain",
-            "expected": "UNKNOWN",
-            "actual": None,
-            "reason": "unconfirmed live path writes no IF-EXP-TRUTH; SYN-UNCONFIRMED stores UNKNOWN",
-        },
-        {
             "field": "resourcePolicy",
             "expected": "NOT-RUN",
             "actual": "ROUNDS",
@@ -225,12 +213,16 @@ def test_walkthrough_executes_live_pipeline_and_compares_syn(workflow_id: str) -
         assert actual["runId"] is None
         assert result["filterRecord"]["validityClass"] == "PRE-RUN-EXCLUDED"
         assert actual["outcome"] == "NOT-ANSWERED"
+        assert actual["injectionStatus"] == "UNCONFIRMED"
+        assert actual["faultDomain"] == "UNKNOWN"
         assert actual["attemptId"] in cells["populations"]["POP-ATTEMPTS"]
         assert actual["attemptId"] not in cells["populations"]["POP-ANSWERED"]
     if workflow_id == "WF-INVALID-OBS":
         assert result["collectRecord"]["missingCorrelation"] is True
         assert result["filterRecord"]["validityClass"] == "INVALID"
         assert actual["outcome"] == "ERROR"
+        assert actual["attemptId"] not in cells["populations"]["POP-LOCALIZATION-ELIGIBLE"]
+        assert actual["attemptId"] not in cells["populations"]["POP-LOCALIZATION-TRUTH-SCORABLE"]
     if workflow_id == "WF-ABSTAIN":
         replay_source = inspect.getsource(execute_accounting_replay)
         assert "fixture[\"validity\"]" not in replay_source
@@ -279,6 +271,21 @@ def test_schema_fixture_replay_is_not_walkthrough_evidence() -> None:
     source = inspect.getsource(execute_synthetic_walkthrough)
     assert "replay_run_fixture" not in source
     assert "collect_from_fixture" not in source
+
+
+def test_pipeline_modules_do_not_read_iut_private_fault_flags() -> None:
+    forbidden = (
+        "_resource_error",
+        "_fault_id",
+        "_scene_id",
+        "_scene_wait",
+        "_scene_abort",
+        "_scene_batch",
+    )
+    for path in PIPE.glob("*.py"):
+        source = path.read_text(encoding="utf-8")
+        for token in forbidden:
+            assert token not in source, f"{path.name} reads IUT private {token}"
 
 
 def test_run_and_collect_modules_do_not_import_or_read_truth() -> None:
@@ -412,6 +419,8 @@ def test_live_unconfirmed_stays_in_attempt_denominator() -> None:
     assert row["runId"] is None
     assert result["filterRecord"]["validityClass"] == "PRE-RUN-EXCLUDED"
     assert row["outcome"] == "NOT-ANSWERED"
+    assert row["injectionStatus"] == "UNCONFIRMED"
+    assert row["faultDomain"] == "UNKNOWN"
     cells = result["metricCells"]
     assert row["attemptId"] in cells["populations"]["POP-ATTEMPTS"]
     assert row["attemptId"] not in cells["populations"]["POP-ANSWERED"]
@@ -431,6 +440,8 @@ def test_resource_error_silence_collision_is_separate_from_abstain_walkthrough()
         confirm=True,
     )
     row = result["attemptRow"]
+    assert result["injectionAttempt"]["testerResourceLog"]["statusClass"] == "RESOURCE-ERROR"
+    assert result["runRecord"]["testerResourceLog"]["statusClass"] == "RESOURCE-ERROR"
     assert row["resourceErrorSilenceCollision"] is True
     assert row["detectFamilyOnly"] is True
     assert row["truthReference"]["truthHypothesis"] is None
@@ -490,6 +501,8 @@ def test_live_invalid_observation_is_error_not_iut_fail() -> None:
     assert result["attemptRow"]["outcome"] == "ERROR"
     assert result["attemptRow"]["attemptId"] in result["metricCells"]["populations"]["POP-ATTEMPTS"]
     assert result["attemptRow"]["attemptId"] not in result["metricCells"]["populations"]["POP-ANSWERED"]
+    assert result["attemptRow"]["attemptId"] not in result["metricCells"]["populations"]["POP-LOCALIZATION-ELIGIBLE"]
+    assert result["attemptRow"]["attemptId"] not in result["metricCells"]["populations"]["POP-LOCALIZATION-TRUTH-SCORABLE"]
 
 
 def test_n3_reference_session_reaches_iut_only_through_execute() -> None:

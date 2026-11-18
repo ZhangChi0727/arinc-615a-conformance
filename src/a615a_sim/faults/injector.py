@@ -32,6 +32,9 @@ class InjectionAttempt:
     producer: str = "IF-EXP-INJECT"
     observed_signature: str | None = None
     declared_signature: str | None = None
+    injection_status: str | None = None
+    fault_domain: str | None = None
+    tester_resource_log: Mapping[str, Any] | None = None
 
     def as_mapping(self) -> Mapping[str, Any]:
         return {
@@ -40,6 +43,11 @@ class InjectionAttempt:
             "faultId": self.fault_id,
             "injectionConfirmed": self.injection_confirmed,
             "injectionUnconfirmed": self.injection_unconfirmed,
+            "injectionStatus": self.injection_status,
+            "faultDomain": self.fault_domain,
+            "testerResourceLog": (
+                dict(self.tester_resource_log) if self.tester_resource_log else None
+            ),
             "producer": self.producer,
             "observedSignature": self.observed_signature,
             "declaredSignature": self.declared_signature,
@@ -190,14 +198,24 @@ def inject(
     declared = declared_signature(canonical)
     token = str(entry_by_id(canonical)["confirmationToken"])
     confirmed = bool(confirm and observed == token)
+    unconfirmed = not confirmed
+    tester_log = None
+    if canonical == "H-RESOURCE-ERROR":
+        tester_log = {
+            "statusClass": "RESOURCE-ERROR",
+            "producer": "TESTER-RESOURCE-CONTROLLER",
+        }
     record = InjectionAttempt(
         scene_id=scene_id,
         attempt_id=attempt,
         fault_id=canonical,
         injection_confirmed=confirmed,
-        injection_unconfirmed=not confirmed,
+        injection_unconfirmed=unconfirmed,
         observed_signature=observed,
         declared_signature=declared,
+        injection_status="UNCONFIRMED" if unconfirmed else None,
+        fault_domain="UNKNOWN" if unconfirmed else None,
+        tester_resource_log=tester_log,
     )
     if truth_store is not None:
         truth_store.write_from_confirmed_injection(record, truth_capability)
