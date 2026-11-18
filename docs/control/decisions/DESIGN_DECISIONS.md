@@ -1284,6 +1284,32 @@ laboratory calibration. A normal singleton is not protocol PASS.
 **Status:** Candidate under CR-2026-024. Draft PR review required. Not run
 admission, not confirmatory, not Ready/merge.
 
+## DD-049 — Simulated-IUT Phase B four-arm adapter
+
+**Decision:** Under CR-2026-025, permit one Draft adapter that runs the four
+registered arms CL-T, CL-A, CL-TA and CL-LOOP against the Phase A simulated IUT,
+using the design's visibility table, fair-cost table, shared action library,
+stop-class names and T5 oracle. CL-LOOP must construct the existing
+`ReferenceSession`; runtime selection/update/stop semantics are not copied or
+changed. DEC-IUT, DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and DEC-RESOURCE
+remain OPEN. Phase C/D pipeline and pilot execution remain out of scope.
+
+**Why:** EXP-PLAN-2026-001 and the experiment implementation spec require the
+four arms to share information and action pools while isolating evaluator truth
+and other-arm records, especially CL-LOOP observations.
+
+**Scope:** `src/a615a_sim/algorithm/` arm adapter and `src/a615a_sim/evaluator/`
+harness/fault-view. No `src/cltav_runtime/` semantic change, no manuscript
+result cells, no confirmatory registration.
+
+**Guardrails:** Arms see only algorithm-visible records and the typed initial
+projection. `evaluator_fault_record` stays evaluator-only behind the truth
+capability. Confirmation traces are reset before an arm runs. A missing allowed
+caller fails closed.
+
+**Status:** Candidate under CR-2026-025. Draft PR review required. Not run
+admission, not confirmatory, not Ready/merge.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -1961,3 +1987,22 @@ Draft PR #27 的图增量，本决定不复用。
 真值。缺少允许的调用者即失败关闭。模拟 ε 不是实验室校准。正常单例不是协议 PASS。
 
 **状态：** 在 CR-2026-024 下为候选。须 Draft PR 审查。不是运行准入、确认性实验或 Ready／合并。
+
+## DD-049——模拟 IUT Phase B 四臂适配器
+
+**决定：** 在 CR-2026-025 下，许可一个 Draft 适配器，在 Phase A 模拟 IUT 上运行已登记四臂
+CL-T、CL-A、CL-TA 与 CL-LOOP，采用设计中的可见性表、公平成本表、共用动作库、停止类名
+与 T5 判据。CL-LOOP 必须构造现有 `ReferenceSession`；不得复制或改写运行时选择／更新／停止
+语义。DEC-IUT、DEC-TRUTH、DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN。
+Phase C／D 流水线与试点执行仍不在范围。
+
+**理由：** 实验方案与实施规格要求四臂共享信息与动作池，同时隔离评价者真值和其他臂记录，
+尤其是 CL-LOOP 观测。
+
+**范围：** `src/a615a_sim/algorithm/` 臂适配器与 `src/a615a_sim/evaluator/` 夹具／故障视图。
+不改变 `src/cltav_runtime/` 语义，不填写稿件结果格，不做确认性登记。
+
+**护栏：** 臂只看见算法可见记录和类型化初始投影。`evaluator_fault_record` 留在评价者侧并
+受真值能力对象保护。确认轨迹在臂运行前复位。缺少允许的调用者即失败关闭。
+
+**状态：** 在 CR-2026-025 下为候选。须 Draft PR 审查。不是运行准入、确认性实验或 Ready／合并。
