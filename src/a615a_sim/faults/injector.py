@@ -7,7 +7,12 @@ from typing import Any, Mapping
 from uuid import uuid4
 
 from a615a_sim.bound_iut.protocol import SimulatedTarget
-from a615a_sim.faults.catalogue import declared_signature, entry_by_id
+from a615a_sim.faults.catalogue import (
+    canonical_fault_id,
+    declared_signature,
+    entry_by_id,
+    require_applicable,
+)
 
 
 @dataclass(frozen=True)
@@ -35,48 +40,99 @@ class InjectionAttempt:
         }
 
 
+_H_SINGLE_TOKENS = frozenset(
+    {
+        "FIND-ANSWER-LATE",
+        "FIND-ANSWER-ABSENT",
+        "LUR-ACK-MISSING",
+        "LUR-ACK-WITHOUT-WRQ",
+        "STATUS-SILENCE",
+    }
+)
+
+
 def _observe_signature(target: SimulatedTarget, fault_id: str) -> str | None:
     kinds = {event.kind for event in target.events}
     visible = target._last_visible or {}
-    if fault_id == "H-NORMAL":
-        return "COMPLETED" if "COMPLETED" in kinds and "FIND" in kinds else None
-    if fault_id == "H-WAIT-CONTINUE":
-        return "WAIT+CONTINUE" if {"WAIT", "CONTINUE"} <= kinds else None
-    if fault_id == "H-NO-RESPONSE":
-        return "NO-RESPONSE" if "NO-RESPONSE" in kinds and "STATUS-WITH-DELAY" in kinds else None
-    if fault_id == "H-ABORT":
-        return "ABORT" if "ABORT" in kinds else None
-    if fault_id == "H-SAME-KEY":
+    canonical = canonical_fault_id(fault_id)
+    if canonical in {"H-NORMAL"}:
+        if kinds & _H_SINGLE_TOKENS:
+            return None
+        return "H-NORMAL"
+    if canonical == "F-FIND-ANSWER-LATE":
+        late = [event for event in target.events if event.kind == "FIND-ANSWER-LATE"]
+        return "FIND-ANSWER-LATE" if late else None
+    if canonical == "F-FIND-ANSWER-ABSENT":
+        absent = [event for event in target.events if event.kind == "FIND-ANSWER-ABSENT"]
+        host = [event for event in target.events if event.kind in {"FIND", "FIND-ANSWER-LATE"}]
+        return "FIND-ANSWER-ABSENT" if absent and not host else None
+    if canonical == "F-LUR-ACK-MISSING":
+        wrq = any(event.kind == "LUR-WRQ" for event in target.events)
+        ack = any(event.kind in {"LUR-ACK", "LUR-ACK-WITHOUT-WRQ"} for event in target.events)
+        return "LUR-ACK-MISSING" if wrq and not ack and "LUR-ACK-MISSING" in kinds else None
+    if canonical == "F-LUR-ACK-WITHOUT-WRQ":
+        wrq = any(event.kind == "LUR-WRQ" for event in target.events)
+        unmatched = any(event.kind == "LUR-ACK-WITHOUT-WRQ" for event in target.events)
+        return "LUR-ACK-WITHOUT-WRQ" if unmatched and not wrq else None
+    if canonical == "F-STATUS-SILENCE":
+        silenced = [
+            event
+            for event in target.events
+            if event.kind == "STATUS-SILENCE" and event.payload.get("abortFallback") == "AVAILABLE"
+        ]
+        delayed = "STATUS-WITH-DELAY" in kinds
+        suppressed = any(
+            event.payload.get("abortFallback") == "SUPPRESSED" for event in target.events
+        )
+        return "STATUS-SILENCE" if silenced and delayed and not suppressed else None
+    if canonical == "H-SAME-KEY":
         reused = [event for event in target.events if event.payload.get("reusedKey")]
         return "REUSED-KEY" if reused else None
-    if fault_id == "H-SINGLE-BATCH":
-        return "BATCH" if target.configuration == "BATCH" else None
-    if fault_id == "H-INVALID-OBS":
+    if canonical == "H-INVALID-OBS":
         return "MISSING-CORRELATION" if visible.get("correlationId") is None else None
-    if fault_id == "H-RESOURCE-ERROR":
+    if canonical == "H-RESOURCE-ERROR":
         return "RESOURCE-ERROR" if "RESOURCE-ERROR" in kinds else None
     return None
 
 
-def _drive_for_confirmation(target: SimulatedTarget, fault_id: str, correlation_id: str) -> None:
-    if fault_id in {"H-NORMAL", "H-WAIT-CONTINUE", "H-ABORT", "H-SINGLE-BATCH"}:
+def _drive_for_confirmation(
+    target: SimulatedTarget, fault_id: str, scene_id: str, correlation_id: str
+) -> None:
+    canonical = canonical_fault_id(fault_id)
+    information_scenes = {
+        "SC-NO-RESPONSE",
+        "SC-SAME-KEY",
+        "SC-INVALID-OBS",
+        "SC-RESOURCE-ERROR",
+    }
+    if canonical == "H-NORMAL":
+        if scene_id in information_scenes:
+            target.information(correlation_id)
+            return
         target.find(correlation_id)
         target.send(correlation_id)
         return
-    if fault_id == "H-NO-RESPONSE":
+    if canonical in {
+        "F-FIND-ANSWER-LATE",
+        "F-FIND-ANSWER-ABSENT",
+        "F-LUR-ACK-MISSING",
+        "F-LUR-ACK-WITHOUT-WRQ",
+    }:
+        target.find(correlation_id)
+        if canonical in {"F-LUR-ACK-MISSING", "F-LUR-ACK-WITHOUT-WRQ"}:
+            target.send(correlation_id)
+        return
+    if canonical == "F-STATUS-SILENCE":
         target.information(correlation_id)
         return
-    if fault_id == "H-SAME-KEY":
+    if canonical == "H-SAME-KEY":
         target.information(correlation_id)
         target.information(correlation_id + "-b")
         return
-    if fault_id == "H-INVALID-OBS":
+    if canonical in {"H-INVALID-OBS", "H-RESOURCE-ERROR"}:
         target.information(correlation_id)
         return
-    if fault_id == "H-RESOURCE-ERROR":
-        target.information(correlation_id)
-        return
-    raise KeyError(fault_id)
+    raise KeyError(canonical)
 
 
 def inject(
@@ -89,22 +145,27 @@ def inject(
     truth_store: Any | None = None,
     truth_capability: Any | None = None,
 ) -> InjectionAttempt:
-    """Install one declared fault.  Planned is not confirmed until the signature is seen."""
+    """Overlay one declared fault on an applicable scene.  Planned is not confirmed."""
 
-    entry_by_id(fault_id)
+    require_applicable(scene_id, fault_id)
+    canonical = canonical_fault_id(fault_id)
     attempt = attempt_id or f"A-{uuid4().hex[:12]}"
-    target.install_fault(fault_id)
+    overlay = None if canonical == "H-NORMAL" else canonical
+    target.install_scene(scene_id)
+    target.install_fault(overlay)
     observed = None
     if confirm:
-        _drive_for_confirmation(target, fault_id, correlation_id=f"corr-{attempt}")
-        observed = _observe_signature(target, fault_id)
-    declared = declared_signature(fault_id)
-    token = str(entry_by_id(fault_id)["confirmationToken"])
+        _drive_for_confirmation(
+            target, canonical, scene_id, correlation_id=f"corr-{attempt}"
+        )
+        observed = _observe_signature(target, canonical)
+    declared = declared_signature(canonical)
+    token = str(entry_by_id(canonical)["confirmationToken"])
     confirmed = bool(confirm and observed == token)
     record = InjectionAttempt(
         scene_id=scene_id,
         attempt_id=attempt,
-        fault_id=fault_id,
+        fault_id=canonical,
         injection_confirmed=confirmed,
         injection_unconfirmed=not confirmed,
         observed_signature=observed,

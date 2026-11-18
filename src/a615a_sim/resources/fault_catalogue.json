@@ -1,88 +1,157 @@
 {
   "identity": {
-    "catalogueId": "CLTAV-H-SINGLE-SIMULATED-2026-010-A",
+    "catalogueId": "CLTAV-H-SINGLE-SIMULATED-2026-010-B1",
     "domain": "H0 = {h_normal} union H_single",
     "iutClass": "SIMULATED-IUT",
+    "iutRole": "target side (TH / FIND-HOST); data-loader side is tester infrastructure (R1)",
     "boundModel": "UPLOAD FIND/SEND/ABORT and INFORMATION only; no DOWNLOAD/AFDX",
-    "claimStatus": "non-confirmatory; DEC-IUT and DEC-EQUIV remain OPEN"
+    "claimStatus": "non-confirmatory; DEC-IUT and DEC-EQUIV remain OPEN",
+    "declaredObservationEndS": "11/5",
+    "declaredObservationEndNote": "greater than FIND host-answer 2 s + SIMULATED_EPSILON + margin so LATE and ABSENT are distinguishable; (LATE, ABSENT) remains a DEC-EQUIV candidate"
   },
+  "locateScenes": [
+    "SC-NORMAL-UPLOAD",
+    "SC-WAIT-CONTINUE",
+    "SC-ABORT",
+    "SC-SINGLE-BATCH",
+    "SC-NO-RESPONSE"
+  ],
+  "detectAblationOnlyScenes": [
+    "SC-SAME-KEY",
+    "SC-RESOURCE-ERROR",
+    "SC-INVALID-OBS"
+  ],
+  "pilotLocateDeviation": "SC-SAME-KEY, SC-RESOURCE-ERROR, and SC-INVALID-OBS are DETECT/ABLATION accounting only in this pilot; they are not used for LOCATE. Recorded in CR-2026-024; cltav_experiment_design.json is unchanged.",
+  "decEquivCandidates": [
+    {
+      "pair": ["F-FIND-ANSWER-LATE", "F-FIND-ANSWER-ABSENT"],
+      "status": "OPEN",
+      "decisionId": "DEC-EQUIV",
+      "note": "for observation windows that end at or before 2 s the pair is not distinguishable; the declared observation end is above 2 s + epsilon + margin"
+    }
+  ],
   "normal": {
     "id": "H-NORMAL",
     "hypothesisId": "h_normal",
     "inHSingle": false,
-    "sceneId": "SC-NORMAL-UPLOAD",
-    "serviceScope": "UPLOAD",
+    "applicableScenes": [
+      "SC-NORMAL-UPLOAD",
+      "SC-WAIT-CONTINUE",
+      "SC-ABORT",
+      "SC-SINGLE-BATCH",
+      "SC-NO-RESPONSE",
+      "SC-SAME-KEY",
+      "SC-RESOURCE-ERROR",
+      "SC-INVALID-OBS"
+    ],
+    "serviceScope": "UPLOAD/INFORMATION",
     "faultClass": "NORMAL-CONTROL",
-    "mechanism": "no perturbation; complete FIND then SEND under a fresh reset",
-    "observableSignature": "terminal-status COMPLETED with owned FIND and SEND records",
-    "confirmationToken": "COMPLETED",
+    "basisIds": [],
+    "mechanism": "no IUT overlay; WAIT/CONTINUE, owned ABORT, and BATCH remain legal h_normal scene trajectories",
+    "observableSignature": "scene trajectory without an H_single overlay; FIND host answer in [0,2] when FIND occurs",
+    "expectedT5OrHalt": "FIND host-answer observation contained in CRS-M1-00391 [0,2] when FIND occurs; no halt from an H_single overlay",
+    "confirmationToken": "H-NORMAL",
     "faultDomainClass": "normal",
     "injectionStatusIfConfirmed": "normal",
-    "notes": "A normal singleton is not protocol PASS."
+    "notes": "A normal singleton is not protocol PASS. Confirmation token is per hypothesis, not per scene."
   },
   "hSingle": [
     {
-      "id": "H-WAIT-CONTINUE",
-      "hypothesisId": "h_wait_continue",
+      "id": "F-FIND-ANSWER-LATE",
+      "hypothesisId": "h_find_answer_late",
       "inHSingle": true,
-      "sceneId": "SC-WAIT-CONTINUE",
-      "serviceScope": "UPLOAD",
-      "faultClass": "CONFIGURATION-OR-PROTOCOL",
-      "mechanism": "emit WAIT then a delayed CONTINUE while the upload obligation remains active",
-      "observableSignature": "WAIT status observed before CONTINUE; obligation not cancelled",
-      "confirmationToken": "WAIT+CONTINUE",
-      "faultDomainClass": "in-domain-non-equivalent",
-      "injectionStatusIfConfirmed": "confirmed"
-    },
-    {
-      "id": "H-NO-RESPONSE",
-      "hypothesisId": "h_no_response",
-      "inHSingle": true,
-      "sceneId": "SC-NO-RESPONSE",
-      "serviceScope": "INFORMATION",
+      "applicableScenes": [
+        "SC-NORMAL-UPLOAD",
+        "SC-WAIT-CONTINUE",
+        "SC-ABORT",
+        "SC-SINGLE-BATCH"
+      ],
+      "serviceScope": "UPLOAD FIND-HOST",
       "faultClass": "PROTOCOL-FAULT",
-      "mechanism": "after a status file carrying exceptionDelaySeconds, suppress the next status and the data-loader abort fallback",
-      "observableSignature": "status-with-delay observed; neither timely new status nor abort fallback before the finite observation end",
-      "confirmationToken": "NO-RESPONSE",
+      "basisIds": ["CRS-M1-00391"],
+      "mechanism": "TH FIND-HOST answer is emitted after the 2 s host-answer closed interval and before the declared observation end",
+      "observableSignature": "FIND-ANSWER-LATE event with host-answer tick strictly after 2 s and strictly before declaredObservationEndS",
+      "expectedT5OrHalt": "T5 FAIL against CRS-M1-00391 [0,2] (observation disjoint from the host-answer interval); session continues until observation end",
+      "confirmationToken": "FIND-ANSWER-LATE",
       "faultDomainClass": "in-domain-non-equivalent",
       "injectionStatusIfConfirmed": "confirmed"
     },
     {
-      "id": "H-ABORT",
-      "hypothesisId": "h_abort",
+      "id": "F-FIND-ANSWER-ABSENT",
+      "hypothesisId": "h_find_answer_absent",
       "inHSingle": true,
-      "sceneId": "SC-ABORT",
-      "serviceScope": "UPLOAD",
-      "faultClass": "CONFIGURATION-OR-PROTOCOL",
-      "mechanism": "deliver an owned ABORT for the active SEND correlation during transfer",
-      "observableSignature": "ABORT event with the same correlation key as the active SEND",
-      "confirmationToken": "ABORT",
+      "applicableScenes": [
+        "SC-NORMAL-UPLOAD",
+        "SC-WAIT-CONTINUE",
+        "SC-ABORT",
+        "SC-SINGLE-BATCH"
+      ],
+      "serviceScope": "UPLOAD FIND-HOST",
+      "faultClass": "PROTOCOL-FAULT",
+      "basisIds": ["CRS-M1-00391"],
+      "mechanism": "TH emits no FIND-HOST answer through the declared observation end",
+      "observableSignature": "FIND-ANSWER-ABSENT at declaredObservationEndS with no host-answer event",
+      "expectedT5OrHalt": "T5 FAIL against CRS-M1-00391 [0,2]; halt at declared observation end without a host answer",
+      "confirmationToken": "FIND-ANSWER-ABSENT",
       "faultDomainClass": "in-domain-non-equivalent",
       "injectionStatusIfConfirmed": "confirmed"
     },
     {
-      "id": "H-SAME-KEY",
-      "hypothesisId": "h_same_key",
+      "id": "F-LUR-ACK-MISSING",
+      "hypothesisId": "h_lur_ack_missing",
       "inHSingle": true,
-      "sceneId": "SC-SAME-KEY",
-      "serviceScope": "INFORMATION",
-      "faultClass": "CONFIGURATION-OR-PROTOCOL",
-      "mechanism": "issue a second INFORMATION request that reuses the live correlation key",
-      "observableSignature": "two INFORMATION requests share one correlation key while both are outstanding",
-      "confirmationToken": "REUSED-KEY",
+      "applicableScenes": [
+        "SC-NORMAL-UPLOAD",
+        "SC-WAIT-CONTINUE",
+        "SC-ABORT",
+        "SC-SINGLE-BATCH"
+      ],
+      "serviceScope": "UPLOAD LUR",
+      "faultClass": "PROTOCOL-FAULT",
+      "basisIds": ["CRS-M1-00366"],
+      "mechanism": "after a matching LUR WRQ, TH omits the ACK",
+      "observableSignature": "LUR-WRQ present and no TH LUR-ACK",
+      "expectedT5OrHalt": "upload matching-ACK obligation unmet; halt without TH LUR-ACK",
+      "confirmationToken": "LUR-ACK-MISSING",
       "faultDomainClass": "in-domain-non-equivalent",
       "injectionStatusIfConfirmed": "confirmed"
     },
     {
-      "id": "H-SINGLE-BATCH",
-      "hypothesisId": "h_single_batch",
+      "id": "F-LUR-ACK-WITHOUT-WRQ",
+      "hypothesisId": "h_lur_ack_without_wrq",
       "inHSingle": true,
-      "sceneId": "SC-SINGLE-BATCH",
-      "serviceScope": "UPLOAD",
-      "faultClass": "CONFIGURATION-DIFFERENCE",
-      "mechanism": "select the registered batch policy instead of the single-file policy on an otherwise identical reset target",
-      "observableSignature": "publicConfigurationRef equals BATCH while pairing identity is shared",
-      "confirmationToken": "BATCH",
+      "applicableScenes": [
+        "SC-NORMAL-UPLOAD",
+        "SC-WAIT-CONTINUE",
+        "SC-ABORT",
+        "SC-SINGLE-BATCH"
+      ],
+      "serviceScope": "UPLOAD LUR",
+      "faultClass": "PROTOCOL-FAULT",
+      "basisIds": ["CRS-M1-00366", "TH-MATCHING-LUR-WRQ-RECEIVED"],
+      "mechanism": "TH emits a LUR ACK while TH-MATCHING-LUR-WRQ-RECEIVED is false (no matching LUR WRQ)",
+      "observableSignature": "TH LUR-ACK-WITHOUT-WRQ with matchingWrqReceived=false",
+      "expectedT5OrHalt": "invariant TH-MATCHING-LUR-WRQ-RECEIVED violated; halt after unmatched ACK",
+      "confirmationToken": "LUR-ACK-WITHOUT-WRQ",
+      "faultDomainClass": "in-domain-non-equivalent",
+      "injectionStatusIfConfirmed": "confirmed"
+    },
+    {
+      "id": "F-STATUS-SILENCE",
+      "hypothesisId": "h_status_silence",
+      "inHSingle": true,
+      "applicableScenes": [
+        "SC-NO-RESPONSE",
+        "SC-WAIT-CONTINUE",
+        "SC-ABORT"
+      ],
+      "serviceScope": "INFORMATION/UPLOAD status",
+      "faultClass": "PROTOCOL-FAULT",
+      "basisIds": ["CRS-M1-00106"],
+      "mechanism": "TH omits the next timed status; data-loader abort fallback is not suppressed",
+      "observableSignature": "STATUS-WITH-DELAY then STATUS-SILENCE with abortFallback=AVAILABLE",
+      "expectedT5OrHalt": "TH status obligation unmet; DL abort fallback remains available (not suppressed)",
+      "confirmationToken": "STATUS-SILENCE",
       "faultDomainClass": "in-domain-non-equivalent",
       "injectionStatusIfConfirmed": "confirmed"
     }
@@ -92,29 +161,49 @@
       "id": "H-INVALID-OBS",
       "hypothesisId": null,
       "inHSingle": false,
-      "sceneId": "SC-INVALID-OBS",
+      "applicableScenes": ["SC-INVALID-OBS"],
       "serviceScope": "INFORMATION",
       "faultClass": "OBSERVATION-ANOMALY",
+      "basisIds": [],
       "mechanism": "evaluator corrupts capture timestamp or ownership evidence; not an IUT-fault label",
       "observableSignature": "observation record missing correlation id or invalid timestamp",
+      "expectedT5OrHalt": "not scored as IUT nonconformance; retained in DETECT/ABLATION accounting only",
       "confirmationToken": "MISSING-CORRELATION",
       "faultDomainClass": "unknown",
       "injectionStatusIfConfirmed": "unresolved",
-      "notes": "Retained in attempt accounting; excluded from IUT PASS/FAIL denominators."
+      "notes": "Pilot LOCATE unused (CR-2026-024 deviation)."
     },
     {
       "id": "H-RESOURCE-ERROR",
       "hypothesisId": null,
       "inHSingle": false,
-      "sceneId": "SC-RESOURCE-ERROR",
+      "applicableScenes": ["SC-RESOURCE-ERROR"],
       "serviceScope": "INFORMATION",
       "faultClass": "TOOL-OR-RESOURCE-ERROR",
+      "basisIds": [],
       "mechanism": "resource controller raises a named tool error without IUT nonconformance",
       "observableSignature": "resourceStatus RESOURCE-ERROR with spent cost retained",
+      "expectedT5OrHalt": "not scored as IUT nonconformance; DETECT/ABLATION accounting only",
       "confirmationToken": "RESOURCE-ERROR",
       "faultDomainClass": "unknown",
       "injectionStatusIfConfirmed": "unresolved",
-      "notes": "Not scored as IUT nonconformance."
+      "notes": "Pilot LOCATE unused (CR-2026-024 deviation)."
+    },
+    {
+      "id": "H-SAME-KEY",
+      "hypothesisId": null,
+      "inHSingle": false,
+      "applicableScenes": ["SC-SAME-KEY"],
+      "serviceScope": "INFORMATION",
+      "faultClass": "CONFIGURATION-OR-PROTOCOL",
+      "basisIds": [],
+      "mechanism": "issue a second INFORMATION request that reuses the live correlation key; not in H_single for this pilot",
+      "observableSignature": "two INFORMATION requests share one correlation key while both are outstanding",
+      "expectedT5OrHalt": "DETECT/ABLATION accounting only; not used for LOCATE",
+      "confirmationToken": "REUSED-KEY",
+      "faultDomainClass": "unknown",
+      "injectionStatusIfConfirmed": "unresolved",
+      "notes": "Pilot LOCATE unused (CR-2026-024 deviation)."
     }
   ]
 }

@@ -13,8 +13,12 @@ import pytest
 from a615a_sim.bound_iut.protocol import SimulatedTarget
 from a615a_sim.clock import (
     ClosedInterval,
+    DECLARED_OBSERVATION_END_S,
+    FIND_ANSWER_LATE_AT_S,
+    FIND_HOST_ANSWER_S,
     SIMULATED_EPSILON,
     SimulatedClock,
+    declared_observation_end,
     find_host_requirement,
     t5_interval_verdict,
 )
@@ -27,7 +31,13 @@ from a615a_sim.evaluator import (
 )
 from a615a_sim.evaluator.guard import TruthLeakageError
 from a615a_sim.evaluator.reset import reset_target
-from a615a_sim.faults.catalogue import h_single_entries, load_catalogue
+from a615a_sim.faults.catalogue import (
+    evaluator_fault_plan,
+    h_single_entries,
+    in_domain_hypotheses_for_scene,
+    load_catalogue,
+    locate_scenes,
+)
 from a615a_sim.faults.injector import inject
 
 
@@ -60,35 +70,35 @@ def test_catalogue_declares_h_single_and_normal() -> None:
     catalogue = load_catalogue()
     ids = {entry["id"] for entry in h_single_entries()}
     assert catalogue["normal"]["id"] == "H-NORMAL"
+    assert catalogue["normal"]["hypothesisId"] == "h_normal"
     assert catalogue["normal"]["inHSingle"] is False
+    assert "sceneId" not in catalogue["normal"]
     assert ids == {
-        "H-WAIT-CONTINUE",
-        "H-NO-RESPONSE",
-        "H-ABORT",
-        "H-SAME-KEY",
-        "H-SINGLE-BATCH",
+        "F-FIND-ANSWER-LATE",
+        "F-FIND-ANSWER-ABSENT",
+        "F-LUR-ACK-MISSING",
+        "F-LUR-ACK-WITHOUT-WRQ",
+        "F-STATUS-SILENCE",
     }
+    tokens = [entry["confirmationToken"] for entry in h_single_entries()]
+    assert len(tokens) == len(set(tokens))
+    pair = catalogue["decEquivCandidates"][0]["pair"]
+    assert pair == ["F-FIND-ANSWER-LATE", "F-FIND-ANSWER-ABSENT"]
+    assert catalogue["decEquivCandidates"][0]["status"] == "OPEN"
     for entry in h_single_entries():
         assert entry["observableSignature"]
         assert entry["mechanism"]
         assert entry["confirmationToken"]
+        assert entry["basisIds"]
+        assert entry["expectedT5OrHalt"]
+        assert entry["applicableScenes"]
+        assert "sceneId" not in entry
         assert entry["inHSingle"] is True
+    assert catalogue["normal"]["confirmationToken"] == "H-NORMAL"
 
 
-@pytest.mark.parametrize(
-    ("fault_id", "scene_id"),
-    [
-        ("H-NORMAL", "SC-NORMAL-UPLOAD"),
-        ("H-WAIT-CONTINUE", "SC-WAIT-CONTINUE"),
-        ("H-NO-RESPONSE", "SC-NO-RESPONSE"),
-        ("H-ABORT", "SC-ABORT"),
-        ("H-SAME-KEY", "SC-SAME-KEY"),
-        ("H-SINGLE-BATCH", "SC-SINGLE-BATCH"),
-        ("H-INVALID-OBS", "SC-INVALID-OBS"),
-        ("H-RESOURCE-ERROR", "SC-RESOURCE-ERROR"),
-    ],
-)
-def test_confirmed_injection_writes_truth_before_any_arm(fault_id: str, scene_id: str) -> None:
+@pytest.mark.parametrize(("scene_id", "fault_id"), list(evaluator_fault_plan()))
+def test_confirmed_injection_writes_truth_before_any_arm(scene_id: str, fault_id: str) -> None:
     target = _target()
     reset = reset_target(target, pairing_id="PAIR-PHASE-A")
     assert reset.confirmed
@@ -111,7 +121,9 @@ def test_confirmed_injection_writes_truth_before_any_arm(fault_id: str, scene_id
 def test_unconfirmed_injection_cannot_become_truth() -> None:
     target = _target()
     reset_target(target)
-    attempt = inject(target, scene_id="SC-ABORT", fault_id="H-ABORT", confirm=False)
+    attempt = inject(
+        target, scene_id="SC-NORMAL-UPLOAD", fault_id="F-LUR-ACK-MISSING", confirm=False
+    )
     assert attempt.injection_confirmed is False
     assert attempt.injection_unconfirmed is True
     store = new_independent_truth_store()
@@ -123,7 +135,7 @@ def test_unconfirmed_injection_cannot_become_truth() -> None:
 def test_reset_evidence_is_distinct_per_attempt() -> None:
     target = _target()
     first = reset_target(target, pairing_id="PAIR-1")
-    inject(target, scene_id="SC-ABORT", fault_id="H-ABORT")
+    inject(target, scene_id="SC-NORMAL-UPLOAD", fault_id="F-LUR-ACK-MISSING")
     second = reset_target(target, pairing_id="PAIR-1")
     assert first.pairing_id == second.pairing_id
     assert first.reset_id != second.reset_id
@@ -146,7 +158,16 @@ def test_simulated_clock_t5_matches_experiment_plan_examples() -> None:
     interval = clock.observation_interval()
     assert interval.upper - interval.lower == 2 * SIMULATED_EPSILON
     host = find_host_requirement()
+    assert host.lower == Fraction(0)
+    assert host.upper == FIND_HOST_ANSWER_S == Fraction(2)
     assert t5_interval_verdict(ClosedInterval(Fraction(0), Fraction(2)), host) == "PASS"
+    end = declared_observation_end()
+    assert end == DECLARED_OBSERVATION_END_S
+    assert end > FIND_HOST_ANSWER_S + SIMULATED_EPSILON
+    import a615a_sim.clock as clock_mod
+
+    assert not hasattr(clock_mod, "find_registration_requirement")
+    assert not hasattr(clock_mod, "FIND_REGISTRATION_S")
 
 
 def test_algorithm_module_read_fails_closed() -> None:
@@ -280,6 +301,88 @@ def test_access_without_capability_is_denied() -> None:
         get_truth(store, "missing")
     target = _target()
     reset_target(target)
-    attempt = inject(target, scene_id="SC-ABORT", fault_id="H-ABORT")
+    attempt = inject(target, scene_id="SC-NORMAL-UPLOAD", fault_id="F-LUR-ACK-MISSING")
     with pytest.raises(TruthLeakageError, match="capability"):
         write_confirmed_truth(store, attempt)
+
+
+def test_locate_scenes_have_at_least_two_in_domain_hypotheses() -> None:
+    for scene_id in locate_scenes():
+        hypotheses = in_domain_hypotheses_for_scene(scene_id)
+        assert "H-NORMAL" in hypotheses
+        assert len(hypotheses) >= 2, scene_id
+
+
+def test_inapplicable_scene_fault_pair_is_rejected() -> None:
+    target = _target()
+    reset_target(target)
+    with pytest.raises(ValueError, match="inapplicable"):
+        inject(target, scene_id="SC-NO-RESPONSE", fault_id="F-FIND-ANSWER-LATE")
+    with pytest.raises(ValueError, match="inapplicable"):
+        inject(target, scene_id="SC-NORMAL-UPLOAD", fault_id="F-STATUS-SILENCE")
+    with pytest.raises(ValueError, match="inapplicable"):
+        inject(target, scene_id="SC-SAME-KEY", fault_id="F-LUR-ACK-MISSING")
+
+
+def test_scene_id_does_not_uniquely_determine_truth() -> None:
+    scene_id = "SC-NORMAL-UPLOAD"
+    capability = issue_truth_capability()
+    store = new_independent_truth_store()
+    first = inject(
+        _target(),
+        scene_id=scene_id,
+        fault_id="h_normal",
+        truth_store=store,
+        truth_capability=capability,
+    )
+    second = inject(
+        _target(),
+        scene_id=scene_id,
+        fault_id="F-FIND-ANSWER-LATE",
+        truth_store=store,
+        truth_capability=capability,
+    )
+    assert get_truth(store, first.attempt_id, capability).truth_hypothesis == "h_normal"
+    assert (
+        get_truth(store, second.attempt_id, capability).truth_hypothesis
+        == "h_find_answer_late"
+    )
+
+
+def test_late_and_absent_signatures_differ_under_declared_observation_window() -> None:
+    assert FIND_ANSWER_LATE_AT_S > FIND_HOST_ANSWER_S
+    assert FIND_ANSWER_LATE_AT_S < declared_observation_end()
+    late = inject(_target(), scene_id="SC-NORMAL-UPLOAD", fault_id="F-FIND-ANSWER-LATE")
+    absent = inject(_target(), scene_id="SC-NORMAL-UPLOAD", fault_id="F-FIND-ANSWER-ABSENT")
+    assert late.observed_signature == "FIND-ANSWER-LATE"
+    assert absent.observed_signature == "FIND-ANSWER-ABSENT"
+    assert late.observed_signature != absent.observed_signature
+    late_target = _target()
+    inject(late_target, scene_id="SC-WAIT-CONTINUE", fault_id="F-FIND-ANSWER-LATE")
+    late_event = next(event for event in late_target.events if event.kind == "FIND-ANSWER-LATE")
+    late_obs = late_target.clock.observation_interval(late_event.tick)
+    assert t5_interval_verdict(late_obs, find_host_requirement()) == "FAIL"
+    absent_target = _target()
+    inject(absent_target, scene_id="SC-ABORT", fault_id="F-FIND-ANSWER-ABSENT")
+    assert all(event.kind != "FIND-ANSWER-LATE" for event in absent_target.events)
+    assert absent_target.clock.now == declared_observation_end()
+
+
+def test_wait_abort_and_batch_are_h_normal_trajectories() -> None:
+    wait = _target()
+    inject(wait, scene_id="SC-WAIT-CONTINUE", fault_id="H-NORMAL")
+    kinds = {event.kind for event in wait.events}
+    assert {"WAIT", "CONTINUE"} <= kinds
+    abort = _target()
+    inject(abort, scene_id="SC-ABORT", fault_id="h_normal")
+    assert any(event.kind == "ABORT" and event.payload.get("owned") for event in abort.events)
+    batch = _target()
+    inject(batch, scene_id="SC-SINGLE-BATCH", fault_id="H-NORMAL")
+    assert batch.configuration == "BATCH"
+
+
+def test_status_silence_does_not_suppress_abort_fallback() -> None:
+    target = _target()
+    inject(target, scene_id="SC-NO-RESPONSE", fault_id="F-STATUS-SILENCE")
+    silence = next(event for event in target.events if event.kind == "STATUS-SILENCE")
+    assert silence.payload["abortFallback"] == "AVAILABLE"

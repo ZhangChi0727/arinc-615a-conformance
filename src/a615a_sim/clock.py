@@ -16,7 +16,10 @@ CLOCK_UNIT = "second"
 # calibrated laboratory budget.
 SIMULATED_EPSILON = Fraction(1, 1000)
 FIND_HOST_ANSWER_S = Fraction(2, 1)
-FIND_REGISTRATION_S = Fraction(3, 1)
+# Observation end > 2 s + epsilon + margin so LATE versus ABSENT differ.
+OBSERVATION_END_MARGIN_S = Fraction(1, 10)
+DECLARED_OBSERVATION_END_S = FIND_HOST_ANSWER_S + SIMULATED_EPSILON + OBSERVATION_END_MARGIN_S + Fraction(1, 10)
+FIND_ANSWER_LATE_AT_S = FIND_HOST_ANSWER_S + Fraction(5, 100)
 
 
 @dataclass(frozen=True)
@@ -84,8 +87,15 @@ def t5_interval_verdict(observation: ClosedInterval, requirement: ClosedInterval
 
 
 def find_host_requirement() -> ClosedInterval:
+    """CRS-M1-00391 2 s host-answer closed interval [0, 2]."""
+
     return ClosedInterval(Fraction(0, 1), FIND_HOST_ANSWER_S)
 
 
-def find_registration_requirement() -> ClosedInterval:
-    return ClosedInterval(Fraction(0, 1), FIND_REGISTRATION_S)
+def declared_observation_end() -> Fraction:
+    """Evaluator observation end; strictly after 2 s + epsilon + margin."""
+
+    minimum = FIND_HOST_ANSWER_S + SIMULATED_EPSILON + OBSERVATION_END_MARGIN_S
+    if DECLARED_OBSERVATION_END_S <= minimum:
+        raise ValueError("declared observation end must exceed 2 s + epsilon + margin")
+    return DECLARED_OBSERVATION_END_S
