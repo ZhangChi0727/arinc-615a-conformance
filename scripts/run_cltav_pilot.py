@@ -41,12 +41,24 @@ METRIC_NUM_DEN = (
     ("MET-SINGLETON-CORRECT", "POP-SINGLETON-CORRECT", "POP-SINGLETON-TRUTH-SCORABLE"),
 )
 
-COMPARE_IGNORE = {
-    "attemptId",
-    "runId",
-    "pairingId",
-    "resetEvidenceRef",
-}
+OUTCOME_KEYS = (
+    "validity",
+    "outcome",
+    "stopClass",
+    "stage",
+    "finalHypotheses",
+    "injectionStatus",
+    "faultDomain",
+    "localizationDecisionIssued",
+    "singletonDecisionIssued",
+    "resourcePolicy",
+    "resourceStatus",
+    "actionIssued",
+    "chargedCost",
+    "detectFamilyOnly",
+    "resourceErrorSilenceCollision",
+    "truthHypothesis",
+)
 
 
 def _git_head() -> str | None:
@@ -94,7 +106,9 @@ def counts_with_denominators(rows: list[Mapping[str, Any]]) -> dict[str, Any]:
 
 
 def _comparable(row: Mapping[str, Any]) -> dict[str, Any]:
-    return {key: value for key, value in row.items() if key not in COMPARE_IGNORE}
+    payload = {key: row.get(key) for key in OUTCOME_KEYS if key != "truthHypothesis"}
+    payload["truthHypothesis"] = (row.get("truthReference") or {}).get("truthHypothesis")
+    return payload
 
 
 def variance_report(rows: list[Mapping[str, Any]]) -> dict[str, Any]:
