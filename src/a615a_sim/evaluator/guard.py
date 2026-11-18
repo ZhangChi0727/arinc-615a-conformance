@@ -1,8 +1,8 @@
 """Fail-closed leakage guard for evaluator-only experiment truth.
 
 Algorithm and arm modules must never read IF-EXP-TRUTH.  Access is denied when
-any frame on the call stack belongs to a denied prefix, or when no allowed
-evaluator/test/injector frame can be identified.
+any frame on the call stack belongs to a denied prefix, or when the first
+non-guard/truth frame is not an evaluator or injector module.
 """
 
 from __future__ import annotations
@@ -21,8 +21,12 @@ ALGORITHM_PREFIXES = (
 ALLOWED_PREFIXES = (
     "a615a_sim.evaluator",
     "a615a_sim.faults",
-    "tests.",
-    "test_",
+)
+
+_SKIP_PREFIXES = (
+    "a615a_sim.evaluator.guard",
+    "a615a_sim.evaluator.truth",
+    "importlib",
 )
 
 
@@ -35,16 +39,24 @@ def _module_name(frame: inspect.FrameInfo) -> str:
     return name if isinstance(name, str) else ""
 
 
+def _matches(name: str, prefixes: tuple[str, ...]) -> bool:
+    return any(name == prefix or name.startswith(prefix + ".") for prefix in prefixes)
+
+
 def _is_algorithm(name: str) -> bool:
-    return any(name == prefix or name.startswith(prefix + ".") for prefix in ALGORITHM_PREFIXES)
+    return _matches(name, ALGORITHM_PREFIXES)
 
 
 def _is_allowed(name: str) -> bool:
-    if any(name == prefix or name.startswith(prefix + ".") for prefix in ALLOWED_PREFIXES):
-        return True
-    if name.startswith("test_") or ".test_" in name:
-        return True
-    return False
+    return _matches(name, ALLOWED_PREFIXES)
+
+
+def _direct_caller(names: list[str]) -> str | None:
+    for name in names:
+        if not name or _matches(name, _SKIP_PREFIXES):
+            continue
+        return name
+    return None
 
 
 def deny_algorithm_import(*, operation: str = "import") -> None:
@@ -54,14 +66,15 @@ def deny_algorithm_import(*, operation: str = "import") -> None:
 
 
 def deny_algorithm_truth_access(*, operation: str) -> None:
-    """Fail closed: deny unless an allowed frame is present and no algorithm frame is."""
+    """Fail closed: deny unless the direct caller is allowed and no algorithm frame is."""
 
     names = [_module_name(frame) for frame in inspect.stack()[1:]]
     if any(_is_algorithm(name) for name in names if name):
         raise TruthLeakageError(
             f"IF-EXP-TRUTH {operation} denied: algorithm/arm frame on stack"
         )
-    if not any(_is_allowed(name) for name in names if name):
+    direct = _direct_caller(names)
+    if direct is None or not _is_allowed(direct):
         raise TruthLeakageError(
-            f"IF-EXP-TRUTH {operation} denied: caller is not an evaluator or test frame"
+            f"IF-EXP-TRUTH {operation} denied: caller is not an evaluator or injector frame"
         )

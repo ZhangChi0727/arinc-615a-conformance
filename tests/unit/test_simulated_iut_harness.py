@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import ast
 import sys
 import types
 from fractions import Fraction
+from pathlib import Path
 
 import pytest
 
@@ -16,9 +18,15 @@ from a615a_sim.clock import (
     find_host_requirement,
     t5_interval_verdict,
 )
+from a615a_sim.evaluator import (
+    get_truth,
+    invoke_callable,
+    issue_truth_capability,
+    new_independent_truth_store,
+    write_confirmed_truth,
+)
 from a615a_sim.evaluator.guard import TruthLeakageError
 from a615a_sim.evaluator.reset import reset_target
-from a615a_sim.evaluator.truth import IndependentTruthStore
 from a615a_sim.faults.catalogue import h_single_entries, load_catalogue
 from a615a_sim.faults.injector import inject
 
@@ -84,13 +92,20 @@ def test_confirmed_injection_writes_truth_before_any_arm(fault_id: str, scene_id
     target = _target()
     reset = reset_target(target, pairing_id="PAIR-PHASE-A")
     assert reset.confirmed
-    attempt = inject(target, scene_id=scene_id, fault_id=fault_id)
+    capability = issue_truth_capability()
+    store = new_independent_truth_store()
+    attempt = inject(
+        target,
+        scene_id=scene_id,
+        fault_id=fault_id,
+        truth_store=store,
+        truth_capability=capability,
+    )
     assert attempt.injection_confirmed is True
     assert attempt.injection_unconfirmed is False
-    store = IndependentTruthStore()
-    record = store.write_from_confirmed_injection(attempt)
+    record = get_truth(store, attempt.attempt_id, capability)
     assert record.attempt_id == attempt.attempt_id
-    assert store.get(attempt.attempt_id).confirmation_ref == f"INJ-{attempt.attempt_id}"
+    assert record.confirmation_ref == f"INJ-{attempt.attempt_id}"
 
 
 def test_unconfirmed_injection_cannot_become_truth() -> None:
@@ -99,9 +114,10 @@ def test_unconfirmed_injection_cannot_become_truth() -> None:
     attempt = inject(target, scene_id="SC-ABORT", fault_id="H-ABORT", confirm=False)
     assert attempt.injection_confirmed is False
     assert attempt.injection_unconfirmed is True
-    store = IndependentTruthStore()
+    store = new_independent_truth_store()
+    capability = issue_truth_capability()
     with pytest.raises(ValueError, match="unconfirmed"):
-        store.write_from_confirmed_injection(attempt)
+        write_confirmed_truth(store, attempt, capability)
 
 
 def test_reset_evidence_is_distinct_per_attempt() -> None:
@@ -134,23 +150,25 @@ def test_simulated_clock_t5_matches_experiment_plan_examples() -> None:
 
 
 def test_algorithm_module_read_fails_closed() -> None:
-    store = IndependentTruthStore()
+    store = new_independent_truth_store()
+    capability = issue_truth_capability()
     probe = types.ModuleType("cltav_runtime.fake_arm")
     probe.__name__ = "cltav_runtime.fake_arm"
     exec(
-        "def steal(store):\n    return store.get('missing')\n",
+        "def steal(store, capability):\n    return store.get('missing', capability)\n",
         probe.__dict__,
     )
     sys.modules["cltav_runtime.fake_arm"] = probe
     try:
         with pytest.raises(TruthLeakageError, match="algorithm/arm"):
-            probe.steal(store)
+            probe.steal(store, capability)
     finally:
         del sys.modules["cltav_runtime.fake_arm"]
 
 
 def test_unclassified_caller_fails_closed() -> None:
-    store = IndependentTruthStore()
+    store = new_independent_truth_store()
+    capability = issue_truth_capability()
     probe = types.ModuleType("unregistered.caller")
     probe.__name__ = "unregistered.caller"
     exec(
@@ -163,9 +181,6 @@ def test_unclassified_caller_fails_closed() -> None:
     )
     sys.modules["unregistered.caller"] = probe
     try:
-        # Test frame remains on the stack, so this path is allowed by the
-        # tests. prefix.  Fail-closed for production is the missing-allowed
-        # branch exercised by calling deny with a synthetic empty stack.
         from a615a_sim.evaluator import guard as guard_mod
 
         original = guard_mod.inspect.stack
@@ -176,7 +191,7 @@ def test_unclassified_caller_fails_closed() -> None:
         guard_mod.inspect.stack = _empty_stack
         try:
             with pytest.raises(TruthLeakageError, match="not an evaluator"):
-                store.get("missing")
+                store.get("missing", capability)
         finally:
             guard_mod.inspect.stack = original
     finally:
@@ -215,3 +230,56 @@ def test_algorithm_import_of_truth_fails_closed() -> None:
     finally:
         sys.modules.update(saved)
         del sys.modules["cltav_runtime.fake_arm"]
+
+
+def test_no_module_outside_allowlist_imports_truth() -> None:
+    src_root = Path(__file__).resolve().parents[2] / "src"
+    offenders: list[str] = []
+    for path in src_root.rglob("*.py"):
+        relative = path.relative_to(src_root)
+        parts = relative.parts
+        if len(parts) >= 2 and parts[0] == "a615a_sim" and parts[1] in {"evaluator", "faults"}:
+            continue
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            modules: list[str] = []
+            if isinstance(node, ast.Import):
+                modules.extend(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                modules.append(node.module)
+            if any(
+                module == "a615a_sim.evaluator.truth"
+                or module.startswith("a615a_sim.evaluator.truth.")
+                for module in modules
+            ):
+                offenders.append(relative.as_posix())
+                break
+    assert offenders == []
+
+
+def test_unlisted_module_called_from_evaluator_frame_is_denied() -> None:
+    store = new_independent_truth_store()
+    capability = issue_truth_capability()
+    probe = types.ModuleType("experiment_arms.fake")
+    probe.__name__ = "experiment_arms.fake"
+    exec(
+        "def read_truth(store, capability):\n    return store.get('missing', capability)\n",
+        probe.__dict__,
+    )
+    sys.modules["experiment_arms.fake"] = probe
+    try:
+        with pytest.raises(TruthLeakageError):
+            invoke_callable(probe.read_truth, store, capability)
+    finally:
+        del sys.modules["experiment_arms.fake"]
+
+
+def test_access_without_capability_is_denied() -> None:
+    store = new_independent_truth_store()
+    with pytest.raises(TruthLeakageError, match="capability"):
+        get_truth(store, "missing")
+    target = _target()
+    reset_target(target)
+    attempt = inject(target, scene_id="SC-ABORT", fault_id="H-ABORT")
+    with pytest.raises(TruthLeakageError, match="capability"):
+        write_confirmed_truth(store, attempt)

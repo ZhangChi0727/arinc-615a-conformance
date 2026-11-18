@@ -86,6 +86,8 @@ def inject(
     fault_id: str,
     attempt_id: str | None = None,
     confirm: bool = True,
+    truth_store: Any | None = None,
+    truth_capability: Any | None = None,
 ) -> InjectionAttempt:
     """Install one declared fault.  Planned is not confirmed until the signature is seen."""
 
@@ -99,7 +101,7 @@ def inject(
     declared = declared_signature(fault_id)
     token = str(entry_by_id(fault_id)["confirmationToken"])
     confirmed = bool(confirm and observed == token)
-    return InjectionAttempt(
+    record = InjectionAttempt(
         scene_id=scene_id,
         attempt_id=attempt,
         fault_id=fault_id,
@@ -108,3 +110,6 @@ def inject(
         observed_signature=observed,
         declared_signature=declared,
     )
+    if truth_store is not None:
+        truth_store.write_from_confirmed_injection(record, truth_capability)
+    return record

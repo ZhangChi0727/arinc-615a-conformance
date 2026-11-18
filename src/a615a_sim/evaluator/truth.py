@@ -11,11 +11,30 @@ from types import MappingProxyType
 from typing import Any, Mapping
 from uuid import uuid4
 
-from a615a_sim.evaluator.guard import deny_algorithm_import, deny_algorithm_truth_access
+from a615a_sim.evaluator.guard import (
+    TruthLeakageError,
+    deny_algorithm_import,
+    deny_algorithm_truth_access,
+)
 from a615a_sim.faults.catalogue import entry_by_id
 from a615a_sim.faults.injector import InjectionAttempt
 
 deny_algorithm_import(operation="import-truth")
+
+
+class TruthCapability:
+    """Opaque token issuable only from an evaluator caller."""
+
+    __slots__ = ("_nonce",)
+
+    def __init__(self) -> None:
+        deny_algorithm_truth_access(operation="issue-capability")
+        self._nonce = uuid4().hex
+
+
+def _require_capability(capability: object) -> None:
+    if type(capability) is not TruthCapability:
+        raise TruthLeakageError("IF-EXP-TRUTH denied: missing or forged capability")
 
 
 @dataclass(frozen=True)
@@ -30,8 +49,9 @@ class TruthRecord:
     fault_domain_class: str
     shared_component_risk: tuple[str, ...]
 
-    def as_mapping(self) -> Mapping[str, Any]:
+    def as_mapping(self, capability: object = None) -> Mapping[str, Any]:
         deny_algorithm_truth_access(operation="project")
+        _require_capability(capability)
         return MappingProxyType(
             {
                 "sceneId": self.scene_id,
@@ -58,8 +78,11 @@ class IndependentTruthStore:
         deny_algorithm_truth_access(operation="construct")
         self._records: dict[str, TruthRecord] = {}
 
-    def write_from_confirmed_injection(self, attempt: InjectionAttempt) -> TruthRecord:
+    def write_from_confirmed_injection(
+        self, attempt: InjectionAttempt, capability: object = None
+    ) -> TruthRecord:
         deny_algorithm_truth_access(operation="write")
+        _require_capability(capability)
         if not attempt.injection_confirmed:
             raise ValueError("unconfirmed injection cannot default to valid truth")
         entry = entry_by_id(attempt.fault_id)
@@ -80,8 +103,9 @@ class IndependentTruthStore:
         self._records[attempt.attempt_id] = record
         return record
 
-    def get(self, attempt_id: str) -> TruthRecord:
+    def get(self, attempt_id: str, capability: object = None) -> TruthRecord:
         deny_algorithm_truth_access(operation="read")
+        _require_capability(capability)
         return self._records[attempt_id]
 
     def __getattribute__(self, name: str) -> Any:
