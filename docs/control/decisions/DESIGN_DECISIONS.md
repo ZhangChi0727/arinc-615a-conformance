@@ -1419,6 +1419,25 @@ result cells.
 **Status:** Candidate under CR-2026-029. Draft PR review required. Not
 confirmatory, not Ready/merge.
 
+## DD-054 — Freeze the confirmatory registration (user approval 2026-11-19)
+
+**Decision:** Under CR-2026-030 and the 2026-11-19 user approval, freeze
+`configs/research/cltav_confirmatory_registration_v1.json`: 312 cells, primary
+metrics M-DETECT and M-LOCALISE, primary contrasts H1 (CL-LOOP vs CL-T) and
+H2 (CL-LOOP vs CL-TA), exact McNemar tests with Holm correction (α = 0.05),
+stopping rules with no interim looks, and the base-commit SHA with config hashes.
+
+**Why:** A confirmatory run must first be registered and frozen, to prevent
+post-hoc selection of metrics or contrasts.
+
+**Scope:** Registration file and control records only. No run, no
+`src/cltav_runtime/` semantic change, no manuscript result cells.
+
+**Guardrails:** Effect statements are hypotheses. CI success is not approval.
+Freeze on merge.
+
+**Status:** Candidate under CR-2026-030. Draft PR review required.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -2197,3 +2216,14 @@ IUT 上的 DRAFT 确认性*设计*。U2：变异为参数化故障（迟答延�
 
 **状态：** 在 CR-2026-029 下为候选。须 Draft PR 审查。不是确认性实验或 Ready／合并。
 
+## DD-054——冻结确认性实验登记（用户批准 2026-11-19）
+
+**决策：** 依据 CR-2026-030 与用户 2026-11-19 的批准，冻结 `configs/research/cltav_confirmatory_registration_v1.json`：312 个单元格、主指标 M-DETECT 与 M-LOCALISE、主对比 H1（CL-LOOP 对 CL-T）与 H2（CL-LOOP 对 CL-TA）、精确 McNemar 检验加 Holm 校正（α = 0.05）、无中期查看的停止规则，以及基点提交 SHA 与配置哈希。
+
+**原因：** 确认性运行之前必须先登记并冻结，防止事后选择指标或对比。
+
+**范围：** 仅登记文件与控制记录。无运行、不改 `src/cltav_runtime/` 语义、不填写稿件结果。
+
+**护栏：** 效应陈述为假设。CI 通过不等于批准。合并即冻结。
+
+**状态：** CR-2026-030 下的候选；须 Draft PR 审查。
