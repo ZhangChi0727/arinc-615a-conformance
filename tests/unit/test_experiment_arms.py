@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import inspect
+import json
 from fractions import Fraction
 from pathlib import Path
 
@@ -687,3 +688,10 @@ def test_jitter_does_not_move_clear_point_unless_declared() -> None:
     assert _class("0") == "FIND-ANSWER-LATE"
     assert _class("1/500") == "FIND-ANSWER-LATE"
     assert _class("-1/500") == "FIND-ANSWER-LATE"
+
+
+def test_v2_model_file_matches_builder() -> None:
+    built = build_confirmatory_hypothesis_model_v2()
+    path = Path("configs/research/cltav_confirmatory_hypothesis_model_v2.json")
+    committed = json.loads(path.read_text(encoding="utf-8"))
+    assert built == committed
