@@ -65,6 +65,7 @@ silently redefine the Core.
 - CR-2026-027 / DD-051 closes DEC-IUT as the local simulated 615A environment (TH / FIND-HOST). Results remain labelled SIMULATED-IUT. DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and DEC-RESOURCE stay OPEN.
 - configs/research/cltav_pilot_config_v1.json pre-declares 120 cells (catalogue applicable (scene, fault) x 4 arms), N=3, seeds [1001,1002,1003], ROUNDS remaining=8. The census is written under artifacts/pilot/ as PILOT / SIMULATED-IUT development lineage and must not be reused as confirmatory data.
 - PR #28 was merged as 4e34165 with a merge commit that keeps the reviewed SHAs, including pilot pre-declaration d6786da. CR-2026-028 / DD-052 adds the confirmatory design draft: arms see only observation intervals (S1), cltav_confirmatory_hypothesis_model_v2.json adds boundary and near-boundary variants, and configs/research/cltav_confirmatory_design_draft_v1.json declares 78 units x 4 arms = 312 cells with N=1. CR-2026-029 / DD-053 records the C1, E3, S1, R1 and T3 rulings and treats a delayed LUR ACK as an H-NORMAL timing perturbation without inventing a deadline. The design is not yet registered or frozen, and no confirmatory run has started.
+- CR-2026-030 / DD-054 freezes the confirmatory registration at base 0a182a1 and no confirmatory run has started.
 - No confirmatory result, Configuration, expanded capability, conformance, submission, baseline or tag is created.
 
 State changes:
@@ -76,6 +77,7 @@ State changes:
 - Draft PR #26 has limited-accepted C (7fd917b9) and D (1012f673); E closeout awaits DM whole-branch review and establishes no experiment admission.
 - CR-2026-024 / DD-048 Phase A remains the SIMULATED-IUT instrument; CR-2026-025 / DD-049 Phase B remains the four-arm adapter; CR-2026-026 / DD-050 Phase C remains the E0-E6 pipeline; CR-2026-027 / DD-051 closes DEC-IUT only. This is not confirmatory evidence.
 - CR-2026-028 / DD-052 and CR-2026-029 / DD-053 define a confirmatory design draft only; registration, freeze and confirmatory runs remain pending.
+- CR-2026-030 / DD-054 freezes the confirmatory registration at base 0a182a1; no confirmatory run has started.
 - currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims.
 
 Unchanged boundaries:
@@ -135,6 +137,7 @@ Unchanged boundaries:
 - CR-2026-027／DD-051 关闭 DEC-IUT：本地模拟 615A 环境（TH／FIND-HOST）。结果仍标注 SIMULATED-IUT。DEC-TRUTH、DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN。
 - configs/research/cltav_pilot_config_v1.json 预先声明 120 个单元格（目录 applicable (scene, fault) × 4 臂）、N=3、种子 [1001,1002,1003]、ROUNDS remaining=8。普查写入 artifacts/pilot/，标注 PILOT／SIMULATED-IUT，属开发谱系，不得复用为确认性数据。
 - PR #28 已以合并提交 4e34165 并入，保留了已审查的 SHA（含试点预声明 d6786da）。CR-2026-028／DD-052 增加确认性设计草案：实验臂只看到观测区间（S1），cltav_confirmatory_hypothesis_model_v2.json 增加边界与近边界变体，configs/research/cltav_confirmatory_design_draft_v1.json 声明 78 个单元 × 4 臂 = 312 个单元格，N=1。CR-2026-029／DD-053 记录 C1、E3、S1、R1、T3 裁决，并将延迟的 LUR ACK 视为 H-NORMAL 时序扰动，不虚构截止时限。该设计尚未登记或冻结，确认性运行尚未开始。
+- CR-2026-030／DD-054 在基点 0a182a1 冻结确认性登记，确认性运行尚未开始。
 - 本增量不产生确认性结果、Configuration、扩大能力、符合性、投稿、baseline 或 tag。
 
 状态变化：
@@ -146,6 +149,7 @@ Unchanged boundaries:
 - Draft PR #26 的 C（7fd917b9）与 D（1012f673）已有限接受；E 收尾待 DM 整支复审，且不建立实验准入。
 - CR-2026-024／DD-048 Phase A 仍是模拟 IUT 仪器；CR-2026-025／DD-049 Phase B 仍是四臂适配器；CR-2026-026／DD-050 Phase C 仍是 E0–E6 流水线；CR-2026-027／DD-051 仅关闭 DEC-IUT。这不是确认性证据。
 - CR-2026-028／DD-052 与 CR-2026-029／DD-053 仅定义确认性设计草案；登记、冻结与确认性运行仍待进行。
+- CR-2026-030／DD-054 在基点 0a182a1 冻结确认性登记；确认性运行尚未开始。
 - 对 M3、主动执行和能力主张而言，currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。
 
 保持不变的边界：
