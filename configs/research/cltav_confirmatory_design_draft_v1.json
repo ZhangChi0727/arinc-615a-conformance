@@ -327,9 +327,9 @@
       "statementClass": "HYPOTHESIS-NOT-RESULT"
     }
   ],
-  "unitCount": 74,
-  "cellCount": 296,
-  "attemptCountIfN1": 296,
+  "unitCount": 78,
+  "cellCount": 312,
+  "attemptCountIfN1": 312,
   "units": [
     {
       "unitId": "SC-ABORT/H-NORMAL/DEFAULT",
@@ -569,6 +569,21 @@
       "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT"
     },
     {
+      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT"
+    },
+    {
       "unitId": "SC-WAIT-CONTINUE/F-FIND-ANSWER-LATE/FIND-TICK-FAIL-2EPS",
       "sceneId": "SC-WAIT-CONTINUE",
       "faultId": "F-FIND-ANSWER-LATE",
@@ -706,6 +721,21 @@
         "AX-LUR-ACK-TICK"
       ],
       "harderCaseId": null,
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT"
+    },
+    {
+      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
       "locateFamily": true,
       "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT"
     },
@@ -851,6 +881,21 @@
       "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT"
     },
     {
+      "unitId": "SC-ABORT/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT"
+    },
+    {
       "unitId": "SC-SINGLE-BATCH/F-FIND-ANSWER-LATE/FIND-TICK-FAIL-2EPS",
       "sceneId": "SC-SINGLE-BATCH",
       "faultId": "F-FIND-ANSWER-LATE",
@@ -988,6 +1033,21 @@
         "AX-LUR-ACK-TICK"
       ],
       "harderCaseId": null,
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT"
+    },
+    {
+      "unitId": "SC-SINGLE-BATCH/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
       "locateFamily": true,
       "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT"
     },
@@ -2475,6 +2535,74 @@
       "cellId": "SC-NORMAL-UPLOAD/H-NORMAL/LUR-ACK-FAR/CL-LOOP"
     },
     {
+      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-T",
+      "cellId": "SC-NORMAL-UPLOAD/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-T"
+    },
+    {
+      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-A",
+      "cellId": "SC-NORMAL-UPLOAD/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-A"
+    },
+    {
+      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-TA",
+      "cellId": "SC-NORMAL-UPLOAD/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-TA"
+    },
+    {
+      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-LOOP",
+      "cellId": "SC-NORMAL-UPLOAD/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-LOOP"
+    },
+    {
       "unitId": "SC-WAIT-CONTINUE/F-FIND-ANSWER-LATE/FIND-TICK-FAIL-2EPS",
       "sceneId": "SC-WAIT-CONTINUE",
       "faultId": "F-FIND-ANSWER-LATE",
@@ -3117,6 +3245,74 @@
       "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
       "armId": "CL-LOOP",
       "cellId": "SC-WAIT-CONTINUE/H-NORMAL/LUR-ACK-FAR/CL-LOOP"
+    },
+    {
+      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-T",
+      "cellId": "SC-WAIT-CONTINUE/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-T"
+    },
+    {
+      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-A",
+      "cellId": "SC-WAIT-CONTINUE/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-A"
+    },
+    {
+      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-TA",
+      "cellId": "SC-WAIT-CONTINUE/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-TA"
+    },
+    {
+      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-LOOP",
+      "cellId": "SC-WAIT-CONTINUE/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-LOOP"
     },
     {
       "unitId": "SC-ABORT/F-FIND-ANSWER-LATE/FIND-TICK-FAIL-2EPS",
@@ -3763,6 +3959,74 @@
       "cellId": "SC-ABORT/H-NORMAL/LUR-ACK-FAR/CL-LOOP"
     },
     {
+      "unitId": "SC-ABORT/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-T",
+      "cellId": "SC-ABORT/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-T"
+    },
+    {
+      "unitId": "SC-ABORT/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-A",
+      "cellId": "SC-ABORT/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-A"
+    },
+    {
+      "unitId": "SC-ABORT/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-TA",
+      "cellId": "SC-ABORT/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-TA"
+    },
+    {
+      "unitId": "SC-ABORT/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-LOOP",
+      "cellId": "SC-ABORT/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-LOOP"
+    },
+    {
       "unitId": "SC-SINGLE-BATCH/F-FIND-ANSWER-LATE/FIND-TICK-FAIL-2EPS",
       "sceneId": "SC-SINGLE-BATCH",
       "faultId": "F-FIND-ANSWER-LATE",
@@ -4405,6 +4669,74 @@
       "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
       "armId": "CL-LOOP",
       "cellId": "SC-SINGLE-BATCH/H-NORMAL/LUR-ACK-FAR/CL-LOOP"
+    },
+    {
+      "unitId": "SC-SINGLE-BATCH/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-T",
+      "cellId": "SC-SINGLE-BATCH/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-T"
+    },
+    {
+      "unitId": "SC-SINGLE-BATCH/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-A",
+      "cellId": "SC-SINGLE-BATCH/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-A"
+    },
+    {
+      "unitId": "SC-SINGLE-BATCH/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-TA",
+      "cellId": "SC-SINGLE-BATCH/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-TA"
+    },
+    {
+      "unitId": "SC-SINGLE-BATCH/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "parameters": {
+        "findAnswerAtS": "3999/2000"
+      },
+      "axisIds": [
+        "AX-BASE-SCENE",
+        "AX-FIND-NORMAL-NEAR-BOUNDARY"
+      ],
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "locateFamily": true,
+      "label": "DRAFT / SIMULATED-IUT / HYPOTHETICAL-NOT-RESULT",
+      "armId": "CL-LOOP",
+      "cellId": "SC-SINGLE-BATCH/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY/CL-LOOP"
     },
     {
       "unitId": "SC-NO-RESPONSE/F-STATUS-SILENCE/STATUS-UNTIL-10",
