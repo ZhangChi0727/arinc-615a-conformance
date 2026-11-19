@@ -231,6 +231,58 @@ def _missing_record(
     }
 
 
+def _undefined_record(
+    *,
+    cell: Mapping[str, Any],
+    live: Mapping[str, Any],
+    git_sha: str | None,
+    config_hashes: Mapping[str, str],
+    remaining: int,
+) -> dict[str, Any]:
+    row = live.get("attemptRow")
+    run = live.get("runRecord") or {}
+    return {
+        "label": LABEL,
+        "cellId": cell["cellId"],
+        "unitId": cell["unitId"],
+        "arm": cell.get("armId") or cell.get("arm"),
+        "truthParentHypothesis": _truth_parent(row),
+        "verdict": None,
+        "finalCandidateSet": _candidate_set(live, row),
+        "stopClass": run.get("stopClass"),
+        "roundsConsumed": _rounds_consumed(live, remaining),
+        "status": "UNDEFINED-OUTCOME",
+        "undefinedDetectionOutcome": str(live.get("undefinedDetectionOutcome")),
+        "gitHead": git_sha,
+        "configHashes": dict(config_hashes),
+    }
+
+
+def _record_from_live(
+    *,
+    cell: Mapping[str, Any],
+    live: Mapping[str, Any],
+    git_sha: str | None,
+    config_hashes: Mapping[str, str],
+    remaining: int,
+) -> dict[str, Any]:
+    if live.get("attemptRow") is None and live.get("undefinedDetectionOutcome"):
+        return _undefined_record(
+            cell=cell,
+            live=live,
+            git_sha=git_sha,
+            config_hashes=config_hashes,
+            remaining=remaining,
+        )
+    return _ok_record(
+        cell=cell,
+        live=live,
+        git_sha=git_sha,
+        config_hashes=config_hashes,
+        remaining=remaining,
+    )
+
+
 def execute_one_cell(
     cell: Mapping[str, Any],
     *,
@@ -261,27 +313,9 @@ def execute_one_cell(
 
     try:
         live = once()
-        if live.get("attemptRow") is None and live.get("undefinedDetectionOutcome"):
-            raise RuntimeError(str(live.get("undefinedDetectionOutcome")))
-        return _ok_record(
-            cell=cell,
-            live=live,
-            git_sha=git_sha,
-            config_hashes=config_hashes,
-            remaining=remaining,
-        )
     except Exception as exc:
         try:
             live = once()
-            if live.get("attemptRow") is None and live.get("undefinedDetectionOutcome"):
-                raise RuntimeError(str(live.get("undefinedDetectionOutcome")))
-            return _ok_record(
-                cell=cell,
-                live=live,
-                git_sha=git_sha,
-                config_hashes=config_hashes,
-                remaining=remaining,
-            )
         except Exception as retry_exc:
             return _missing_record(
                 cell=cell,
@@ -289,6 +323,13 @@ def execute_one_cell(
                 config_hashes=config_hashes,
                 detail=f"{type(exc).__name__}: {exc}; retry {type(retry_exc).__name__}: {retry_exc}",
             )
+    return _record_from_live(
+        cell=cell,
+        live=live,
+        git_sha=git_sha,
+        config_hashes=config_hashes,
+        remaining=remaining,
+    )
 
 
 def run_cells(

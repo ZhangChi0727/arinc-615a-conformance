@@ -22,7 +22,11 @@ DESIGN_PATH = ROOT / "configs/research/cltav_confirmatory_design_draft_v1.json"
 RAW_PATH = ROOT / "artifacts/confirmatory/cltav_confirmatory_attempts_v1.jsonl"
 OUT_PATH = ROOT / "artifacts/confirmatory/cltav_confirmatory_analysis_v1.json"
 NORMAL_TRUTH = frozenset({"h_normal", "h-normal"})
-E3_HARDER = frozenset({"HC-FIND-ENDPOINT", "HC-LATE-ABSENT-SHORT-WINDOW"})
+# Pre-run exclusions documented by CR-2026-031 / RR-PR31-001.
+# E3: unresolved LATE vs ABSENT equivalence under a short window.
+E3_EXCLUDED = frozenset({"HC-LATE-ABSENT-SHORT-WINDOW"})
+# T3: endpoint truth unresolved.
+T3_EXCLUDED = frozenset({"HC-FIND-ENDPOINT"})
 FAMILYWISE_ALPHA = 0.05
 
 
@@ -38,21 +42,34 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
-def unit_excluded_under_e3(unit: Mapping[str, Any]) -> bool:
-    if unit.get("e3Excluded") or unit.get("excludedUnderE3"):
-        return True
-    if str(unit.get("preRunExclusion") or "") == "E3":
-        return True
+def pre_run_exclusion_reason(unit: Mapping[str, Any]) -> str | None:
+    marked = str(unit.get("preRunExclusion") or "")
+    if unit.get("e3Excluded") or unit.get("excludedUnderE3") or marked == "E3":
+        return "E3"
+    if unit.get("t3Excluded") or unit.get("excludedUnderT3") or marked == "T3":
+        return "T3"
     harder = unit.get("harderCaseId")
-    return harder in E3_HARDER
+    if harder in E3_EXCLUDED:
+        return "E3"
+    if harder in T3_EXCLUDED:
+        return "T3"
+    return None
 
 
-def e3_excluded_unit_ids(design: Mapping[str, Any]) -> set[str]:
-    excluded: set[str] = set()
+def pre_run_excluded_units(design: Mapping[str, Any]) -> dict[str, str]:
+    """Map unitId -> reason ('E3' or 'T3') for documented pre-run exclusions."""
+
+    excluded: dict[str, str] = {}
     for unit in design.get("units") or []:
-        if unit_excluded_under_e3(unit):
-            excluded.add(str(unit["unitId"]))
+        reason = pre_run_exclusion_reason(unit)
+        if reason is not None:
+            excluded[str(unit["unitId"])] = reason
     return excluded
+
+
+def pre_run_excluded_unit_counts(design: Mapping[str, Any]) -> dict[str, int]:
+    reasons = list(pre_run_excluded_units(design).values())
+    return {"E3": reasons.count("E3"), "T3": reasons.count("T3")}
 
 
 def binom_cdf(k: int, n: int, p: float) -> float:
@@ -141,23 +158,31 @@ def paired_metric(
     left_arm: str,
     right_arm: str,
     metric,
-    excluded_units: set[str],
+    excluded_units: Mapping[str, str] | set[str],
 ) -> dict[str, Any]:
     table = _by_unit_arm(rows)
     units = sorted({row["unitId"] for row in rows})
+    excluded = set(excluded_units)
     b = 0
     c = 0
     used = 0
     left_ones = 0
     right_ones = 0
+    missing_dropped = 0
+    undefined_dropped = 0
     for unit in units:
-        if unit in excluded_units:
+        if unit in excluded:
             continue
         left = table.get((unit, left_arm))
         right = table.get((unit, right_arm))
         if left is None or right is None:
             continue
-        if left.get("status") == "MISSING" or right.get("status") == "MISSING":
+        statuses = {left.get("status"), right.get("status")}
+        if "UNDEFINED-OUTCOME" in statuses:
+            undefined_dropped += 1
+            continue
+        if "MISSING" in statuses:
+            missing_dropped += 1
             continue
         truth = str(left.get("truthParentHypothesis") or "")
         if truth in NORMAL_TRUTH or not truth:
@@ -185,6 +210,8 @@ def paired_metric(
         "clopperPearsonBOverBPlusC": {"lower": ci_low, "upper": ci_high},
         "leftOnes": left_ones,
         "rightOnes": right_ones,
+        "undefinedOutcomeDropped": undefined_dropped,
+        "missingDropped": missing_dropped,
     }
 
 
@@ -240,7 +267,7 @@ def analyze_rows(
     *,
     design: Mapping[str, Any],
 ) -> dict[str, Any]:
-    excluded = e3_excluded_unit_ids(design)
+    excluded = pre_run_excluded_units(design)
     h1 = paired_metric(
         rows,
         left_arm="CL-LOOP",
@@ -274,7 +301,7 @@ def analyze_rows(
     }
     return {
         "label": "CONFIRMATORY / SIMULATED-IUT",
-        "e3ExcludedUnitCount": len(excluded),
+        "preRunExcludedUnitCounts": pre_run_excluded_unit_counts(design),
         "contrasts": contrasts,
         "holm": adjusted,
         "alpha": FAMILYWISE_ALPHA,
