@@ -53,7 +53,7 @@ inclusivity is not frozen (DEC-CLOCK remains OPEN).
 | AX-BASE-SCENE | base scene | public scene ids | n/a | n/a | SC-NORMAL-UPLOAD, SC-WAIT-CONTINUE, SC-ABORT, SC-SINGLE-BATCH, SC-NO-RESPONSE, SC-SAME-KEY, SC-RESOURCE-ERROR, SC-INVALID-OBS |
 | AX-FIND-ANSWER-TICK | timing | F-FIND-ANSWER-LATE / `findAnswerAtS` | CRS-M1-00391 closed `[0, 2]` s | FIND family `2201/1000` s (`2 + ε + margin`) so a late FIND-ANSWER in `(2, end)` stays a FIND-ANSWER, not an absence | `2002/1000` (just outside), `41/20` (pilot default late), `21/10` (mid), `11/5` (near end) |
 | AX-STATUS-SILENCE-UNTIL | timing | F-STATUS-SILENCE / `statusSilenceUntilS` | CRS-M1-00106 `exceptionDelaySeconds=10` | INFORMATION family `10201/1000` s | `10`, `10002/1000`, `10201/1000` (pilot default) |
-| AX-LUR-ACK-TICK | timing | H-NORMAL / `lurAckAtS` | CRS-M1-00366 matching ACK **presence** after LUR WRQ; numeric ACK deadline is **not** frozen | none declared | `1/50`, `1/5`, `1` (ACK still present; kind `LUR-ACK`) |
+| AX-LUR-ACK-TICK | timing | H-NORMAL / `lurAckAtS` | CRS-M1-00366 matching ACK **presence** after LUR WRQ; numeric ACK deadline is **not** frozen | none declared | `1/50`, `1/5`, `1` (ACK still present; kind `LUR-ACK`) — normal timing perturbation, truth h_normal (CR-2026-029) |
 | AX-OBS-JITTER | observation perturbation | `observationJitterS` | declared simulated `ε = 1/1000` s | n/a | `±1/500` (`±2ε`) applied only to algorithm-visible `observationInterval` |
 | AX-FIND-OBS-END | observation end | F-FIND-ANSWER-ABSENT / `findObservationEndS` | CRS-M1-00391 `[0, 2]` | short window `2` s vs default `2201/1000` s | `FIND-END-DEADLINE`, `FIND-END-DEFAULT` |
 
@@ -72,7 +72,7 @@ protocol events.
 | HC-FIND-NEAR-EQUIV | LATE near FIND observation end (`11/5`) paired with ABSENT | CL-T: hypothesized to confuse late-near-end with absence. CL-A: order/presence features are hypothesized to still separate the pair. CL-TA: hypothesized to follow TEST. CL-LOOP: hypothesized to retain both LATE and ABSENT until stop. |
 | HC-LATE-ABSENT-SHORT-WINDOW | ABSENT with observation end at `2` s, paired with LATE | All arms: hypothesized observationally equivalent when the window ends at or before the deadline; DEC-EQUIV remains OPEN. |
 | HC-OBS-PERTURB-EPS | LATE plus `+2ε` observationInterval shift | It is **hypothesized** that jitter now changes the arm-visible interval and, near endpoints, the observation class. CL-T: hypothesized more sensitive to interval shift. CL-A: hypothesized insensitive if it ignores endpoints. CL-TA: hypothesized to inherit TEST. CL-LOOP: hypothesized partial sensitivity through T5 members. |
-| HC-LUR-ACK-DELAY-VS-MISSING | delayed but present LUR-ACK versus F-LUR-ACK-MISSING | CL-T: if no numeric ACK interval is frozen, delay is hypothesized indistinguishable from H-NORMAL on T5. CL-A: presence is hypothesized to separate delay from missing. CL-TA: hypothesized to follow presence. CL-LOOP: hypothesized to drop `h_lur_ack_missing` once LUR-ACK is observed. |
+| HC-LUR-ACK-DELAY-VS-MISSING | delayed but present LUR-ACK versus F-LUR-ACK-MISSING | CL-T: if no numeric ACK interval is frozen, delay is hypothesized indistinguishable from H-NORMAL on T5. CL-A: presence is hypothesized to separate delay from missing. CL-TA: hypothesized to follow presence. CL-LOOP: hypothesized to drop `h_lur_ack_missing` once LUR-ACK is observed. Truth for delayed-ACK units is h_normal (CR-2026-029); any FAIL on them is a false fail. |
 | HC-INVALID-OBS-JITTER | H-INVALID-OBS plus `−2ε` interval shift | All arms: hypothesized ERROR / INVALID-OBS rather than IUT FAIL; DETECT/ABLATION accounting only. |
 
 These constructions are intended so that accuracy metrics *can* separate arms.
@@ -192,8 +192,7 @@ DEC-IUT is already closed. The items below stay OPEN.
 
 ## Design ambiguities (not resolved here)
 
-1. Numeric LUR-ACK deadline is unnamed; delayed ACK may be scoring-identical
-   to H-NORMAL on T5 (HC-LUR-ACK-DELAY-VS-MISSING).
+1. Resolved by CR-2026-029: the standard gives no numeric LUR-ACK deadline and none is invented; delayed ACK is a normal timing perturbation (truth h_normal).
 2. Whether `findAnswerAtS = 2` is LATE, in-interval normal, or INCONCLUSIVE
    still depends on DEC-CLOCK inclusivity. S1/C1 **hypothesizes** overlap
    INCONCLUSIVE / `FIND-ANSWER-BOUNDARY` on the unshifted simulated interval;

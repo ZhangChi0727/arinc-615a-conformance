@@ -154,6 +154,8 @@
       "parentFaultId": "H-NORMAL",
       "parameterKey": "lurAckAtS",
       "unit": "second",
+      "perturbationOf": "H-NORMAL",
+      "ruling": "CR-2026-029: no numeric ACK deadline is invented; delayed ACK is a normal timing perturbation (truth h_normal), used for false-fail robustness",
       "requirementInterval": {
         "id": "CRS-M1-00366",
         "closed": "matching-ACK presence after LUR WRQ",
@@ -164,17 +166,17 @@
         {
           "id": "LUR-ACK-DEFAULT",
           "lurAckAtS": "1/50",
-          "role": "presence-preserving-default"
+          "role": "normal-default"
         },
         {
           "id": "LUR-ACK-DELAYED",
           "lurAckAtS": "1/5",
-          "role": "delayed-but-present"
+          "role": "normal-timing-perturbation"
         },
         {
           "id": "LUR-ACK-FAR",
           "lurAckAtS": "1",
-          "role": "far-delay-present"
+          "role": "normal-timing-perturbation-far"
         }
       ]
     },
@@ -303,6 +305,7 @@
       },
       "pairWith": "F-LUR-ACK-MISSING",
       "visibleThrough": "LUR-ACK timing versus omitted LUR-ACK; both use existing LUR-WRQ/LUR-ACK kinds",
+      "truthPolicy": "delayed ACK units have truth h_normal (CR-2026-029); a FAIL or a localisation away from h_normal on them counts as a false fail",
       "hypothesisStress": {
         "CL-T": "if no numeric ACK interval is frozen, delayed ACK is hypothesized indistinguishable from H-NORMAL on T5",
         "CL-A": "presence of LUR-ACK is hypothesized to separate delay from missing",
