@@ -1,0 +1,2573 @@
+{
+  "identity": {
+    "artifactId": "CLTAV-PILOT-CONFIG-V1",
+    "kind": "pilot-predeclaration",
+    "confirmatoryRegistration": false,
+    "registrationYaml": false,
+    "label": "PILOT / SIMULATED-IUT",
+    "phase": "D",
+    "authority": "WO-CLTAV-EXP-HARNESS-2026-010 Phase D; CR-2026-027 / DD-051; EXP-PLAN-2026-001",
+    "notes": "Pre-declared before any Phase D census. Must not change after the first pilot run commit. Not confirmatory registration.yaml. Pilot rows are development lineage and must not be reused as confirmatory data."
+  },
+  "iut": {
+    "class": "SIMULATED-IUT",
+    "boundModel": "UPLOAD FIND/SEND/ABORT and INFORMATION; no DOWNLOAD/AFDX",
+    "decIut": "CLOSED",
+    "decIutRecord": "CR-2026-027 / DD-051",
+    "iutIdentity": "local simulated 615A environment (TH / FIND-HOST)"
+  },
+  "arms": [
+    "CL-T",
+    "CL-A",
+    "CL-TA",
+    "CL-LOOP"
+  ],
+  "sample": {
+    "attemptsPerCell": 3,
+    "seeds": [
+      1001,
+      1002,
+      1003
+    ],
+    "seedSemantics": "Attempt identity labels only. The simulated IUT is deterministic and does not consume these seeds as a PRNG. Repeats with distinct seeds are expected to be identical unless a non-deterministic dependency is observed.",
+    "decSample": "OPEN"
+  },
+  "resourceMode": {
+    "mode": "ROUNDS",
+    "remainingPerCell": 8,
+    "note": "Exclusive ROUNDS mode for every pilot cell; remaining=8 matches the Phase C live remaining used by execute_live_attempt. DEC-RESOURCE remains OPEN; this is a pilot session envelope, not confirmatory freeze.",
+    "decResource": "OPEN"
+  },
+  "analysis": {
+    "reported": [
+      "per-attempt raw rows labelled PILOT / SIMULATED-IUT",
+      "per-cell counts for every metric dictionary entry with the declared denominator",
+      "whether repeated attempts in a cell are identical (zero variance)",
+      "operational problems",
+      "known structural effects: CL-T vs CL-TA candidate sets; TEST-ABORT uninformative; RESOURCE-ERROR collision; mixed sets to INCONCLUSIVE"
+    ],
+    "forbidden": [
+      "inferential statistics",
+      "Clopper-Pearson or other intervals as confirmatory",
+      "superiority claims",
+      "manuscript placeholder fill"
+    ],
+    "analysisPlanIds": [
+      "AN-FLOW",
+      "AN-PROPORTION",
+      "AN-DISTRIBUTION",
+      "AN-PAIRED"
+    ],
+    "methodStatus": "DESCRIPTIVE-COUNTS-ONLY; WAIT-DEC-SAMPLE"
+  },
+  "openDecisions": [
+    "DEC-TRUTH",
+    "DEC-CLOCK",
+    "DEC-EQUIV",
+    "DEC-SAMPLE",
+    "DEC-RESOURCE"
+  ],
+  "closedDecisions": [
+    "DEC-IUT"
+  ],
+  "cells": [
+    {
+      "cellId": "SC-ABORT/H-NORMAL/CL-T",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/H-NORMAL/CL-A",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/H-NORMAL/CL-TA",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/H-NORMAL/CL-LOOP",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-FIND-ANSWER-LATE/CL-T",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-FIND-ANSWER-LATE/CL-A",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-FIND-ANSWER-LATE/CL-TA",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-FIND-ANSWER-LATE/CL-LOOP",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-FIND-ANSWER-ABSENT/CL-T",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-FIND-ANSWER-ABSENT/CL-A",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-FIND-ANSWER-ABSENT/CL-TA",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-FIND-ANSWER-ABSENT/CL-LOOP",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-LUR-ACK-MISSING/CL-T",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-LUR-ACK-MISSING/CL-A",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-LUR-ACK-MISSING/CL-TA",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-LUR-ACK-MISSING/CL-LOOP",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-LUR-ACK-WITHOUT-WRQ/CL-T",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-LUR-ACK-WITHOUT-WRQ/CL-A",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-LUR-ACK-WITHOUT-WRQ/CL-TA",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-LUR-ACK-WITHOUT-WRQ/CL-LOOP",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-STATUS-SILENCE/CL-T",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-STATUS-SILENCE",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-STATUS-SILENCE/CL-A",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-STATUS-SILENCE",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-STATUS-SILENCE/CL-TA",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-STATUS-SILENCE",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-ABORT/F-STATUS-SILENCE/CL-LOOP",
+      "sceneId": "SC-ABORT",
+      "faultId": "F-STATUS-SILENCE",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-INVALID-OBS/H-NORMAL/CL-T",
+      "sceneId": "SC-INVALID-OBS",
+      "faultId": "H-NORMAL",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-INVALID-OBS/H-NORMAL/CL-A",
+      "sceneId": "SC-INVALID-OBS",
+      "faultId": "H-NORMAL",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-INVALID-OBS/H-NORMAL/CL-TA",
+      "sceneId": "SC-INVALID-OBS",
+      "faultId": "H-NORMAL",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-INVALID-OBS/H-NORMAL/CL-LOOP",
+      "sceneId": "SC-INVALID-OBS",
+      "faultId": "H-NORMAL",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-INVALID-OBS/H-INVALID-OBS/CL-T",
+      "sceneId": "SC-INVALID-OBS",
+      "faultId": "H-INVALID-OBS",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-INVALID-OBS/H-INVALID-OBS/CL-A",
+      "sceneId": "SC-INVALID-OBS",
+      "faultId": "H-INVALID-OBS",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-INVALID-OBS/H-INVALID-OBS/CL-TA",
+      "sceneId": "SC-INVALID-OBS",
+      "faultId": "H-INVALID-OBS",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-INVALID-OBS/H-INVALID-OBS/CL-LOOP",
+      "sceneId": "SC-INVALID-OBS",
+      "faultId": "H-INVALID-OBS",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-NO-RESPONSE/H-NORMAL/CL-T",
+      "sceneId": "SC-NO-RESPONSE",
+      "faultId": "H-NORMAL",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NO-RESPONSE/H-NORMAL/CL-A",
+      "sceneId": "SC-NO-RESPONSE",
+      "faultId": "H-NORMAL",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NO-RESPONSE/H-NORMAL/CL-TA",
+      "sceneId": "SC-NO-RESPONSE",
+      "faultId": "H-NORMAL",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NO-RESPONSE/H-NORMAL/CL-LOOP",
+      "sceneId": "SC-NO-RESPONSE",
+      "faultId": "H-NORMAL",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NO-RESPONSE/F-STATUS-SILENCE/CL-T",
+      "sceneId": "SC-NO-RESPONSE",
+      "faultId": "F-STATUS-SILENCE",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NO-RESPONSE/F-STATUS-SILENCE/CL-A",
+      "sceneId": "SC-NO-RESPONSE",
+      "faultId": "F-STATUS-SILENCE",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NO-RESPONSE/F-STATUS-SILENCE/CL-TA",
+      "sceneId": "SC-NO-RESPONSE",
+      "faultId": "F-STATUS-SILENCE",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NO-RESPONSE/F-STATUS-SILENCE/CL-LOOP",
+      "sceneId": "SC-NO-RESPONSE",
+      "faultId": "F-STATUS-SILENCE",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/H-NORMAL/CL-T",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/H-NORMAL/CL-A",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/H-NORMAL/CL-TA",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/H-NORMAL/CL-LOOP",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-FIND-ANSWER-LATE/CL-T",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-FIND-ANSWER-LATE/CL-A",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-FIND-ANSWER-LATE/CL-TA",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-FIND-ANSWER-LATE/CL-LOOP",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-FIND-ANSWER-ABSENT/CL-T",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-FIND-ANSWER-ABSENT/CL-A",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-FIND-ANSWER-ABSENT/CL-TA",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-FIND-ANSWER-ABSENT/CL-LOOP",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-LUR-ACK-MISSING/CL-T",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-LUR-ACK-MISSING/CL-A",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-LUR-ACK-MISSING/CL-TA",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-LUR-ACK-MISSING/CL-LOOP",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-LUR-ACK-WITHOUT-WRQ/CL-T",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-LUR-ACK-WITHOUT-WRQ/CL-A",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-LUR-ACK-WITHOUT-WRQ/CL-TA",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-NORMAL-UPLOAD/F-LUR-ACK-WITHOUT-WRQ/CL-LOOP",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-RESOURCE-ERROR/H-NORMAL/CL-T",
+      "sceneId": "SC-RESOURCE-ERROR",
+      "faultId": "H-NORMAL",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-RESOURCE-ERROR/H-NORMAL/CL-A",
+      "sceneId": "SC-RESOURCE-ERROR",
+      "faultId": "H-NORMAL",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-RESOURCE-ERROR/H-NORMAL/CL-TA",
+      "sceneId": "SC-RESOURCE-ERROR",
+      "faultId": "H-NORMAL",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-RESOURCE-ERROR/H-NORMAL/CL-LOOP",
+      "sceneId": "SC-RESOURCE-ERROR",
+      "faultId": "H-NORMAL",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-RESOURCE-ERROR/H-RESOURCE-ERROR/CL-T",
+      "sceneId": "SC-RESOURCE-ERROR",
+      "faultId": "H-RESOURCE-ERROR",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-RESOURCE-ERROR/H-RESOURCE-ERROR/CL-A",
+      "sceneId": "SC-RESOURCE-ERROR",
+      "faultId": "H-RESOURCE-ERROR",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-RESOURCE-ERROR/H-RESOURCE-ERROR/CL-TA",
+      "sceneId": "SC-RESOURCE-ERROR",
+      "faultId": "H-RESOURCE-ERROR",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-RESOURCE-ERROR/H-RESOURCE-ERROR/CL-LOOP",
+      "sceneId": "SC-RESOURCE-ERROR",
+      "faultId": "H-RESOURCE-ERROR",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-SAME-KEY/H-NORMAL/CL-T",
+      "sceneId": "SC-SAME-KEY",
+      "faultId": "H-NORMAL",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-SAME-KEY/H-NORMAL/CL-A",
+      "sceneId": "SC-SAME-KEY",
+      "faultId": "H-NORMAL",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-SAME-KEY/H-NORMAL/CL-TA",
+      "sceneId": "SC-SAME-KEY",
+      "faultId": "H-NORMAL",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-SAME-KEY/H-NORMAL/CL-LOOP",
+      "sceneId": "SC-SAME-KEY",
+      "faultId": "H-NORMAL",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-SAME-KEY/H-SAME-KEY/CL-T",
+      "sceneId": "SC-SAME-KEY",
+      "faultId": "H-SAME-KEY",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-SAME-KEY/H-SAME-KEY/CL-A",
+      "sceneId": "SC-SAME-KEY",
+      "faultId": "H-SAME-KEY",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-SAME-KEY/H-SAME-KEY/CL-TA",
+      "sceneId": "SC-SAME-KEY",
+      "faultId": "H-SAME-KEY",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-SAME-KEY/H-SAME-KEY/CL-LOOP",
+      "sceneId": "SC-SAME-KEY",
+      "faultId": "H-SAME-KEY",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION"
+      ],
+      "locateFamily": false,
+      "detectAblationOnly": true
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/H-NORMAL/CL-T",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/H-NORMAL/CL-A",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/H-NORMAL/CL-TA",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/H-NORMAL/CL-LOOP",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-FIND-ANSWER-LATE/CL-T",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-FIND-ANSWER-LATE/CL-A",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-FIND-ANSWER-LATE/CL-TA",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-FIND-ANSWER-LATE/CL-LOOP",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-FIND-ANSWER-ABSENT/CL-T",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-FIND-ANSWER-ABSENT/CL-A",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-FIND-ANSWER-ABSENT/CL-TA",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-FIND-ANSWER-ABSENT/CL-LOOP",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-LUR-ACK-MISSING/CL-T",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-LUR-ACK-MISSING/CL-A",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-LUR-ACK-MISSING/CL-TA",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-LUR-ACK-MISSING/CL-LOOP",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-LUR-ACK-WITHOUT-WRQ/CL-T",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-LUR-ACK-WITHOUT-WRQ/CL-A",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-LUR-ACK-WITHOUT-WRQ/CL-TA",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-SINGLE-BATCH/F-LUR-ACK-WITHOUT-WRQ/CL-LOOP",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/H-NORMAL/CL-T",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/H-NORMAL/CL-A",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/H-NORMAL/CL-TA",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/H-NORMAL/CL-LOOP",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-FIND-ANSWER-LATE/CL-T",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-FIND-ANSWER-LATE/CL-A",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-FIND-ANSWER-LATE/CL-TA",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-FIND-ANSWER-LATE/CL-LOOP",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-FIND-ANSWER-LATE",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-FIND-ANSWER-ABSENT/CL-T",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-FIND-ANSWER-ABSENT/CL-A",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-FIND-ANSWER-ABSENT/CL-TA",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-FIND-ANSWER-ABSENT/CL-LOOP",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-FIND-ANSWER-ABSENT",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-LUR-ACK-MISSING/CL-T",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-LUR-ACK-MISSING/CL-A",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-LUR-ACK-MISSING/CL-TA",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-LUR-ACK-MISSING/CL-LOOP",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-LUR-ACK-MISSING",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-LUR-ACK-WITHOUT-WRQ/CL-T",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-LUR-ACK-WITHOUT-WRQ/CL-A",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-LUR-ACK-WITHOUT-WRQ/CL-TA",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-LUR-ACK-WITHOUT-WRQ/CL-LOOP",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-LUR-ACK-WITHOUT-WRQ",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-STATUS-SILENCE/CL-T",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-STATUS-SILENCE",
+      "armId": "CL-T",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-STATUS-SILENCE/CL-A",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-STATUS-SILENCE",
+      "armId": "CL-A",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-STATUS-SILENCE/CL-TA",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-STATUS-SILENCE",
+      "armId": "CL-TA",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    },
+    {
+      "cellId": "SC-WAIT-CONTINUE/F-STATUS-SILENCE/CL-LOOP",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "F-STATUS-SILENCE",
+      "armId": "CL-LOOP",
+      "N": 3,
+      "seeds": [
+        1001,
+        1002,
+        1003
+      ],
+      "resourceMode": "ROUNDS",
+      "resourceRemaining": 8,
+      "families": [
+        "EXP-CLTAV-DETECT",
+        "EXP-CLTAV-ABLATION",
+        "EXP-CLTAV-LOCATE"
+      ],
+      "locateFamily": true,
+      "detectAblationOnly": false
+    }
+  ],
+  "cellCount": 120,
+  "attemptCount": 360
+}

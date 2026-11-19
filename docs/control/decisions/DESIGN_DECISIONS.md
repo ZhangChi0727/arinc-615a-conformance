@@ -1257,6 +1257,117 @@ not claimed; CRC/integrity remains NOT-ESTABLISHED. This
 decision authorizes neither Ready, approval, merge, Configuration/M3,
 capability/conformance/certification nor scientific result claims.
 
+## DD-048 — Simulated-IUT Phase A experiment instrument
+
+**Decision:** Under CR-2026-024, permit a Draft, non-confirmatory SIMULATED-IUT
+instrument: bound-model FIND/SEND/ABORT/INFORMATION, declared `H_single` injection
+with confirmation, an evaluator-only truth store that fails closed to algorithm
+and arm code, per-attempt reset evidence, and a simulated clock with declared ε
+for T5 intervals. DEC-IUT, DEC-TRUTH, DEC-CLOCK, DEC-EQUIV and DEC-SAMPLE remain
+OPEN. CR-2026-023 / DD-047 remain the Draft PR #27 figure increment and are not
+reused.
+
+**Why:** EXP-PLAN-2026-001 and the experiment implementation spec require
+injection confirmation, independent truth, reset evidence and a named clock
+error bound before arms run. Phase A implements those instruments only.
+
+**Scope:** `src/a615a_sim/` bound IUT, fault catalogue, injector, evaluator
+store/guard, simulated clock, and unit tests. Four-arm adapters, E0–E6 pipeline,
+pilot execution, manuscript results, runtime semantics, CRS/M2 and real IUT or
+network evidence remain out of scope.
+
+**Guardrails:** Planned injection is not confirmed injection. Unconfirmed
+injection is not valid truth. Algorithm-visible APIs must not import or read
+evaluator truth. A missing allowed caller fails closed. Simulated ε is not
+laboratory calibration. A normal singleton is not protocol PASS.
+
+**Status:** Candidate under CR-2026-024. Draft PR review required. Not run
+admission, not confirmatory, not Ready/merge.
+
+## DD-049 — Simulated-IUT Phase B four-arm adapter
+
+**Decision:** Under CR-2026-025, permit one Draft adapter that runs the four
+registered arms CL-T, CL-A, CL-TA and CL-LOOP against the Phase A simulated IUT,
+using the design's visibility table, fair-cost table, shared action library,
+stop-class names and T5 oracle. CL-LOOP must construct the existing
+`ReferenceSession`; runtime selection/update/stop semantics are not copied or
+changed. DEC-IUT, DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and DEC-RESOURCE
+remain OPEN. Phase C/D pipeline and pilot execution remain out of scope.
+
+**Why:** EXP-PLAN-2026-001 and the experiment implementation spec require the
+four arms to share information and action pools while isolating evaluator truth
+and other-arm records, especially CL-LOOP observations.
+
+**Scope:** `src/a615a_sim/algorithm/` arm adapter and `src/a615a_sim/evaluator/`
+harness/fault-view. No `src/cltav_runtime/` semantic change, no manuscript
+result cells, no confirmatory registration.
+
+**Guardrails:** Arms see only algorithm-visible records and the typed initial
+projection. `evaluator_fault_record` stays evaluator-only behind the truth
+capability. Confirmation traces are reset before an arm runs. A missing allowed
+caller fails closed.
+
+**Status:** Candidate under CR-2026-025. Draft PR review required. Not run
+admission, not confirmatory, not Ready/merge.
+
+## DD-050 — Simulated-IUT Phase C E0–E6 pipeline
+
+**Decision:** Under CR-2026-026, permit a Draft E0–E6 pipeline that implements
+`IF-EXP-SCENE` through `IF-EXP-EVAL` for the simulated IUT, with executable
+WF-NORMAL, WF-UNCONFIRMED-INJECT, WF-INVALID-OBS, WF-ABSTAIN and WF-EQUIVALENT
+tests compared to SYN-* accounting rows through a registered mismatch table.
+A VALID candidate set that contains `h_normal` together with other hypotheses
+and has no T5 interval is `INCONCLUSIVE`: it counts in MET-INCONCLUSIVE, stays
+outside POP-ANSWERED, and is never PASS or FAIL. WF-ABSTAIN and WF-EQUIVALENT
+are ACCOUNTING-REPLAY (SYN feeds RUN/COLLECT inputs only; FILTER and EVAL
+compute). Metrics use the declared dictionary and
+denominators. Truth is readable only in EVAL via `TruthCapability`. A
+registration-shaped pilot config is recorded with N and seeds left
+`PENDING-PHASE-D`. DEC-IUT, DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and
+DEC-RESOURCE remain OPEN. Phase D execution remains out of scope.
+
+**Why:** EXP-PLAN-2026-001 requires the seven experiment interfaces, walkthrough
+record flows, and denominator-preserving evaluation before any pilot census.
+
+**Scope:** `src/a615a_sim/evaluator/pipeline/`, unit tests, and
+`configs/research/cltav_pilot_registration_shape_v1.json`. No
+`src/cltav_runtime/` semantic change, no manuscript result cells, no confirmatory
+registration, no Phase D runs.
+
+**Guardrails:** Abstain is not PASS or FAIL. Mixed VALID sets that still contain
+`h_normal` without a T5 interval are INCONCLUSIVE, not false FAIL. Excluded
+attempts remain in the
+attempt denominator. RUN and COLLECT cannot read truth. SYN-* rows remain
+synthetic design witnesses, not observed results. Simulated ε is not laboratory
+calibration.
+
+**Status:** Candidate under CR-2026-026. Draft PR review required. Not run
+admission, not confirmatory, not Ready/merge.
+
+## DD-051 — Close DEC-IUT as the local simulated environment
+
+**Decision:** Under CR-2026-027 and the 2026-11-18 user ruling, close DEC-IUT:
+the IUT for this study is the repository local simulated 615A environment
+(fault-injectable bound-model IUT, TH / FIND-HOST side). No real-target
+experiment is planned. All experimental products are labelled SIMULATED-IUT.
+DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and DEC-RESOURCE remain OPEN.
+This decision does not declare confirmatory N, freeze `registration.yaml`,
+or authorize manuscript result cells.
+
+**Why:** The experiment owner selected the simulated IUT already present in
+this repository. The ruling must be recorded before any Phase D census so
+that every row is labelled against a closed IUT identity.
+
+**Scope:** Control record only (this DD and CR-2026-027). No
+`src/cltav_runtime/` semantic change.
+
+**Guardrails:** Simulated-IUT results are not real-target behaviour,
+conformance or certification. The simulation-to-real gap remains a threat
+to validity. Closing DEC-IUT does not close other DEC-* items.
+
+**Status:** Candidate under CR-2026-027. Draft PR review required. Not
+confirmatory, not Ready/merge.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -1914,3 +2025,87 @@ DM-C-R01 记录 UNKNOWN 经合格 Recover 后完整会话保守停于 Stop-Predi
 不继续诊断；继续诊断属后续方法项。E 收尾待 DM 整支复审。不主张完整 UPLOAD、真实 IUT／网络、
 四臂或实验结果；CRC／完整性保持 NOT-ESTABLISHED。本决定不授权 Ready、批准、
 合并、Configuration/M3、能力／符合性／认证或科学结果主张。
+
+## DD-048——模拟 IUT Phase A 实验仪器
+
+**决定：** 在 CR-2026-024 下，许可一份 Draft、非确认性的 SIMULATED-IUT 仪器：有界模型
+FIND／SEND／ABORT／INFORMATION、带确认的声明 `H_single` 注入、对算法／臂失败即关闭的
+仅评价者真值存储、每次尝试复位证据，以及带声明 ε 的模拟时钟供 T5 区间使用。DEC-IUT、
+DEC-TRUTH、DEC-CLOCK、DEC-EQUIV 与 DEC-SAMPLE 保持 OPEN。CR-2026-023／DD-047 仍属
+Draft PR #27 的图增量，本决定不复用。
+
+**理由：** 实验方案与实施规格要求在对照臂运行前具备注入确认、独立真值、复位证据和具名
+时钟误差界。Phase A 只实现这些仪器。
+
+**范围：** `src/a615a_sim/` 有界 IUT、故障目录、注入器、评价者存储／守卫、模拟时钟与单元
+测试。四臂适配器、E0–E6 流水线、试点执行、稿件结果、运行时语义、CRS／M2 以及真实 IUT 或
+网络证据仍不在范围。
+
+**护栏：** 计划注入不是确认注入。未确认注入不是有效真值。算法可见 API 不得导入或读取评价者
+真值。缺少允许的调用者即失败关闭。模拟 ε 不是实验室校准。正常单例不是协议 PASS。
+
+**状态：** 在 CR-2026-024 下为候选。须 Draft PR 审查。不是运行准入、确认性实验或 Ready／合并。
+
+## DD-049——模拟 IUT Phase B 四臂适配器
+
+**决定：** 在 CR-2026-025 下，许可一个 Draft 适配器，在 Phase A 模拟 IUT 上运行已登记四臂
+CL-T、CL-A、CL-TA 与 CL-LOOP，采用设计中的可见性表、公平成本表、共用动作库、停止类名
+与 T5 判据。CL-LOOP 必须构造现有 `ReferenceSession`；不得复制或改写运行时选择／更新／停止
+语义。DEC-IUT、DEC-TRUTH、DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN。
+Phase C／D 流水线与试点执行仍不在范围。
+
+**理由：** 实验方案与实施规格要求四臂共享信息与动作池，同时隔离评价者真值和其他臂记录，
+尤其是 CL-LOOP 观测。
+
+**范围：** `src/a615a_sim/algorithm/` 臂适配器与 `src/a615a_sim/evaluator/` 夹具／故障视图。
+不改变 `src/cltav_runtime/` 语义，不填写稿件结果格，不做确认性登记。
+
+**护栏：** 臂只看见算法可见记录和类型化初始投影。`evaluator_fault_record` 留在评价者侧并
+受真值能力对象保护。确认轨迹在臂运行前复位。缺少允许的调用者即失败关闭。
+
+**状态：** 在 CR-2026-025 下为候选。须 Draft PR 审查。不是运行准入、确认性实验或 Ready／合并。
+
+## DD-050——模拟 IUT Phase C E0–E6 流水线
+
+**决定：** 在 CR-2026-026 下，许可一份 Draft E0–E6 流水线，在模拟 IUT 上实现
+`IF-EXP-SCENE` 至 `IF-EXP-EVAL`，并以可执行测试把 WF-NORMAL、WF-UNCONFIRMED-INJECT、
+WF-INVALID-OBS、WF-ABSTAIN 与 WF-EQUIVALENT 对照 SYN-* 记账行，差异写入已登记表。
+含 `h_normal` 及其他假设、且无 T5 区间的 VALID 候选集为 `INCONCLUSIVE`（计入
+MET-INCONCLUSIVE，不进入 POP-ANSWERED，不是 PASS 或 FAIL）。WF-ABSTAIN 与
+WF-EQUIVALENT 为 ACCOUNTING-REPLAY（SYN 只提供 RUN／COLLECT 输入；FILTER 与 EVAL
+自行计算）。指标使用已声明字典
+与分母。真值仅在 EVAL 经 `TruthCapability` 可读。记录登记形状的试点配置，N 与种子
+保持 `PENDING-PHASE-D`。DEC-IUT、DEC-TRUTH、DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE 与
+DEC-RESOURCE 保持 OPEN。Phase D 执行仍不在范围。
+
+**理由：** EXP-PLAN-2026-001 要求在任何试点普查前具备七个实验接口、走查记录流和保
+留分母的评价。
+
+**范围：** `src/a615a_sim/evaluator/pipeline/`、单元测试与
+`configs/research/cltav_pilot_registration_shape_v1.json`。不改变
+`src/cltav_runtime/` 语义，不填写稿件结果格，不做确认性登记，不跑 Phase D。
+
+**护栏：** 弃权不是 PASS 或 FAIL。仍含 `h_normal` 且无 T5 区间的混合 VALID 集为
+INCONCLUSIVE，不是假 FAIL。被排除尝试仍留在尝试分母。RUN 与 COLLECT 不能读
+真值。SYN-* 行仍是合成设计见证，不是观测结果。模拟 ε 不是实验室校准。
+
+**状态：** 在 CR-2026-026 下为候选。须 Draft PR 审查。不是运行准入、确认性实验或 Ready／合并。
+
+## DD-051——关闭 DEC-IUT 为本地模拟环境
+
+**决定：** 在 CR-2026-027 与 2026-11-18 用户裁决下，关闭 DEC-IUT：本研究的 IUT
+为仓库本地模拟 615A 环境（可注入故障的有界模型 IUT，TH／FIND-HOST 侧）。不
+计划真实目标实验。所有实验产物标注 SIMULATED-IUT。DEC-TRUTH、DEC-CLOCK、
+DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN。本决定不声明确认性 N、不
+冻结 `registration.yaml`、不授权填写稿件结果格。
+
+**理由：** 实验所有者选择本仓库已有的模拟 IUT。须在任何 Phase D 普查前记录，
+使每一行都对照已关闭的 IUT 身份标注。
+
+**范围：** 仅控制记录（本 DD 与 CR-2026-027）。不改变 `src/cltav_runtime/`
+语义。
+
+**护栏：** 模拟 IUT 结果不是真实目标行为、符合性或认证。模拟到真实的差距
+仍是效度威胁。关闭 DEC-IUT 并不关闭其他 DEC-*。
+
+**状态：** 在 CR-2026-027 下为候选。须 Draft PR 审查。不是确认性实验或 Ready／合并。
