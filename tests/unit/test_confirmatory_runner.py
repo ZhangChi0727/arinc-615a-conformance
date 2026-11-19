@@ -87,13 +87,23 @@ def _row(
 
 ENDPOINT_EXPECTED = {
     "unitId": "U-EP",
-    "expectedVerdict": "INCONCLUSIVE",
-    "expectedCandidateSet": ["h_find_answer_late", "h_normal"],
+    "acceptableVerdicts": ["INCONCLUSIVE"],
+    "candidateRule": {"kind": "equals", "set": ["h_find_answer_late", "h_normal"]},
 }
 SHORT_WINDOW_EXPECTED = {
     "unitId": "U-SW",
-    "expectedVerdict": "FAIL",
-    "expectedCandidateSet": ["h_find_answer_absent", "h_find_answer_late"],
+    "acceptableVerdicts": ["FAIL"],
+    "candidateRule": {"kind": "equals", "set": ["h_find_answer_absent", "h_find_answer_late"]},
+}
+INVALID_OBS_EXPECTED = {
+    "unitId": "U-INV",
+    "acceptableVerdicts": ["ERROR", "INCONCLUSIVE", "NOT-ANSWERED"],
+    "candidateRule": {"kind": "notSingletonFault"},
+}
+NORMAL_EXPECTED = {
+    "unitId": "U-N",
+    "acceptableVerdicts": ["INCONCLUSIVE", "PASS"],
+    "candidateRule": {"kind": "contains", "member": "h_normal"},
 }
 
 
@@ -132,44 +142,107 @@ def test_v2_metrics_on_endpoint_and_short_window_rows() -> None:
     assert analyze.m_localise_correct(short_singleton, SHORT_WINDOW_EXPECTED) == 0
 
 
-def test_missing_and_undefined_pairs_are_dropped_from_contrast() -> None:
+def test_invalid_observation_class_scores_non_pass_fail() -> None:
+    ok = _row("U-INV", "CL-LOOP", truth="", verdict="INCONCLUSIVE", candidates=["h_normal", "h_invalid"])
+    fail = _row("U-INV", "CL-T", truth="", verdict="FAIL", candidates=["h_find_answer_late"])
+    singleton = _row("U-INV", "CL-TA", truth="", verdict="ERROR", candidates=["h_find_answer_late"])
+    assert analyze.m_detect_correct(ok, INVALID_OBS_EXPECTED) == 1
+    assert analyze.m_detect_correct(fail, INVALID_OBS_EXPECTED) == 0
+    assert analyze.m_localise_correct(ok, INVALID_OBS_EXPECTED) == 1
+    assert analyze.m_localise_correct(singleton, INVALID_OBS_EXPECTED) == 0
+
+
+def test_h_normal_units_accept_pass_or_inconclusive() -> None:
+    passed = _row("U-N", "CL-LOOP", truth="h_normal", verdict="PASS", candidates=["h_normal"])
+    mixed = _row("U-N", "CL-T", truth="h_normal", verdict="INCONCLUSIVE", candidates=["h_normal", "h_find_answer_late"])
+    failed = _row("U-N", "CL-TA", truth="h_normal", verdict="FAIL", candidates=["h_find_answer_late"])
+    assert analyze.m_detect_correct(passed, NORMAL_EXPECTED) == 1
+    assert analyze.m_detect_correct(mixed, NORMAL_EXPECTED) == 1
+    assert analyze.m_detect_correct(failed, NORMAL_EXPECTED) == 0
+    assert analyze.m_localise_correct(passed, NORMAL_EXPECTED) == 1
+    assert analyze.m_localise_correct(mixed, NORMAL_EXPECTED) == 1
+    assert analyze.m_localise_correct(failed, NORMAL_EXPECTED) == 0
+
+
+def test_undefined_outcome_is_scored_not_dropped() -> None:
+    ordinary = {
+        "unitId": "U3",
+        "acceptableVerdicts": ["FAIL"],
+        "candidateRule": {"kind": "equals", "set": ["h_find_answer_late"]},
+    }
+    invalid = dict(INVALID_OBS_EXPECTED)
+    undef_ordinary = _row(
+        "U3",
+        "CL-LOOP",
+        truth="h_find_answer_late",
+        verdict="FAIL",
+        candidates=["h_find_answer_late"],
+        status="UNDEFINED-OUTCOME",
+    )
+    undef_invalid = _row(
+        "U-INV",
+        "CL-LOOP",
+        truth="",
+        verdict="FAIL",
+        candidates=["h_normal", "h_find_answer_late"],
+        status="UNDEFINED-OUTCOME",
+    )
+    assert analyze.m_detect_correct(undef_ordinary, ordinary) == 0
+    assert analyze.m_detect_correct(undef_invalid, invalid) == 1
+    assert analyze.m_localise_correct(undef_ordinary, ordinary) == 1
+    from_run_record = {
+        "unitId": "U3",
+        "arm": "CL-TA",
+        "status": "UNDEFINED-OUTCOME",
+        "verdict": None,
+        "finalCandidateSet": [],
+        "runRecord": {
+            "stopClass": "Stop-NoDistinguisher",
+            "finalHypotheses": ["h_find_answer_late"],
+        },
+    }
+    assert analyze.m_localise_correct(from_run_record, ordinary) == 1
     rows = [
         _row("U1", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"]),
         _row("U1", "CL-T", truth="h_find_answer_late", verdict="PASS", candidates=["h_normal"], status="MISSING"),
         _row("U2", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"]),
         _row("U2", "CL-T", truth="h_find_answer_late", verdict="PASS", candidates=["h_normal"]),
-        _row("U3", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"], status="UNDEFINED-OUTCOME"),
+        undef_ordinary,
         _row("U3", "CL-T", truth="h_find_answer_late", verdict="PASS", candidates=["h_normal"]),
     ]
     expected = {
         "units": [
-            {"unitId": "U1", "expectedVerdict": "FAIL", "expectedCandidateSet": ["h_find_answer_late"]},
-            {"unitId": "U2", "expectedVerdict": "FAIL", "expectedCandidateSet": ["h_find_answer_late"]},
-            {"unitId": "U3", "expectedVerdict": "FAIL", "expectedCandidateSet": ["h_find_answer_late"]},
+            {"unitId": "U1", "acceptableVerdicts": ["FAIL"], "candidateRule": {"kind": "equals", "set": ["h_find_answer_late"]}},
+            {"unitId": "U2", "acceptableVerdicts": ["FAIL"], "candidateRule": {"kind": "equals", "set": ["h_find_answer_late"]}},
+            ordinary,
         ],
         "needsDmRuling": [],
     }
-    by_unit = analyze.expected_by_unit_id(expected)
-
-    def detect(row):
-        return analyze.m_detect_correct(row, by_unit[row["unitId"]])
-
-    result = analyze.paired_metric(
-        rows,
-        left_arm="CL-LOOP",
-        right_arm="CL-T",
-        metric=detect,
-        eligible_units=analyze.eligible_unit_ids(expected),
-    )
-    assert result["n"] == 1
-    assert result["b"] == 1
-    assert result["c"] == 0
-    assert result["missingDropped"] == 1
-    assert result["undefinedOutcomeDropped"] == 1
     payload = analyze.analyze_rows(rows, design={"units": []}, expected=expected)
-    assert payload["eligibleUnitCount"] == 3
-    assert payload["nullExpectationUnitCount"] == 0
-    assert payload["contrasts"]["H1"]["metric"] == "M-DETECT-CORRECT"
+    assert payload["contrasts"]["H1"]["missingDropped"] == 1
+    assert payload["contrasts"]["H1"]["undefinedOutcomeScored"] == 1
+    assert payload["contrasts"]["H1"]["n"] == 2
+
+
+def test_missing_pair_is_dropped_from_contrast() -> None:
+    rows = [
+        _row("U1", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"]),
+        _row("U1", "CL-T", truth="h_find_answer_late", verdict="PASS", candidates=["h_normal"], status="MISSING"),
+        _row("U2", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"]),
+        _row("U2", "CL-T", truth="h_find_answer_late", verdict="PASS", candidates=["h_normal"]),
+    ]
+    expected = {
+        "units": [
+            {"unitId": "U1", "acceptableVerdicts": ["FAIL"], "candidateRule": {"kind": "equals", "set": ["h_find_answer_late"]}},
+            {"unitId": "U2", "acceptableVerdicts": ["FAIL"], "candidateRule": {"kind": "equals", "set": ["h_find_answer_late"]}},
+        ]
+    }
+    payload = analyze.analyze_rows(rows, design={"units": []}, expected=expected)
+    assert payload["contrasts"]["H1"]["n"] == 1
+    assert payload["contrasts"]["H1"]["b"] == 1
+    assert payload["contrasts"]["H1"]["missingDropped"] == 1
+    assert payload["contrasts"]["H1"]["undefinedOutcomeScored"] == 0
+    assert payload["eligibleUnitCount"] == 2
 
 
 def test_endpoint_and_short_window_units_are_eligible() -> None:
@@ -203,13 +276,10 @@ def test_endpoint_and_short_window_units_are_eligible() -> None:
             candidates=["h_find_answer_absent"],
         ),
     ]
-    expected = {
-        "units": [ENDPOINT_EXPECTED, SHORT_WINDOW_EXPECTED],
-        "needsDmRuling": [{"unitId": "U-JITTER"}],
-    }
+    expected = {"units": [ENDPOINT_EXPECTED, SHORT_WINDOW_EXPECTED], "needsDmRuling": []}
     payload = analyze.analyze_rows(rows, design={"units": []}, expected=expected)
     assert payload["eligibleUnitCount"] == 2
-    assert payload["nullExpectationUnitCount"] == 1
+    assert payload["nullExpectationUnitCount"] == 0
     assert payload["contrasts"]["H1"]["n"] == 1
     assert payload["contrasts"]["H2"]["n"] == 1
     assert payload["secondary"]["CL-LOOP"]["inconclusiveShare"]["denominator"] == 2
@@ -221,6 +291,9 @@ def test_expected_behaviour_table_is_reproducible() -> None:
     )
     rebuilt = builder.build_expected_behaviour()
     assert rebuilt == committed
+    assert len(committed["units"]) == 78
+    assert committed["needsDmRuling"] == []
+    assert "secondaryOnlyUnits" not in committed
 
 
 def test_dry_run_preflight_passes_with_monkeypatched_clean_tree(monkeypatch, tmp_path) -> None:
@@ -292,6 +365,8 @@ def test_undefined_detection_outcome_is_not_retried(monkeypatch) -> None:
     assert record["undefinedDetectionOutcome"] == "metric dictionary does not define PASS/FAIL"
     assert record["stopClass"] == "Stop-NoDistinguisher"
     assert record["finalCandidateSet"] == ["h_normal", "h_find_answer_late"]
+    assert record["runRecord"]["stopClass"] == "Stop-NoDistinguisher"
+    assert record["runRecord"]["finalHypotheses"] == ["h_normal", "h_find_answer_late"]
     assert record["roundsConsumed"] == 2
 
 

@@ -47,21 +47,11 @@ def expected_by_unit_id(expected: Mapping[str, Any]) -> dict[str, dict[str, Any]
 
 
 def eligible_unit_ids(expected: Mapping[str, Any]) -> set[str]:
-    return {
-        str(entry["unitId"])
-        for entry in expected.get("units") or []
-        if entry.get("expectedVerdict") is not None and entry.get("expectedCandidateSet") is not None
-    }
+    return {str(entry["unitId"]) for entry in expected.get("units") or []}
 
 
 def null_expectation_count(expected: Mapping[str, Any]) -> int:
-    needs = list(expected.get("needsDmRuling") or [])
-    null_entries = [
-        entry
-        for entry in expected.get("units") or []
-        if entry.get("expectedVerdict") is None or entry.get("expectedCandidateSet") is None
-    ]
-    return len(needs) + len(null_entries)
+    return len(list(expected.get("needsDmRuling") or []))
 
 
 def binom_cdf(k: int, n: int, p: float) -> float:
@@ -121,15 +111,64 @@ def holm_adjust(pvalues: Sequence[tuple[str, float]], alpha: float = FAMILYWISE_
     return adjusted
 
 
+def _acceptable_verdicts(expected: Mapping[str, Any]) -> list[str]:
+    if expected.get("acceptableVerdicts") is not None:
+        return [str(item) for item in expected["acceptableVerdicts"]]
+    single = expected.get("expectedVerdict")
+    return [] if single is None else [str(single)]
+
+
+def _excludes_fail_and_pass(expected: Mapping[str, Any]) -> bool:
+    acceptable = set(_acceptable_verdicts(expected))
+    return "FAIL" not in acceptable and "PASS" not in acceptable
+
+
+def scored_verdict(row: Mapping[str, Any]) -> str | None:
+    if row.get("status") == "UNDEFINED-OUTCOME":
+        return None
+    value = row.get("verdict")
+    return None if value is None else str(value)
+
+
+def mapped_candidate_set(row: Mapping[str, Any]) -> list[str]:
+    if row.get("status") == "UNDEFINED-OUTCOME":
+        run = row.get("runRecord") or {}
+        hypotheses = [str(item) for item in (run.get("finalHypotheses") or [])]
+        if hypotheses:
+            return sorted(map_to_parent_hypotheses(hypotheses))
+    candidates = [str(item) for item in (row.get("finalCandidateSet") or [])]
+    return sorted(map_to_parent_hypotheses(candidates))
+
+
+def candidate_rule_holds(mapped: Sequence[str], rule: Mapping[str, Any] | None) -> bool:
+    if not rule:
+        return False
+    kind = str(rule.get("kind") or "")
+    values = list(mapped)
+    if kind == "equals":
+        want = sorted(str(item) for item in (rule.get("set") or []))
+        return values == want
+    if kind == "contains":
+        return str(rule.get("member")) in values
+    if kind == "notSingletonFault":
+        return not (len(values) == 1 and values[0] not in NORMAL_TRUTH)
+    return False
+
+
 def m_detect_correct(row: Mapping[str, Any], expected: Mapping[str, Any]) -> int:
-    return 1 if row.get("verdict") == expected.get("expectedVerdict") else 0
+    verdict = scored_verdict(row)
+    acceptable = _acceptable_verdicts(expected)
+    if verdict is None:
+        return 1 if _excludes_fail_and_pass(expected) else 0
+    return 1 if verdict in acceptable else 0
 
 
 def m_localise_correct(row: Mapping[str, Any], expected: Mapping[str, Any]) -> int:
-    candidates = [str(item) for item in (row.get("finalCandidateSet") or [])]
-    mapped = sorted(map_to_parent_hypotheses(candidates))
-    want = sorted(str(item) for item in (expected.get("expectedCandidateSet") or []))
-    return 1 if mapped == want else 0
+    mapped = mapped_candidate_set(row)
+    rule = expected.get("candidateRule")
+    if rule is None and expected.get("expectedCandidateSet") is not None:
+        rule = {"kind": "equals", "set": list(expected["expectedCandidateSet"])}
+    return 1 if candidate_rule_holds(mapped, rule) else 0
 
 
 def _by_unit_arm(rows: Iterable[Mapping[str, Any]]) -> dict[tuple[str, str], Mapping[str, Any]]:
@@ -156,7 +195,7 @@ def paired_metric(
     left_ones = 0
     right_ones = 0
     missing_dropped = 0
-    undefined_dropped = 0
+    undefined_scored = 0
     for unit in units:
         if unit not in eligible:
             continue
@@ -165,12 +204,11 @@ def paired_metric(
         if left is None or right is None:
             continue
         statuses = {left.get("status"), right.get("status")}
-        if "UNDEFINED-OUTCOME" in statuses:
-            undefined_dropped += 1
-            continue
         if "MISSING" in statuses:
             missing_dropped += 1
             continue
+        if "UNDEFINED-OUTCOME" in statuses:
+            undefined_scored += 1
         left_v = metric(left)
         right_v = metric(right)
         used += 1
@@ -194,7 +232,7 @@ def paired_metric(
         "clopperPearsonBOverBPlusC": {"lower": ci_low, "upper": ci_high},
         "leftOnes": left_ones,
         "rightOnes": right_ones,
-        "undefinedOutcomeDropped": undefined_dropped,
+        "undefinedOutcomeScored": undefined_scored,
         "missingDropped": missing_dropped,
     }
 

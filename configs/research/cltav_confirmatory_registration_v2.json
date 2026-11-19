@@ -16,9 +16,9 @@
     "configs/research/cltav_confirmatory_design_draft_v1.json": "0e506abc2e918b2f0ce492aa23ce7a7179a5c0143b97f9d2afc22fa83f42f628",
     "configs/research/cltav_confirmatory_hypothesis_model_v2.json": "2923e20be7ad4f3e3a4158d6d99ee98452aac22f271d1fc30a7b3b8222ccdf6b",
     "src/a615a_sim/resources/fault_catalogue.json": "c7e247aefc2a331a528d7c459a80648b93bf8ea1f58f96776f370fbcbe50d97a",
-    "configs/research/cltav_confirmatory_expected_behaviour_v1.json": "343922138475c325b7ab602df512cedba18609c17a5a42361831db1fd3820912",
-    "scripts/run_cltav_confirmatory.py": "bc6353115c03b253965c0938318ea608ef8c46a02b71b99b8df1df12bfd13e4e",
-    "scripts/analyze_cltav_confirmatory.py": "feee2e9d6044b59cd0a56e6d9c1c6e7f3b2ae972539583a85098164dea780a31"
+    "configs/research/cltav_confirmatory_expected_behaviour_v1.json": "a5c9850633fb031dd190a968c7cc14a0ba97176e121437e2a05a0b06f91784a1",
+    "scripts/run_cltav_confirmatory.py": "2825db0859eab4ab608ac49ce8a094aa2edace5fdae4723fd200a623b86b3c49",
+    "scripts/analyze_cltav_confirmatory.py": "f50df65091ce13d3daccbe6bd0e5e126f7819f3cccd0bb3e7871498cb1f9c67f"
   },
   "hashedFiles": [
     "configs/research/cltav_confirmatory_design_draft_v1.json",
@@ -55,11 +55,11 @@
     "primary": [
       {
         "id": "M-DETECT-CORRECT",
-        "definition": "per eligible unit with a non-null expected-behaviour entry: 1 if the arm's verdict equals the pre-registered expectedVerdict, else 0"
+        "definition": "per eligible unit with an expected-behaviour entry: 1 if the arm's scored verdict is in the pre-registered acceptableVerdicts (UNDEFINED-OUTCOME is a null verdict, correct only when acceptableVerdicts exclude FAIL and PASS), else 0"
       },
       {
         "id": "M-LOCALISE-CORRECT",
-        "definition": "per eligible unit with a non-null expected-behaviour entry: 1 if the sorted parent-mapped final candidate set equals the pre-registered expectedCandidateSet, else 0"
+        "definition": "per eligible unit with an expected-behaviour entry: 1 if the pre-registered candidateRule holds of the sorted parent-mapped final set (UNDEFINED-OUTCOME uses runRecord finalHypotheses), else 0"
       }
     ],
     "secondary": [
@@ -111,6 +111,7 @@
   "stoppingRules": [
     "Run all 312 cells exactly once; no interim looks; no early stopping.",
     "A cell that fails for an infrastructure reason (exception, not a verdict) is re-run once at the same commit and recorded as such; if it fails again it is reported as MISSING and excluded from both arms of that pair.",
+    "An UNDEFINED-OUTCOME cell is scored from the arm run record and is not dropped. Only MISSING cells are dropped.",
     "No cell, unit, metric or contrast may be added, removed or redefined after freeze except through a new CR that labels any later analysis exploratory."
   ],
   "dataRules": [

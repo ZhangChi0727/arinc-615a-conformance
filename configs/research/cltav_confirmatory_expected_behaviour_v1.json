@@ -4,6 +4,12 @@
     "authority": "CR-2026-032 / DD-056",
     "label": "CONFIRMATORY / SIMULATED-IUT / PRE-REGISTERED-EXPECTED-BEHAVIOUR"
   },
+  "invalidObservationAcceptableVerdicts": [
+    "ERROR",
+    "INCONCLUSIVE",
+    "NOT-ANSWERED"
+  ],
+  "invalidObservationAcceptableVerdictsSource": "src/a615a_sim/evaluator/pipeline/evaluate.py derive_outcome returns PASS, FAIL, INCONCLUSIVE, ERROR, NOT-ANSWERED; invalid-observation units accept every value except FAIL and PASS",
   "units": [
     {
       "unitId": "SC-ABORT/F-FIND-ANSWER-ABSENT/DEFAULT",
@@ -11,10 +17,15 @@
       "faultId": "F-FIND-ANSWER-ABSENT",
       "harderCaseId": null,
       "truthParent": "h_find_answer_absent",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_absent"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_absent"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -23,11 +34,16 @@
       "faultId": "F-FIND-ANSWER-ABSENT",
       "harderCaseId": "HC-LATE-ABSENT-SHORT-WINDOW",
       "truthParent": "h_find_answer_absent",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_absent",
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_absent",
+          "h_find_answer_late"
+        ]
+      },
       "rule": "short-window LATE vs ABSENT"
     },
     {
@@ -36,10 +52,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -48,10 +69,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -60,10 +86,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -72,10 +103,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -84,10 +120,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": "HC-OBS-PERTURB-EPS",
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -96,10 +137,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": "HC-OBS-PERTURB-EPS",
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -108,10 +154,15 @@
       "faultId": "F-LUR-ACK-MISSING",
       "harderCaseId": null,
       "truthParent": "h_lur_ack_missing",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_lur_ack_missing"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_lur_ack_missing"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -120,10 +171,15 @@
       "faultId": "F-LUR-ACK-WITHOUT-WRQ",
       "harderCaseId": null,
       "truthParent": "h_lur_ack_without_wrq",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_lur_ack_without_wrq"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_lur_ack_without_wrq"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -132,10 +188,15 @@
       "faultId": "F-STATUS-SILENCE",
       "harderCaseId": null,
       "truthParent": "h_status_silence",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_status_silence"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_status_silence"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -144,10 +205,15 @@
       "faultId": "F-STATUS-SILENCE",
       "harderCaseId": null,
       "truthParent": "h_status_silence",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_status_silence"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_status_silence"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -156,11 +222,96 @@
       "faultId": "F-STATUS-SILENCE",
       "harderCaseId": null,
       "truthParent": "h_status_silence",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_status_silence"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_status_silence"
+        ]
+      },
       "rule": "ordinary"
+    },
+    {
+      "unitId": "SC-ABORT/H-NORMAL/DEFAULT",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-ABORT/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-ABORT/H-NORMAL/LUR-ACK-DEFAULT",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-ABORT/H-NORMAL/LUR-ACK-DELAYED",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-ABORT/H-NORMAL/LUR-ACK-FAR",
+      "sceneId": "SC-ABORT",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
     },
     {
       "unitId": "SC-ABORT/HC-FIND-ENDPOINT/findAnswerAtS=2",
@@ -168,12 +319,49 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": "HC-FIND-ENDPOINT",
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "INCONCLUSIVE",
-      "expectedCandidateSet": [
-        "h_find_answer_late",
-        "h_normal"
+      "acceptableVerdicts": [
+        "INCONCLUSIVE"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late",
+          "h_normal"
+        ]
+      },
       "rule": "C1 overlap"
+    },
+    {
+      "unitId": "SC-INVALID-OBS/H-NORMAL/DEFAULT",
+      "sceneId": "SC-INVALID-OBS",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-INVALID-OBS/HC-INVALID-OBS-JITTER/observationJitterS=-1/500",
+      "sceneId": "SC-INVALID-OBS",
+      "faultId": "H-INVALID-OBS",
+      "harderCaseId": "HC-INVALID-OBS-JITTER",
+      "truthParent": null,
+      "acceptableVerdicts": [
+        "ERROR",
+        "INCONCLUSIVE",
+        "NOT-ANSWERED"
+      ],
+      "candidateRule": {
+        "kind": "notSingletonFault"
+      },
+      "rule": "invalid-observation"
     },
     {
       "unitId": "SC-NO-RESPONSE/F-STATUS-SILENCE/STATUS-UNTIL-10",
@@ -181,10 +369,15 @@
       "faultId": "F-STATUS-SILENCE",
       "harderCaseId": null,
       "truthParent": "h_status_silence",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_status_silence"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_status_silence"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -193,10 +386,15 @@
       "faultId": "F-STATUS-SILENCE",
       "harderCaseId": null,
       "truthParent": "h_status_silence",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_status_silence"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_status_silence"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -205,11 +403,32 @@
       "faultId": "F-STATUS-SILENCE",
       "harderCaseId": null,
       "truthParent": "h_status_silence",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_status_silence"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_status_silence"
+        ]
+      },
       "rule": "ordinary"
+    },
+    {
+      "unitId": "SC-NO-RESPONSE/H-NORMAL/DEFAULT",
+      "sceneId": "SC-NO-RESPONSE",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
     },
     {
       "unitId": "SC-NORMAL-UPLOAD/F-FIND-ANSWER-ABSENT/DEFAULT",
@@ -217,10 +436,15 @@
       "faultId": "F-FIND-ANSWER-ABSENT",
       "harderCaseId": null,
       "truthParent": "h_find_answer_absent",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_absent"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_absent"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -229,11 +453,16 @@
       "faultId": "F-FIND-ANSWER-ABSENT",
       "harderCaseId": "HC-LATE-ABSENT-SHORT-WINDOW",
       "truthParent": "h_find_answer_absent",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_absent",
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_absent",
+          "h_find_answer_late"
+        ]
+      },
       "rule": "short-window LATE vs ABSENT"
     },
     {
@@ -242,10 +471,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -254,10 +488,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -266,10 +505,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -278,10 +522,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -290,10 +539,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": "HC-OBS-PERTURB-EPS",
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -302,10 +556,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": "HC-OBS-PERTURB-EPS",
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -314,10 +573,15 @@
       "faultId": "F-LUR-ACK-MISSING",
       "harderCaseId": null,
       "truthParent": "h_lur_ack_missing",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_lur_ack_missing"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_lur_ack_missing"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -326,11 +590,96 @@
       "faultId": "F-LUR-ACK-WITHOUT-WRQ",
       "harderCaseId": null,
       "truthParent": "h_lur_ack_without_wrq",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_lur_ack_without_wrq"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_lur_ack_without_wrq"
+        ]
+      },
       "rule": "ordinary"
+    },
+    {
+      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/DEFAULT",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/LUR-ACK-DEFAULT",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/LUR-ACK-DELAYED",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/LUR-ACK-FAR",
+      "sceneId": "SC-NORMAL-UPLOAD",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
     },
     {
       "unitId": "SC-NORMAL-UPLOAD/HC-FIND-ENDPOINT/findAnswerAtS=2",
@@ -338,12 +687,49 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": "HC-FIND-ENDPOINT",
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "INCONCLUSIVE",
-      "expectedCandidateSet": [
-        "h_find_answer_late",
-        "h_normal"
+      "acceptableVerdicts": [
+        "INCONCLUSIVE"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late",
+          "h_normal"
+        ]
+      },
       "rule": "C1 overlap"
+    },
+    {
+      "unitId": "SC-RESOURCE-ERROR/H-NORMAL/DEFAULT",
+      "sceneId": "SC-RESOURCE-ERROR",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-SAME-KEY/H-NORMAL/DEFAULT",
+      "sceneId": "SC-SAME-KEY",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
     },
     {
       "unitId": "SC-SINGLE-BATCH/F-FIND-ANSWER-ABSENT/DEFAULT",
@@ -351,10 +737,15 @@
       "faultId": "F-FIND-ANSWER-ABSENT",
       "harderCaseId": null,
       "truthParent": "h_find_answer_absent",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_absent"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_absent"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -363,11 +754,16 @@
       "faultId": "F-FIND-ANSWER-ABSENT",
       "harderCaseId": "HC-LATE-ABSENT-SHORT-WINDOW",
       "truthParent": "h_find_answer_absent",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_absent",
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_absent",
+          "h_find_answer_late"
+        ]
+      },
       "rule": "short-window LATE vs ABSENT"
     },
     {
@@ -376,10 +772,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -388,10 +789,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -400,10 +806,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -412,10 +823,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -424,10 +840,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": "HC-OBS-PERTURB-EPS",
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -436,10 +857,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": "HC-OBS-PERTURB-EPS",
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -448,10 +874,15 @@
       "faultId": "F-LUR-ACK-MISSING",
       "harderCaseId": null,
       "truthParent": "h_lur_ack_missing",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_lur_ack_missing"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_lur_ack_missing"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -460,11 +891,96 @@
       "faultId": "F-LUR-ACK-WITHOUT-WRQ",
       "harderCaseId": null,
       "truthParent": "h_lur_ack_without_wrq",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_lur_ack_without_wrq"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_lur_ack_without_wrq"
+        ]
+      },
       "rule": "ordinary"
+    },
+    {
+      "unitId": "SC-SINGLE-BATCH/H-NORMAL/DEFAULT",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-SINGLE-BATCH/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-SINGLE-BATCH/H-NORMAL/LUR-ACK-DEFAULT",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-SINGLE-BATCH/H-NORMAL/LUR-ACK-DELAYED",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-SINGLE-BATCH/H-NORMAL/LUR-ACK-FAR",
+      "sceneId": "SC-SINGLE-BATCH",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
     },
     {
       "unitId": "SC-SINGLE-BATCH/HC-FIND-ENDPOINT/findAnswerAtS=2",
@@ -472,11 +988,16 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": "HC-FIND-ENDPOINT",
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "INCONCLUSIVE",
-      "expectedCandidateSet": [
-        "h_find_answer_late",
-        "h_normal"
+      "acceptableVerdicts": [
+        "INCONCLUSIVE"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late",
+          "h_normal"
+        ]
+      },
       "rule": "C1 overlap"
     },
     {
@@ -485,10 +1006,15 @@
       "faultId": "F-FIND-ANSWER-ABSENT",
       "harderCaseId": null,
       "truthParent": "h_find_answer_absent",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_absent"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_absent"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -497,11 +1023,16 @@
       "faultId": "F-FIND-ANSWER-ABSENT",
       "harderCaseId": "HC-LATE-ABSENT-SHORT-WINDOW",
       "truthParent": "h_find_answer_absent",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_absent",
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_absent",
+          "h_find_answer_late"
+        ]
+      },
       "rule": "short-window LATE vs ABSENT"
     },
     {
@@ -510,10 +1041,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -522,10 +1058,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -534,10 +1075,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -546,10 +1092,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": null,
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -558,10 +1109,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": "HC-OBS-PERTURB-EPS",
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -570,10 +1126,15 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": "HC-OBS-PERTURB-EPS",
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_find_answer_late"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -582,10 +1143,15 @@
       "faultId": "F-LUR-ACK-MISSING",
       "harderCaseId": null,
       "truthParent": "h_lur_ack_missing",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_lur_ack_missing"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_lur_ack_missing"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -594,10 +1160,15 @@
       "faultId": "F-LUR-ACK-WITHOUT-WRQ",
       "harderCaseId": null,
       "truthParent": "h_lur_ack_without_wrq",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_lur_ack_without_wrq"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_lur_ack_without_wrq"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -606,10 +1177,15 @@
       "faultId": "F-STATUS-SILENCE",
       "harderCaseId": null,
       "truthParent": "h_status_silence",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_status_silence"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_status_silence"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -618,10 +1194,15 @@
       "faultId": "F-STATUS-SILENCE",
       "harderCaseId": null,
       "truthParent": "h_status_silence",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_status_silence"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_status_silence"
+        ]
+      },
       "rule": "ordinary"
     },
     {
@@ -630,11 +1211,96 @@
       "faultId": "F-STATUS-SILENCE",
       "harderCaseId": null,
       "truthParent": "h_status_silence",
-      "expectedVerdict": "FAIL",
-      "expectedCandidateSet": [
-        "h_status_silence"
+      "acceptableVerdicts": [
+        "FAIL"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_status_silence"
+        ]
+      },
       "rule": "ordinary"
+    },
+    {
+      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/DEFAULT",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/LUR-ACK-DEFAULT",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/LUR-ACK-DELAYED",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
+    },
+    {
+      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/LUR-ACK-FAR",
+      "sceneId": "SC-WAIT-CONTINUE",
+      "faultId": "H-NORMAL",
+      "harderCaseId": null,
+      "truthParent": "h_normal",
+      "acceptableVerdicts": [
+        "INCONCLUSIVE",
+        "PASS"
+      ],
+      "candidateRule": {
+        "kind": "contains",
+        "member": "h_normal"
+      },
+      "rule": "h_normal"
     },
     {
       "unitId": "SC-WAIT-CONTINUE/HC-FIND-ENDPOINT/findAnswerAtS=2",
@@ -642,197 +1308,20 @@
       "faultId": "F-FIND-ANSWER-LATE",
       "harderCaseId": "HC-FIND-ENDPOINT",
       "truthParent": "h_find_answer_late",
-      "expectedVerdict": "INCONCLUSIVE",
-      "expectedCandidateSet": [
-        "h_find_answer_late",
-        "h_normal"
+      "acceptableVerdicts": [
+        "INCONCLUSIVE"
       ],
+      "candidateRule": {
+        "kind": "equals",
+        "set": [
+          "h_find_answer_late",
+          "h_normal"
+        ]
+      },
       "rule": "C1 overlap"
     }
   ],
-  "secondaryOnlyUnits": [
-    {
-      "unitId": "SC-ABORT/H-NORMAL/DEFAULT",
-      "sceneId": "SC-ABORT",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "H-NORMAL; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-ABORT/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
-      "sceneId": "SC-ABORT",
-      "faultId": "H-NORMAL",
-      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
-      "reason": "near-boundary normal; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-ABORT/H-NORMAL/LUR-ACK-DEFAULT",
-      "sceneId": "SC-ABORT",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "LUR-ACK perturbation; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-ABORT/H-NORMAL/LUR-ACK-DELAYED",
-      "sceneId": "SC-ABORT",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "LUR-ACK perturbation; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-ABORT/H-NORMAL/LUR-ACK-FAR",
-      "sceneId": "SC-ABORT",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "LUR-ACK perturbation; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-INVALID-OBS/H-NORMAL/DEFAULT",
-      "sceneId": "SC-INVALID-OBS",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "H-NORMAL; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-NO-RESPONSE/H-NORMAL/DEFAULT",
-      "sceneId": "SC-NO-RESPONSE",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "H-NORMAL; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/DEFAULT",
-      "sceneId": "SC-NORMAL-UPLOAD",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "H-NORMAL; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
-      "sceneId": "SC-NORMAL-UPLOAD",
-      "faultId": "H-NORMAL",
-      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
-      "reason": "near-boundary normal; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/LUR-ACK-DEFAULT",
-      "sceneId": "SC-NORMAL-UPLOAD",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "LUR-ACK perturbation; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/LUR-ACK-DELAYED",
-      "sceneId": "SC-NORMAL-UPLOAD",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "LUR-ACK perturbation; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-NORMAL-UPLOAD/H-NORMAL/LUR-ACK-FAR",
-      "sceneId": "SC-NORMAL-UPLOAD",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "LUR-ACK perturbation; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-RESOURCE-ERROR/H-NORMAL/DEFAULT",
-      "sceneId": "SC-RESOURCE-ERROR",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "H-NORMAL; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-SAME-KEY/H-NORMAL/DEFAULT",
-      "sceneId": "SC-SAME-KEY",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "H-NORMAL; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-SINGLE-BATCH/H-NORMAL/DEFAULT",
-      "sceneId": "SC-SINGLE-BATCH",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "H-NORMAL; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-SINGLE-BATCH/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
-      "sceneId": "SC-SINGLE-BATCH",
-      "faultId": "H-NORMAL",
-      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
-      "reason": "near-boundary normal; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-SINGLE-BATCH/H-NORMAL/LUR-ACK-DEFAULT",
-      "sceneId": "SC-SINGLE-BATCH",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "LUR-ACK perturbation; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-SINGLE-BATCH/H-NORMAL/LUR-ACK-DELAYED",
-      "sceneId": "SC-SINGLE-BATCH",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "LUR-ACK perturbation; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-SINGLE-BATCH/H-NORMAL/LUR-ACK-FAR",
-      "sceneId": "SC-SINGLE-BATCH",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "LUR-ACK perturbation; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/DEFAULT",
-      "sceneId": "SC-WAIT-CONTINUE",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "H-NORMAL; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/FIND-TICK-NORMAL-NEAR-BOUNDARY",
-      "sceneId": "SC-WAIT-CONTINUE",
-      "faultId": "H-NORMAL",
-      "harderCaseId": "HC-NORMAL-NEAR-BOUNDARY",
-      "reason": "near-boundary normal; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/LUR-ACK-DEFAULT",
-      "sceneId": "SC-WAIT-CONTINUE",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "LUR-ACK perturbation; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/LUR-ACK-DELAYED",
-      "sceneId": "SC-WAIT-CONTINUE",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "LUR-ACK perturbation; truth parent h_normal"
-    },
-    {
-      "unitId": "SC-WAIT-CONTINUE/H-NORMAL/LUR-ACK-FAR",
-      "sceneId": "SC-WAIT-CONTINUE",
-      "faultId": "H-NORMAL",
-      "harderCaseId": null,
-      "reason": "LUR-ACK perturbation; truth parent h_normal"
-    }
-  ],
-  "needsDmRuling": [
-    {
-      "unitId": "SC-INVALID-OBS/HC-INVALID-OBS-JITTER/observationJitterS=-1/500",
-      "sceneId": "SC-INVALID-OBS",
-      "faultId": "H-INVALID-OBS",
-      "harderCaseId": "HC-INVALID-OBS-JITTER",
-      "truthParent": null,
-      "expectedVerdict": null,
-      "expectedCandidateSet": null,
-      "rule": null,
-      "detail": "HC-INVALID-OBS-JITTER: evaluator construction; do not guess expected verdict or set"
-    }
-  ],
+  "needsDmRuling": [],
   "flaggedForDmReview": [
     "SC-ABORT/F-FIND-ANSWER-LATE/JITTER-MINUS-2EPS",
     "SC-ABORT/F-FIND-ANSWER-LATE/JITTER-PLUS-2EPS",

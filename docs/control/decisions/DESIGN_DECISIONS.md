@@ -1465,8 +1465,10 @@ approval. No interim look.
 registration v1 with `configs/research/cltav_confirmatory_registration_v2.json`
 and score H1/H2 against a pre-registered expected-behaviour table
 (`configs/research/cltav_confirmatory_expected_behaviour_v1.json`). Primary
-metrics are M-DETECT-CORRECT and M-LOCALISE-CORRECT. The 8 endpoint and
-short-window units count in the primary contrasts. v1 is retained, unused.
+metrics are M-DETECT-CORRECT (verdict in acceptableVerdicts) and
+M-LOCALISE-CORRECT (candidateRule holds). All 78 units with an entry
+count in the primary contrasts, including h_normal and invalid-observation
+units. v1 is retained, unused.
 
 **Why:** v1 excluded the hard cases the design added to distinguish arms.
 Unresolved truth does not mean the correct behaviour cannot be declared

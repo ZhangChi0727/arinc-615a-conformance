@@ -18,6 +18,10 @@ from a615a_sim.faults.catalogue import entry_by_id, harder_cases  # noqa: E402
 DESIGN_PATH = ROOT / "configs/research/cltav_confirmatory_design_draft_v1.json"
 OUT_PATH = ROOT / "configs/research/cltav_confirmatory_expected_behaviour_v1.json"
 NORMAL_PARENTS = frozenset({"h_normal", "h-normal"})
+# derive_outcome in src/a615a_sim/evaluator/pipeline/evaluate.py emits
+# PASS, FAIL, INCONCLUSIVE, ERROR, NOT-ANSWERED. Invalid-observation units
+# accept every emitted verdict except FAIL and PASS.
+INVALID_OBS_ACCEPTABLE_VERDICTS = ["ERROR", "INCONCLUSIVE", "NOT-ANSWERED"]
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -35,16 +39,6 @@ def truth_parent_of_fault(fault_id: str) -> str | None:
         return None
     mapped = map_to_parent_hypotheses([str(raw)])
     return mapped[0] if mapped else str(raw)
-
-
-def _secondary_reason(unit: Mapping[str, Any]) -> str:
-    harder = unit.get("harderCaseId")
-    params = unit.get("parameters") or {}
-    if harder == "HC-NORMAL-NEAR-BOUNDARY" or "AX-FIND-NORMAL-NEAR-BOUNDARY" in (unit.get("axisIds") or []):
-        return "near-boundary normal; truth parent h_normal"
-    if "lurAckAtS" in params or "AX-LUR-ACK-TICK" in (unit.get("axisIds") or []):
-        return "LUR-ACK perturbation; truth parent h_normal"
-    return "H-NORMAL; truth parent h_normal"
 
 
 def _late_and_absent_parents(case: Mapping[str, Any]) -> tuple[str, str] | None:
@@ -67,6 +61,26 @@ def _late_and_absent_parents(case: Mapping[str, Any]) -> tuple[str, str] | None:
     return None
 
 
+def _entry(
+    unit: Mapping[str, Any],
+    *,
+    truth_parent: str | None,
+    acceptable_verdicts: list[str],
+    candidate_rule: dict[str, Any],
+    rule: str,
+) -> dict[str, Any]:
+    return {
+        "unitId": unit["unitId"],
+        "sceneId": unit["sceneId"],
+        "faultId": unit["faultId"],
+        "harderCaseId": unit.get("harderCaseId"),
+        "truthParent": truth_parent,
+        "acceptableVerdicts": sorted(acceptable_verdicts),
+        "candidateRule": candidate_rule,
+        "rule": rule,
+    }
+
+
 def classify_unit(
     unit: Mapping[str, Any],
     *,
@@ -75,73 +89,83 @@ def classify_unit(
     fault_id = str(unit["faultId"])
     truth_parent = truth_parent_of_fault(fault_id)
     harder = unit.get("harderCaseId")
-    base = {
-        "unitId": unit["unitId"],
-        "sceneId": unit["sceneId"],
-        "faultId": fault_id,
-        "harderCaseId": harder,
-        "truthParent": truth_parent,
-    }
-    if truth_parent in NORMAL_PARENTS:
-        return {
-            "kind": "secondary",
-            "reason": _secondary_reason(unit),
-            **base,
-        }
     if harder == "HC-FIND-ENDPOINT":
         late_fault = (cases.get(str(harder)) or {}).get("parentFaultId") or "F-FIND-ANSWER-LATE"
         late_parent = truth_parent_of_fault(str(late_fault)) or "h_find_answer_late"
-        expected_set = sorted(["h_normal", late_parent])
         return {
             "kind": "entry",
-            **base,
-            "expectedVerdict": "INCONCLUSIVE",
-            "expectedCandidateSet": expected_set,
-            "rule": "C1 overlap",
+            **_entry(
+                unit,
+                truth_parent=truth_parent,
+                acceptable_verdicts=["INCONCLUSIVE"],
+                candidate_rule={"kind": "equals", "set": sorted(["h_normal", late_parent])},
+                rule="C1 overlap",
+            ),
         }
     if harder == "HC-LATE-ABSENT-SHORT-WINDOW":
         pair = _late_and_absent_parents(cases.get(str(harder)) or {})
         if pair is None:
             return {
                 "kind": "needsDmRuling",
-                **base,
-                "expectedVerdict": None,
-                "expectedCandidateSet": None,
-                "rule": None,
+                "unitId": unit["unitId"],
+                "sceneId": unit["sceneId"],
+                "faultId": fault_id,
+                "harderCaseId": harder,
+                "truthParent": truth_parent,
                 "detail": "could not identify LATE and ABSENT parents from harderCases text",
             }
         late_parent, absent_parent = pair
         return {
             "kind": "entry",
-            **base,
-            "expectedVerdict": "FAIL",
-            "expectedCandidateSet": sorted([late_parent, absent_parent]),
-            "rule": "short-window LATE vs ABSENT",
+            **_entry(
+                unit,
+                truth_parent=truth_parent,
+                acceptable_verdicts=["FAIL"],
+                candidate_rule={"kind": "equals", "set": sorted([late_parent, absent_parent])},
+                rule="short-window LATE vs ABSENT",
+            ),
         }
-    if harder == "HC-INVALID-OBS-JITTER":
+    if harder == "HC-INVALID-OBS-JITTER" or fault_id == "H-INVALID-OBS":
         return {
-            "kind": "needsDmRuling",
-            **base,
-            "expectedVerdict": None,
-            "expectedCandidateSet": None,
-            "rule": None,
-            "detail": "HC-INVALID-OBS-JITTER: evaluator construction; do not guess expected verdict or set",
+            "kind": "entry",
+            **_entry(
+                unit,
+                truth_parent=truth_parent,
+                acceptable_verdicts=list(INVALID_OBS_ACCEPTABLE_VERDICTS),
+                candidate_rule={"kind": "notSingletonFault"},
+                rule="invalid-observation",
+            ),
+        }
+    if truth_parent in NORMAL_PARENTS:
+        return {
+            "kind": "entry",
+            **_entry(
+                unit,
+                truth_parent=truth_parent,
+                acceptable_verdicts=["INCONCLUSIVE", "PASS"],
+                candidate_rule={"kind": "contains", "member": "h_normal"},
+                rule="h_normal",
+            ),
         }
     if truth_parent is None:
         return {
             "kind": "needsDmRuling",
-            **base,
-            "expectedVerdict": None,
-            "expectedCandidateSet": None,
-            "rule": None,
-            "detail": "fault has no catalogue hypothesisId; cannot form expectedCandidateSet",
+            "unitId": unit["unitId"],
+            "sceneId": unit["sceneId"],
+            "faultId": fault_id,
+            "harderCaseId": harder,
+            "truthParent": truth_parent,
+            "detail": "fault has no catalogue hypothesisId; cannot form an equals candidate set",
         }
     return {
         "kind": "entry",
-        **base,
-        "expectedVerdict": "FAIL",
-        "expectedCandidateSet": [truth_parent],
-        "rule": "ordinary",
+        **_entry(
+            unit,
+            truth_parent=truth_parent,
+            acceptable_verdicts=["FAIL"],
+            candidate_rule={"kind": "equals", "set": [truth_parent]},
+            rule="ordinary",
+        ),
     }
 
 
@@ -151,7 +175,6 @@ def build_expected_behaviour(
     payload = dict(design) if design is not None else load_json(DESIGN_PATH)
     cases = _harder_by_id()
     entries: list[dict[str, Any]] = []
-    secondary: list[dict[str, Any]] = []
     needs: list[dict[str, Any]] = []
     flagged: list[str] = []
     for unit in payload.get("units") or []:
@@ -159,34 +182,11 @@ def build_expected_behaviour(
         if classified.get("harderCaseId") == "HC-OBS-PERTURB-EPS":
             flagged.append(str(unit["unitId"]))
         kind = classified.pop("kind")
-        if kind == "secondary":
-            secondary.append(
-                {
-                    "unitId": classified["unitId"],
-                    "sceneId": classified["sceneId"],
-                    "faultId": classified["faultId"],
-                    "harderCaseId": classified["harderCaseId"],
-                    "reason": classified["reason"],
-                }
-            )
-            continue
         if kind == "needsDmRuling":
             needs.append(classified)
             continue
-        entries.append(
-            {
-                "unitId": classified["unitId"],
-                "sceneId": classified["sceneId"],
-                "faultId": classified["faultId"],
-                "harderCaseId": classified["harderCaseId"],
-                "truthParent": classified["truthParent"],
-                "expectedVerdict": classified["expectedVerdict"],
-                "expectedCandidateSet": classified["expectedCandidateSet"],
-                "rule": classified["rule"],
-            }
-        )
+        entries.append(classified)
     entries.sort(key=lambda item: item["unitId"])
-    secondary.sort(key=lambda item: item["unitId"])
     needs.sort(key=lambda item: item["unitId"])
     flagged.sort()
     return {
@@ -195,8 +195,13 @@ def build_expected_behaviour(
             "authority": "CR-2026-032 / DD-056",
             "label": "CONFIRMATORY / SIMULATED-IUT / PRE-REGISTERED-EXPECTED-BEHAVIOUR",
         },
+        "invalidObservationAcceptableVerdicts": list(INVALID_OBS_ACCEPTABLE_VERDICTS),
+        "invalidObservationAcceptableVerdictsSource": (
+            "src/a615a_sim/evaluator/pipeline/evaluate.py derive_outcome "
+            "returns PASS, FAIL, INCONCLUSIVE, ERROR, NOT-ANSWERED; "
+            "invalid-observation units accept every value except FAIL and PASS"
+        ),
         "units": entries,
-        "secondaryOnlyUnits": secondary,
         "needsDmRuling": needs,
         "flaggedForDmReview": flagged,
     }
@@ -219,8 +224,11 @@ def write_expected_behaviour(path: Path = OUT_PATH) -> dict[str, Any]:
 def summary_text(payload: Mapping[str, Any]) -> str:
     lines = [
         "countsPerRule=" + json.dumps(rule_counts(payload), ensure_ascii=False, sort_keys=True),
+        "unitCount=" + str(len(payload.get("units") or [])),
         "needsDmRuling=" + json.dumps(payload.get("needsDmRuling") or [], ensure_ascii=False, indent=2),
         "flaggedForDmReview=" + json.dumps(payload.get("flaggedForDmReview") or [], ensure_ascii=False, indent=2),
+        "invalidObservationAcceptableVerdicts="
+        + json.dumps(payload.get("invalidObservationAcceptableVerdicts") or [], ensure_ascii=False),
         "hardCaseRows=",
     ]
     hard = [
@@ -228,11 +236,6 @@ def summary_text(payload: Mapping[str, Any]) -> str:
         for entry in payload.get("units") or []
         if entry.get("harderCaseId") in {"HC-FIND-ENDPOINT", "HC-LATE-ABSENT-SHORT-WINDOW"}
     ]
-    hard.extend(
-        item
-        for item in (payload.get("needsDmRuling") or [])
-        if item.get("harderCaseId") in {"HC-FIND-ENDPOINT", "HC-LATE-ABSENT-SHORT-WINDOW"}
-    )
     hard.sort(key=lambda item: item["unitId"])
     lines.append(json.dumps(hard, ensure_ascii=False, indent=2))
     return "\n".join(lines) + "\n"

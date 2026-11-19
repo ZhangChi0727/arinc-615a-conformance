@@ -67,7 +67,7 @@ silently redefine the Core.
 - PR #28 was merged as 4e34165 with a merge commit that keeps the reviewed SHAs, including pilot pre-declaration d6786da. CR-2026-028 / DD-052 adds the confirmatory design draft: arms see only observation intervals (S1), cltav_confirmatory_hypothesis_model_v2.json adds boundary and near-boundary variants, and configs/research/cltav_confirmatory_design_draft_v1.json declares 78 units x 4 arms = 312 cells with N=1. CR-2026-029 / DD-053 records the C1, E3, S1, R1 and T3 rulings and treats a delayed LUR ACK as an H-NORMAL timing perturbation without inventing a deadline. The design is not yet registered or frozen, and no confirmatory run has started.
 - CR-2026-030 / DD-054 registers the confirmatory experiment; frozen on merge as e987145.
 - CR-2026-031 / DD-055 adds the confirmatory runner and analysis scripts without changing the frozen registration and no confirmatory run has started.
-- CR-2026-032 / DD-056 amends the confirmatory registration to v2 before any run: primary metrics score pre-registered expected behaviour, so the 8 endpoint and short-window units count in H1/H2; v1 is superseded unused.
+- CR-2026-032 / DD-056 amends the confirmatory registration to v2 before any run: primary metrics score pre-registered acceptable verdicts and candidate-set rules for all 78 units, including h_normal and invalid-observation; v1 is superseded unused.
 - No confirmatory result, Configuration, expanded capability, conformance, submission, baseline or tag is created.
 
 State changes:
@@ -81,7 +81,7 @@ State changes:
 - CR-2026-028 / DD-052 and CR-2026-029 / DD-053 define a confirmatory design draft only; registration, freeze and confirmatory runs remain pending.
 - CR-2026-030 / DD-054 registers the confirmatory experiment; frozen on merge as e987145.
 - CR-2026-031 / DD-055 adds the confirmatory runner and analysis scripts without changing the frozen registration and no confirmatory run has started.
-- CR-2026-032 / DD-056 amends the confirmatory registration to v2 before any run: primary metrics score pre-registered expected behaviour, so the 8 endpoint and short-window units count in H1/H2; v1 is superseded unused.
+- CR-2026-032 / DD-056 amends the confirmatory registration to v2 before any run: primary metrics score pre-registered acceptable verdicts and candidate-set rules for all 78 units, including h_normal and invalid-observation; v1 is superseded unused.
 - currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims.
 
 Unchanged boundaries:

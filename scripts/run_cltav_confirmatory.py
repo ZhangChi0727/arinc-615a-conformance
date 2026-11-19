@@ -241,6 +241,7 @@ def _undefined_record(
 ) -> dict[str, Any]:
     row = live.get("attemptRow")
     run = live.get("runRecord") or {}
+    hypotheses = list(run.get("finalHypotheses") or [])
     return {
         "label": LABEL,
         "cellId": cell["cellId"],
@@ -253,6 +254,10 @@ def _undefined_record(
         "roundsConsumed": _rounds_consumed(live, remaining),
         "status": "UNDEFINED-OUTCOME",
         "undefinedDetectionOutcome": str(live.get("undefinedDetectionOutcome")),
+        "runRecord": {
+            "stopClass": run.get("stopClass"),
+            "finalHypotheses": hypotheses,
+        },
         "gitHead": git_sha,
         "configHashes": dict(config_hashes),
     }
