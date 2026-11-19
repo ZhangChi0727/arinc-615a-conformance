@@ -1,14 +1,14 @@
 {
   "schemaVersion": "1.0",
-  "updatedAt": "2026-11-18",
+  "updatedAt": "2026-11-19",
   "repository": {
     "role": "instance",
     "displayRole": "ARINC 615A Profile / Binding / Configuration / instance engineering and evidence owner",
     "url": "https://github.com/ZhangChi0727/arinc-615a-conformance"
   },
   "currentIncrement": {
-    "title": "Draft SIMULATED-IUT experiment harness Phase D: DEC-IUT closed; non-confirmatory",
-    "titleZh": "Draft 模拟 IUT 实验夹具 Phase D：DEC-IUT 已关闭；非确认性",
+    "title": "Draft SIMULATED-IUT confirmatory design: interval-only visibility and v2 hypothesis model; not yet registered",
+    "titleZh": "Draft 模拟 IUT 确认性设计：仅区间可见与 v2 假设模型；尚未登记",
     "summary": [
       "CR-2026-017 / DD-041 delivered the separately owned, read-only offline capture-to-evidence increment merged as eddec443; its bounded evidence scope remains unchanged.",
       "CR-2026-018 / DD-042 integrated accepted literature evidence into bounded C1/C2 wording and evaluation accounting without changing algorithms, interfaces or experiment arms.",
@@ -21,6 +21,7 @@
       "CR-2026-026 / DD-050 adds the Draft Phase C E0-E6 pipeline (SCENE, INJECT, TRUTH, RUN, COLLECT, FILTER, EVAL), SYN-* walkthrough tests with registered mismatch tables, mixed VALID {h_normal,...} → INCONCLUSIVE, and a registration-shaped pilot config with N and seeds pending Phase D. Truth is EVAL-only.",
       "CR-2026-027 / DD-051 closes DEC-IUT as the local simulated 615A environment (TH / FIND-HOST). Results remain labelled SIMULATED-IUT. DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and DEC-RESOURCE stay OPEN.",
       "configs/research/cltav_pilot_config_v1.json pre-declares 120 cells (catalogue applicable (scene, fault) x 4 arms), N=3, seeds [1001,1002,1003], ROUNDS remaining=8. The census is written under artifacts/pilot/ as PILOT / SIMULATED-IUT development lineage and must not be reused as confirmatory data.",
+      "PR #28 was merged as 4e34165 with a merge commit that keeps the reviewed SHAs, including pilot pre-declaration d6786da. CR-2026-028 / DD-052 adds the confirmatory design draft: arms see only observation intervals (S1), cltav_confirmatory_hypothesis_model_v2.json adds boundary and near-boundary variants, and configs/research/cltav_confirmatory_design_draft_v1.json declares 78 units x 4 arms = 312 cells with N=1. CR-2026-029 / DD-053 records the C1, E3, S1, R1 and T3 rulings and treats a delayed LUR ACK as an H-NORMAL timing perturbation without inventing a deadline. The design is not yet registered or frozen, and no confirmatory run has started.",
       "No confirmatory result, Configuration, expanded capability, conformance, submission, baseline or tag is created."
     ],
     "summaryZh": [
@@ -35,6 +36,7 @@
       "CR-2026-026／DD-050 增加 Draft Phase C E0–E6 流水线（SCENE、INJECT、TRUTH、RUN、COLLECT、FILTER、EVAL）、带已登记差异表的 SYN-* 走查测试、混合 VALID {h_normal,...}→INCONCLUSIVE，以及 N 与种子待 Phase D 的登记形状试点配置。真值仅 EVAL 可读。",
       "CR-2026-027／DD-051 关闭 DEC-IUT：本地模拟 615A 环境（TH／FIND-HOST）。结果仍标注 SIMULATED-IUT。DEC-TRUTH、DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN。",
       "configs/research/cltav_pilot_config_v1.json 预先声明 120 个单元格（目录 applicable (scene, fault) × 4 臂）、N=3、种子 [1001,1002,1003]、ROUNDS remaining=8。普查写入 artifacts/pilot/，标注 PILOT／SIMULATED-IUT，属开发谱系，不得复用为确认性数据。",
+      "PR #28 已以合并提交 4e34165 并入，保留了已审查的 SHA（含试点预声明 d6786da）。CR-2026-028／DD-052 增加确认性设计草案：实验臂只看到观测区间（S1），cltav_confirmatory_hypothesis_model_v2.json 增加边界与近边界变体，configs/research/cltav_confirmatory_design_draft_v1.json 声明 78 个单元 × 4 臂 = 312 个单元格，N=1。CR-2026-029／DD-053 记录 C1、E3、S1、R1、T3 裁决，并将延迟的 LUR ACK 视为 H-NORMAL 时序扰动，不虚构截止时限。该设计尚未登记或冻结，确认性运行尚未开始。",
       "本增量不产生确认性结果、Configuration、扩大能力、符合性、投稿、baseline 或 tag。"
     ],
     "stateChanges": [
@@ -44,6 +46,7 @@
       "PR #25 is merged as the bounded finite reference-runtime foundation; it is not a runtime-integrity result or authority for M3, active execution, or capability claims.",
       "Draft PR #26 has limited-accepted C (7fd917b9) and D (1012f673); E closeout awaits DM whole-branch review and establishes no experiment admission.",
       "CR-2026-024 / DD-048 Phase A remains the SIMULATED-IUT instrument; CR-2026-025 / DD-049 Phase B remains the four-arm adapter; CR-2026-026 / DD-050 Phase C remains the E0-E6 pipeline; CR-2026-027 / DD-051 closes DEC-IUT only. This is not confirmatory evidence.",
+      "CR-2026-028 / DD-052 and CR-2026-029 / DD-053 define a confirmatory design draft only; registration, freeze and confirmatory runs remain pending.",
       "currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims."
     ],
     "stateChangesZh": [
@@ -53,6 +56,7 @@
       "PR #25 已作为有界有限参考运行时基础合并；这不是运行完整性结果，也不授权 M3、主动执行或能力主张。",
       "Draft PR #26 的 C（7fd917b9）与 D（1012f673）已有限接受；E 收尾待 DM 整支复审，且不建立实验准入。",
       "CR-2026-024／DD-048 Phase A 仍是模拟 IUT 仪器；CR-2026-025／DD-049 Phase B 仍是四臂适配器；CR-2026-026／DD-050 Phase C 仍是 E0–E6 流水线；CR-2026-027／DD-051 仅关闭 DEC-IUT。这不是确认性证据。",
+      "CR-2026-028／DD-052 与 CR-2026-029／DD-053 仅定义确认性设计草案；登记、冻结与确认性运行仍待进行。",
       "对 M3、主动执行和能力主张而言，currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。"
     ],
     "unchangedBoundaries": [
@@ -90,20 +94,22 @@
       "objective": "This stop still blocks M3, active protocol execution, runtime-integrity claims and capability claims. RR-CLTAV-2026-097 accepted the first-slice offline UPLOAD/INFORMATION development specification at PR #19 Head c9ca381, squash-merged as 324d832; PR #20 rebounded the M2 input to c5296aed. CR-2026-017 / DD-041 separately authorize only a bounded, read-only offline intake implementation with evidence output. PR #25 is merged as the bounded finite reference-runtime foundation. Draft PR #26 has limited-accepted C-stage session integration and D-stage engineering delivery; E closeout awaits DM whole-branch review. UNKNOWN after Recover stops at Stop-Prediction-Gap (DM-C-R01) and is not post-recovery continued diagnosis. CR-2026-024 / DD-048 Phase A is a SIMULATED-IUT instrument only; CR-2026-025 / DD-049 Phase B is a four-arm adapter only; CR-2026-026 / DD-050 Phase C is an E0-E6 pipeline only; CR-2026-027 / DD-051 closes DEC-IUT as the local simulated environment while DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and DEC-RESOURCE remain OPEN. None of this is a runtime-integrity result, confirmatory experiment, real protocol-service ownership, physical clock calibration, Project Configuration, expanded-CRS approval or M3 activation. M1-CANDIDATE-25 and its open source dependencies retain their controlled dispositions.",
       "objectiveZh": "本停点仍禁止 M3、主动协议执行、运行完整性主张和能力主张。RR-CLTAV-2026-097 接受了 PR #19 Head c9ca381 的首轮离线 UPLOAD／INFORMATION 开发规格，随后以 324d832 压缩合并；PR #20 将 M2 输入重钉至 c5296aed。CR-2026-017／DD-041 仅单独授权一个输出证据的有界、只读离线接入实现。PR #25 已作为有界有限参考运行时基础合并。Draft PR #26 的 C 阶段会话接入与 D 阶段工程交付已有限接受；E 收尾待 DM 整支复审。UNKNOWN 经 Recover 后以 Stop-Prediction-Gap 终止（DM-C-R01），不是恢复后继续诊断。CR-2026-024／DD-048 Phase A 只是模拟 IUT 仪器；CR-2026-025／DD-049 Phase B 只是四臂适配器；CR-2026-026／DD-050 Phase C 只是 E0–E6 流水线；CR-2026-027／DD-051 关闭 DEC-IUT 为本地模拟环境，而 DEC-TRUTH、DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN。这些都不等于运行完整性结果、确认性实验、真实协议服务所有权、物理时钟校准、Project Configuration、扩大 CRS 批准或 M3 激活。M1-CANDIDATE-25 及其开放来源依赖保持受控处置。"
     },
-  "nextSteps": [
-    "Retain PR #24's controlled model-figure candidates as DRAFT-REDRAW; do not promote reader figures or migrate downstream consumers until the separate semantic, size, migration and promotion gates close.",
-    "Complete independent D-stage review of Draft PR #26 on one fixed candidate Head before E-stage whole-PR gates; do not treat the engineering CLI as authority for M3, controlled IUT execution, post-recovery continued diagnosis, or runtime-integrity work.",
-    "Independently review the Phase D SIMULATED-IUT / PILOT census on one fixed Head; do not reuse these rows as confirmatory data; keep DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and DEC-RESOURCE OPEN.",
-    "Keep every experiment run-admission decision OPEN and establish runtime integrity and independent truth before capability or conformance claims; do not start M3 from the accepted design alone.",
-    "Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth."
-  ],
-  "nextStepsZh": [
-    "将 PR #24 的受控模型图候选保持为 DRAFT-REDRAW；在独立的语义、尺寸、迁移和晋级门关闭前，不得晋级 reader 图或迁移下游使用者。",
-    "在 E 阶段整支门禁前，在一个固定候选 Head 上完成 Draft PR #26 的独立 D 阶段评审；不得把工程 CLI 当作 M3、受控 IUT 执行、恢复后继续诊断或运行完整性工作的授权。",
-    "在一个固定 Head 上独立审查 Phase D SIMULATED-IUT／PILOT 普查；不得把这些行当作确认性数据；DEC-TRUTH、DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN。",
-    "所有实验运行准入决定保持 OPEN；建立运行完整性与独立真值后方可提出能力或符合性主张，不得仅凭已接受设计启动 M3。",
-    "保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。"
-  ],
+    "nextSteps": [
+      "Retain PR #24's controlled model-figure candidates as DRAFT-REDRAW; do not promote reader figures or migrate downstream consumers until the separate semantic, size, migration and promotion gates close.",
+      "Complete independent D-stage review of Draft PR #26 on one fixed candidate Head before E-stage whole-PR gates; do not treat the engineering CLI as authority for M3, controlled IUT execution, post-recovery continued diagnosis, or runtime-integrity work.",
+      "Independently review the Phase D SIMULATED-IUT / PILOT census on one fixed Head; do not reuse these rows as confirmatory data; keep DEC-TRUTH, DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE and DEC-RESOURCE OPEN.",
+      "Write and freeze the confirmatory registration (cells, primary and secondary metrics, contrasts, multiplicity, decision and stopping rules, code SHA and config hashes) before any confirmatory run; never reuse pilot rows.",
+      "Keep every experiment run-admission decision OPEN and establish runtime integrity and independent truth before capability or conformance claims; do not start M3 from the accepted design alone.",
+      "Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth."
+    ],
+    "nextStepsZh": [
+      "将 PR #24 的受控模型图候选保持为 DRAFT-REDRAW；在独立的语义、尺寸、迁移和晋级门关闭前，不得晋级 reader 图或迁移下游使用者。",
+      "在 E 阶段整支门禁前，在一个固定候选 Head 上完成 Draft PR #26 的独立 D 阶段评审；不得把工程 CLI 当作 M3、受控 IUT 执行、恢复后继续诊断或运行完整性工作的授权。",
+      "在一个固定 Head 上独立审查 Phase D SIMULATED-IUT／PILOT 普查；不得把这些行当作确认性数据；DEC-TRUTH、DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN。",
+      "在任何确认性运行之前撰写并冻结确认性登记（单元格、主次指标、对比、多重性、判定与停止规则、代码 SHA 与配置哈希）；不得复用试点数据。",
+      "所有实验运行准入决定保持 OPEN；建立运行完整性与独立真值后方可提出能力或符合性主张，不得仅凭已接受设计启动 M3。",
+      "保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。"
+    ],
     "blockedActions": [
       "Do not start M3 or a development-ready CRS PR before this expanded protocol CRS is independently accepted.",
       "Do not implement unbounded, active or verdict-producing protocol behavior beyond the narrowly authorized read-only offline intake increment.",
