@@ -23,7 +23,7 @@ from a615a_sim.evaluator.pipeline import orchestrator as orchestrator_mod  # noq
 from a615a_sim.evaluator.pipeline.orchestrator import execute_live_attempt  # noqa: E402
 from a615a_sim.faults.injector import inject, overlay_declared_fault  # noqa: E402
 
-REGISTRATION_PATH = ROOT / "configs/research/cltav_confirmatory_registration_v1.json"
+REGISTRATION_PATH = ROOT / "configs/research/cltav_confirmatory_registration_v2.json"
 DESIGN_PATH = ROOT / "configs/research/cltav_confirmatory_design_draft_v1.json"
 OUT_DIR = ROOT / "artifacts" / "confirmatory"
 RAW_PATH = OUT_DIR / "cltav_confirmatory_attempts_v1.jsonl"

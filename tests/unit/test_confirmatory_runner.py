@@ -23,6 +23,10 @@ def _load(name: str, path: Path):
 
 runner = _load("run_cltav_confirmatory", ROOT / "scripts/run_cltav_confirmatory.py")
 analyze = _load("analyze_cltav_confirmatory", ROOT / "scripts/analyze_cltav_confirmatory.py")
+builder = _load(
+    "build_confirmatory_expected_behaviour_v1",
+    ROOT / "scripts/build_confirmatory_expected_behaviour_v1.py",
+)
 
 
 def test_mcnemar_zero_discordant_is_one() -> None:
@@ -81,93 +85,142 @@ def _row(
     }
 
 
-def test_metric_definitions_on_hand_built_rows() -> None:
-    fail_true = _row("U-F", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"])
-    miss = _row("U-F", "CL-T", truth="h_find_answer_late", verdict="INCONCLUSIVE", candidates=["h_normal", "h_find_answer_late"])
-    assert analyze.m_detect(fail_true) == 1
-    assert analyze.m_detect(miss) == 0
-    assert analyze.m_localise(fail_true) == 1
-    assert analyze.m_localise(miss) == 0
-    with pytest.raises(ValueError):
-        analyze.m_detect(_row("U-N", "CL-T", truth="h_normal", verdict="FAIL", candidates=["h_find_answer_late"]))
+ENDPOINT_EXPECTED = {
+    "unitId": "U-EP",
+    "expectedVerdict": "INCONCLUSIVE",
+    "expectedCandidateSet": ["h_find_answer_late", "h_normal"],
+}
+SHORT_WINDOW_EXPECTED = {
+    "unitId": "U-SW",
+    "expectedVerdict": "FAIL",
+    "expectedCandidateSet": ["h_find_answer_absent", "h_find_answer_late"],
+}
 
 
-def test_missing_pair_is_excluded_from_contrast() -> None:
+def test_v2_metrics_on_endpoint_and_short_window_rows() -> None:
+    endpoint_ok = _row(
+        "U-EP",
+        "CL-LOOP",
+        truth="h_find_answer_late",
+        verdict="INCONCLUSIVE",
+        candidates=["h_normal", "h_find_answer_late"],
+    )
+    endpoint_fail = _row(
+        "U-EP",
+        "CL-T",
+        truth="h_find_answer_late",
+        verdict="FAIL",
+        candidates=["h_find_answer_late"],
+    )
+    assert analyze.m_detect_correct(endpoint_ok, ENDPOINT_EXPECTED) == 1
+    assert analyze.m_detect_correct(endpoint_fail, ENDPOINT_EXPECTED) == 0
+    short_both = _row(
+        "U-SW",
+        "CL-LOOP",
+        truth="h_find_answer_absent",
+        verdict="FAIL",
+        candidates=["h_find_answer_late", "h_find_answer_absent"],
+    )
+    short_singleton = _row(
+        "U-SW",
+        "CL-TA",
+        truth="h_find_answer_absent",
+        verdict="FAIL",
+        candidates=["h_find_answer_absent"],
+    )
+    assert analyze.m_localise_correct(short_both, SHORT_WINDOW_EXPECTED) == 1
+    assert analyze.m_localise_correct(short_singleton, SHORT_WINDOW_EXPECTED) == 0
+
+
+def test_missing_and_undefined_pairs_are_dropped_from_contrast() -> None:
     rows = [
         _row("U1", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"]),
         _row("U1", "CL-T", truth="h_find_answer_late", verdict="PASS", candidates=["h_normal"], status="MISSING"),
         _row("U2", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"]),
         _row("U2", "CL-T", truth="h_find_answer_late", verdict="PASS", candidates=["h_normal"]),
+        _row("U3", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"], status="UNDEFINED-OUTCOME"),
+        _row("U3", "CL-T", truth="h_find_answer_late", verdict="PASS", candidates=["h_normal"]),
     ]
-    design = {"units": [{"unitId": "U1", "harderCaseId": None}, {"unitId": "U2", "harderCaseId": None}]}
+    expected = {
+        "units": [
+            {"unitId": "U1", "expectedVerdict": "FAIL", "expectedCandidateSet": ["h_find_answer_late"]},
+            {"unitId": "U2", "expectedVerdict": "FAIL", "expectedCandidateSet": ["h_find_answer_late"]},
+            {"unitId": "U3", "expectedVerdict": "FAIL", "expectedCandidateSet": ["h_find_answer_late"]},
+        ],
+        "needsDmRuling": [],
+    }
+    by_unit = analyze.expected_by_unit_id(expected)
+
+    def detect(row):
+        return analyze.m_detect_correct(row, by_unit[row["unitId"]])
+
     result = analyze.paired_metric(
         rows,
         left_arm="CL-LOOP",
         right_arm="CL-T",
-        metric=analyze.m_detect,
-        excluded_units=analyze.pre_run_excluded_units(design),
+        metric=detect,
+        eligible_units=analyze.eligible_unit_ids(expected),
     )
     assert result["n"] == 1
     assert result["b"] == 1
     assert result["c"] == 0
     assert result["missingDropped"] == 1
-    assert result["undefinedOutcomeDropped"] == 0
-
-
-def test_e3_and_t3_reason_mapping_and_dropped_counts() -> None:
-    rows = [
-        _row("U-E3", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"]),
-        _row("U-E3", "CL-T", truth="h_find_answer_late", verdict="PASS", candidates=["h_normal"]),
-        _row("U-T3", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"]),
-        _row("U-T3", "CL-T", truth="h_find_answer_late", verdict="PASS", candidates=["h_normal"]),
-        _row("U-OK", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"]),
-        _row("U-OK", "CL-T", truth="h_find_answer_late", verdict="PASS", candidates=["h_normal"]),
-        _row("U-MISS", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"], status="MISSING"),
-        _row("U-MISS", "CL-T", truth="h_find_answer_late", verdict="PASS", candidates=["h_normal"]),
-        _row("U-UNDEF", "CL-LOOP", truth="h_find_answer_late", verdict="FAIL", candidates=["h_find_answer_late"], status="UNDEFINED-OUTCOME"),
-        _row("U-UNDEF", "CL-T", truth="h_find_answer_late", verdict="PASS", candidates=["h_normal"]),
-    ]
-    design = {
-        "units": [
-            {"unitId": "U-E3", "harderCaseId": "HC-LATE-ABSENT-SHORT-WINDOW"},
-            {"unitId": "U-T3", "harderCaseId": "HC-FIND-ENDPOINT"},
-            {"unitId": "U-OK", "harderCaseId": None},
-            {"unitId": "U-MISS", "harderCaseId": None},
-            {"unitId": "U-UNDEF", "harderCaseId": None},
-        ]
-    }
-    mapping = analyze.pre_run_excluded_units(design)
-    assert mapping == {"U-E3": "E3", "U-T3": "T3"}
-    assert analyze.pre_run_excluded_unit_counts(design) == {"E3": 1, "T3": 1}
-    result = analyze.paired_metric(
-        rows,
-        left_arm="CL-LOOP",
-        right_arm="CL-T",
-        metric=analyze.m_detect,
-        excluded_units=mapping,
-    )
-    assert result["n"] == 1
-    assert result["b"] == 1
-    assert result["missingDropped"] == 1
     assert result["undefinedOutcomeDropped"] == 1
-    payload = analyze.analyze_rows(rows, design=design)
-    assert payload["preRunExcludedUnitCounts"] == {"E3": 1, "T3": 1}
-    assert payload["contrasts"]["H1"]["missingDropped"] == 1
-    assert payload["contrasts"]["H1"]["undefinedOutcomeDropped"] == 1
-    secondary = payload["secondary"]["CL-LOOP"]
-    assert secondary["inconclusiveShare"]["denominator"] >= 3
+    payload = analyze.analyze_rows(rows, design={"units": []}, expected=expected)
+    assert payload["eligibleUnitCount"] == 3
+    assert payload["nullExpectationUnitCount"] == 0
+    assert payload["contrasts"]["H1"]["metric"] == "M-DETECT-CORRECT"
 
 
-def test_pre_run_excluded_units_remain_in_secondary() -> None:
+def test_endpoint_and_short_window_units_are_eligible() -> None:
     rows = [
-        _row("U-E3", "CL-LOOP", truth="h_find_answer_late", verdict="INCONCLUSIVE", candidates=["h_normal", "h_find_answer_late"]),
-        _row("U-E3", "CL-T", truth="h_find_answer_late", verdict="INCONCLUSIVE", candidates=["h_normal", "h_find_answer_late"]),
+        _row(
+            "U-EP",
+            "CL-LOOP",
+            truth="h_find_answer_late",
+            verdict="INCONCLUSIVE",
+            candidates=["h_normal", "h_find_answer_late"],
+        ),
+        _row(
+            "U-EP",
+            "CL-T",
+            truth="h_find_answer_late",
+            verdict="FAIL",
+            candidates=["h_find_answer_late"],
+        ),
+        _row(
+            "U-SW",
+            "CL-LOOP",
+            truth="h_find_answer_absent",
+            verdict="FAIL",
+            candidates=["h_find_answer_absent", "h_find_answer_late"],
+        ),
+        _row(
+            "U-SW",
+            "CL-TA",
+            truth="h_find_answer_absent",
+            verdict="FAIL",
+            candidates=["h_find_answer_absent"],
+        ),
     ]
-    design = {"units": [{"unitId": "U-E3", "harderCaseId": "HC-LATE-ABSENT-SHORT-WINDOW"}]}
-    payload = analyze.analyze_rows(rows, design=design)
-    assert payload["preRunExcludedUnitCounts"] == {"E3": 1, "T3": 0}
-    assert payload["secondary"]["CL-LOOP"]["inconclusiveShare"] == {"numerator": 1, "denominator": 1}
-    assert payload["contrasts"]["H1"]["n"] == 0
+    expected = {
+        "units": [ENDPOINT_EXPECTED, SHORT_WINDOW_EXPECTED],
+        "needsDmRuling": [{"unitId": "U-JITTER"}],
+    }
+    payload = analyze.analyze_rows(rows, design={"units": []}, expected=expected)
+    assert payload["eligibleUnitCount"] == 2
+    assert payload["nullExpectationUnitCount"] == 1
+    assert payload["contrasts"]["H1"]["n"] == 1
+    assert payload["contrasts"]["H2"]["n"] == 1
+    assert payload["secondary"]["CL-LOOP"]["inconclusiveShare"]["denominator"] == 2
+
+
+def test_expected_behaviour_table_is_reproducible() -> None:
+    committed = json.loads(
+        (ROOT / "configs/research/cltav_confirmatory_expected_behaviour_v1.json").read_text(encoding="utf-8")
+    )
+    rebuilt = builder.build_expected_behaviour()
+    assert rebuilt == committed
 
 
 def test_dry_run_preflight_passes_with_monkeypatched_clean_tree(monkeypatch, tmp_path) -> None:
@@ -180,7 +233,7 @@ def test_dry_run_preflight_passes_with_monkeypatched_clean_tree(monkeypatch, tmp
 
 
 def test_tampered_hash_fails_preflight(tmp_path) -> None:
-    source = ROOT / "configs/research/cltav_confirmatory_registration_v1.json"
+    source = ROOT / "configs/research/cltav_confirmatory_registration_v2.json"
     payload = json.loads(source.read_text(encoding="utf-8"))
     first = payload["hashedFiles"][0]
     payload["configHashes"][first] = hashlib.sha256(b"tampered").hexdigest()

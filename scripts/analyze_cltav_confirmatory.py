@@ -19,14 +19,10 @@ if str(SRC) not in sys.path:
 from a615a_sim.algorithm.hypothesis_model import map_to_parent_hypotheses  # noqa: E402
 
 DESIGN_PATH = ROOT / "configs/research/cltav_confirmatory_design_draft_v1.json"
+EXPECTED_PATH = ROOT / "configs/research/cltav_confirmatory_expected_behaviour_v1.json"
 RAW_PATH = ROOT / "artifacts/confirmatory/cltav_confirmatory_attempts_v1.jsonl"
 OUT_PATH = ROOT / "artifacts/confirmatory/cltav_confirmatory_analysis_v1.json"
 NORMAL_TRUTH = frozenset({"h_normal", "h-normal"})
-# Pre-run exclusions documented by CR-2026-031 / RR-PR31-001.
-# E3: unresolved LATE vs ABSENT equivalence under a short window.
-E3_EXCLUDED = frozenset({"HC-LATE-ABSENT-SHORT-WINDOW"})
-# T3: endpoint truth unresolved.
-T3_EXCLUDED = frozenset({"HC-FIND-ENDPOINT"})
 FAMILYWISE_ALPHA = 0.05
 
 
@@ -42,34 +38,30 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
-def pre_run_exclusion_reason(unit: Mapping[str, Any]) -> str | None:
-    marked = str(unit.get("preRunExclusion") or "")
-    if unit.get("e3Excluded") or unit.get("excludedUnderE3") or marked == "E3":
-        return "E3"
-    if unit.get("t3Excluded") or unit.get("excludedUnderT3") or marked == "T3":
-        return "T3"
-    harder = unit.get("harderCaseId")
-    if harder in E3_EXCLUDED:
-        return "E3"
-    if harder in T3_EXCLUDED:
-        return "T3"
-    return None
+def load_expected_behaviour(path: Path = EXPECTED_PATH) -> dict[str, Any]:
+    return load_json(path)
 
 
-def pre_run_excluded_units(design: Mapping[str, Any]) -> dict[str, str]:
-    """Map unitId -> reason ('E3' or 'T3') for documented pre-run exclusions."""
-
-    excluded: dict[str, str] = {}
-    for unit in design.get("units") or []:
-        reason = pre_run_exclusion_reason(unit)
-        if reason is not None:
-            excluded[str(unit["unitId"])] = reason
-    return excluded
+def expected_by_unit_id(expected: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
+    return {str(entry["unitId"]): dict(entry) for entry in expected.get("units") or []}
 
 
-def pre_run_excluded_unit_counts(design: Mapping[str, Any]) -> dict[str, int]:
-    reasons = list(pre_run_excluded_units(design).values())
-    return {"E3": reasons.count("E3"), "T3": reasons.count("T3")}
+def eligible_unit_ids(expected: Mapping[str, Any]) -> set[str]:
+    return {
+        str(entry["unitId"])
+        for entry in expected.get("units") or []
+        if entry.get("expectedVerdict") is not None and entry.get("expectedCandidateSet") is not None
+    }
+
+
+def null_expectation_count(expected: Mapping[str, Any]) -> int:
+    needs = list(expected.get("needsDmRuling") or [])
+    null_entries = [
+        entry
+        for entry in expected.get("units") or []
+        if entry.get("expectedVerdict") is None or entry.get("expectedCandidateSet") is None
+    ]
+    return len(needs) + len(null_entries)
 
 
 def binom_cdf(k: int, n: int, p: float) -> float:
@@ -129,20 +121,15 @@ def holm_adjust(pvalues: Sequence[tuple[str, float]], alpha: float = FAMILYWISE_
     return adjusted
 
 
-def m_detect(row: Mapping[str, Any]) -> int:
-    truth = str(row.get("truthParentHypothesis") or "")
-    if truth in NORMAL_TRUTH:
-        raise ValueError("M-DETECT is defined on fault units only")
-    return 1 if row.get("verdict") == "FAIL" else 0
+def m_detect_correct(row: Mapping[str, Any], expected: Mapping[str, Any]) -> int:
+    return 1 if row.get("verdict") == expected.get("expectedVerdict") else 0
 
 
-def m_localise(row: Mapping[str, Any]) -> int:
-    truth = str(row.get("truthParentHypothesis") or "")
-    if truth in NORMAL_TRUTH:
-        raise ValueError("M-LOCALISE is defined on fault units only")
-    candidates = row.get("finalCandidateSet") or []
-    mapped = list(map_to_parent_hypotheses([str(item) for item in candidates]))
-    return 1 if mapped == [truth] else 0
+def m_localise_correct(row: Mapping[str, Any], expected: Mapping[str, Any]) -> int:
+    candidates = [str(item) for item in (row.get("finalCandidateSet") or [])]
+    mapped = sorted(map_to_parent_hypotheses(candidates))
+    want = sorted(str(item) for item in (expected.get("expectedCandidateSet") or []))
+    return 1 if mapped == want else 0
 
 
 def _by_unit_arm(rows: Iterable[Mapping[str, Any]]) -> dict[tuple[str, str], Mapping[str, Any]]:
@@ -158,11 +145,11 @@ def paired_metric(
     left_arm: str,
     right_arm: str,
     metric,
-    excluded_units: Mapping[str, str] | set[str],
+    eligible_units: Mapping[str, Any] | set[str],
 ) -> dict[str, Any]:
     table = _by_unit_arm(rows)
     units = sorted({row["unitId"] for row in rows})
-    excluded = set(excluded_units)
+    eligible = set(eligible_units)
     b = 0
     c = 0
     used = 0
@@ -171,7 +158,7 @@ def paired_metric(
     missing_dropped = 0
     undefined_dropped = 0
     for unit in units:
-        if unit in excluded:
+        if unit not in eligible:
             continue
         left = table.get((unit, left_arm))
         right = table.get((unit, right_arm))
@@ -183,9 +170,6 @@ def paired_metric(
             continue
         if "MISSING" in statuses:
             missing_dropped += 1
-            continue
-        truth = str(left.get("truthParentHypothesis") or "")
-        if truth in NORMAL_TRUTH or not truth:
             continue
         left_v = metric(left)
         right_v = metric(right)
@@ -266,34 +250,45 @@ def analyze_rows(
     rows: Sequence[Mapping[str, Any]],
     *,
     design: Mapping[str, Any],
+    expected: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    excluded = pre_run_excluded_units(design)
+    del design  # cells/units come from the expected-behaviour table for H1/H2.
+    table = expected if expected is not None else load_expected_behaviour()
+    by_unit = expected_by_unit_id(table)
+    eligible = eligible_unit_ids(table)
+
+    def detect(row: Mapping[str, Any]) -> int:
+        return m_detect_correct(row, by_unit[str(row["unitId"])])
+
+    def localise(row: Mapping[str, Any]) -> int:
+        return m_localise_correct(row, by_unit[str(row["unitId"])])
+
     h1 = paired_metric(
         rows,
         left_arm="CL-LOOP",
         right_arm="CL-T",
-        metric=m_detect,
-        excluded_units=excluded,
+        metric=detect,
+        eligible_units=eligible,
     )
     h2 = paired_metric(
         rows,
         left_arm="CL-LOOP",
         right_arm="CL-TA",
-        metric=m_localise,
-        excluded_units=excluded,
+        metric=localise,
+        eligible_units=eligible,
     )
     adjusted = holm_adjust([("H1", float(h1["p"])), ("H2", float(h2["p"]))])
     contrasts = {
         "H1": {
             **h1,
-            "metric": "M-DETECT",
+            "metric": "M-DETECT-CORRECT",
             "comparison": "CL-LOOP vs CL-T",
             "holmAdjustedP": adjusted["H1"],
             "supported": bool(adjusted["H1"] < FAMILYWISE_ALPHA and h1["b"] > h1["c"]),
         },
         "H2": {
             **h2,
-            "metric": "M-LOCALISE",
+            "metric": "M-LOCALISE-CORRECT",
             "comparison": "CL-LOOP vs CL-TA",
             "holmAdjustedP": adjusted["H2"],
             "supported": bool(adjusted["H2"] < FAMILYWISE_ALPHA and h2["b"] > h2["c"]),
@@ -301,7 +296,8 @@ def analyze_rows(
     }
     return {
         "label": "CONFIRMATORY / SIMULATED-IUT",
-        "preRunExcludedUnitCounts": pre_run_excluded_unit_counts(design),
+        "eligibleUnitCount": len(eligible),
+        "nullExpectationUnitCount": null_expectation_count(table),
         "contrasts": contrasts,
         "holm": adjusted,
         "alpha": FAMILYWISE_ALPHA,
@@ -313,12 +309,13 @@ def write_analysis(
     *,
     rows: Sequence[Mapping[str, Any]],
     design: Mapping[str, Any],
+    expected: Mapping[str, Any] | None = None,
     out_path: Path = OUT_PATH,
 ) -> dict[str, Any]:
     if out_path.exists():
         print(f"{out_path} already exists", file=sys.stderr)
         raise SystemExit(2)
-    payload = analyze_rows(rows, design=design)
+    payload = analyze_rows(rows, design=design, expected=expected)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return payload

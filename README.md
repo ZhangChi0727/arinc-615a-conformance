@@ -67,6 +67,7 @@ silently redefine the Core.
 - PR #28 was merged as 4e34165 with a merge commit that keeps the reviewed SHAs, including pilot pre-declaration d6786da. CR-2026-028 / DD-052 adds the confirmatory design draft: arms see only observation intervals (S1), cltav_confirmatory_hypothesis_model_v2.json adds boundary and near-boundary variants, and configs/research/cltav_confirmatory_design_draft_v1.json declares 78 units x 4 arms = 312 cells with N=1. CR-2026-029 / DD-053 records the C1, E3, S1, R1 and T3 rulings and treats a delayed LUR ACK as an H-NORMAL timing perturbation without inventing a deadline. The design is not yet registered or frozen, and no confirmatory run has started.
 - CR-2026-030 / DD-054 registers the confirmatory experiment; frozen on merge as e987145.
 - CR-2026-031 / DD-055 adds the confirmatory runner and analysis scripts without changing the frozen registration and no confirmatory run has started.
+- CR-2026-032 / DD-056 amends the confirmatory registration to v2 before any run: primary metrics score pre-registered expected behaviour, so the 8 endpoint and short-window units count in H1/H2; v1 is superseded unused.
 - No confirmatory result, Configuration, expanded capability, conformance, submission, baseline or tag is created.
 
 State changes:
@@ -80,6 +81,7 @@ State changes:
 - CR-2026-028 / DD-052 and CR-2026-029 / DD-053 define a confirmatory design draft only; registration, freeze and confirmatory runs remain pending.
 - CR-2026-030 / DD-054 registers the confirmatory experiment; frozen on merge as e987145.
 - CR-2026-031 / DD-055 adds the confirmatory runner and analysis scripts without changing the frozen registration and no confirmatory run has started.
+- CR-2026-032 / DD-056 amends the confirmatory registration to v2 before any run: primary metrics score pre-registered expected behaviour, so the 8 endpoint and short-window units count in H1/H2; v1 is superseded unused.
 - currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims.
 
 Unchanged boundaries:
@@ -141,6 +143,7 @@ Unchanged boundaries:
 - PR #28 已以合并提交 4e34165 并入，保留了已审查的 SHA（含试点预声明 d6786da）。CR-2026-028／DD-052 增加确认性设计草案：实验臂只看到观测区间（S1），cltav_confirmatory_hypothesis_model_v2.json 增加边界与近边界变体，configs/research/cltav_confirmatory_design_draft_v1.json 声明 78 个单元 × 4 臂 = 312 个单元格，N=1。CR-2026-029／DD-053 记录 C1、E3、S1、R1、T3 裁决，并将延迟的 LUR ACK 视为 H-NORMAL 时序扰动，不虚构截止时限。该设计尚未登记或冻结，确认性运行尚未开始。
 - CR-2026-030／DD-054 登记确认性实验，已于 e987145 合并冻结。
 - CR-2026-031／DD-055 增加确认性运行与分析脚本，不改变已冻结登记，确认性运行尚未开始。
+- CR-2026-032／DD-056 新登记文件 `configs/research/cltav_confirmatory_registration_v2.json` 取代 v1；v1 保留，标注为运行前被取代。登记 v1 的主指标只在真值已确定的单元上计分，因此把端点情形（`HC-FIND-ENDPOINT`，T3 真值未决）和短窗下迟到与缺失不可区分的情形（`HC-LATE-ABSENT-SHORT-WINDOW`，E3 未决等价）共 8 个单元排除在主对比之外。这些单元正是设计中为区分实验臂而加入的难例，排除它们与设计目的相矛盾。真值未决并不等于没有正确行为：这些单元的正确行为可以在运行前确定。修订发生在任何单元格运行之前，没有人看过任何确认性结果，因此不构成事后选择。
 - 本增量不产生确认性结果、Configuration、扩大能力、符合性、投稿、baseline 或 tag。
 
 状态变化：
@@ -154,6 +157,7 @@ Unchanged boundaries:
 - CR-2026-028／DD-052 与 CR-2026-029／DD-053 仅定义确认性设计草案；登记、冻结与确认性运行仍待进行。
 - CR-2026-030／DD-054 登记确认性实验，已于 e987145 合并冻结。
 - CR-2026-031／DD-055 增加确认性运行与分析脚本，不改变已冻结登记，确认性运行尚未开始。
+- CR-2026-032／DD-056 新登记文件 `configs/research/cltav_confirmatory_registration_v2.json` 取代 v1；v1 保留，标注为运行前被取代。登记 v1 的主指标只在真值已确定的单元上计分，因此把端点情形（`HC-FIND-ENDPOINT`，T3 真值未决）和短窗下迟到与缺失不可区分的情形（`HC-LATE-ABSENT-SHORT-WINDOW`，E3 未决等价）共 8 个单元排除在主对比之外。这些单元正是设计中为区分实验臂而加入的难例，排除它们与设计目的相矛盾。真值未决并不等于没有正确行为：这些单元的正确行为可以在运行前确定。修订发生在任何单元格运行之前，没有人看过任何确认性结果，因此不构成事后选择。
 - 对 M3、主动执行和能力主张而言，currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。
 
 保持不变的边界：
