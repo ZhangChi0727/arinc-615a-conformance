@@ -1438,6 +1438,52 @@ Freeze on merge.
 
 **Status:** Candidate under CR-2026-030. Draft PR review required.
 
+
+## DD-055 — Add confirmatory run and analysis scripts (user approval 2026-11-19)
+
+**Decision:** Under CR-2026-031 and the 2026-11-19 user instruction, add
+`scripts/run_cltav_confirmatory.py` and `scripts/analyze_cltav_confirmatory.py`
+so the frozen registration can be executed later without changing cells,
+metrics, contrasts, tests, or stopping rules.
+
+**Why:** The frozen registration requires a run at the registration merge
+commit, but the repository had only the pilot runner.
+
+**Scope:** Runner, analysis, tests, and control records only. No confirmatory
+cell is executed. The frozen registration is unchanged. No `src/` or
+`configs/` change.
+
+**Guardrails:** Effect statements remain hypotheses. CI success is not
+approval. No interim look.
+
+**Status:** Candidate under CR-2026-031. Draft PR review required.
+
+
+## DD-056 — Amend the confirmatory registration to v2 before any run (user ruling 2026-11-19)
+
+**Decision:** Under CR-2026-032 and the 2026-11-19 user ruling, supersede
+registration v1 with `configs/research/cltav_confirmatory_registration_v2.json`
+and score H1/H2 against a pre-registered expected-behaviour table
+(`configs/research/cltav_confirmatory_expected_behaviour_v1.json`). Primary
+metrics are M-DETECT-CORRECT (verdict in acceptableVerdicts) and
+M-LOCALISE-CORRECT (candidateRule holds). All 78 units with an entry
+count in the primary contrasts, including h_normal and invalid-observation
+units. v1 is retained, unused.
+
+**Why:** v1 excluded the hard cases the design added to distinguish arms.
+Unresolved truth does not mean the correct behaviour cannot be declared
+before any run. The amendment is made before any confirmatory cell has run.
+
+**Scope:** Registration v2, expected-behaviour table, runner/analysis
+scripts, tests, and control records. No confirmatory cell is executed.
+Registration v1 is not edited. No `src/` change.
+
+**Guardrails:** Effect statements remain hypotheses. CI success is not
+approval. Freeze on merge. No interim look.
+
+**Status:** Candidate under CR-2026-032. Same Draft PR as CR-2026-031.
+Independent DM review required.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -2227,3 +2273,27 @@ IUT 上的 DRAFT 确认性*设计*。U2：变异为参数化故障（迟答延�
 **护栏：** 效应陈述为假设。CI 通过不等于批准。合并即冻结。
 
 **状态：** CR-2026-030 下的候选；须 Draft PR 审查。
+
+## DD-055——补充确认性运行与分析脚本（用户批准 2026-11-19）
+
+**决策：** 依据 CR-2026-031 与用户 2026-11-19 指示：核实缺少运行脚本后补上。`scripts/run_cltav_confirmatory.py`：运行前校验工作树干净、登记中三个配置哈希一致，否则拒绝运行；按设计逐格运行 312 个单元格各一次；结果写入 `artifacts/confirmatory/`，每行记录提交 SHA 与配置哈希。`scripts/analyze_cltav_confirmatory.py`：只读运行结果，按登记计算 M-DETECT、M-LOCALISE、次指标、精确双侧 McNemar 与 Holm 校正。
+
+**原因：** 冻结的登记要求在登记合并提交上运行，但仓库中只有试点运行脚本，没有读取确认性设计的运行脚本。本 CR 只补充脚本，不增删或重定义任何单元格、指标、对比、检验或停止规则。
+
+**范围：** 冻结的登记要求在登记合并提交上运行，但仓库中只有试点运行脚本，没有读取确认性设计的运行脚本。本 CR 只补充脚本，不增删或重定义任何单元格、指标、对比、检验或停止规则。测试只用合成数据和空跑（列举单元格、校验哈希），不运行任何真实单元格，避免形成中期查看。
+
+**护栏：** 新 Draft PR；须独立 DM 审查。CI 不等于批准。
+
+**状态：** CR-2026-031／DD-055。新 Draft PR；须独立 DM 审查。CI 不等于批准。
+
+## DD-056——运行前修订确认性登记为 v2（用户裁决 2026-11-19）
+
+**决策：** 依据 CR-2026-032 与用户 2026-11-19 裁决：按期望行为计分，难例计入主对比。新登记文件 `configs/research/cltav_confirmatory_registration_v2.json` 取代 v1；v1 保留，标注为运行前被取代。
+
+**原因：** 登记 v1 的主指标只在真值已确定的单元上计分，因此把端点情形（`HC-FIND-ENDPOINT`，T3 真值未决）和短窗下迟到与缺失不可区分的情形（`HC-LATE-ABSENT-SHORT-WINDOW`，E3 未决等价）共 8 个单元排除在主对比之外。这些单元正是设计中为区分实验臂而加入的难例，排除它们与设计目的相矛盾。真值未决并不等于没有正确行为：这些单元的正确行为可以在运行前确定。修订发生在任何单元格运行之前，没有人看过任何确认性结果，因此不构成事后选择。
+
+**范围：** 新登记文件 `configs/research/cltav_confirmatory_registration_v2.json` 取代 v1；v1 保留，标注为运行前被取代。新增 `configs/research/cltav_confirmatory_expected_behaviour_v1.json`：为每个非 h_normal 单元预先登记期望判定与期望候选集（映射到父假设）。
+
+**护栏：** 与 CR-2026-031 同一 Draft PR；须独立 DM 审查；合并即冻结。CI 不等于批准。
+
+**状态：** CR-2026-032／DD-056。与 CR-2026-031 同一 Draft PR；须独立 DM 审查；合并即冻结。CI 不等于批准。
