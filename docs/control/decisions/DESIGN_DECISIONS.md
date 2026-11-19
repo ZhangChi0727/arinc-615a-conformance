@@ -1368,6 +1368,57 @@ to validity. Closing DEC-IUT does not close other DEC-* items.
 **Status:** Candidate under CR-2026-027. Draft PR review required. Not
 confirmatory, not Ready/merge.
 
+## DD-052 — Confirmatory design variation source (U2–U4; stub)
+
+**Decision:** Under CR-2026-028 and the 2026-11-18 user rulings, record U2–U4
+for a DRAFT confirmatory *design* on the already-closed simulated IUT. U2:
+variation is parameterised faults (late-answer delay, silence duration, ACK
+timing) and multiple base scenes, not N repetition and not unseeded
+randomness. U3: harder in-domain cases (timing-boundary, near-equivalent
+pairs, observation-side perturbation) are declared in the catalogue and
+visible to arms only through protocol events. U4: keep the R1 rule (mixed set
+containing `h_normal`, no T5 interval → INCONCLUSIVE); the manuscript must
+state it. DEC-CLOCK, DEC-EQUIV, DEC-SAMPLE, DEC-RESOURCE and DEC-TRUTH remain
+OPEN. This stub does not freeze `registration.yaml`, N, or endpoint
+inclusivity.
+
+**Why:** The non-confirmatory pilot showed identity repeats carry no
+information and accuracy metrics hit a ceiling on default model-built faults.
+A confirmatory design therefore needs a declared variation source and harder
+cases before any later run is even proposed.
+
+**Scope:** Design proposal, DRAFT cell grid, catalogue axes/harder cases, and
+simulated-IUT parameter hooks. No census, no confirmatory run, no
+`src/cltav_runtime/` semantic change, no manuscript result cells.
+
+**Guardrails:** Effect statements are hypotheses. Faults must not invent event
+names. Truth access stays evaluator-only. CI success is not approval.
+
+**Status:** Candidate under CR-2026-028. Draft PR review required. Not
+confirmatory, not Ready/merge.
+
+## DD-053 — Close confirmatory design decisions (user ruling 2026-11-19)
+
+**Decision:** Under CR-2026-029 and the 2026-11-19 user rulings, close
+DEC-CLOCK = C1, DEC-EQUIV = E3, DEC-SAMPLE = S1 (fallback S2),
+DEC-RESOURCE = R1 and DEC-TRUTH = T3. LUR-ACK: The standard gives no frozen
+numeric LUR-ACK deadline, and none is invented. The `AX-LUR-ACK-TICK` points
+are h_normal timing perturbations (truth = h_normal). They test false-fail
+robustness and are not faults. LUR faults remain presence/order only
+(F-LUR-ACK-MISSING, F-LUR-ACK-WITHOUT-WRQ).
+
+**Why:** CR-2026-028 recorded options only. The 2026-11-19 user ruling selects
+the closed confirmatory-design values without running a census.
+
+**Scope:** Control record only (this DD and CR-2026-029). No census, no
+confirmatory run, no `src/cltav_runtime/` semantic change, no manuscript
+result cells.
+
+**Guardrails:** Effect statements are hypotheses. CI success is not approval.
+
+**Status:** Candidate under CR-2026-029. Draft PR review required. Not
+confirmatory, not Ready/merge.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -2109,3 +2160,40 @@ DEC-EQUIV、DEC-SAMPLE 与 DEC-RESOURCE 保持 OPEN。本决定不声明确认�
 仍是效度威胁。关闭 DEC-IUT 并不关闭其他 DEC-*。
 
 **状态：** 在 CR-2026-027 下为候选。须 Draft PR 审查。不是确认性实验或 Ready／合并。
+
+## DD-052——确认性设计变异来源（U2–U4；stub）
+
+**决定：** 在 CR-2026-028 与 2026-11-18 用户裁决下，记录 U2–U4，作为已关闭模拟
+IUT 上的 DRAFT 确认性*设计*。U2：变异为参数化故障（迟答延迟、静默时长、ACK
+时序）与多基准场景，不是 N 次重复，也不是无种子随机。U3：困难域内情形（时序
+边界、近等价对、观测侧扰动）在目录中声明，且仅通过协议事件对臂可见。U4：保
+留 R1（含 `h_normal` 且无 T5 区间的混合集 → INCONCLUSIVE）；稿件必须陈述该
+规则。DEC-CLOCK、DEC-EQUIV、DEC-SAMPLE、DEC-RESOURCE 与 DEC-TRUTH 保持 OPEN。
+本 stub 不冻结 `registration.yaml`、N 或端点开闭性。
+
+**理由：** 非确认性试点表明身份重复不携带信息，且默认模型内建故障上准确率
+指标触顶。因此在提议任何后续运行之前，确认性设计必须先声明变异来源与困难
+情形。
+
+**范围：** 设计提案、DRAFT 单元格网格、目录轴／困难情形与模拟 IUT 参数挂钩。
+无普查、无确认性运行、不改变 `src/cltav_runtime/` 语义、不填写稿件结果格。
+
+**护栏：** 效果陈述均为假设。故障不得发明事件名。真值访问保持仅评估端。CI
+通过不等于批准。
+
+**状态：** 在 CR-2026-028 下为候选。须 Draft PR 审查。不是确认性实验或 Ready／合并。
+
+## DD-053——关闭确认性设计决策（用户裁定 2026-11-19）
+
+**决定：** 在 CR-2026-029 与 2026-11-19 用户裁决下关闭：DEC-CLOCK = C1：对观测区间采用 T5 子集规则（含于需求区间为在窗内，不相交为迟到，部分相交为 INCONCLUSIVE）。DEC-EQUIV = E3：边界或短窗下 LATE 与 ABSENT 的关系保持 UNRESOLVED，并作为未决等价在运行前排除。默认窗口下，LATE 与 ABSENT 仍为两个故障。DEC-SAMPLE = S1：全网格，每个独立单位（基准场景 × 故障 × 参数向量）N = 1。S2（仅困难子集）为声明的资源回退方案。DEC-RESOURCE = R1：ROUNDS，remaining = 8，每次运行单一资源模式。DEC-TRUTH = T3：有无与顺序类故障使用确认标记；端点与等价情形保持未决。
+
+**LUR-ACK 计时裁定：** 标准没有给出冻结的 LUR-ACK 数值时限，本设计也不自行设定。`AX-LUR-ACK-TICK` 的各点作为 h_normal 的时序扰动（真值 = h_normal），用于检验误报稳健性，不构成故障。LUR 故障仅保留有无与顺序两类（F-LUR-ACK-MISSING、F-LUR-ACK-WITHOUT-WRQ）。
+
+**理由：** CR-2026-028 仅记录选项。2026-11-19 用户裁决选定确认性设计取值，不运行普查。
+
+**范围：** 仅控制记录（本 DD 与 CR-2026-029）。无普查、无确认性运行、不改变 `src/cltav_runtime/` 语义、不填写稿件结果格。
+
+**护栏：** 效果陈述均为假设。CI 通过不等于批准。
+
+**状态：** 在 CR-2026-029 下为候选。须 Draft PR 审查。不是确认性实验或 Ready／合并。
+

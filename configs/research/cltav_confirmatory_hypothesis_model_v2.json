@@ -1,0 +1,354 @@
+{
+  "actions": {
+    "TEST-ABORT": {
+      "h_find_answer_absent": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "ABORT",
+        "present": true
+      },
+      "h_find_answer_late": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "ABORT",
+        "present": true
+      },
+      "h_find_answer_late@boundary": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "ABORT",
+        "present": true
+      },
+      "h_lur_ack_missing": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "ABORT",
+        "present": true
+      },
+      "h_lur_ack_without_wrq": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "ABORT",
+        "present": true
+      },
+      "h_normal": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "ABORT",
+        "present": true
+      },
+      "h_normal@near-boundary": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "ABORT",
+        "present": true
+      },
+      "h_status_silence": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "ABORT",
+        "present": true
+      }
+    },
+    "TEST-FIND": {
+      "h_find_answer_absent": {
+        "measurementTick": {
+          "numerator": 0,
+          "positiveDenominator": 1
+        },
+        "observable": "FIND-REQUEST-RECEIVED",
+        "present": false
+      },
+      "h_find_answer_late": {
+        "measurementTick": {
+          "numerator": 41,
+          "positiveDenominator": 20
+        },
+        "observable": "FIND-ANSWER-LATE",
+        "present": true
+      },
+      "h_find_answer_late@boundary": {
+        "measurementTick": {
+          "numerator": 2,
+          "positiveDenominator": 1
+        },
+        "observable": "FIND-ANSWER-BOUNDARY",
+        "present": true
+      },
+      "h_lur_ack_missing": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "FIND-ANSWER",
+        "present": true
+      },
+      "h_lur_ack_without_wrq": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "FIND-ANSWER",
+        "present": true
+      },
+      "h_normal": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "FIND-ANSWER",
+        "present": true
+      },
+      "h_normal@near-boundary": {
+        "measurementTick": {
+          "numerator": 3999,
+          "positiveDenominator": 2000
+        },
+        "observable": "FIND-ANSWER-BOUNDARY",
+        "present": true
+      },
+      "h_status_silence": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "FIND-ANSWER",
+        "present": true
+      }
+    },
+    "TEST-INFORMATION": {
+      "h_find_answer_absent": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "COMPLETED",
+        "present": true
+      },
+      "h_find_answer_late": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "COMPLETED",
+        "present": true
+      },
+      "h_find_answer_late@boundary": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "COMPLETED",
+        "present": true
+      },
+      "h_lur_ack_missing": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "COMPLETED",
+        "present": true
+      },
+      "h_lur_ack_without_wrq": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "COMPLETED",
+        "present": true
+      },
+      "h_normal": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "COMPLETED",
+        "present": true
+      },
+      "h_normal@near-boundary": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 100
+        },
+        "observable": "COMPLETED",
+        "present": true
+      },
+      "h_status_silence": {
+        "measurementTick": {
+          "numerator": 10201,
+          "positiveDenominator": 1000
+        },
+        "observable": "STATUS",
+        "present": false
+      }
+    },
+    "TEST-SEND": {
+      "h_find_answer_absent": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 50
+        },
+        "observable": "LUR-COMPLETE",
+        "present": true
+      },
+      "h_find_answer_late": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 50
+        },
+        "observable": "LUR-COMPLETE",
+        "present": true
+      },
+      "h_find_answer_late@boundary": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 50
+        },
+        "observable": "LUR-COMPLETE",
+        "present": true
+      },
+      "h_lur_ack_missing": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 50
+        },
+        "observable": "LUR-WRQ",
+        "present": false
+      },
+      "h_lur_ack_without_wrq": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 50
+        },
+        "observable": "LUR-ACK",
+        "present": true
+      },
+      "h_normal": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 50
+        },
+        "observable": "LUR-COMPLETE",
+        "present": true
+      },
+      "h_normal@near-boundary": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 50
+        },
+        "observable": "LUR-COMPLETE",
+        "present": true
+      },
+      "h_status_silence": {
+        "measurementTick": {
+          "numerator": 1,
+          "positiveDenominator": 50
+        },
+        "observable": "LUR-COMPLETE",
+        "present": true
+      }
+    }
+  },
+  "hypothesisIds": [
+    "h_normal",
+    "h_normal@near-boundary",
+    "h_find_answer_late",
+    "h_find_answer_late@boundary",
+    "h_find_answer_absent",
+    "h_lur_ack_missing",
+    "h_lur_ack_without_wrq",
+    "h_status_silence"
+  ],
+  "identity": {
+    "artifactId": "CLTAV-CONFIRMATORY-HYPOTHESIS-MODEL",
+    "authority": "RR-PR29-2026-002 B1: split hypotheses by fault x parameter class from the catalogue grid. S1 interval classification retained. Pilot v1 unchanged.",
+    "catalogueId": "CLTAV-H-SINGLE-SIMULATED-2026-010-B1",
+    "changeRequest": "CR-2026-028",
+    "label": "SIMULATED-IUT",
+    "pilotInterfaceNote": "Pilot census artefacts were produced against the v1 tick-classified interface and are not regenerated here.",
+    "status": "DRAFT",
+    "version": "2"
+  },
+  "intervalRule": {
+    "contained": "FIND-ANSWER (in window)",
+    "disjoint": "FIND-ANSWER-LATE",
+    "note": "FIND-ANSWER-BOUNDARY is an observation class, not a protocol event name. Variants are generated from the catalogue grid.",
+    "partialOverlap": "FIND-ANSWER-BOUNDARY",
+    "source": "EXP-PLAN-2026-001 T5; clock.t5_interval_verdict; CRS-M1-00391 closed [0, 2]"
+  },
+  "notes": [
+    "Pilot hypothesis model v1 is unmodified.",
+    "v2 splits FIND hypotheses by T5 interval class on the catalogue grid.",
+    "h_normal@near-boundary and h_find_answer_late@boundary both emit FIND-ANSWER-BOUNDARY so a boundary observation retains both parents after evaluator mapping.",
+    "The evaluator table parentByVariant maps variants to catalogue parents for truth retention, singleton scoring, and R1.",
+    "LATE and ABSENT remain two parent hypotheses (DEC-EQUIV OPEN)."
+  ],
+  "observationClasses": [
+    "FIND-ANSWER",
+    "FIND-ANSWER-LATE",
+    "FIND-ANSWER-BOUNDARY",
+    "FIND-REQUEST-RECEIVED",
+    "LUR-COMPLETE",
+    "LUR-WRQ",
+    "LUR-ACK",
+    "ABORT",
+    "COMPLETED",
+    "STATUS"
+  ],
+  "parameterClasses": {
+    "h_find_answer_late:FIND-ANSWER-BOUNDARY": {
+      "measurementTick": "2",
+      "observable": "FIND-ANSWER-BOUNDARY",
+      "parent": "h_find_answer_late",
+      "source": "HC-FIND-ENDPOINT",
+      "variant": "h_find_answer_late@boundary"
+    },
+    "h_find_answer_late:FIND-ANSWER-LATE": {
+      "measurementTick": "1001/500",
+      "observable": "FIND-ANSWER-LATE",
+      "parent": "h_find_answer_late",
+      "source": "FIND-TICK-FAIL-2EPS",
+      "variant": "h_find_answer_late"
+    },
+    "h_normal:FIND-ANSWER": {
+      "measurementTick": "1/100",
+      "observable": "FIND-ANSWER",
+      "parent": "h_normal",
+      "source": "default-normal",
+      "variant": "h_normal"
+    },
+    "h_normal:FIND-ANSWER-BOUNDARY": {
+      "measurementTick": "3999/2000",
+      "observable": "FIND-ANSWER-BOUNDARY",
+      "parent": "h_normal",
+      "source": "FIND-TICK-NORMAL-NEAR-BOUNDARY",
+      "variant": "h_normal@near-boundary"
+    }
+  },
+  "parentByVariant": {
+    "h_find_answer_absent": "h_find_answer_absent",
+    "h_find_answer_late": "h_find_answer_late",
+    "h_find_answer_late@boundary": "h_find_answer_late",
+    "h_lur_ack_missing": "h_lur_ack_missing",
+    "h_lur_ack_without_wrq": "h_lur_ack_without_wrq",
+    "h_normal": "h_normal",
+    "h_normal@near-boundary": "h_normal",
+    "h_status_silence": "h_status_silence"
+  }
+}

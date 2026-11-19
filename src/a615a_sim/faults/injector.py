@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from fractions import Fraction
 from typing import Any, Mapping
 from uuid import uuid4
 
@@ -20,6 +21,39 @@ from a615a_sim.faults.catalogue import (
     entry_by_id,
     require_applicable,
 )
+
+ALLOWED_PARAMETER_KEYS = {
+    "H-NORMAL": frozenset({"lurAckAtS", "observationJitterS", "findAnswerAtS"}),
+    "F-FIND-ANSWER-LATE": frozenset({"findAnswerAtS", "observationJitterS"}),
+    "F-FIND-ANSWER-ABSENT": frozenset({"findObservationEndS", "observationJitterS"}),
+    "F-STATUS-SILENCE": frozenset({"statusSilenceUntilS", "observationJitterS"}),
+    "F-LUR-ACK-MISSING": frozenset({"observationJitterS"}),
+    "F-LUR-ACK-WITHOUT-WRQ": frozenset({"observationJitterS"}),
+    "H-SAME-KEY": frozenset({"observationJitterS"}),
+    "H-INVALID-OBS": frozenset({"observationJitterS"}),
+    "H-RESOURCE-ERROR": frozenset({"observationJitterS"}),
+}
+
+
+def require_matching_parameters(
+    fault_id: str, parameters: Mapping[str, Any] | None
+) -> None:
+    """Reject parameter keys that do not belong to this fault overlay."""
+
+    canonical = canonical_fault_id(fault_id)
+    keys = {str(key) for key in dict(parameters or {})}
+    allowed = ALLOWED_PARAMETER_KEYS.get(canonical, frozenset())
+    extra = keys - allowed
+    if extra:
+        raise ValueError(
+            f"parameter keys {sorted(extra)} do not match fault {canonical}"
+        )
+    if canonical == "H-NORMAL" and parameters and parameters.get("findAnswerAtS") is not None:
+        tick = Fraction(str(parameters["findAnswerAtS"]))
+        if tick > FIND_HOST_ANSWER_S:
+            raise ValueError(
+                f"parameter keys ['findAnswerAtS'] do not match fault {canonical}"
+            )
 
 
 @dataclass(frozen=True)
@@ -86,16 +120,18 @@ def _observe_signature(target: SimulatedTarget, fault_id: str) -> str | None:
             return None
         return "H-NORMAL"
     if canonical == "F-FIND-ANSWER-LATE":
+        expected_late = getattr(target, "_find_answer_at", None) or FIND_ANSWER_LATE_AT_S
         late = [
             event
             for event in answers
             if FIND_HOST_ANSWER_S < event.tick < FIND_OBSERVATION_END_S
-            and event.tick == FIND_ANSWER_LATE_AT_S
+            and event.tick == expected_late
         ]
         return "FIND-ANSWER-LATE" if late else None
     if canonical == "F-FIND-ANSWER-ABSENT":
         requested = any(event.kind == "FIND-REQUEST-RECEIVED" for event in target.events)
-        halted = target.clock.now == declared_observation_end("FIND")
+        halt_at = getattr(target, "_find_observation_end", None) or declared_observation_end("FIND")
+        halted = target.clock.now == halt_at
         return "FIND-ANSWER-ABSENT" if requested and not answers and halted else None
     if canonical == "F-LUR-ACK-MISSING":
         return "LUR-ACK-MISSING" if wrq and not ack else None
@@ -105,7 +141,8 @@ def _observe_signature(target: SimulatedTarget, fault_id: str) -> str | None:
         delayed = any(event.payload.get("exceptionDelaySeconds") == "10" for event in statuses)
         follow_on_status = len(statuses) > 1
         tester_abort = any(event.kind == "ABORT" for event in target.events)
-        at_end = target.clock.now >= INFORMATION_OBSERVATION_END_S
+        silence_end = getattr(target, "_status_until", None) or INFORMATION_OBSERVATION_END_S
+        at_end = target.clock.now >= silence_end
         return "STATUS-SILENCE" if delayed and not follow_on_status and tester_abort and at_end else None
     if canonical == "H-SAME-KEY":
         ids = [event.correlation_id for event in target.events if event.kind == "STATUS"]
@@ -162,15 +199,21 @@ def _drive_for_confirmation(
 
 
 def overlay_declared_fault(
-    target: SimulatedTarget, *, scene_id: str, fault_id: str
+    target: SimulatedTarget,
+    *,
+    scene_id: str,
+    fault_id: str,
+    parameters: Mapping[str, Any] | None = None,
 ) -> None:
     """Install scene and fault overlay without driving confirmation traces."""
 
     canonical = canonical_fault_id(fault_id)
     require_applicable(scene_id, canonical)
+    require_matching_parameters(canonical, parameters)
     overlay = None if canonical == "H-NORMAL" else canonical
     target.install_scene(scene_id)
     target.install_fault(overlay)
+    target.install_parameters(parameters)
 
 
 def inject(
@@ -182,13 +225,16 @@ def inject(
     confirm: bool = True,
     truth_store: Any | None = None,
     truth_capability: Any | None = None,
+    parameters: Mapping[str, Any] | None = None,
 ) -> InjectionAttempt:
     """Overlay one declared fault on an applicable scene.  Planned is not confirmed."""
 
     require_applicable(scene_id, fault_id)
     canonical = canonical_fault_id(fault_id)
     attempt = attempt_id or f"A-{uuid4().hex[:12]}"
-    overlay_declared_fault(target, scene_id=scene_id, fault_id=canonical)
+    overlay_declared_fault(
+        target, scene_id=scene_id, fault_id=canonical, parameters=parameters
+    )
     observed = None
     if confirm:
         _drive_for_confirmation(

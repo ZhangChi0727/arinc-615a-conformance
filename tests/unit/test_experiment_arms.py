@@ -4,12 +4,25 @@ from __future__ import annotations
 
 import ast
 import inspect
+import json
+from fractions import Fraction
 from pathlib import Path
 
 import pytest
 
 from a615a_sim.algorithm.adapter import REGISTERED_ARMS, run_arm
-from a615a_sim.algorithm.hypothesis_model import public_hypothesis_ids
+from a615a_sim.algorithm.hypothesis_model import (
+    FIND_ANSWER_BOUNDARY,
+    VARIANT_LATE_BOUNDARY,
+    VARIANT_NORMAL_NEAR_BOUNDARY,
+    build_confirmatory_hypothesis_model_v2,
+    classify_observable,
+    confirmatory_hypothesis_ids,
+    load_confirmatory_hypothesis_model_v2,
+    load_pilot_hypothesis_model,
+    map_to_parent_hypotheses,
+    public_hypothesis_ids,
+)
 from a615a_sim.algorithm.library import (
     ACTION_ANALYSIS,
     ACTION_LIBRARY,
@@ -19,7 +32,7 @@ from a615a_sim.algorithm.library import (
     STOP_CLASSES,
     predetermined_test_sequence,
 )
-from a615a_sim.bound_iut.protocol import SimulatedTarget
+from a615a_sim.bound_iut.protocol import PROTOCOL_EVENT_WHITELIST, SimulatedTarget
 from a615a_sim.clock import SimulatedClock
 from a615a_sim.evaluator import (
     issue_truth_capability,
@@ -29,7 +42,7 @@ from a615a_sim.evaluator import (
 from a615a_sim.evaluator.guard import TruthLeakageError
 from a615a_sim.evaluator.reset import reset_target
 from a615a_sim.faults.catalogue import evaluator_fault_plan
-from a615a_sim.faults.injector import overlay_declared_fault
+from a615a_sim.faults.injector import inject, overlay_declared_fault
 from cltav_runtime.session import ReferenceSession
 
 
@@ -108,7 +121,7 @@ def test_four_arms_run_on_same_scene_fault(scene_id: str, fault_id: str) -> None
         assert run.arm_id == arm_id
         assert run.stop_class in STOP_CLASSES
         assert run.candidate_hypotheses
-        assert set(run.candidate_hypotheses) <= set(public_hypothesis_ids())
+        assert set(map_to_parent_hypotheses(run.candidate_hypotheses)) <= set(public_hypothesis_ids())
         assert run.resource_mode == "ROUNDS"
         assert set(run.issued_actions) <= set(ACTION_LIBRARY)
         blob = repr(run.as_mapping())
@@ -296,3 +309,196 @@ def test_late_and_absent_remain_two_hypotheses() -> None:
     assert ids.count("h_find_answer_absent") == 1
     assert ids[0] == "h_normal"
     assert len(ids) == 6
+
+
+def test_find_answer_classifies_by_interval_not_tick() -> None:
+    contained = {
+        "kind": "FIND-ANSWER",
+        "observationInterval": {"lower": "0", "upper": "2", "unit": "second"},
+    }
+    disjoint = {
+        "kind": "FIND-ANSWER",
+        "observationInterval": {"lower": "2001/1000", "upper": "2003/1000", "unit": "second"},
+    }
+    overlap = {
+        "kind": "FIND-ANSWER",
+        "observationInterval": {"lower": "1999/1000", "upper": "2001/1000", "unit": "second"},
+    }
+    assert classify_observable(ACTION_TEST_FIND, contained) == "FIND-ANSWER"
+    assert classify_observable(ACTION_TEST_FIND, disjoint) == "FIND-ANSWER-LATE"
+    assert classify_observable(ACTION_TEST_FIND, overlap) == FIND_ANSWER_BOUNDARY
+    assert FIND_ANSWER_BOUNDARY not in PROTOCOL_EVENT_WHITELIST
+
+
+def test_v2_model_matches_interval_classes_on_grid_defaults() -> None:
+    from a615a_sim.clock import ClosedInterval, SIMULATED_EPSILON, find_host_requirement, t5_interval_verdict
+
+    v1 = load_pilot_hypothesis_model()
+    v2 = load_confirmatory_hypothesis_model_v2()
+    assert v1["identity"]["version"] == "1"
+    assert v2["identity"]["version"] == "2"
+    assert v1["actions"]["TEST-FIND"]["h_find_answer_late"]["observable"] == "FIND-ANSWER-LATE"
+    find_table = v2["actions"]["TEST-FIND"]
+    requirement = find_host_requirement()
+
+    def _class_for(tick_map: dict[str, int]) -> str:
+        tick = Fraction(tick_map["numerator"], tick_map["positiveDenominator"])
+        interval = ClosedInterval(tick - SIMULATED_EPSILON, tick + SIMULATED_EPSILON)
+        verdict = t5_interval_verdict(interval, requirement)
+        if verdict == "PASS":
+            return "FIND-ANSWER"
+        if verdict == "FAIL":
+            return "FIND-ANSWER-LATE"
+        return FIND_ANSWER_BOUNDARY
+
+    for _hypothesis, row in find_table.items():
+        if not row["present"]:
+            assert row["observable"] == "FIND-REQUEST-RECEIVED"
+            continue
+        assert row["observable"] == _class_for(row["measurementTick"])
+
+
+def test_jitter_changes_find_observation_class_at_endpoint() -> None:
+    def _class(jitter: str) -> str:
+        target = _target()
+        inject(
+            target,
+            scene_id="SC-NORMAL-UPLOAD",
+            fault_id="F-FIND-ANSWER-LATE",
+            parameters={"findAnswerAtS": "2", "observationJitterS": jitter},
+        )
+        answer = next(
+            row for row in target.algorithm_visible_records() if row["kind"] == "FIND-ANSWER"
+        )
+        assert "tick" not in answer
+        return classify_observable(ACTION_TEST_FIND, answer)
+
+    assert _class("0") == FIND_ANSWER_BOUNDARY
+    assert _class("1/500") == "FIND-ANSWER-LATE"
+    assert _class("-1/500") == "FIND-ANSWER"
+
+
+def test_v2_is_generated_from_catalogue_grid() -> None:
+    built = build_confirmatory_hypothesis_model_v2()
+    stored = load_confirmatory_hypothesis_model_v2()
+    assert built["hypothesisIds"] == list(stored["hypothesisIds"])
+    assert built["parentByVariant"] == stored["parentByVariant"]
+    assert built["actions"]["TEST-FIND"][VARIANT_LATE_BOUNDARY]["observable"] == FIND_ANSWER_BOUNDARY
+    assert built["actions"]["TEST-FIND"][VARIANT_NORMAL_NEAR_BOUNDARY]["observable"] == FIND_ANSWER_BOUNDARY
+    assert stored["parentByVariant"][VARIANT_LATE_BOUNDARY] == "h_find_answer_late"
+    assert stored["parentByVariant"][VARIANT_NORMAL_NEAR_BOUNDARY] == "h_normal"
+
+
+def test_v2_is_generated_from_catalogue_grid() -> None:
+    built = build_confirmatory_hypothesis_model_v2()
+    stored = load_confirmatory_hypothesis_model_v2()
+    assert built["hypothesisIds"] == list(stored["hypothesisIds"])
+    assert built["parentByVariant"] == stored["parentByVariant"]
+    assert built["actions"]["TEST-FIND"][VARIANT_LATE_BOUNDARY]["observable"] == FIND_ANSWER_BOUNDARY
+    assert built["actions"]["TEST-FIND"][VARIANT_NORMAL_NEAR_BOUNDARY]["observable"] == FIND_ANSWER_BOUNDARY
+    assert stored["parentByVariant"][VARIANT_LATE_BOUNDARY] == "h_find_answer_late"
+    assert stored["parentByVariant"][VARIANT_NORMAL_NEAR_BOUNDARY] == "h_normal"
+
+
+def test_endpoint_answer_never_yields_stop_empty() -> None:
+    target = _target()
+    inject(
+        target,
+        scene_id="SC-NORMAL-UPLOAD",
+        fault_id="F-FIND-ANSWER-LATE",
+        parameters={"findAnswerAtS": "2"},
+    )
+    run = run_arm(
+        "CL-T",
+        target,
+        scene_id="SC-NORMAL-UPLOAD",
+        resource_mode="ROUNDS",
+        remaining=8,
+        correlation_id="boundary-late",
+    )
+    assert run.candidate_hypotheses
+    assert run.stop_class != "Stop-Empty"
+    assert FIND_ANSWER_BOUNDARY in {
+        classify_observable(ACTION_TEST_FIND, row)
+        for row in run.observation_log
+        if row["kind"] == "FIND-ANSWER"
+    }
+
+
+def test_boundary_observation_retains_both_parents() -> None:
+    from a615a_sim.algorithm.hypothesis_model import consistent_hypotheses
+
+    target = _target()
+    inject(
+        target,
+        scene_id="SC-NORMAL-UPLOAD",
+        fault_id="F-FIND-ANSWER-LATE",
+        parameters={"findAnswerAtS": "2"},
+    )
+    answer = next(row for row in target.algorithm_visible_records() if row["kind"] == "FIND-ANSWER")
+    remaining = consistent_hypotheses([ACTION_TEST_FIND], [answer])
+    assert VARIANT_NORMAL_NEAR_BOUNDARY in remaining
+    assert VARIANT_LATE_BOUNDARY in remaining
+    assert map_to_parent_hypotheses(remaining) == ("h_normal", "h_find_answer_late")
+
+
+def test_every_v2_emission_class_has_a_grid_point() -> None:
+    from a615a_sim.algorithm.library import ACTION_TEST_ABORT
+    from a615a_sim.faults.parameters import expand_independent_units
+
+    v2 = load_confirmatory_hypothesis_model_v2()
+    required = {row["observable"] for table in v2["actions"].values() for row in table.values()}
+    produced: set[str] = set()
+    for unit in expand_independent_units():
+        target = _target()
+        inject(
+            target,
+            scene_id=unit["sceneId"],
+            fault_id=unit["faultId"],
+            parameters=unit["parameters"],
+        )
+        previous_kind = None
+        for record in target.algorithm_visible_records():
+            kind = record["kind"]
+            if kind in {"FIND-ANSWER", "FIND-REQUEST-RECEIVED"}:
+                produced.add(classify_observable(ACTION_TEST_FIND, record))
+            elif kind == "COMPLETED" and previous_kind == "STATUS":
+                produced.add(classify_observable(ACTION_TEST_INFORMATION, record))
+            elif kind in {"COMPLETED", "WAIT", "CONTINUE", "ABORT", "LUR-WRQ", "LUR-ACK"}:
+                produced.add(classify_observable(ACTION_TEST_SEND, record))
+            elif kind == "STATUS":
+                produced.add(classify_observable(ACTION_TEST_INFORMATION, record))
+            previous_kind = kind
+        abort_target = _target()
+        overlay_declared_fault(abort_target, scene_id="SC-NORMAL-UPLOAD", fault_id="H-NORMAL")
+        abort_target.abort("abort-class")
+        produced.add(classify_observable(ACTION_TEST_ABORT, abort_target.algorithm_visible_records()[-1]))
+        if required <= produced:
+            break
+    assert required <= produced
+
+
+def test_jitter_does_not_move_clear_point_unless_declared() -> None:
+    def _class(jitter: str) -> str:
+        target = _target()
+        inject(
+            target,
+            scene_id="SC-NORMAL-UPLOAD",
+            fault_id="F-FIND-ANSWER-LATE",
+            parameters={"findAnswerAtS": "21/10", "observationJitterS": jitter},
+        )
+        answer = next(
+            row for row in target.algorithm_visible_records() if row["kind"] == "FIND-ANSWER"
+        )
+        return classify_observable(ACTION_TEST_FIND, answer)
+
+    assert _class("0") == "FIND-ANSWER-LATE"
+    assert _class("1/500") == "FIND-ANSWER-LATE"
+    assert _class("-1/500") == "FIND-ANSWER-LATE"
+
+
+def test_v2_model_file_matches_builder() -> None:
+    built = build_confirmatory_hypothesis_model_v2()
+    path = Path("configs/research/cltav_confirmatory_hypothesis_model_v2.json")
+    committed = json.loads(path.read_text(encoding="utf-8"))
+    assert built == committed

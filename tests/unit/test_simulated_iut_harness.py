@@ -69,7 +69,8 @@ def test_bound_model_find_send_abort_and_information() -> None:
     aborted = _target().abort("c-abort")
     info = _target().information("c-info")
     assert found["kind"] == "FIND-ANSWER" and found["label"] == "SIMULATED-IUT"
-    assert found["tick"] == str(FIND_ANSWER_NORMAL_AT_S)
+    assert "tick" not in found
+    assert found["observationInterval"]["lower"]
     assert sent["kind"] == "COMPLETED"
     assert aborted["kind"] == "ABORT"
     assert info["kind"] == "COMPLETED"
@@ -503,18 +504,26 @@ def test_two_faults_in_one_scene_differ_only_by_timing_presence_or_order() -> No
         reset_target(target)
         inject(target, scene_id=scene_id, fault_id=fault_id)
         records = target.algorithm_visible_records()
-        streams[fault_id] = [(record["kind"], record["tick"]) for record in records]
+        streams[fault_id] = [
+            (record["kind"], record["observationInterval"]["lower"], record["observationInterval"]["upper"])
+            for record in records
+        ]
         payloads[fault_id] = [frozenset(record["payload"].keys()) for record in records]
-        assert {kind for kind, _tick in streams[fault_id]} <= PROTOCOL_EVENT_WHITELIST
+        assert {kind for kind, _lower, _upper in streams[fault_id]} <= PROTOCOL_EVENT_WHITELIST
+        assert all("tick" not in record for record in records)
     assert streams["H-NORMAL"] != streams["F-FIND-ANSWER-LATE"]
     assert streams["F-FIND-ANSWER-LATE"] != streams["F-FIND-ANSWER-ABSENT"]
-    normal_kinds = [kind for kind, _tick in streams["H-NORMAL"] if kind.startswith("FIND")]
-    late_kinds = [kind for kind, _tick in streams["F-FIND-ANSWER-LATE"] if kind.startswith("FIND")]
+    normal_kinds = [kind for kind, _lower, _upper in streams["H-NORMAL"] if kind.startswith("FIND")]
+    late_kinds = [kind for kind, _lower, _upper in streams["F-FIND-ANSWER-LATE"] if kind.startswith("FIND")]
     assert normal_kinds == late_kinds == ["FIND-REQUEST-RECEIVED", "FIND-ANSWER"]
-    normal_answer = next(tick for kind, tick in streams["H-NORMAL"] if kind == "FIND-ANSWER")
-    late_answer = next(tick for kind, tick in streams["F-FIND-ANSWER-LATE"] if kind == "FIND-ANSWER")
+    normal_answer = next(
+        (lower, upper) for kind, lower, upper in streams["H-NORMAL"] if kind == "FIND-ANSWER"
+    )
+    late_answer = next(
+        (lower, upper) for kind, lower, upper in streams["F-FIND-ANSWER-LATE"] if kind == "FIND-ANSWER"
+    )
     assert normal_answer != late_answer
-    assert "FIND-ANSWER" not in {kind for kind, _tick in streams["F-FIND-ANSWER-ABSENT"]}
+    assert "FIND-ANSWER" not in {kind for kind, _lower, _upper in streams["F-FIND-ANSWER-ABSENT"]}
     lur_missing = _target()
     lur_unmatched = _target()
     inject(lur_missing, scene_id=scene_id, fault_id="F-LUR-ACK-MISSING")

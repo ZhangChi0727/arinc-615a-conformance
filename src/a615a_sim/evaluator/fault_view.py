@@ -17,5 +17,6 @@ def evaluator_fault_record(target: SimulatedTarget, capability: object = None) -
     return {
         "faultId": target._fault_id,
         "sceneId": target._scene_id,
+        "events": target.evaluator_timed_records(),
         "label": "EVALUATOR-ONLY",
     }

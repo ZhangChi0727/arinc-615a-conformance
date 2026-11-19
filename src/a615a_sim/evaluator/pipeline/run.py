@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Mapping
 
 from a615a_sim.algorithm.adapter import run_arm
+from a615a_sim.algorithm.hypothesis_model import map_to_parent_hypotheses
 from a615a_sim.algorithm.library import ArmRun
 from a615a_sim.bound_iut.protocol import SimulatedTarget
 
@@ -33,13 +34,14 @@ def run_registered_arm(
     mapping = arm_run.as_mapping()
     issued = list(arm_run.issued_actions)
     hypotheses = list(arm_run.candidate_hypotheses)
-    localization = bool(hypotheses) and arm_run.stop_class not in {
+    parent_hypotheses = list(map_to_parent_hypotheses(hypotheses))
+    localization = bool(parent_hypotheses) and arm_run.stop_class not in {
         "Stop-Error",
         "Stop-Empty",
         "Stop-645",
         "Stop-Budget",
     }
-    singleton = localization and len(hypotheses) == 1 and arm_run.stop_class == "Stop-Singleton"
+    singleton = localization and len(parent_hypotheses) == 1 and arm_run.stop_class == "Stop-Singleton"
     if not issued and arm_run.stop_class == "Stop-Budget":
         stage = "PRE-ACTION"
     elif arm_run.stop_class in {"Stop-Empty", "Stop-645"}:
