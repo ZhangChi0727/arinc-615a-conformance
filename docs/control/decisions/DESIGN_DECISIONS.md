@@ -1484,6 +1484,30 @@ approval. Freeze on merge. No interim look.
 **Status:** Candidate under CR-2026-032. Same Draft PR as CR-2026-031.
 Independent DM review required.
 
+## DD-057 — Void the first confirmatory run and fix the runner (user ruling 2026-11-20)
+
+**Decision:** Under CR-2026-033 and the 2026-11-20 user ruling, void the first
+confirmatory run at `f5fe943` (all 312 cells MISSING from a runner guard
+defect; no verdicts were produced), archive it, fix the runner so the
+e1-inject guard still runs from an allowed evaluator or injector module,
+and add registration v3 with unchanged cells, metrics, contrasts, tests
+and stopping rules. The confirmatory grid is pending re-execution on the
+merge commit.
+
+**Why:** The run produced no verdicts. The guard behaved correctly; the
+defect was the script-module caller. Re-running after the tooling fix is
+not post-hoc selection.
+
+**Scope:** Void archive, runner fix, a published-pilot-identical e2e test,
+registration v3, and control records. No `src/` change. This CR does not
+re-run the 312-cell grid.
+
+**Guardrails:** New Draft PR; independent DM review required. CI is not
+approval. No interim look.
+
+**Status:** Candidate under CR-2026-033. New Draft PR. Independent DM
+review required.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -2297,3 +2321,16 @@ IUT 上的 DRAFT 确认性*设计*。U2：变异为参数化故障（迟答延�
 **护栏：** 与 CR-2026-031 同一 Draft PR；须独立 DM 审查；合并即冻结。CI 不等于批准。
 
 **状态：** CR-2026-032／DD-056。与 CR-2026-031 同一 Draft PR；须独立 DM 审查；合并即冻结。CI 不等于批准。
+
+## DD-057——作废首次确认性运行并修复运行脚本（用户裁决 2026-11-20）
+
+**决策：** 依据 CR-2026-033 与用户 2026-11-20 裁决：作废无效运行，修复后在新合并提交上重跑全部 312 格。
+
+**原因：** 2026-11-20 在 `f5fe943` 上执行了首次确认性运行。312 个单元格全部记为 MISSING：运行脚本为注入单元参数而自建的注入包装函数位于脚本模块内，并在其中调用真值访问守卫；守卫要求直接调用者属于评估或注入模块，因此每次注入都以 `TruthLeakageError` 被拒绝。守卫行为正确，缺陷在运行脚本。所有行的判定均为空，没有人看到任何确认性单元格的结果，因此修复后重跑不涉及结果驱动的选择。
+
+**范围：** 首次运行原样归档于 `artifacts/confirmatory/void-run-1/`；修复运行脚本；登记 v2 的单元格、指标、对比、检验与停止规则不变，新增登记 v3。
+
+**护栏：** 新 Draft PR；须独立 DM 审查。CI 不等于批准。
+
+**状态：** CR-2026-033／DD-057。新 Draft PR；须独立 DM 审查。CI 不等于批准。
+

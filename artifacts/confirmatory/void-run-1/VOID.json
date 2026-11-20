@@ -1,0 +1,11 @@
+{
+  "label": "VOID / RUN-TOOLING-DEFECT / NO VERDICTS",
+  "runCommit": "f5fe943f7104d2d57dcf82ba43670096d73f5bc8",
+  "cause": "scripts/run_cltav_confirmatory.py replacement run_inject called deny_algorithm_truth_access from the script module, so IF-EXP-TRUTH e1-inject denied every cell.",
+  "authority": "CR-2026-033 / DD-057",
+  "files": {
+    "cltav_confirmatory_attempts_v1.jsonl": "6ab1efd031c280a94af3b53a951873d12107af90f2e6d956cd9f9d79552145d5",
+    "cltav_confirmatory_analysis_v1.json": "97e13c94374354124df187635f26de9296f4e96f3b9a5394474b95c760f43327",
+    "cltav-confirmatory-run.log": "4a58a958ddda419b312955a42b0fb8b85d7f97cbb39b955307c969a626ff9ad4"
+  }
+}

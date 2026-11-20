@@ -1,0 +1,129 @@
+{
+  "identity": {
+    "artifactId": "CLTAV-CONFIRMATORY-REGISTRATION-V3",
+    "kind": "confirmatory-registration",
+    "status": "FROZEN-ON-MERGE",
+    "label": "CONFIRMATORY / SIMULATED-IUT",
+    "authority": "CR-2026-033 / DD-057",
+    "registeredBeforeAnyRun": true,
+    "supersedes": "CLTAV-CONFIRMATORY-REGISTRATION-V2 (tooling fix only; cells, metrics, contrasts, tests and stopping rules unchanged)"
+  },
+  "codeIdentity": {
+    "baseMainCommit": "f5fe943f7104d2d57dcf82ba43670096d73f5bc8",
+    "note": "run at the merge commit of the PR that adds this file"
+  },
+  "configHashes": {
+    "configs/research/cltav_confirmatory_design_draft_v1.json": "0e506abc2e918b2f0ce492aa23ce7a7179a5c0143b97f9d2afc22fa83f42f628",
+    "configs/research/cltav_confirmatory_hypothesis_model_v2.json": "2923e20be7ad4f3e3a4158d6d99ee98452aac22f271d1fc30a7b3b8222ccdf6b",
+    "src/a615a_sim/resources/fault_catalogue.json": "c7e247aefc2a331a528d7c459a80648b93bf8ea1f58f96776f370fbcbe50d97a",
+    "configs/research/cltav_confirmatory_expected_behaviour_v1.json": "a5c9850633fb031dd190a968c7cc14a0ba97176e121437e2a05a0b06f91784a1",
+    "scripts/run_cltav_confirmatory.py": "fb0e727aa594eac913a057f8cf4002547d50358927a16c1b1bcd8e5d569334c8",
+    "scripts/analyze_cltav_confirmatory.py": "dc4ee3508d2b59fe6fbc0e3f672c61715fef87a78beab2e8fec8e62675580d68"
+  },
+  "hashedFiles": [
+    "configs/research/cltav_confirmatory_design_draft_v1.json",
+    "configs/research/cltav_confirmatory_hypothesis_model_v2.json",
+    "src/a615a_sim/resources/fault_catalogue.json",
+    "configs/research/cltav_confirmatory_expected_behaviour_v1.json",
+    "scripts/run_cltav_confirmatory.py",
+    "scripts/analyze_cltav_confirmatory.py"
+  ],
+  "decisions": {
+    "DEC-IUT": "CLOSED: local simulated 615A environment (CR-2026-027 / DD-051)",
+    "DEC-CLOCK": "C1: T5 subset rule on the observed interval; contained = in window, disjoint = late, overlap = INCONCLUSIVE",
+    "DEC-EQUIV": "E3: boundary / short-window LATE vs ABSENT stays UNRESOLVED and is excluded pre-run; under the default window LATE and ABSENT remain two faults; scored by pre-registered expected behaviour, not excluded",
+    "DEC-SAMPLE": "S1: full grid, N = 1 per unit (base scene x fault x parameter vector); S2 hard subset is the declared resource fallback",
+    "DEC-RESOURCE": "R1: ROUNDS, remaining = 8 per cell, identical across arms",
+    "DEC-TRUTH": "T3: presence/order faults use the confirmation token; endpoint and equivalence cases stay unresolved; scored by pre-registered expected behaviour, not excluded",
+    "LUR-ACK": "no deadline invented; AX-LUR-ACK-TICK points are H-NORMAL timing perturbations",
+    "R1-rule": "mixed VALID set containing h_normal without T5 resolution is INCONCLUSIVE"
+  },
+  "cells": {
+    "source": "units and cells arrays of configs/research/cltav_confirmatory_design_draft_v1.json, unchanged",
+    "unitCount": 78,
+    "arms": [
+      "CL-T",
+      "CL-A",
+      "CL-TA",
+      "CL-LOOP"
+    ],
+    "cellCount": 312,
+    "attemptsPerCell": 1,
+    "visibility": "S1: arms see observation intervals only; exact ticks are evaluator-only"
+  },
+  "metrics": {
+    "primary": [
+      {
+        "id": "M-DETECT-CORRECT",
+        "definition": "per eligible unit with an expected-behaviour entry: 1 if the arm's scored verdict is in the pre-registered acceptableVerdicts (UNDEFINED-OUTCOME is a null verdict, correct only when acceptableVerdicts exclude FAIL and PASS), else 0"
+      },
+      {
+        "id": "M-LOCALISE-CORRECT",
+        "definition": "per eligible unit with an expected-behaviour entry: 1 if the pre-registered candidateRule holds of the sorted parent-mapped final set (UNDEFINED-OUTCOME uses runRecord finalHypotheses), else 0"
+      }
+    ],
+    "secondary": [
+      {
+        "id": "M-FALSE-FAIL",
+        "definition": "share of h_normal units (including LUR-ACK perturbations) with verdict FAIL"
+      },
+      {
+        "id": "M-INCONCLUSIVE",
+        "definition": "share of units with verdict INCONCLUSIVE, per arm"
+      },
+      {
+        "id": "M-ROUNDS",
+        "definition": "rounds consumed per cell, per arm; median and range"
+      },
+      {
+        "id": "M-STOP-CLASS",
+        "definition": "count of Stop-Singleton / Stop-NoDistinguisher / Stop-Budget per arm"
+      }
+    ],
+    "secondaryAnalysis": "descriptive only; no hypothesis tests"
+  },
+  "contrasts": [
+    {
+      "id": "H1",
+      "metric": "M-DETECT-CORRECT",
+      "comparison": "CL-LOOP vs CL-T",
+      "pairing": "same unit",
+      "test": "exact two-sided McNemar (binomial on discordant pairs)"
+    },
+    {
+      "id": "H2",
+      "metric": "M-LOCALISE-CORRECT",
+      "comparison": "CL-LOOP vs CL-TA",
+      "pairing": "same unit",
+      "test": "exact two-sided McNemar (binomial on discordant pairs)"
+    }
+  ],
+  "multiplicity": {
+    "method": "Holm over H1 and H2",
+    "familywiseAlpha": 0.05
+  },
+  "decisionRules": [
+    "A contrast is supported only if its Holm-adjusted p < 0.05 and the discordant-pair direction favours CL-LOOP.",
+    "If there are zero discordant pairs, report p = 1 and 'no difference observable at this grid'; do not reinterpret it as equivalence.",
+    "Non-significant and adverse results are reported unchanged.",
+    "Report counts of discordant pairs (b, c) and the paired difference in proportions with an exact 95% confidence interval for each contrast."
+  ],
+  "stoppingRules": [
+    "Run all 312 cells exactly once; no interim looks; no early stopping.",
+    "A cell that fails for an infrastructure reason (exception, not a verdict) is re-run once at the same commit and recorded as such; if it fails again it is reported as MISSING and excluded from both arms of that pair.",
+    "An UNDEFINED-OUTCOME cell is scored from the arm run record and is not dropped. Only MISSING cells are dropped.",
+    "No cell, unit, metric or contrast may be added, removed or redefined after freeze except through a new CR that labels any later analysis exploratory."
+  ],
+  "dataRules": [
+    "Pilot artefacts under artifacts/pilot/ are never reused.",
+    "Confirmatory output goes to artifacts/confirmatory/ with the commit SHA and these config hashes recorded in every row."
+  ],
+  "knownRisk": "The pilot showed a ceiling effect. If arms agree on nearly every unit, discordant pairs will be few and H1/H2 may be non-significant; this is reported as is.",
+  "voidRuns": [
+    {
+      "path": "artifacts/confirmatory/void-run-1/",
+      "runCommit": "f5fe943f7104d2d57dcf82ba43670096d73f5bc8",
+      "reason": "all 312 cells MISSING: replacement run_inject called deny_algorithm_truth_access from the script module"
+    }
+  ]
+}

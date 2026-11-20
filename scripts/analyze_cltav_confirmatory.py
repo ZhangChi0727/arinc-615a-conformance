@@ -20,6 +20,7 @@ from a615a_sim.algorithm.hypothesis_model import map_to_parent_hypotheses  # noq
 
 DESIGN_PATH = ROOT / "configs/research/cltav_confirmatory_design_draft_v1.json"
 EXPECTED_PATH = ROOT / "configs/research/cltav_confirmatory_expected_behaviour_v1.json"
+REGISTRATION_PATH = ROOT / "configs/research/cltav_confirmatory_registration_v3.json"
 RAW_PATH = ROOT / "artifacts/confirmatory/cltav_confirmatory_attempts_v1.jsonl"
 OUT_PATH = ROOT / "artifacts/confirmatory/cltav_confirmatory_analysis_v1.json"
 NORMAL_TRUTH = frozenset({"h_normal", "h-normal"})
@@ -364,7 +365,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--jsonl", type=Path, default=RAW_PATH)
     parser.add_argument("--design", type=Path, default=DESIGN_PATH)
     parser.add_argument("--out", type=Path, default=OUT_PATH)
+    parser.add_argument("--registration", type=Path, default=REGISTRATION_PATH)
     args = parser.parse_args(argv)
+    registration = load_json(args.registration)
+    if registration.get("identity", {}).get("artifactId") != "CLTAV-CONFIRMATORY-REGISTRATION-V3":
+        print("analysis requires confirmatory registration v3", file=sys.stderr)
+        raise SystemExit(2)
     design = load_json(args.design)
     rows = load_jsonl(args.jsonl)
     payload = write_analysis(rows=rows, design=design, out_path=args.out)
