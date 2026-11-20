@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "updatedAt": "2026-11-19",
+  "updatedAt": "2026-11-20",
   "repository": {
     "role": "instance",
     "displayRole": "ARINC 615A Profile / Binding / Configuration / instance engineering and evidence owner",
@@ -25,6 +25,7 @@
       "CR-2026-030 / DD-054 registers the confirmatory experiment; frozen on merge as e987145.",
       "CR-2026-031 / DD-055 adds the confirmatory runner and analysis scripts without changing the frozen registration and no confirmatory run has started.",
       "CR-2026-032 / DD-056 amends the confirmatory registration to v2 before any run: primary metrics score pre-registered acceptable verdicts and candidate-set rules for all 78 units, including h_normal and invalid-observation; v1 is superseded unused.",
+      "CR-2026-033 / DD-057 voids the first confirmatory run at f5fe943 (all 312 cells MISSING from a runner guard defect; no verdicts were produced), archives it, fixes the runner and adds registration v3 with unchanged content; the confirmatory run is pending re-execution.",
       "No confirmatory result, Configuration, expanded capability, conformance, submission, baseline or tag is created."
     ],
     "summaryZh": [
@@ -43,6 +44,7 @@
       "CR-2026-030／DD-054 登记确认性实验，已于 e987145 合并冻结。",
       "CR-2026-031／DD-055 增加确认性运行与分析脚本，不改变已冻结登记，确认性运行尚未开始。",
       "CR-2026-032／DD-056 新登记文件 `configs/research/cltav_confirmatory_registration_v2.json` 取代 v1；v1 保留，标注为运行前被取代。登记 v1 的主指标只在真值已确定的单元上计分，因此把端点情形（`HC-FIND-ENDPOINT`，T3 真值未决）和短窗下迟到与缺失不可区分的情形（`HC-LATE-ABSENT-SHORT-WINDOW`，E3 未决等价）共 8 个单元排除在主对比之外。这些单元正是设计中为区分实验臂而加入的难例，排除它们与设计目的相矛盾。真值未决并不等于没有正确行为：这些单元的正确行为可以在运行前确定。修订发生在任何单元格运行之前，没有人看过任何确认性结果，因此不构成事后选择。",
+      "CR-2026-033／DD-057 作废 f5fe943 上的首次确认性运行（运行脚本守卫缺陷导致 312 格全部 MISSING，未产生任何判定），归档后修复运行脚本并新增内容不变的登记 v3；确认性运行待重跑。",
       "本增量不产生确认性结果、Configuration、扩大能力、符合性、投稿、baseline 或 tag。"
     ],
     "stateChanges": [
@@ -56,6 +58,7 @@
       "CR-2026-030 / DD-054 registers the confirmatory experiment; frozen on merge as e987145.",
       "CR-2026-031 / DD-055 adds the confirmatory runner and analysis scripts without changing the frozen registration and no confirmatory run has started.",
       "CR-2026-032 / DD-056 amends the confirmatory registration to v2 before any run: primary metrics score pre-registered acceptable verdicts and candidate-set rules for all 78 units, including h_normal and invalid-observation; v1 is superseded unused.",
+      "CR-2026-033 / DD-057 voids the first confirmatory run at f5fe943 (all 312 cells MISSING from a runner guard defect; no verdicts were produced), archives it, fixes the runner and adds registration v3 with unchanged content; the confirmatory run is pending re-execution.",
       "currentStop remains EXECUTABLE-FOUNDATION-GATE for M3, active execution and capability claims."
     ],
     "stateChangesZh": [
@@ -69,6 +72,7 @@
       "CR-2026-030／DD-054 登记确认性实验，已于 e987145 合并冻结。",
       "CR-2026-031／DD-055 增加确认性运行与分析脚本，不改变已冻结登记，确认性运行尚未开始。",
       "CR-2026-032／DD-056 新登记文件 `configs/research/cltav_confirmatory_registration_v2.json` 取代 v1；v1 保留，标注为运行前被取代。登记 v1 的主指标只在真值已确定的单元上计分，因此把端点情形（`HC-FIND-ENDPOINT`，T3 真值未决）和短窗下迟到与缺失不可区分的情形（`HC-LATE-ABSENT-SHORT-WINDOW`，E3 未决等价）共 8 个单元排除在主对比之外。这些单元正是设计中为区分实验臂而加入的难例，排除它们与设计目的相矛盾。真值未决并不等于没有正确行为：这些单元的正确行为可以在运行前确定。修订发生在任何单元格运行之前，没有人看过任何确认性结果，因此不构成事后选择。",
+      "CR-2026-033／DD-057 作废 f5fe943 上的首次确认性运行（运行脚本守卫缺陷导致 312 格全部 MISSING，未产生任何判定），归档后修复运行脚本并新增内容不变的登记 v3；确认性运行待重跑。",
       "对 M3、主动执行和能力主张而言，currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。"
     ],
     "unchangedBoundaries": [

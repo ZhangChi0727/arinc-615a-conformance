@@ -306,7 +306,7 @@ def test_dry_run_preflight_passes_with_monkeypatched_clean_tree(monkeypatch, tmp
 
 
 def test_tampered_hash_fails_preflight(tmp_path) -> None:
-    source = ROOT / "configs/research/cltav_confirmatory_registration_v2.json"
+    source = ROOT / "configs/research/cltav_confirmatory_registration_v3.json"
     payload = json.loads(source.read_text(encoding="utf-8"))
     first = payload["hashedFiles"][0]
     payload["configHashes"][first] = hashlib.sha256(b"tampered").hexdigest()
@@ -368,6 +368,72 @@ def test_undefined_detection_outcome_is_not_retried(monkeypatch) -> None:
     assert record["runRecord"]["stopClass"] == "Stop-NoDistinguisher"
     assert record["runRecord"]["finalHypotheses"] == ["h_normal", "h_find_answer_late"]
     assert record["roundsConsumed"] == 2
+
+
+def _pilot_sc_abort_h_normal_cl_t() -> dict:
+    path = ROOT / "artifacts/pilot/cltav_pilot_attempts_v1.jsonl"
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        if (
+            row.get("sceneId") == "SC-ABORT"
+            and row.get("faultId") == "H-NORMAL"
+            and row.get("armId") == "CL-T"
+        ):
+            return row
+    raise AssertionError("pilot row SC-ABORT/H-NORMAL/CL-T not found")
+
+
+def test_execute_one_cell_matches_published_pilot_unit() -> None:
+    from a615a_sim.algorithm.hypothesis_model import map_to_parent_hypotheses
+
+    design = json.loads(
+        (ROOT / "configs/research/cltav_confirmatory_design_draft_v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    cell = next(
+        c
+        for c in design["cells"]
+        if c["sceneId"] == "SC-ABORT"
+        and c["faultId"] == "H-NORMAL"
+        and c.get("armId") == "CL-T"
+        and not dict(c.get("parameters") or {})
+    )
+    remaining = int((design.get("resourceMode") or {}).get("remainingPerCell") or 8)
+    record = runner.execute_one_cell(
+        cell, remaining=remaining, git_sha="test", config_hashes={}
+    )
+    pilot = _pilot_sc_abort_h_normal_cl_t()
+    attempt = pilot["attemptRow"]
+    expected_candidates = list(map_to_parent_hypotheses(attempt.get("finalHypotheses") or []))
+    assert record["status"] == "OK"
+    assert record["verdict"] is not None
+    assert record["verdict"] == attempt["outcome"]
+    assert record["finalCandidateSet"] == expected_candidates
+    assert record["stopClass"] == attempt["stopClass"]
+
+
+def test_default_parameter_injection_does_not_raise_truth_leakage() -> None:
+    from a615a_sim.bound_iut.protocol import SimulatedTarget
+    from a615a_sim.clock import SimulatedClock
+    from a615a_sim.evaluator.guard import TruthLeakageError
+    from a615a_sim.evaluator.pipeline.inject_stage import run_inject
+
+    target = SimulatedTarget(SimulatedClock())
+    try:
+        with runner.apply_unit_parameter_vector({}):
+            attempt = run_inject(
+                target,
+                scene_id="SC-ABORT",
+                fault_id="H-NORMAL",
+                attempt_id="A-GUARD-SMOKE",
+                confirm=True,
+            )
+    except TruthLeakageError as exc:
+        raise AssertionError(f"default-parameter inject raised TruthLeakageError: {exc}") from exc
+    assert attempt.injection_confirmed is True
 
 
 def test_infrastructure_exception_retries_once_then_missing(monkeypatch) -> None:

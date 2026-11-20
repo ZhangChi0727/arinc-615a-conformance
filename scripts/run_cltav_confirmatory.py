@@ -18,12 +18,12 @@ if str(SRC) not in sys.path:
 
 from a615a_sim.algorithm.hypothesis_model import map_to_parent_hypotheses  # noqa: E402
 from a615a_sim.evaluator import issue_truth_capability, new_independent_truth_store  # noqa: E402
-from a615a_sim.evaluator.guard import deny_algorithm_truth_access  # noqa: E402
+from a615a_sim.evaluator.pipeline import inject_stage as inject_stage_mod  # noqa: E402
 from a615a_sim.evaluator.pipeline import orchestrator as orchestrator_mod  # noqa: E402
 from a615a_sim.evaluator.pipeline.orchestrator import execute_live_attempt  # noqa: E402
-from a615a_sim.faults.injector import inject, overlay_declared_fault  # noqa: E402
+from a615a_sim.faults.injector import overlay_declared_fault  # noqa: E402
 
-REGISTRATION_PATH = ROOT / "configs/research/cltav_confirmatory_registration_v2.json"
+REGISTRATION_PATH = ROOT / "configs/research/cltav_confirmatory_registration_v3.json"
 DESIGN_PATH = ROOT / "configs/research/cltav_confirmatory_design_draft_v1.json"
 OUT_DIR = ROOT / "artifacts" / "confirmatory"
 RAW_PATH = OUT_DIR / "cltav_confirmatory_attempts_v1.jsonl"
@@ -122,36 +122,34 @@ def run_preflight(**kwargs: Any) -> None:
 
 @contextmanager
 def apply_unit_parameter_vector(parameters: Mapping[str, Any] | None) -> Iterator[None]:
-    """Install the unit parameter vector on inject and overlay (S1 interval visibility)."""
+    """Install the unit parameter vector on inject and overlay (S1 interval visibility).
+
+    inject() itself does not apply the IF-EXP-TRUTH guard.  Keep
+    inject_stage.run_inject as the orchestrator binding so deny_algorithm_truth_access
+    still runs from an allowed evaluator module; only bind parameters onto the
+    inject() that inject_stage.run_inject already calls.
+    """
 
     params = dict(parameters or {})
+    original_inject = inject_stage_mod.inject
+    original_overlay = orchestrator_mod.overlay_declared_fault
 
-    def run_inject(target, *, scene_id, fault_id, attempt_id=None, confirm=True):
-        deny_algorithm_truth_access(operation="e1-inject")
-        return inject(
-            target,
-            scene_id=scene_id,
-            fault_id=fault_id,
-            attempt_id=attempt_id,
-            confirm=confirm,
-            truth_store=None,
-            truth_capability=None,
-            parameters=params,
-        )
+    def inject_with_params(target, **kwargs):
+        kwargs = dict(kwargs)
+        kwargs["parameters"] = params
+        return original_inject(target, **kwargs)
 
     def overlay(target, **kwargs):
         kwargs = dict(kwargs)
         kwargs["parameters"] = params
         return overlay_declared_fault(target, **kwargs)
 
-    original_run_inject = orchestrator_mod.run_inject
-    original_overlay = orchestrator_mod.overlay_declared_fault
-    orchestrator_mod.run_inject = run_inject
+    inject_stage_mod.inject = inject_with_params
     orchestrator_mod.overlay_declared_fault = overlay
     try:
         yield
     finally:
-        orchestrator_mod.run_inject = original_run_inject
+        inject_stage_mod.inject = original_inject
         orchestrator_mod.overlay_declared_fault = original_overlay
 
 

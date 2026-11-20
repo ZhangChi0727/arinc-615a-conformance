@@ -1,0 +1,51 @@
+{
+  "label": "CONFIRMATORY / SIMULATED-IUT",
+  "eligibleUnitCount": 78,
+  "nullExpectationUnitCount": 0,
+  "contrasts": {
+    "H1": {
+      "n": 0,
+      "b": 0,
+      "c": 0,
+      "p": 1.0,
+      "pointDifference": null,
+      "clopperPearsonBOverBPlusC": {
+        "lower": null,
+        "upper": null
+      },
+      "leftOnes": 0,
+      "rightOnes": 0,
+      "undefinedOutcomeScored": 0,
+      "missingDropped": 78,
+      "metric": "M-DETECT-CORRECT",
+      "comparison": "CL-LOOP vs CL-T",
+      "holmAdjustedP": 1.0,
+      "supported": false
+    },
+    "H2": {
+      "n": 0,
+      "b": 0,
+      "c": 0,
+      "p": 1.0,
+      "pointDifference": null,
+      "clopperPearsonBOverBPlusC": {
+        "lower": null,
+        "upper": null
+      },
+      "leftOnes": 0,
+      "rightOnes": 0,
+      "undefinedOutcomeScored": 0,
+      "missingDropped": 78,
+      "metric": "M-LOCALISE-CORRECT",
+      "comparison": "CL-LOOP vs CL-TA",
+      "holmAdjustedP": 1.0,
+      "supported": false
+    }
+  },
+  "holm": {
+    "H1": 1.0,
+    "H2": 1.0
+  },
+  "alpha": 0.05,
+  "secondary": {}
+}
